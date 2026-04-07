@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Mockolate.Parameters;
 
 namespace Mockolate;
 
@@ -169,7 +170,7 @@ public record MockBehavior : IMockBehaviorAccess
 		DefaultValueFactory[] factories)
 		: IDefaultValueGenerator
 	{
-		public object? GenerateValue(Type type, params object?[] parameters)
+		public object? GenerateValue(Type type, params INamedParameterValue[] parameters)
 		{
 			DefaultValueFactory? factory = factories.FirstOrDefault(f => f.CanGenerateValue(type));
 			if (factory is not null)

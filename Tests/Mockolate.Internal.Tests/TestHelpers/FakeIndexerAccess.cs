@@ -5,5 +5,5 @@ namespace Mockolate.Internal.Tests.TestHelpers;
 
 internal sealed class FakeIndexerAccess : IndexerAccess
 {
-	internal FakeIndexerAccess() : base(Array.Empty<NamedParameterValue>()) { }
+	internal FakeIndexerAccess() : base(Array.Empty<INamedParameterValue>()) { }
 }

@@ -24,8 +24,8 @@ public sealed partial class HttpClientExtensionsTests
 
 		bool result = interactiveSetup.Matches(new MethodInvocation("global::System.Net.Http.HttpMessageHandler.SendAsync",
 		[
-			new NamedParameterValue("request", new HttpRequestMessage()),
-			new NamedParameterValue("cancellationToken", CancellationToken.None),
+			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
+			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
 		]));
 
 		await That(result).IsTrue();
@@ -93,8 +93,8 @@ public sealed partial class HttpClientExtensionsTests
 
 		bool result = interactiveSetup.Matches(new MethodInvocation("global::System.Net.Http.HttpMessageHandler.SendAsync",
 		[
-			new NamedParameterValue("request", new HttpRequestMessage()),
-			new NamedParameterValue("cancellationToken", CancellationToken.None),
+			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
+			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
 		]));
 
 		await That(result).IsFalse();
@@ -112,8 +112,8 @@ public sealed partial class HttpClientExtensionsTests
 
 		bool result = interactiveSetup.Matches(new MethodInvocation("System.Net.Http.HttpMessageHandler.SendAsync",
 		[
-			new NamedParameterValue("request", new HttpRequestMessage()),
-			new NamedParameterValue("cancellationToken", CancellationToken.None),
+			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
+			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
 		]));
 
 		await That(result).IsFalse();

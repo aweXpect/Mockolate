@@ -13,9 +13,19 @@ public interface IParameter
 	bool Matches(object? value);
 
 	/// <summary>
+	///     Checks if the <paramref name="value" /> matches the expectation.
+	/// </summary>
+	bool Matches(INamedParameterValue value);
+
+	/// <summary>
 	///     Invokes the callbacks registered for this parameter match.
 	/// </summary>
 	void InvokeCallbacks(object? value);
+
+	/// <summary>
+	///     Invokes the callbacks registered for this parameter match.
+	/// </summary>
+	void InvokeCallbacks(INamedParameterValue value);
 }
 
 /// <summary>

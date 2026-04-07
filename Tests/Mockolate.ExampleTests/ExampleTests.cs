@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Mockolate.ExampleTests.TestData;

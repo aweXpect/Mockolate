@@ -718,9 +718,9 @@ internal static partial class Sources
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(" &&").AppendLine();
-			sb.Append("\t\t\t    TryCast(indexerGetterAccess.Parameters[").Append(i - 1).Append("].Value, out T").Append(i)
+			sb.Append("\t\t\t    indexerGetterAccess.Parameters[").Append(i - 1).Append("].TryGetValue(out T").Append(i)
 				.Append(" p")
-				.Append(i).Append(", behavior)");
+				.Append(i).Append(")");
 		}
 
 		sb.Append(")").AppendLine();
@@ -788,9 +788,9 @@ internal static partial class Sources
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(" &&").AppendLine();
-			sb.Append("\t\t\t    TryCast(indexerSetterAccess.Parameters[").Append(i - 1).Append("].Value, out T").Append(i)
+			sb.Append("\t\t\t    indexerSetterAccess.Parameters[").Append(i - 1).Append("].TryGetValue(out T").Append(i)
 				.Append(" p")
-				.Append(i).Append(", behavior)");
+				.Append(i).Append(")");
 		}
 
 		sb.Append(")").AppendLine();
@@ -816,8 +816,8 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IsMatch(global::Mockolate.Parameters.NamedParameterValue[])\" />").AppendLine();
-		sb.Append("\t\tprotected override bool IsMatch(global::Mockolate.Parameters.NamedParameterValue[] parameters)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"IsMatch(global::Mockolate.Parameters.INamedParameterValue[])\" />").AppendLine();
+		sb.Append("\t\tprotected override bool IsMatch(global::Mockolate.Parameters.INamedParameterValue[] parameters)").AppendLine();
 		sb.Append("\t\t\t=> Matches([")
 			.Append(string.Join(", ",
 				Enumerable.Range(1, numberOfParameters).Select(i => $"match{i}")))
@@ -825,18 +825,18 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append(
-				"\t\t/// <inheritdoc cref=\"IndexerSetup.GetInitialValue{T}(global::Mockolate.MockBehavior, global::System.Func{T}, global::Mockolate.Parameters.NamedParameterValue[], out T)\" />")
+				"\t\t/// <inheritdoc cref=\"IndexerSetup.GetInitialValue{T}(global::Mockolate.MockBehavior, global::System.Func{T}, global::Mockolate.Parameters.INamedParameterValue[], out T)\" />")
 			.AppendLine();
 		sb.Append(
-				"\t\tprotected override void GetInitialValue<T>(global::Mockolate.MockBehavior behavior, global::System.Func<T> defaultValueGenerator, global::Mockolate.Parameters.NamedParameterValue[] parameters, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value)")
+				"\t\tprotected override void GetInitialValue<T>(global::Mockolate.MockBehavior behavior, global::System.Func<T> defaultValueGenerator, global::Mockolate.Parameters.INamedParameterValue[] parameters, [global::System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T value)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (_initialization is not null &&").AppendLine();
 		sb.Append("\t\t\t    parameters.Length == ").Append(numberOfParameters).Append(" &&").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\t\t    TryCast(parameters[").Append(i - 1).Append("].Value, out T").Append(i).Append(" p")
-				.Append(i).Append(", behavior)").Append(" &&").AppendLine();
+			sb.Append("\t\t\t    parameters[").Append(i - 1).Append("].TryGetValue(out T").Append(i).Append(" p")
+				.Append(i).Append(")").Append(" &&").AppendLine();
 		}
 
 		sb.Append("\t\t\t    _initialization.Invoke(").Append(parameters).Append(") is T initialValue)").AppendLine();

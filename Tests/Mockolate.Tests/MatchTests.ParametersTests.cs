@@ -1,4 +1,3 @@
-using System.Linq;
 using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
@@ -14,11 +13,11 @@ public sealed partial class MatchTests
 		[InlineData(false, null, null)]
 		[InlineData(false, "", 1)]
 		[InlineData(false, "foo", null)]
-		public async Task ShouldMatchWhenPredicateReturnsTrue(bool expectedResult, params object?[] values)
+		public async Task ShouldMatchWhenPredicateReturnsTrue(bool expectedResult, string? value1, int? value2)
 		{
 			IParameters sut = Match.Parameters(_ => expectedResult);
 
-			bool result = sut.Matches(values.Select(x => new NamedParameterValue(null, x)).ToArray());
+			bool result = sut.Matches([new NamedParameterValue<string?>("p1", value1), new NamedParameterValue<int?>("p2", value2),]);
 
 			await That(result).IsEqualTo(expectedResult);
 		}

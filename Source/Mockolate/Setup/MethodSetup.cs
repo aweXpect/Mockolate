@@ -38,7 +38,6 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	bool? IInteractiveMethodSetup.SkipBaseClass()
 		=> GetSkipBaseClass();
 
-
 	/// <inheritdoc cref="IInteractiveMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
 	TResult IInteractiveMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
@@ -99,6 +98,7 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	/// </summary>
 	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator);
+
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.

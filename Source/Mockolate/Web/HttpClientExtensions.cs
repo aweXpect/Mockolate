@@ -63,9 +63,31 @@ public static partial class HttpClientExtensions
 			return false;
 		}
 
+		public bool Matches(INamedParameterValue value)
+		{
+			if (value.TryGetValue(out HttpRequestMessage requestMessage) &&
+			    requestMessage.Method == method)
+			{
+				return parameters.All(parameter => parameter.Matches(requestMessage));
+			}
+
+			return false;
+		}
+
 		public void InvokeCallbacks(object? value)
 		{
 			if (value is HttpRequestMessage typedValue)
+			{
+				foreach (IHttpRequestMessageParameter parameter in parameters)
+				{
+					parameter.InvokeCallbacks(typedValue);
+				}
+			}
+		}
+
+		public void InvokeCallbacks(INamedParameterValue value)
+		{
+			if (value.TryGetValue(out HttpRequestMessage typedValue))
 			{
 				foreach (IHttpRequestMessageParameter parameter in parameters)
 				{

@@ -536,14 +536,14 @@ internal static partial class Sources
 		sb.Append("\t\t\tif (");
 		for (int i = 1; i < numberOfParameters; i++)
 		{
-			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("].Value, out T").Append(i).Append(" p")
-				.Append(i).Append(", behavior) &&");
+			sb.Append("invocation.Parameters[").Append(i - 1).Append("].TryGetValue(out T").Append(i).Append(" p")
+				.Append(i).Append(") &&");
 			sb.AppendLine().Append("\t\t    ");
 		}
 
-		sb.Append("TryCast(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("].Value, out T").Append(numberOfParameters).Append(" p")
-			.Append(numberOfParameters).Append(", behavior))")
+		sb.Append("invocation.Parameters[")
+			.Append(numberOfParameters - 1).Append("].TryGetValue(out T").Append(numberOfParameters).Append(" p")
+			.Append(numberOfParameters).Append("))")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tbool wasInvoked = false;").AppendLine();
@@ -1140,14 +1140,14 @@ internal static partial class Sources
 		sb.Append("\t\t\tif (");
 		for (int i = 1; i < numberOfParameters; i++)
 		{
-			sb.Append("TryCast(invocation.Parameters[").Append(i - 1).Append("].Value, out T").Append(i).Append(" p")
-				.Append(i).Append(", behavior) &&");
+			sb.Append("invocation.Parameters[").Append(i - 1).Append("].TryGetValue(out T").Append(i).Append(" p")
+				.Append(i).Append(") &&");
 			sb.AppendLine().Append("\t\t    ");
 		}
 
-		sb.Append("TryCast(invocation.Parameters[")
-			.Append(numberOfParameters - 1).Append("].Value, out T").Append(numberOfParameters).Append(" p")
-			.Append(numberOfParameters).Append(", behavior))")
+		sb.Append("invocation.Parameters[")
+			.Append(numberOfParameters - 1).Append("].TryGetValue(out T").Append(numberOfParameters).Append(" p")
+			.Append(numberOfParameters).Append("))")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tbool wasInvoked = false;").AppendLine();
@@ -1179,13 +1179,13 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\t\tif (!TryCast(invocation.Parameters[").Append(i - 1)
-				.Append("].Value, out T").Append(i).Append(" p").Append(i).Append(", behavior))").AppendLine();
+			sb.Append("\t\t\tif (!invocation.Parameters[").Append(i - 1)
+				.Append("].TryGetValue(out T").Append(i).Append(" p").Append(i).Append("))").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"The input parameter ").Append(i)
 				.Append(" only supports '{FormatType(typeof(T").Append(i)
 				.Append("))}', but is '{FormatType(invocation.Parameters[")
-				.Append(i - 1).Append("].Value!.GetType())}'.\");").AppendLine();
+				.Append(i - 1).Append("].GetValueType())}'.\");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.AppendLine();
 		}

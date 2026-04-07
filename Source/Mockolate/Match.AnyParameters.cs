@@ -16,7 +16,7 @@ public partial class Match
 	private sealed class AnyParametersMatch : IParameters
 	{
 		/// <inheritdoc cref="IParameters.Matches" />
-		public bool Matches(NamedParameterValue[] values)
+		public bool Matches(INamedParameterValue[] values)
 			=> true;
 
 		/// <inheritdoc cref="object.ToString()" />

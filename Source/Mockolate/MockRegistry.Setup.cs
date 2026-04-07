@@ -32,7 +32,7 @@ public partial class MockRegistry
 	///     Gets the indexer value for the given <paramref name="parameters" />.
 	/// </summary>
 	private TValue GetIndexerValue<TValue>(IInteractiveIndexerSetup? setup, Func<TValue> defaultValueGenerator,
-		NamedParameterValue[] parameters)
+		INamedParameterValue[] parameters)
 		=> Setup.Indexers.GetOrAddValue(parameters, defaultValueGenerator);
 
 	/// <summary>

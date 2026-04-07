@@ -17,8 +17,8 @@ public sealed partial class SetupIndexerTests
 		bool result = MyIndexerSetup.DoesMatch([
 			new NamedParameter("foo", (IParameter)parameter),
 		], [
-			new NamedParameterValue("foo", 4),
-			new NamedParameterValue("bar", 5),
+			new NamedParameterValue<int>("foo", 4),
+			new NamedParameterValue<int>("bar", 5),
 		]);
 
 		await That(result).IsFalse();
@@ -33,7 +33,7 @@ public sealed partial class SetupIndexerTests
 		bool result = MyIndexerSetup.DoesMatch([
 			new NamedParameter("foo", (IParameter)parameter),
 		], [
-			new NamedParameterValue("foo", 4),
+			new NamedParameterValue<int>("foo", 4),
 		]);
 
 		await That(result).IsTrue();
@@ -183,9 +183,9 @@ public sealed partial class SetupIndexerTests
 
 		int? result0 = sut["foo", 1, 2];
 		registration.SetIndexer(42,
-			new NamedParameterValue("index1", "foo"),
-			new NamedParameterValue("index2", 1),
-			new NamedParameterValue("index3", 2));
+			new NamedParameterValue<string>("index1", "foo"),
+			new NamedParameterValue<int>("index2", 1),
+			new NamedParameterValue<int>("index3", 2));
 		int? result1 = sut["foo", 1, 2];
 		int? result2 = sut["bar", 1, 2];
 		int? result3 = sut["foo", 2, 2];
@@ -233,8 +233,8 @@ public sealed partial class SetupIndexerTests
 		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
 		MockRegistry registration = ((IMock)sut).MockRegistry;
 
-		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
-		IndexerSetupResult<string> result2 = registration.GetIndexer<string>(new NamedParameterValue("other", 1));
+		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue<int>("index", 1));
+		IndexerSetupResult<string> result2 = registration.GetIndexer<string>(new NamedParameterValue<int>("other", 1));
 
 		await That(result1.GetResult(() => "")).IsEqualTo("foo");
 		await That(result2.GetResult(() => "")).IsEqualTo("");
@@ -247,8 +247,8 @@ public sealed partial class SetupIndexerTests
 		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
 		MockRegistry registration = ((IMock)sut).MockRegistry;
 
-		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue("index", 1));
-		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(new NamedParameterValue("index", 1));
+		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue<int>("index", 1));
+		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(new NamedParameterValue<int>("index", 1));
 
 		await That(result1.GetResult(() => "")).IsEqualTo("foo");
 		await That(result2.GetResult(() => 0)).IsEqualTo(0);
@@ -422,7 +422,7 @@ public sealed partial class SetupIndexerTests
 
 	public class MyIndexerSetup : IndexerSetup
 	{
-		public static bool DoesMatch(NamedParameter[] namedParameters, NamedParameterValue[] values)
+		public static bool DoesMatch(NamedParameter[] namedParameters, INamedParameterValue[] values)
 			=> Matches(namedParameters, values);
 
 		protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
@@ -433,14 +433,14 @@ public sealed partial class SetupIndexerTests
 			MockBehavior behavior)
 			=> throw new NotSupportedException();
 
-		protected override bool IsMatch(NamedParameterValue[] parameters)
+		protected override bool IsMatch(INamedParameterValue[] parameters)
 			=> throw new NotSupportedException();
 
 		protected override bool? GetSkipBaseClass()
 			=> throw new NotSupportedException();
 
 		protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-			NamedParameterValue[] parameters,
+			INamedParameterValue[] parameters,
 			[NotNullWhen(true)] out T value)
 			=> throw new NotSupportedException();
 	}

@@ -63,12 +63,33 @@ public partial class It
 				return Matches(typedValue);
 			}
 
-			return value is null && Matches(default!);
+			return value is null && Matches(default(T)!);
 		}
 
+		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
+		public virtual bool Matches(INamedParameterValue value)
+		{
+			if (value.TryGetValue(out T typedValue))
+			{
+				return Matches(typedValue);
+			}
+
+			return false;
+		}
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 		{
 			if (TryCast(value, out T typedValue) && _callbacks is not null)
+			{
+				_callbacks.ForEach(a => a.Invoke(typedValue));
+			}
+		}
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
+		public void InvokeCallbacks(INamedParameterValue value)
+		{
+			if (_callbacks is not null && value.TryGetValue(out T typedValue))
 			{
 				_callbacks.ForEach(a => a.Invoke(typedValue));
 			}

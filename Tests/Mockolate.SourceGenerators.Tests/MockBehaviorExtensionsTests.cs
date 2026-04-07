@@ -33,19 +33,19 @@ public sealed class MockBehaviorExtensionsTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public T[] Generate<T>(T[] nullValue, params object?[] parameters)
+			          		public T[] Generate<T>(T[] nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          			=> global::System.Array.Empty<T>();
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public T[,] Generate<T>(T[,] nullValue, params object?[] parameters)
+			          		public T[,] Generate<T>(T[,] nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          			=> new T[,] { };
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public T[,,] Generate<T>(T[,,] nullValue, params object?[] parameters)
+			          		public T[,,] Generate<T>(T[,,] nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          			=> new T[,,] { };
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public T[,,,] Generate<T>(T[,,,] nullValue, params object?[] parameters)
+			          		public T[,,,] Generate<T>(T[,,,] nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          			=> new T[,,,] { };
 			          """).IgnoringNewlineStyle();
 	}
@@ -80,11 +80,11 @@ public sealed class MockBehaviorExtensionsTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public global::System.Collections.Generic.IEnumerable<T> Generate<T>(global::System.Collections.Generic.IEnumerable<T> nullValue, params object?[] parameters)
+			          		public global::System.Collections.Generic.IEnumerable<T> Generate<T>(global::System.Collections.Generic.IEnumerable<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          			=> global::System.Array.Empty<T>();
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public global::System.Collections.Generic.List<T> Generate<T>(global::System.Collections.Generic.List<T> nullValue, params object?[] parameters)
+			          		public global::System.Collections.Generic.List<T> Generate<T>(global::System.Collections.Generic.List<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          			=> new global::System.Collections.Generic.List<T>();
 			          """).IgnoringNewlineStyle();
 	}
@@ -119,26 +119,31 @@ public sealed class MockBehaviorExtensionsTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params object?[] parameters)
+			          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
 			          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
-			          			var objectParameters = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<object?[]>(parameters));
-			          			if (objectParameters is not null)
+			          			foreach (var parameter in parameters)
 			          			{
-			          				cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
-			          					global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(objectParameters)) ?? cancellationToken;
+			          			    if (parameter.TryGetValue(out global::System.Threading.CancellationToken token))
+			          				{
+			          					cancellationToken = token;
+			          					break;
+			          				}
 			          			}
-			          			
+
 			          			if (cancellationToken.IsCancellationRequested)
 			          			{
 			          				return global::System.Threading.Tasks.Task.FromCanceled<T>(cancellationToken);
 			          			}
-			          			
-			          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
+
+			          			foreach (global::Mockolate.Parameters.INamedParameterValue parameter in parameters)
 			          			{
-			          				return global::System.Threading.Tasks.Task.FromResult(func());
+			          				if (parameter.TryGetValue(out global::System.Func<T> func))
+			          				{
+			          					return global::System.Threading.Tasks.Task.FromResult(func());
+			          				}
 			          			}
-			          			
+
 			          			return global::System.Threading.Tasks.Task.FromResult(generator.Generate(default(T)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle();
@@ -174,26 +179,31 @@ public sealed class MockBehaviorExtensionsTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params object?[] parameters)
+			          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
 			          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
-			          			var objectParameters = global::System.Linq.Enumerable.FirstOrDefault(global::System.Linq.Enumerable.OfType<object?[]>(parameters));
-			          			if (objectParameters is not null)
+			          			foreach (var parameter in parameters)
 			          			{
-			          				cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
-			          					global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(objectParameters)) ?? cancellationToken;
+			          			    if (parameter.TryGetValue(out global::System.Threading.CancellationToken token))
+			          				{
+			          					cancellationToken = token;
+			          					break;
+			          				}
 			          			}
-			          			
+
 			          			if (cancellationToken.IsCancellationRequested)
 			          			{
 			          				return global::System.Threading.Tasks.ValueTask.FromCanceled<T>(cancellationToken);
 			          			}
-			          			
-			          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
+
+			          			foreach (global::Mockolate.Parameters.INamedParameterValue parameter in parameters)
 			          			{
-			          				return global::System.Threading.Tasks.ValueTask.FromResult(func());
+			          				if (parameter.TryGetValue(out global::System.Func<T> func))
+			          				{
+			          					return global::System.Threading.Tasks.ValueTask.FromResult(func());
+			          				}
 			          			}
-			          			
+
 			          			return global::System.Threading.Tasks.ValueTask.FromResult(generator.Generate(default(T)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle();
@@ -228,79 +238,79 @@ public sealed class MockBehaviorExtensionsTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params object?[] parameters)
+			          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
-			          			if (parameters.Length >= 2 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2)
+			          			if (parameters.Length >= 2 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2))
 			          			{
 			          				return (func1(), func2());
 			          			}
-			          			
+
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public (T1, T2, T3) Generate<T1, T2, T3>((T1, T2, T3) nullValue, params object?[] parameters)
+			          		public (T1, T2, T3) Generate<T1, T2, T3>((T1, T2, T3) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
-			          			if (parameters.Length >= 3 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3)
+			          			if (parameters.Length >= 3 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2) && parameters[2].TryGetValue(out global::System.Func<T3> func3))
 			          			{
 			          				return (func1(), func2(), func3());
 			          			}
-			          			
+
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public (T1, T2, T3, T4) Generate<T1, T2, T3, T4>((T1, T2, T3, T4) nullValue, params object?[] parameters)
+			          		public (T1, T2, T3, T4) Generate<T1, T2, T3, T4>((T1, T2, T3, T4) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
-			          			if (parameters.Length >= 4 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4)
+			          			if (parameters.Length >= 4 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2) && parameters[2].TryGetValue(out global::System.Func<T3> func3) && parameters[3].TryGetValue(out global::System.Func<T4> func4))
 			          			{
 			          				return (func1(), func2(), func3(), func4());
 			          			}
-			          			
+
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public (T1, T2, T3, T4, T5) Generate<T1, T2, T3, T4, T5>((T1, T2, T3, T4, T5) nullValue, params object?[] parameters)
+			          		public (T1, T2, T3, T4, T5) Generate<T1, T2, T3, T4, T5>((T1, T2, T3, T4, T5) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
-			          			if (parameters.Length >= 5 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5)
+			          			if (parameters.Length >= 5 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2) && parameters[2].TryGetValue(out global::System.Func<T3> func3) && parameters[3].TryGetValue(out global::System.Func<T4> func4) && parameters[4].TryGetValue(out global::System.Func<T5> func5))
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5());
 			          			}
-			          			
+
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public (T1, T2, T3, T4, T5, T6) Generate<T1, T2, T3, T4, T5, T6>((T1, T2, T3, T4, T5, T6) nullValue, params object?[] parameters)
+			          		public (T1, T2, T3, T4, T5, T6) Generate<T1, T2, T3, T4, T5, T6>((T1, T2, T3, T4, T5, T6) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
-			          			if (parameters.Length >= 6 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5 && parameters[5] is global::System.Func<T6> func6)
+			          			if (parameters.Length >= 6 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2) && parameters[2].TryGetValue(out global::System.Func<T3> func3) && parameters[3].TryGetValue(out global::System.Func<T4> func4) && parameters[4].TryGetValue(out global::System.Func<T5> func5) && parameters[5].TryGetValue(out global::System.Func<T6> func6))
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5(), func6());
 			          			}
-			          			
+
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters), generator.Generate(default(T6)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public (T1, T2, T3, T4, T5, T6, T7) Generate<T1, T2, T3, T4, T5, T6, T7>((T1, T2, T3, T4, T5, T6, T7) nullValue, params object?[] parameters)
+			          		public (T1, T2, T3, T4, T5, T6, T7) Generate<T1, T2, T3, T4, T5, T6, T7>((T1, T2, T3, T4, T5, T6, T7) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
-			          			if (parameters.Length >= 7 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5 && parameters[5] is global::System.Func<T6> func6 && parameters[6] is global::System.Func<T7> func7)
+			          			if (parameters.Length >= 7 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2) && parameters[2].TryGetValue(out global::System.Func<T3> func3) && parameters[3].TryGetValue(out global::System.Func<T4> func4) && parameters[4].TryGetValue(out global::System.Func<T5> func5) && parameters[5].TryGetValue(out global::System.Func<T6> func6) && parameters[6].TryGetValue(out global::System.Func<T7> func7))
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5(), func6(), func7());
 			          			}
-			          			
+
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters), generator.Generate(default(T6)!, parameters), generator.Generate(default(T7)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
-			          		public (T1, T2, T3, T4, T5, T6, T7, T8) Generate<T1, T2, T3, T4, T5, T6, T7, T8>((T1, T2, T3, T4, T5, T6, T7, T8) nullValue, params object?[] parameters)
+			          		public (T1, T2, T3, T4, T5, T6, T7, T8) Generate<T1, T2, T3, T4, T5, T6, T7, T8>((T1, T2, T3, T4, T5, T6, T7, T8) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
 			          		{
-			          			if (parameters.Length >= 8 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2 && parameters[2] is global::System.Func<T3> func3 && parameters[3] is global::System.Func<T4> func4 && parameters[4] is global::System.Func<T5> func5 && parameters[5] is global::System.Func<T6> func6 && parameters[6] is global::System.Func<T7> func7 && parameters[7] is global::System.Func<T8> func8)
+			          			if (parameters.Length >= 8 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2) && parameters[2].TryGetValue(out global::System.Func<T3> func3) && parameters[3].TryGetValue(out global::System.Func<T4> func4) && parameters[4].TryGetValue(out global::System.Func<T5> func5) && parameters[5].TryGetValue(out global::System.Func<T6> func6) && parameters[6].TryGetValue(out global::System.Func<T7> func7) && parameters[7].TryGetValue(out global::System.Func<T8> func8))
 			          			{
 			          				return (func1(), func2(), func3(), func4(), func5(), func6(), func7(), func8());
 			          			}
-			          			
+
 			          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters), generator.Generate(default(T3)!, parameters), generator.Generate(default(T4)!, parameters), generator.Generate(default(T5)!, parameters), generator.Generate(default(T6)!, parameters), generator.Generate(default(T7)!, parameters), generator.Generate(default(T8)!, parameters));
 			          		}
 			          """).IgnoringNewlineStyle();

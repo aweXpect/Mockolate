@@ -11,7 +11,7 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class MethodInvocation(string name, NamedParameterValue[] parameters) : IInteraction, ISettableInteraction
+public class MethodInvocation(string name, INamedParameterValue[] parameters) : IInteraction, ISettableInteraction
 {
 	private int? _index;
 	/// <summary>
@@ -22,7 +22,7 @@ public class MethodInvocation(string name, NamedParameterValue[] parameters) : I
 	/// <summary>
 	///     The named parameters of the method.
 	/// </summary>
-	public NamedParameterValue[] Parameters { get; } = parameters;
+	public INamedParameterValue[] Parameters { get; } = parameters;
 
 	/// <inheritdoc cref="IInteraction.Index" />
 	public int Index => _index.GetValueOrDefault();
@@ -31,5 +31,5 @@ public class MethodInvocation(string name, NamedParameterValue[] parameters) : I
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"[{Index}] invoke method {Name.SubstringAfterLast('.')}({string.Join(", ", Parameters.Select(p => p.Value?.ToString() ?? "null"))})";
+		=> $"[{Index}] invoke method {Name.SubstringAfterLast('.')}({string.Join(", ", Parameters.Select(p => p.ToString()))})";
 }

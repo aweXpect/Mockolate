@@ -84,6 +84,10 @@ public static partial class ItExtensions
 		private HttpQueryMatcher? _query;
 		private string? _scheme;
 
+		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
+		public bool Matches(INamedParameterValue value)
+			=> value.TryGetValue<Uri>(out var uri) && Matches(uri);
+
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 		public bool Matches(object? value)
 		{
@@ -138,6 +142,13 @@ public static partial class ItExtensions
 		public void InvokeCallbacks(object? value)
 		{
 			if (value is Uri uri)
+			{
+				_callbacks?.ForEach(a => a.Invoke(uri));
+			}
+		}
+		public void InvokeCallbacks(INamedParameterValue value)
+		{
+			if (value.TryGetValue(out Uri uri))
 			{
 				_callbacks?.ForEach(a => a.Invoke(uri));
 			}

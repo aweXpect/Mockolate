@@ -70,7 +70,17 @@ public partial class It
 				return Matches(typedValue);
 			}
 
-			return value is not null || Matches(default!);
+			return value is not null || Matches(default(T)!);
+		}
+
+		public override bool Matches(INamedParameterValue value)
+		{
+			if (value.TryGetValue(out T typedValue))
+			{
+				return Matches(typedValue);
+			}
+
+			return !value.IsNull || Matches(default(T)!);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />

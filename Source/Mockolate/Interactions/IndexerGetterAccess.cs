@@ -9,9 +9,9 @@ namespace Mockolate.Interactions;
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 [DebuggerNonUserCode]
-public class IndexerGetterAccess(NamedParameterValue[] parameters) : IndexerAccess(parameters)
+public class IndexerGetterAccess(INamedParameterValue[] parameters) : IndexerAccess(parameters)
 {
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"[{Index}] get indexer [{string.Join(", ", Parameters.Select(p => p.Value?.ToString() ?? "null"))}]";
+		=> $"[{Index}] get indexer [{string.Join(", ", Parameters.Select(p => p.ToString()))}]";
 }

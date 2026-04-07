@@ -15,9 +15,9 @@ public record NamedParameter(string Name, IParameter Parameter)
 	public override string? ToString() => Parameter.ToString();
 
 	/// <summary>
-	///     Checks if the name and value of the given <see cref="NamedParameterValue" /> matches this named parameter.
+	///     Checks if the name and value of the given <see cref="INamedParameterValue" /> matches this named parameter.
 	/// </summary>
-	public bool Matches(NamedParameterValue value)
+	public bool Matches(INamedParameterValue value)
 		=> (string.IsNullOrEmpty(value.Name) || Name.Equals(value.Name, StringComparison.Ordinal)) &&
-		   Parameter.Matches(value.Value);
+		   Parameter.Matches(value);
 }

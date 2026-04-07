@@ -50,7 +50,7 @@ public sealed partial class ItTests
 			bool result = ((IParameter)sut).Matches(value);
 
 			await That(result).IsTrue();
-			await That(() => ((IParameter)sut).InvokeCallbacks(null)).DoesNotThrow();
+			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();
 		}
 	}
 }
