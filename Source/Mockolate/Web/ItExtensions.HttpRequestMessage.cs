@@ -115,7 +115,14 @@ public static partial class ItExtensions
 
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public bool Matches(INamedParameterValue value)
-			=> value.TryGetValue<HttpRequestMessage>(out var typedValue) && Matches(typedValue);
+		{
+			if (!value.TryGetValue(out HttpRequestMessage? typedValue) || typedValue is null)
+			{
+				return false;
+			}
+
+			return Matches(typedValue);
+		}
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
 		public void InvokeCallbacks(INamedParameterValue value)

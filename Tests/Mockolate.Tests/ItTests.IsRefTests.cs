@@ -6,8 +6,6 @@ public sealed partial class ItTests
 {
 	public sealed class IsRefTests
 	{
-		// ...existing code...
-
 		[Fact]
 		public async Task WithRef_DifferentType_Long_ShouldNotMatch()
 		{
@@ -40,8 +38,6 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(predicateValue);
 		}
 
-		// ...existing code...
-
 		[Fact]
 		public async Task WithRef_Verify_Long_ShouldAlwaysMatch()
 		{
@@ -63,7 +59,5 @@ public sealed partial class ItTests
 			await That(result).IsTrue();
 			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();
 		}
-
-		// ...existing code...
 	}
 }
