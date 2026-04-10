@@ -27,7 +27,7 @@ public partial class It
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
 	[DebuggerNonUserCode]
-	private abstract class TypedMatch<T> : IParameter<T>, IParameter
+	private abstract class TypedMatch<T> : IParameter<T>, IParameter, ITypedParameter<T>
 	{
 		private List<Action<T>>? _callbacks;
 
@@ -64,6 +64,9 @@ public partial class It
 			_callbacks.Add(callback);
 			return this;
 		}
+
+		/// <inheritdoc cref="ITypedParameter{T}.MatchesValue" />
+		bool ITypedParameter<T>.MatchesValue(string name, T value) => Matches(value);
 
 		/// <summary>
 		///     Verifies the expectation for the <paramref name="value" />.

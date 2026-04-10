@@ -129,12 +129,20 @@ internal static partial class Sources
 			.Append(')').AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		string resultVarName = Helpers.GetUniqueLocalVariableName("result", delegateMethod.Parameters);
+		bool useTypedOverload = delegateMethod.Parameters.Count is >= 1 and <= MaxExplicitParameters;
 		if (delegateMethod.ReturnType != Type.Void)
 		{
 			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.").Append(mockRegistryName).Append(".InvokeMethod<")
-				.Append(delegateMethod.ReturnType.Fullname)
-				.Append(">(").Append(delegateMethod.GetUniqueNameString())
-				.Append(", ");
+				.Append(delegateMethod.ReturnType.Fullname);
+			if (useTypedOverload)
+			{
+				foreach (MethodParameter p in delegateMethod.Parameters)
+				{
+					sb.Append(", ").AppendTypeOrWrapper(p.Type);
+				}
+			}
+
+			sb.Append(">(").Append(delegateMethod.GetUniqueNameString()).Append(", ");
 			if (delegateMethod.Parameters.Count == 0)
 			{
 				sb.Append("() => ")
@@ -151,18 +159,49 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.").Append(mockRegistryName).Append(".InvokeMethod(")
-				.Append(delegateMethod.GetUniqueNameString());
+			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.").Append(mockRegistryName).Append(".InvokeMethod");
+			if (useTypedOverload)
+			{
+				sb.Append('<');
+				bool first = true;
+				foreach (MethodParameter p in delegateMethod.Parameters)
+				{
+					if (!first)
+					{
+						sb.Append(", ");
+					}
+
+					sb.AppendTypeOrWrapper(p.Type);
+					first = false;
+				}
+
+				sb.Append('>');
+			}
+
+			sb.Append('(').Append(delegateMethod.GetUniqueNameString());
 		}
 
 		foreach (MethodParameter p in delegateMethod.Parameters)
 		{
-			sb.Append(", new global::Mockolate.Parameters.NamedParameterValue<").AppendTypeOrWrapper(p.Type).Append(">(\"").Append(p.Name).Append("\", ")
-				.Append(p.RefKind switch
-				{
-					RefKind.Out => "default",
-					_ => p.ToNameOrWrapper(),
-				}).Append(')');
+			if (useTypedOverload)
+			{
+				sb.Append(", \"").Append(p.Name).Append("\", ").Append(
+					p.RefKind switch
+					{
+						RefKind.Out => "default",
+						_ => p.ToNameOrWrapper(),
+					});
+			}
+			else
+			{
+				sb.Append(", new global::Mockolate.Parameters.NamedParameterValue<").AppendTypeOrWrapper(p.Type)
+					.Append(">(\"").Append(p.Name).Append("\", ")
+					.Append(p.RefKind switch
+					{
+						RefKind.Out => "default",
+						_ => p.ToNameOrWrapper(),
+					}).Append(')');
+			}
 		}
 
 		sb.AppendLine(");");

@@ -808,7 +808,7 @@ public class GeneralTests
 			          		[global::System.ComponentModel.Localizable(false)]
 			          		public string MyMethod(string message)
 			          		{
-			          			global::Mockolate.Setup.MethodSetupResult<string> methodExecution = this.MockRegistry.InvokeMethod<string>("global::MyCode.IMyService.MyMethod", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!, p), new global::Mockolate.Parameters.NamedParameterValue<string>("message", message));
+			          			global::Mockolate.Setup.MethodSetupResult<string> methodExecution = this.MockRegistry.InvokeMethod<string, string>("global::MyCode.IMyService.MyMethod", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!, p), "message", message);
 			          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          			{
 			          				var baseResult = wraps.MyMethod(message);
