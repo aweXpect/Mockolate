@@ -82,7 +82,7 @@ public sealed partial class MockTests
 				          		public global::MyCode.Program.DoSomething1 Object => new(Invoke);
 				          		private global::System.Span<char> Invoke(int x)
 				          		{
-				          			var result = this.MockRegistry.InvokeMethod<global::System.Span<char>>("global::MyCode.Program.DoSomething1.Invoke", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<char>)!, [new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<char>>(string.Empty, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!)), ..p]), new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
+				          			var result = this.MockRegistry.InvokeMethod<global::System.Span<char>, int>("global::MyCode.Program.DoSomething1.Invoke", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<char>)!, [new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<char>>(string.Empty, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!)), ..p]), "x", x);
 				          			result.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
 				          			return result.Result;
 				          		}
@@ -93,7 +93,7 @@ public sealed partial class MockTests
 				          		public global::MyCode.Program.DoSomething2 Object => new(Invoke);
 				          		private global::System.ReadOnlySpan<char> Invoke(int x)
 				          		{
-				          			var result = this.MockRegistry.InvokeMethod<global::System.ReadOnlySpan<char>>("global::MyCode.Program.DoSomething2.Invoke", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<char>)!, [new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<char>>(string.Empty, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!)), ..p]), new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
+				          			var result = this.MockRegistry.InvokeMethod<global::System.ReadOnlySpan<char>, int>("global::MyCode.Program.DoSomething2.Invoke", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<char>)!, [new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<char>>(string.Empty, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!)), ..p]), "x", x);
 				          			result.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
 				          			return result.Result;
 				          		}
@@ -169,7 +169,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Func_int_bool.g.cs").WhoseValue
-				.Contains("this.MockRegistry.InvokeMethod<bool>(\"global::System.Func<int, bool>.Invoke\", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!, p), new global::Mockolate.Parameters.NamedParameterValue<int>(\"arg\", arg));")
+				.Contains("this.MockRegistry.InvokeMethod<bool, int>(\"global::System.Func<int, bool>.Invoke\", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!, p), \"arg\", arg);")
 				.IgnoringNewlineStyle().And
 				.Contains("global::System.Func<int, bool> Object").IgnoringNewlineStyle();
 		}
@@ -254,7 +254,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs").WhoseValue
-				.Contains("var result1 = this.MockRegistry.InvokeMethod<int>(")
+				.Contains("var result1 = this.MockRegistry.InvokeMethod<int, int>(")
 				.IgnoringNewlineStyle().And
 				.Contains("result1.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>(\"result\", result))")
 				.IgnoringNewlineStyle().And
@@ -284,7 +284,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs").WhoseValue
-				.Contains("var result1 = this.MockRegistry.InvokeMethod(")
+				.Contains("var result1 = this.MockRegistry.InvokeMethod<string, int>(")
 				.IgnoringNewlineStyle().And
 				.Contains("value = result1.SetOutParameter<int>(\"value\", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));")
 				.IgnoringNewlineStyle().And

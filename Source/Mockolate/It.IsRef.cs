@@ -105,7 +105,7 @@ public partial class It
 	///     Matches a method <see langword="out" /> parameter against an expectation.
 	/// </summary>
 	[DebuggerNonUserCode]
-	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameter
+	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameter, ITypedParameter<T>
 	{
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public bool Matches(INamedParameterValue value)
@@ -117,6 +117,9 @@ public partial class It
 			// Do nothing
 		}
 
+		/// <inheritdoc cref="ITypedParameter{T}.MatchesValue" />
+		bool ITypedParameter<T>.MatchesValue(string name, T value) => true;
+
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"It.IsRef<{typeof(T).FormatType()}>()";
 	}
@@ -125,7 +128,7 @@ public partial class It
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
 	[DebuggerNonUserCode]
-	private abstract class TypedRefMatch<T> : IRefParameter<T>, IParameter
+	private abstract class TypedRefMatch<T> : IRefParameter<T>, IParameter, ITypedParameter<T>
 	{
 		private List<Action<T>>? _callbacks;
 
@@ -146,6 +149,9 @@ public partial class It
 
 			return false;
 		}
+
+		/// <inheritdoc cref="ITypedParameter{T}.MatchesValue" />
+		bool ITypedParameter<T>.MatchesValue(string name, T value) => Matches(value);
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
 		public void InvokeCallbacks(INamedParameterValue value)

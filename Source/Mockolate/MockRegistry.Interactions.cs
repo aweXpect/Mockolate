@@ -24,6 +24,240 @@ public partial class MockRegistry
 		=> Interactions.Clear();
 
 	/// <summary>
+	///     Executes the method with <paramref name="methodName" /> and one typed parameter and gets the setup return value.
+	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult<TResult> InvokeMethod<TResult, T1>(
+		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
+		string p1Name, T1 p1)
+	{
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1);
+		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null)
+		{
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The method '{methodName}({typeof(T1).FormatType()})' was invoked without prior setup.");
+			}
+
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+		}
+
+		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
+			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+	}
+
+	/// <summary>
+	///     Executes the method with <paramref name="methodName" /> and two typed parameters and gets the setup return value.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult<TResult> InvokeMethod<TResult, T1, T2>(
+		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
+		string p1Name, T1 p1, string p2Name, T2 p2)
+	{
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2)
+		];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null)
+		{
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()})' was invoked without prior setup.");
+			}
+
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+		}
+
+		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
+			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+	}
+
+	/// <summary>
+	///     Executes the method with <paramref name="methodName" /> and three typed parameters and gets the setup return value.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult<TResult> InvokeMethod<TResult, T1, T2, T3>(
+		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
+		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3)
+	{
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3)
+		];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null)
+		{
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()})' was invoked without prior setup.");
+			}
+
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+		}
+
+		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
+			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+	}
+
+	/// <summary>
+	///     Executes the method with <paramref name="methodName" /> and four typed parameters and gets the setup return value.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult<TResult> InvokeMethod<TResult, T1, T2, T3, T4>(
+		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
+		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4)
+	{
+		IInteractiveMethodSetup? matchingSetup =
+			GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3),
+			new NamedParameterValue<T4>(p4Name, p4)
+		];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null)
+		{
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException(
+					$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()}, {typeof(T4).FormatType()})' was invoked without prior setup.");
+			}
+
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+		}
+
+		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
+			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+	}
+
+	/// <summary>
+	///     Executes the void method with <paramref name="methodName" /> and one typed parameter.
+	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult InvokeMethod<T1>(
+		string methodName, string p1Name, T1 p1)
+	{
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1);
+		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		{
+			throw new MockNotSetupException(
+				$"The method '{methodName}({typeof(T1).FormatType()})' was invoked without prior setup.");
+		}
+
+		matchingSetup?.Invoke(methodInvocation, Behavior);
+		return new MethodSetupResult(matchingSetup, Behavior);
+	}
+
+	/// <summary>
+	///     Executes the void method with <paramref name="methodName" /> and two typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult InvokeMethod<T1, T2>(
+		string methodName, string p1Name, T1 p1, string p2Name, T2 p2)
+	{
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2)
+		];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		{
+			throw new MockNotSetupException(
+				$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()})' was invoked without prior setup.");
+		}
+
+		matchingSetup?.Invoke(methodInvocation, Behavior);
+		return new MethodSetupResult(matchingSetup, Behavior);
+	}
+
+	/// <summary>
+	///     Executes the void method with <paramref name="methodName" /> and three typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult InvokeMethod<T1, T2, T3>(
+		string methodName, string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3)
+	{
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3)
+		];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		{
+			throw new MockNotSetupException(
+				$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()})' was invoked without prior setup.");
+		}
+
+		matchingSetup?.Invoke(methodInvocation, Behavior);
+		return new MethodSetupResult(matchingSetup, Behavior);
+	}
+
+	/// <summary>
+	///     Executes the void method with <paramref name="methodName" /> and four typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public MethodSetupResult InvokeMethod<T1, T2, T3, T4>(
+		string methodName, string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4)
+	{
+		IInteractiveMethodSetup? matchingSetup =
+			GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3),
+			new NamedParameterValue<T4>(p4Name, p4)
+		];
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+
+		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		{
+			throw new MockNotSetupException(
+				$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()}, {typeof(T4).FormatType()})' was invoked without prior setup.");
+		}
+
+		matchingSetup?.Invoke(methodInvocation, Behavior);
+		return new MethodSetupResult(matchingSetup, Behavior);
+	}
+
+	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> with no parameters and gets the setup return value.
 	/// </summary>
 	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<TResult> defaultValue)
