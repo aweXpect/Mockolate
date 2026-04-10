@@ -1333,7 +1333,7 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty(").Append(property.GetUniqueNameString())
+					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<").AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
 						.Append(", value);").AppendLine();
 					if (!property.IsStatic)
 					{
@@ -1390,7 +1390,7 @@ internal static partial class Sources
 			{
 				if (!isClassInterface && !property.IsAbstract)
 				{
-					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty(").Append(property.GetUniqueNameString())
+					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty<").AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
 						.Append(", value))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property is { IsStatic: false, } && property.Setter?.IsProtected != true)
@@ -1413,7 +1413,7 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty(").Append(property.GetUniqueNameString())
+					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<").AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
 						.AppendLine(", value);");
 				}
 			}
@@ -1511,14 +1511,23 @@ internal static partial class Sources
 		string methodExecutionVarName = Helpers.GetUniqueLocalVariableName("methodExecution", method.Parameters);
 		if (method.ReturnType != Type.Void)
 		{
-			string parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
 			sb.Append("\t\t\tglobal::Mockolate.Setup.MethodSetupResult<")
 				.AppendTypeOrWrapper(method.ReturnType).Append("> ").Append(methodExecutionVarName)
 				.Append(" = ").Append(mockRegistry).Append(".InvokeMethod<")
 				.AppendTypeOrWrapper(method.ReturnType).Append(">(").Append(method.GetUniqueNameString())
-				.Append(", ").Append(parameterVarName).Append(" => ")
-				.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
-					parameterVarName);
+				.Append(", ");
+			if (method.Parameters.Count == 0)
+			{
+				sb.Append("() => ")
+					.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue");
+			}
+			else
+			{
+				string parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
+				sb.Append(parameterVarName).Append(" => ")
+					.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
+						parameterVarName);
+			}
 		}
 		else
 		{

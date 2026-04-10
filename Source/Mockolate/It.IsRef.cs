@@ -107,18 +107,9 @@ public partial class It
 	[DebuggerNonUserCode]
 	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameter
 	{
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		public bool Matches(object? value) => true;
-
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public bool Matches(INamedParameterValue value)
 			=> true;
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		public void InvokeCallbacks(object? value)
-		{
-			// Do nothing
-		}
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
 		public void InvokeCallbacks(INamedParameterValue value)
@@ -145,16 +136,6 @@ public partial class It
 		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
 		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
 		/// </returns>
-		public bool Matches(object? value)
-		{
-			if (value is T typedValue)
-			{
-				return Matches(typedValue);
-			}
-
-			return value is null && Matches(default(T)!);
-		}
-
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public bool Matches(INamedParameterValue value)
 		{
@@ -162,17 +143,8 @@ public partial class It
 			{
 				return Matches(typedValue);
 			}
-			
-			return false;
-		}
 
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		public void InvokeCallbacks(object? value)
-		{
-			if (TryCast(value, out T typedValue) && _callbacks is not null)
-			{
-				_callbacks.ForEach(a => a.Invoke(typedValue));
-			}
+			return false;
 		}
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />

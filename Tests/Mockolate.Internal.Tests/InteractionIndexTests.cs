@@ -42,7 +42,7 @@ public sealed class InteractionIndexTests
 	[Fact]
 	public async Task IndexerSetterAccess_SetIndexTwice_ShouldRemainUnchanged()
 	{
-		IndexerSetterAccess interaction = new([new NamedParameterValue<string>("p1", "SomeProperty"),], "foo");
+		IndexerSetterAccess interaction = new([new NamedParameterValue<string>("p1", "SomeProperty"),], new NamedParameterValue<string>("value", "foo"));
 		((ISettableInteraction)interaction).SetIndex(1);
 
 		((ISettableInteraction)interaction).SetIndex(2);

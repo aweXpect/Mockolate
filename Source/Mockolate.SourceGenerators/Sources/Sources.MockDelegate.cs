@@ -131,13 +131,23 @@ internal static partial class Sources
 		string resultVarName = Helpers.GetUniqueLocalVariableName("result", delegateMethod.Parameters);
 		if (delegateMethod.ReturnType != Type.Void)
 		{
-			string parameterVarName = Helpers.GetUniqueLocalVariableName("p", delegateMethod.Parameters);
 			sb.Append("\t\t\tvar ").Append(resultVarName).Append(" = this.").Append(mockRegistryName).Append(".InvokeMethod<")
 				.Append(delegateMethod.ReturnType.Fullname)
-				.Append(">(").Append(delegateMethod.GetUniqueNameString());
-			sb.Append(", ").Append(parameterVarName).Append(" => ")
-				.AppendDefaultValueGeneratorFor(delegateMethod.ReturnType,
-					$"this.{mockRegistryName}.Behavior.DefaultValue", parameterVarName);
+				.Append(">(").Append(delegateMethod.GetUniqueNameString())
+				.Append(", ");
+			if (delegateMethod.Parameters.Count == 0)
+			{
+				sb.Append("() => ")
+					.AppendDefaultValueGeneratorFor(delegateMethod.ReturnType,
+						$"this.{mockRegistryName}.Behavior.DefaultValue");
+			}
+			else
+			{
+				string parameterVarName = Helpers.GetUniqueLocalVariableName("p", delegateMethod.Parameters);
+				sb.Append(parameterVarName).Append(" => ")
+					.AppendDefaultValueGeneratorFor(delegateMethod.ReturnType,
+						$"this.{mockRegistryName}.Behavior.DefaultValue", parameterVarName);
+			}
 		}
 		else
 		{
@@ -161,7 +171,9 @@ internal static partial class Sources
 			$"this.{mockRegistryName}.Behavior.DefaultValue");
 
 		sb.Append("\t\t\t").Append(resultVarName).Append(".TriggerCallbacks(")
-			.Append(string.Join(", ", delegateMethod.Parameters.Select(p => p.Name))).Append(");").AppendLine();
+			.Append(string.Join(", ", delegateMethod.Parameters.Select(p =>
+				$"new global::Mockolate.Parameters.NamedParameterValue<{p.ToTypeOrWrapper()}>(\"{p.Name}\", {p.ToNameOrWrapper()})")))
+			.Append(");").AppendLine();
 		if (delegateMethod.ReturnType != Type.Void)
 		{
 			sb.Append("\t\t\treturn ").Append(resultVarName).Append(".Result;").AppendLine();

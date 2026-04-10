@@ -74,8 +74,8 @@ public sealed partial class HttpClientExtensionsTests
 		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
 
 		interactiveSetup.TriggerCallbacks([
-			new HttpRequestMessage(),
-			CancellationToken.None,
+			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
+			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
 		]);
 
 		await That(callbackUri).IsNull();

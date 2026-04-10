@@ -1379,7 +1379,6 @@ public sealed partial class SetupMethodTests
 				await That(result).IsEqualTo(4);
 			}
 
-
 			private class MyVoidMethodSetup(string name) : VoidMethodSetup(name)
 			{
 				public T SetOutParameter<T>(string parameterName)

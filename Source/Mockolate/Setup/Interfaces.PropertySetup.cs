@@ -11,7 +11,7 @@ public interface IInteractivePropertySetup : ISetup
 	/// <summary>
 	///     Invokes the setter logic for the <paramref name="invocation" /> and <paramref name="value" />.
 	/// </summary>
-	void InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior);
+	void InvokeSetter<T>(IInteraction invocation, T value, MockBehavior behavior);
 
 	/// <summary>
 	///     Invokes the getter logic for the <paramref name="invocation" /> and returns the value of type

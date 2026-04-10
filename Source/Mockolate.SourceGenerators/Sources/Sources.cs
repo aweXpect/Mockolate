@@ -64,7 +64,8 @@ internal static partial class Sources
 	private static void AppendTriggerCallbacks(StringBuilder sb, string indent, string varName,
 		IEnumerable<MethodParameter> parameters)
 		=> sb.Append(indent).Append(varName).Append(".TriggerCallbacks(")
-			.Append(string.Join(", ", parameters.Select(p => p.ToNameOrNull())))
+			.Append(string.Join(", ", parameters.Select(p =>
+				$"new global::Mockolate.Parameters.NamedParameterValue<{p.ToTypeOrWrapper()}>(\"{p.Name}\", {p.ToNameOrWrapper()})")))
 			.Append(");").AppendLine();
 
 	/// <summary>

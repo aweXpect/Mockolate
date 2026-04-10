@@ -6,18 +6,44 @@ public sealed partial class ItTests
 {
 	public sealed class IsAnyOutTests
 	{
-		[Theory]
-		[InlineData(42L, false)]
-		[InlineData("foo", false)]
-		[InlineData(null, true)]
-		[InlineData(123, true)]
-		public async Task ShouldCheckType(object? value, bool expectMatch)
+		[Fact]
+		public async Task ShouldNotMatchLong()
 		{
 			IOutParameter<int?> sut = It.IsAnyOut<int?>();
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<long>(string.Empty, 42L));
 
-			await That(result).IsEqualTo(expectMatch);
+			await That(result).IsFalse();
+		}
+
+		[Fact]
+		public async Task ShouldNotMatchString()
+		{
+			IOutParameter<int?> sut = It.IsAnyOut<int?>();
+
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
+
+			await That(result).IsFalse();
+		}
+
+		[Fact]
+		public async Task ShouldMatchNull()
+		{
+			IOutParameter<int?> sut = It.IsAnyOut<int?>();
+
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int?>(string.Empty, null));
+
+			await That(result).IsTrue();
+		}
+
+		[Fact]
+		public async Task ShouldMatchInt()
+		{
+			IOutParameter<int?> sut = It.IsAnyOut<int?>();
+
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int?>(string.Empty, 123));
+
+			await That(result).IsTrue();
 		}
 
 		[Fact]

@@ -83,7 +83,7 @@ public sealed partial class MockTests
 				          		private global::System.Span<char> Invoke(int x)
 				          		{
 				          			var result = this.MockRegistry.InvokeMethod<global::System.Span<char>>("global::MyCode.Program.DoSomething1.Invoke", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<char>)!, [new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<char>>(string.Empty, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!)), ..p]), new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
-				          			result.TriggerCallbacks(x);
+				          			result.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
 				          			return result.Result;
 				          		}
 				          """).IgnoringNewlineStyle();
@@ -94,7 +94,7 @@ public sealed partial class MockTests
 				          		private global::System.ReadOnlySpan<char> Invoke(int x)
 				          		{
 				          			var result = this.MockRegistry.InvokeMethod<global::System.ReadOnlySpan<char>>("global::MyCode.Program.DoSomething2.Invoke", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<char>)!, [new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<char>>(string.Empty, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!)), ..p]), new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
-				          			result.TriggerCallbacks(x);
+				          			result.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("x", x));
 				          			return result.Result;
 				          		}
 				          """).IgnoringNewlineStyle();
@@ -256,7 +256,7 @@ public sealed partial class MockTests
 			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs").WhoseValue
 				.Contains("var result1 = this.MockRegistry.InvokeMethod<int>(")
 				.IgnoringNewlineStyle().And
-				.Contains("result1.TriggerCallbacks(result)")
+				.Contains("result1.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>(\"result\", result))")
 				.IgnoringNewlineStyle().And
 				.Contains("return result1.Result;")
 				.IgnoringNewlineStyle();
@@ -288,7 +288,7 @@ public sealed partial class MockTests
 				.IgnoringNewlineStyle().And
 				.Contains("value = result1.SetOutParameter<int>(\"value\", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));")
 				.IgnoringNewlineStyle().And
-				.Contains("result1.TriggerCallbacks(result, value)")
+				.Contains("result1.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<string>(\"result\", result), new global::Mockolate.Parameters.NamedParameterValue<int>(\"value\", value))")
 				.IgnoringNewlineStyle();
 		}
 

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
@@ -56,8 +57,8 @@ public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior beha
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
 	/// </summary>
-	public void TriggerCallbacks(params object?[]? parameters)
-		=> setup?.TriggerCallbacks(parameters ?? [null,]);
+	public void TriggerCallbacks(params INamedParameterValue[]? parameters)
+		=> setup?.TriggerCallbacks(parameters ?? []);
 }
 
 /// <summary>

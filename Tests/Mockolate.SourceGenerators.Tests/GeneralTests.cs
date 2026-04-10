@@ -405,7 +405,6 @@ public class GeneralTests
 			.Contains("global::MyCode.N2.IMyInterface, IMockForIMyInterface_2, IMockSetupForIMyInterface_2, IMockVerifyForIMyInterface_2");
 	}
 
-
 	[Fact]
 	public async Task ObsoleteAttributes_ShouldBeRepeatedInMock()
 	{
@@ -796,7 +795,7 @@ public class GeneralTests
 			          			}
 			          			set
 			          			{
-			          				this.MockRegistry.SetProperty("global::MyCode.IMyService.SomeProperty", value);
+			          				this.MockRegistry.SetProperty<string>("global::MyCode.IMyService.SomeProperty", value);
 			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
 			          					wraps.SomeProperty = value;
@@ -815,11 +814,11 @@ public class GeneralTests
 			          				var baseResult = wraps.MyMethod(message);
 			          				if (!methodExecution.HasSetupResult)
 			          				{
-			          					methodExecution.TriggerCallbacks(message);
+			          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<string>("message", message));
 			          					return baseResult;
 			          				}
 			          			}
-			          			methodExecution.TriggerCallbacks(message);
+			          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<string>("message", message));
 			          			return methodExecution.Result;
 			          		}
 			          """).IgnoringNewlineStyle().And

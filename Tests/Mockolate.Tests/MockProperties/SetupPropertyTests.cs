@@ -28,7 +28,7 @@ public sealed partial class SetupPropertyTests
 
 		void Act()
 		{
-			setup.InvokeSetter("foo");
+			setup.InvokeSetter<string>("foo");
 		}
 
 		await That(Act).Throws<MockException>()
@@ -155,7 +155,7 @@ public sealed partial class SetupPropertyTests
 
 	private sealed class MyPropertySetup<T>() : PropertySetup<T>("My.Property")
 	{
-		public void InvokeSetter(object? value)
+		public void InvokeSetter<TValue>(TValue value)
 			=> InvokeSetter(value, MockBehavior.Default);
 
 		public TResult InvokeGetter<TResult>()

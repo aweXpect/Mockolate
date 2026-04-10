@@ -19,7 +19,7 @@ public sealed partial class ItTests
 		{
 			IParameter<int> sut = It.IsOneOf(5, 6, 7);
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int>(string.Empty, value));
 
 			await That(result).IsEqualTo(expectMatch);
 		}
@@ -102,7 +102,7 @@ public sealed partial class ItTests
 		{
 			IParameter<int> sut = It.IsOneOf(4, 5, 6).Using(new AllEqualComparer());
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int>(string.Empty, value));
 
 			await That(result).IsTrue();
 		}

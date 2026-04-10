@@ -1,5 +1,6 @@
 using System;
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
@@ -74,7 +75,7 @@ public interface IInteractiveMethodSetup : ISetup
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
 	/// </summary>
-	void TriggerCallbacks(object?[] parameters);
+	void TriggerCallbacks(INamedParameterValue[] parameters);
 }
 
 /// <summary>

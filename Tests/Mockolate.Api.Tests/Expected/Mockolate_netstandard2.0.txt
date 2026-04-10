@@ -175,7 +175,9 @@ namespace Mockolate
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, Mockolate.Parameters.IParameter value, params Mockolate.Parameters.NamedParameter[] parameters) { }
+        public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName) { }
         public Mockolate.Setup.MethodSetupResult InvokeMethod(string methodName, params Mockolate.Parameters.INamedParameterValue[] parameters) { }
+        public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<TResult> defaultValue) { }
         public Mockolate.Setup.MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, System.Func<Mockolate.Parameters.INamedParameterValue[], TResult> defaultValue, params Mockolate.Parameters.INamedParameterValue[] parameters) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, Mockolate.Setup.IMethodMatch methodMatch) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, Mockolate.Setup.IMethodSetup methodSetup) { }
@@ -184,7 +186,7 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName, Mockolate.Parameters.IParameter value) { }
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public bool SetIndexer<TResult>(TResult value, params Mockolate.Parameters.INamedParameterValue[] parameters) { }
-        public bool SetProperty(string propertyName, object? value) { }
+        public bool SetProperty<T>(string propertyName, T value) { }
         public void SetupEvent(Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
@@ -523,8 +525,8 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerSetterAccess(Mockolate.Parameters.INamedParameterValue[] parameters, object? value) { }
-        public object? Value { get; }
+        public IndexerSetterAccess(Mockolate.Parameters.INamedParameterValue[] parameters, Mockolate.Parameters.INamedParameterValue value) { }
+        public Mockolate.Parameters.INamedParameterValue Value { get; }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
@@ -560,8 +562,8 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class PropertySetterAccess : Mockolate.Interactions.PropertyAccess
     {
-        public PropertySetterAccess(string propertyName, object? value) { }
-        public object? Value { get; }
+        public PropertySetterAccess(string propertyName, Mockolate.Parameters.INamedParameterValue value) { }
+        public Mockolate.Parameters.INamedParameterValue Value { get; }
         public override string ToString() { }
     }
 }
@@ -599,9 +601,7 @@ namespace Mockolate.Parameters
     public interface IParameter
     {
         void InvokeCallbacks(Mockolate.Parameters.INamedParameterValue value);
-        void InvokeCallbacks(object? value);
         bool Matches(Mockolate.Parameters.INamedParameterValue value);
-        bool Matches(object? value);
     }
     public interface IParameterMonitor<out T>
     {
@@ -918,13 +918,13 @@ namespace Mockolate.Setup
         T SetOutParameter<T>(string parameterName, System.Func<T> defaultValueGenerator);
         T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
         bool? SkipBaseClass();
-        void TriggerCallbacks(object?[] parameters);
+        void TriggerCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters);
     }
     public interface IInteractivePropertySetup : Mockolate.Setup.ISetup
     {
         void InitializeWith(object? value);
         TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
-        void InvokeSetter(Mockolate.Interactions.IInteraction invocation, object? value, Mockolate.MockBehavior behavior);
+        void InvokeSetter<T>(Mockolate.Interactions.IInteraction invocation, T value, Mockolate.MockBehavior behavior);
         bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
         bool? SkipBaseClass();
     }
@@ -1489,12 +1489,12 @@ namespace Mockolate.Setup
         protected virtual bool HasReturnCalls() { }
         protected abstract T SetOutParameter<T>(string parameterName, System.Func<T> defaultValueGenerator);
         protected abstract T SetRefParameter<T>(string parameterName, T value, Mockolate.MockBehavior behavior);
-        public void TriggerCallbacks(object?[] parameters) { }
-        protected abstract void TriggerParameterCallbacks(object?[] parameters);
+        public void TriggerCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
+        protected abstract void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters);
         protected static string FormatType(System.Type type) { }
         protected static bool HasOutParameter<T>(Mockolate.Parameters.NamedParameter?[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IOutParameter<T>? parameter) { }
         protected static bool HasRefParameter<T>(Mockolate.Parameters.NamedParameter?[] namedParameters, string parameterName, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Mockolate.Parameters.IRefParameter<T>? parameter) { }
-        protected static void TriggerCallbacks(Mockolate.Parameters.NamedParameter?[] namedParameters, object?[] values) { }
+        protected static void TriggerCallbacks(Mockolate.Parameters.NamedParameter?[] namedParameters, Mockolate.Parameters.INamedParameterValue[] values) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
     public class MethodSetupResult
@@ -1504,7 +1504,7 @@ namespace Mockolate.Setup
         public bool SkipBaseClass { get; }
         public T SetOutParameter<T>(string parameterName, System.Func<T> defaultValueGenerator) { }
         public T SetRefParameter<T>(string parameterName, T value) { }
-        public void TriggerCallbacks(params object?[]? parameters) { }
+        public void TriggerCallbacks(params Mockolate.Parameters.INamedParameterValue[]? parameters) { }
     }
     public class MethodSetupResult<TResult> : Mockolate.Setup.MethodSetupResult
     {
@@ -1518,7 +1518,7 @@ namespace Mockolate.Setup
         protected abstract bool? GetSkipBaseClass();
         protected abstract void InitializeValue(object? value);
         protected abstract TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
-        protected abstract void InvokeSetter(object? value, Mockolate.MockBehavior behavior);
+        protected abstract void InvokeSetter<TValue>(TValue value, Mockolate.MockBehavior behavior);
         protected abstract bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
     public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
@@ -1531,7 +1531,7 @@ namespace Mockolate.Setup
         protected override void InitializeValue(object? value) { }
         public Mockolate.Setup.IPropertySetup<T> InitializeWith(T value) { }
         protected override TResult InvokeGetter<TResult>(Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
-        protected override void InvokeSetter(object? value, Mockolate.MockBehavior behavior) { }
+        protected override void InvokeSetter<TValue>(TValue value, Mockolate.MockBehavior behavior) { }
         protected override bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess) { }
         public Mockolate.Setup.IPropertySetup<T> Register() { }
         public Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T> callback) { }
@@ -1564,7 +1564,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>
     {
@@ -1590,7 +1590,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>
     {
@@ -1616,7 +1616,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>
     {
@@ -1642,7 +1642,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>
     {
@@ -1668,7 +1668,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupReturnBuilder, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder
     {
@@ -1687,7 +1687,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetupReturnBuilder Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
     {
@@ -1710,7 +1710,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
     {
@@ -1733,7 +1733,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
     {
@@ -1756,7 +1756,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
     public class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
     {
@@ -1779,7 +1779,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
-        protected override void TriggerParameterCallbacks(object?[] parameters) { }
+        protected override void TriggerParameterCallbacks(Mockolate.Parameters.INamedParameterValue[] parameters) { }
     }
 }
 namespace Mockolate.Verify
@@ -1880,9 +1880,7 @@ namespace Mockolate.Web
             protected HttpContentParameterWrapper(Mockolate.Web.ItExtensions.IHttpContentParameter parameter, System.Func<string> parameterString) { }
             public Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?> Do(System.Action<System.Net.Http.HttpContent?> callback) { }
             public void InvokeCallbacks(Mockolate.Parameters.INamedParameterValue value) { }
-            public void InvokeCallbacks(object? value) { }
             public bool Matches(Mockolate.Parameters.INamedParameterValue value) { }
-            public bool Matches(object? value) { }
             public override string ToString() { }
             public Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(System.Func<byte[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
             public Mockolate.Web.ItExtensions.IHttpContentHeaderParameter WithHeaders([System.Runtime.CompilerServices.TupleElementNames(new string[] {

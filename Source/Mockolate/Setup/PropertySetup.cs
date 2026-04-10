@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -25,8 +24,8 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	/// </summary>
 	internal abstract bool IsValueInitialized { get; }
 
-	/// <inheritdoc cref="IInteractivePropertySetup.InvokeSetter(IInteraction, object?, MockBehavior)" />
-	void IInteractivePropertySetup.InvokeSetter(IInteraction invocation, object? value, MockBehavior behavior)
+	/// <inheritdoc cref="IInteractivePropertySetup.InvokeSetter{T}(IInteraction, T, MockBehavior)" />
+	void IInteractivePropertySetup.InvokeSetter<T>(IInteraction invocation, T value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
 	/// <inheritdoc cref="IInteractivePropertySetup.InvokeGetter{TResult}(IInteraction, MockBehavior, Func{TResult}?)" />
@@ -64,7 +63,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	/// <summary>
 	///     Invokes the setter logic with the given <paramref name="value" />.
 	/// </summary>
-	protected abstract void InvokeSetter(object? value, MockBehavior behavior);
+	protected abstract void InvokeSetter<TValue>(TValue value, MockBehavior behavior);
 
 	/// <summary>
 	///     Invokes the getter logic and returns the value of type <typeparamref name="TResult" />.
@@ -72,10 +71,8 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
 	[DebuggerNonUserCode]
-	internal class Default(string name, object? initialValue) : PropertySetup
+	internal abstract class Default(string name) : PropertySetup
 	{
-		private object? _value = initialValue;
-
 		/// <inheritdoc cref="PropertySetup.Name" />
 		public override string Name => name;
 
@@ -95,22 +92,45 @@ public abstract class PropertySetup : IInteractivePropertySetup
 		/// <inheritdoc cref="PropertySetup.Matches(PropertyAccess)" />
 		protected override bool Matches(PropertyAccess propertyAccess)
 			=> name.Equals(propertyAccess.Name);
+	}
 
-		/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
-		protected override void InvokeSetter(object? value, MockBehavior behavior)
-			=> _value = value;
+	[DebuggerNonUserCode]
+	internal sealed class Default<T>(string name, T initialValue) : Default(name)
+	{
+		private T _value = initialValue;
+
+		/// <inheritdoc cref="PropertySetup.InvokeSetter{TValue}(TValue, MockBehavior)" />
+		protected override void InvokeSetter<TValue>(TValue value, MockBehavior behavior)
+		{
+			if (typeof(TValue) == typeof(T))
+			{
+				_value = Unsafe.As<TValue, T>(ref value);
+			}
+			else if (value is null && default(T) is null)
+			{
+				_value = default!;
+			}
+			else
+			{
+				throw new MockException(
+					$"The property value only supports '{typeof(T).FormatType()}', but is '{typeof(TValue).FormatType()}'.");
+			}
+		}
 
 		/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
 		protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		{
+			if (typeof(TResult) == typeof(T))
+			{
+				return Unsafe.As<T, TResult>(ref _value);
+			}
+
 			if (_value is TResult typedValue)
 			{
 				return typedValue;
 			}
 
-			TResult result = defaultValueGenerator.Invoke();
-			_value = result;
-			return result;
+			return defaultValueGenerator.Invoke();
 		}
 	}
 }
@@ -232,13 +252,13 @@ public class PropertySetup<T>(string name) : PropertySetup,
 			return Unsafe.As<T, TResult>(ref _value);
 		}
 
-		if (!TryCast(_value, out TResult result))
+		if (_value is null && default(TResult) is null)
 		{
-			throw new MockException(
-				$"The property only supports '{typeof(T).FormatType()}' and not '{typeof(TResult).FormatType()}'.");
+			return default!;
 		}
 
-		return result;
+		throw new MockException(
+			$"The property only supports '{typeof(T).FormatType()}' and not '{typeof(TResult).FormatType()}'.");
 
 		[DebuggerNonUserCode]
 		void Callback(int invocationCount, Action<int, T> @delegate)
@@ -253,13 +273,22 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		}
 	}
 
-	/// <inheritdoc cref="PropertySetup.InvokeSetter(object?, MockBehavior)" />
-	protected override void InvokeSetter(object? value, MockBehavior behavior)
+	/// <inheritdoc cref="PropertySetup.InvokeSetter{TValue}(TValue, MockBehavior)" />
+	protected override void InvokeSetter<TValue>(TValue value, MockBehavior behavior)
 	{
-		if (!TryCast(value, out T newValue))
+		T newValue;
+		if (value is T v)
+		{
+			newValue = v;
+		}
+		else if (value is null && default(T) is null)
+		{
+			newValue = default!;
+		}
+		else
 		{
 			throw new MockException(
-				$"The property value only supports '{typeof(T).FormatType()}', but is '{value.GetType().FormatType()}'.");
+				$"The property value only supports '{typeof(T).FormatType()}', but is '{typeof(TValue).FormatType()}'.");
 		}
 
 		if (_setterCallbacks is not null)
@@ -308,18 +337,6 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"{typeof(T).FormatType()} {name.SubstringAfterLast('.')}";
-
-	private static bool TryCast<TValue>([NotNullWhen(false)] object? value, out TValue result)
-	{
-		if (value is TValue typedValue)
-		{
-			result = typedValue;
-			return true;
-		}
-
-		result = default!;
-		return value is null;
-	}
 
 	#region IPropertySetup<T>
 

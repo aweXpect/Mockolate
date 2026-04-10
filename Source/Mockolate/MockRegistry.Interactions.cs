@@ -24,6 +24,29 @@ public partial class MockRegistry
 		=> Interactions.Clear();
 
 	/// <summary>
+	///     Executes the method with <paramref name="methodName" /> with no parameters and gets the setup return value.
+	/// </summary>
+	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<TResult> defaultValue)
+	{
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, Array.Empty<INamedParameterValue>()));
+
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		if (matchingSetup is null)
+		{
+			if (Behavior.ThrowWhenNotSetup)
+			{
+				throw new MockNotSetupException($"The method '{methodName}()' was invoked without prior setup.");
+			}
+
+			return new MethodSetupResult<TResult>(null, Behavior, defaultValue());
+		}
+
+		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
+			matchingSetup.Invoke(methodInvocation, Behavior, defaultValue));
+	}
+
+	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
 	///     the setup return value.
 	/// </summary>
@@ -56,6 +79,24 @@ public partial class MockRegistry
 		{
 			return x.GetValueType().FormatType();
 		}
+	}
+
+	/// <summary>
+	///     Executes the method with <paramref name="methodName" /> with no parameters returning <see langword="void" />.
+	/// </summary>
+	public MethodSetupResult InvokeMethod(string methodName)
+	{
+		MethodInvocation methodInvocation =
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, Array.Empty<INamedParameterValue>()));
+
+		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
+		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		{
+			throw new MockNotSetupException($"The method '{methodName}()' was invoked without prior setup.");
+		}
+
+		matchingSetup?.Invoke(methodInvocation, Behavior);
+		return new MethodSetupResult(matchingSetup, Behavior);
 	}
 
 	/// <summary>
@@ -102,12 +143,12 @@ public partial class MockRegistry
 	/// <remarks>
 	///     Returns a flag, indicating whether the base class implementation should be skipped.
 	/// </remarks>
-	public bool SetProperty(string propertyName, object? value)
+	public bool SetProperty<T>(string propertyName, T value)
 	{
 		IInteraction interaction =
-			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(propertyName, value));
+			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(propertyName, new NamedParameterValue<T>("value", value)));
 
-		PropertySetup matchingSetup = ResolvePropertySetup<object>(propertyName, null, null, false);
+		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
 
 		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction, value, Behavior);
 		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
@@ -127,12 +168,12 @@ public partial class MockRegistry
 					$"The property '{propertyName}' was accessed without prior setup.");
 			}
 
-			object? initialValue = defaultValueGenerator is null
-				? null
+			TResult initialValue = defaultValueGenerator is null
+				? default!
 				: Behavior.SkipBaseClass || baseValueAccessor is null
 					? defaultValueGenerator()
 					: baseValueAccessor.Invoke();
-			PropertySetup setup = new PropertySetup.Default(propertyName, initialValue);
+			PropertySetup setup = new PropertySetup.Default<TResult>(propertyName, initialValue);
 			Setup.Properties.Add(setup);
 			return setup;
 		}
@@ -179,7 +220,7 @@ public partial class MockRegistry
 	/// </remarks>
 	public bool SetIndexer<TResult>(TResult value, params INamedParameterValue[] parameters)
 	{
-		IndexerSetterAccess interaction = new(parameters, value);
+		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
 		((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 		Setup.Indexers.UpdateValue(parameters, value);

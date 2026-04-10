@@ -449,7 +449,6 @@ public class VerificationResultExtensionsTests
 			sut.Dispense("Dark", value);
 		}
 
-
 		void Act()
 		{
 			sut.Mock.Verify.Dispense(It.IsAny<string>(), It.Is(2))

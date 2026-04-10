@@ -50,8 +50,8 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	void IInteractiveMethodSetup.Invoke(MethodInvocation methodInvocation, MockBehavior behavior)
 		=> ExecuteCallback(methodInvocation, behavior);
 
-	/// <inheritdoc cref="IInteractiveMethodSetup.TriggerCallbacks(object?[])" />
-	public void TriggerCallbacks(object?[] parameters)
+	/// <inheritdoc cref="IInteractiveMethodSetup.TriggerCallbacks(INamedParameterValue[])" />
+	public void TriggerCallbacks(INamedParameterValue[] parameters)
 		=> TriggerParameterCallbacks(parameters);
 
 	/// <inheritdoc cref="IVerifiableMethodSetup.GetMatch()" />
@@ -99,11 +99,10 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator);
 
-
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
 	/// </summary>
-	protected abstract void TriggerParameterCallbacks(object?[] parameters);
+	protected abstract void TriggerParameterCallbacks(INamedParameterValue[] parameters);
 
 	/// <summary>
 	///     Determines whether the specified collection of named parameters contains a reference parameter of the given name
@@ -153,7 +152,7 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	///     Triggers the parameter callbacks for each value in the specified array according to
 	///     the corresponding named parameter.
 	/// </summary>
-	protected static void TriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
+	protected static void TriggerCallbacks(NamedParameter?[] namedParameters, INamedParameterValue[] values)
 	{
 		if (namedParameters.Length != values.Length)
 		{

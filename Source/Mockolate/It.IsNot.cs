@@ -63,16 +63,6 @@ public partial class It
 			return !EqualityComparer<T>.Default.Equals(value, _value);
 		}
 
-		public override bool Matches(object? value)
-		{
-			if (value is T typedValue)
-			{
-				return Matches(typedValue);
-			}
-
-			return value is not null || Matches(default(T)!);
-		}
-
 		public override bool Matches(INamedParameterValue value)
 		{
 			if (value.TryGetValue(out T typedValue))

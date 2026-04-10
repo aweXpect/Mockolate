@@ -14,7 +14,7 @@ public sealed partial class ItTests
 		{
 			IParameter<string> sut = It.IsAny<string>();
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string?>(string.Empty, value));
 
 			await That(result).IsTrue();
 		}
