@@ -137,7 +137,7 @@ internal static partial class Sources
 				.Append(">(").Append(delegateMethod.GetUniqueNameString());
 			sb.Append(", ").Append(parameterVarName).Append(" => ")
 				.AppendDefaultValueGeneratorFor(delegateMethod.ReturnType,
-					$"this.{mockRegistryName}.Behavior.DefaultValue", $", {parameterVarName}");
+					$"this.{mockRegistryName}.Behavior.DefaultValue", parameterVarName);
 		}
 		else
 		{
@@ -147,10 +147,10 @@ internal static partial class Sources
 
 		foreach (MethodParameter p in delegateMethod.Parameters)
 		{
-			sb.Append(", new global::Mockolate.Parameters.NamedParameterValue(\"").Append(p.Name).Append("\", ")
+			sb.Append(", new global::Mockolate.Parameters.NamedParameterValue<").AppendTypeOrWrapper(p.Type).Append(">(\"").Append(p.Name).Append("\", ")
 				.Append(p.RefKind switch
 				{
-					RefKind.Out => "null",
+					RefKind.Out => "default",
 					_ => p.ToNameOrWrapper(),
 				}).Append(')');
 		}

@@ -18,7 +18,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(3);
-				MethodInvocation invocation = new("foo", Array.Empty<NamedParameterValue>());
+				MethodInvocation invocation = new("foo", Array.Empty<INamedParameterValue>());
 
 				void Act()
 				{
@@ -73,7 +73,7 @@ public sealed partial class SetupMethodTests
 			{
 				MyReturnMethodSetup<int> setup = new("foo");
 				setup.Returns(x => 3 * x);
-				MethodInvocation invocation = new("foo", [new NamedParameterValue("p1", "b"),]);
+				MethodInvocation invocation = new("foo", [new NamedParameterValue<string>("p1", "b"),]);
 
 				void Act()
 				{
@@ -92,7 +92,7 @@ public sealed partial class SetupMethodTests
 				int callCount = 0;
 				MyReturnMethodSetup<int> setup = new("foo");
 				setup.Do(() => { callCount++; }).Returns(x => 3 * x);
-				MethodInvocation invocation = new("foo", [new NamedParameterValue("p1", 2),]);
+				MethodInvocation invocation = new("foo", [new NamedParameterValue<int>("p1", 2),]);
 
 				void Act()
 				{
@@ -237,8 +237,8 @@ public sealed partial class SetupMethodTests
 				setup.Returns((x, _) => 3 * x);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", "a"),
-					new NamedParameterValue("p2", 2),
+					new NamedParameterValue<string>("p1", "a"),
+					new NamedParameterValue<int>("p2", 2),
 				]);
 
 				void Act()
@@ -259,8 +259,8 @@ public sealed partial class SetupMethodTests
 				setup.Returns((x, _) => 3 * x);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", "b"),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<string>("p2", "b"),
 				]);
 
 				void Act()
@@ -282,8 +282,8 @@ public sealed partial class SetupMethodTests
 				setup.Do(() => { callCount++; }).Returns(3);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 2),
-					new NamedParameterValue("p2", 3),
+					new NamedParameterValue<int>("p1", 2),
+					new NamedParameterValue<int>("p2", 3),
 				]);
 
 				void Act()
@@ -448,9 +448,9 @@ public sealed partial class SetupMethodTests
 				setup.Returns((x, _, _) => 3 * x);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", "a"),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<string>("p1", "a"),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				]);
 
 				void Act()
@@ -471,9 +471,9 @@ public sealed partial class SetupMethodTests
 				setup.Returns((x, _, _) => 3 * x);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", "b"),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<string>("p2", "b"),
+					new NamedParameterValue<int>("p3", 3),
 				]);
 
 				void Act()
@@ -494,9 +494,9 @@ public sealed partial class SetupMethodTests
 				setup.Returns((x, _, _) => 3 * x);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", "c"),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<string>("p3", "c"),
 				]);
 
 				void Act()
@@ -518,9 +518,9 @@ public sealed partial class SetupMethodTests
 				setup.Do(() => { callCount++; }).Returns(3);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				]);
 
 				void Act()
@@ -705,10 +705,10 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", "a"),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<string>("p1", "a"),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				]);
 
 				void Act()
@@ -729,10 +729,10 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", "b"),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<string>("p2", "b"),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				]);
 
 				void Act()
@@ -753,10 +753,10 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", "c"),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<string>("p3", "c"),
+					new NamedParameterValue<int>("p4", 4),
 				]);
 
 				void Act()
@@ -777,10 +777,10 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4) => 3 * v1 * v2 * v3 * v4);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", "d"),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<string>("p4", "d"),
 				]);
 
 				void Act()
@@ -802,10 +802,10 @@ public sealed partial class SetupMethodTests
 				setup.Do(() => { callCount++; }).Returns(3);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				]);
 
 				void Act()
@@ -1010,11 +1010,11 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", "a"),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<string>("p1", "a"),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				void Act()
@@ -1035,11 +1035,11 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", "b"),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<string>("p2", "b"),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				void Act()
@@ -1060,11 +1060,11 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", "c"),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<string>("p3", "c"),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				void Act()
@@ -1085,11 +1085,11 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", "d"),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<string>("p4", "d"),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				void Act()
@@ -1110,11 +1110,11 @@ public sealed partial class SetupMethodTests
 				setup.Returns((v1, v2, v3, v4, v5) => 3 * v1 * v2 * v3 * v4 * v5);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", "e"),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<string>("p5", "e"),
 				]);
 
 				void Act()
@@ -1136,11 +1136,11 @@ public sealed partial class SetupMethodTests
 				setup.Do(() => { callCount++; }).Returns(3);
 				MethodInvocation invocation = new("foo",
 				[
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				void Act()

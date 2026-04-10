@@ -63,8 +63,18 @@ public partial class It
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		public bool Matches(object? value) => true;
 
+		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
+		public bool Matches(INamedParameterValue value)
+			=> true;
+
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
+		{
+			// Do nothing
+		}
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
+		public void InvokeCallbacks(INamedParameterValue value)
 		{
 			// Do nothing
 		}
@@ -103,10 +113,23 @@ public partial class It
 		public bool Matches(object? value)
 			=> value is T or null;
 
+		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
+		public bool Matches(INamedParameterValue value)
+			=> value.TryGetValue<T>(out _);
+
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 		{
 			if (TryCast(value, out T typedValue) && _callbacks is not null)
+			{
+				_callbacks.ForEach(a => a.Invoke(typedValue));
+			}
+		}
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
+		public void InvokeCallbacks(INamedParameterValue value)
+		{
+			if (_callbacks is not null && value.TryGetValue(out T typedValue))
 			{
 				_callbacks.ForEach(a => a.Invoke(typedValue));
 			}

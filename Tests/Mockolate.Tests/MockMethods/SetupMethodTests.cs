@@ -592,7 +592,7 @@ public sealed partial class SetupMethodTests
 		{
 			registration.InvokeMethod(
 				$"global::Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.{methodName}", _ => 0,
-				parameters.Select(x => new NamedParameterValue(null, x)).ToArray());
+				parameters.Select(x => new NamedParameterValue<int>("", x)).Cast<INamedParameterValue>().ToArray());
 		}
 
 		await That(Act).Throws<MockException>()
@@ -627,8 +627,8 @@ public sealed partial class SetupMethodTests
 			registration.InvokeMethod(
 				"global::Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters",
 				_ => 0,
-				new NamedParameterValue("p1", 1),
-				new NamedParameterValue("p2", 2));
+				new NamedParameterValue<int>("p1", 1),
+				new NamedParameterValue<int>("p2", 2));
 		}
 
 		await That(Act).Throws<MockException>()

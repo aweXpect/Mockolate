@@ -14,7 +14,7 @@ public sealed partial class InteractionsTests
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 		MockRegistry registration = ((IMock)sut).MockRegistry;
-		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
+		registration.InvokeMethod("foo.bar", new NamedParameterValue<int>("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(sut,
@@ -28,7 +28,7 @@ public sealed partial class InteractionsTests
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 		MockRegistry registration = ((IMock)sut).MockRegistry;
-		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
+		registration.InvokeMethod("foo.bar", new NamedParameterValue<int>("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(sut,
@@ -42,7 +42,7 @@ public sealed partial class InteractionsTests
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 		MockRegistry registration = ((IMock)sut).MockRegistry;
-		registration.InvokeMethod("foo.bar", new NamedParameterValue("p1", 4));
+		registration.InvokeMethod("foo.bar", new NamedParameterValue<int>("p1", 4));
 
 		VerificationResult<IChocolateDispenser> result =
 			registration.Method(sut,
@@ -71,9 +71,9 @@ public sealed partial class InteractionsTests
 		MockInteractions interactions = new();
 		MethodInvocation interaction = ((IMockInteractions)interactions).RegisterInteraction(
 			new MethodInvocation("global::Mockolate.InteractionsTests.SomeMethod", [
-				new NamedParameterValue("p1", 1),
-				new NamedParameterValue("p2", null),
-				new NamedParameterValue("p3", (TimeSpan)90.Seconds()),
+				new NamedParameterValue<int>("p1", 1),
+				new NamedParameterValue<long?>("p2", null),
+				new NamedParameterValue<TimeSpan>("p3", 90.Seconds()),
 			]));
 		string expectedValue = "[0] invoke method SomeMethod(1, null, 00:01:30)";
 

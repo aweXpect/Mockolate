@@ -79,7 +79,7 @@ internal static partial class Sources
 	private static string FormatIndexerParametersAsNameOrWrapper(EquatableArray<MethodParameter> parameters)
 		=> string.Join(", ",
 			parameters.Select(p
-				=> $"new global::Mockolate.Parameters.NamedParameterValue(\"{p.Name}\", {p.ToNameOrWrapper()})"));
+				=> $"new global::Mockolate.Parameters.NamedParameterValue<{p.ToTypeOrWrapper()}>(\"{p.Name}\", {p.ToNameOrWrapper()})"));
 
 	/// <summary>
 	///     Formats indexer parameters as comma-separated names.

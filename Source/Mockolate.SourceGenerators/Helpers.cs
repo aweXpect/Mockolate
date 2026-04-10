@@ -157,20 +157,47 @@ internal static class Helpers
 
 			if (type.TupleTypes is not null)
 			{
+				sb.Append(", [");
 				foreach (Type? genericType in type.TupleTypes.Value)
 				{
-					sb.Append(", () => ").AppendDefaultValueGeneratorFor(genericType, defaultValueName);
+					sb.Append("new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<")
+						.Append(genericType.Fullname).Append(">>(string.Empty, () => ")
+						.AppendDefaultValueGeneratorFor(genericType, defaultValueName).Append("), ");
 				}
-			}
-			else if (type.SpecialGenericType != SpecialGenericType.None && type.GenericTypeParameters?.Count > 0)
-			{
-				foreach (Type? genericType in type.GenericTypeParameters.Value)
+
+				if (!string.IsNullOrWhiteSpace(suffix))
 				{
-					sb.Append(", () => ").AppendDefaultValueGeneratorFor(genericType, defaultValueName);
+					sb.Append("..").Append(suffix);
 				}
+
+				sb.Append("])");
+				return sb;
 			}
 
-			sb.Append(suffix);
+			if (type.SpecialGenericType != SpecialGenericType.None && type.GenericTypeParameters?.Count > 0)
+			{
+				sb.Append(", [");
+				foreach (Type? genericType in type.GenericTypeParameters.Value)
+				{
+					sb.Append("new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<")
+						.Append(genericType.Fullname).Append(">>(string.Empty, () => ")
+						.AppendDefaultValueGeneratorFor(genericType, defaultValueName).Append("), ");
+				}
+
+				if (!string.IsNullOrWhiteSpace(suffix))
+				{
+					sb.Append("..").Append(suffix);
+				}
+
+				sb.Append("])");
+				return sb;
+			}
+
+			if (!string.IsNullOrWhiteSpace(suffix))
+			{
+				sb.Append(", ").Append(suffix);
+			}
+
 			sb.Append(")");
 			return sb;
 		}
@@ -270,6 +297,22 @@ internal static class Helpers
 			}
 
 			return parameter.Name;
+		}
+
+		public string ToTypeOrWrapper()
+		{
+			if (parameter.Type.SpecialGenericType == SpecialGenericType.Span)
+			{
+				return $"global::Mockolate.Setup.SpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>";
+			}
+
+			if (parameter.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+			{
+				return
+					$"global::Mockolate.Setup.ReadOnlySpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>";
+			}
+
+			return parameter.Type.Fullname;
 		}
 
 		public string ToNameOrNull()

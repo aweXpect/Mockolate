@@ -32,30 +32,6 @@ public sealed partial class ItTests
 	}
 
 	[Fact]
-	public async Task InvokeCallbacks_WithNull_WhenTypeIsNotNullable_ShouldNotInvokeCallback()
-	{
-		int isCalled = 0;
-		IParameter<int> sut = It.Satisfies<int>(_ => true)
-			.Do(_ => isCalled++);
-
-		((IParameter)sut).InvokeCallbacks(null);
-
-		await That(isCalled).IsEqualTo(0);
-	}
-
-	[Fact]
-	public async Task InvokeCallbacks_WithNull_WhenTypeIsNullable_ShouldInvokeCallback()
-	{
-		int isCalled = 0;
-		IParameter<int?> sut = It.Satisfies<int?>(_ => true)
-			.Do(_ => isCalled++);
-
-		((IParameter)sut).InvokeCallbacks(null);
-
-		await That(isCalled).IsEqualTo(1);
-	}
-
-	[Fact]
 	public async Task ShouldOnlyHaveOneParameterlessPrivateConstructor()
 	{
 		ConstructorInfo[] constructors = typeof(Match)

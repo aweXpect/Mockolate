@@ -11,10 +11,10 @@ public sealed class InteractionsTests
 	{
 		MockInteractions interactions = new();
 		IndexerGetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(new IndexerGetterAccess([
-			new NamedParameterValue("p1", "SomeProperty"),
-			new NamedParameterValue("p2", 4),
-			new NamedParameterValue("p3", null),
-			new NamedParameterValue("p4", (TimeSpan)150.Seconds()),
+			new NamedParameterValue<string>("p1", "SomeProperty"),
+			new NamedParameterValue<int>("p2", 4),
+			new NamedParameterValue<long?>("p3", null),
+			new NamedParameterValue<TimeSpan>("p4", 150.Seconds()),
 		]));
 		string expectedValue = "[0] get indexer [SomeProperty, 4, null, 00:02:30]";
 
@@ -26,10 +26,10 @@ public sealed class InteractionsTests
 	{
 		MockInteractions interactions = new();
 		IndexerSetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(new IndexerSetterAccess([
-			new NamedParameterValue("p1", "SomeProperty"),
-			new NamedParameterValue("p2", 4),
-			new NamedParameterValue("p3", null),
-			new NamedParameterValue("p4", (TimeSpan)150.Seconds()),
+			new NamedParameterValue<string>("p1", "SomeProperty"),
+			new NamedParameterValue<int>("p2", 4),
+			new NamedParameterValue<long?>("p3", null),
+			new NamedParameterValue<TimeSpan>("p4", 150.Seconds()),
 		], 6));
 		string expectedValue = "[0] set indexer [SomeProperty, 4, null, 00:02:30] to 6";
 
@@ -41,10 +41,10 @@ public sealed class InteractionsTests
 	{
 		MockInteractions interactions = new();
 		IndexerSetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(new IndexerSetterAccess([
-			new NamedParameterValue("p1", "SomeProperty"),
-			new NamedParameterValue("p2", 4),
-			new NamedParameterValue("p3", null),
-			new NamedParameterValue("p4", (TimeSpan)150.Seconds()),
+			new NamedParameterValue<string>("p1", "SomeProperty"),
+			new NamedParameterValue<int>("p2", 4),
+			new NamedParameterValue<long?>("p3", null),
+			new NamedParameterValue<TimeSpan>("p4", 150.Seconds()),
 		], null));
 		string expectedValue = "[0] set indexer [SomeProperty, 4, null, 00:02:30] to null";
 

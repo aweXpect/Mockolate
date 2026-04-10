@@ -16,7 +16,7 @@ public sealed partial class SetupIndexerTests
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess access = new([
-				new NamedParameterValue("p1", 1),
+				new NamedParameterValue<int>("p1", 1),
 			]);
 
 			long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
@@ -32,8 +32,8 @@ public sealed partial class SetupIndexerTests
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess access = new([
-				new NamedParameterValue("p1", 1),
-				new NamedParameterValue("p2", 1),
+				new NamedParameterValue<int>("p1", 1),
+				new NamedParameterValue<int>("p2", 1),
 			]);
 
 			string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -49,7 +49,7 @@ public sealed partial class SetupIndexerTests
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess access = new([
-				new NamedParameterValue("p1", "expect-int"),
+				new NamedParameterValue<string>("p1", "expect-int"),
 			]);
 
 			string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -64,7 +64,7 @@ public sealed partial class SetupIndexerTests
 			int callCount = 0;
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess access = new([new NamedParameterValue("p1", 1),]);
+			IndexerGetterAccess access = new([new NamedParameterValue<int>("p1", 1),]);
 
 			string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
 
@@ -79,7 +79,7 @@ public sealed partial class SetupIndexerTests
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess access = new([
-				new NamedParameterValue("p1", 1),
+				new NamedParameterValue<int>("p1", 1),
 			], "bar");
 
 			indexerSetup.DoExecuteSetterCallback(access, 2L);
@@ -94,8 +94,8 @@ public sealed partial class SetupIndexerTests
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess access = new([
-				new NamedParameterValue("p1", 1),
-				new NamedParameterValue("p2", 1),
+				new NamedParameterValue<int>("p1", 1),
+				new NamedParameterValue<int>("p2", 1),
 			], "bar");
 
 			indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -110,7 +110,7 @@ public sealed partial class SetupIndexerTests
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess access = new([
-				new NamedParameterValue("p1", "expect-int"),
+				new NamedParameterValue<string>("p1", "expect-int"),
 			], "bar");
 
 			indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -124,7 +124,7 @@ public sealed partial class SetupIndexerTests
 			int callCount = 0;
 			MyIndexerSetup<int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess access = new([new NamedParameterValue("p1", 1),], "bar");
+			IndexerSetterAccess access = new([new NamedParameterValue<int>("p1", 1),], "bar");
 
 			indexerSetup.DoExecuteSetterCallback(access, "foo");
 
@@ -417,8 +417,8 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
 				]);
 
 				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
@@ -434,9 +434,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -455,8 +455,8 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -472,8 +472,8 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -489,8 +489,8 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, 2L);
@@ -505,9 +505,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -525,8 +525,8 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -541,8 +541,8 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -826,9 +826,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				]);
 
 				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
@@ -844,10 +844,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -867,9 +867,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
-					new NamedParameterValue("p3", v3),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
+					new NamedParameterValue<object?>("p3", v3),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -885,9 +885,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -903,9 +903,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, 2L);
@@ -920,10 +920,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -942,9 +942,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
-					new NamedParameterValue("p3", v3),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
+					new NamedParameterValue<object?>("p3", v3),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -959,9 +959,9 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -1249,10 +1249,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				]);
 
 				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
@@ -1268,11 +1268,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -1293,10 +1293,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
-					new NamedParameterValue("p3", v3),
-					new NamedParameterValue("p4", v4),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
+					new NamedParameterValue<object?>("p3", v3),
+					new NamedParameterValue<object?>("p4", v4),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -1312,10 +1312,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -1331,10 +1331,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, 2L);
@@ -1349,11 +1349,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -1373,10 +1373,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
-					new NamedParameterValue("p3", v3),
-					new NamedParameterValue("p4", v4),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
+					new NamedParameterValue<object?>("p3", v3),
+					new NamedParameterValue<object?>("p4", v4),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -1391,10 +1391,10 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -1686,11 +1686,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				long result = indexerSetup.DoExecuteGetterCallback(access, 2L);
@@ -1706,12 +1706,12 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
-					new NamedParameterValue("p6", 6),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
+					new NamedParameterValue<int>("p6", 6),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -1733,11 +1733,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
-					new NamedParameterValue("p3", v3),
-					new NamedParameterValue("p4", v4),
-					new NamedParameterValue("p5", v5),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
+					new NamedParameterValue<object?>("p3", v3),
+					new NamedParameterValue<object?>("p4", v4),
+					new NamedParameterValue<object?>("p5", v5),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -1753,11 +1753,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnGet.Do(() => { callCount++; });
 				IndexerGetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				]);
 
 				string result = indexerSetup.DoExecuteGetterCallback(access, "foo");
@@ -1773,11 +1773,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, 2L);
@@ -1792,12 +1792,12 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
-					new NamedParameterValue("p6", 6),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
+					new NamedParameterValue<int>("p6", 6),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -1818,11 +1818,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", v1),
-					new NamedParameterValue("p2", v2),
-					new NamedParameterValue("p3", v3),
-					new NamedParameterValue("p4", v4),
-					new NamedParameterValue("p5", v5),
+					new NamedParameterValue<object?>("p1", v1),
+					new NamedParameterValue<object?>("p2", v2),
+					new NamedParameterValue<object?>("p3", v3),
+					new NamedParameterValue<object?>("p4", v4),
+					new NamedParameterValue<object?>("p5", v5),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");
@@ -1837,11 +1837,11 @@ public sealed partial class SetupIndexerTests
 				MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 				indexerSetup.OnSet.Do(() => { callCount++; });
 				IndexerSetterAccess access = new([
-					new NamedParameterValue("p1", 1),
-					new NamedParameterValue("p2", 2),
-					new NamedParameterValue("p3", 3),
-					new NamedParameterValue("p4", 4),
-					new NamedParameterValue("p5", 5),
+					new NamedParameterValue<int>("p1", 1),
+					new NamedParameterValue<int>("p2", 2),
+					new NamedParameterValue<int>("p3", 3),
+					new NamedParameterValue<int>("p4", 4),
+					new NamedParameterValue<int>("p5", 5),
 				], "bar");
 
 				indexerSetup.DoExecuteSetterCallback(access, "foo");

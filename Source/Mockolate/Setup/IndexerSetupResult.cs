@@ -28,8 +28,8 @@ public class IndexerSetupResult<TResult>(
 	IInteractiveIndexerSetup? setup,
 	IndexerGetterAccess indexerAccess,
 	MockBehavior behavior,
-	Func<IInteractiveIndexerSetup?, Func<TResult>, NamedParameterValue[], TResult> getIndexerValue,
-	Action<NamedParameterValue[], TResult> setIndexerValue)
+	Func<IInteractiveIndexerSetup?, Func<TResult>, INamedParameterValue[], TResult> getIndexerValue,
+	Action<INamedParameterValue[], TResult> setIndexerValue)
 	: IndexerSetupResult(setup, behavior)
 {
 	private readonly MockBehavior _behavior = behavior;
@@ -77,7 +77,7 @@ public class IndexerSetupResult<TResult>(
 		if (_behavior.ThrowWhenNotSetup)
 		{
 			throw new MockNotSetupException(
-				$"The indexer [{string.Join(", ", indexerAccess.Parameters.Select(p => p.Value?.ToString() ?? "null"))}] was accessed without prior setup.");
+				$"The indexer [{string.Join(", ", indexerAccess.Parameters.Select(p => p.ToString()))}] was accessed without prior setup.");
 		}
 
 		value = defaultValueGenerator();

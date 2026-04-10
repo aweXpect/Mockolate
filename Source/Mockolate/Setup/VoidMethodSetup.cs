@@ -440,7 +440,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior))
+		if (invocation.Parameters[0].TryGetValue(out T1 p1))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;
@@ -733,8 +733,8 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior) &&
-		    TryCast(invocation.Parameters[1].Value, out T2 p2, behavior))
+		if (invocation.Parameters[0].TryGetValue(out T1 p1) &&
+		    invocation.Parameters[1].TryGetValue(out T2 p2))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;
@@ -1035,9 +1035,9 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior) &&
-		    TryCast(invocation.Parameters[1].Value, out T2 p2, behavior) &&
-		    TryCast(invocation.Parameters[2].Value, out T3 p3, behavior))
+		if (invocation.Parameters[0].TryGetValue(out T1 p1) &&
+		    invocation.Parameters[1].TryGetValue(out T2 p2) &&
+		    invocation.Parameters[2].TryGetValue(out T3 p3))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;
@@ -1342,10 +1342,10 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
 	{
-		if (TryCast(invocation.Parameters[0].Value, out T1 p1, behavior) &&
-		    TryCast(invocation.Parameters[1].Value, out T2 p2, behavior) &&
-		    TryCast(invocation.Parameters[2].Value, out T3 p3, behavior) &&
-		    TryCast(invocation.Parameters[3].Value, out T4 p4, behavior))
+		if (invocation.Parameters[0].TryGetValue(out T1 p1) &&
+		    invocation.Parameters[1].TryGetValue(out T2 p2) &&
+		    invocation.Parameters[2].TryGetValue(out T3 p3) &&
+		    invocation.Parameters[3].TryGetValue(out T4 p4))
 		{
 			bool wasInvoked = false;
 			int currentCallbacksIndex = _currentCallbacksIndex;

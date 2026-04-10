@@ -8,5 +8,5 @@ public interface IParameters
 	/// <summary>
 	///     Checks if the <paramref name="values" /> match the expectations.
 	/// </summary>
-	bool Matches(NamedParameterValue[] values);
+	bool Matches(INamedParameterValue[] values);
 }

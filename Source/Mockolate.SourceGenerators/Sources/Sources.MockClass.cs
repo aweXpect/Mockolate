@@ -1518,7 +1518,7 @@ internal static partial class Sources
 				.AppendTypeOrWrapper(method.ReturnType).Append(">(").Append(method.GetUniqueNameString())
 				.Append(", ").Append(parameterVarName).Append(" => ")
 				.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
-					$", {parameterVarName}");
+					parameterVarName);
 		}
 		else
 		{
@@ -1529,10 +1529,10 @@ internal static partial class Sources
 
 		foreach (MethodParameter p in method.Parameters)
 		{
-			sb.Append(", new global::Mockolate.Parameters.NamedParameterValue(\"").Append(p.Name).Append("\", ").Append(
+			sb.Append(", new global::Mockolate.Parameters.NamedParameterValue<").AppendTypeOrWrapper(p.Type).Append(">(\"").Append(p.Name).Append("\", ").Append(
 				p.RefKind switch
 				{
-					RefKind.Out => "null",
+					RefKind.Out => "default",
 					_ => p.ToNameOrWrapper(),
 				}).Append(')');
 		}

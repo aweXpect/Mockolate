@@ -104,11 +104,11 @@ internal partial class MockSetups
 			}
 		}
 
-		internal TValue GetOrAddValue<TValue>(NamedParameterValue[] parameters, Func<TValue> valueGenerator)
+		internal TValue GetOrAddValue<TValue>(INamedParameterValue[] parameters, Func<TValue> valueGenerator)
 		{
 			_valueStorage ??= new ValueStorage();
 			ValueStorage? storage = _valueStorage;
-			foreach (NamedParameterValue parameter in parameters)
+			foreach (INamedParameterValue parameter in parameters)
 			{
 				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
 			}
@@ -123,11 +123,11 @@ internal partial class MockSetups
 			return value;
 		}
 
-		internal void UpdateValue<TValue>(NamedParameterValue[] parameters, TValue value)
+		internal void UpdateValue<TValue>(INamedParameterValue[] parameters, TValue value)
 		{
 			_valueStorage ??= new ValueStorage();
 			ValueStorage? storage = _valueStorage;
-			foreach (NamedParameterValue parameter in parameters)
+			foreach (INamedParameterValue parameter in parameters)
 			{
 				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
 			}
@@ -154,17 +154,17 @@ internal partial class MockSetups
 		[DebuggerNonUserCode]
 		private sealed class ValueStorage
 		{
-			private readonly List<(NamedParameterValue Key, ValueStorage Value)> _storage = [];
+			private readonly List<(INamedParameterValue Key, ValueStorage Value)> _storage = [];
 
 			public object? Value { get; set; }
 
-			public ValueStorage GetOrAdd(NamedParameterValue key, Func<ValueStorage> valueGenerator)
+			public ValueStorage GetOrAdd(INamedParameterValue key, Func<ValueStorage> valueGenerator)
 			{
 				lock (_storage)
 				{
-					foreach ((NamedParameterValue existingKey, ValueStorage existingValue) in _storage)
+					foreach ((INamedParameterValue existingKey, ValueStorage existingValue) in _storage)
 					{
-						if (KeyEquals(existingKey, key))
+						if (existingKey.Equals(key))
 						{
 							return existingValue;
 						}
@@ -175,10 +175,6 @@ internal partial class MockSetups
 					return newValue;
 				}
 			}
-
-			private static bool KeyEquals(NamedParameterValue x, NamedParameterValue y)
-				=> string.Equals(x.Name, y.Name, StringComparison.Ordinal)
-				   && (ReferenceEquals(x.Value, y.Value) || (x.Value?.Equals(y.Value) ?? y.Value is null));
 		}
 	}
 }

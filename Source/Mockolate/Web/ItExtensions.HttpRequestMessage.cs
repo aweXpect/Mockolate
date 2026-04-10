@@ -117,10 +117,23 @@ public static partial class ItExtensions
 		public bool Matches(object? value)
 			=> value is HttpRequestMessage typedValue && Matches(typedValue);
 
+		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
+		public bool Matches(INamedParameterValue value)
+			=> value.TryGetValue<HttpRequestMessage>(out var typedValue) && Matches(typedValue);
+
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		public void InvokeCallbacks(object? value)
 		{
 			if (value is HttpRequestMessage httpRequestMessage)
+			{
+				_callbacks?.ForEach(a => a.Invoke(httpRequestMessage));
+			}
+		}
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
+		public void InvokeCallbacks(INamedParameterValue value)
+		{
+			if (value.TryGetValue(out HttpRequestMessage httpRequestMessage))
 			{
 				_callbacks?.ForEach(a => a.Invoke(httpRequestMessage));
 			}
