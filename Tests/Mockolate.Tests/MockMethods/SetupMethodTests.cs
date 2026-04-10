@@ -181,7 +181,7 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task MethodSetupResult_TriggerCallbacks_Null_ShouldTriggerCallbacksWithNullArray()
+	public async Task MethodSetupResult_TriggerCallbacks_Null_ShouldTriggerCallbacksWithEmptyArray()
 	{
 		IInteractiveMethodSetup methodSetup = IInteractiveMethodSetup.CreateMock();
 		MethodSetupResult sut = new(methodSetup, MockBehavior.Default);
@@ -189,8 +189,7 @@ public sealed partial class SetupMethodTests
 		sut.TriggerCallbacks(null);
 
 		await That(methodSetup.Mock.Verify.TriggerCallbacks(
-			// ReSharper disable once MergeIntoPattern
-			It.Satisfies<object?[]>(arr => arr.Length == 1 && arr[0] is null))).Once();
+			It.Satisfies<INamedParameterValue[]>(arr => arr.Length == 0))).Once();
 	}
 
 	[Fact]
@@ -538,7 +537,10 @@ public sealed partial class SetupMethodTests
 		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
 		MyMethodSetup.DoTriggerCallbacks([
 			new NamedParameter("foo", (IParameter)parameter),
-		], [4, 5,]);
+		], [
+			new NamedParameterValue<int>("foo", 4),
+			new NamedParameterValue<int>("foo", 5),
+		]);
 
 		await That(monitor.Values).IsEmpty();
 	}
@@ -549,7 +551,9 @@ public sealed partial class SetupMethodTests
 		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
 		MyMethodSetup.DoTriggerCallbacks([
 			new NamedParameter("foo", (IParameter)parameter),
-		], [4,]);
+		], [
+			new NamedParameterValue<int>("foo", 4),
+		]);
 
 		await That(monitor.Values).IsEqualTo([4,]);
 	}
@@ -2047,7 +2051,7 @@ public sealed partial class SetupMethodTests
 
 	public class MyMethodSetup() : MethodSetup(new MethodParameterMatch("", []))
 	{
-		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, object?[] values)
+		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, INamedParameterValue[] values)
 			=> TriggerCallbacks(namedParameters, values);
 
 		public bool GetHasReturnCalls()
@@ -2077,7 +2081,7 @@ public sealed partial class SetupMethodTests
 			Func<TResult> defaultValueGenerator)
 			=> throw new NotSupportedException();
 
-		protected override void TriggerParameterCallbacks(object?[] parameters)
+		protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
 			=> throw new NotSupportedException();
 	}
 

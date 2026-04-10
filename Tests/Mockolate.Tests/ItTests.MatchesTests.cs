@@ -94,11 +94,11 @@ public sealed partial class ItTests
 			match.CaseSensitive();
 			IParameter parameter = (IParameter)match;
 
-			bool result1 = parameter.Matches("foo");
+			bool result1 = parameter.Matches(new NamedParameterValue<string>(string.Empty, "foo"));
 
 			match.CaseSensitive(false);
 
-			bool result2 = parameter.Matches("foo");
+			bool result2 = parameter.Matches(new NamedParameterValue<string>(string.Empty, "foo"));
 
 			await That(result1).IsFalse();
 			await That(result2).IsFalse();

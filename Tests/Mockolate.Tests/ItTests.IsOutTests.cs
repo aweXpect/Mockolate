@@ -40,14 +40,23 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(value);
 		}
 
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
-		public async Task WithOut_Verify_ShouldAlwaysMatch(object? value)
+		[Fact]
+		public async Task WithOut_Verify_Long_ShouldAlwaysMatch()
 		{
 			IVerifyOutParameter<int?> sut = It.IsOut<int?>();
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<long>(string.Empty, 42L));
+
+			await That(result).IsTrue();
+			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithOut_Verify_String_ShouldAlwaysMatch()
+		{
+			IVerifyOutParameter<int?> sut = It.IsOut<int?>();
+
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
 
 			await That(result).IsTrue();
 			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();

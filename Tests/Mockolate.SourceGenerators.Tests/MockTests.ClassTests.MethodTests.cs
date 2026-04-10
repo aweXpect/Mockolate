@@ -168,7 +168,7 @@ public sealed partial class MockTests
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
 					.Contains("MethodSetupResult<int> methodExecution1 = this.MockRegistry.InvokeMethod<int>(")
 					.IgnoringNewlineStyle().And
-					.Contains("methodExecution1.TriggerCallbacks(methodExecution)")
+					.Contains("methodExecution1.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>(\"methodExecution\", methodExecution))")
 					.IgnoringNewlineStyle().And
 					.Contains("return methodExecution1.Result;")
 					.IgnoringNewlineStyle();
@@ -200,7 +200,7 @@ public sealed partial class MockTests
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
 					.Contains("MethodSetupResult<int> methodExecution = this.MockRegistry.InvokeMethod<int>(")
 					.IgnoringNewlineStyle().And
-					.Contains("methodExecution.TriggerCallbacks(result)")
+					.Contains("methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>(\"result\", result))")
 					.IgnoringNewlineStyle().And
 					.Contains("return methodExecution.Result;")
 					.IgnoringNewlineStyle();
@@ -345,11 +345,11 @@ public sealed partial class MockTests
 					          				var baseResult = wraps.MyMethod1(index);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
-					          					methodExecution.TriggerCallbacks(index);
+					          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index));
 					          					return baseResult;
 					          				}
 					          			}
-					          			methodExecution.TriggerCallbacks(index);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index));
 					          			return methodExecution.Result;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -362,7 +362,7 @@ public sealed partial class MockTests
 					          			{
 					          				wraps.MyMethod2(index, isReadOnly);
 					          			}
-					          			methodExecution.TriggerCallbacks(index, isReadOnly);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<bool>("isReadOnly", isReadOnly));
 					          		}
 					          """).IgnoringNewlineStyle();
 			}
@@ -416,11 +416,11 @@ public sealed partial class MockTests
 					          				var baseResult = wraps.MyDirectMethod(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
-					          					methodExecution.TriggerCallbacks(value);
+					          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          					return baseResult;
 					          				}
 					          			}
-					          			methodExecution.TriggerCallbacks(value);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          			return methodExecution.Result;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -434,11 +434,11 @@ public sealed partial class MockTests
 					          				var baseResult = wraps.MyBaseMethod1(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
-					          					methodExecution.TriggerCallbacks(value);
+					          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          					return baseResult;
 					          				}
 					          			}
-					          			methodExecution.TriggerCallbacks(value);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          			return methodExecution.Result;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -452,11 +452,11 @@ public sealed partial class MockTests
 					          				var baseResult = wraps.MyBaseMethod2(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
-					          					methodExecution.TriggerCallbacks(value);
+					          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          					return baseResult;
 					          				}
 					          			}
-					          			methodExecution.TriggerCallbacks(value);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          			return methodExecution.Result;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -470,11 +470,11 @@ public sealed partial class MockTests
 					          				var baseResult = wraps.MyBaseMethod3(value);
 					          				if (!methodExecution.HasSetupResult)
 					          				{
-					          					methodExecution.TriggerCallbacks(value);
+					          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          					return baseResult;
 					          				}
 					          			}
-					          			methodExecution.TriggerCallbacks(value);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("value", value));
 					          			return methodExecution.Result;
 					          		}
 					          """).IgnoringNewlineStyle();
@@ -542,13 +542,13 @@ public sealed partial class MockTests
 					          					base.MyMethod1(index, ref value1, out flag);
 					          				}
 					          			}
-					          			methodExecution.TriggerCallbacks(index, value1, flag);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<int>("value1", value1), new global::Mockolate.Parameters.NamedParameterValue<bool>("flag", flag));
 
 					          			value1 = methodExecution.SetRefParameter<int>("value1", value1);
-					          			methodExecution.TriggerCallbacks(index, value1, flag);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<int>("value1", value1), new global::Mockolate.Parameters.NamedParameterValue<bool>("flag", flag));
 
 					          			flag = methodExecution.SetOutParameter<bool>("flag", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!));
-					          			methodExecution.TriggerCallbacks(index, value1, flag);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<int>("value1", value1), new global::Mockolate.Parameters.NamedParameterValue<bool>("flag", flag));
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
@@ -571,7 +571,7 @@ public sealed partial class MockTests
 
 					          				if (!methodExecution.HasSetupResult)
 					          				{
-					          					methodExecution.TriggerCallbacks(index, isReadOnly, value1, flag);
+					          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<bool>("isReadOnly", isReadOnly), new global::Mockolate.Parameters.NamedParameterValue<int>("value1", value1), new global::Mockolate.Parameters.NamedParameterValue<bool>("flag", flag));
 					          					return baseResult;
 					          				}
 					          			}
@@ -581,7 +581,7 @@ public sealed partial class MockTests
 					          				flag = methodExecution.SetOutParameter<bool>("flag", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!));
 					          			}
 
-					          			methodExecution.TriggerCallbacks(index, isReadOnly, value1, flag);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<bool>("isReadOnly", isReadOnly), new global::Mockolate.Parameters.NamedParameterValue<int>("value1", value1), new global::Mockolate.Parameters.NamedParameterValue<bool>("flag", flag));
 					          			return methodExecution.Result;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -590,7 +590,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyOtherService.SomeOtherMethod()" />
 					          		int global::MyCode.IMyOtherService.SomeOtherMethod()
 					          		{
-					          			global::Mockolate.Setup.MethodSetupResult<int> methodExecution = this.MockRegistry.InvokeMethod<int>("global::MyCode.IMyOtherService.SomeOtherMethod", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, p));
+					          			global::Mockolate.Setup.MethodSetupResult<int> methodExecution = this.MockRegistry.InvokeMethod<int>("global::MyCode.IMyOtherService.SomeOtherMethod", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));
 					          			methodExecution.TriggerCallbacks();
 					          			return methodExecution.Result;
 					          		}
@@ -705,6 +705,11 @@ public sealed partial class MockTests
 					         void MyMethod3(in MyReadonlyStruct p1);
 					         void MyMethod4(ref readonly MyReadonlyStruct p1);
 					     }
+					     
+					     public readonly struct MyReadonlyStruct
+					     {
+					         public int Value { get; init; }
+					     }
 					     """);
 
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
@@ -723,7 +728,7 @@ public sealed partial class MockTests
 
 					          			}
 					          			index = methodExecution.SetRefParameter<int>("index", index);
-					          			methodExecution.TriggerCallbacks(index);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index));
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
@@ -741,37 +746,37 @@ public sealed partial class MockTests
 
 					          				if (!methodExecution.HasSetupResult)
 					          				{
-					          					methodExecution.TriggerCallbacks(index, isReadOnly);
+					          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<bool>("isReadOnly", isReadOnly));
 					          					return baseResult;
 					          				}
 					          			}
 					          			isReadOnly = methodExecution.SetOutParameter<bool>("isReadOnly", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!));
-					          			methodExecution.TriggerCallbacks(index, isReadOnly);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<int>("index", index), new global::Mockolate.Parameters.NamedParameterValue<bool>("isReadOnly", isReadOnly));
 					          			return methodExecution.Result;
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
-					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod3(in MyReadonlyStruct)" />
-					          		public void MyMethod3(in MyReadonlyStruct p1)
+					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod3(in global::MyCode.MyReadonlyStruct)" />
+					          		public void MyMethod3(in global::MyCode.MyReadonlyStruct p1)
 					          		{
-					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod3", new global::Mockolate.Parameters.NamedParameterValue<MyReadonlyStruct>("p1", p1));
+					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod3", new global::Mockolate.Parameters.NamedParameterValue<global::MyCode.MyReadonlyStruct>("p1", p1));
 					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
 					          				wraps.MyMethod3(in p1);
 					          			}
-					          			methodExecution.TriggerCallbacks(p1);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<global::MyCode.MyReadonlyStruct>("p1", p1));
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
-					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod4(ref readonly MyReadonlyStruct)" />
-					          		public void MyMethod4(ref readonly MyReadonlyStruct p1)
+					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod4(ref readonly global::MyCode.MyReadonlyStruct)" />
+					          		public void MyMethod4(ref readonly global::MyCode.MyReadonlyStruct p1)
 					          		{
-					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod4", new global::Mockolate.Parameters.NamedParameterValue<MyReadonlyStruct>("p1", p1));
+					          			global::Mockolate.Setup.MethodSetupResult methodExecution = this.MockRegistry.InvokeMethod("global::MyCode.IMyService.MyMethod4", new global::Mockolate.Parameters.NamedParameterValue<global::MyCode.MyReadonlyStruct>("p1", p1));
 					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          			{
 					          				wraps.MyMethod4(in p1);
 					          			}
-					          			methodExecution.TriggerCallbacks(p1);
+					          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<global::MyCode.MyReadonlyStruct>("p1", p1));
 					          		}
 					          """).IgnoringNewlineStyle();
 			}

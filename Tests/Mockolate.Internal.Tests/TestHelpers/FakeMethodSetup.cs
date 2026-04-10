@@ -1,4 +1,5 @@
 using Mockolate.Interactions;
+using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate.Internal.Tests.TestHelpers;
@@ -18,5 +19,5 @@ internal sealed class FakeMethodSetup : MethodSetup
 	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior) => value;
 	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior) { }
 	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator) => defaultValueGenerator();
-	protected override void TriggerParameterCallbacks(object?[] parameters) { }
+	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters) { }
 }

@@ -30,7 +30,7 @@ public sealed class InteractionsTests
 			new NamedParameterValue<int>("p2", 4),
 			new NamedParameterValue<long?>("p3", null),
 			new NamedParameterValue<TimeSpan>("p4", 150.Seconds()),
-		], 6));
+		], new NamedParameterValue<int>("value", 6)));
 		string expectedValue = "[0] set indexer [SomeProperty, 4, null, 00:02:30] to 6";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
@@ -45,7 +45,7 @@ public sealed class InteractionsTests
 			new NamedParameterValue<int>("p2", 4),
 			new NamedParameterValue<long?>("p3", null),
 			new NamedParameterValue<TimeSpan>("p4", 150.Seconds()),
-		], null));
+		], new NamedParameterValue<string?>("value", null)));
 		string expectedValue = "[0] set indexer [SomeProperty, 4, null, 00:02:30] to null";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);

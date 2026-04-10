@@ -222,7 +222,6 @@ public sealed partial class SetupMethodTests
 			public virtual void MyVoidMethodWith5Parameters(int p1, int p2, int p3, int p4, int p5)
 				=> MyVoidMethodWith5ParametersCallCount++;
 
-
 			public virtual int MyReturnMethodWithoutParameters()
 				=> MyReturnMethodWithoutParametersCallCount++;
 

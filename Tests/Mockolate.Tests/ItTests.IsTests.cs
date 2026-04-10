@@ -15,7 +15,7 @@ public sealed partial class ItTests
 		{
 			IParameter<int> sut = It.Is(5);
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int>(string.Empty, value));
 
 			await That(result).IsEqualTo(expectMatch);
 		}
@@ -66,7 +66,7 @@ public sealed partial class ItTests
 		{
 			IParameter<int> sut = It.Is(5).Using(new AllEqualComparer());
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int>(string.Empty, value));
 
 			await That(result).IsTrue();
 		}

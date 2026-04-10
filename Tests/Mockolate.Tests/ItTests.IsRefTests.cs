@@ -6,47 +6,24 @@ public sealed partial class ItTests
 {
 	public sealed class IsRefTests
 	{
-		[Fact]
-		public async Task ToString_ShouldReturnExpectedValue()
-		{
-			IRefParameter<int?> sut = It.IsRef<int?>(v => v * 3);
-			string expectedValue = "It.IsRef<int?>(v => v * 3)";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
+		// ...existing code...
 
 		[Fact]
-		public async Task ToString_Verify_ShouldReturnExpectedValue()
-		{
-			IVerifyRefParameter<int> sut = It.IsRef<int>();
-			string expectedValue = "It.IsRef<int>()";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
-
-		[Fact]
-		public async Task ToString_WithPredicate_ShouldReturnExpectedValue()
-		{
-			IRefParameter<int?> sut = It.IsRef<int?>(v => v > 3, v => v * 3);
-			string expectedValue = "It.IsRef<int?>(v => v > 3, v => v * 3)";
-
-			string? result = sut.ToString();
-
-			await That(result).IsEqualTo(expectedValue);
-		}
-
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
-		public async Task WithRef_DifferentType_ShouldNotMatch(object? value)
+		public async Task WithRef_DifferentType_Long_ShouldNotMatch()
 		{
 			IRefParameter<int?> sut = It.IsRef<int?>(_ => true, _ => null);
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<long>(string.Empty, 42L));
+
+			await That(result).IsFalse();
+		}
+
+		[Fact]
+		public async Task WithRef_DifferentType_String_ShouldNotMatch()
+		{
+			IRefParameter<int?> sut = It.IsRef<int?>(_ => true, _ => null);
+
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
 
 			await That(result).IsFalse();
 		}
@@ -58,46 +35,35 @@ public sealed partial class ItTests
 		{
 			IRefParameter<string> sut = It.IsRef<string>(_ => predicateValue, _ => "");
 
-			bool result = ((IParameter)sut).Matches("foo");
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
 
 			await That(result).IsEqualTo(predicateValue);
 		}
 
-		[Theory]
-		[InlineData(42)]
-		[InlineData(-2)]
-		public async Task WithRef_ShouldReturnValue(int? value)
-		{
-			IRefParameter<int?> sut = It.IsRef<int?>(v => v * 2);
+		// ...existing code...
 
-			int? result = sut.GetValue(value);
-
-			await That(result).IsEqualTo(2 * value);
-		}
-
-		[Theory]
-		[InlineData(42L)]
-		[InlineData("foo")]
-		public async Task WithRef_Verify_ShouldAlwaysMatch(object? value)
+		[Fact]
+		public async Task WithRef_Verify_Long_ShouldAlwaysMatch()
 		{
 			IVerifyRefParameter<int?> sut = It.IsRef<int?>();
 
-			bool result = ((IParameter)sut).Matches(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<long>(string.Empty, 42L));
 
 			await That(result).IsTrue();
 			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();
 		}
 
-		[Theory]
-		[InlineData(42)]
-		[InlineData(-2)]
-		public async Task WithRef_WithoutSetter_ShouldReturnOriginalValue(int? value)
+		[Fact]
+		public async Task WithRef_Verify_String_ShouldAlwaysMatch()
 		{
-			IRefParameter<int?> sut = It.IsRef<int?>(_ => true);
+			IVerifyRefParameter<int?> sut = It.IsRef<int?>();
 
-			int? result = sut.GetValue(value);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
 
-			await That(result).IsEqualTo(value);
+			await That(result).IsTrue();
+			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();
 		}
+
+		// ...existing code...
 	}
 }

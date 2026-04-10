@@ -113,22 +113,9 @@ public static partial class ItExtensions
 			return GetThis;
 		}
 
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		public bool Matches(object? value)
-			=> value is HttpRequestMessage typedValue && Matches(typedValue);
-
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public bool Matches(INamedParameterValue value)
 			=> value.TryGetValue<HttpRequestMessage>(out var typedValue) && Matches(typedValue);
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		public void InvokeCallbacks(object? value)
-		{
-			if (value is HttpRequestMessage httpRequestMessage)
-			{
-				_callbacks?.ForEach(a => a.Invoke(httpRequestMessage));
-			}
-		}
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
 		public void InvokeCallbacks(INamedParameterValue value)
@@ -151,13 +138,13 @@ public static partial class ItExtensions
 			}
 
 			if (_uriParameter is not null &&
-			    !((IParameter)_uriParameter).Matches(value.RequestUri))
+			    !((IParameter)_uriParameter).Matches(new NamedParameterValue<Uri?>(string.Empty, value.RequestUri)))
 			{
 				return false;
 			}
 
 			if (_contentParameter is not null &&
-			    !((IParameter)_contentParameter).Matches(value.Content))
+			    !((IParameter)_contentParameter).Matches(new NamedParameterValue<HttpContent?>(string.Empty, value.Content)))
 			{
 				return false;
 			}

@@ -204,7 +204,6 @@ internal static partial class Sources
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
-
 		sb.AppendXmlSummary(
 			$"Sets up a return callback for a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <see langword=\"void\" />.",
 			"");
@@ -591,8 +590,8 @@ internal static partial class Sources
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();
-		sb.Append("\t\tprotected override void TriggerParameterCallbacks(object?[] parameters)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(global::Mockolate.Parameters.INamedParameterValue[])\" />").AppendLine();
+		sb.Append("\t\tprotected override void TriggerParameterCallbacks(global::Mockolate.Parameters.INamedParameterValue[] parameters)").AppendLine();
 		sb.Append("\t\t\t=> TriggerCallbacks([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameters);").AppendLine();
@@ -1222,8 +1221,8 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(object?[])\" />").AppendLine();
-		sb.Append("\t\tprotected override void TriggerParameterCallbacks(object?[] parameters)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(global::Mockolate.Parameters.INamedParameterValue[])\" />").AppendLine();
+		sb.Append("\t\tprotected override void TriggerParameterCallbacks(global::Mockolate.Parameters.INamedParameterValue[] parameters)").AppendLine();
 		sb.Append("\t\t\t=> TriggerCallbacks([")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
 			.Append("], parameters);").AppendLine();

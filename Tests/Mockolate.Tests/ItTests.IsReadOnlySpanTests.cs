@@ -17,7 +17,7 @@ public sealed partial class ItTests
 			ReadOnlySpan<char> valueSpan = value.AsSpan();
 			IVerifyReadOnlySpanParameter<char> sut = It.IsReadOnlySpan<char>(c => c.Length > 0 && c[0] == 'b');
 
-			bool result = ((IParameter)sut).Matches((ReadOnlySpanWrapper<char>)valueSpan);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<ReadOnlySpanWrapper<char>>(string.Empty, (ReadOnlySpanWrapper<char>)valueSpan));
 
 			await That(result).IsEqualTo(expectSuccess);
 		}

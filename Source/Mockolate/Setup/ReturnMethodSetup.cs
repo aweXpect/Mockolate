@@ -160,7 +160,6 @@ public class ReturnMethodSetup<TReturn>(string name)
 		return this;
 	}
 
-
 	/// <inheritdoc cref="IReturnMethodSetupReturnBuilder{TReturn}.When(Func{int, bool})" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn> IReturnMethodSetupReturnBuilder<TReturn>.When(
 		Func<int, bool> predicate)
@@ -235,8 +234,8 @@ public class ReturnMethodSetup<TReturn>(string name)
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
-	protected override void TriggerParameterCallbacks(object?[] parameters)
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
+	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
 	{
 		// No parameters to trigger
 	}
@@ -568,8 +567,8 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
-	protected override void TriggerParameterCallbacks(object?[] parameters)
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
+	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
 		=> TriggerCallbacks([_match1,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
@@ -927,8 +926,8 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
-	protected override void TriggerParameterCallbacks(object?[] parameters)
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
+	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
 		=> TriggerCallbacks([_match1, _match2,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
@@ -1300,8 +1299,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
-	protected override void TriggerParameterCallbacks(object?[] parameters)
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
+	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
 		=> TriggerCallbacks([_match1, _match2, _match3,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
@@ -1573,7 +1572,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-
 	/// <inheritdoc cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2, T3, T4}.When(Func{int, bool})" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>
 		IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>.When(Func<int, bool> predicate)
@@ -1689,8 +1687,8 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(object?[])" />
-	protected override void TriggerParameterCallbacks(object?[] parameters)
+	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
+	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
 		=> TriggerCallbacks([_match1, _match2, _match3, _match4,], parameters);
 
 	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />

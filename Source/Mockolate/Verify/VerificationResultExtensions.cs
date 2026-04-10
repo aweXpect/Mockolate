@@ -382,7 +382,6 @@ public static class VerificationResultExtensions
 					$"Expected that mock {string.Join(separator, expectations)} in order, but it {error}.");
 			}
 
-
 			bool VerifyInteractions(IInteraction[] interactions, IVerificationResult currentResult)
 			{
 				IInteraction? firstInteraction = interactions

@@ -14,7 +14,7 @@ public sealed partial class ItTests
 		IParameter<int> sut = It.Satisfies<int>(_ => true)
 			.Do(v => isCalled += v);
 
-		((IParameter)sut).InvokeCallbacks(5);
+		((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>(string.Empty, 5));
 
 		await That(isCalled).IsEqualTo(5);
 	}
@@ -26,7 +26,7 @@ public sealed partial class ItTests
 		IParameter<int> sut = It.Satisfies<int>(_ => true)
 			.Do(v => isCalled += v);
 
-		((IParameter)sut).InvokeCallbacks("5");
+		((IParameter)sut).InvokeCallbacks(new NamedParameterValue<string>(string.Empty, "5"));
 
 		await That(isCalled).IsEqualTo(0);
 	}

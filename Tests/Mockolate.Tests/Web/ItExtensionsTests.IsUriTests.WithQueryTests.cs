@@ -87,7 +87,6 @@ public sealed partial class ItExtensionsTests
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
-
 			[Theory]
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", "123", true)]
 			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "y", "234", true)]

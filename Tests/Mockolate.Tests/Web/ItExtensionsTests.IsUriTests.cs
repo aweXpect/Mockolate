@@ -89,16 +89,35 @@ public sealed partial class ItExtensionsTests
 				.IsEqualTo(HttpStatusCode.NotImplemented);
 		}
 
-		[Theory]
-		[InlineData("https://www.aweXpect.com")]
-		[InlineData(443)]
-		[InlineData(null)]
-		public async Task WhenTypeDoesNotMatch_ShouldReturnFalse(object? value)
+		[Fact]
+		public async Task WhenTypeDoesNotMatch_String_ShouldReturnFalse()
 		{
 			ItExtensions.IUriParameter sut = It.IsUri();
 			IParameter parameter = (IParameter)sut;
 
-			bool result = parameter.Matches(value);
+			bool result = parameter.Matches(new NamedParameterValue<string>(string.Empty, "https://www.aweXpect.com"));
+
+			await That(result).IsFalse();
+		}
+
+		[Fact]
+		public async Task WhenTypeDoesNotMatch_Int_ShouldReturnFalse()
+		{
+			ItExtensions.IUriParameter sut = It.IsUri();
+			IParameter parameter = (IParameter)sut;
+
+			bool result = parameter.Matches(new NamedParameterValue<int>(string.Empty, 443));
+
+			await That(result).IsFalse();
+		}
+
+		[Fact]
+		public async Task WhenTypeDoesNotMatch_Null_ShouldReturnFalse()
+		{
+			ItExtensions.IUriParameter sut = It.IsUri();
+			IParameter parameter = (IParameter)sut;
+
+			bool result = parameter.Matches(new NamedParameterValue<Uri?>(string.Empty, null));
 
 			await That(result).IsFalse();
 		}

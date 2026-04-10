@@ -108,7 +108,7 @@ public sealed class InteractionsTests
 	{
 		MockInteractions interactions = new();
 		PropertySetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(
-			new PropertySetterAccess("global::Mockolate.InteractionsTests.SomeProperty", 5));
+			new PropertySetterAccess("global::Mockolate.InteractionsTests.SomeProperty", new NamedParameterValue<int>("value", 5)));
 		string expectedValue = "[0] set property SomeProperty to 5";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
@@ -119,7 +119,7 @@ public sealed class InteractionsTests
 	{
 		MockInteractions interactions = new();
 		PropertySetterAccess interaction = ((IMockInteractions)interactions).RegisterInteraction(
-			new PropertySetterAccess("SomeProperty", null));
+			new PropertySetterAccess("SomeProperty", new NamedParameterValue<string?>("value", null)));
 		string expectedValue = "[0] set property SomeProperty to null";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);

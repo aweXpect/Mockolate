@@ -145,22 +145,9 @@ public static partial class ItExtensions
 			return true;
 		}
 
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		public bool Matches(object? value)
-			=> value is HttpContent typedValue && Matches(typedValue, null);
-
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public bool Matches(INamedParameterValue value)
 			=> value.TryGetValue<HttpContent>(out var typedValue) && Matches(typedValue, null);
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		public void InvokeCallbacks(object? value)
-		{
-			if (value is HttpContent httpContent)
-			{
-				_callbacks?.ForEach(a => a.Invoke(httpContent));
-			}
-		}
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
 		public void InvokeCallbacks(INamedParameterValue value)
@@ -346,21 +333,13 @@ public static partial class ItExtensions
 				return requestMessagePropertyParameter.Matches(value, requestMessage);
 			}
 
-			return Matches(value);
+			return Matches(new NamedParameterValue<HttpContent?>(string.Empty, value));
 		}
-
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		public bool Matches(object? value)
-			=> ((IParameter)parameter).Matches(value);
 
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public bool Matches(INamedParameterValue value)
 			=> ((IParameter)parameter).Matches(value);
 
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		public void InvokeCallbacks(object? value)
-			=> ((IParameter)parameter).InvokeCallbacks(value);
-		
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
 		public void InvokeCallbacks(INamedParameterValue value)
 			=> ((IParameter)parameter).InvokeCallbacks(value);

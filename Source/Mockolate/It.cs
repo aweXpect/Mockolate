@@ -23,24 +23,6 @@ public partial class It
 		// Prevent instantiation.
 	}
 
-	private static bool TryCast<T>(object? value, out T typedValue)
-	{
-		if (value is T castValue)
-		{
-			typedValue = castValue;
-			return true;
-		}
-
-		if (value is null && default(T) is null)
-		{
-			typedValue = default!;
-			return true;
-		}
-
-		typedValue = default!;
-		return false;
-	}
-
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
@@ -56,16 +38,6 @@ public partial class It
 		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
 		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
 		/// </returns>
-		public virtual bool Matches(object? value)
-		{
-			if (value is T typedValue)
-			{
-				return Matches(typedValue);
-			}
-
-			return value is null && Matches(default(T)!);
-		}
-
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
 		public virtual bool Matches(INamedParameterValue value)
 		{
@@ -75,15 +47,6 @@ public partial class It
 			}
 
 			return false;
-		}
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		public void InvokeCallbacks(object? value)
-		{
-			if (TryCast(value, out T typedValue) && _callbacks is not null)
-			{
-				_callbacks.ForEach(a => a.Invoke(typedValue));
-			}
 		}
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />

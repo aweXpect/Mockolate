@@ -52,17 +52,6 @@ public static partial class HttpClientExtensions
 		params IHttpRequestMessageParameter[] parameters)
 		: IParameter
 	{
-		public bool Matches(object? value)
-		{
-			if (value is HttpRequestMessage requestMessage &&
-			    requestMessage.Method == method)
-			{
-				return parameters.All(parameter => parameter.Matches(requestMessage));
-			}
-
-			return false;
-		}
-
 		public bool Matches(INamedParameterValue value)
 		{
 			if (value.TryGetValue(out HttpRequestMessage requestMessage) &&
@@ -72,17 +61,6 @@ public static partial class HttpClientExtensions
 			}
 
 			return false;
-		}
-
-		public void InvokeCallbacks(object? value)
-		{
-			if (value is HttpRequestMessage typedValue)
-			{
-				foreach (IHttpRequestMessageParameter parameter in parameters)
-				{
-					parameter.InvokeCallbacks(typedValue);
-				}
-			}
 		}
 
 		public void InvokeCallbacks(INamedParameterValue value)
@@ -122,14 +100,14 @@ public static partial class HttpClientExtensions
 				return httpRequestMessageParameter.Matches(valueSelector(value), value);
 			}
 
-			return ((IParameter)parameter).Matches(valueSelector(value));
+			return ((IParameter)parameter).Matches(new NamedParameterValue<T>(string.Empty, valueSelector(value)));
 		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)
 		{
 			if (parameter is IParameter invokableParameter)
 			{
-				invokableParameter.InvokeCallbacks(valueSelector(value));
+				invokableParameter.InvokeCallbacks(new NamedParameterValue<T>(string.Empty, valueSelector(value)));
 			}
 		}
 
@@ -154,15 +132,15 @@ public static partial class HttpClientExtensions
 			}
 
 			string requestUri1 = value.RequestUri.ToString();
-			return invokableParameter.Matches(requestUri1) ||
-			       (requestUri1.EndsWith('/') && invokableParameter.Matches(requestUri1.TrimEnd('/')));
+			return invokableParameter.Matches(new NamedParameterValue<string?>(string.Empty, requestUri1)) ||
+			       (requestUri1.EndsWith('/') && invokableParameter.Matches(new NamedParameterValue<string?>(string.Empty, requestUri1.TrimEnd('/'))));
 		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)
 		{
 			if (parameter is IParameter invokableParameter)
 			{
-				invokableParameter.InvokeCallbacks(value.RequestUri?.ToString());
+				invokableParameter.InvokeCallbacks(new NamedParameterValue<string?>(string.Empty, value.RequestUri?.ToString()));
 			}
 		}
 

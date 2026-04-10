@@ -327,7 +327,6 @@ public static class SetupExtensions
 			=> setup.Only(1);
 	}
 
-
 	/// <summary>
 	///     Extensions for method setup returning void without parameters.
 	/// </summary>

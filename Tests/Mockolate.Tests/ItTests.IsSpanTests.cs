@@ -17,7 +17,7 @@ public sealed partial class ItTests
 			Span<char> valueSpan = new(value.ToCharArray());
 			IVerifySpanParameter<char> sut = It.IsSpan<char>(c => c.Length > 0 && c[0] == 'b');
 
-			bool result = ((IParameter)sut).Matches((SpanWrapper<char>)valueSpan);
+			bool result = ((IParameter)sut).Matches(new NamedParameterValue<SpanWrapper<char>>(string.Empty, (SpanWrapper<char>)valueSpan));
 
 			await That(result).IsEqualTo(expectSuccess);
 		}
