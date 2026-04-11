@@ -286,6 +286,52 @@ public sealed partial class SetupIndexerTests
 			.WithMessage("The indexer [null, 1, 2] was accessed without prior setup.");
 	}
 
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task WithReadOnlySpanIndexerParameters_ShouldCompile()
+	{
+		ReadOnlySpan<int> readOnlySpan123 = ((int[])[1, 2, 3,]).AsSpan();
+		ReadOnlySpan<int> readOnlySpan456 = ((int[])[4, 5, 6,]).AsSpan();
+		IMyServiceWithSpanIndexerParameters sut = IMyServiceWithSpanIndexerParameters.CreateMock();
+		sut.Mock.Setup[It.IsReadOnlySpan<int>(x => x[0] == 1)].InitializeWith(42);
+
+		int result1 = sut[readOnlySpan123];
+		int result2 = sut[readOnlySpan456];
+
+		await That(result1).IsEqualTo(42);
+		await That(result2).IsEqualTo(0);
+		await That(sut.Mock.Verify[It.IsReadOnlySpan<int>(x => x[0] == 1)].Got()).Once();
+		await That(sut.Mock.Verify[It.IsReadOnlySpan<int>(x => x[0] == 4)].Got()).Once();
+		await That(sut.Mock.Verify[It.IsReadOnlySpan<int>(x => x[0] == 9)].Got()).Never();
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task WithSpanIndexerParameters_ShouldCompile()
+	{
+		Span<char> fooSpan = "foo".ToCharArray().AsSpan();
+		Span<char> barSpan = "bar".ToCharArray().AsSpan();
+		IMyServiceWithSpanIndexerParameters sut = IMyServiceWithSpanIndexerParameters.CreateMock();
+		sut.Mock.Setup[It.IsSpan<char>(x => x[0] == 'f')].InitializeWith(42);
+
+		int result1 = sut[fooSpan];
+		int result2 = sut[barSpan];
+
+		await That(result1).IsEqualTo(42);
+		await That(result2).IsEqualTo(0);
+		await That(sut.Mock.Verify[It.IsSpan<char>(x => x[0] == 'f')].Got()).Once();
+		await That(sut.Mock.Verify[It.IsSpan<char>(x => x[0] == 'b')].Got()).Once();
+		await That(sut.Mock.Verify[It.IsSpan<char>(x => x[0] == 'x')].Got()).Never();
+	}
+#endif
+
+	public interface IMyServiceWithSpanIndexerParameters
+	{
+		int this[Span<char> buffer] { get; set; }
+		int this[ReadOnlySpan<int> values] { get; set; }
+	}
+
 	public class IndexerWith1Parameter
 	{
 		[Fact]

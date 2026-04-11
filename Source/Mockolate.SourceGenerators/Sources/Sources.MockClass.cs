@@ -1201,16 +1201,15 @@ internal static partial class Sources
 
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry).Append(".GetIndexer<").AppendTypeOrWrapper(property.Type)
-						.Append(">(").Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
-						.Append(").GetResult(() => ")
+					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry);
+					AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
+					sb.Append(".GetResult(() => ")
 						.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
 						.Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\tvar ").Append(indexerResultVarName).Append(" = this.").Append(mockRegistryName).Append(".GetIndexer<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
-						.AppendLine(");");
+					sb.Append("\t\t\t\tvar ").Append(indexerResultVarName).Append(" = this.").Append(mockRegistryName);
+					AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
+					sb.AppendLine(";");
 					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps[")
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
 						.AppendLine();
@@ -1243,10 +1242,9 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
-					sb.Append("\t\t\t\tvar ").Append(indexerResultVarName).Append(" = this.").Append(mockRegistryName).Append(".GetIndexer<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
-						.AppendLine(");");
+					sb.Append("\t\t\t\tvar ").Append(indexerResultVarName).Append(" = this.").Append(mockRegistryName);
+					AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
+					sb.AppendLine(";");
 					sb.Append("\t\t\t\tif (!").Append(indexerResultVarName).Append(".SkipBaseClass)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property.Getter?.IsProtected != true)
@@ -1292,10 +1290,9 @@ internal static partial class Sources
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
-				sb.Append("\t\t\t\treturn this.").Append(mockRegistryName).Append(".GetIndexer<")
-					.AppendTypeOrWrapper(property.Type).Append(">(")
-					.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
-					.Append(").GetResult(() => ")
+				sb.Append("\t\t\t\treturn this.").Append(mockRegistryName);
+				AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
+				sb.Append(".GetResult(() => ")
 					.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
 					.Append(");").AppendLine();
 			}
@@ -1326,11 +1323,9 @@ internal static partial class Sources
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetIndexer<")
-						.Append(property.Type.Fullname)
-						.Append(">(value, ")
-						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
-						.Append(");").AppendLine();
+					sb.Append("\t\t\t\tthis.").Append(mockRegistryName);
+					AppendSetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
+					sb.Append(";").AppendLine();
 
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
@@ -1356,10 +1351,9 @@ internal static partial class Sources
 			{
 				if (!isClassInterface && !property.IsAbstract)
 				{
-					sb.Append("\t\t\t\tif (!this.").Append(mockRegistryName).Append(".SetIndexer<").Append(property.Type.Fullname)
-						.Append(">(value, ")
-						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value)).Append("))")
-						.AppendLine();
+					sb.Append("\t\t\t\tif (!this.").Append(mockRegistryName);
+					AppendSetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
+					sb.Append(")").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property.Setter?.IsProtected != true)
 					{
@@ -1387,11 +1381,9 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetIndexer<")
-						.Append(property.Type.Fullname)
-						.Append(">(value, ")
-						.Append(FormatIndexerParametersAsNameOrWrapper(property.IndexerParameters.Value))
-						.AppendLine(");");
+					sb.Append("\t\t\t\tthis.").Append(mockRegistryName);
+					AppendSetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
+					sb.AppendLine(";");
 				}
 			}
 			else

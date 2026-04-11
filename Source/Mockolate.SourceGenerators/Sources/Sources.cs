@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
 using Mockolate.SourceGenerators.Internals;
+using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
 
@@ -83,6 +84,86 @@ internal static partial class Sources
 				=> $"new global::Mockolate.Parameters.NamedParameterValue<{p.ToTypeOrWrapper()}>(\"{p.Name}\", {p.ToNameOrWrapper()})"));
 
 	/// <summary>
+	///     Appends a typed <c>GetIndexer</c> call, using the typed overload for 1–4 parameters
+	///     and falling back to the <c>params INamedParameterValue[]</c> overload otherwise.
+	/// </summary>
+	private static void AppendGetIndexerCall(
+		StringBuilder sb, Type propertyType, EquatableArray<MethodParameter> parameters)
+	{
+		bool useTypedOverload = parameters.Count is >= 1 and <= MaxExplicitParameters;
+		sb.Append(".GetIndexer<").AppendTypeOrWrapper(propertyType);
+		if (useTypedOverload)
+		{
+			foreach (Type? type in parameters.Select(p => p.Type))
+			{
+				sb.Append(", ").AppendTypeOrWrapper(type);
+			}
+		}
+
+		sb.Append(">(");
+		if (useTypedOverload)
+		{
+			bool first = true;
+			foreach (MethodParameter p in parameters)
+			{
+				if (!first)
+				{
+					sb.Append(", ");
+				}
+
+				sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
+				first = false;
+			}
+		}
+		else
+		{
+			sb.Append(FormatIndexerParametersAsNameOrWrapper(parameters));
+		}
+
+		sb.Append(')');
+	}
+
+	/// <summary>
+	///     Appends a typed <c>SetIndexer</c> call, using the typed overload for 1–4 parameters
+	///     and falling back to the <c>params INamedParameterValue[]</c> overload otherwise.
+	/// </summary>
+	private static void AppendSetIndexerCall(
+		StringBuilder sb, Type propertyType, EquatableArray<MethodParameter> parameters)
+	{
+		bool useTypedOverload = parameters.Count is >= 1 and <= MaxExplicitParameters;
+		sb.Append(".SetIndexer<").Append(propertyType.Fullname);
+		if (useTypedOverload)
+		{
+			foreach (Type? type in parameters.Select(p => p.Type))
+			{
+				sb.Append(", ").AppendTypeOrWrapper(type);
+			}
+		}
+
+		sb.Append(">(value, ");
+		if (useTypedOverload)
+		{
+			bool first = true;
+			foreach (MethodParameter p in parameters)
+			{
+				if (!first)
+				{
+					sb.Append(", ");
+				}
+
+				sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
+				first = false;
+			}
+		}
+		else
+		{
+			sb.Append(FormatIndexerParametersAsNameOrWrapper(parameters));
+		}
+
+		sb.Append(')');
+	}
+
+	/// <summary>
 	///     Formats indexer parameters as comma-separated names.
 	/// </summary>
 	private static string FormatIndexerParametersAsNames(EquatableArray<MethodParameter> parameters)
@@ -147,9 +228,13 @@ internal static partial class Sources
 		{
 			sb.Append(paramRef).Append(" is null ? \"null\" : ");
 			if (parameter.Type.IsFormattable)
+			{
 				sb.Append("((global::System.IFormattable)").Append(paramRef).Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
+			}
 			else
+			{
 				sb.Append(paramRef).Append(".ToString()");
+			}
 		}
 		else if (parameter.Type.IsFormattable)
 		{
