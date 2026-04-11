@@ -27,8 +27,8 @@ internal static partial class Sources
 		                           (@class.AllMethods().Any(method => method.IsProtected)
 		                            || @class.AllProperties().Any(property => property.IsProtected));
 		string setupType = hasProtectedMembers
-			? $"global::System.Action<IMockSetupInitializationFor{name}>"
-			: $"global::System.Action<global::Mockolate.Mock.IMockSetupFor{name}>";
+			? $"IMockSetupInitializationFor{name}"
+			: $"global::Mockolate.Mock.IMockSetupFor{name}";
 		string mockRegistryName = @class.GetUniqueName("MockRegistry", "MockolateMockRegistry");
 		StringBuilder sb = InitializeBuilder();
 
@@ -81,7 +81,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(").Append(setupType).Append(" setup)").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::System.Action<").Append(setupType).Append("> setup)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, setup);").AppendLine();
 		sb.AppendLine();
 
@@ -92,7 +92,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, ").Append(setupType).Append(" setup)").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<").Append(setupType).Append("> setup)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, setup);").AppendLine();
 		sb.AppendLine();
 
@@ -110,19 +110,19 @@ internal static partial class Sources
 
 			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" />.");
 			sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, ").Append(setupType).Append(" setup)").AppendLine();
+			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, global::System.Action<").Append(setupType).Append("> setup)").AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, null, setup);").AppendLine();
 			sb.AppendLine();
 		}
 
 		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ").Append(@class.ClassFullName).Append(" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior, ").Append(setupType).Append("? setup)").AppendLine();
+		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ").Append(@class.ClassFullName).Append(" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior, global::System.Action<").Append(setupType).Append(">? setup)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (mockBehavior is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;").AppendLine();
-		sb.Append("\t\t\t\tif (mockBehaviorAccess.TryGet<").Append(setupType).Append("?>(out var additionalSetup))").AppendLine();
+		sb.Append("\t\t\t\tif (mockBehaviorAccess.TryGet<global::System.Action<").Append(setupType).Append(">?>(out var additionalSetup))").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tif (setup is null)").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
@@ -173,7 +173,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 
 		sb.AppendLine();
-		sb.Append("\t\tprivate static ").Append(@class.ClassFullName).Append(" CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, ").Append(setupType).Append("? setup)").AppendLine();
+		sb.Append("\t\tprivate static ").Append(@class.ClassFullName).Append(" CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<").Append(setupType).Append(">? setup)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		if (!@class.IsInterface && constructors?.Count > 0)
 		{
@@ -336,7 +336,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Initialize mocks of type <typeparamref name=\"T\" /> with the given <paramref name=\"setup\" />.");
 		sb.AppendXmlRemarks("The <paramref name=\"setup\" /> is applied to the mock before the constructor is executed.");
-		sb.Append("\t\tpublic global::Mockolate.MockBehavior Initialize<T>(").Append(setupType).Append(" setup)").AppendLine();
+		sb.Append("\t\tpublic global::Mockolate.MockBehavior Initialize<T>(global::System.Action<").Append(setupType).Append("> setup)").AppendLine();
 		sb.Append("\t\t\twhere T : ").Append(@class.ClassFullName).AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;").AppendLine();
@@ -422,6 +422,7 @@ internal static partial class Sources
 		if (hasProtectedMembers)
 		{
 			sb.Append(", IMockProtectedSetupFor").Append(name);
+			sb.Append(", global::Mockolate.MockExtensionsFor").Append(name).Append(".IMockSetupInitializationFor").Append(name);
 		}
 
 		if (hasStaticMembers)
@@ -485,8 +486,10 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
-
-		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
+		setupType = hasProtectedMembers
+			? $"global::Mockolate.MockExtensionsFor{name}.IMockSetupInitializationFor{name}"
+			: $"global::Mockolate.Mock.IMockSetupFor{name}";
+		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents, setupType);
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
@@ -664,6 +667,17 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
+		sb.AppendXmlSummary($"Set up a scenario on the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.Append("\t\t").Append(setupType).Append(" SetupScenario(string scenarioName);").AppendLine();
+		sb.AppendLine();
+		
+		sb.AppendXmlSummary($"Set up a scenario on the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.Append("\t\tIMockFor").Append(name).Append(" SetupScenario(string scenarioName, global::System.Action<").Append(setupType).Append("> setup);").AppendLine();
+		sb.AppendLine();
+		sb.AppendXmlSummary($"Change the active scenario on the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.Append("\t\tIMockFor").Append(name).Append(" ChangeScenario(string scenarioName);").AppendLine();
+		sb.AppendLine();
+		
 		if (hasEvents)
 		{
 			sb.AppendXmlSummary($"Raise events on the mock of <see cref=\"{escapedClassName}\" />.");
@@ -850,7 +864,9 @@ internal static partial class Sources
 	}
 
 #pragma warning disable S107 // Methods should not have too many parameters
-	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name, bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
+	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name,
+		bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents,
+		string setupType)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
@@ -863,6 +879,11 @@ internal static partial class Sources
 			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
 			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".SetupProtected").AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
+			
+			sb.Append("\t\t/// <inheritdoc />").AppendLine();
+			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" global::Mockolate.MockExtensionsFor").Append(name).Append(".IMockSetupInitializationFor").Append(name).Append(".Protected").AppendLine();
+			sb.Append("\t\t\t=> this;").AppendLine();
 		}
 
 		if (hasStaticMembers)
@@ -872,6 +893,33 @@ internal static partial class Sources
 			sb.Append("\t\tIMockStaticSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".SetupStatic").AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
+
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\t").Append(setupType).Append(" IMockFor").Append(name)
+			.Append(".SetupScenario(string scenarioName)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = scenarioName;").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name)
+			.Append(".SetupScenario(string scenarioName, global::System.Action<").Append(setupType)
+			.Append("> setup)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = scenarioName;").AppendLine();
+		sb.Append("\t\t\tsetup.Invoke(this);").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = \"\";").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name).Append(".ChangeScenario(string scenarioName)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".Scenario = scenarioName;").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
 
 		if (hasEvents)
 		{
@@ -929,7 +977,7 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tbool IMockFor").Append(name).Append(".VerifyThatAllSetupsAreUsed()").AppendLine();
 		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".GetUnusedSetups(this.").Append(mockRegistryName).Append(".Interactions).Count == 0;").AppendLine();
-
+		
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tvoid IMockFor").Append(name).Append(".ClearAllInteractions()").AppendLine();
 		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".ClearAllInteractions();").AppendLine();

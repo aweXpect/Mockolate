@@ -11,8 +11,6 @@ namespace Mockolate.Setup;
 
 internal partial class MockSetups
 {
-	internal MethodSetups Methods { get; } = new();
-
 	[DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 	[DebuggerNonUserCode]

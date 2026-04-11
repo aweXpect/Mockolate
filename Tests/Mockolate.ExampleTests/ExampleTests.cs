@@ -40,11 +40,16 @@ public class ExampleTests
 		MyClass sut = MyClass.CreateMock([3,]);
 
 		sut.Mock.Setup.MyMethod(It.IsAny<int>()).Returns(5);
+		sut.Mock.Setup.Value.OnGet.ChangeScenario("bar");
+		sut.Mock.SetupScenario("bar", s => s.MyMethod(It.IsAny<int>()).Returns(10))
+			.SetupScenario("baz", s => s.MyMethod(It.IsAny<int>()).Returns(15));
+		sut.Mock.ChangeScenario("baz");
 
+		_ = sut.Value;
 		int result = sut.MyMethod(3);
 
 		VerificationResult<Mock.IMockVerifyForMyClass> check = sut.Mock.Verify.MyMethod(It.IsAny<int>());
-		await That(result).IsEqualTo(5);
+		await That(result).IsEqualTo(10);
 		check.Once();
 	}
 

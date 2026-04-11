@@ -12,8 +12,6 @@ namespace Mockolate.Setup;
 
 internal partial class MockSetups
 {
-	internal IndexerSetups Indexers { get; } = new();
-
 	[DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 	[DebuggerNonUserCode]

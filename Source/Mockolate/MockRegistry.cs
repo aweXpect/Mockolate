@@ -57,6 +57,17 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     The current scenario of the mock.
+	/// </summary>
+	public string Scenario { get; set; } = "";
+
+	/// <summary>
+	///     The current setup scenario of the mock.
+	/// </summary>
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	public string SetupScenario { get; set; } = "";
+
+	/// <summary>
 	///     Gets the behavior settings used by this mock instance.
 	/// </summary>
 	public MockBehavior Behavior { get; }
