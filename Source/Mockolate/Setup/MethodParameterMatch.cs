@@ -15,7 +15,7 @@ namespace Mockolate.Setup;
 ///     and the <paramref name="parameters" /> are matched one by one against the corresponding parameter in the method
 ///     invocation.
 /// </remarks>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public readonly struct MethodParameterMatch(string methodName, NamedParameter[] parameters)

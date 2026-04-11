@@ -14,7 +14,7 @@ internal partial class MockSetups
 	internal MethodSetups Methods { get; } = new();
 
 	[DebuggerDisplay("{ToString()}")]
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	internal sealed class MethodSetups

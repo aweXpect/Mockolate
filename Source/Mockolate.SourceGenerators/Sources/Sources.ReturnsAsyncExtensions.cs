@@ -18,7 +18,7 @@ internal static partial class Sources
 		sb.Append("/// <summary>").AppendLine();
 		sb.Append("///     Extensions for setting up return values and throwing exceptions for <see langword=\"async\" /> methods.").AppendLine();
 		sb.Append("/// </summary>").AppendLine();
-#if RELEASE
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.Append("[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();

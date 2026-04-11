@@ -54,7 +54,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class RefParameterMatch<T>(
@@ -91,7 +91,7 @@ public partial class It
 	/// <summary>
 	///     Matches any method <see langword="ref" /> parameter.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class AnyRefParameterMatch<T> : TypedRefMatch<T>
@@ -108,7 +108,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method <see langword="out" /> parameter against an expectation.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameter, ITypedParameter<T>
@@ -133,7 +133,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private abstract class TypedRefMatch<T> : IRefParameter<T>, IParameter, ITypedParameter<T>

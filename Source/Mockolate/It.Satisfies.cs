@@ -18,7 +18,7 @@ public partial class It
 		string doNotPopulateThisValue = "")
 		=> new SatisfiesPredicateMatch<T>(predicate, doNotPopulateThisValue);
 
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class SatisfiesPredicateMatch<T>(Func<T, bool> predicate, string predicateExpression) : TypedMatch<T>

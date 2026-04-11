@@ -8,7 +8,7 @@ namespace Mockolate.Interactions;
 ///     An access of an indexer getter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class IndexerGetterAccess(INamedParameterValue[] parameters) : IndexerAccess(parameters)

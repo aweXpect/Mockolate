@@ -8,7 +8,7 @@ namespace Mockolate.Interactions;
 ///     A subscription to an event.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class EventSubscription(string name, object? target, MethodInfo method) : IInteraction, ISettableInteraction

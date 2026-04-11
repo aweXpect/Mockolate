@@ -9,7 +9,7 @@ namespace Mockolate.Internals.Polyfills;
 ///     Provides polyfill extension methods on <see langword="string" />.
 /// </summary>
 [ExcludeFromCodeCoverage]
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 internal static class StringExtensionMethods

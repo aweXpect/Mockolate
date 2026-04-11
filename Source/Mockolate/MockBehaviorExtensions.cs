@@ -6,7 +6,7 @@ namespace Mockolate;
 /// <summary>
 ///     Extension methods for <see cref="MockBehavior" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public static class MockBehaviorExtensions

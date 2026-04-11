@@ -9,7 +9,7 @@ namespace Mockolate.Parameters;
 /// </summary>
 /// <param name="Name">The name of the parameter.</param>
 /// <param name="Value">The parameter value.</param>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public record NamedParameterValue<T>(

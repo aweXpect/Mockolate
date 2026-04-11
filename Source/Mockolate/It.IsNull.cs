@@ -14,7 +14,7 @@ public partial class It
 	public static IParameter<T> IsNull<T>(string? toString = null)
 		=> new NullParameterMatch<T>(toString);
 
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class NullParameterMatch<T>(string? toString) : TypedMatch<T>

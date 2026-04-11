@@ -10,7 +10,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A result of an indexer setup.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior behavior)
@@ -25,7 +25,7 @@ public class IndexerSetupResult(IInteractiveIndexerSetup? setup, MockBehavior be
 /// <summary>
 ///     A result of an indexer setup with return type <typeparamref name="TResult" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetupResult<TResult>(

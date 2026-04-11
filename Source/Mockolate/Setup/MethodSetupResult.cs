@@ -7,7 +7,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A result of a method setup invocation.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior behavior)
@@ -66,7 +66,7 @@ public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior beha
 /// <summary>
 ///     A result of a method setup invocation with return type <typeparamref name="TResult" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class MethodSetupResult<TResult>(IInteractiveMethodSetup? setup, MockBehavior behavior, TResult result)

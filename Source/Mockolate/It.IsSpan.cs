@@ -27,7 +27,7 @@ public partial class It
 		string doNotPopulateThisValue = "")
 		=> new SpanParameterMatch<T>(predicate, doNotPopulateThisValue);
 
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class SpanParameterMatch<T>(Func<T[], bool>? predicate, string? predicateExpression = null)

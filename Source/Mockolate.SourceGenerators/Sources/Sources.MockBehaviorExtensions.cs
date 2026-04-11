@@ -58,7 +58,7 @@ internal static partial class Sources
 		          	///     parameter <typeparamref name="T" />.
 		          	/// </summary>
 		          """);
-#if RELEASE
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.AppendLine("""
@@ -82,7 +82,7 @@ internal static partial class Sources
 			          	///     <paramref name="statusCode" />.
 			          	/// </summary>
 			          """);
-#if RELEASE
+#if !DEBUG
 			sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 			sb.AppendLine("""
@@ -106,7 +106,7 @@ internal static partial class Sources
 		          	///     Provides default values for common types used in mocking scenarios.
 		          	/// </summary>
 		          """);
-#if RELEASE
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.AppendLine("""
@@ -185,7 +185,7 @@ internal static partial class Sources
 		          		}
 
 		          """);
-#if RELEASE
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.AppendLine("""
@@ -209,7 +209,7 @@ internal static partial class Sources
 		              	}
 		              #if NET8_0_OR_GREATER
 		              """);
-#if RELEASE
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.AppendLine("""
@@ -239,7 +239,7 @@ internal static partial class Sources
 		              ///     Extensions on <see cref="IDefaultValueGenerator" />
 		              /// </summary>
 		              """);
-#if RELEASE
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.AppendLine("""

@@ -11,7 +11,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up a method returning <see langword="void" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class VoidMethodSetup(string name)
@@ -229,7 +229,7 @@ public class VoidMethodSetup(string name)
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <see langword="void" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class VoidMethodSetup<T1> : MethodSetup,
@@ -522,7 +522,7 @@ public class VoidMethodSetup<T1> : MethodSetup,
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <see langword="void" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class VoidMethodSetup<T1, T2> : MethodSetup,
@@ -818,7 +818,7 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <see langword="void" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
@@ -1123,7 +1123,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <see langword="void" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,

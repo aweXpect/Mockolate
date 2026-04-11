@@ -7,7 +7,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifications on a property of type <typeparamref name="TParameter" />.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class VerificationPropertyResult<TSubject, TParameter>

@@ -27,7 +27,7 @@ internal static partial class Sources
 		          namespace Mockolate
 		          {
 		          """);
-#if RELEASE
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.AppendLine("""
@@ -290,7 +290,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
-#if RELEASE
+#if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();

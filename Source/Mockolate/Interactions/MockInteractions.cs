@@ -13,7 +13,7 @@ namespace Mockolate.Interactions;
 ///     Keeps track of the interactions on the mock and its verifications.
 /// </summary>
 [DebuggerDisplay("{_interactions.Count} interactions")]
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteractions

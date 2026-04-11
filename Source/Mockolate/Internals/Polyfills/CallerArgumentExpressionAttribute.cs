@@ -13,7 +13,7 @@ namespace System.Runtime.CompilerServices
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Parameter)]
 	[ExcludeFromCodeCoverage]
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	internal sealed class CallerArgumentExpressionAttribute : Attribute

@@ -9,7 +9,7 @@ namespace Mockolate;
 /// <summary>
 ///     Extensions for setting up return values and throwing exceptions for <see langword="async" /> methods.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public static class ReturnsThrowsAsyncExtensions

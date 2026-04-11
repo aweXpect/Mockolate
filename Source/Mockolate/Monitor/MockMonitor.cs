@@ -14,7 +14,7 @@ namespace Mockolate.Monitor;
 ///     which events were subscribed to, during a test session. Monitoring is session-based; begin a session with the Run
 ///     method and dispose the returned scope to finalize monitoring.
 /// </remarks>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public abstract class MockMonitor
@@ -107,7 +107,7 @@ public abstract class MockMonitor
 ///     Monitoring is session-based: begin a session with the <see cref="MockMonitor.Run()" /> method and
 ///     dispose the returned scope to finalize monitoring.
 /// </remarks>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public sealed class MockMonitor<T> : MockMonitor

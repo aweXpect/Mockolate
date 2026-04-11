@@ -10,7 +10,7 @@ namespace Mockolate;
 /// <summary>
 ///     The behavior of the mock.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public record MockBehavior : IMockBehaviorAccess

@@ -7,7 +7,7 @@ namespace Mockolate.Interactions;
 ///     An access of a property getter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class PropertyGetterAccess(string propertyName) : PropertyAccess(propertyName)

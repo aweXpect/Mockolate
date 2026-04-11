@@ -15,7 +15,7 @@ public partial class It
 	public static IParameter<T> IsAny<T>()
 		=> new AnyParameterMatch<T>();
 
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class AnyParameterMatch<T> : TypedMatch<T>

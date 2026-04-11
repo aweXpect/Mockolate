@@ -13,7 +13,7 @@ public partial class It
 	public static IParameter<bool> IsTrue()
 		=> new TrueParameterMatch();
 
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class TrueParameterMatch : TypedMatch<bool>

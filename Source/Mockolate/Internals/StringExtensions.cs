@@ -2,7 +2,7 @@
 
 namespace Mockolate.Internals;
 
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 internal static class StringExtensions

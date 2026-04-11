@@ -5,7 +5,7 @@ using System.Text;
 namespace Mockolate.Setup;
 
 [DebuggerDisplay("{ToString()}")]
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 internal partial class MockSetups

@@ -11,7 +11,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public static class VerificationResultExtensions

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Mockolate.Internals;
 
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 internal readonly struct Wildcard

@@ -34,7 +34,7 @@ public partial class It
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : TypedOutMatch<T>
@@ -49,7 +49,7 @@ public partial class It
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class AnyOutParameterMatch<T> : TypedOutMatch<T>
@@ -61,7 +61,7 @@ public partial class It
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>, IParameter, ITypedParameter<T>
@@ -86,7 +86,7 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private abstract class TypedOutMatch<T> : IOutParameter<T>, IParameter, ITypedParameter<T>

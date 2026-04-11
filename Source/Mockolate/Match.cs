@@ -7,7 +7,7 @@ namespace Mockolate;
 /// <summary>
 ///     Specify a matching condition for a list of parameter.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public partial class Match

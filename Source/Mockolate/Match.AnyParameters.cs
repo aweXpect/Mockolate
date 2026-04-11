@@ -12,7 +12,7 @@ public partial class Match
 	public static IParameters AnyParameters()
 		=> new AnyParametersMatch();
 
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class AnyParametersMatch : IParameters

@@ -12,7 +12,7 @@ public partial class Match
 	public static IDefaultEventParameters WithDefaultParameters()
 		=> new DefaultEventParameters();
 
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	private sealed class DefaultEventParameters : IDefaultEventParameters

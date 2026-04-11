@@ -14,7 +14,7 @@ internal partial class MockSetups
 	internal PropertySetups Properties { get; } = new();
 
 	[DebuggerDisplay("{ToString()}")]
-#if RELEASE
+#if !DEBUG
 	[DebuggerNonUserCode]
 #endif
 	internal sealed class PropertySetups

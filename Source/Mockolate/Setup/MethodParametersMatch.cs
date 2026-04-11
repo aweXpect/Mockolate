@@ -12,7 +12,7 @@ namespace Mockolate.Setup;
 ///     During verification, the <paramref name="methodName" /> is compared to the method name of the method invocation,
 ///     and the <paramref name="parameters" /> are matched against the parameters in the method invocation.
 /// </remarks>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public readonly struct MethodParametersMatch(string methodName, IParameters parameters) : IMethodMatch

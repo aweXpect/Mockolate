@@ -8,7 +8,7 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A callback wrapper that allows conditional invocation based on predicates.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class Callback
@@ -100,7 +100,7 @@ public class Callback
 /// <summary>
 ///     A callback wrapper for the <paramref name="delegate" /> that allows conditional invocation based on predicates.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate : Delegate

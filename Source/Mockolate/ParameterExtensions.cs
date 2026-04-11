@@ -7,7 +7,7 @@ namespace Mockolate;
 /// <summary>
 ///     Extension methods for <see cref="IParameter" />s.
 /// </summary>
-#if RELEASE
+#if !DEBUG
 [DebuggerNonUserCode]
 #endif
 public static class ParameterExtensions
