@@ -125,6 +125,32 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	/// </summary>
 	protected static string FormatType(Type type)
 		=> type.FormatType();
+
+	/// <summary>
+	///     Checks if the given <paramref name="namedParameter" /> matches the typed <paramref name="value" />,
+	///     using <see cref="ITypedParameter{T}" /> when available to avoid boxing.
+	/// </summary>
+	protected static bool MatchesParameter<T>(NamedParameter namedParameter, string name, T value)
+	{
+		if (!string.IsNullOrEmpty(name) &&
+		    !namedParameter.Name.Equals(name, StringComparison.Ordinal))
+		{
+			return false;
+		}
+
+		if (namedParameter.Parameter is ITypedParameter<T> typed)
+		{
+			return typed.MatchesValue(namedParameter.Name, value);
+		}
+
+		return namedParameter.Parameter.Matches(new NamedParameterValue<T>(name, value));
+	}
+
+	/// <summary>
+	///     Invokes the callbacks of the given <paramref name="namedParameter" /> with the typed <paramref name="value" />.
+	/// </summary>
+	protected static void InvokeCallbacksParameter<T>(NamedParameter namedParameter, string name, T value)
+		=> namedParameter.Parameter.InvokeCallbacks(new NamedParameterValue<T>(name, value));
 }
 
 /// <summary>
@@ -135,7 +161,7 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 #endif
 public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
-	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
+	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>, ITypedIndexerMatch
 {
 	private readonly List<Callback<Action<int, T1, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, TValue, TValue>>> _returnCallbacks = [];
@@ -553,6 +579,29 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 	protected override bool IsMatch(INamedParameterValue[] parameters)
 		=> Matches([match1,], parameters);
 
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1)
+	{
+		if (!MatchesParameter(match1, n1, v1))
+		{
+			return false;
+		}
+
+		InvokeCallbacksParameter(match1, n1, v1);
+		return true;
+	}
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4) => false;
+
 	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
 	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		INamedParameterValue[] parameters,
@@ -579,7 +628,7 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 #endif
 public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter match2) : IndexerSetup
 	, IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
-	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
+	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>, ITypedIndexerMatch
 {
 	private readonly List<Callback<Action<int, T1, T2, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, TValue, TValue>>> _returnCallbacks = [];
@@ -1002,6 +1051,30 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 	protected override bool IsMatch(INamedParameterValue[] parameters)
 		=> Matches([match1, match2,], parameters);
 
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2)
+	{
+		if (!MatchesParameter(match1, n1, v1) || !MatchesParameter(match2, n2, v2))
+		{
+			return false;
+		}
+
+		InvokeCallbacksParameter(match1, n1, v1);
+		InvokeCallbacksParameter(match2, n2, v2);
+		return true;
+	}
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4) => false;
+
 	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
 	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		INamedParameterValue[] parameters,
@@ -1033,7 +1106,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	NamedParameter match2,
 	NamedParameter match3) : IndexerSetup,
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
-	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>
+	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>, ITypedIndexerMatch
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, TValue, TValue>>> _returnCallbacks = [];
@@ -1462,6 +1535,32 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	protected override bool IsMatch(INamedParameterValue[] parameters)
 		=> Matches([match1, match2, match3,], parameters);
 
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3)
+	{
+		if (!MatchesParameter(match1, n1, v1) || !MatchesParameter(match2, n2, v2) ||
+		    !MatchesParameter(match3, n3, v3))
+		{
+			return false;
+		}
+
+		InvokeCallbacksParameter(match1, n1, v1);
+		InvokeCallbacksParameter(match2, n2, v2);
+		InvokeCallbacksParameter(match3, n3, v3);
+		return true;
+	}
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4) => false;
+
 	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
 	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
 		INamedParameterValue[] parameters,
@@ -1497,7 +1596,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	NamedParameter match4)
 	: IndexerSetup,
 		IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
-		IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>
+		IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>, ITypedIndexerMatch
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TValue, TValue>>> _returnCallbacks = [];
@@ -1930,6 +2029,33 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	/// <inheritdoc cref="IsMatch(INamedParameterValue[])" />
 	protected override bool IsMatch(INamedParameterValue[] parameters)
 		=> Matches([match1, match2, match3, match4,], parameters);
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3) => false;
+
+	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
+	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
+		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4)
+	{
+		if (!MatchesParameter(match1, n1, v1) || !MatchesParameter(match2, n2, v2) ||
+		    !MatchesParameter(match3, n3, v3) || !MatchesParameter(match4, n4, v4))
+		{
+			return false;
+		}
+
+		InvokeCallbacksParameter(match1, n1, v1);
+		InvokeCallbacksParameter(match2, n2, v2);
+		InvokeCallbacksParameter(match3, n3, v3);
+		InvokeCallbacksParameter(match4, n4, v4);
+		return true;
+	}
 
 	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
 	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,

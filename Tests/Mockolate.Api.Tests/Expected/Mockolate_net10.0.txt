@@ -185,6 +185,10 @@ namespace Mockolate
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public void ClearAllInteractions() { }
         public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult>(params Mockolate.Parameters.INamedParameterValue[] parameters) { }
+        public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult, T1>(string p1Name, T1 p1) { }
+        public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2>(string p1Name, T1 p1, string p2Name, T2 p2) { }
+        public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2, T3>(string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3) { }
+        public Mockolate.Setup.IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2, T3, T4>(string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> Indexer<T>(T subject, params Mockolate.Parameters.NamedParameter[] parameters) { }
@@ -208,6 +212,10 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T> Property<T>(T subject, string propertyName, Mockolate.Parameters.IParameter value) { }
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public bool SetIndexer<TResult>(TResult value, params Mockolate.Parameters.INamedParameterValue[] parameters) { }
+        public bool SetIndexer<TResult, T1>(TResult value, string p1Name, T1 p1) { }
+        public bool SetIndexer<TResult, T1, T2>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2) { }
+        public bool SetIndexer<TResult, T1, T2, T3>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3) { }
+        public bool SetIndexer<TResult, T1, T2, T3, T4>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4) { }
         public bool SetProperty<T>(string propertyName, T value) { }
         public void SetupEvent(Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
@@ -1406,7 +1414,9 @@ namespace Mockolate.Setup
         protected abstract bool? GetSkipBaseClass();
         protected abstract bool IsMatch(Mockolate.Parameters.INamedParameterValue[] parameters);
         protected static string FormatType(System.Type type) { }
+        protected static void InvokeCallbacksParameter<T>(Mockolate.Parameters.NamedParameter namedParameter, string name, T value) { }
         protected static bool Matches(Mockolate.Parameters.NamedParameter[] namedParameters, Mockolate.Parameters.INamedParameterValue[] values) { }
+        protected static bool MatchesParameter<T>(Mockolate.Parameters.NamedParameter namedParameter, string name, T value) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
     public class IndexerSetupResult

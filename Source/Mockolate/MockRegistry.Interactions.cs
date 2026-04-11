@@ -434,6 +434,80 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Gets the value from the indexer with one typed parameter.
+	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public IndexerSetupResult<TResult> GetIndexer<TResult, T1>(string p1Name, T1 p1)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1);
+		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
+		IndexerGetterAccess interaction = new(parameters);
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
+			Setup.Indexers.UpdateValue);
+	}
+
+	/// <summary>
+	///     Gets the value from the indexer with two typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2>(string p1Name, T1 p1, string p2Name, T2 p2)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2)
+		];
+		IndexerGetterAccess interaction = new(parameters);
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
+			Setup.Indexers.UpdateValue);
+	}
+
+	/// <summary>
+	///     Gets the value from the indexer with three typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2, T3>(
+		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3)
+		];
+		IndexerGetterAccess interaction = new(parameters);
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
+			Setup.Indexers.UpdateValue);
+	}
+
+	/// <summary>
+	///     Gets the value from the indexer with four typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	public IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2, T3, T4>(
+		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3),
+			new NamedParameterValue<T4>(p4Name, p4)
+		];
+		IndexerGetterAccess interaction = new(parameters);
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
+			Setup.Indexers.UpdateValue);
+	}
+
+	/// <summary>
 	///     Gets the value from the indexer with the given parameters.
 	/// </summary>
 	public IndexerSetupResult<TResult> GetIndexer<TResult>(params INamedParameterValue[] parameters)
@@ -444,6 +518,100 @@ public partial class MockRegistry
 		IndexerSetup? matchingSetup = Setup.Indexers.GetLatestOrDefault(interaction);
 		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
 			Setup.Indexers.UpdateValue);
+	}
+
+	/// <summary>
+	///     Sets the value of the indexer with one typed parameter.
+	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	/// <remarks>
+	///     Returns a flag, indicating whether the base class implementation should be skipped.
+	/// </remarks>
+	public bool SetIndexer<TResult, T1>(TResult value, string p1Name, T1 p1)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1);
+		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
+		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+
+		Setup.Indexers.UpdateValue(parameters, value);
+		matchingSetup?.InvokeSetter(interaction, value, Behavior);
+		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	/// <summary>
+	///     Sets the value of the indexer with two typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	/// <remarks>
+	///     Returns a flag, indicating whether the base class implementation should be skipped.
+	/// </remarks>
+	public bool SetIndexer<TResult, T1, T2>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2)
+		];
+		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+
+		Setup.Indexers.UpdateValue(parameters, value);
+		matchingSetup?.InvokeSetter(interaction, value, Behavior);
+		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	/// <summary>
+	///     Sets the value of the indexer with three typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	/// <remarks>
+	///     Returns a flag, indicating whether the base class implementation should be skipped.
+	/// </remarks>
+	public bool SetIndexer<TResult, T1, T2, T3>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2,
+		string p3Name, T3 p3)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3)
+		];
+		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+
+		Setup.Indexers.UpdateValue(parameters, value);
+		matchingSetup?.InvokeSetter(interaction, value, Behavior);
+		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	/// <summary>
+	///     Sets the value of the indexer with four typed parameters.
+	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
+	///     allocated for recording.
+	/// </summary>
+	/// <remarks>
+	///     Returns a flag, indicating whether the base class implementation should be skipped.
+	/// </remarks>
+	public bool SetIndexer<TResult, T1, T2, T3, T4>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2,
+		string p3Name, T3 p3, string p4Name, T4 p4)
+	{
+		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
+		INamedParameterValue[] parameters = [
+			new NamedParameterValue<T1>(p1Name, p1),
+			new NamedParameterValue<T2>(p2Name, p2),
+			new NamedParameterValue<T3>(p3Name, p3),
+			new NamedParameterValue<T4>(p4Name, p4)
+		];
+		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+
+		Setup.Indexers.UpdateValue(parameters, value);
+		matchingSetup?.InvokeSetter(interaction, value, Behavior);
+		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 
 	/// <summary>

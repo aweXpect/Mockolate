@@ -133,6 +133,104 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Retrieves the latest indexer setup that matches the single typed parameter,
+	///     or returns <see langword="null" /> if no matching setup is found.
+	/// </summary>
+	private IndexerSetup? GetIndexerSetupTyped<T1>(string n1, T1 v1)
+	{
+		IndexerGetterAccess? fallback = null;
+		return Setup.Indexers.GetLatestOrDefault(Predicate);
+
+		[DebuggerNonUserCode]
+		bool Predicate(IndexerSetup setup)
+		{
+			if (setup is ITypedIndexerMatch typed)
+			{
+				return typed.MatchesTyped(n1, v1);
+			}
+
+			fallback ??= new IndexerGetterAccess([new NamedParameterValue<T1>(n1, v1)]);
+			return ((IInteractiveIndexerSetup)setup).Matches(fallback);
+		}
+	}
+
+	/// <summary>
+	///     Retrieves the latest indexer setup that matches the two typed parameters,
+	///     or returns <see langword="null" /> if no matching setup is found.
+	/// </summary>
+	private IndexerSetup? GetIndexerSetupTyped<T1, T2>(string n1, T1 v1, string n2, T2 v2)
+	{
+		IndexerGetterAccess? fallback = null;
+		return Setup.Indexers.GetLatestOrDefault(Predicate);
+
+		[DebuggerNonUserCode]
+		bool Predicate(IndexerSetup setup)
+		{
+			if (setup is ITypedIndexerMatch typed)
+			{
+				return typed.MatchesTyped(n1, v1, n2, v2);
+			}
+
+			fallback ??= new IndexerGetterAccess([
+				new NamedParameterValue<T1>(n1, v1),
+				new NamedParameterValue<T2>(n2, v2)]);
+			return ((IInteractiveIndexerSetup)setup).Matches(fallback);
+		}
+	}
+
+	/// <summary>
+	///     Retrieves the latest indexer setup that matches the three typed parameters,
+	///     or returns <see langword="null" /> if no matching setup is found.
+	/// </summary>
+	private IndexerSetup? GetIndexerSetupTyped<T1, T2, T3>(string n1, T1 v1, string n2, T2 v2, string n3, T3 v3)
+	{
+		IndexerGetterAccess? fallback = null;
+		return Setup.Indexers.GetLatestOrDefault(Predicate);
+
+		[DebuggerNonUserCode]
+		bool Predicate(IndexerSetup setup)
+		{
+			if (setup is ITypedIndexerMatch typed)
+			{
+				return typed.MatchesTyped(n1, v1, n2, v2, n3, v3);
+			}
+
+			fallback ??= new IndexerGetterAccess([
+				new NamedParameterValue<T1>(n1, v1),
+				new NamedParameterValue<T2>(n2, v2),
+				new NamedParameterValue<T3>(n3, v3)]);
+			return ((IInteractiveIndexerSetup)setup).Matches(fallback);
+		}
+	}
+
+	/// <summary>
+	///     Retrieves the latest indexer setup that matches the four typed parameters,
+	///     or returns <see langword="null" /> if no matching setup is found.
+	/// </summary>
+	private IndexerSetup? GetIndexerSetupTyped<T1, T2, T3, T4>(
+		string n1, T1 v1, string n2, T2 v2, string n3, T3 v3, string n4, T4 v4)
+	{
+		IndexerGetterAccess? fallback = null;
+		return Setup.Indexers.GetLatestOrDefault(Predicate);
+
+		[DebuggerNonUserCode]
+		bool Predicate(IndexerSetup setup)
+		{
+			if (setup is ITypedIndexerMatch typed)
+			{
+				return typed.MatchesTyped(n1, v1, n2, v2, n3, v3, n4, v4);
+			}
+
+			fallback ??= new IndexerGetterAccess([
+				new NamedParameterValue<T1>(n1, v1),
+				new NamedParameterValue<T2>(n2, v2),
+				new NamedParameterValue<T3>(n3, v3),
+				new NamedParameterValue<T4>(n4, v4)]);
+			return ((IInteractiveIndexerSetup)setup).Matches(fallback);
+		}
+	}
+
+	/// <summary>
 	///     Gets the indexer value for the given <paramref name="parameters" />.
 	/// </summary>
 	private TValue GetIndexerValue<TValue>(IInteractiveIndexerSetup? setup, Func<TValue> defaultValueGenerator,
