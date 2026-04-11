@@ -10,7 +10,9 @@ namespace Mockolate;
 /// <summary>
 ///     The behavior of the mock.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public record MockBehavior : IMockBehaviorAccess
 {
 	private ConcurrentStack<IConstructorParameters>? _constructorParameters;

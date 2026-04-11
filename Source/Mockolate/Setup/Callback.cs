@@ -8,7 +8,9 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     A callback wrapper that allows conditional invocation based on predicates.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public class Callback
 {
 	private int? _forTimes;
@@ -98,7 +100,9 @@ public class Callback
 /// <summary>
 ///     A callback wrapper for the <paramref name="delegate" /> that allows conditional invocation based on predicates.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate : Delegate
 {
 	private int _forIterationCount;

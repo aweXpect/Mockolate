@@ -11,7 +11,9 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public static class VerificationResultExtensions
 {
 	private static string ToTimes(this int amount, string verb = "")

@@ -54,7 +54,9 @@ public partial class It
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class RefParameterMatch<T>(
 		Func<T, bool> predicate,
 		Func<T, T>? setter,
@@ -89,7 +91,9 @@ public partial class It
 	/// <summary>
 	///     Matches any method <see langword="ref" /> parameter.
 	/// </summary>
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class AnyRefParameterMatch<T> : TypedRefMatch<T>
 	{
 		/// <inheritdoc cref="object.ToString()" />
@@ -104,7 +108,9 @@ public partial class It
 	/// <summary>
 	///     Matches a method <see langword="out" /> parameter against an expectation.
 	/// </summary>
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameter, ITypedParameter<T>
 	{
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
@@ -127,7 +133,9 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private abstract class TypedRefMatch<T> : IRefParameter<T>, IParameter, ITypedParameter<T>
 	{
 		private List<Action<T>>? _callbacks;

@@ -7,7 +7,9 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifications on an indexer of type <typeparamref name="TParameter" />.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public class VerificationIndexerResult<TSubject, TParameter>
 {
 	private readonly MockRegistry _mockRegistry;

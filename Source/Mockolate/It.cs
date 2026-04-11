@@ -11,7 +11,9 @@ namespace Mockolate;
 /// <summary>
 ///     Specify a matching condition for a parameter.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public partial class It
 {
 	/// <summary>
@@ -26,7 +28,9 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private abstract class TypedMatch<T> : IParameter<T>, IParameter, ITypedParameter<T>
 	{
 		private List<Action<T>>? _callbacks;

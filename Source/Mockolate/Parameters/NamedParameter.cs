@@ -8,7 +8,9 @@ namespace Mockolate.Parameters;
 /// </summary>
 /// <param name="Name">The name of the <paramref name="Parameter" />.</param>
 /// <param name="Parameter">The actual <see cref="IParameter" />.</param>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public record NamedParameter(string Name, IParameter Parameter)
 {
 	/// <inheritdoc cref="object.ToString()" />

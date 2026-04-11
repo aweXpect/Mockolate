@@ -5,7 +5,9 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifications on an event.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public class VerificationEventResult<TSubject>
 {
 	private readonly string _name;

@@ -7,7 +7,9 @@ namespace Mockolate.Interactions;
 ///     An access of a property.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public abstract class PropertyAccess(string propertyName) : IInteraction, ISettableInteraction
 {
 	private int? _index;

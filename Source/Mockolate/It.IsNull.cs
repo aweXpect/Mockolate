@@ -14,7 +14,9 @@ public partial class It
 	public static IParameter<T> IsNull<T>(string? toString = null)
 		=> new NullParameterMatch<T>(toString);
 
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class NullParameterMatch<T>(string? toString) : TypedMatch<T>
 	{
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />

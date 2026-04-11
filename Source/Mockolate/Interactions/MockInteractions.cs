@@ -13,7 +13,9 @@ namespace Mockolate.Interactions;
 ///     Keeps track of the interactions on the mock and its verifications.
 /// </summary>
 [DebuggerDisplay("{_interactions.Count} interactions")]
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteractions
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]

@@ -30,7 +30,9 @@ public partial class It
 			string doNotPopulateThisValue = "");
 	}
 
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
 	{
 		private readonly T _value;

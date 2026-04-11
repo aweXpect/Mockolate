@@ -10,7 +10,9 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for method setups.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethodSetup, IVerifiableMethodSetup
 {
 	/// <summary>

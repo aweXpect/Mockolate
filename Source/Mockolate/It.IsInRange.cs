@@ -37,7 +37,9 @@ public partial class It
 		IParameter<T> Inclusive();
 	}
 
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class InRangeMatch<T> : TypedMatch<T>, IInRangeParameter<T>
 		where T : IComparable<T>
 	{

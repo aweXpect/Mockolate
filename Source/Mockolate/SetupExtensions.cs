@@ -6,7 +6,9 @@ namespace Mockolate;
 /// <summary>
 ///     Extensions for indexer, property and method setups.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public static class SetupExtensions
 {
 	/// <summary>

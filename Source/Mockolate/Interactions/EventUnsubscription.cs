@@ -9,7 +9,9 @@ namespace Mockolate.Interactions;
 ///     An unsubscription from an event.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public class EventUnsubscription(string name, object? target, MethodInfo method) : IInteraction, ISettableInteraction
 {
 	private int? _index;

@@ -11,7 +11,9 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     The result of a verification containing the matching interactions.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
 {
 	private readonly Func<string> _expectationFactory;

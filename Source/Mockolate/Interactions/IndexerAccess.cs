@@ -6,7 +6,9 @@ namespace Mockolate.Interactions;
 /// <summary>
 ///     An access of an indexer.
 /// </summary>
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 public abstract class IndexerAccess(INamedParameterValue[] parameters) : IInteraction, ISettableInteraction
 {
 	private int? _index;

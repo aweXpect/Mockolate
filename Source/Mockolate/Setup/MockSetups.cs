@@ -5,7 +5,9 @@ using System.Text;
 namespace Mockolate.Setup;
 
 [DebuggerDisplay("{ToString()}")]
+#if RELEASE
 [DebuggerNonUserCode]
+#endif
 internal partial class MockSetups
 {
 	/// <inheritdoc cref="object.ToString()" />

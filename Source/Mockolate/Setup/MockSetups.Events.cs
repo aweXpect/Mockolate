@@ -10,7 +10,9 @@ internal partial class MockSetups
 	internal EventSetups Events { get; } = new();
 
 	[DebuggerDisplay("{ToString()}")]
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	internal sealed class EventSetups
 	{
 		private int _count;

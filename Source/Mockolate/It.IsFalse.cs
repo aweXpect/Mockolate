@@ -13,7 +13,9 @@ public partial class It
 	public static IParameter<bool> IsFalse()
 		=> new FalseParameterMatch();
 
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class FalseParameterMatch : TypedMatch<bool>
 	{
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />

@@ -16,7 +16,9 @@ public partial class Match
 		string doNotPopulateThisValue = "")
 		=> new ParametersMatch(predicate, doNotPopulateThisValue);
 
+#if RELEASE
 	[DebuggerNonUserCode]
+#endif
 	private sealed class ParametersMatch(Func<INamedParameterValue[], bool> predicate, string predicateExpression) : IParameters
 	{
 		/// <inheritdoc cref="IParameters.Matches" />
