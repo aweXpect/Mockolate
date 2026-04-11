@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
 using Mockolate.SourceGenerators.Internals;
+using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
 
@@ -87,15 +88,15 @@ internal static partial class Sources
 	///     and falling back to the <c>params INamedParameterValue[]</c> overload otherwise.
 	/// </summary>
 	private static void AppendGetIndexerCall(
-		StringBuilder sb, Entities.Type propertyType, EquatableArray<MethodParameter> parameters)
+		StringBuilder sb, Type propertyType, EquatableArray<MethodParameter> parameters)
 	{
 		bool useTypedOverload = parameters.Count is >= 1 and <= MaxExplicitParameters;
 		sb.Append(".GetIndexer<").AppendTypeOrWrapper(propertyType);
 		if (useTypedOverload)
 		{
-			foreach (MethodParameter p in parameters)
+			foreach (Type? type in parameters.Select(p => p.Type))
 			{
-				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+				sb.Append(", ").AppendTypeOrWrapper(type);
 			}
 		}
 
@@ -110,7 +111,7 @@ internal static partial class Sources
 					sb.Append(", ");
 				}
 
-				sb.Append('"').Append(p.Name).Append("\", ").Append(p.Name);
+				sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
 				first = false;
 			}
 		}
@@ -127,15 +128,15 @@ internal static partial class Sources
 	///     and falling back to the <c>params INamedParameterValue[]</c> overload otherwise.
 	/// </summary>
 	private static void AppendSetIndexerCall(
-		StringBuilder sb, Entities.Type propertyType, EquatableArray<MethodParameter> parameters)
+		StringBuilder sb, Type propertyType, EquatableArray<MethodParameter> parameters)
 	{
 		bool useTypedOverload = parameters.Count is >= 1 and <= MaxExplicitParameters;
 		sb.Append(".SetIndexer<").Append(propertyType.Fullname);
 		if (useTypedOverload)
 		{
-			foreach (MethodParameter p in parameters)
+			foreach (Type? type in parameters.Select(p => p.Type))
 			{
-				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+				sb.Append(", ").AppendTypeOrWrapper(type);
 			}
 		}
 
@@ -150,7 +151,7 @@ internal static partial class Sources
 					sb.Append(", ");
 				}
 
-				sb.Append('"').Append(p.Name).Append("\", ").Append(p.Name);
+				sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
 				first = false;
 			}
 		}
@@ -227,9 +228,13 @@ internal static partial class Sources
 		{
 			sb.Append(paramRef).Append(" is null ? \"null\" : ");
 			if (parameter.Type.IsFormattable)
+			{
 				sb.Append("((global::System.IFormattable)").Append(paramRef).Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
+			}
 			else
+			{
 				sb.Append(paramRef).Append(".ToString()");
+			}
 		}
 		else if (parameter.Type.IsFormattable)
 		{

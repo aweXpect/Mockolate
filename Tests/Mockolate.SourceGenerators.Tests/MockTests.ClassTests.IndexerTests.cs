@@ -232,6 +232,81 @@ public sealed partial class MockTests
 					          		}
 					          """).IgnoringNewlineStyle();
 			}
+
+			[Fact]
+			public async Task ShouldSupportSpanAndReadOnlySpanIndexerParameters()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System;
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         int this[Span<char> buffer] { get; set; }
+					         int this[ReadOnlySpan<int> values] { get; set; }
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+					.Contains("""
+					          		/// <inheritdoc cref="global::MyCode.IMyService.this[global::System.Span{char}]" />
+					          		public int this[global::System.Span<char> buffer]
+					          		{
+					          			get
+					          			{
+					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
+					          				{
+					          					return this.MockRegistry.GetIndexer<int, global::Mockolate.Setup.SpanWrapper<char>>("buffer", new global::Mockolate.Setup.SpanWrapper<char>(buffer)).GetResult(() => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));
+					          				}
+					          				var indexerResult = this.MockRegistry.GetIndexer<int, global::Mockolate.Setup.SpanWrapper<char>>("buffer", new global::Mockolate.Setup.SpanWrapper<char>(buffer));
+					          				var baseResult = wraps[buffer];
+					          				return indexerResult.GetResult(baseResult);
+					          			}
+					          			set
+					          			{
+					          				this.MockRegistry.SetIndexer<int, global::Mockolate.Setup.SpanWrapper<char>>(value, "buffer", new global::Mockolate.Setup.SpanWrapper<char>(buffer));
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wraps[buffer] = value;
+					          				}
+					          			}
+					          		}
+					          """).IgnoringNewlineStyle().And
+					.Contains("""
+					          		/// <inheritdoc cref="global::MyCode.IMyService.this[global::System.ReadOnlySpan{int}]" />
+					          		public int this[global::System.ReadOnlySpan<int> values]
+					          		{
+					          			get
+					          			{
+					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
+					          				{
+					          					return this.MockRegistry.GetIndexer<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>>("values", new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values)).GetResult(() => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!));
+					          				}
+					          				var indexerResult = this.MockRegistry.GetIndexer<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>>("values", new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values));
+					          				var baseResult = wraps[values];
+					          				return indexerResult.GetResult(baseResult);
+					          			}
+					          			set
+					          			{
+					          				this.MockRegistry.SetIndexer<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>>(value, "values", new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values));
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wraps[values] = value;
+					          				}
+					          			}
+					          		}
+					          """).IgnoringNewlineStyle();
+			}
 		}
 	}
 }
