@@ -29,7 +29,9 @@ public partial class It
 			string doNotPopulateThisValue = "");
 	}
 
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private sealed class ParameterIsNotOneOfMatch<T>(T[] values) : TypedMatch<T>, IIsNotOneOfParameter<T>
 	{
 		private IEqualityComparer<T>? _comparer;

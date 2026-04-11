@@ -31,7 +31,11 @@ internal static partial class Sources
 
 		          namespace Mockolate
 		          {
-		          	[global::System.Diagnostics.DebuggerNonUserCode]
+		          """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
 		          	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		          	internal static class MethodSetupExtensions
 		          	{
@@ -258,7 +262,9 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <see langword=\"void\" />.",
 			"");
+#if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("internal class VoidMethodSetup<").Append(typeParams)
 			.Append("> : global::Mockolate.Setup.MethodSetup,").AppendLine();
@@ -832,7 +838,9 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
 			"\t");
+#if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tinternal class ReturnMethodSetup<TReturn, ").Append(typeParams)
 			.Append("> : global::Mockolate.Setup.MethodSetup,").AppendLine();

@@ -5,7 +5,9 @@ using System.Text;
 
 namespace Mockolate.Internals;
 
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 internal static class TypeFormatter
 {
 	private static readonly Dictionary<Type, string> Aliases = new()

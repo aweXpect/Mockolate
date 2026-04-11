@@ -11,7 +11,9 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Sets up a method returning <typeparamref name="TReturn" />.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class ReturnMethodSetup<TReturn>(string name)
 	: MethodSetup(new MethodParameterMatch(name, [])),
 		IReturnMethodSetupCallbackBuilder<TReturn>, IReturnMethodSetupReturnBuilder<TReturn>
@@ -264,7 +266,9 @@ public class ReturnMethodSetup<TReturn>(string name)
 /// <summary>
 ///     Setup for a method with one parameter <typeparamref name="T1" /> returning <typeparamref name="TReturn" />.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>, IReturnMethodSetupParameterIgnorer<TReturn, T1>
 {
@@ -612,7 +616,9 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 ///     Setup for a method with two parameters <typeparamref name="T1" /> and <typeparamref name="T2" /> returning
 ///     <typeparamref name="TReturn" />.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2>
 {
@@ -971,7 +977,9 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 ///     Setup for a method with three parameters <typeparamref name="T1" />, <typeparamref name="T2" /> and
 ///     <typeparamref name="T3" /> returning <typeparamref name="TReturn" />.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3>
 {
@@ -1345,7 +1353,9 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 ///     Setup for a method with four parameters <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" /> returning <typeparamref name="TReturn" />.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3, T4>
 {

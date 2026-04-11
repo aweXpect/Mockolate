@@ -7,7 +7,9 @@ namespace Mockolate.Interactions;
 ///     An access of a property getter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class PropertyGetterAccess(string propertyName) : PropertyAccess(propertyName)
 {
 	/// <inheritdoc cref="object.ToString()" />

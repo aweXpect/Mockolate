@@ -7,7 +7,9 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Wraps a <see cref="Span{T}" /> of <typeparamref name="T" /> to be used as a generic type parameter.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class SpanWrapper<T>
 {
 	/// <inheritdoc cref="SpanWrapper{T}" />

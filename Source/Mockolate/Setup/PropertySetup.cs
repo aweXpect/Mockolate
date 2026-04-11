@@ -11,7 +11,9 @@ namespace Mockolate.Setup;
 /// <summary>
 ///     Base class for property setups.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public abstract class PropertySetup : IInteractivePropertySetup
 {
 	/// <summary>
@@ -70,7 +72,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	/// </summary>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	internal abstract class Default(string name) : PropertySetup
 	{
 		/// <inheritdoc cref="PropertySetup.Name" />
@@ -94,7 +98,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 			=> name.Equals(propertyAccess.Name);
 	}
 
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	internal sealed class Default<T>(string name, T initialValue) : Default(name)
 	{
 		private T _value = initialValue;
@@ -138,7 +144,9 @@ public abstract class PropertySetup : IInteractivePropertySetup
 /// <summary>
 ///     Sets up a property.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class PropertySetup<T>(string name) : PropertySetup,
 	IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>,
 	IPropertyGetterSetup<T>, IPropertySetterSetup<T>

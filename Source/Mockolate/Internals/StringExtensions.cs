@@ -2,7 +2,9 @@
 
 namespace Mockolate.Internals;
 
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 internal static class StringExtensions
 {
 	internal static string SubstringUntilFirst(this string name, char c)

@@ -8,7 +8,9 @@ namespace Mockolate.Interactions;
 ///     An access of a property setter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class PropertySetterAccess(string propertyName, INamedParameterValue value) : PropertyAccess(propertyName)
 {
 	/// <summary>

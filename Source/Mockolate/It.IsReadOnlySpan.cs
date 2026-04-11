@@ -27,7 +27,9 @@ public partial class It
 		string doNotPopulateThisValue = "")
 		=> new ReadOnlySpanParameterMatch<T>(predicate, doNotPopulateThisValue);
 
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private sealed class ReadOnlySpanParameterMatch<T>(Func<T[], bool>? predicate, string? predicateExpression = null)
 		: TypedMatch<ReadOnlySpanWrapper<T>>, IVerifyReadOnlySpanParameter<T>
 	{

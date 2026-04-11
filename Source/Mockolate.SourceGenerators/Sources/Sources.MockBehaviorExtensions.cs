@@ -57,19 +57,23 @@ internal static partial class Sources
 		          	///     A <see cref="IDefaultValueFactory" /> that returns a specified <paramref name="value" /> for the given type
 		          	///     parameter <typeparamref name="T" />.
 		          	/// </summary>
-		          	[global::System.Diagnostics.DebuggerNonUserCode]
-		          	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-		          	internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
-		          	{
-		          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-		          		public bool IsMatch(global::System.Type type)
-		          			=> type == typeof(T);
-		          	
-		          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, global::Mockolate.Parameters.INamedParameterValue[])" />
-		          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
-		          			=> value;
-		          	}
-		          """).AppendLine();
+		          """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
+		              	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		              	internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
+		              	{
+		              		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+		              		public bool IsMatch(global::System.Type type)
+		              			=> type == typeof(T);
+		              	
+		              		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, global::Mockolate.Parameters.INamedParameterValue[])" />
+		              		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
+		              			=> value;
+		              	}
+		              """).AppendLine();
 		if (includeHttpClient)
 		{
 			sb.Append("""
@@ -77,19 +81,23 @@ internal static partial class Sources
 			          	///     A <see cref="IDefaultValueFactory" /> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage" /> with the specified
 			          	///     <paramref name="statusCode" />.
 			          	/// </summary>
-			          	[global::System.Diagnostics.DebuggerNonUserCode]
-			          	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-			          	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
-			          	{
-			          		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-			          		public bool IsMatch(global::System.Type type)
-			          			=> type == typeof(global::System.Net.Http.HttpResponseMessage);
-			          	
-			          		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
-			          		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
-			          			=> new global::System.Net.Http.HttpResponseMessage(statusCode) { Content = new global::System.Net.Http.StringContent(string.Empty) };
-			          	}
-			          """).AppendLine();
+			          """);
+#if !DEBUG
+			sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+			sb.AppendLine("""
+			              	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+			              	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
+			              	{
+			              		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+			              		public bool IsMatch(global::System.Type type)
+			              			=> type == typeof(global::System.Net.Http.HttpResponseMessage);
+			              	
+			              		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+			              		public object? Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
+			              			=> new global::System.Net.Http.HttpResponseMessage(statusCode) { Content = new global::System.Net.Http.StringContent(string.Empty) };
+			              	}
+			              """).AppendLine();
 		}
 
 		sb.Append("""
@@ -97,13 +105,17 @@ internal static partial class Sources
 		          	/// <summary>
 		          	///     Provides default values for common types used in mocking scenarios.
 		          	/// </summary>
-		          	[global::System.Diagnostics.DebuggerNonUserCode]
-		          	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-		          	private class DefaultValueGenerator : IDefaultValueGenerator
-		          	{
-		          		private static readonly global::System.Collections.Concurrent.ConcurrentQueue<IDefaultValueFactory> _factories = new([
-		          			new TypedDefaultValueFactory<string>(""),
-		          """).AppendLine();
+		          """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
+		              	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		              	private class DefaultValueGenerator : IDefaultValueGenerator
+		              	{
+		              		private static readonly global::System.Collections.Concurrent.ConcurrentQueue<IDefaultValueFactory> _factories = new([
+		              			new TypedDefaultValueFactory<string>(""),
+		              """).AppendLine();
 		if (includeHttpClient)
 		{
 			sb.Append("""
@@ -172,141 +184,153 @@ internal static partial class Sources
 		          			return false;
 		          		}
 
-		          		[global::System.Diagnostics.DebuggerNonUserCode]
-		          		[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-		          		private sealed class CancellableTaskFactory : IDefaultValueFactory
-		          		{
-		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-		          			public bool IsMatch(global::System.Type type)
-		          				=> type == typeof(global::System.Threading.Tasks.Task);
-		          	
-		          			/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
-		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
-		          			{
-		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
-		          				{
-		          					return global::System.Threading.Tasks.Task.FromCanceled(cancellationToken);
-		          				}
-		          	
-		          				return global::System.Threading.Tasks.Task.CompletedTask;
-		          			}
-		          		}
-		          	#if NET8_0_OR_GREATER
-		          		[global::System.Diagnostics.DebuggerNonUserCode]
-		          		[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-		          		private sealed class CancellableValueTaskFactory : IDefaultValueFactory
-		          		{
-		          			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
-		          			public bool IsMatch(global::System.Type type)
-		          				=> type == typeof(global::System.Threading.Tasks.ValueTask);
-		          	
-		          			/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
-		          			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
-		          			{
-		          				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
-		          				{
-		          					return global::System.Threading.Tasks.ValueTask.FromCanceled(cancellationToken);
-		          				}
-		          	
-		          				return global::System.Threading.Tasks.ValueTask.CompletedTask;
-		          			}
-		          		}
-		          	#endif
-		          	}
-		          }
+		          """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
+		              	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		              	private sealed class CancellableTaskFactory : IDefaultValueFactory
+		              	{
+		              		/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+		              		public bool IsMatch(global::System.Type type)
+		              			=> type == typeof(global::System.Threading.Tasks.Task);
 
-		          /// <summary>
-		          ///     Extensions on <see cref="IDefaultValueGenerator" />
-		          /// </summary>
-		          [global::System.Diagnostics.DebuggerNonUserCode]
-		          [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-		          internal static class DefaultValueGeneratorExtensions
-		          {
-		          	/// <summary>
-		          	///     Adds a generic <c>Generate</c> method for specific types.
-		          	/// </summary>
-		          	extension(IDefaultValueGenerator generator)
-		          	{
-		          		/// <summary>
-		          		///     Generates a <see cref="global::System.Threading.Tasks.Task" /> of <typeparamref name="T" />, with
-		          		///     the <paramref name="parameters" /> for context.
-		          		/// </summary>
-		          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
-		          		{
-		          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
-		          			foreach (var parameter in parameters)
-		          			{
-		          			    if (parameter.TryGetValue(out global::System.Threading.CancellationToken token))
-		          				{
-		          					cancellationToken = token;
-		          					break;
-		          				}
-		          			}
+		              		/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		              		public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
+		              		{
+		              			if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
+		              			{
+		              				return global::System.Threading.Tasks.Task.FromCanceled(cancellationToken);
+		              			}
 
-		          			if (cancellationToken.IsCancellationRequested)
-		          			{
-		          				return global::System.Threading.Tasks.Task.FromCanceled<T>(cancellationToken);
-		          			}
+		              			return global::System.Threading.Tasks.Task.CompletedTask;
+		              		}
+		              	}
+		              #if NET8_0_OR_GREATER
+		              """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
+		              		[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		              		private sealed class CancellableValueTaskFactory : IDefaultValueFactory
+		              		{
+		              			/// <inheritdoc cref="IDefaultValueFactory.IsMatch(global::System.Type)" />
+		              			public bool IsMatch(global::System.Type type)
+		              				=> type == typeof(global::System.Threading.Tasks.ValueTask);
+		              	
+		              			/// <inheritdoc cref="IDefaultValueFactory.Create(global::System.Type, IDefaultValueGenerator, object[])" />
+		              			public object Create(global::System.Type type, IDefaultValueGenerator defaultValueGenerator, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
+		              			{
+		              				if (HasCanceledCancellationToken(parameters, out global::System.Threading.CancellationToken cancellationToken))
+		              				{
+		              					return global::System.Threading.Tasks.ValueTask.FromCanceled(cancellationToken);
+		              				}
+		              	
+		              				return global::System.Threading.Tasks.ValueTask.CompletedTask;
+		              			}
+		              		}
+		              	#endif
+		              	}
+		              }
 
-		          			foreach (global::Mockolate.Parameters.INamedParameterValue parameter in parameters)
-		          			{
-		          				if (parameter.TryGetValue(out global::System.Func<T> func))
-		          				{
-		          					return global::System.Threading.Tasks.Task.FromResult(func());
-		          				}
-		          			}
+		              /// <summary>
+		              ///     Extensions on <see cref="IDefaultValueGenerator" />
+		              /// </summary>
+		              """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
+		              [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		              internal static class DefaultValueGeneratorExtensions
+		              {
+		              	/// <summary>
+		              	///     Adds a generic <c>Generate</c> method for specific types.
+		              	/// </summary>
+		              	extension(IDefaultValueGenerator generator)
+		              	{
+		              		/// <summary>
+		              		///     Generates a <see cref="global::System.Threading.Tasks.Task" /> of <typeparamref name="T" />, with
+		              		///     the <paramref name="parameters" /> for context.
+		              		/// </summary>
+		              		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
+		              		{
+		              			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
+		              			foreach (var parameter in parameters)
+		              			{
+		              			    if (parameter.TryGetValue(out global::System.Threading.CancellationToken token))
+		              				{
+		              					cancellationToken = token;
+		              					break;
+		              				}
+		              			}
 
-		          			return global::System.Threading.Tasks.Task.FromResult(generator.Generate(default(T)!, parameters));
-		          		}
+		              			if (cancellationToken.IsCancellationRequested)
+		              			{
+		              				return global::System.Threading.Tasks.Task.FromCanceled<T>(cancellationToken);
+		              			}
 
-		          #if NET8_0_OR_GREATER
-		          		/// <summary>
-		          		///     Generates a <see cref="global::System.Threading.Tasks.ValueTask" /> of <typeparamref name="T" />, with
-		          		///     the <paramref name="parameters" /> for context.
-		          		/// </summary>
-		          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
-		          		{
-		          			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
-		          			foreach (var parameter in parameters)
-		          			{
-		          			    if (parameter.TryGetValue(out global::System.Threading.CancellationToken token))
-		          				{
-		          					cancellationToken = token;
-		          					break;
-		          				}
-		          			}
+		              			foreach (global::Mockolate.Parameters.INamedParameterValue parameter in parameters)
+		              			{
+		              				if (parameter.TryGetValue(out global::System.Func<T> func))
+		              				{
+		              					return global::System.Threading.Tasks.Task.FromResult(func());
+		              				}
+		              			}
 
-		          			if (cancellationToken.IsCancellationRequested)
-		          			{
-		          				return global::System.Threading.Tasks.ValueTask.FromCanceled<T>(cancellationToken);
-		          			}
+		              			return global::System.Threading.Tasks.Task.FromResult(generator.Generate(default(T)!, parameters));
+		              		}
 
-		          			foreach (global::Mockolate.Parameters.INamedParameterValue parameter in parameters)
-		          			{
-		          				if (parameter.TryGetValue(out global::System.Func<T> func))
-		          				{
-		          					return global::System.Threading.Tasks.ValueTask.FromResult(func());
-		          				}
-		          			}
+		              #if NET8_0_OR_GREATER
+		              		/// <summary>
+		              		///     Generates a <see cref="global::System.Threading.Tasks.ValueTask" /> of <typeparamref name="T" />, with
+		              		///     the <paramref name="parameters" /> for context.
+		              		/// </summary>
+		              		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
+		              		{
+		              			global::System.Threading.CancellationToken cancellationToken = global::System.Threading.CancellationToken.None;
+		              			foreach (var parameter in parameters)
+		              			{
+		              			    if (parameter.TryGetValue(out global::System.Threading.CancellationToken token))
+		              				{
+		              					cancellationToken = token;
+		              					break;
+		              				}
+		              			}
 
-		          			return global::System.Threading.Tasks.ValueTask.FromResult(generator.Generate(default(T)!, parameters));
-		          		}
-		          #endif
+		              			if (cancellationToken.IsCancellationRequested)
+		              			{
+		              				return global::System.Threading.Tasks.ValueTask.FromCanceled<T>(cancellationToken);
+		              			}
 
-		          		/// <summary>
-		          		///     Generates a tuple of (<typeparamref name="T1" />, <typeparamref name="T2" />), with
-		          		///     the <paramref name="parameters" /> for context.
-		          		/// </summary>
-		          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
-		          		{
-		          			if (parameters.Length >= 2 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2))
-		          			{
-		          				return (func1(), func2());
-		          			}
+		              			foreach (global::Mockolate.Parameters.INamedParameterValue parameter in parameters)
+		              			{
+		              				if (parameter.TryGetValue(out global::System.Func<T> func))
+		              				{
+		              					return global::System.Threading.Tasks.ValueTask.FromResult(func());
+		              				}
+		              			}
 
-		          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters));
-		          		}
-		          """).AppendLine();
+		              			return global::System.Threading.Tasks.ValueTask.FromResult(generator.Generate(default(T)!, parameters));
+		              		}
+		              #endif
+
+		              		/// <summary>
+		              		///     Generates a tuple of (<typeparamref name="T1" />, <typeparamref name="T2" />), with
+		              		///     the <paramref name="parameters" /> for context.
+		              		/// </summary>
+		              		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params global::Mockolate.Parameters.INamedParameterValue[] parameters)
+		              		{
+		              			if (parameters.Length >= 2 && parameters[0].TryGetValue(out global::System.Func<T1> func1) && parameters[1].TryGetValue(out global::System.Func<T2> func2))
+		              			{
+		              				return (func1(), func2());
+		              			}
+
+		              			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters));
+		              		}
+		              """).AppendLine();
 		for (int i = 3; i <= 8; i++)
 		{
 			string ts = string.Join(", ", Enumerable.Range(1, i).Select(x => $"T{x}"));

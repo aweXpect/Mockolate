@@ -23,7 +23,11 @@ internal static partial class Sources
 		              ///     You can also provide a <see cref="global::Mockolate.MockBehavior"/> parameter to customize how the mock should behave in certain scenarios.<br />
 		              ///     If your type is a class without a default constructor, you can provide constructor parameters by passing an <c>object?[]?</c> to the corresponding <c>CreateMock(...)</c> overload.
 		              /// </remarks>
-		              [global::System.Diagnostics.DebuggerNonUserCode]
+		              """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
 		              [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		              internal static partial class Mock
 		              {

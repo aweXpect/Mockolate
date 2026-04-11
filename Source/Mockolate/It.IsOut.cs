@@ -34,7 +34,9 @@ public partial class It
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : TypedOutMatch<T>
 	{
 		/// <inheritdoc cref="IOutParameter{T}.GetValue(Func{T})" />
@@ -47,7 +49,9 @@ public partial class It
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private sealed class AnyOutParameterMatch<T> : TypedOutMatch<T>
 	{
 		/// <inheritdoc cref="object.ToString()" />
@@ -57,7 +61,9 @@ public partial class It
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>, IParameter, ITypedParameter<T>
 	{
 		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
@@ -80,7 +86,9 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private abstract class TypedOutMatch<T> : IOutParameter<T>, IParameter, ITypedParameter<T>
 	{
 		private List<Action<T>>? _callbacks;

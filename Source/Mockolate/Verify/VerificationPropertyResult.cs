@@ -7,7 +7,9 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Verifications on a property of type <typeparamref name="TParameter" />.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class VerificationPropertyResult<TSubject, TParameter>
 {
 	private readonly MockRegistry _mockRegistry;

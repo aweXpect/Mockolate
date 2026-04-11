@@ -39,7 +39,9 @@ internal static partial class Sources
 		#region MockForXXXExtensions
 
 		sb.AppendXmlSummary($"Mock extensions for <see cref=\"{escapedClassName}\" />.", "");
+#if !DEBUG
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
 		sb.Append("[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("internal static partial class MockExtensionsFor").Append(name).AppendLine();
 		sb.Append("{").AppendLine();
@@ -360,7 +362,9 @@ internal static partial class Sources
 			}
 
 			sb.AppendLine();
+#if !DEBUG
 			sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
 			sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 			sb.Append("\tinternal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupFor").Append(name);
 			if (hasProtectedMembers)
@@ -408,7 +412,9 @@ internal static partial class Sources
 		sb.Append("{").AppendLine();
 		sb.AppendXmlSummary($"A mock implementation for <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").AppendLine();
+#if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tinternal class ").Append(name).Append(" :").AppendLine();
 		sb.Append("\t\t").Append(@class.ClassFullName);
@@ -618,7 +624,9 @@ internal static partial class Sources
 		sb.AppendLine("\t}");
 
 		sb.AppendLine();
+#if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tprivate sealed class VerifyMonitor").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();

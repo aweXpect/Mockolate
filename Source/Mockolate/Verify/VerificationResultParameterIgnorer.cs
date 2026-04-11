@@ -7,7 +7,9 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Represents the result of a verification that contains the matching interactions and allows ignoring explicit parameters.
 /// </summary>
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class VerificationResultParameterIgnorer<TVerify> : VerificationResult<TVerify>
 {
 	private readonly Func<VerificationResult<TVerify>> _anyParametersFactory;

@@ -15,7 +15,9 @@ internal partial class MockSetups
 	internal IndexerSetups Indexers { get; } = new();
 
 	[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	internal sealed class IndexerSetups
 	{
 		private List<IndexerSetup>? _storage;

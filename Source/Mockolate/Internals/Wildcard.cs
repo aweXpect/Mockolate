@@ -5,7 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace Mockolate.Internals;
 
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 internal readonly struct Wildcard
 {
 	public Regex Regex { get; }

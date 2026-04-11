@@ -11,7 +11,9 @@ namespace Mockolate;
 ///     It also gives access to constructor parameters and the wrapped instance.
 /// </remarks>
 [DebuggerDisplay("{Interactions} | {Setup}")]
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public partial class MockRegistry
 {
 	/// <inheritdoc cref="MockRegistry" />

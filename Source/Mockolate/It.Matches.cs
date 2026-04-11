@@ -41,7 +41,9 @@ public partial class It
 			[CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "");
 	}
 
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private sealed class MatchesAsWildcardMatch(string pattern) : TypedMatch<string>, IParameterMatches
 	{
 		private bool _caseSensitive;

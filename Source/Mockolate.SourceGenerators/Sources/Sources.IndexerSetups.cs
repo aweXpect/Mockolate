@@ -26,7 +26,11 @@ internal static partial class Sources
 
 		          namespace Mockolate
 		          {
-		          	[global::System.Diagnostics.DebuggerNonUserCode]
+		          """);
+#if !DEBUG
+		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.AppendLine("""
 		          	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		          	internal static class IndexerSetupExtensions
 		          	{
@@ -286,7 +290,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
+#if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tinternal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
 			.Append(

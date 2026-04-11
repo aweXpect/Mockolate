@@ -10,7 +10,9 @@ namespace Mockolate.Setup;
 ///     Sets up event subscription and unsubscription callbacks.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
+#if !DEBUG
 [DebuggerNonUserCode]
+#endif
 public class EventSetup(string name) : IEventSetup,
 	IEventSubscriptionSetup, IEventUnsubscriptionSetup,
 	IEventSetupCallbackBuilder, IEventSetupCallbackWhenBuilder

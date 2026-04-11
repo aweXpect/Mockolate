@@ -15,7 +15,9 @@ public partial class It
 	public static IParameter<T> IsAny<T>()
 		=> new AnyParameterMatch<T>();
 
+#if !DEBUG
 	[DebuggerNonUserCode]
+#endif
 	private sealed class AnyParameterMatch<T> : TypedMatch<T>
 	{
 		protected override bool Matches(T value) => true;
