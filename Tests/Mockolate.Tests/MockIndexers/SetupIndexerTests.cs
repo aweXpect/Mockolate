@@ -10,37 +10,6 @@ namespace Mockolate.Tests.MockIndexers;
 public sealed partial class SetupIndexerTests
 {
 	[Fact]
-	public async Task Matches_WhenParameterCountDoesNotMatch_ShouldNotInvokeParameterCallbacks()
-	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
-
-		bool result = MyIndexerSetup.DoesMatch([
-			new NamedParameter("foo", (IParameter)parameter),
-		], [
-			new NamedParameterValue<int>("foo", 4),
-			new NamedParameterValue<int>("bar", 5),
-		]);
-
-		await That(result).IsFalse();
-		await That(monitor.Values).IsEmpty();
-	}
-
-	[Fact]
-	public async Task Matches_WhenParameterCountMatches_ShouldInvokeParameterCallbacks()
-	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
-
-		bool result = MyIndexerSetup.DoesMatch([
-			new NamedParameter("foo", (IParameter)parameter),
-		], [
-			new NamedParameterValue<int>("foo", 4),
-		]);
-
-		await That(result).IsTrue();
-		await That(monitor.Values).IsEqualTo([4,]);
-	}
-
-	[Fact]
 	public async Task MultipleValues_ShouldAllStoreValues()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -179,13 +148,16 @@ public sealed partial class SetupIndexerTests
 	public async Task ThreeLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
+		MockRegistry registry = ((IMock)sut).MockRegistry;
 
 		int? result0 = sut["foo", 1, 2];
-		registration.SetIndexer(42,
-			new NamedParameterValue<string>("index1", "foo"),
-			new NamedParameterValue<int>("index2", 1),
-			new NamedParameterValue<int>("index3", 2));
+		registry.SetIndexerValue<int?>(
+			new IndexerSetterAccess<string?, int, int, int?>(
+				"index1", "foo",
+				"index2", 1,
+				"index3", 2,
+				42),
+			42);
 		int? result1 = sut["foo", 1, 2];
 		int? result2 = sut["bar", 1, 2];
 		int? result3 = sut["foo", 2, 2];
@@ -227,31 +199,20 @@ public sealed partial class SetupIndexerTests
 	}
 
 	[Fact]
-	public async Task WhenNameOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
-	{
-		IIndexerService sut = IIndexerService.CreateMock();
-		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
-		MockRegistry registration = ((IMock)sut).MockRegistry;
-
-		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue<int>("index", 1));
-		IndexerSetupResult<string> result2 = registration.GetIndexer<string>(new NamedParameterValue<int>("other", 1));
-
-		await That(result1.GetResult(() => "")).IsEqualTo("foo");
-		await That(result2.GetResult(() => "")).IsEqualTo("");
-	}
-
-	[Fact]
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
 		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
-		MockRegistry registration = ((IMock)sut).MockRegistry;
+		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		IndexerSetupResult<string> result1 = registration.GetIndexer<string>(new NamedParameterValue<int>("index", 1));
-		IndexerSetupResult<int> result2 = registration.GetIndexer<int>(new NamedParameterValue<int>("index", 1));
+		IndexerSetup? stringSetup = registry.GetIndexerSetup<IndexerSetup>(s => true);
+		IndexerGetterAccess<int> access1 = new("index", 1);
+		IndexerGetterAccess<int> access2 = new("index", 1);
+		string result1 = registry.ApplyIndexerGetter<string>(access1, stringSetup, () => "");
+		int result2 = registry.ApplyIndexerGetter<int>(access2, stringSetup, () => 0);
 
-		await That(result1.GetResult(() => "")).IsEqualTo("foo");
-		await That(result2.GetResult(() => 0)).IsEqualTo(0);
+		await That(result1).IsEqualTo("foo");
+		await That(result2).IsEqualTo(0);
 	}
 
 	[Fact]
@@ -283,7 +244,7 @@ public sealed partial class SetupIndexerTests
 		}
 
 		await That(Act).Throws<MockNotSetupException>()
-			.WithMessage("The indexer [null, 1, 2] was accessed without prior setup.");
+			.WithMessage("The indexer get indexer [, 1, 2] was accessed without prior setup.");
 	}
 
 #if NET8_0_OR_GREATER
@@ -466,30 +427,6 @@ public sealed partial class SetupIndexerTests
 		}
 	}
 
-	public class MyIndexerSetup : IndexerSetup
-	{
-		public static bool DoesMatch(NamedParameter[] namedParameters, INamedParameterValue[] values)
-			=> Matches(namedParameters, values);
-
-		protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
-			MockBehavior behavior)
-			=> throw new NotSupportedException();
-
-		protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value,
-			MockBehavior behavior)
-			=> throw new NotSupportedException();
-
-		protected override bool IsMatch(INamedParameterValue[] parameters)
-			=> throw new NotSupportedException();
-
-		protected override bool? GetSkipBaseClass()
-			=> throw new NotSupportedException();
-
-		protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-			INamedParameterValue[] parameters,
-			[NotNullWhen(true)] out T value)
-			=> throw new NotSupportedException();
-	}
 
 	public interface IIndexerService
 	{

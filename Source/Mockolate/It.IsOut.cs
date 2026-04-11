@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -38,8 +39,12 @@ public partial class It
 #endif
 	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : TypedOutMatch<T>
 	{
-		/// <inheritdoc cref="IOutParameter{T}.GetValue(Func{T})" />
-		public override T GetValue(Func<T> defaultValue) => setter();
+		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
+		public override bool TryGetValue([NotNullWhen(true)] out T? value)
+		{
+			value = setter()!;
+			return true;
+		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"It.IsOut<{typeof(T).FormatType()}>({setterExpression})";
@@ -53,6 +58,13 @@ public partial class It
 #endif
 	private sealed class AnyOutParameterMatch<T> : TypedOutMatch<T>
 	{
+		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
+		public override bool TryGetValue([NotNullWhen(true)] out T? value)
+		{
+			value = default;
+			return false;
+		}
+
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"It.IsAnyOut<{typeof(T).FormatType()}>()";
 	}
@@ -63,23 +75,20 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>, IParameter, ITypedParameter<T>
+	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>, IParameterMatch<T>
 	{
-		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
-		public bool Matches(INamedParameterValue value)
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString() => $"It.IsOut<{typeof(T).FormatType()}>()";
+
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
+		public bool Matches(T value)
 			=> true;
 
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
-		public void InvokeCallbacks(INamedParameterValue value)
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		public void InvokeCallbacks(T value)
 		{
 			// Do nothing
 		}
-
-		/// <inheritdoc cref="ITypedParameter{T}.MatchesValue" />
-		bool ITypedParameter<T>.MatchesValue(string name, T value) => true;
-
-		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"It.IsOut<{typeof(T).FormatType()}>()";
 	}
 
 	/// <summary>
@@ -88,13 +97,12 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private abstract class TypedOutMatch<T> : IOutParameter<T>, IParameter, ITypedParameter<T>
+	private abstract class TypedOutMatch<T> : IOutParameter<T>, IParameterMatch<T>
 	{
 		private List<Action<T>>? _callbacks;
 
-		/// <inheritdoc cref="IOutParameter{T}.GetValue(Func{T})" />
-		public virtual T GetValue(Func<T> defaultValue)
-			=> defaultValue();
+		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
+		public abstract bool TryGetValue([NotNullWhen(true)] out T? value);
 
 		/// <inheritdoc cref="IOutParameter{T}.Do(Action{T})" />
 		public IOutParameter<T> Do(Action<T> callback)
@@ -104,26 +112,16 @@ public partial class It
 			return this;
 		}
 
-		/// <summary>
-		///     Checks if the <paramref name="value" /> is a matching parameter.
-		/// </summary>
-		/// <returns>
-		///     <see langword="true" />, if the <paramref name="value" /> is a matching parameter
-		///     of type <typeparamref name="T" />; otherwise <see langword="false" />.
-		/// </returns>
-		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
-		public bool Matches(INamedParameterValue value)
-			=> value.TryGetValue<T>(out _);
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
+		public bool Matches(T value)
+			=> true;
 
-		/// <inheritdoc cref="ITypedParameter{T}.MatchesValue" />
-		bool ITypedParameter<T>.MatchesValue(string name, T value) => true;
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
-		public void InvokeCallbacks(INamedParameterValue value)
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		public void InvokeCallbacks(T value)
 		{
-			if (_callbacks is not null && value.TryGetValue(out T typedValue))
+			if (_callbacks is not null)
 			{
-				_callbacks.ForEach(a => a.Invoke(typedValue));
+				_callbacks.ForEach(a => a.Invoke(value));
 			}
 		}
 	}

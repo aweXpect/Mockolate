@@ -171,7 +171,7 @@ public record MockBehavior : IMockBehaviorAccess
 		DefaultValueFactory[] factories)
 		: IDefaultValueGenerator
 	{
-		public object? GenerateValue(Type type, params INamedParameterValue[] parameters)
+		public object? GenerateValue(Type type, params object?[] parameters)
 		{
 			DefaultValueFactory? factory = factories.FirstOrDefault(f => f.CanGenerateValue(type));
 			if (factory is not null)

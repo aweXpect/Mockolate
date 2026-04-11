@@ -16,8 +16,9 @@ public sealed partial class MatchTests
 		public async Task ShouldMatchWhenPredicateReturnsTrue(bool expectedResult, string? value1, int? value2)
 		{
 			IParameters sut = Match.Parameters(_ => expectedResult);
+			IParametersMatch match = (IParametersMatch)sut;
 
-			bool result = sut.Matches([new NamedParameterValue<string?>("p1", value1), new NamedParameterValue<int?>("p2", value2),]);
+			bool result = match.Matches([value1, value2,]);
 
 			await That(result).IsEqualTo(expectedResult);
 		}

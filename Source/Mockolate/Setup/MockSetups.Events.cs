@@ -7,8 +7,6 @@ namespace Mockolate.Setup;
 
 internal partial class MockSetups
 {
-	internal EventSetups Events { get; } = new();
-
 	[DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 	[DebuggerNonUserCode]

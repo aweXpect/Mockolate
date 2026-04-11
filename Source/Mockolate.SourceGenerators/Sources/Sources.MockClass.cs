@@ -27,8 +27,8 @@ internal static partial class Sources
 		                           (@class.AllMethods().Any(method => method.IsProtected)
 		                            || @class.AllProperties().Any(property => property.IsProtected));
 		string setupType = hasProtectedMembers
-			? $"global::System.Action<IMockSetupInitializationFor{name}>"
-			: $"global::System.Action<global::Mockolate.Mock.IMockSetupFor{name}>";
+			? $"IMockSetupInitializationFor{name}"
+			: $"global::Mockolate.Mock.IMockSetupFor{name}";
 		string mockRegistryName = @class.GetUniqueName("MockRegistry", "MockolateMockRegistry");
 		StringBuilder sb = InitializeBuilder();
 
@@ -57,15 +57,18 @@ internal static partial class Sources
 		string mockPropertyName = CreateUniquePropertyName(@class, "Mock");
 
 		sb.AppendXmlSummary($"Get access to the mock of <see cref=\"{escapedClassName}\" />.");
-		sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(name).Append(' ').Append(mockPropertyName).AppendLine();
+		sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(name).Append(' ').Append(mockPropertyName)
+			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tget").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tif (mock is global::Mockolate.Mock.IMockFor").Append(name).Append(" mockInterface)").AppendLine();
+		sb.Append("\t\t\t\tif (mock is global::Mockolate.Mock.IMockFor").Append(name).Append(" mockInterface)")
+			.AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\treturn mockInterface;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
-		sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");").AppendLine();
+		sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");")
+			.AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -74,55 +77,79 @@ internal static partial class Sources
 
 		#region CreateMock
 
-		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
+		sb.AppendXmlSummary(
+			$"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, null);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
+		sb.AppendXmlSummary(
+			$"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(").Append(setupType).Append(" setup)").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::System.Action<")
+			.Append(setupType).Append("> setup)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, setup);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
-		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior)").AppendLine();
+		sb.AppendXmlSummary(
+			$"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
+			.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, null);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
+		sb.AppendXmlSummary(
+			$"Create a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, ").Append(setupType).Append(" setup)").AppendLine();
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
+			.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<").Append(setupType)
+			.Append("> setup)").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, setup);").AppendLine();
 		sb.AppendLine();
 
 		if (!@class.IsInterface)
 		{
-			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" />.");
-			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters)").AppendLine();
+			sb.AppendXmlSummary(
+				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" />.");
+			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
+				.Append(" CreateMock(object?[] constructorParameters)").AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, null, null);").AppendLine();
 			sb.AppendLine();
 
-			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
-			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, global::Mockolate.MockBehavior mockBehavior)").AppendLine();
+			sb.AppendXmlSummary(
+				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
+			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
+				.Append(" CreateMock(object?[] constructorParameters, global::Mockolate.MockBehavior mockBehavior)")
+				.AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, mockBehavior, null);").AppendLine();
 			sb.AppendLine();
 
-			sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" />.");
+			sb.AppendXmlSummary(
+				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" />.");
 			sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-			sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(object?[] constructorParameters, ").Append(setupType).Append(" setup)").AppendLine();
+			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
+				.Append(" CreateMock(object?[] constructorParameters, global::System.Action<").Append(setupType)
+				.Append("> setup)").AppendLine();
 			sb.Append("\t\t\t=> CreateMock(constructorParameters, null, setup);").AppendLine();
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary($"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
+		sb.AppendXmlSummary(
+			$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the <paramref name=\"constructorParameters\" /> with the given <paramref name=\"mockBehavior\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock.");
-		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ").Append(@class.ClassFullName).Append(" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior, ").Append(setupType).Append("? setup)").AppendLine();
+		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ")
+			.Append(@class.ClassFullName)
+			.Append(
+				" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior, global::System.Action<")
+			.Append(setupType).Append(">? setup)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (mockBehavior is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;").AppendLine();
-		sb.Append("\t\t\t\tif (mockBehaviorAccess.TryGet<").Append(setupType).Append("?>(out var additionalSetup))").AppendLine();
+		sb.Append(
+				"\t\t\t\tIMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;")
+			.AppendLine();
+		sb.Append("\t\t\t\tif (mockBehaviorAccess.TryGet<global::System.Action<").Append(setupType)
+			.Append(">?>(out var additionalSetup))").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tif (setup is null)").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
@@ -136,7 +163,8 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t}").AppendLine();
 		if (!@class.IsInterface && !hasStaticMembers)
 		{
-			sb.Append("\t\t\t\tif (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<").Append(@class.ClassFullName).Append(">(out object?[]? parameters))").AppendLine();
+			sb.Append("\t\t\t\tif (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<")
+				.Append(@class.ClassFullName).Append(">(out object?[]? parameters))").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\tconstructorParameters = parameters;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
@@ -147,33 +175,50 @@ internal static partial class Sources
 
 		if (@class is { ClassFullName: "global::System.Net.Http.HttpClient", })
 		{
-			sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior ?? global::Mockolate.MockBehavior.Default, constructorParameters);").AppendLine();
+			sb.Append(
+					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior ?? global::Mockolate.MockBehavior.Default, constructorParameters);")
+				.AppendLine();
 			sb.Append("\t\t\tif (constructorParameters is null)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tconstructorParameters = [new global::Mockolate.Mock.HttpMessageHandler(mockRegistry),];").AppendLine();
-			sb.Append("\t\t\t\tmockRegistry = new global::Mockolate.MockRegistry(mockRegistry, constructorParameters);").AppendLine();
+			sb.Append("\t\t\t\tconstructorParameters = [new global::Mockolate.Mock.HttpMessageHandler(mockRegistry),];")
+				.AppendLine();
+			sb.Append("\t\t\t\tmockRegistry = new global::Mockolate.MockRegistry(mockRegistry, constructorParameters);")
+				.AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
-			sb.Append("\t\t\telse if (constructorParameters.Length > 0 && constructorParameters[0] is global::Mockolate.Mock.HttpMessageHandler && constructorParameters[0] is global::Mockolate.IMock httpMessageHandlerMock)").AppendLine();
+			sb.Append(
+					"\t\t\telse if (constructorParameters.Length > 0 && constructorParameters[0] is global::Mockolate.Mock.HttpMessageHandler && constructorParameters[0] is global::Mockolate.IMock httpMessageHandlerMock)")
+				.AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tif (mockBehavior is not null && httpMessageHandlerMock.MockRegistry.Behavior != mockBehavior)").AppendLine();
+			sb.Append(
+					"\t\t\t\tif (mockBehavior is not null && httpMessageHandlerMock.MockRegistry.Behavior != mockBehavior)")
+				.AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"Mock of type 'System.Net.Http.HttpClient' cannot be created with behavior '{mockBehavior}' because it shares its mock registry with a mock of type 'System.Net.Http.HttpMessageHandler' that has behavior '{httpMessageHandlerMock.MockRegistry.Behavior}'.\");").AppendLine();
+			sb.Append(
+					"\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"Mock of type 'System.Net.Http.HttpClient' cannot be created with behavior '{mockBehavior}' because it shares its mock registry with a mock of type 'System.Net.Http.HttpMessageHandler' that has behavior '{httpMessageHandlerMock.MockRegistry.Behavior}'.\");")
+				.AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
-			sb.Append("\t\t\t\tmockRegistry = new global::Mockolate.MockRegistry(httpMessageHandlerMock.MockRegistry, constructorParameters);").AppendLine();
+			sb.Append(
+					"\t\t\t\tmockRegistry = new global::Mockolate.MockRegistry(httpMessageHandlerMock.MockRegistry, constructorParameters);")
+				.AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
 		}
 		else
 		{
 			sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
-			sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, constructorParameters);").AppendLine();
+			sb.Append(
+					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, constructorParameters);")
+				.AppendLine();
 		}
 
 		sb.Append("\t\t\treturn CreateMockInstance(mockRegistry, constructorParameters, setup);").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 
 		sb.AppendLine();
-		sb.Append("\t\tprivate static ").Append(@class.ClassFullName).Append(" CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, ").Append(setupType).Append("? setup)").AppendLine();
+		sb.Append("\t\tprivate static ").Append(@class.ClassFullName)
+			.Append(
+				" CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<")
+			.Append(setupType).Append(">? setup)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		if (!@class.IsInterface && constructors?.Count > 0)
 		{
@@ -181,18 +226,23 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			if (constructors.Value.Any(m => m.Parameters.Count == 0))
 			{
-				sb.Append("\t\t\t\tglobal::Mockolate.Mock.").Append(name).Append(".MockRegistryProvider.Value = mockRegistry;").AppendLine();
-				sb.Append("\t\t\t\tglobal::Mockolate.MockExtensionsFor").Append(name).Append(".MockSetup? setupTarget = null;").AppendLine();
+				sb.Append("\t\t\t\tglobal::Mockolate.Mock.").Append(name)
+					.Append(".MockRegistryProvider.Value = mockRegistry;").AppendLine();
+				sb.Append("\t\t\t\tglobal::Mockolate.MockExtensionsFor").Append(name)
+					.Append(".MockSetup? setupTarget = null;").AppendLine();
 				sb.Append("\t\t\t\tif (setup is not null)").AppendLine();
 				sb.Append("\t\t\t\t{").AppendLine();
 				sb.Append("\t\t\t\t\tsetupTarget ??= new(mockRegistry);").AppendLine();
 				sb.Append("\t\t\t\t\tsetup.Invoke(setupTarget);").AppendLine();
 				sb.Append("\t\t\t\t}").AppendLine();
-				sb.Append("\t\t\t\treturn new global::Mockolate.Mock.").Append(name).Append("(mockRegistry);").AppendLine();
+				sb.Append("\t\t\t\treturn new global::Mockolate.Mock.").Append(name).Append("(mockRegistry);")
+					.AppendLine();
 			}
 			else
 			{
-				sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"No parameterless constructor found for '").Append(@class.DisplayString).Append("'. Please provide constructor parameters.\");").AppendLine();
+				sb.Append(
+						"\t\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"No parameterless constructor found for '")
+					.Append(@class.DisplayString).Append("'. Please provide constructor parameters.\");").AppendLine();
 			}
 
 			sb.Append("\t\t\t}").AppendLine();
@@ -234,8 +284,10 @@ internal static partial class Sources
 
 				sb.Append(")").AppendLine();
 				sb.Append("\t\t\t{").AppendLine();
-				sb.Append("\t\t\t\tglobal::Mockolate.Mock.").Append(name).Append(".MockRegistryProvider.Value = mockRegistry;").AppendLine();
-				sb.Append("\t\t\t\tglobal::Mockolate.MockExtensionsFor").Append(name).Append(".MockSetup? setupTarget = null;").AppendLine();
+				sb.Append("\t\t\t\tglobal::Mockolate.Mock.").Append(name)
+					.Append(".MockRegistryProvider.Value = mockRegistry;").AppendLine();
+				sb.Append("\t\t\t\tglobal::Mockolate.MockExtensionsFor").Append(name)
+					.Append(".MockSetup? setupTarget = null;").AppendLine();
 				sb.Append("\t\t\t\tif (setup is not null)").AppendLine();
 				sb.Append("\t\t\t\t{").AppendLine();
 				sb.Append("\t\t\t\t\tsetupTarget ??= new(mockRegistry);").AppendLine();
@@ -298,7 +350,8 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tvar value = new global::Mockolate.Mock.").Append(name).Append("(mockRegistry);").AppendLine();
+			sb.Append("\t\t\tvar value = new global::Mockolate.Mock.").Append(name).Append("(mockRegistry);")
+				.AppendLine();
 			sb.Append("\t\t\tif (setup is not null)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tsetup.Invoke(value);").AppendLine();
@@ -312,13 +365,17 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Create a mock that wraps the given <paramref name=\"instance\" />.");
 		sb.AppendXmlRemarks("All interactions are forwarded to the <paramref name=\"instance\" />.");
-		sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Wrapping(").Append(@class.ClassFullName).Append(" instance)").AppendLine();
+		sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Wrapping(").Append(@class.ClassFullName)
+			.Append(" instance)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (mock is global::Mockolate.IMock mockInterface)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn CreateMockInstance(new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance), mockInterface.MockRegistry.ConstructorParameters, null);").AppendLine();
+		sb.Append(
+				"\t\t\t\treturn CreateMockInstance(new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance), mockInterface.MockRegistry.ConstructorParameters, null);")
+			.AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");").AppendLine();
+		sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");")
+			.AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
@@ -334,9 +391,12 @@ internal static partial class Sources
 		sb.Append("\textension(global::Mockolate.MockBehavior behavior)").AppendLine();
 		sb.Append("\t{").AppendLine();
 
-		sb.AppendXmlSummary("Initialize mocks of type <typeparamref name=\"T\" /> with the given <paramref name=\"setup\" />.");
-		sb.AppendXmlRemarks("The <paramref name=\"setup\" /> is applied to the mock before the constructor is executed.");
-		sb.Append("\t\tpublic global::Mockolate.MockBehavior Initialize<T>(").Append(setupType).Append(" setup)").AppendLine();
+		sb.AppendXmlSummary(
+			"Initialize mocks of type <typeparamref name=\"T\" /> with the given <paramref name=\"setup\" />.");
+		sb.AppendXmlRemarks(
+			"The <paramref name=\"setup\" /> is applied to the mock before the constructor is executed.");
+		sb.Append("\t\tpublic global::Mockolate.MockBehavior Initialize<T>(global::System.Action<").Append(setupType)
+			.Append("> setup)").AppendLine();
 		sb.Append("\t\t\twhere T : ").Append(@class.ClassFullName).AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;").AppendLine();
@@ -354,10 +414,12 @@ internal static partial class Sources
 			string protectedName = @class.GetUniqueName("Protected", "SetupProtected");
 			if (hasProtectedMembers)
 			{
-				sb.Append("\tinternal interface IMockSetupInitializationFor").Append(name).Append(" : global::Mockolate.Mock.IMockSetupFor").Append(name).AppendLine();
+				sb.Append("\tinternal interface IMockSetupInitializationFor").Append(name)
+					.Append(" : global::Mockolate.Mock.IMockSetupFor").Append(name).AppendLine();
 				sb.Append("\t{").AppendLine();
 				sb.AppendXmlSummary("Setup protected members");
-				sb.Append("\t\tglobal::Mockolate.Mock.IMockProtectedSetupFor").Append(name).Append(' ').Append(protectedName).Append(" { get; }").AppendLine();
+				sb.Append("\t\tglobal::Mockolate.Mock.IMockProtectedSetupFor").Append(name).Append(' ')
+					.Append(protectedName).Append(" { get; }").AppendLine();
 				sb.Append("\t}").AppendLine();
 			}
 
@@ -366,10 +428,13 @@ internal static partial class Sources
 			sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 			sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
-			sb.Append("\tinternal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupFor").Append(name);
+			sb.Append(
+					"\tinternal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupFor")
+				.Append(name);
 			if (hasProtectedMembers)
 			{
-				sb.Append(", global::Mockolate.Mock.IMockProtectedSetupFor").Append(name).Append(", IMockSetupInitializationFor").Append(name);
+				sb.Append(", global::Mockolate.Mock.IMockProtectedSetupFor").Append(name)
+					.Append(", IMockSetupInitializationFor").Append(name);
 			}
 
 			sb.AppendLine();
@@ -377,10 +442,13 @@ internal static partial class Sources
 			if (hasProtectedMembers)
 			{
 				sb.Append("\t\t/// <inheritdoc />").AppendLine();
-				sb.Append("\t\tglobal::Mockolate.Mock.IMockProtectedSetupFor").Append(name).Append(" IMockSetupInitializationFor").Append(name).Append('.').Append(protectedName).Append(" => this;").AppendLine();
+				sb.Append("\t\tglobal::Mockolate.Mock.IMockProtectedSetupFor").Append(name)
+					.Append(" IMockSetupInitializationFor").Append(name).Append('.').Append(protectedName)
+					.Append(" => this;").AppendLine();
 			}
 
-			sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; } = mockRegistry;").AppendLine();
+			sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName)
+				.Append(" { get; } = mockRegistry;").AppendLine();
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
@@ -391,7 +459,8 @@ internal static partial class Sources
 				sb.AppendLine();
 				sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
 				sb.AppendLine();
-				ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}", MemberType.Protected);
+				ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}",
+					MemberType.Protected);
 				sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 			}
 
@@ -400,6 +469,7 @@ internal static partial class Sources
 
 		#endregion Setup helpers
 
+		AppendNestedCovariantParameterAdapter(sb);
 		sb.Append("}").AppendLine();
 
 		#endregion MockForXXXExtensions
@@ -411,7 +481,9 @@ internal static partial class Sources
 		sb.Append("internal static partial class Mock").AppendLine();
 		sb.Append("{").AppendLine();
 		sb.AppendXmlSummary($"A mock implementation for <see cref=\"{escapedClassName}\" />.", "\t");
-		sb.Append("\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").AppendLine();
+		sb.Append(
+				"\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]")
+			.AppendLine();
 #if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
@@ -422,6 +494,8 @@ internal static partial class Sources
 		if (hasProtectedMembers)
 		{
 			sb.Append(", IMockProtectedSetupFor").Append(name);
+			sb.Append(", global::Mockolate.MockExtensionsFor").Append(name).Append(".IMockSetupInitializationFor")
+				.Append(name);
 		}
 
 		if (hasStaticMembers)
@@ -462,8 +536,11 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.MockRegistry global::Mockolate.IMock.MockRegistry => this.").Append(mockRegistryName).Append(';').AppendLine();
+		sb.Append(
+				"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+			.AppendLine();
+		sb.Append("\t\tglobal::Mockolate.MockRegistry global::Mockolate.IMock.MockRegistry => this.")
+			.Append(mockRegistryName).Append(';').AppendLine();
 		if (constructors?.Count > 0)
 		{
 			sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).AppendLine();
@@ -471,22 +548,34 @@ internal static partial class Sources
 			sb.Append("\t\t\tget => field ?? MockRegistryProvider.Value;").AppendLine();
 			sb.Append("\t\t\tset;").AppendLine();
 			sb.Append("\t\t}").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tinternal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider = new global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry>();").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append(
+					"\t\tinternal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider = new global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry>();")
+				.AppendLine();
 		}
 		else
 		{
-			sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; }").AppendLine();
+			sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; }")
+				.AppendLine();
 			if (hasStaticMembers)
 			{
-				sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-				sb.Append("\t\tinternal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider = new global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry>();").AppendLine();
+				sb.Append(
+						"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+					.AppendLine();
+				sb.Append(
+						"\t\tinternal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider = new global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry>();")
+					.AppendLine();
 			}
 		}
 
 		sb.AppendLine();
-
-		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
+		setupType = hasProtectedMembers
+			? $"global::Mockolate.MockExtensionsFor{name}.IMockSetupInitializationFor{name}"
+			: $"global::Mockolate.Mock.IMockSetupFor{name}";
+		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents,
+			hasStaticMembers, hasStaticEvents, setupType);
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
@@ -539,7 +628,8 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}", MemberType.Protected);
+			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}",
+				MemberType.Protected);
 			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 		}
 
@@ -606,7 +696,8 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockProtectedVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
+			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockProtectedVerifyFor{name}",
+				MemberType.Protected);
 			sb.Append("\t\t#endregion IMockProtectedVerifyFor").Append(name).AppendLine();
 		}
 
@@ -628,9 +719,12 @@ internal static partial class Sources
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
-		sb.Append("\tprivate sealed class VerifyMonitor").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyFor").Append(name).AppendLine();
+		sb.Append("\tprivate sealed class VerifyMonitor").Append(name)
+			.Append("(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyFor")
+			.Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; } = mockRegistry;").AppendLine();
+		sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName)
+			.Append(" { get; } = mockRegistry;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
@@ -663,6 +757,18 @@ internal static partial class Sources
 			sb.Append("\t\tIMockStaticSetupFor").Append(name).Append(" SetupStatic { get; }").AppendLine();
 			sb.AppendLine();
 		}
+
+		sb.AppendXmlSummary($"Set up a scenario on the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.Append("\t\t").Append(setupType).Append(" SetupScenario(string scenarioName);").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary($"Set up a scenario on the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.Append("\t\tIMockFor").Append(name).Append(" SetupScenario(string scenarioName, global::System.Action<")
+			.Append(setupType).Append("> setup);").AppendLine();
+		sb.AppendLine();
+		sb.AppendXmlSummary($"Change the active scenario on the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.Append("\t\tIMockFor").Append(name).Append(" ChangeScenario(string scenarioName);").AppendLine();
+		sb.AppendLine();
 
 		if (hasEvents)
 		{
@@ -703,7 +809,8 @@ internal static partial class Sources
 		}
 
 		sb.AppendXmlSummary("Verifies the method invocations for the <paramref name=\"setup\" /> on the mock.");
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name).Append("> VerifySetup(global::Mockolate.Setup.IMethodSetup setup);").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name)
+			.Append("> VerifySetup(global::Mockolate.Setup.IMethodSetup setup);").AppendLine();
 		sb.AppendLine();
 		sb.AppendXmlSummary("Gets a value indicating whether all expected interactions have been verified.");
 		sb.Append("\t\tbool VerifyThatAllInteractionsAreVerified();").AppendLine();
@@ -714,8 +821,10 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Clears all interactions recorded by the mock object.");
 		sb.Append("\t\tvoid ClearAllInteractions();").AppendLine();
 		sb.AppendLine();
-		sb.AppendXmlSummary("Provides monitoring capabilities for a mocked instance of the specified type, allowing inspection of accessed properties, invoked methods, and event subscriptions.");
-		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> Monitor();").AppendLine();
+		sb.AppendXmlSummary(
+			"Provides monitoring capabilities for a mocked instance of the specified type, allowing inspection of accessed properties, invoked methods, and event subscriptions.");
+		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> Monitor();")
+			.AppendLine();
 		sb.Append("\t}").AppendLine();
 
 		#endregion IMockForXXX
@@ -824,20 +933,24 @@ internal static partial class Sources
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
 			sb.AppendLine();
-			sb.AppendXmlSummary($"Verify protected interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.AppendXmlSummary($"Verify protected interactions with the mock of <see cref=\"{escapedClassName}\" />.",
+				"\t");
 			sb.Append("\tinternal interface IMockProtectedVerifyFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineVerifyInterface(sb, @class, $"IMockProtectedVerifyFor{name}", MemberType.Protected, hasOverloadResolutionPriority);
+			DefineVerifyInterface(sb, @class, $"IMockProtectedVerifyFor{name}", MemberType.Protected,
+				hasOverloadResolutionPriority);
 			sb.Append("\t}").AppendLine();
 		}
 
 		if (hasStaticMembers || hasStaticEvents)
 		{
 			sb.AppendLine();
-			sb.AppendXmlSummary($"Verify static interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
+			sb.AppendXmlSummary($"Verify static interactions with the mock of <see cref=\"{escapedClassName}\" />.",
+				"\t");
 			sb.Append("\tinternal interface IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.Append("\t{").AppendLine();
-			DefineVerifyInterface(sb, @class, $"IMockStaticVerifyFor{name}", MemberType.Static, hasOverloadResolutionPriority);
+			DefineVerifyInterface(sb, @class, $"IMockStaticVerifyFor{name}", MemberType.Static,
+				hasOverloadResolutionPriority);
 			sb.Append("\t}").AppendLine();
 		}
 
@@ -850,33 +963,81 @@ internal static partial class Sources
 	}
 
 #pragma warning disable S107 // Methods should not have too many parameters
-	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name, bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
+	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name,
+		bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents,
+		string setupType)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+		sb.Append(
+				"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+			.AppendLine();
 		sb.Append("\t\tIMockSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".Setup").AppendLine();
 		sb.Append("\t\t\t=> this;").AppendLine();
 
 		if (hasProtectedMembers)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".SetupProtected").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" IMockFor").Append(name)
+				.Append(".SetupProtected").AppendLine();
+			sb.Append("\t\t\t=> this;").AppendLine();
+
+			sb.Append("\t\t/// <inheritdoc />").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" global::Mockolate.MockExtensionsFor")
+				.Append(name).Append(".IMockSetupInitializationFor").Append(name).Append(".Protected").AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
 
 		if (hasStaticMembers)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tIMockStaticSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".SetupStatic").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tIMockStaticSetupFor").Append(name).Append(" IMockFor").Append(name).Append(".SetupStatic")
+				.AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
+
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\t").Append(setupType).Append(" IMockFor").Append(name)
+			.Append(".SetupScenario(string scenarioName)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = scenarioName;").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name)
+			.Append(".SetupScenario(string scenarioName, global::System.Action<").Append(setupType)
+			.Append("> setup)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = scenarioName;").AppendLine();
+		sb.Append("\t\t\tsetup.Invoke(this);").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = \"\";").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name)
+			.Append(".ChangeScenario(string scenarioName)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".Scenario = scenarioName;").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
 
 		if (hasEvents)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
 			sb.Append("\t\tIMockRaiseOn").Append(name).Append(" IMockFor").Append(name).Append(".Raise").AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
@@ -884,66 +1045,89 @@ internal static partial class Sources
 		if (hasProtectedEvents)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tIMockProtectedRaiseOn").Append(name).Append(" IMockFor").Append(name).Append(".RaiseProtected").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tIMockProtectedRaiseOn").Append(name).Append(" IMockFor").Append(name)
+				.Append(".RaiseProtected").AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
 
 		if (hasStaticEvents)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tIMockStaticRaiseOn").Append(name).Append(" IMockFor").Append(name).Append(".RaiseStatic").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tIMockStaticRaiseOn").Append(name).Append(" IMockFor").Append(name).Append(".RaiseStatic")
+				.AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+		sb.Append(
+				"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+			.AppendLine();
 		sb.Append("\t\tIMockVerifyFor").Append(name).Append(" IMockFor").Append(name).Append(".Verify").AppendLine();
 		sb.Append("\t\t\t=> this;").AppendLine();
 
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tIMockProtectedVerifyFor").Append(name).Append(" IMockFor").Append(name).Append(".VerifyProtected").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tIMockProtectedVerifyFor").Append(name).Append(" IMockFor").Append(name)
+				.Append(".VerifyProtected").AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
 
 		if (hasStaticMembers || hasStaticEvents)
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tIMockStaticVerifyFor").Append(name).Append(" IMockFor").Append(name).Append(".VerifyStatic").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tIMockStaticVerifyFor").Append(name).Append(" IMockFor").Append(name).Append(".VerifyStatic")
+				.AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name).Append("> IMockFor").Append(name).Append(".VerifySetup(global::Mockolate.Setup.IMethodSetup setup)").AppendLine();
-		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".Method<IMockVerifyFor").Append(name).Append(">(this, setup);").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name).Append("> IMockFor")
+			.Append(name).Append(".VerifySetup(global::Mockolate.Setup.IMethodSetup setup)").AppendLine();
+		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".Method<IMockVerifyFor").Append(name)
+			.Append(">(this, setup);").AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tbool IMockFor").Append(name).Append(".VerifyThatAllInteractionsAreVerified()").AppendLine();
-		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".Interactions.GetUnverifiedInteractions().Count == 0;").AppendLine();
+		sb.Append("\t\t\t=> this.").Append(mockRegistryName)
+			.Append(".Interactions.GetUnverifiedInteractions().Count == 0;").AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tbool IMockFor").Append(name).Append(".VerifyThatAllSetupsAreUsed()").AppendLine();
-		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".GetUnusedSetups(this.").Append(mockRegistryName).Append(".Interactions).Count == 0;").AppendLine();
+		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".GetUnusedSetups(this.").Append(mockRegistryName)
+			.Append(".Interactions).Count == 0;").AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tvoid IMockFor").Append(name).Append(".ClearAllInteractions()").AppendLine();
 		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".ClearAllInteractions();").AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> IMockFor").Append(name).Append(".Monitor()").AppendLine();
-		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.").Append(mockRegistryName).Append(".Interactions, interactions => new VerifyMonitor").Append(name).Append("(new global::Mockolate.MockRegistry(this.").Append(mockRegistryName).Append(", interactions)));").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> IMockFor")
+			.Append(name).Append(".Monitor()").AppendLine();
+		sb.Append("\t\t\t=> new global::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append(">(this.")
+			.Append(mockRegistryName).Append(".Interactions, interactions => new VerifyMonitor").Append(name)
+			.Append("(new global::Mockolate.MockRegistry(this.").Append(mockRegistryName).Append(", interactions)));")
+			.AppendLine();
 		sb.AppendLine();
 	}
 #pragma warning restore S107 // Methods should not have too many parameters
 
 	#region Mock Helpers
 
-	private static void AppendMockSubject_BaseClassConstructor(StringBuilder sb, string mockRegistryName, string name, Method constructor)
+	private static void AppendMockSubject_BaseClassConstructor(StringBuilder sb, string mockRegistryName, string name,
+		Method constructor)
 	{
 		string mockRegistry = CreateUniqueParameterName(constructor.Parameters, "mockRegistry");
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
@@ -996,7 +1180,8 @@ internal static partial class Sources
 		{
 			if (mockEvents?.All(e => !Event.EqualityComparer.Equals(@event, e)) != false)
 			{
-				AppendMockSubject_ImplementClass_AddEvent(sb, @event, mockRegistryName, className, mockClass is not null,
+				AppendMockSubject_ImplementClass_AddEvent(sb, @event, mockRegistryName, className,
+					mockClass is not null,
 					@class.IsInterface);
 				sb.AppendLine();
 			}
@@ -1007,7 +1192,8 @@ internal static partial class Sources
 		{
 			if (mockProperties?.All(p => !Property.EqualityComparer.Equals(property, p)) != false)
 			{
-				AppendMockSubject_ImplementClass_AddProperty(sb, property, mockRegistryName, className, mockClass is not null,
+				AppendMockSubject_ImplementClass_AddProperty(sb, property, mockRegistryName, className,
+					mockClass is not null,
 					@class.IsInterface);
 				sb.AppendLine();
 			}
@@ -1018,7 +1204,8 @@ internal static partial class Sources
 		{
 			if (mockMethods?.All(m => !Method.EqualityComparer.Equals(method, m)) != false)
 			{
-				AppendMockSubject_ImplementClass_AddMethod(sb, method, mockRegistryName, className, mockClass is not null,
+				AppendMockSubject_ImplementClass_AddMethod(sb, method, mockRegistryName, className,
+					mockClass is not null,
 					@class.IsInterface, @class);
 				sb.AppendLine();
 			}
@@ -1027,7 +1214,8 @@ internal static partial class Sources
 		sb.Append("\t\t#endregion ").Append(@class.DisplayString).AppendLine();
 	}
 
-	private static void AppendMockSubject_ImplementClass_AddEvent(StringBuilder sb, Event @event, string mockRegistryName, string className,
+	private static void AppendMockSubject_ImplementClass_AddEvent(StringBuilder sb, Event @event,
+		string mockRegistryName, string className,
 		bool explicitInterfaceImplementation, bool isClassInterface)
 	{
 		string mockRegistry = @event.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
@@ -1035,7 +1223,8 @@ internal static partial class Sources
 		string backingFieldAccess;
 		if (@event.IsStatic)
 		{
-			sb.Append("\t\tprivate static readonly global::System.Threading.AsyncLocal<").Append(@event.Type.Fullname.TrimEnd('?'))
+			sb.Append("\t\tprivate static readonly global::System.Threading.AsyncLocal<")
+				.Append(@event.Type.Fullname.TrimEnd('?'))
 				.Append("?> ").Append(backingFieldName).Append(" = new global::System.Threading.AsyncLocal<")
 				.Append(@event.Type.Fullname.TrimEnd('?')).Append("?>();").AppendLine();
 			backingFieldAccess = $"{backingFieldName}.Value";
@@ -1052,7 +1241,8 @@ internal static partial class Sources
 		sb.Append(@event.Attributes, "\t\t");
 		if (explicitInterfaceImplementation)
 		{
-			sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname).Append(' ').Append(className).Append('.').Append(@event.Name).AppendLine();
+			sb.Append(@event.IsStatic ? "\t\tstatic event " : "\t\tevent ").Append(@event.Type.Fullname).Append(' ')
+				.Append(className).Append('.').Append(@event.Name).AppendLine();
 		}
 		else
 		{
@@ -1081,7 +1271,8 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t\t{");
-		bool supportsWrapping = @event is { IsStatic: false, IsProtected: false, ExplicitImplementation: null, } && !explicitInterfaceImplementation;
+		bool supportsWrapping = @event is { IsStatic: false, IsProtected: false, ExplicitImplementation: null, } &&
+		                        !explicitInterfaceImplementation;
 		if (supportsWrapping)
 		{
 			sb.Append("\t\t\tadd").AppendLine();
@@ -1089,7 +1280,8 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".AddEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" += value;").AppendLine();
-			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)")
+				.AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" += value;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
@@ -1099,7 +1291,8 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t").Append(mockRegistry).Append(".RemoveEvent(").Append(@event.GetUniqueNameString())
 				.Append(", value?.Target, value?.Method);").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" -= value;").AppendLine();
-			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)")
+				.AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" -= value;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
@@ -1124,7 +1317,8 @@ internal static partial class Sources
 		sb.AppendLine("\t\t}");
 	}
 
-	private static void AppendMockSubject_ImplementClass_AddProperty(StringBuilder sb, Property property, string mockRegistryName,
+	private static void AppendMockSubject_ImplementClass_AddProperty(StringBuilder sb, Property property,
+		string mockRegistryName,
 		string className, bool explicitInterfaceImplementation, bool isClassInterface)
 	{
 		string mockRegistry = property.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
@@ -1194,26 +1388,29 @@ internal static partial class Sources
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					string indexerResultVarName =
-						Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
+					string accessVarName =
+						Helpers.GetUniqueLocalVariableName("access", property.IndexerParameters.Value);
+					string setupVarName =
+						Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
 
-					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className).Append(" wraps)").AppendLine();
+					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
+						property.Type, property.IndexerParameters.Value);
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className)
+						.Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry);
-					AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
-					sb.Append(".GetResult(() => ")
+					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
 						.Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\tvar ").Append(indexerResultVarName).Append(" = this.").Append(mockRegistryName);
-					AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
-					sb.AppendLine(";");
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps[")
+					sb.Append("\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ').Append(baseResultVarName)
+						.Append(" = wraps[")
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
 						.AppendLine();
-					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
+					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", ")
 						.Append(baseResultVarName).Append(");").AppendLine();
 				}
 				else
@@ -1224,7 +1421,8 @@ internal static partial class Sources
 						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 					if (!property.IsStatic)
 					{
-						sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className).Append(" wraps ? null : () => wraps.").Append(property.Name);
+						sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className)
+							.Append(" wraps ? null : () => wraps.").Append(property.Name);
 					}
 					else
 					{
@@ -1238,35 +1436,43 @@ internal static partial class Sources
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					string indexerResultVarName =
-						Helpers.GetUniqueLocalVariableName("indexerResult", property.IndexerParameters.Value);
+					string accessVarName =
+						Helpers.GetUniqueLocalVariableName("access", property.IndexerParameters.Value);
+					string setupVarName =
+						Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
-					sb.Append("\t\t\t\tvar ").Append(indexerResultVarName).Append(" = this.").Append(mockRegistryName);
-					AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
-					sb.AppendLine(";");
-					sb.Append("\t\t\t\tif (!").Append(indexerResultVarName).Append(".SkipBaseClass)").AppendLine();
+
+					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
+						property.Type, property.IndexerParameters.Value);
+					sb.Append("\t\t\t\tif (!(").Append(setupVarName).Append("?.SkipBaseClass() ?? ")
+						.Append(mockRegistry).Append(".Behavior.SkipBaseClass))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property.Getter?.IsProtected != true)
 					{
-						sb.Append("\t\t\t\t\tvar ").Append(baseResultVarName).Append(" = this.").Append(mockRegistryName)
+						sb.Append("\t\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ')
+							.Append(baseResultVarName).Append(" = this.")
+							.Append(mockRegistryName)
 							.Append(".Wraps is ").Append(className).Append(" wraps ? wraps[")
-							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("] : base[")
+							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
+							.Append("] : base[")
 							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
 							.AppendLine();
 					}
 					else
 					{
-						sb.Append("\t\t\t\t\tvar ").Append(baseResultVarName).Append(" = base[")
+						sb.Append("\t\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ')
+							.Append(baseResultVarName).Append(" = base[")
 							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
 							.AppendLine();
 					}
 
-					sb.Append("\t\t\t\t\treturn ").Append(indexerResultVarName).Append(".GetResult(")
+					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", ")
 						.Append(baseResultVarName).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\treturn ").Append(indexerResultVarName)
-						.Append(".GetResult(() => ")
+					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
 						.Append(");").AppendLine();
 				}
@@ -1278,7 +1484,9 @@ internal static partial class Sources
 						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 					if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
 					{
-						sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.").Append(property.Name);
+						sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.")
+							.Append(property.Name);
 					}
 					else
 					{
@@ -1290,9 +1498,15 @@ internal static partial class Sources
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
-				sb.Append("\t\t\t\treturn this.").Append(mockRegistryName);
-				AppendGetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
-				sb.Append(".GetResult(() => ")
+				string accessVarName =
+					Helpers.GetUniqueLocalVariableName("access", property.IndexerParameters.Value);
+				string setupVarName =
+					Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
+
+				EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
+					property.Type, property.IndexerParameters.Value);
+				sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
+					.Append(accessVarName).Append(", ").Append(setupVarName).Append(", () => ")
 					.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
 					.Append(");").AppendLine();
 			}
@@ -1323,11 +1537,19 @@ internal static partial class Sources
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					sb.Append("\t\t\t\tthis.").Append(mockRegistryName);
-					AppendSetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
-					sb.Append(";").AppendLine();
+					string accessVarName =
+						Helpers.GetUniqueLocalVariableName("access", property.IndexerParameters.Value);
+					string setupVarName =
+						Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
 
-					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
+						property.Type, property.IndexerParameters.Value);
+					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value);")
+						.AppendLine();
+
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+						.Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\twraps[")
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
@@ -1336,11 +1558,13 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<").AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
+					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
 						.Append(", value);").AppendLine();
 					if (!property.IsStatic)
 					{
-						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\twraps.").Append(property.Name).Append(" = value;").AppendLine();
 						sb.Append("\t\t\t\t}").AppendLine();
@@ -1349,15 +1573,22 @@ internal static partial class Sources
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
 			{
+				string accessVarName =
+					Helpers.GetUniqueLocalVariableName("access", property.IndexerParameters.Value);
+				string setupVarName =
+					Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
+
 				if (!isClassInterface && !property.IsAbstract)
 				{
-					sb.Append("\t\t\t\tif (!this.").Append(mockRegistryName);
-					AppendSetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
-					sb.Append(")").AppendLine();
+					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
+						property.Type, property.IndexerParameters.Value);
+					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".ApplyIndexerSetter(")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property.Setter?.IsProtected != true)
 					{
-						sb.Append("\t\t\t\t\tif (this.").Append(mockRegistryName).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\t\tif (this.").Append(mockRegistryName).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\twraps[")
 							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
@@ -1381,21 +1612,24 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\tthis.").Append(mockRegistryName);
-					AppendSetIndexerCall(sb, property.Type, property.IndexerParameters.Value);
-					sb.AppendLine(";");
+					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
+						property.Type, property.IndexerParameters.Value);
+					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value);").AppendLine();
 				}
 			}
 			else
 			{
 				if (!isClassInterface && !property.IsAbstract)
 				{
-					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty<").AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
+					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty<")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
 						.Append(", value))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property is { IsStatic: false, } && property.Setter?.IsProtected != true)
 					{
-						sb.Append("\t\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\twraps.").Append(property.Name).Append(" = value;").AppendLine();
 						sb.Append("\t\t\t\t\t}").AppendLine();
@@ -1413,7 +1647,8 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<").AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
+					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
 						.AppendLine(", value);");
 				}
 			}
@@ -1424,7 +1659,8 @@ internal static partial class Sources
 		sb.AppendLine("\t\t}");
 	}
 
-	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method, string mockRegistryName, string className,
+	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method,
+		string mockRegistryName, string className,
 		bool explicitInterfaceImplementation, bool isClassInterface, Class @class)
 	{
 		string mockRegistry = method.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
@@ -1508,247 +1744,252 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
-		string methodExecutionVarName = Helpers.GetUniqueLocalVariableName("methodExecution", method.Parameters);
-		bool useTypedOverload = method.Parameters.Count is >= 1 and <= MaxExplicitParameters;
-		if (method.ReturnType != Type.Void)
+		string methodSetup = Helpers.GetUniqueLocalVariableName("methodSetup", method.Parameters);
+		string methodSetupType = (method.ReturnType == Type.Void, method.Parameters.Count) switch
 		{
-			sb.Append("\t\t\tglobal::Mockolate.Setup.MethodSetupResult<")
-				.AppendTypeOrWrapper(method.ReturnType).Append("> ").Append(methodExecutionVarName)
-				.Append(" = ").Append(mockRegistry).Append(".InvokeMethod<")
-				.AppendTypeOrWrapper(method.ReturnType);
-			if (useTypedOverload)
+			(true, 0) => "global::Mockolate.Setup.VoidMethodSetup",
+			(true, _) => $"global::Mockolate.Setup.VoidMethodSetup<{string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
+			(_, 0) => $"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}>",
+			(_, _) => $"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}, {string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
+		};
+		bool hasOutParams = method.Parameters.Any(p => p.RefKind is RefKind.Out);
+		bool hasRefParams = method.Parameters.Any(p => p.RefKind is RefKind.Ref);
+		string hasWrappedResult = Helpers.GetUniqueLocalVariableName("hasWrappedResult", method.Parameters);
+		string wrappedResult = Helpers.GetUniqueLocalVariableName("wrappedResult", method.Parameters);
+		string wpc = Helpers.GetUniqueLocalVariableName("wpc", method.Parameters);
+		bool supportsWrapping = !explicitInterfaceImplementation && method is { IsStatic: false, IsProtected: false, };
+		bool isAbstractOrInterface = isClassInterface || method.IsAbstract;
+
+		StringBuilder sb2 = new();
+		int i = 0;
+		foreach (MethodParameter p in method.Parameters)
+		{
+			if (i++ > 0)
 			{
-				foreach (MethodParameter p in method.Parameters)
-				{
-					sb.Append(", ").AppendTypeOrWrapper(p.Type);
-				}
+				sb2.Append(", ");
 			}
 
-			sb.Append(">(").Append(method.GetUniqueNameString()).Append(", ");
-			if (method.Parameters.Count == 0)
+			if (p.RefKind == RefKind.Ref || p.RefKind == RefKind.In || p.RefKind == RefKind.RefReadOnlyParameter)
 			{
-				sb.Append("() => ")
-					.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue");
+				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", method.Parameters);
+
+				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
+				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+			}
+			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
+			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+			{
+				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", method.Parameters);
+
+				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.ToNameOrWrapper()).Append(';')
+					.AppendLine();
+				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
 			}
 			else
 			{
-				string parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
-				sb.Append(parameterVarName).Append(" => ")
-					.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
-						parameterVarName);
-			}
-		}
-		else
-		{
-			sb.Append("\t\t\tglobal::Mockolate.Setup.MethodSetupResult ").Append(methodExecutionVarName)
-				.Append(" = ").Append(mockRegistry).Append(".InvokeMethod");
-			if (useTypedOverload)
-			{
-				sb.Append('<');
-				bool first = true;
-				foreach (MethodParameter p in method.Parameters)
-				{
-					if (!first)
-					{
-						sb.Append(", ");
-					}
-
-					sb.AppendTypeOrWrapper(p.Type);
-					first = false;
-				}
-
-				sb.Append('>');
-			}
-
-			sb.Append('(').Append(method.GetUniqueNameString());
-		}
-
-		foreach (MethodParameter p in method.Parameters)
-		{
-			if (useTypedOverload)
-			{
-				sb.Append(", \"").Append(p.Name).Append("\", ").Append(
+				sb2.Append("\"").Append(p.Name).Append("\", ").Append(
 					p.RefKind switch
 					{
 						RefKind.Out => "default",
 						_ => p.ToNameOrWrapper(),
 					});
 			}
-			else
-			{
-				sb.Append(", new global::Mockolate.Parameters.NamedParameterValue<").AppendTypeOrWrapper(p.Type)
-					.Append(">(\"").Append(p.Name).Append("\", ").Append(
-						p.RefKind switch
-						{
-							RefKind.Out => "default",
-							_ => p.ToNameOrWrapper(),
-						}).Append(')');
-			}
 		}
 
-		sb.AppendLine(");");
-
-		if (isClassInterface || method.IsAbstract)
+		sb.Append("\t\t\tvar ").Append(methodSetup)
+			.Append(" = ").Append(mockRegistry).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
+			.Append(method.GetUniqueNameString()).Append(", m => m.Matches(");
+		sb.Append(sb2);
+		sb.AppendLine("));");
+		sb.Append("\t\t\tbool ").Append(hasWrappedResult).Append(" = false;").AppendLine();
+		if (method.ReturnType != Type.Void)
 		{
-			if (!explicitInterfaceImplementation && isClassInterface && !method.IsStatic)
-			{
-				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
-				if (method.ReturnType != Type.Void)
-				{
-					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps").Append(".")
-						.Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
-				}
-				else
-				{
-					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\twraps").Append(".")
-						.Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
-				}
-
-				AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
-					$"{mockRegistry}.Behavior.DefaultValue");
-
-				if (method.ReturnType != Type.Void)
-				{
-					sb.Append("\t\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)").AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					AppendTriggerCallbacks(sb, "\t\t\t\t\t", methodExecutionVarName, method.Parameters);
-					sb.Append("\t\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
-					sb.Append("\t\t\t\t}").AppendLine();
-				}
-
-				sb.Append("\t\t\t}").AppendLine();
-			}
-
-			AppendOutRefParameterHandling(sb, "\t\t\t", method.Parameters, methodExecutionVarName,
-				$"{mockRegistry}.Behavior.DefaultValue");
-
-			AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
-			if (method.ReturnType != Type.Void)
-			{
-				sb.Append("\t\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
-			}
+			sb.Append("\t\t\t").Append(method.ReturnType.Fullname).Append(" ").Append(wrappedResult)
+				.Append(" = default!;")
+				.AppendLine();
 		}
-		else
+
+		if (supportsWrapping)
 		{
-			sb.Append("\t\t\tif (!").Append(methodExecutionVarName).Append(".SkipBaseClass)").AppendLine();
+			sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+				.Append(" wraps)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
-				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
-
-				if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
-				    @class is { ClassFullName: "global::System.Net.Http.HttpClient", })
-				{
-					sb.Append("\t\t\t\t#if NETFRAMEWORK").AppendLine();
-					sb.Append(
-							"\t\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework")
-						.AppendLine();
-					sb.Append("\t\t\t\tif (request.Content != null)").AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append(
-							"\t\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
-						.AppendLine();
-					sb.Append("\t\t\t\t\tusing global::System.IO.MemoryStream ms = new();").AppendLine();
-					sb.Append("\t\t\t\t\tstream.CopyTo(ms);").AppendLine();
-					sb.Append("\t\t\t\t\tbyte[] bytes = ms.ToArray();").AppendLine();
-					sb.Append("\t\t\t\t\tstream.Position = 0L;").AppendLine();
-					sb.Append("\t\t\t\t\trequest.Properties.Add(\"Mockolate:HttpContent\", bytes);").AppendLine();
-					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\t#endif").AppendLine();
-				}
-
-				if (method is { IsStatic: false, IsProtected: false, })
-				{
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = ").Append(mockRegistry)
-						.Append(".Wraps is ").Append(className).Append(" wraps ? wraps.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(") : base.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
-				}
-				else
-				{
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
-				}
-
-				AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
-					$"{mockRegistry}.Behavior.DefaultValue");
-
-				sb.Append("\t\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)").AppendLine();
-				sb.Append("\t\t\t\t{").AppendLine();
-				AppendTriggerCallbacks(sb, "\t\t\t\t\t", methodExecutionVarName, method.Parameters);
-				sb.Append("\t\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
-				sb.Append("\t\t\t\t}").AppendLine();
-				sb.Append("\t\t\t}").AppendLine();
-				if (method.Parameters.Any(p => p.RefKind == RefKind.Ref || p.RefKind == RefKind.Out))
-				{
-					sb.Append("\t\t\telse").AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					AppendOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
-						$"{mockRegistry}.Behavior.DefaultValue");
-					sb.Append("\t\t\t}").AppendLine();
-				}
-
-				sb.AppendLine();
-				AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
-				sb.Append("\t\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
+				sb.Append("\t\t\t\t").Append(wrappedResult).Append(" = wraps").Append(".")
+					.Append(method.Name).Append('(')
+					.Append(FormatMethodParametersWithRefKind(method.Parameters))
+					.Append(");").AppendLine();
+				sb.Append("\t\t\t\t").Append(hasWrappedResult).Append(" = true;").AppendLine();
 			}
 			else
 			{
-				if (method is { IsStatic: false, IsProtected: false, })
+				sb.Append("\t\t\t\twraps").Append(".")
+					.Append(method.Name).Append('(')
+					.Append(FormatMethodParametersWithRefKind(method.Parameters))
+					.Append(");").AppendLine();
+				sb.Append("\t\t\t\t").Append(hasWrappedResult).Append(" = true;").AppendLine();
+			}
+
+			sb.Append("\t\t\t}").AppendLine();
+			if (hasOutParams)
+			{
+				sb.Append("\t\t\telse").AppendLine();
+				sb.Append("\t\t\t{").AppendLine();
+				foreach (MethodParameter parameter in method.Parameters.Where(p => p.RefKind == RefKind.Out))
 				{
-					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\twraps.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
-					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\telse").AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tbase.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
-					sb.Append("\t\t\t\t}").AppendLine();
-				}
-				else
-				{
-					sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+					sb.Append("\t\t\t\t").Append(parameter.Name).Append(" = default!;").AppendLine();
 				}
 
 				sb.Append("\t\t\t}").AppendLine();
-				foreach (MethodParameter parameter in method.Parameters)
-				{
-					if (parameter.RefKind == RefKind.Out)
-					{
-						sb.AppendLine();
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetOutParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-							.Append("\", () => ")
-							.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
-							.Append(");").AppendLine();
-					}
-					else if (parameter.RefKind == RefKind.Ref)
-					{
-						sb.AppendLine();
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetRefParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
-							.Append(parameter.Name).Append(");").AppendLine();
-					}
+			}
+		}
+		else if (hasOutParams)
+		{
+			foreach (MethodParameter parameter in method.Parameters.Where(p => p.RefKind == RefKind.Out))
+			{
+				sb.Append("\t\t\t").Append(parameter.Name).Append(" = default!;").AppendLine();
+			}
+		}
 
-					AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
+		if (!isAbstractOrInterface)
+		{
+			if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
+			    @class is { ClassFullName: "global::System.Net.Http.HttpClient", })
+			{
+				sb.Append("\t\t\t#if NETFRAMEWORK").AppendLine();
+				sb.Append(
+						"\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework")
+					.AppendLine();
+				sb.Append("\t\t\tif (request.Content != null)").AppendLine();
+				sb.Append("\t\t\t{").AppendLine();
+				sb.Append(
+						"\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
+					.AppendLine();
+				sb.Append("\t\t\t\tusing global::System.IO.MemoryStream ms = new();").AppendLine();
+				sb.Append("\t\t\t\tstream.CopyTo(ms);").AppendLine();
+				sb.Append("\t\t\t\tbyte[] bytes = ms.ToArray();").AppendLine();
+				sb.Append("\t\t\t\tstream.Position = 0L;").AppendLine();
+				sb.Append("\t\t\t\trequest.Properties.Add(\"Mockolate:HttpContent\", bytes);").AppendLine();
+				sb.Append("\t\t\t}").AppendLine();
+				sb.Append("\t\t\t#endif").AppendLine();
+			}
+
+			sb.Append("\t\t\tif (!(").Append(methodSetup).Append("?.SkipBaseClass(").Append(mockRegistry)
+				.Append(".Behavior) ?? ").Append(mockRegistry).Append(".Behavior.SkipBaseClass)");
+			if (supportsWrapping)
+			{
+				sb.Append(" && !").Append(hasWrappedResult);
+			}
+
+			sb.Append(')').AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t");
+			if (method.ReturnType != Type.Void)
+			{
+				sb.Append(wrappedResult).Append(" = ");
+			}
+
+			sb.Append("base.").Append(method.Name).Append('(')
+				.Append(FormatMethodParametersWithRefKind(method.Parameters))
+				.Append(");").AppendLine();
+			sb.Append("\t\t\t\t").Append(hasWrappedResult).Append(" = true;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+		}
+
+		if (hasOutParams || hasRefParams)
+		{
+			sb.Append("\t\t\tif (!").Append(hasWrappedResult).Append(" || ").Append(methodSetup).Append(" is ").Append(methodSetupType)
+				.Append(".WithParameterCollection)")
+				.AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tif (").Append(methodSetup).Append(" is ").Append(methodSetupType)
+				.Append(".WithParameterCollection ").Append(wpc).Append(')').AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			int parameterIndex = 0;
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				parameterIndex++;
+				if (parameter.RefKind == RefKind.Out)
+				{
+					sb.Append("\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
+						.Append(" is not global::Mockolate.Parameters.IOutParameter<")
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> outParam").Append(parameterIndex)
+						.Append(" || !outParam").Append(parameterIndex).Append(".TryGetValue(out ")
+						.Append(parameter.Name).Append("))").AppendLine();
+					sb.Append("\t\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
+						.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
+						.Append(';').AppendLine();
+					sb.Append("\t\t\t\t\t}").AppendLine();
+				}
+				else if (parameter.RefKind == RefKind.Ref)
+				{
+					sb.Append("\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
+						.Append(" is global::Mockolate.Parameters.IRefParameter<")
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> refParam").Append(parameterIndex)
+						.Append(")").AppendLine();
+					sb.Append("\t\t\t\t\t{").AppendLine();
+					sb.Append("\t\t\t\t\t\t").Append(parameter.Name).Append(" = refParam").Append(parameterIndex)
+						.Append(".GetValue(").Append(parameter.Name).Append(");").AppendLine();
+					sb.Append("\t\t\t\t\t}").AppendLine();
 				}
 			}
+
+			sb.Append("\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t\telse").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			foreach (MethodParameter parameter in method.Parameters.Where(p => p.RefKind == RefKind.Out))
+			{
+				sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = ")
+					.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue").Append(';')
+					.AppendLine();
+			}
+
+			sb.Append("\t\t\t\t}").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+		}
+
+		sb.Append("\t\t\t").Append(mockRegistry)
+			.Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
+		if (method.Parameters.Count > 0)
+		{
+			sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append('>');
+		}
+
+		sb.Append("(").Append(method.GetUniqueNameString());
+		if (method.Parameters.Count > 0)
+		{
+			sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => $"\"{p.Name}\", {p.ToNameOrWrapper()}")));
+		}
+
+		sb.Append("));").AppendLine();
+
+		string displayMethodName = $"{method.ContainingType}.{method.Name}({string.Join(", ", method.Parameters.Select(p => p.Type.DisplayName))})";
+		sb.Append("\t\t\tif (").Append(methodSetup).Append(" is null && !").Append(hasWrappedResult).Append(" && ").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockNotSetupException(\"The method '").Append(displayMethodName).Append("' was invoked without prior setup.\");").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+
+		AppendTriggerCallbacks(sb, "\t\t\t", methodSetup, method.Parameters);
+
+		if (method.ReturnType != Type.Void)
+		{
+			sb.Append("\t\t\tif (").Append(methodSetup).Append("?.HasReturnCallbacks != true && ").Append(hasWrappedResult).Append(")").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\treturn ").Append(wrappedResult).Append(";").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t\treturn ").Append(methodSetup).Append("?.TryGetReturnValue(");
+			string defaultValueGeneratorSuffix = "";
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper()))).Append(", ");
+				defaultValueGeneratorSuffix = string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper()));
+			}
+
+			sb.Append("out var returnValue) == true ? returnValue : ")
+				.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue", defaultValueGeneratorSuffix)
+				.Append(';').AppendLine();
 		}
 
 		sb.AppendLine("\t\t}");
@@ -1757,6 +1998,28 @@ internal static partial class Sources
 	#endregion Mock Helpers
 
 	#region Setup Helpers
+
+	/// <summary>
+	///     Emits a private nested <c>CovariantParameterAdapter&lt;T&gt;</c> class, used so that covariant widening of
+	///     <c>IParameter&lt;T&gt;</c> parameters can be dispatched at setup/verify time without an
+	///     <c>IParameterMatch&lt;T&gt;</c> cast failure.
+	/// </summary>
+	private static void AppendNestedCovariantParameterAdapter(StringBuilder sb)
+	{
+		sb.AppendLine();
+		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
+		sb.Append("\tprivate sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\tpublic bool Matches(T value) => inner.Matches(value);").AppendLine();
+		sb.Append("\t\tpublic void InvokeCallbacks(T value) => inner.InvokeCallbacks(value);").AppendLine();
+		sb.Append("\t\tpublic override string? ToString() => inner.ToString();").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tpublic static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)").AppendLine();
+		sb.Append("\t\t\t=> parameter is global::Mockolate.Parameters.IParameterMatch<T> direct").AppendLine();
+		sb.Append("\t\t\t\t? direct").AppendLine();
+		sb.Append("\t\t\t\t: new CovariantParameterAdapter<T>(parameter);").AppendLine();
+		sb.Append("\t}").AppendLine();
+	}
 
 	private static IEnumerable<bool[]> GenerateValueFlagCombinations(EquatableArray<MethodParameter> parameters)
 	{
@@ -1808,7 +2071,8 @@ internal static partial class Sources
 		return result;
 	}
 
-	private static void DefineSetupInterface(StringBuilder sb, Class @class, MemberType memberType, bool hasOverloadResolutionPriority)
+	private static void DefineSetupInterface(StringBuilder sb, Class @class, MemberType memberType,
+		bool hasOverloadResolutionPriority)
 	{
 		#region Properties
 
@@ -1817,8 +2081,10 @@ internal static partial class Sources
 			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
-			sb.AppendXmlSummary($"Setup for the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
+			sb.AppendXmlSummary(
+				$"Setup for the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
+			sb.Append("\t\tglobal::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname).Append("> ")
+				.Append(property.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
@@ -1830,7 +2096,8 @@ internal static partial class Sources
 			=> @event.ExplicitImplementation is null && @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
 		{
-			sb.AppendXmlSummary($"Setup for the event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
+			sb.AppendXmlSummary(
+				$"Setup for the event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
 			sb.Append("\t\tglobal::Mockolate.Setup.EventSetup ").Append(@event.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
@@ -1854,7 +2121,8 @@ internal static partial class Sources
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload())
+					.ToArray();
 				if (allValueFlags.Any(f => f))
 				{
 					AppendIndexerSetupDefinition(sb, indexer, allValueFlags, hasOverloadResolutionPriority);
@@ -1866,10 +2134,13 @@ internal static partial class Sources
 
 		#region Methods
 
-		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.MemberType == memberType;
+		bool MethodPredicate(Method method)
+		{
+			return method.ExplicitImplementation is null && method.MemberType == memberType;
+		}
 
-		List<IGrouping<string, Method>> methodGroups = @class.AllMethods().Where(methodPredicate).GroupBy(m => m.Name).ToList();
+		List<IGrouping<string, Method>> methodGroups =
+			@class.AllMethods().Where((Func<Method, bool>)MethodPredicate).GroupBy(m => m.Name).ToList();
 		foreach (IGrouping<string, Method>? methodGroup in methodGroups)
 		{
 			if (methodGroup.Count() == 1)
@@ -1877,7 +2148,8 @@ internal static partial class Sources
 				Method? method = methodGroup.Single();
 				if (method.Parameters.Count > 0)
 				{
-					AppendMethodSetupDefinition(sb, @class, method, true, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendMethodSetupDefinition(sb, @class, method, true,
+						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 
@@ -1885,24 +2157,29 @@ internal static partial class Sources
 			{
 				if (method.Parameters.Count == 0)
 				{
-					AppendMethodSetupDefinition(sb, @class, method, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendMethodSetupDefinition(sb, @class, method, false,
+						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 				else
 				{
-					AppendMethodSetupDefinition(sb, @class, method, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendMethodSetupDefinition(sb, @class, method, false,
+						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: valueFlags,
+								hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload())
+							.ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+							AppendMethodSetupDefinition(sb, @class, method, false, valueFlags: allValueFlags,
+								hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 				}
@@ -1913,7 +2190,8 @@ internal static partial class Sources
 	}
 
 	private static void AppendMethodSetupDefinition(StringBuilder sb, Class @class, Method method,
-		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
+		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
+		bool hasOverloadResolutionPriority = false)
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
@@ -1955,7 +2233,8 @@ internal static partial class Sources
 			{
 				if (hasOverloadResolutionPriority)
 				{
-					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
+						.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
 				}
 
 				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
@@ -1980,7 +2259,8 @@ internal static partial class Sources
 			{
 				if (hasOverloadResolutionPriority)
 				{
-					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
+						.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
 				}
 
 				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
@@ -2061,7 +2341,8 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void ImplementSetupInterface(StringBuilder sb, Class @class, string mockRegistryName, string setupName, MemberType memberType)
+	private static void ImplementSetupInterface(StringBuilder sb, Class @class, string mockRegistryName,
+		string setupName, MemberType memberType)
 	{
 		#region Properties
 
@@ -2071,7 +2352,9 @@ internal static partial class Sources
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
 			sb.Append("\t\tglobal::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname)
 				.Append("> global::Mockolate.Mock.").Append(setupName).Append('.').Append(property.Name).AppendLine();
 			sb.Append("\t\t{").AppendLine();
@@ -2096,7 +2379,9 @@ internal static partial class Sources
 		foreach (Event @event in @class.AllEvents().Where(eventSetupPredicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
 			sb.Append("\t\tglobal::Mockolate.Setup.EventSetup global::Mockolate.Mock.")
 				.Append(setupName).Append('.').Append(@event.Name).AppendLine();
 			sb.Append("\t\t{").AppendLine();
@@ -2130,7 +2415,8 @@ internal static partial class Sources
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload())
+					.ToArray();
 				if (allValueFlags.Any(f => f))
 				{
 					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, allValueFlags);
@@ -2142,10 +2428,13 @@ internal static partial class Sources
 
 		#region Methods
 
-		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.MemberType == memberType;
+		bool MethodPredicate(Method method)
+		{
+			return method.ExplicitImplementation is null && method.MemberType == memberType;
+		}
 
-		List<IGrouping<string, Method>> methodGroups = @class.AllMethods().Where(methodPredicate).GroupBy(m => m.Name).ToList();
+		List<IGrouping<string, Method>> methodGroups =
+			@class.AllMethods().Where((Func<Method, bool>)MethodPredicate).GroupBy(m => m.Name).ToList();
 		foreach (IGrouping<string, Method>? methodGroup in methodGroups)
 		{
 			if (methodGroup.Count() == 1)
@@ -2170,15 +2459,18 @@ internal static partial class Sources
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false, valueFlags: valueFlags);
+							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
+								valueFlags: valueFlags);
 						}
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload())
+							.ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false, valueFlags: allValueFlags);
+							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
+								valueFlags: allValueFlags);
 						}
 					}
 				}
@@ -2188,7 +2480,8 @@ internal static partial class Sources
 		#endregion
 	}
 
-	private static void AppendMethodSetupImplementation(StringBuilder sb, Method method, string mockRegistryName, string setupName,
+	private static void AppendMethodSetupImplementation(StringBuilder sb, Method method, string mockRegistryName,
+		string setupName,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null)
 	{
 		string methodName = methodNameOverride ?? method.Name;
@@ -2314,14 +2607,16 @@ internal static partial class Sources
 
 		if (useParameters)
 		{
-			sb.Append("(").Append(method.GetUniqueNameString()).Append(", parameters);")
+			sb.Append(".WithParameters(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString())
+				.Append(", parameters);")
 				.AppendLine();
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(methodSetup);").AppendLine();
 			sb.Append("\t\t\treturn methodSetup;").AppendLine();
 		}
 		else
 		{
-			sb.Append("(").Append(method.GetUniqueNameString());
+			sb.Append(".WithParameterCollection(").Append(mockRegistryName).Append(", ")
+				.Append(method.GetUniqueNameString());
 			int j = 0;
 			foreach (MethodParameter parameter in method.Parameters)
 			{
@@ -2347,13 +2642,15 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerSetupDefinition(StringBuilder sb, Property indexer, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
+	private static void AppendIndexerSetupDefinition(StringBuilder sb, Property indexer, bool[]? valueFlags = null,
+		bool hasOverloadResolutionPriority = false)
 	{
 		sb.AppendXmlSummary(
 			$"Setup for the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />");
 		if (hasOverloadResolutionPriority)
 		{
-			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
+				.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
 		}
 
 		sb.Append("\t\tglobal::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(indexer.Type);
@@ -2394,10 +2691,13 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerSetupImplementation(StringBuilder sb, Property indexer, string mockRegistryName, string setupName, bool[]? valueFlags = null)
+	private static void AppendIndexerSetupImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
+		string setupName, bool[]? valueFlags = null)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
+		sb.Append(
+				"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+			.AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(indexer.Type);
 		foreach (MethodParameter parameter in indexer.IndexerParameters!)
 		{
@@ -2436,7 +2736,8 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tget").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tvar indexerSetup = new global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(indexer.Type);
+		sb.Append("\t\t\t\tvar indexerSetup = new global::Mockolate.Setup.IndexerSetup<")
+			.AppendTypeOrWrapper(indexer.Type);
 		foreach (MethodParameter parameter in indexer.IndexerParameters!)
 		{
 			sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -2459,13 +2760,16 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append($"new global::Mockolate.Parameters.NamedParameter(\"{parameter.Name}\", (global::Mockolate.Parameters.IParameter)({paramRef}");
+				sb.Append("CovariantParameterAdapter<")
+					.AppendTypeOrWrapper(parameter.Type)
+					.Append(">.Wrap(")
+					.Append(paramRef);
 				if (parameter.CanUseNullableParameterOverload())
 				{
 					sb.Append($" ?? global::Mockolate.It.IsNull<{parameter.ToNullableType()}>(\"null\")");
 				}
 
-				sb.Append("))");
+				sb.Append(")");
 			}
 
 			j++;
@@ -2479,16 +2783,19 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerVerifyDefinition(StringBuilder sb, Property indexer, string verifyName, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
+	private static void AppendIndexerVerifyDefinition(StringBuilder sb, Property indexer, string verifyName,
+		bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
 	{
 		sb.AppendXmlSummary(
 			$"Verify interactions with the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />.");
 		if (hasOverloadResolutionPriority)
 		{
-			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
+				.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
 		}
 
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ").AppendTypeOrWrapper(indexer.Type).Append("> this[");
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ")
+			.AppendTypeOrWrapper(indexer.Type).Append("> this[");
 		int i = 0;
 		foreach (MethodParameter parameter in indexer.IndexerParameters!.Value)
 		{
@@ -2520,11 +2827,15 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void AppendIndexerVerifyImplementation(StringBuilder sb, Property indexer, string mockRegistryName, string verifyName, bool[]? valueFlags = null)
+	private static void AppendIndexerVerifyImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
+		string verifyName, bool[]? valueFlags = null)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ").AppendTypeOrWrapper(indexer.Type).Append("> ").Append(verifyName).Append(".this[");
+		sb.Append(
+				"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+			.AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ")
+			.AppendTypeOrWrapper(indexer.Type).Append("> ").Append(verifyName).Append(".this[");
 		int i = 0;
 		foreach (MethodParameter parameter in indexer.IndexerParameters!.Value)
 		{
@@ -2556,28 +2867,104 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tget").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName).Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName).Append(", [ ");
-		int j = 0;
-		foreach (MethodParameter parameter in indexer.IndexerParameters)
+		sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName)
+			.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
+			.Append(",").AppendLine();
+
+		sb.Append("\t\t\t\t\tinteraction => interaction is global::Mockolate.Interactions.IndexerGetterAccess<");
+		int ti = 0;
+		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
 		{
-			bool isValueParam = valueFlags?[j] == true;
+			if (ti > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.AppendTypeOrWrapper(parameter.Type);
+			ti++;
+		}
+
+		sb.Append("> g");
+		AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "g");
+		sb.Append(",").AppendLine();
+
+		sb.Append("\t\t\t\t\t(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<");
+		ti = 0;
+		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+		{
+			sb.AppendTypeOrWrapper(parameter.Type).Append(", ");
+			ti++;
+		}
+
+		sb.AppendTypeOrWrapper(indexer.Type).Append("> s");
+		AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "s");
+		sb.Append(" && value.Matches(s.TypedValue),").AppendLine();
+
+		sb.Append("\t\t\t\t\t() => global::System.String.Format(\"[");
+
+		for (int k = 0; k < indexer.IndexerParameters.Value.Count; k++)
+		{
+			if (k > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append("{").Append(k).Append("}");
+		}
+
+		sb.Append("]\"");
+		int kk = 0;
+		foreach (string? parameterName in indexer.IndexerParameters.Value.Select(p => p.Name))
+		{
+			sb.Append(", ");
+			bool isValueParam = valueFlags?[kk] == true;
 			if (isValueParam)
 			{
-				AppendNamedValueParameter(sb, parameter);
+				sb.Append("(object?)").Append(parameterName);
 			}
 			else
 			{
-				AppendNamedParameter(sb, parameter);
+				sb.Append("(object?)").Append(parameterName).Append(" ?? \"null\"");
 			}
 
-			sb.Append(", ");
-			j++;
+			kk++;
 		}
 
-		sb.Append("]);").AppendLine();
+		sb.Append("));").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
+	}
+
+	private static void AppendIndexerVerifyParameterMatches(StringBuilder sb,
+		EquatableArray<MethodParameter> parameters, bool[]? valueFlags, string interactionVar)
+	{
+		int j = 0;
+		foreach (MethodParameter parameter in parameters)
+		{
+			sb.Append(" && ");
+			bool isValueParam = valueFlags?[j] == true;
+			if (isValueParam)
+			{
+				sb.Append("global::System.Collections.Generic.EqualityComparer<")
+					.AppendTypeOrWrapper(parameter.Type).Append(">.Default.Equals(").Append(parameter.Name)
+					.Append(", ").Append(interactionVar).Append(".Parameter").Append(j + 1).Append(")");
+			}
+			else
+			{
+				sb.Append("CovariantParameterAdapter<").AppendTypeOrWrapper(parameter.Type)
+					.Append(">.Wrap(").Append(parameter.Name);
+				if (parameter.CanUseNullableParameterOverload())
+				{
+					sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType())
+						.Append(">(\"null\")");
+				}
+
+				sb.Append(").Matches(").Append(interactionVar).Append(".Parameter").Append(j + 1).Append(")");
+			}
+
+			j++;
+		}
 	}
 
 	#endregion Setup Helpers
@@ -2590,8 +2977,10 @@ internal static partial class Sources
 		                                        @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
-			sb.AppendXmlSummary($"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\"/> event.");
-			sb.Append("\t\tvoid ").Append(@event.Name).Append("(").Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters)).Append(");").AppendLine();
+			sb.AppendXmlSummary(
+				$"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\"/> event.");
+			sb.Append("\t\tvoid ").Append(@event.Name).Append("(")
+				.Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters)).Append(");").AppendLine();
 			sb.AppendLine();
 		}
 
@@ -2602,20 +2991,26 @@ internal static partial class Sources
 			         .Select(g => g.Single())
 			         .Where(m => m.Delegate.Parameters.Count > 0))
 		{
-			sb.AppendXmlSummary($"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\"/> event.");
-			sb.Append("\t\tvoid ").Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters);").AppendLine();
+			sb.AppendXmlSummary(
+				$"Raise the <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\"/> event.");
+			sb.Append("\t\tvoid ").Append(@event.Name)
+				.Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters);").AppendLine();
 			sb.AppendLine();
 		}
 	}
 
-	private static void ImplementRaiseInterface(StringBuilder sb, Class @class, string mockRegistryName, string raiseOnName, MemberType memberType)
+	private static void ImplementRaiseInterface(StringBuilder sb, Class @class, string mockRegistryName,
+		string raiseOnName, MemberType memberType)
 	{
-		string mockRegistry = memberType == MemberType.Static ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
+		string mockRegistry =
+			memberType == MemberType.Static ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
 		Func<Event, bool> predicate = @event => @event.ExplicitImplementation is null &&
 		                                        @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(predicate))
 		{
-			string backingFieldAccess = @event.IsStatic ? $"{@event.GetBackingFieldName()}.Value" : $"this.{@event.GetBackingFieldName()}";
+			string backingFieldAccess = @event.IsStatic
+				? $"{@event.GetBackingFieldName()}.Value"
+				: $"this.{@event.GetBackingFieldName()}";
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append("\t\tvoid ").Append(raiseOnName).Append('.').Append(@event.Name).Append("(")
 				.Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters))
@@ -2639,17 +3034,23 @@ internal static partial class Sources
 			         .Select(g => g.Single())
 			         .Where(m => m.Delegate.Parameters.Count > 0))
 		{
-			string backingFieldAccess = @event.IsStatic ? $"{@event.GetBackingFieldName()}.Value" : $"this.{@event.GetBackingFieldName()}";
+			string backingFieldAccess = @event.IsStatic
+				? $"{@event.GetBackingFieldName()}.Value"
+				: $"this.{@event.GetBackingFieldName()}";
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\tvoid ").Append(raiseOnName).Append('.').Append(@event.Name).Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters)")
+			sb.Append("\t\tvoid ").Append(raiseOnName).Append('.').Append(@event.Name)
+				.Append("(global::Mockolate.Parameters.IDefaultEventParameters parameters)")
 				.AppendLine();
 			sb.AppendLine("\t\t{");
-			sb.Append("\t\t\tglobal::Mockolate.MockBehavior mockBehavior = ").Append(mockRegistry).Append(".Behavior;").AppendLine();
+			sb.Append("\t\t\tglobal::Mockolate.MockBehavior mockBehavior = ").Append(mockRegistry).Append(".Behavior;")
+				.AppendLine();
 			sb.Append("\t\t\t").Append(backingFieldAccess).Append("?.Invoke(");
 
 			if (@event.Delegate.Parameters.Count > 0)
 			{
-				sb.Append(string.Join(", ", @event.Delegate.Parameters.Select(p => $"mockBehavior.DefaultValue.Generate(default({p.Type.Fullname.TrimEnd('?')}))")));
+				sb.Append(string.Join(", ",
+					@event.Delegate.Parameters.Select(p
+						=> $"mockBehavior.DefaultValue.Generate(default({p.Type.Fullname.TrimEnd('?')}))")));
 			}
 
 			sb.Append(");").AppendLine();
@@ -2662,7 +3063,8 @@ internal static partial class Sources
 
 	#region Verify Helpers
 
-	private static void DefineVerifyInterface(StringBuilder sb, Class @class, string verifyName, MemberType memberType, bool hasOverloadResolutionPriority)
+	private static void DefineVerifyInterface(StringBuilder sb, Class @class, string verifyName, MemberType memberType,
+		bool hasOverloadResolutionPriority)
 	{
 		#region Properties
 
@@ -2671,8 +3073,10 @@ internal static partial class Sources
 			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
-			sb.AppendXmlSummary($"Verify interactions with the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ").Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
+			sb.AppendXmlSummary(
+				$"Verify interactions with the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ")
+				.Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
@@ -2685,7 +3089,8 @@ internal static partial class Sources
 			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerVerifyDefinition(sb, indexer, verifyName, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+			AppendIndexerVerifyDefinition(sb, indexer, verifyName,
+				hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
@@ -2695,10 +3100,12 @@ internal static partial class Sources
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload())
+					.ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerVerifyDefinition(sb, indexer, verifyName, allValueFlags, hasOverloadResolutionPriority);
+					AppendIndexerVerifyDefinition(sb, indexer, verifyName, allValueFlags,
+						hasOverloadResolutionPriority);
 				}
 			}
 		}
@@ -2707,10 +3114,13 @@ internal static partial class Sources
 
 		#region Methods
 
-		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.MemberType == memberType;
+		bool MethodPredicate(Method method)
+		{
+			return method.ExplicitImplementation is null && method.MemberType == memberType;
+		}
 
-		List<IGrouping<string, Method>> methodGroups = @class.AllMethods().Where(methodPredicate).GroupBy(m => m.Name).ToList();
+		List<IGrouping<string, Method>> methodGroups =
+			@class.AllMethods().Where((Func<Method, bool>)MethodPredicate).GroupBy(m => m.Name).ToList();
 		foreach (IGrouping<string, Method>? methodGroup in methodGroups)
 		{
 			if (methodGroup.Count() == 1)
@@ -2718,7 +3128,8 @@ internal static partial class Sources
 				Method? method = methodGroup.Single();
 				if (method.Parameters.Count > 0)
 				{
-					AppendMethodVerifyDefinition(sb, method, verifyName, true, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendMethodVerifyDefinition(sb, method, verifyName, true,
+						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 			}
 
@@ -2726,24 +3137,29 @@ internal static partial class Sources
 			{
 				if (method.Parameters.Count == 0)
 				{
-					AppendMethodVerifyDefinition(sb, method, verifyName, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendMethodVerifyDefinition(sb, method, verifyName, false,
+						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 				}
 				else
 				{
-					AppendMethodVerifyDefinition(sb, method, verifyName, false, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					AppendMethodVerifyDefinition(sb, method, verifyName, false,
+						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: valueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: valueFlags,
+								hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload())
+							.ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: allValueFlags, hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+							AppendMethodVerifyDefinition(sb, method, verifyName, false, valueFlags: allValueFlags,
+								hasOverloadResolutionPriority: hasOverloadResolutionPriority);
 						}
 					}
 				}
@@ -2758,8 +3174,10 @@ internal static partial class Sources
 		                                             @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
 		{
-			sb.AppendXmlSummary($"Verify subscriptions on the {@event.Name} event of <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append("> ").Append(@event.Name).Append(" { get; }").AppendLine();
+			sb.AppendXmlSummary(
+				$"Verify subscriptions on the {@event.Name} event of <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append("> ")
+				.Append(@event.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
@@ -2767,7 +3185,8 @@ internal static partial class Sources
 	}
 
 	private static void AppendMethodVerifyDefinition(StringBuilder sb, Method method, string verifyName,
-		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null, bool hasOverloadResolutionPriority = false)
+		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
+		bool hasOverloadResolutionPriority = false)
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <summary>").AppendLine();
@@ -2800,16 +3219,19 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		if (valueFlags?.All(x => x) == true)
 		{
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<").Append(verifyName).Append("> ").Append(methodName).Append("(");
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName)
+				.Append(">.IgnoreParameters ").Append(methodName).Append("(");
 		}
 		else
 		{
 			if (hasOverloadResolutionPriority)
 			{
-				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(").Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
+					.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
 			}
 
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ").Append(methodName).Append("(");
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ")
+				.Append(methodName).Append("(");
 		}
 
 		if (useParameters)
@@ -2866,21 +3288,29 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
-	private static void ImplementVerifyInterface(StringBuilder sb, Class @class, string mockRegistryName, string verifyName, MemberType memberType)
+	private static void ImplementVerifyInterface(StringBuilder sb, Class @class, string mockRegistryName,
+		string verifyName, MemberType memberType)
 	{
 		#region Properties
 
-		Func<Property, bool> propertyPredicate = property => property.ExplicitImplementation is null && property is { IsIndexer: false, } &&
-		                                                     property.MemberType == memberType;
+		Func<Property, bool> propertyPredicate = property
+			=> property.ExplicitImplementation is null && property is { IsIndexer: false, } &&
+			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ").Append(property.Type.Fullname).Append("> ").Append(verifyName).Append('.').Append(property.Name).AppendLine();
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ")
+				.Append(property.Type.Fullname).Append("> ").Append(verifyName).Append('.').Append(property.Name)
+				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ").Append(property.Type.Fullname).Append(">(this, this.").Append(mockRegistryName).Append(", ").Append(property.GetUniqueNameString()).Append(");").AppendLine();
+			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName)
+				.Append(", ").Append(property.Type.Fullname).Append(">(this, this.").Append(mockRegistryName)
+				.Append(", ").Append(property.GetUniqueNameString()).Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -2890,8 +3320,9 @@ internal static partial class Sources
 
 		#region Indexers
 
-		Func<Property, bool> indexerPredicate = indexer => indexer.ExplicitImplementation is null && indexer is { IsIndexer: true, IndexerParameters: not null, } &&
-		                                                   indexer.MemberType == memberType;
+		Func<Property, bool> indexerPredicate = indexer
+			=> indexer.ExplicitImplementation is null && indexer is { IsIndexer: true, IndexerParameters: not null, } &&
+			   indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
 			AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName);
@@ -2904,7 +3335,8 @@ internal static partial class Sources
 			}
 			else
 			{
-				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+				bool[] allValueFlags = indexer.IndexerParameters.Value.Select(p => p.CanUseNullableParameterOverload())
+					.ToArray();
 				if (allValueFlags.Any(f => f))
 				{
 					AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName, allValueFlags);
@@ -2916,9 +3348,13 @@ internal static partial class Sources
 
 		#region Methods
 
-		Func<Method, bool> methodPredicate = method => method.ExplicitImplementation is null &&
-		                                               method.MemberType == memberType;
-		List<IGrouping<string, Method>> methodGroups = @class.AllMethods().Where(methodPredicate).GroupBy(m => m.Name).ToList();
+		bool MethodPredicate(Method method)
+		{
+			return method.ExplicitImplementation is null && method.MemberType == memberType;
+		}
+
+		List<IGrouping<string, Method>> methodGroups =
+			@class.AllMethods().Where((Func<Method, bool>)MethodPredicate).GroupBy(m => m.Name).ToList();
 		foreach (IGrouping<string, Method>? methodGroup in methodGroups)
 		{
 			if (methodGroup.Count() == 1)
@@ -2943,15 +3379,18 @@ internal static partial class Sources
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false, valueFlags: valueFlags);
+							AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
+								valueFlags: valueFlags);
 						}
 					}
 					else
 					{
-						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
+						bool[] allValueFlags = method.Parameters.Select(p => p.CanUseNullableParameterOverload())
+							.ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false, valueFlags: allValueFlags);
+							AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
+								valueFlags: allValueFlags);
 						}
 					}
 				}
@@ -2966,13 +3405,19 @@ internal static partial class Sources
 		                                             @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
 		{
-			sb.AppendXmlSummary($"Verify subscriptions on the {@event.Name} event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
-			sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(@event.Name).AppendLine();
+			sb.AppendXmlSummary(
+				$"Verify subscriptions on the {@event.Name} event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
+			sb.Append(
+					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append("> ")
+				.Append(verifyName).Append('.').Append(@event.Name).AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationEventResult<").Append(verifyName).Append(">(this, this.").Append(mockRegistryName).Append(", ").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
+			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationEventResult<").Append(verifyName)
+				.Append(">(this, this.").Append(mockRegistryName).Append(", ").Append(@event.GetUniqueNameString())
+				.Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -2981,15 +3426,20 @@ internal static partial class Sources
 		#endregion
 	}
 
-	private static void AppendMethodVerifyImplementation(StringBuilder sb, Method method, string mockRegistryName, string verifyName,
+	private static void AppendMethodVerifyImplementation(StringBuilder sb, Method method, string mockRegistryName,
+		string verifyName,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null)
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append(valueFlags?.All(x => x) == true
-			? "\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<"
-			: "\t\tglobal::Mockolate.Verify.VerificationResult<");
-		sb.Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(methodName).Append("(");
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<");
+		sb.Append(verifyName).Append('>');
+		if (valueFlags?.All(x => x) == true)
+		{
+			sb.Append(".IgnoreParameters");
+		}
+
+		sb.Append(' ').Append(verifyName).Append('.').Append(methodName).Append("(");
 		if (useParameters)
 		{
 			sb.Append("global::Mockolate.Parameters.IParameters parameters");
@@ -3034,45 +3484,62 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
+		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".VerifyMethod<").Append(verifyName)
+			.Append(", global::Mockolate.Interactions.MethodInvocation");
+		if (method.Parameters.Count > 0)
+		{
+			sb.Append("<").Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append(">");
+		}
 
-		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".Method<").Append(verifyName).Append(">(this, ");
-
+		sb.Append(">(this, ").Append(method.GetUniqueNameString());
 		if (useParameters)
 		{
-			sb.Append("new global::Mockolate.Setup.MethodParametersMatch(").Append(method.GetUniqueNameString()).Append(", parameters");
+			sb.Append(", i => parameters switch").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, method.Parameters.Count).Select(i => $"i.Parameter{i}"))).Append("]),").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", method.Parameters.Select((p, i) => $"(\"{p.Name}\", i.Parameter{i + 1})"))).Append("]),").AppendLine();
+			sb.Append("\t\t\t\t\t_ => true").AppendLine();
+			sb.Append("\t\t\t\t}");
+		}
+		else if (method.Parameters.Count == 0)
+		{
+			sb.Append(", i => true");
 		}
 		else
 		{
-			sb.Append("new global::Mockolate.Setup.MethodParameterMatch(").Append(method.GetUniqueNameString()).Append(", [ ");
-			int j = 0;
+			sb.Append(", i => ");
+
+			int i = 0;
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				if (valueFlags?[j] == true)
+				if (i > 0)
 				{
-					AppendNamedValueParameter(sb, parameter);
+					sb.Append(" && ");
+				}
+
+				sb.AppendLine().Append("\t\t\t\t");
+
+				bool isValueParam = valueFlags?[i] == true;
+				if (isValueParam)
+				{
+					sb.Append($"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, i.Parameter{i + 1}))");
+				}
+				else if (parameter.RefKind == RefKind.Out || parameter.RefKind == RefKind.Ref || parameter.RefKind == RefKind.RefReadOnlyParameter)
+				{
+					// out/ref verify parameters use IVerifyOutParameter<T> / IVerifyRefParameter<T>, which don't inherit
+					// from IParameter<T> — covariance isn't applicable, so keep the direct IParameterMatch<T> check.
+					sb.Append($"({parameter.Name} is global::Mockolate.Parameters.IParameterMatch<{parameter.ToTypeOrWrapper()}> {parameter.Name}Match ? {parameter.Name}Match.Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
 				}
 				else
 				{
-					AppendNamedParameter(sb, parameter);
+					sb.Append($"({parameter.Name} is not null ? CovariantParameterAdapter<{parameter.ToTypeOrWrapper()}>.Wrap({parameter.Name}).Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
 				}
 
-				sb.Append(", ");
-				j++;
+				i++;
 			}
-
-			sb.Append(']');
 		}
 
-		if (!useParameters && valueFlags?.All(x => x) == true)
-		{
-			sb.Append("), ").Append(method.GetUniqueNameString()).AppendLine(");");
-		}
-		else
-		{
-			sb.AppendLine("));");
-		}
-
-		sb.AppendLine();
+		sb.Append(", () => $\"").Append(method.Name).Append("(").Append(useParameters ? "{parameters}" : string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}"))).Append(")\");").AppendLine();
 	}
 
 	#endregion Verify Helpers

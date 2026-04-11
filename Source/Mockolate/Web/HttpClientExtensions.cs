@@ -34,10 +34,11 @@ public static partial class HttpClientExtensions
 			if (setup is IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
-					new("global::System.Net.Http.HttpMessageHandler.SendAsync",
-						new NamedParameter("request", (IParameter)request),
-						new NamedParameter("cancellationToken", (IParameter)It.IsAny<CancellationToken>()));
+				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>.WithParameterCollection methodSetup =
+					new(httpMessageHandlerMock.MockRegistry,
+						"global::System.Net.Http.HttpMessageHandler.SendAsync",
+						(IParameterMatch<HttpRequestMessage>)request,
+						(IParameterMatch<CancellationToken>)It.IsAny<CancellationToken>());
 				httpMessageHandlerMock.MockRegistry.SetupMethod(methodSetup);
 				return methodSetup;
 			}
@@ -50,27 +51,23 @@ public static partial class HttpClientExtensions
 	private sealed class HttpRequestMessageParameters(
 		HttpMethod method,
 		params IHttpRequestMessageParameter[] parameters)
-		: IParameter
+		: IParameterMatch<HttpRequestMessage>
 	{
-		public bool Matches(INamedParameterValue value)
+		public bool Matches(HttpRequestMessage value)
 		{
-			if (value.TryGetValue(out HttpRequestMessage requestMessage) &&
-			    requestMessage.Method == method)
+			if (value.Method == method)
 			{
-				return parameters.All(parameter => parameter.Matches(requestMessage));
+				return parameters.All(parameter => parameter.Matches(value));
 			}
 
 			return false;
 		}
 
-		public void InvokeCallbacks(INamedParameterValue value)
+		public void InvokeCallbacks(HttpRequestMessage value)
 		{
-			if (value.TryGetValue(out HttpRequestMessage typedValue))
+			foreach (IHttpRequestMessageParameter parameter in parameters)
 			{
-				foreach (IHttpRequestMessageParameter parameter in parameters)
-				{
-					parameter.InvokeCallbacks(typedValue);
-				}
+				parameter.InvokeCallbacks(value);
 			}
 		}
 
@@ -100,14 +97,14 @@ public static partial class HttpClientExtensions
 				return httpRequestMessageParameter.Matches(valueSelector(value), value);
 			}
 
-			return ((IParameter)parameter).Matches(new NamedParameterValue<T>(string.Empty, valueSelector(value)));
+			return ((IParameterMatch<T>)parameter).Matches(valueSelector(value));
 		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)
 		{
-			if (parameter is IParameter invokableParameter)
+			if (parameter is IParameterMatch<T> invokableParameter)
 			{
-				invokableParameter.InvokeCallbacks(new NamedParameterValue<T>(string.Empty, valueSelector(value)));
+				invokableParameter.InvokeCallbacks(valueSelector(value));
 			}
 		}
 
@@ -121,7 +118,7 @@ public static partial class HttpClientExtensions
 	{
 		public bool Matches(HttpRequestMessage value)
 		{
-			if (parameter is not IParameter invokableParameter)
+			if (parameter is not IParameterMatch<string> invokableParameter)
 			{
 				return true;
 			}
@@ -132,15 +129,15 @@ public static partial class HttpClientExtensions
 			}
 
 			string requestUri1 = value.RequestUri.ToString();
-			return invokableParameter.Matches(new NamedParameterValue<string?>(string.Empty, requestUri1)) ||
-			       (requestUri1.EndsWith('/') && invokableParameter.Matches(new NamedParameterValue<string?>(string.Empty, requestUri1.TrimEnd('/'))));
+			return invokableParameter.Matches(requestUri1) ||
+			       (requestUri1.EndsWith('/') && invokableParameter.Matches(requestUri1.TrimEnd('/')));
 		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)
 		{
-			if (parameter is IParameter invokableParameter)
+			if (parameter is IParameterMatch<string?> invokableParameter)
 			{
-				invokableParameter.InvokeCallbacks(new NamedParameterValue<string?>(string.Empty, value.RequestUri?.ToString()));
+				invokableParameter.InvokeCallbacks(value.RequestUri?.ToString());
 			}
 		}
 

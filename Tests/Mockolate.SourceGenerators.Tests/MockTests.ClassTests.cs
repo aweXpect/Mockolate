@@ -28,17 +28,13 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-				.Contains("MethodSetupResult<int> methodExecution = MockRegistry.InvokeMethod<int>(")
+				.Contains("var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\", m => m.Matches(\"baseResult\", baseResult));")
 				.IgnoringNewlineStyle().And
-				.Contains("if (methodExecution.SkipBaseClass)")
+				.Contains("wrappedResult = base.ProcessData(baseResult);")
 				.IgnoringNewlineStyle().And
-				.Contains("var baseResult1 = base.ProcessData(baseResult);")
+				.Contains("methodSetup?.TriggerCallbacks(baseResult);")
 				.IgnoringNewlineStyle().And
-				.Contains("return methodExecution.GetResult(baseResult1);")
-				.Or
-				.Contains("if (!methodExecution.HasSetupResult)")
-				.IgnoringNewlineStyle().And
-				.Contains("return baseResult1;")
+				.Contains("return methodSetup?.TryGetReturnValue(baseResult, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, baseResult);")
 				.IgnoringNewlineStyle();
 		}
 		

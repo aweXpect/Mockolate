@@ -1,81 +1,28 @@
 using System;
 using Mockolate.Interactions;
-using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
 /// <summary>
 ///     Marker interface for method setups.
 /// </summary>
-public interface IMethodSetup;
+public interface IMethodSetup : ISetup
+{
+	/// <summary>
+	///     The name of the method.
+	/// </summary>
+	string Name { get; }
+}
 
 /// <summary>
-///     Interface for verifiable method setup. It hides the implementation details to get the underlying
-///     <see cref="IMethodMatch" />.
+///     Interface for verifiable method setup.
 /// </summary>
 public interface IVerifiableMethodSetup
 {
 	/// <summary>
-	///     Gets the <see cref="IMethodMatch" /> used to match against method invocations.
+	///     Checks if the setup matches the method invocations.
 	/// </summary>
-	IMethodMatch GetMatch();
-}
-
-/// <summary>
-///     Interface for hiding some implementation details of <see cref="MethodSetup" />.
-/// </summary>
-public interface IInteractiveMethodSetup : ISetup
-{
-	/// <summary>
-	///     Checks if the <paramref name="methodInvocation" /> matches the setup.
-	/// </summary>
-	bool Matches(MethodInvocation methodInvocation);
-
-	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be skipped.
-	/// </summary>
-	bool? SkipBaseClass();
-
-	/// <summary>
-	///     Gets a value indicating whether this setup has return calls configured.
-	/// </summary>
-	bool HasReturnCalls();
-
-	/// <summary>
-	///     Sets an <see langword="out" /> parameter with the specified name and returns its generated value of type
-	///     <typeparamref name="T" />.
-	/// </summary>
-	/// <remarks>
-	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
-	///     is generated using the <paramref name="defaultValueGenerator" />.
-	/// </remarks>
-	T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator);
-
-	/// <summary>
-	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value" /> and
-	///     returns its generated value of type <typeparamref name="T" />.
-	/// </summary>
-	/// <remarks>
-	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
-	///     is generated using the current <paramref name="behavior" />.
-	/// </remarks>
-	T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior);
-
-	/// <summary>
-	///     Invokes the <paramref name="methodInvocation" /> returning a value of type <typeparamref name="TResult" />.
-	/// </summary>
-	TResult Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
-		Func<TResult> defaultValueGenerator);
-
-	/// <summary>
-	///     Invokes the <paramref name="methodInvocation" /> returning <see langword="void" />.
-	/// </summary>
-	void Invoke(MethodInvocation methodInvocation, MockBehavior behavior);
-
-	/// <summary>
-	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
-	/// </summary>
-	void TriggerCallbacks(INamedParameterValue[] parameters);
+	bool Matches(IMethodInteraction interaction);
 }
 
 /// <summary>
@@ -256,6 +203,11 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
+	///     Changes the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	/// </summary>
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> ChangeScenario(string scenarioName);
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback);
@@ -296,13 +248,20 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>
+	: IReturnMethodSetupParallelCallbackBuilder<TReturn, T1>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> InParallel();
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> InParallel();
+}
 
+/// <summary>
+///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>

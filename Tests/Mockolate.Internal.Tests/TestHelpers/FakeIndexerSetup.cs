@@ -1,6 +1,4 @@
-using System.Diagnostics.CodeAnalysis;
 using Mockolate.Interactions;
-using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate.Internal.Tests.TestHelpers;
@@ -10,11 +8,17 @@ internal sealed class FakeIndexerSetup : IndexerSetup
 	internal FakeIndexerSetup(bool match) { ShouldMatch = match; }
 	internal bool ShouldMatch { get; }
 
-	protected override bool IsMatch(INamedParameterValue[] parameters) => ShouldMatch;
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value, MockBehavior behavior) => value;
-	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value, MockBehavior behavior) { }
-	protected override bool? GetSkipBaseClass() => null;
+	protected override bool MatchesAccess(IndexerAccess access) => ShouldMatch;
 
-	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator, INamedParameterValue[] parameters, [NotNullWhen(true)] out T value)
-		=> value = defaultValueGenerator();
+	public override bool? SkipBaseClass() => null;
+
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage, TResult baseValue)
+		=> baseValue;
+
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage, Func<TResult> defaultValueGenerator)
+		=> defaultValueGenerator();
+
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage, TResult value)
+	{
+	}
 }

@@ -53,7 +53,7 @@ public static partial class ItExtensions
 	}
 
 	private abstract class HttpRequestMessageParameter<TParameter>
-		: IHttpRequestMessageParameter<TParameter>, IParameter
+		: IHttpRequestMessageParameter<TParameter>, IParameterMatch<HttpRequestMessage>
 	{
 		private List<Action<HttpRequestMessage>>? _callbacks;
 		private IParameter<HttpContent?>? _contentParameter;
@@ -113,25 +113,9 @@ public static partial class ItExtensions
 			return GetThis;
 		}
 
-		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
-		public bool Matches(INamedParameterValue value)
-		{
-			if (!value.TryGetValue(out HttpRequestMessage? typedValue) || typedValue is null)
-			{
-				return false;
-			}
-
-			return Matches(typedValue);
-		}
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
-		public void InvokeCallbacks(INamedParameterValue value)
-		{
-			if (value.TryGetValue(out HttpRequestMessage httpRequestMessage))
-			{
-				_callbacks?.ForEach(a => a.Invoke(httpRequestMessage));
-			}
-		}
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		public void InvokeCallbacks(HttpRequestMessage value)
+			=> _callbacks?.ForEach(a => a.Invoke(value));
 
 		/// <summary>
 		///     Checks whether the given <see cref="HttpRequestMessage" /> <paramref name="value" /> matches the expectations.
@@ -145,13 +129,13 @@ public static partial class ItExtensions
 			}
 
 			if (_uriParameter is not null &&
-			    !((IParameter)_uriParameter).Matches(new NamedParameterValue<Uri?>(string.Empty, value.RequestUri)))
+			    !((IParameterMatch<Uri?>)_uriParameter).Matches(value.RequestUri))
 			{
 				return false;
 			}
 
 			if (_contentParameter is not null &&
-			    !((IParameter)_contentParameter).Matches(new NamedParameterValue<HttpContent?>(string.Empty, value.Content)))
+			    !((IParameterMatch<HttpContent?>)_contentParameter).Matches(value.Content))
 			{
 				return false;
 			}
@@ -179,6 +163,22 @@ public static partial class ItExtensions
 			}
 
 			return string.Join(" and ", parts.Where(p => !string.IsNullOrEmpty(p)));
+		}
+
+		bool IParameterMatch<HttpRequestMessage>.Matches(HttpRequestMessage value)
+			=> Matches(value);
+
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
+		bool IParameter.Matches(object? value)
+			=> value is HttpRequestMessage message && Matches(message);
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		void IParameter.InvokeCallbacks(object? value)
+		{
+			if (value is HttpRequestMessage message)
+			{
+				InvokeCallbacks(message);
+			}
 		}
 	}
 

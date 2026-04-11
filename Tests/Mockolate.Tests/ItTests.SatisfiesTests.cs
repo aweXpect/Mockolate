@@ -13,29 +13,9 @@ public sealed partial class ItTests
 		{
 			IParameter<int?> sut = It.Satisfies<int?>(v => v is null);
 
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int?>(string.Empty, value));
+			bool result = ((IParameterMatch<int?>)sut).Matches(value);
 
 			await That(result).IsEqualTo(expectedResult);
-		}
-
-		[Fact]
-		public async Task DifferentType_Long_ShouldNotMatch()
-		{
-			IParameter<int?> sut = It.Satisfies<int?>(_ => true);
-
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<long>(string.Empty, 42L));
-
-			await That(result).IsFalse();
-		}
-
-		[Fact]
-		public async Task DifferentType_String_ShouldNotMatch()
-		{
-			IParameter<int?> sut = It.Satisfies<int?>(_ => true);
-
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
-
-			await That(result).IsFalse();
 		}
 
 		[Theory]
@@ -45,7 +25,7 @@ public sealed partial class ItTests
 		{
 			IParameter<string> sut = It.Satisfies<string>(_ => predicateValue);
 
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
+			bool result = ((IParameterMatch<string>)sut).Matches("foo");
 
 			await That(result).IsEqualTo(predicateValue);
 		}

@@ -51,6 +51,9 @@ public partial class It
 			return values.All(v => !comparer.Equals(value, v));
 		}
 
+		/// <inheritdoc cref="TypedMatch{T}.MatchesOfDifferentType(object?)" />
+		protected override bool MatchesOfDifferentType(object? value) => true;
+
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{

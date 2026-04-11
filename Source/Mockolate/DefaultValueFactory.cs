@@ -1,5 +1,4 @@
 ﻿using System;
-using Mockolate.Parameters;
 
 namespace Mockolate;
 
@@ -8,7 +7,7 @@ namespace Mockolate;
 /// </summary>
 public class DefaultValueFactory
 {
-	private readonly Func<Type, INamedParameterValue[], object?>? _generator;
+	private readonly Func<Type, object?[], object?>? _generator;
 	private readonly Func<Type, bool>? _predicate;
 
 	/// <summary>
@@ -22,7 +21,7 @@ public class DefaultValueFactory
 	/// <summary>
 	///     Creates a new default value factory for types that match the given <paramref name="predicate" />.
 	/// </summary>
-	public DefaultValueFactory(Func<Type, bool> predicate, Func<Type, INamedParameterValue[], object?> generator)
+	public DefaultValueFactory(Func<Type, bool> predicate, Func<Type, object?[], object?> generator)
 	{
 		_predicate = predicate;
 		_generator = generator;
@@ -38,6 +37,6 @@ public class DefaultValueFactory
 	///     Generates a default value of the specified <paramref name="type" />, with
 	///     the <paramref name="parameters" /> for context.
 	/// </summary>
-	public virtual object? GenerateValue(Type type, params INamedParameterValue[] parameters)
+	public virtual object? GenerateValue(Type type, params object?[] parameters)
 		=> _generator?.Invoke(type, parameters);
 }

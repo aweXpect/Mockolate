@@ -18,6 +18,14 @@ internal static class Helpers
 		typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypesAndNamespaces,
 		genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters);
 
+	public static SymbolDisplayFormat TypeDisplayShortFormat { get; } = new(
+		miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
+		                      SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
+		                      SymbolDisplayMiscellaneousOptions.IncludeNullableReferenceTypeModifier,
+		globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Omitted,
+		typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypes,
+		genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters);
+
 	/// <summary>
 	///     Generates a unique local variable name that does not conflict with any parameter names.
 	/// </summary>
@@ -157,39 +165,35 @@ internal static class Helpers
 
 			if (type.TupleTypes is not null)
 			{
-				sb.Append(", [");
 				foreach (Type? genericType in type.TupleTypes.Value)
 				{
-					sb.Append("new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<")
-						.Append(genericType.Fullname).Append(">>(string.Empty, () => ")
-						.AppendDefaultValueGeneratorFor(genericType, defaultValueName).Append("), ");
+					sb.Append(", ").Append("() => ")
+						.AppendDefaultValueGeneratorFor(genericType, defaultValueName);
 				}
 
 				if (!string.IsNullOrWhiteSpace(suffix))
 				{
-					sb.Append("..").Append(suffix);
+					sb.Append(", ").Append(suffix);
 				}
 
-				sb.Append("])");
+				sb.Append(")");
 				return sb;
 			}
 
 			if (type.SpecialGenericType != SpecialGenericType.None && type.GenericTypeParameters?.Count > 0)
 			{
-				sb.Append(", [");
 				foreach (Type? genericType in type.GenericTypeParameters.Value)
 				{
-					sb.Append("new global::Mockolate.Parameters.NamedParameterValue<global::System.Func<")
-						.Append(genericType.Fullname).Append(">>(string.Empty, () => ")
-						.AppendDefaultValueGeneratorFor(genericType, defaultValueName).Append("), ");
+					sb.Append(", ").Append("() => ")
+						.AppendDefaultValueGeneratorFor(genericType, defaultValueName);
 				}
 
 				if (!string.IsNullOrWhiteSpace(suffix))
 				{
-					sb.Append("..").Append(suffix);
+					sb.Append(", ").Append(suffix);
 				}
 
-				sb.Append("])");
+				sb.Append(")");
 				return sb;
 			}
 
@@ -281,6 +285,20 @@ internal static class Helpers
 		}
 	}
 
+	public static string ToTypeOrWrapper(this Type type)
+	{
+		if (type.SpecialGenericType == SpecialGenericType.Span)
+		{
+			return $"global::Mockolate.Setup.SpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
+		}
+		if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+		{
+			return $"global::Mockolate.Setup.ReadOnlySpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
+		}
+
+		return type.Fullname;
+	}
+
 	extension(MethodParameter parameter)
 	{
 		public string ToNameOrWrapper()
@@ -313,16 +331,6 @@ internal static class Helpers
 			}
 
 			return parameter.Type.Fullname;
-		}
-
-		public string ToNameOrNull()
-		{
-			if (parameter.Type.SpecialGenericType is SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan)
-			{
-				return "null";
-			}
-
-			return parameter.Name;
 		}
 
 		public string ToParameter()

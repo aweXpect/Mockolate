@@ -14,21 +14,9 @@ public sealed partial class ItTests
 		IParameter<int> sut = It.Satisfies<int>(_ => true)
 			.Do(v => isCalled += v);
 
-		((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>(string.Empty, 5));
+		((IParameterMatch<int>)sut).InvokeCallbacks(5);
 
 		await That(isCalled).IsEqualTo(5);
-	}
-
-	[Fact]
-	public async Task InvokeCallbacks_WithDifferentType_ShouldNotInvokeCallback()
-	{
-		int isCalled = 0;
-		IParameter<int> sut = It.Satisfies<int>(_ => true)
-			.Do(v => isCalled += v);
-
-		((IParameter)sut).InvokeCallbacks(new NamedParameterValue<string>(string.Empty, "5"));
-
-		await That(isCalled).IsEqualTo(0);
 	}
 
 	[Fact]
@@ -41,17 +29,6 @@ public sealed partial class ItTests
 			.For(c => c.GetParameters(), p => p.HasCount(0));
 
 		_ = constructors.Single().Invoke([]);
-	}
-
-	[Fact]
-	public async Task ToString_NamedParameter_ShouldReturnExpectedValue()
-	{
-		NamedParameter sut = new("foo", (IParameter)It.IsOut<int>());
-		string expectedValue = "It.IsOut<int>()";
-
-		string? result = sut.ToString();
-
-		await That(result).IsEqualTo(expectedValue);
 	}
 
 	internal interface IMyServiceWithNullable

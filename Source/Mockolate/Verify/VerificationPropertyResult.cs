@@ -27,18 +27,18 @@ public class VerificationPropertyResult<TSubject, TParameter>
 	///     Verifies the property read access on the mock.
 	/// </summary>
 	public VerificationResult<TSubject> Got()
-		=> _mockRegistry.Property(_subject, _propertyName);
+		=> _mockRegistry.VerifyProperty(_subject, _propertyName);
 
 	/// <summary>
 	///     Verifies the property write access on the mock with the given <paramref name="value" />.
 	/// </summary>
 	public VerificationResult<TSubject> Set(IParameter<TParameter> value)
-		=> _mockRegistry.Property(_subject, _propertyName, (IParameter)value);
+		=> _mockRegistry.VerifyProperty(_subject, _propertyName, (IParameterMatch<TParameter>)value);
 
 	/// <summary>
 	///     Verifies the property write access on the mock with the given <paramref name="value" />.
 	/// </summary>
 	[OverloadResolutionPriority(1)]
 	public VerificationResult<TSubject> Set(TParameter value, [CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
-		=> _mockRegistry.Property(_subject, _propertyName, (IParameter)It.Is(value, doNotPopulateThisValue));
+		=> _mockRegistry.VerifyProperty(_subject, _propertyName, (IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue));
 }

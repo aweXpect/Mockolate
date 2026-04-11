@@ -788,38 +788,31 @@ public class GeneralTests
 			          		/// <inheritdoc cref="global::MyCode.IMyService.SomeProperty" />
 			          		[global::System.Diagnostics.CodeAnalysis.AllowNull]
 			          		public string SomeProperty
-			          		{
-			          			get
-			          			{
-			          				return this.MockRegistry.GetProperty<string>("global::MyCode.IMyService.SomeProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeProperty);
-			          			}
-			          			set
-			          			{
-			          				this.MockRegistry.SetProperty<string>("global::MyCode.IMyService.SomeProperty", value);
-			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-			          				{
-			          					wraps.SomeProperty = value;
-			          				}
-			          			}
-			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
 			          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod(string)" />
 			          		[global::System.ComponentModel.Localizable(false)]
 			          		public string MyMethod(string message)
 			          		{
-			          			global::Mockolate.Setup.MethodSetupResult<string> methodExecution = this.MockRegistry.InvokeMethod<string, string>("global::MyCode.IMyService.MyMethod", p => this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!, p), "message", message);
+			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, string>>("global::MyCode.IMyService.MyMethod", m => m.Matches("message", message));
+			          			bool hasWrappedResult = false;
+			          			string wrappedResult = default!;
 			          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          			{
-			          				var baseResult = wraps.MyMethod(message);
-			          				if (!methodExecution.HasSetupResult)
-			          				{
-			          					methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<string>("message", message));
-			          					return baseResult;
-			          				}
+			          				wrappedResult = wraps.MyMethod(message);
+			          				hasWrappedResult = true;
 			          			}
-			          			methodExecution.TriggerCallbacks(new global::Mockolate.Parameters.NamedParameterValue<string>("message", message));
-			          			return methodExecution.Result;
+			          			this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<string>("global::MyCode.IMyService.MyMethod", "message", message));
+			          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			          			{
+			          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod(string)' was invoked without prior setup.");
+			          			}
+			          			methodSetup?.TriggerCallbacks(message);
+			          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
+			          			{
+			          				return wrappedResult;
+			          			}
+			          			return methodSetup?.TryGetReturnValue(message, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!, message);
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.Contains("""

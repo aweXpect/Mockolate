@@ -90,34 +90,12 @@ public sealed partial class ItExtensionsTests
 		}
 
 		[Fact]
-		public async Task WhenTypeDoesNotMatch_String_ShouldReturnFalse()
-		{
-			ItExtensions.IUriParameter sut = It.IsUri();
-			IParameter parameter = (IParameter)sut;
-
-			bool result = parameter.Matches(new NamedParameterValue<string>(string.Empty, "https://www.aweXpect.com"));
-
-			await That(result).IsFalse();
-		}
-
-		[Fact]
-		public async Task WhenTypeDoesNotMatch_Int_ShouldReturnFalse()
-		{
-			ItExtensions.IUriParameter sut = It.IsUri();
-			IParameter parameter = (IParameter)sut;
-
-			bool result = parameter.Matches(new NamedParameterValue<int>(string.Empty, 443));
-
-			await That(result).IsFalse();
-		}
-
-		[Fact]
 		public async Task WhenTypeDoesNotMatch_Null_ShouldReturnFalse()
 		{
 			ItExtensions.IUriParameter sut = It.IsUri();
-			IParameter parameter = (IParameter)sut;
+			IParameterMatch<Uri?> parameter = (IParameterMatch<Uri?>)sut;
 
-			bool result = parameter.Matches(new NamedParameterValue<Uri?>(string.Empty, null));
+			bool result = parameter.Matches(null);
 
 			await That(result).IsFalse();
 		}

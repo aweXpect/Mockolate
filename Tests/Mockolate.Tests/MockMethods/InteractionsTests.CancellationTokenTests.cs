@@ -52,6 +52,8 @@ public sealed partial class InteractionsTests
 			Task result = sut.TaskMethod(canceledToken);
 
 			await That(result.IsCanceled).IsTrue();
+
+			var x = MockBehavior.Default.DefaultValue.Generate(default(global::System.Threading.Tasks.Task)!);
 		}
 
 		[Fact]

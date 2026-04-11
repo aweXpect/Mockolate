@@ -2,7 +2,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using Mockolate.Exceptions;
-using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 using Mockolate.Verify;
@@ -20,13 +19,11 @@ public sealed partial class HttpClientExtensionsTests
 			.Mock.Setup
 			.GetAsync(new InvalidParameter())
 			.ReturnsAsync(HttpStatusCode.OK);
-		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
+		ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
+			(ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>)setup;
 
-		bool result = interactiveSetup.Matches(new MethodInvocation("global::System.Net.Http.HttpMessageHandler.SendAsync",
-		[
-			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
-			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
-		]));
+		bool result = methodSetup.Matches("request", new HttpRequestMessage(), "cancellationToken",
+			CancellationToken.None);
 
 		await That(result).IsTrue();
 	}
@@ -71,13 +68,9 @@ public sealed partial class HttpClientExtensionsTests
 			.Mock.Setup
 			.GetAsync(It.Matches("*").Do(uri => callbackUri = uri))
 			.ReturnsAsync(HttpStatusCode.OK);
-		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
+		ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> interactiveSetup = (ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>)setup;
 
-		interactiveSetup.TriggerCallbacks([
-			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
-			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
-		]);
-
+		interactiveSetup.TriggerCallbacks(new HttpRequestMessage(), CancellationToken.None);
 		await That(callbackUri).IsNull();
 	}
 
@@ -89,13 +82,11 @@ public sealed partial class HttpClientExtensionsTests
 			.Mock.Setup
 			.GetAsync(It.Matches("*"))
 			.ReturnsAsync(HttpStatusCode.OK);
-		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
+		ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
+			(ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>)setup;
 
-		bool result = interactiveSetup.Matches(new MethodInvocation("global::System.Net.Http.HttpMessageHandler.SendAsync",
-		[
-			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
-			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
-		]));
+		bool result = methodSetup.Matches("request", new HttpRequestMessage(), "cancellationToken",
+			CancellationToken.None);
 
 		await That(result).IsFalse();
 	}
@@ -108,13 +99,11 @@ public sealed partial class HttpClientExtensionsTests
 			.Mock.Setup
 			.GetAsync(It.IsAny<string?>())
 			.ReturnsAsync(HttpStatusCode.OK);
-		IInteractiveMethodSetup interactiveSetup = (IInteractiveMethodSetup)setup;
+		ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
+			(ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>)setup;
 
-		bool result = interactiveSetup.Matches(new MethodInvocation("System.Net.Http.HttpMessageHandler.SendAsync",
-		[
-			new NamedParameterValue<HttpRequestMessage>("request", new HttpRequestMessage()),
-			new NamedParameterValue<CancellationToken>("cancellationToken", CancellationToken.None),
-		]));
+		bool result = methodSetup.Matches("request", new HttpRequestMessage(), "cancellationToken",
+			CancellationToken.None);
 
 		await That(result).IsFalse();
 	}
@@ -194,9 +183,16 @@ public sealed partial class HttpClientExtensionsTests
 	{
 		public IParameter<string?> Do(Action<string?> callback)
 			=> throw new NotSupportedException();
+
+		public bool Matches(object? value)
+			=> throw new NotSupportedException();
+
+		public void InvokeCallbacks(object? value)
+			=> throw new NotSupportedException();
 	}
 
 	private sealed class MyMethodSetup : IMethodSetup
 	{
+		public string Name { get; } = "Foo";
 	}
 }

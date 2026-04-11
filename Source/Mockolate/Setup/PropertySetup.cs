@@ -409,6 +409,22 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		return this;
 	}
 
+	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.ChangeScenario(string scenarioName)
+	{
+		Callback<Action<int, T>> item = new((_, _) => throw new NotImplementedException());
+		_currentCallback = item;
+		(_setterCallbacks ??= []).Add(item);
+		return this;
+	}
+
+	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.ChangeScenario(string scenarioName)
+	{
+		Callback<Action<int, T>> item = new((_, _) => throw new NotImplementedException());
+		_currentCallback = item;
+		(_getterCallbacks ??= []).Add(item);
+		return this;
+	}
+
 	/// <inheritdoc cref="IPropertySetup{T}.OnSet" />
 	public IPropertySetterSetup<T> OnSet
 		=> this;

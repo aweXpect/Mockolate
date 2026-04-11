@@ -6,14 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Mockolate.Interactions;
-using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
 internal partial class MockSetups
 {
-	internal IndexerSetups Indexers { get; } = new();
-
 	[DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 	[DebuggerNonUserCode]
@@ -40,6 +37,22 @@ internal partial class MockSetups
 			}
 		}
 
+		/// <summary>
+		///     The root value storage used to track stored indexer values (keyed by parameter tree).
+		/// </summary>
+		public ValueStorage ValueStorage
+		{
+			get
+			{
+				if (_valueStorage is null)
+				{
+					Interlocked.CompareExchange(ref _valueStorage, new ValueStorage(), null);
+				}
+
+				return _valueStorage!;
+			}
+		}
+
 		private List<IndexerSetup> GetOrCreateStorage()
 		{
 			if (_storage is null)
@@ -50,7 +63,7 @@ internal partial class MockSetups
 			return _storage!;
 		}
 
-		public IndexerSetup? GetLatestOrDefault(IndexerAccess interaction)
+		public T? GetMatching<T>(Func<T, bool> predicate) where T : IndexerSetup
 		{
 			List<IndexerSetup>? storage = _storage;
 			if (storage is null)
@@ -62,31 +75,9 @@ internal partial class MockSetups
 			{
 				for (int i = storage.Count - 1; i >= 0; i--)
 				{
-					if (((IInteractiveIndexerSetup)storage[i]).Matches(interaction))
+					if (storage[i] is T typedSetup && predicate(typedSetup))
 					{
-						return storage[i];
-					}
-				}
-			}
-
-			return null;
-		}
-
-		public IndexerSetup? GetLatestOrDefault(Predicate<IndexerSetup> predicate)
-		{
-			List<IndexerSetup>? storage = _storage;
-			if (storage is null)
-			{
-				return null;
-			}
-
-			lock (storage)
-			{
-				for (int i = storage.Count - 1; i >= 0; i--)
-				{
-					if (predicate(storage[i]))
-					{
-						return storage[i];
+						return typedSetup;
 					}
 				}
 			}
@@ -128,37 +119,6 @@ internal partial class MockSetups
 			}
 		}
 
-		internal TValue GetOrAddValue<TValue>(INamedParameterValue[] parameters, Func<TValue> valueGenerator)
-		{
-			_valueStorage ??= new ValueStorage();
-			ValueStorage? storage = _valueStorage;
-			foreach (INamedParameterValue parameter in parameters)
-			{
-				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
-			}
-
-			if (storage.Value is TValue value)
-			{
-				return value;
-			}
-
-			value = valueGenerator();
-			storage.Value = value;
-			return value;
-		}
-
-		internal void UpdateValue<TValue>(INamedParameterValue[] parameters, TValue value)
-		{
-			_valueStorage ??= new ValueStorage();
-			ValueStorage? storage = _valueStorage;
-			foreach (INamedParameterValue parameter in parameters)
-			{
-				storage = storage.GetOrAdd(parameter, () => new ValueStorage());
-			}
-
-			storage.Value = value;
-		}
-
 		internal IEnumerable<IndexerSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
 			List<IndexerSetup>? storage = _storage;
@@ -174,31 +134,65 @@ internal partial class MockSetups
 					.ToList();
 			}
 		}
+	}
+}
 
-		[DebuggerNonUserCode]
-		private sealed class ValueStorage
+/// <summary>
+///     Object-keyed tree used to store indexer values by their typed parameter path.
+/// </summary>
+[DebuggerNonUserCode]
+public sealed class ValueStorage
+{
+	private readonly List<KeyValueEntry> _storage = [];
+
+	/// <summary>
+	///     The value stored at the current tree node.
+	/// </summary>
+	public object? Value { get; set; }
+
+	/// <summary>
+	///     Returns the child storage for the given <paramref name="key" />, or <see langword="null" /> if none exists.
+	/// </summary>
+	public ValueStorage? GetChild(object? key)
+	{
+		lock (_storage)
 		{
-			private readonly List<(INamedParameterValue Key, ValueStorage Value)> _storage = [];
-
-			public object? Value { get; set; }
-
-			public ValueStorage GetOrAdd(INamedParameterValue key, Func<ValueStorage> valueGenerator)
+			foreach (KeyValueEntry entry in _storage)
 			{
-				lock (_storage)
+				if (Equals(entry.Key, key))
 				{
-					foreach ((INamedParameterValue existingKey, ValueStorage existingValue) in _storage)
-					{
-						if (existingKey.Equals(key))
-						{
-							return existingValue;
-						}
-					}
-
-					ValueStorage newValue = valueGenerator();
-					_storage.Add((key, newValue));
-					return newValue;
+					return entry.Value;
 				}
 			}
 		}
+
+		return null;
+	}
+
+	/// <summary>
+	///     Returns the child storage for the given <paramref name="key" />, or creates one if none exists.
+	/// </summary>
+	public ValueStorage GetOrAddChild(object? key)
+	{
+		lock (_storage)
+		{
+			foreach (KeyValueEntry entry in _storage)
+			{
+				if (Equals(entry.Key, key))
+				{
+					return entry.Value;
+				}
+			}
+
+			ValueStorage newValue = new();
+			_storage.Add(new KeyValueEntry(key, newValue));
+			return newValue;
+		}
+	}
+
+	private readonly struct KeyValueEntry(object? key, ValueStorage value)
+	{
+		internal object? Key { get; } = key;
+		internal ValueStorage Value { get; } = value;
 	}
 }

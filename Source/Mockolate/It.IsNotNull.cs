@@ -21,6 +21,9 @@ public partial class It
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(T value) => value is not null;
 
+		/// <inheritdoc cref="TypedMatch{T}.MatchesOfDifferentType(object?)" />
+		protected override bool MatchesOfDifferentType(object? value) => true;
+
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => toString ?? $"It.IsNotNull<{typeof(T).FormatType()}>()";
 	}

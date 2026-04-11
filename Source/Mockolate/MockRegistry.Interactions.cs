@@ -1,11 +1,7 @@
 using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Internals;
-using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -18,340 +14,156 @@ public partial class MockRegistry
 	public MockInteractions Interactions { get; }
 
 	/// <summary>
+	///     Gets the <see cref="ValueStorage" /> used to track indexer values for the current scenario.
+	/// </summary>
+	public ValueStorage IndexerStorage
+		=> Setup.GetScenario(Scenario).Indexers.ValueStorage;
+
+	/// <summary>
 	///     Clears all interactions recorded by the mock object.
 	/// </summary>
 	public void ClearAllInteractions()
 		=> Interactions.Clear();
 
 	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> and one typed parameter and gets the setup return value.
-	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
+	///     Get the latest method setup matching the given <paramref name="methodName" /> and <paramref name="predicate" />,
+	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult, T1>(
-		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
-		string p1Name, T1 p1)
-	{
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1);
-		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
+	public T? GetMethodSetup<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
+		=> Setup.Methods.GetMatching(methodName, predicate);
 
-		if (matchingSetup is null)
+	/// <summary>
+	///     Get the latest indexer setup matching the given <paramref name="predicate" />,
+	///     or returns <see langword="null" /> if no matching setup is found.
+	/// </summary>
+	public T? GetIndexerSetup<T>(Func<T, bool> predicate) where T : IndexerSetup
+		=> Setup.GetScenario(Scenario).Indexers.GetMatching(predicate);
+
+	/// <summary>
+	///     Retrieves the stored value for the given indexer <paramref name="access" />, or
+	///     invokes the <paramref name="defaultValueGenerator" /> and stores its result when no value has been stored yet.
+	/// </summary>
+	public TResult GetIndexerValue<TResult>(IndexerAccess access, Func<TResult> defaultValueGenerator)
+	{
+		ValueStorage storage = IndexerStorage;
+		if (access.TryFindStoredValue(storage, out TResult value))
 		{
-			if (Behavior.ThrowWhenNotSetup)
+			return value;
+		}
+
+		value = defaultValueGenerator();
+		access.StoreValue(storage, value);
+		return value;
+	}
+
+	/// <summary>
+	///     Stores the given <paramref name="value" /> for the given indexer <paramref name="access" />.
+	/// </summary>
+	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value)
+		=> access.StoreValue(IndexerStorage, value);
+
+	/// <summary>
+	///     Applies an indexer getter using a pre-computed <paramref name="baseValue" /> and an optional matching
+	///     <paramref name="setup" />. Returns the final getter result.
+	/// </summary>
+	/// <remarks>
+	///     When <paramref name="setup" /> is <see langword="null" />, returns any previously stored value or the
+	///     <paramref name="baseValue" /> (which is then stored).
+	/// </remarks>
+	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult baseValue)
+	{
+		ValueStorage storage = IndexerStorage;
+		if (setup is null)
+		{
+			if (access.TryFindStoredValue(storage, out TResult stored))
 			{
-				throw new MockNotSetupException(
-					$"The method '{methodName}({typeof(T1).FormatType()})' was invoked without prior setup.");
+				return stored;
 			}
 
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+			access.StoreValue(storage, baseValue);
+			return baseValue;
 		}
 
-		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+		return setup.GetResult(access, Behavior, storage, baseValue);
 	}
 
 	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> and two typed parameters and gets the setup return value.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
+	///     Applies an indexer getter using a lazy <paramref name="defaultValueGenerator" /> and an optional matching
+	///     <paramref name="setup" />. Returns the final getter result.
 	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult, T1, T2>(
-		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
-		string p1Name, T1 p1, string p2Name, T2 p2)
+	/// <remarks>
+	///     When <paramref name="setup" /> is <see langword="null" />, returns any previously stored value, or (if
+	///     <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />) throws a
+	///     <see cref="MockNotSetupException" />, otherwise stores and returns the <paramref name="defaultValueGenerator" />'s
+	///     value.
+	/// </remarks>
+	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup,
+		Func<TResult> defaultValueGenerator)
 	{
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2)
-		];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		if (matchingSetup is null)
+		ValueStorage storage = IndexerStorage;
+		if (setup is null)
 		{
-			if (Behavior.ThrowWhenNotSetup)
+			if (access.TryFindStoredValue(storage, out TResult stored))
 			{
-				throw new MockNotSetupException(
-					$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()})' was invoked without prior setup.");
+				return stored;
 			}
 
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
-		}
-
-		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
-	}
-
-	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> and three typed parameters and gets the setup return value.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult, T1, T2, T3>(
-		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
-		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3)
-	{
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3)
-		];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		if (matchingSetup is null)
-		{
 			if (Behavior.ThrowWhenNotSetup)
 			{
-				throw new MockNotSetupException(
-					$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()})' was invoked without prior setup.");
+				throw new MockNotSetupException($"The indexer {access} was accessed without prior setup.");
 			}
 
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+			TResult value = defaultValueGenerator();
+			access.StoreValue(storage, value);
+			return value;
 		}
 
-		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+		return setup.GetResult(access, Behavior, storage, defaultValueGenerator);
 	}
 
 	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> and four typed parameters and gets the setup return value.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
+	///     Applies an indexer setter for the given <paramref name="access" /> with the given <paramref name="value" /> and
+	///     optional matching <paramref name="setup" />. Returns whether the base class implementation should be skipped.
 	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult, T1, T2, T3, T4>(
-		string methodName, Func<INamedParameterValue[], TResult> defaultValue,
-		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4)
+	public bool ApplyIndexerSetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult value)
 	{
-		IInteractiveMethodSetup? matchingSetup =
-			GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3),
-			new NamedParameterValue<T4>(p4Name, p4)
-		];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		if (matchingSetup is null)
+		if (setup is null)
 		{
-			if (Behavior.ThrowWhenNotSetup)
-			{
-				throw new MockNotSetupException(
-					$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()}, {typeof(T4).FormatType()})' was invoked without prior setup.");
-			}
-
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue(parameters));
+			SetIndexerValue(access, value);
+			return Behavior.SkipBaseClass;
 		}
 
-		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, () => defaultValue(parameters)));
+		setup.SetResult(access, Behavior, IndexerStorage, value);
+		return setup.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 
 	/// <summary>
-	///     Executes the void method with <paramref name="methodName" /> and one typed parameter.
-	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
+	///     Dispatches an indexer setter call against the given <paramref name="access" />: registers the interaction,
+	///     updates the stored value, invokes a matching setup (if any), and returns whether the base class implementation
+	///     should be skipped.
 	/// </summary>
-	public MethodSetupResult InvokeMethod<T1>(
-		string methodName, string p1Name, T1 p1)
+	public bool DispatchIndexerSetter<TResult, TSetup>(
+		IndexerAccess access,
+		TResult value,
+		Func<TSetup, bool> setupPredicate) where TSetup : IndexerSetup
 	{
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1);
-		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
+		RegisterInteraction(access);
+		TSetup? setup = GetIndexerSetup(setupPredicate);
+		if (setup is null)
 		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({typeof(T1).FormatType()})' was invoked without prior setup.");
+			SetIndexerValue(access, value);
+			return Behavior.SkipBaseClass;
 		}
 
-		matchingSetup?.Invoke(methodInvocation, Behavior);
-		return new MethodSetupResult(matchingSetup, Behavior);
+		setup.SetResult(access, Behavior, IndexerStorage, value);
+		return setup.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 
 	/// <summary>
-	///     Executes the void method with <paramref name="methodName" /> and two typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
+	///     Register an <paramref name="interaction" /> with the mock.
 	/// </summary>
-	public MethodSetupResult InvokeMethod<T1, T2>(
-		string methodName, string p1Name, T1 p1, string p2Name, T2 p2)
-	{
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2)
-		];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
-		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()})' was invoked without prior setup.");
-		}
-
-		matchingSetup?.Invoke(methodInvocation, Behavior);
-		return new MethodSetupResult(matchingSetup, Behavior);
-	}
-
-	/// <summary>
-	///     Executes the void method with <paramref name="methodName" /> and three typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	public MethodSetupResult InvokeMethod<T1, T2, T3>(
-		string methodName, string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3)
-	{
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3)
-		];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
-		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()})' was invoked without prior setup.");
-		}
-
-		matchingSetup?.Invoke(methodInvocation, Behavior);
-		return new MethodSetupResult(matchingSetup, Behavior);
-	}
-
-	/// <summary>
-	///     Executes the void method with <paramref name="methodName" /> and four typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	public MethodSetupResult InvokeMethod<T1, T2, T3, T4>(
-		string methodName, string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4)
-	{
-		IInteractiveMethodSetup? matchingSetup =
-			GetMethodSetupTyped(methodName, p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3),
-			new NamedParameterValue<T4>(p4Name, p4)
-		];
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
-		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({typeof(T1).FormatType()}, {typeof(T2).FormatType()}, {typeof(T3).FormatType()}, {typeof(T4).FormatType()})' was invoked without prior setup.");
-		}
-
-		matchingSetup?.Invoke(methodInvocation, Behavior);
-		return new MethodSetupResult(matchingSetup, Behavior);
-	}
-
-	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> with no parameters and gets the setup return value.
-	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName, Func<TResult> defaultValue)
-	{
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, Array.Empty<INamedParameterValue>()));
-
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
-		if (matchingSetup is null)
-		{
-			if (Behavior.ThrowWhenNotSetup)
-			{
-				throw new MockNotSetupException($"The method '{methodName}()' was invoked without prior setup.");
-			}
-
-			return new MethodSetupResult<TResult>(null, Behavior, defaultValue());
-		}
-
-		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior, defaultValue));
-	}
-
-	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> and gets
-	///     the setup return value.
-	/// </summary>
-	public MethodSetupResult<TResult> InvokeMethod<TResult>(string methodName,
-		Func<INamedParameterValue[], TResult> defaultValue,
-		params INamedParameterValue[] parameters)
-	{
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
-		if (matchingSetup is null)
-		{
-			if (Behavior.ThrowWhenNotSetup)
-			{
-				throw new MockNotSetupException(
-					$"The method '{methodName}({string.Join(", ", parameters.Select(TypeStringOrNullSelector))})' was invoked without prior setup.");
-			}
-
-			return new MethodSetupResult<TResult>(null, Behavior,
-				defaultValue(parameters));
-		}
-
-		return new MethodSetupResult<TResult>(matchingSetup, Behavior,
-			matchingSetup.Invoke(methodInvocation, Behavior,
-				() => defaultValue(parameters)));
-
-		[DebuggerNonUserCode]
-		string TypeStringOrNullSelector(INamedParameterValue x)
-		{
-			return x.GetValueType().FormatType();
-		}
-	}
-
-	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> with no parameters returning <see langword="void" />.
-	/// </summary>
-	public MethodSetupResult InvokeMethod(string methodName)
-	{
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, Array.Empty<INamedParameterValue>()));
-
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
-		{
-			throw new MockNotSetupException($"The method '{methodName}()' was invoked without prior setup.");
-		}
-
-		matchingSetup?.Invoke(methodInvocation, Behavior);
-		return new MethodSetupResult(matchingSetup, Behavior);
-	}
-
-	/// <summary>
-	///     Executes the method with <paramref name="methodName" /> and the matching <paramref name="parameters" /> returning
-	///     <see langword="void" />.
-	/// </summary>
-	public MethodSetupResult InvokeMethod(string methodName, params INamedParameterValue[] parameters)
-	{
-		MethodInvocation methodInvocation =
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation(methodName, parameters));
-
-		IInteractiveMethodSetup? matchingSetup = GetMethodSetup(methodInvocation);
-		if (matchingSetup is null && Behavior.ThrowWhenNotSetup)
-		{
-			throw new MockNotSetupException(
-				$"The method '{methodName}({string.Join(", ", parameters.Select(x => x.GetValueType().FormatType()))})' was invoked without prior setup.");
-		}
-
-		matchingSetup?.Invoke(methodInvocation, Behavior);
-		return new MethodSetupResult(matchingSetup, Behavior);
-	}
+	public void RegisterInteraction(IInteraction interaction)
+		=> ((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
@@ -380,7 +192,7 @@ public partial class MockRegistry
 	public bool SetProperty<T>(string propertyName, T value)
 	{
 		IInteraction interaction =
-			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess(propertyName, new NamedParameterValue<T>("value", value)));
+			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess<T>(propertyName, value));
 
 		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
 
@@ -402,11 +214,7 @@ public partial class MockRegistry
 					$"The property '{propertyName}' was accessed without prior setup.");
 			}
 
-			TResult initialValue = defaultValueGenerator is null
-				? default!
-				: Behavior.SkipBaseClass || baseValueAccessor is null
-					? defaultValueGenerator()
-					: baseValueAccessor.Invoke();
+			TResult initialValue = GetInitialValue();
 			PropertySetup setup = new PropertySetup.Default<TResult>(propertyName, initialValue);
 			Setup.Properties.Add(setup);
 			return setup;
@@ -431,204 +239,18 @@ public partial class MockRegistry
 		}
 
 		return existingSetup;
-	}
 
-	/// <summary>
-	///     Gets the value from the indexer with one typed parameter.
-	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	public IndexerSetupResult<TResult> GetIndexer<TResult, T1>(string p1Name, T1 p1)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1);
-		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
-		IndexerGetterAccess interaction = new(parameters);
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
-			Setup.Indexers.UpdateValue);
-	}
+		TResult GetInitialValue()
+		{
+			if (defaultValueGenerator is null)
+			{
+				return default!;
+			}
 
-	/// <summary>
-	///     Gets the value from the indexer with two typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	public IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2>(string p1Name, T1 p1, string p2Name, T2 p2)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2)
-		];
-		IndexerGetterAccess interaction = new(parameters);
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
-			Setup.Indexers.UpdateValue);
-	}
-
-	/// <summary>
-	///     Gets the value from the indexer with three typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	public IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2, T3>(
-		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3)
-		];
-		IndexerGetterAccess interaction = new(parameters);
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
-			Setup.Indexers.UpdateValue);
-	}
-
-	/// <summary>
-	///     Gets the value from the indexer with four typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	public IndexerSetupResult<TResult> GetIndexer<TResult, T1, T2, T3, T4>(
-		string p1Name, T1 p1, string p2Name, T2 p2, string p3Name, T3 p3, string p4Name, T4 p4)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3),
-			new NamedParameterValue<T4>(p4Name, p4)
-		];
-		IndexerGetterAccess interaction = new(parameters);
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
-			Setup.Indexers.UpdateValue);
-	}
-
-	/// <summary>
-	///     Gets the value from the indexer with the given parameters.
-	/// </summary>
-	public IndexerSetupResult<TResult> GetIndexer<TResult>(params INamedParameterValue[] parameters)
-	{
-		IndexerGetterAccess interaction = new(parameters);
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-
-		IndexerSetup? matchingSetup = Setup.Indexers.GetLatestOrDefault(interaction);
-		return new IndexerSetupResult<TResult>(matchingSetup, interaction, Behavior, GetIndexerValue,
-			Setup.Indexers.UpdateValue);
-	}
-
-	/// <summary>
-	///     Sets the value of the indexer with one typed parameter.
-	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	/// <remarks>
-	///     Returns a flag, indicating whether the base class implementation should be skipped.
-	/// </remarks>
-	public bool SetIndexer<TResult, T1>(TResult value, string p1Name, T1 p1)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1);
-		INamedParameterValue[] parameters = [new NamedParameterValue<T1>(p1Name, p1)];
-		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-
-		Setup.Indexers.UpdateValue(parameters, value);
-		matchingSetup?.InvokeSetter(interaction, value, Behavior);
-		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
-	}
-
-	/// <summary>
-	///     Sets the value of the indexer with two typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	/// <remarks>
-	///     Returns a flag, indicating whether the base class implementation should be skipped.
-	/// </remarks>
-	public bool SetIndexer<TResult, T1, T2>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2)
-		];
-		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-
-		Setup.Indexers.UpdateValue(parameters, value);
-		matchingSetup?.InvokeSetter(interaction, value, Behavior);
-		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
-	}
-
-	/// <summary>
-	///     Sets the value of the indexer with three typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	/// <remarks>
-	///     Returns a flag, indicating whether the base class implementation should be skipped.
-	/// </remarks>
-	public bool SetIndexer<TResult, T1, T2, T3>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2,
-		string p3Name, T3 p3)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3)
-		];
-		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-
-		Setup.Indexers.UpdateValue(parameters, value);
-		matchingSetup?.InvokeSetter(interaction, value, Behavior);
-		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
-	}
-
-	/// <summary>
-	///     Sets the value of the indexer with four typed parameters.
-	///     Matching runs against the typed values directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
-	///     allocated for recording.
-	/// </summary>
-	/// <remarks>
-	///     Returns a flag, indicating whether the base class implementation should be skipped.
-	/// </remarks>
-	public bool SetIndexer<TResult, T1, T2, T3, T4>(TResult value, string p1Name, T1 p1, string p2Name, T2 p2,
-		string p3Name, T3 p3, string p4Name, T4 p4)
-	{
-		IndexerSetup? matchingSetup = GetIndexerSetupTyped(p1Name, p1, p2Name, p2, p3Name, p3, p4Name, p4);
-		INamedParameterValue[] parameters = [
-			new NamedParameterValue<T1>(p1Name, p1),
-			new NamedParameterValue<T2>(p2Name, p2),
-			new NamedParameterValue<T3>(p3Name, p3),
-			new NamedParameterValue<T4>(p4Name, p4)
-		];
-		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-
-		Setup.Indexers.UpdateValue(parameters, value);
-		matchingSetup?.InvokeSetter(interaction, value, Behavior);
-		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
-	}
-
-	/// <summary>
-	///     Sets the value of the indexer with the given parameters.
-	/// </summary>
-	/// <remarks>
-	///     Returns a flag, indicating whether the base class implementation should be skipped.
-	/// </remarks>
-	public bool SetIndexer<TResult>(TResult value, params INamedParameterValue[] parameters)
-	{
-		IndexerSetterAccess interaction = new(parameters, new NamedParameterValue<TResult>("value", value));
-		((IMockInteractions)Interactions).RegisterInteraction(interaction);
-
-		Setup.Indexers.UpdateValue(parameters, value);
-		IndexerSetup? matchingSetup = Setup.Indexers.GetLatestOrDefault(interaction);
-		matchingSetup?.InvokeSetter(interaction, value, Behavior);
-		return (matchingSetup as IInteractiveIndexerSetup)?.SkipBaseClass() ?? Behavior.SkipBaseClass;
+			return Behavior.SkipBaseClass || baseValueAccessor is null
+				? defaultValueGenerator()
+				: baseValueAccessor.Invoke();
+		}
 	}
 
 	/// <summary>

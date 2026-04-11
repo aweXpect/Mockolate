@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Mockolate.Internals;
-using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
 
@@ -11,13 +10,13 @@ namespace Mockolate.Interactions;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class PropertySetterAccess(string propertyName, INamedParameterValue value) : PropertyAccess(propertyName)
+public class PropertySetterAccess<T>(string propertyName, T value) : PropertyAccess(propertyName)
 {
 	/// <summary>
 	///     The value the property was being set to.
 	/// </summary>
-	public INamedParameterValue Value { get; } = value;
+	public T Value { get; } = value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"set property {Name.SubstringAfterLast('.')} to {Value}";
+	public override string ToString() => $"set property {Name.SubstringAfterLast('.')} to {Value?.ToString() ?? "null"}";
 }

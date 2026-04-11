@@ -11,8 +11,6 @@ namespace Mockolate.Setup;
 
 internal partial class MockSetups
 {
-	internal MethodSetups Methods { get; } = new();
-
 	[DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 	[DebuggerNonUserCode]
@@ -78,6 +76,29 @@ internal partial class MockSetups
 
 			return null;
 		}
+		public T? GetMatching<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
+		{
+			List<MethodSetup>? storage = _storage;
+			if (storage is null)
+			{
+				return null;
+			}
+
+			lock (storage)
+			{
+				for (int i = storage.Count - 1; i >= 0; i--)
+				{
+					if (storage[i].Name.Equals(methodName) &&
+					    storage[i] is T methodSetup &&
+					    predicate(methodSetup))
+					{
+						return methodSetup;
+					}
+				}
+			}
+
+			return null;
+		}
 
 		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
@@ -89,8 +110,8 @@ internal partial class MockSetups
 
 			lock (storage)
 			{
-				return storage.Where(methodSetup => interactions.OfType<MethodInvocation>()
-						.All(methodInvocation => !((IInteractiveMethodSetup)methodSetup).Matches(methodInvocation)))
+				return storage.Where(methodSetup => !interactions.OfType<IMethodInteraction>()
+						.Any(methodInvocation => ((IVerifiableMethodSetup)methodSetup).Matches(methodInvocation)))
 					.ToList();
 			}
 		}

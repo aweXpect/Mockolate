@@ -6,6 +6,7 @@ using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 using Mockolate.Parameters;
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 
 namespace Mockolate.Setup;
 
@@ -19,41 +20,34 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 {
 	/// <inheritdoc cref="IInteractiveIndexerSetup.Matches(IndexerAccess)" />
 	bool IInteractiveIndexerSetup.Matches(IndexerAccess indexerAccess)
-		=> IsMatch(indexerAccess.Parameters);
-
-	/// <inheritdoc
-	///     cref="IInteractiveIndexerSetup.GetInitialValue{TValue}" />
-	void IInteractiveIndexerSetup.GetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator,
-		INamedParameterValue[] parameters,
-		[NotNullWhen(true)] out TValue value)
-		=> GetInitialValue(behavior, defaultValueGenerator, parameters, out value);
+		=> MatchesAccess(indexerAccess);
 
 	/// <inheritdoc cref="IInteractiveIndexerSetup.SkipBaseClass()" />
-	bool? IInteractiveIndexerSetup.SkipBaseClass()
-		=> GetSkipBaseClass();
-
-	internal TValue InvokeGetter<TValue>(IndexerGetterAccess getterAccess, TValue value, MockBehavior behavior)
-		=> ExecuteGetterCallback(getterAccess, value, behavior);
-
-	internal void InvokeSetter<TValue>(IndexerSetterAccess setterAccess, TValue value, MockBehavior behavior)
-		=> ExecuteSetterCallback(setterAccess, value, behavior);
+	public abstract bool? SkipBaseClass();
 
 	/// <summary>
-	///     Execute a potentially registered getter callback.
+	///     Checks if the <paramref name="access" /> matches the setup.
 	/// </summary>
-	protected abstract T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
-		MockBehavior behavior);
+	protected abstract bool MatchesAccess(IndexerAccess access);
 
 	/// <summary>
-	///     Execute a potentially registered setter callback.
+	///     Invokes the getter flow for the given <paramref name="access" /> using <paramref name="baseValue" /> as the seed.
 	/// </summary>
-	protected abstract void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value,
-		MockBehavior behavior);
+	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult baseValue);
 
 	/// <summary>
-	///     Checks if the <paramref name="parameters" /> match the setup.
+	///     Invokes the getter flow for the given <paramref name="access" /> using the <paramref name="defaultValueGenerator" />
+	///     when no value has been stored or initialized.
 	/// </summary>
-	protected abstract bool IsMatch(INamedParameterValue[] parameters);
+	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		Func<TResult> defaultValueGenerator);
+
+	/// <summary>
+	///     Invokes the setter flow for the given <paramref name="access" /> with the given <paramref name="value" />.
+	/// </summary>
+	public abstract void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult value);
 
 	/// <summary>
 	///     Attempts to cast the specified value to the type parameter <typeparamref name="T" />,
@@ -77,80 +71,10 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	}
 
 	/// <summary>
-	///     Determines whether each value in the specified array matches the corresponding parameter according to the
-	///     parameter's matching criteria.
-	/// </summary>
-	/// <remarks>
-	///     The method returns false if the lengths of the parameters and values arrays do not match.
-	///     Each value is compared to its corresponding parameter using the parameter's matching logic.
-	/// </remarks>
-	protected static bool Matches(NamedParameter[] namedParameters, INamedParameterValue[] values)
-	{
-		if (namedParameters.Length != values.Length)
-		{
-			return false;
-		}
-
-		for (int i = 0; i < namedParameters.Length; i++)
-		{
-			if (!namedParameters[i].Matches(values[i]))
-			{
-				return false;
-			}
-		}
-
-		for (int i = 0; i < namedParameters.Length; i++)
-		{
-			namedParameters[i].Parameter.InvokeCallbacks(values[i]);
-		}
-
-		return true;
-	}
-
-	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be skipped.
-	/// </summary>
-	protected abstract bool? GetSkipBaseClass();
-
-	/// <summary>
-	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
-	///     initialization is set up.
-	/// </summary>
-	protected abstract void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		INamedParameterValue[] parameters,
-		[NotNullWhen(true)] out T value);
-
-	/// <summary>
 	///     Returns a formatted string representation of the given <paramref name="type" />.
 	/// </summary>
 	protected static string FormatType(Type type)
 		=> type.FormatType();
-
-	/// <summary>
-	///     Checks if the given <paramref name="namedParameter" /> matches the typed <paramref name="value" />,
-	///     using <see cref="ITypedParameter{T}" /> when available to avoid boxing.
-	/// </summary>
-	protected static bool MatchesParameter<T>(NamedParameter namedParameter, string name, T value)
-	{
-		if (!string.IsNullOrEmpty(name) &&
-		    !namedParameter.Name.Equals(name, StringComparison.Ordinal))
-		{
-			return false;
-		}
-
-		if (namedParameter.Parameter is ITypedParameter<T> typed)
-		{
-			return typed.MatchesValue(namedParameter.Name, value);
-		}
-
-		return namedParameter.Parameter.Matches(new NamedParameterValue<T>(name, value));
-	}
-
-	/// <summary>
-	///     Invokes the callbacks of the given <paramref name="namedParameter" /> with the typed <paramref name="value" />.
-	/// </summary>
-	protected static void InvokeCallbacksParameter<T>(NamedParameter namedParameter, string name, T value)
-		=> namedParameter.Parameter.InvokeCallbacks(new NamedParameterValue<T>(name, value));
 }
 
 /// <summary>
@@ -159,9 +83,9 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
+public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerSetup,
 	IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
-	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>, ITypedIndexerMatch
+	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
 {
 	private readonly List<Callback<Action<int, T1, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, TValue, TValue>>> _returnCallbacks = [];
@@ -509,114 +433,175 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{FormatType(typeof(TValue))} this[{match1}]";
+		=> $"{FormatType(typeof(TValue))} this[{parameter1}]";
 
-	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
+	/// <inheritdoc cref="IndexerSetup.SkipBaseClass()" />
+	public override bool? SkipBaseClass()
 		=> _skipBaseClass;
 
-	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
-		MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter value <paramref name="p1" />.
+	/// </summary>
+	public virtual bool Matches(T1 p1)
 	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerGetterAccess.Parameters.Length == 1 &&
-		    indexerGetterAccess.Parameters[0].TryGetValue(out T1 p1))
-		{
-			bool wasInvoked = false;
-			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
-			for (int i = 0; i < _getterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, TValue>> getterCallback =
-					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-
-			foreach (Callback<Func<int, T1, TValue, TValue>> _ in _returnCallbacks)
-			{
-				Callback<Func<int, T1, TValue, TValue>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, resultValue), out TValue? newValue) &&
-				    TryCast(newValue, out T returnValue, behavior))
-				{
-					return returnValue;
-				}
-			}
-		}
-
-		return value;
-	}
-
-	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
-	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value,
-		MockBehavior behavior)
-	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerSetterAccess.Parameters.Length == 1 &&
-		    indexerSetterAccess.Parameters[0].TryGetValue(out T1 p1))
-		{
-			bool wasInvoked = false;
-			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
-			for (int i = 0; i < _setterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, TValue>> setterCallback =
-					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-		}
-	}
-
-	/// <inheritdoc cref="IsMatch(INamedParameterValue[])" />
-	protected override bool IsMatch(INamedParameterValue[] parameters)
-		=> Matches([match1,], parameters);
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1)
-	{
-		if (!MatchesParameter(match1, n1, v1))
+		if (!parameter1.Matches(p1))
 		{
 			return false;
 		}
 
-		InvokeCallbacksParameter(match1, n1, v1);
+		parameter1.InvokeCallbacks(p1);
 		return true;
 	}
 
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2) => false;
+	/// <summary>
+	///     Check if the setup matches the specified parameter values.
+	/// </summary>
+	public virtual bool Matches(T1 p1, TValue value)
+		=> Matches(p1);
 
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3) => false;
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4) => false;
-
-	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
-	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		INamedParameterValue[] parameters,
-		[NotNullWhen(true)] out T value)
+	/// <inheritdoc cref="IndexerSetup.MatchesAccess(IndexerAccess)" />
+	protected override bool MatchesAccess(IndexerAccess access)
 	{
-		if (_initialization is not null &&
-		    parameters.Length == 1 &&
-		    parameters[0].TryGetValue(out T1 p1) &&
-		    _initialization.Invoke(p1) is T initialValue)
+		if (access is IndexerGetterAccess<T1> getter)
 		{
-			value = initialValue;
+			return Matches(getter.Parameter1);
+		}
+
+		if (access is IndexerSetterAccess<T1, TValue> setter)
+		{
+			return Matches(setter.Parameter1, setter.TypedValue);
+		}
+
+		return false;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult baseValue)
+	{
+		if (!TryExtractParameter(access, out T1 p1))
+		{
+			return baseValue;
+		}
+
+		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
+		currentValue = ExecuteGetterCallbacks(p1, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, currentValue, out bool returnCallbackMatched);
+		TValue stored = returnCallbackMatched ? currentValue : currentValue;
+		access.StoreValue(storage, stored);
+		return TryCast(stored, out TResult result, behavior) ? result : baseValue;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		Func<TResult> defaultValueGenerator)
+	{
+		if (!TryExtractParameter(access, out T1 p1))
+		{
+			return defaultValueGenerator();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(storage, out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1);
+		}
+		else
+		{
+			currentValue = TryCast(defaultValueGenerator(), out TValue casted, behavior) ? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, currentValue, out _);
+		access.StoreValue(storage, currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
+	}
+
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult value)
+	{
+		access.StoreValue(storage, value);
+		if (!TryExtractParameter(access, out T1 p1))
+		{
 			return;
 		}
 
-		value = defaultValueGenerator();
+		if (!TryCast(value, out TValue resultValue, behavior))
+		{
+			return;
+		}
+
+		bool wasInvoked = false;
+		int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+		for (int i = 0; i < _setterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, TValue>> setterCallback =
+				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, resultValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+	}
+
+	private TValue ExecuteGetterCallbacks(T1 p1, TValue currentValue)
+	{
+		bool wasInvoked = false;
+		int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+		for (int i = 0; i < _getterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, TValue>> getterCallback =
+				_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, currentValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private TValue ExecuteReturnCallbacks(T1 p1, TValue currentValue, out bool matched)
+	{
+		matched = false;
+		foreach (Callback<Func<int, T1, TValue, TValue>> _ in _returnCallbacks)
+		{
+			Callback<Func<int, T1, TValue, TValue>> returnCallback =
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, currentValue), out TValue? newValue))
+			{
+				matched = true;
+				return newValue!;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private static bool TryExtractParameter(IndexerAccess access, out T1 p1)
+	{
+		if (access is IndexerGetterAccess<T1> getter)
+		{
+			p1 = getter.Parameter1;
+			return true;
+		}
+
+		if (access is IndexerSetterAccess<T1, TValue> setter)
+		{
+			p1 = setter.Parameter1;
+			return true;
+		}
+
+		p1 = default!;
+		return false;
 	}
 }
 
@@ -626,9 +611,9 @@ public class IndexerSetup<TValue, T1>(NamedParameter match1) : IndexerSetup,
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter match2) : IndexerSetup
-	, IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
-	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>, ITypedIndexerMatch
+public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParameterMatch<T2> parameter2) : IndexerSetup,
+	IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
+	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, TValue, TValue>>> _returnCallbacks = [];
@@ -941,14 +926,14 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2}.For(int)" />
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2}.For(int)" />
 	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
 	{
 		_currentCallback?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2}.Only(int)" />
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2}.Only(int)" />
 	IIndexerSetup<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.Only(int times)
 	{
 		_currentCallback?.Only(times);
@@ -963,14 +948,14 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2}.For(int)" />
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1,T2}.For(int)" />
 	IIndexerSetupReturnWhenBuilder<TValue, T1, T2> IIndexerSetupReturnWhenBuilder<TValue, T1, T2>.For(int times)
 	{
 		_currentReturnCallback?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2}.Only(int)" />
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1,T2}.Only(int)" />
 	IIndexerSetup<TValue, T1, T2> IIndexerSetupReturnWhenBuilder<TValue, T1, T2>.Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
@@ -979,118 +964,178 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}]";
+		=> $"{FormatType(typeof(TValue))} this[{parameter1}, {parameter2}]";
 
-	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
+	/// <inheritdoc cref="IndexerSetup.SkipBaseClass()" />
+	public override bool? SkipBaseClass()
 		=> _skipBaseClass;
 
-	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
-		MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter values.
+	/// </summary>
+	public virtual bool Matches(T1 p1, T2 p2)
 	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerGetterAccess.Parameters.Length == 2 &&
-		    indexerGetterAccess.Parameters[0].TryGetValue(out T1 p1) &&
-		    indexerGetterAccess.Parameters[1].TryGetValue(out T2 p2))
-		{
-			bool wasInvoked = false;
-			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
-			for (int i = 0; i < _getterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, T2, TValue>> getterCallback =
-					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-
-			foreach (Callback<Func<int, T1, T2, TValue, TValue>> _ in _returnCallbacks)
-			{
-				Callback<Func<int, T1, T2, TValue, TValue>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, resultValue), out TValue? newValue) &&
-				    TryCast(newValue, out T returnValue, behavior))
-				{
-					return returnValue;
-				}
-			}
-		}
-
-		return value;
-	}
-
-	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
-	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value,
-		MockBehavior behavior)
-	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerSetterAccess.Parameters.Length == 2 &&
-		    indexerSetterAccess.Parameters[0].TryGetValue(out T1 p1) &&
-		    indexerSetterAccess.Parameters[1].TryGetValue(out T2 p2))
-		{
-			bool wasInvoked = false;
-			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
-			for (int i = 0; i < _setterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, T2, TValue>> setterCallback =
-					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-		}
-	}
-
-	/// <inheritdoc cref="IsMatch(INamedParameterValue[])" />
-	protected override bool IsMatch(INamedParameterValue[] parameters)
-		=> Matches([match1, match2,], parameters);
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1) => false;
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2)
-	{
-		if (!MatchesParameter(match1, n1, v1) || !MatchesParameter(match2, n2, v2))
+		if (!parameter1.Matches(p1) || !parameter2.Matches(p2))
 		{
 			return false;
 		}
 
-		InvokeCallbacksParameter(match1, n1, v1);
-		InvokeCallbacksParameter(match2, n2, v2);
+		parameter1.InvokeCallbacks(p1);
+		parameter2.InvokeCallbacks(p2);
 		return true;
 	}
 
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3) => false;
+	/// <summary>
+	///     Check if the setup matches the specified parameter values.
+	/// </summary>
+	public virtual bool Matches(T1 p1, T2 p2, TValue value)
+		=> Matches(p1, p2);
 
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4) => false;
-
-	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
-	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		INamedParameterValue[] parameters,
-		[NotNullWhen(true)] out T value)
+	/// <inheritdoc cref="IndexerSetup.MatchesAccess(IndexerAccess)" />
+	protected override bool MatchesAccess(IndexerAccess access)
 	{
-		if (_initialization is not null &&
-		    parameters.Length == 2 &&
-		    parameters[0].TryGetValue(out T1 p1) &&
-		    parameters[1].TryGetValue(out T2 p2) &&
-		    _initialization.Invoke(p1, p2) is T initialValue)
+		if (access is IndexerGetterAccess<T1, T2> getter)
 		{
-			value = initialValue;
+			return Matches(getter.Parameter1, getter.Parameter2);
+		}
+
+		if (access is IndexerSetterAccess<T1, T2, TValue> setter)
+		{
+			return Matches(setter.Parameter1, setter.Parameter2, setter.TypedValue);
+		}
+
+		return false;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult baseValue)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2))
+		{
+			return baseValue;
+		}
+
+		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
+		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
+		access.StoreValue(storage, currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		Func<TResult> defaultValueGenerator)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2))
+		{
+			return defaultValueGenerator();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(storage, out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1, p2);
+		}
+		else
+		{
+			currentValue = TryCast(defaultValueGenerator(), out TValue casted, behavior) ? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
+		access.StoreValue(storage, currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
+	}
+
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult value)
+	{
+		access.StoreValue(storage, value);
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2))
+		{
 			return;
 		}
 
-		value = defaultValueGenerator();
+		if (!TryCast(value, out TValue resultValue, behavior))
+		{
+			return;
+		}
+
+		bool wasInvoked = false;
+		int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+		for (int i = 0; i < _setterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, T2, TValue>> setterCallback =
+				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, resultValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+	}
+
+	private TValue ExecuteGetterCallbacks(T1 p1, T2 p2, TValue currentValue)
+	{
+		bool wasInvoked = false;
+		int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+		for (int i = 0; i < _getterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, T2, TValue>> getterCallback =
+				_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, currentValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, TValue currentValue, out bool matched)
+	{
+		matched = false;
+		foreach (Callback<Func<int, T1, T2, TValue, TValue>> _ in _returnCallbacks)
+		{
+			Callback<Func<int, T1, T2, TValue, TValue>> returnCallback =
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, currentValue), out TValue? newValue))
+			{
+				matched = true;
+				return newValue!;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private static bool TryExtractParameters(IndexerAccess access, out T1 p1, out T2 p2)
+	{
+		if (access is IndexerGetterAccess<T1, T2> getter)
+		{
+			p1 = getter.Parameter1;
+			p2 = getter.Parameter2;
+			return true;
+		}
+
+		if (access is IndexerSetterAccess<T1, T2, TValue> setter)
+		{
+			p1 = setter.Parameter1;
+			p2 = setter.Parameter2;
+			return true;
+		}
+
+		p1 = default!;
+		p2 = default!;
+		return false;
 	}
 }
 
@@ -1102,11 +1147,11 @@ public class IndexerSetup<TValue, T1, T2>(NamedParameter match1, NamedParameter 
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetup<TValue, T1, T2, T3>(
-	NamedParameter match1,
-	NamedParameter match2,
-	NamedParameter match3) : IndexerSetup,
+	IParameterMatch<T1> parameter1,
+	IParameterMatch<T2> parameter2,
+	IParameterMatch<T3> parameter3) : IndexerSetup,
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
-	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>, ITypedIndexerMatch
+	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, TValue, TValue>>> _returnCallbacks = [];
@@ -1192,7 +1237,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(Action<TValue> callback)
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+		Action<TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
 		_currentCallback = currentCallback;
@@ -1422,15 +1468,15 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3}.For(int)" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.
-		For(int times)
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3}.For(int)" />
+	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(
+		int times)
 	{
 		_currentCallback?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3}.Only(int)" />
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3}.Only(int)" />
 	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.Only(int times)
 	{
 		_currentCallback?.Only(times);
@@ -1445,14 +1491,15 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3}.For(int)" />
-	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.For(int times)
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1,T2,T3}.For(int)" />
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.For(
+		int times)
 	{
 		_currentReturnCallback?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3}.Only(int)" />
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1,T2,T3}.Only(int)" />
 	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>.Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
@@ -1461,127 +1508,185 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}, {match3}]";
+		=> $"{FormatType(typeof(TValue))} this[{parameter1}, {parameter2}, {parameter3}]";
 
-	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
+	/// <inheritdoc cref="IndexerSetup.SkipBaseClass()" />
+	public override bool? SkipBaseClass()
 		=> _skipBaseClass;
 
-	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
-		MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter values.
+	/// </summary>
+	public virtual bool Matches(T1 p1, T2 p2, T3 p3)
 	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerGetterAccess.Parameters.Length == 3 &&
-		    indexerGetterAccess.Parameters[0].TryGetValue(out T1 p1) &&
-		    indexerGetterAccess.Parameters[1].TryGetValue(out T2 p2) &&
-		    indexerGetterAccess.Parameters[2].TryGetValue(out T3 p3))
-		{
-			bool wasInvoked = false;
-			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
-			for (int i = 0; i < _getterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, T2, T3, TValue>> getterCallback =
-					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-
-			foreach (Callback<Func<int, T1, T2, T3, TValue, TValue>> _ in _returnCallbacks)
-			{
-				Callback<Func<int, T1, T2, T3, TValue, TValue>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, resultValue), out TValue? newValue) &&
-				    TryCast(newValue, out T returnValue, behavior))
-				{
-					return returnValue;
-				}
-			}
-		}
-
-		return value;
-	}
-
-	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
-	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value,
-		MockBehavior behavior)
-	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerSetterAccess.Parameters.Length == 3 &&
-		    indexerSetterAccess.Parameters[0].TryGetValue(out T1 p1) &&
-		    indexerSetterAccess.Parameters[1].TryGetValue(out T2 p2) &&
-		    indexerSetterAccess.Parameters[2].TryGetValue(out T3 p3))
-		{
-			bool wasInvoked = false;
-			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
-			for (int i = 0; i < _setterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, T2, T3, TValue>> setterCallback =
-					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-		}
-	}
-
-	/// <inheritdoc cref="IsMatch(INamedParameterValue[])" />
-	protected override bool IsMatch(INamedParameterValue[] parameters)
-		=> Matches([match1, match2, match3,], parameters);
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1) => false;
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2) => false;
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3)
-	{
-		if (!MatchesParameter(match1, n1, v1) || !MatchesParameter(match2, n2, v2) ||
-		    !MatchesParameter(match3, n3, v3))
+		if (!parameter1.Matches(p1) || !parameter2.Matches(p2) || !parameter3.Matches(p3))
 		{
 			return false;
 		}
 
-		InvokeCallbacksParameter(match1, n1, v1);
-		InvokeCallbacksParameter(match2, n2, v2);
-		InvokeCallbacksParameter(match3, n3, v3);
+		parameter1.InvokeCallbacks(p1);
+		parameter2.InvokeCallbacks(p2);
+		parameter3.InvokeCallbacks(p3);
 		return true;
 	}
 
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4) => false;
+	/// <summary>
+	///     Check if the setup matches the specified parameter values.
+	/// </summary>
+	public virtual bool Matches(T1 p1, T2 p2, T3 p3, TValue value)
+		=> Matches(p1, p2, p3);
 
-	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
-	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		INamedParameterValue[] parameters,
-		[NotNullWhen(true)] out T value)
+	/// <inheritdoc cref="IndexerSetup.MatchesAccess(IndexerAccess)" />
+	protected override bool MatchesAccess(IndexerAccess access)
 	{
-		if (_initialization is not null &&
-		    parameters.Length == 3 &&
-		    parameters[0].TryGetValue(out T1 p1) &&
-		    parameters[1].TryGetValue(out T2 p2) &&
-		    parameters[2].TryGetValue(out T3 p3) &&
-		    _initialization.Invoke(p1, p2, p3) is T initialValue)
+		if (access is IndexerGetterAccess<T1, T2, T3> getter)
 		{
-			value = initialValue;
+			return Matches(getter.Parameter1, getter.Parameter2, getter.Parameter3);
+		}
+
+		if (access is IndexerSetterAccess<T1, T2, T3, TValue> setter)
+		{
+			return Matches(setter.Parameter1, setter.Parameter2, setter.Parameter3, setter.TypedValue);
+		}
+
+		return false;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult baseValue)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3))
+		{
+			return baseValue;
+		}
+
+		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
+		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
+		access.StoreValue(storage, currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		Func<TResult> defaultValueGenerator)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3))
+		{
+			return defaultValueGenerator();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(storage, out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1, p2, p3);
+		}
+		else
+		{
+			currentValue = TryCast(defaultValueGenerator(), out TValue casted, behavior) ? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
+		access.StoreValue(storage, currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
+	}
+
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult value)
+	{
+		access.StoreValue(storage, value);
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3))
+		{
 			return;
 		}
 
-		value = defaultValueGenerator();
+		if (!TryCast(value, out TValue resultValue, behavior))
+		{
+			return;
+		}
+
+		bool wasInvoked = false;
+		int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+		for (int i = 0; i < _setterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, T2, T3, TValue>> setterCallback =
+				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, p3, resultValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+	}
+
+	private TValue ExecuteGetterCallbacks(T1 p1, T2 p2, T3 p3, TValue currentValue)
+	{
+		bool wasInvoked = false;
+		int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+		for (int i = 0; i < _getterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, T2, T3, TValue>> getterCallback =
+				_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, p3, currentValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, T3 p3, TValue currentValue, out bool matched)
+	{
+		matched = false;
+		foreach (Callback<Func<int, T1, T2, T3, TValue, TValue>> _ in _returnCallbacks)
+		{
+			Callback<Func<int, T1, T2, T3, TValue, TValue>> returnCallback =
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, p3, currentValue), out TValue? newValue))
+			{
+				matched = true;
+				return newValue!;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private static bool TryExtractParameters(IndexerAccess access, out T1 p1, out T2 p2, out T3 p3)
+	{
+		if (access is IndexerGetterAccess<T1, T2, T3> getter)
+		{
+			p1 = getter.Parameter1;
+			p2 = getter.Parameter2;
+			p3 = getter.Parameter3;
+			return true;
+		}
+
+		if (access is IndexerSetterAccess<T1, T2, T3, TValue> setter)
+		{
+			p1 = setter.Parameter1;
+			p2 = setter.Parameter2;
+			p3 = setter.Parameter3;
+			return true;
+		}
+
+		p1 = default!;
+		p2 = default!;
+		p3 = default!;
+		return false;
 	}
 }
 
-#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
 ///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />,
 ///     <typeparamref name="T3" /> and <typeparamref name="T4" />.
@@ -1590,13 +1695,12 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetup<TValue, T1, T2, T3, T4>(
-	NamedParameter match1,
-	NamedParameter match2,
-	NamedParameter match3,
-	NamedParameter match4)
-	: IndexerSetup,
-		IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
-		IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>, ITypedIndexerMatch
+	IParameterMatch<T1> parameter1,
+	IParameterMatch<T2> parameter2,
+	IParameterMatch<T3> parameter3,
+	IParameterMatch<T4> parameter4) : IndexerSetup,
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
+	IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TValue, TValue>>> _returnCallbacks = [];
@@ -1914,7 +2018,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3, T4}.For(int)" />
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.For(int)" />
 	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.
 		For(int times)
 	{
@@ -1922,7 +2026,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1, T2, T3, T4}.Only(int)" />
+	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.Only(int)" />
 	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
 	{
 		_currentCallback?.Only(times);
@@ -1937,15 +2041,15 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3, T4}.For(int)" />
-	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.
-		For(int times)
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1,T2,T3,T4}.For(int)" />
+	IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.For(
+		int times)
 	{
 		_currentReturnCallback?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1, T2, T3, T4}.Only(int)" />
+	/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue,T1,T2,T3,T4}.Only(int)" />
 	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
@@ -1954,127 +2058,188 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{FormatType(typeof(TValue))} this[{match1}, {match2}, {match3}, {match4}]";
+		=> $"{FormatType(typeof(TValue))} this[{parameter1}, {parameter2}, {parameter3}, {parameter4}]";
 
-	/// <inheritdoc cref="IndexerSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
+	/// <inheritdoc cref="IndexerSetup.SkipBaseClass()" />
+	public override bool? SkipBaseClass()
 		=> _skipBaseClass;
 
-	/// <inheritdoc cref="ExecuteGetterCallback{TValue}(IndexerGetterAccess, TValue, MockBehavior)" />
-	protected override T ExecuteGetterCallback<T>(IndexerGetterAccess indexerGetterAccess, T value,
-		MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter values.
+	/// </summary>
+	public virtual bool Matches(T1 p1, T2 p2, T3 p3, T4 p4)
 	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerGetterAccess.Parameters.Length == 4 &&
-		    indexerGetterAccess.Parameters[0].TryGetValue(out T1 p1) &&
-		    indexerGetterAccess.Parameters[1].TryGetValue(out T2 p2) &&
-		    indexerGetterAccess.Parameters[2].TryGetValue(out T3 p3) &&
-		    indexerGetterAccess.Parameters[3].TryGetValue(out T4 p4))
-		{
-			bool wasInvoked = false;
-			int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
-			for (int i = 0; i < _getterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, T2, T3, T4, TValue>> getterCallback =
-					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-
-			foreach (Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> _ in _returnCallbacks)
-			{
-				Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4, resultValue), out TValue? newValue) &&
-				    TryCast(newValue, out T returnValue, behavior))
-				{
-					return returnValue;
-				}
-			}
-		}
-
-		return value;
-	}
-
-	/// <inheritdoc cref="ExecuteSetterCallback{TValue}(IndexerSetterAccess, TValue, MockBehavior)" />
-	protected override void ExecuteSetterCallback<T>(IndexerSetterAccess indexerSetterAccess, T value,
-		MockBehavior behavior)
-	{
-		if (TryCast(value, out TValue resultValue, behavior) &&
-		    indexerSetterAccess.Parameters.Length == 4 &&
-		    indexerSetterAccess.Parameters[0].TryGetValue(out T1 p1) &&
-		    indexerSetterAccess.Parameters[1].TryGetValue(out T2 p2) &&
-		    indexerSetterAccess.Parameters[2].TryGetValue(out T3 p3) &&
-		    indexerSetterAccess.Parameters[3].TryGetValue(out T4 p4))
-		{
-			bool wasInvoked = false;
-			int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
-			for (int i = 0; i < _setterCallbacks.Count; i++)
-			{
-				Callback<Action<int, T1, T2, T3, T4, TValue>> setterCallback =
-					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4, resultValue)))
-				{
-					wasInvoked = true;
-				}
-			}
-		}
-	}
-
-	/// <inheritdoc cref="IsMatch(INamedParameterValue[])" />
-	protected override bool IsMatch(INamedParameterValue[] parameters)
-		=> Matches([match1, match2, match3, match4,], parameters);
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1}(string, T1)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1>(string n1, TActual1 v1) => false;
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2}(string, T1, string, T2)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2>(string n1, TActual1 v1, string n2, TActual2 v2) => false;
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3}(string, T1, string, T2, string, T3)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3) => false;
-
-	/// <inheritdoc cref="ITypedIndexerMatch.MatchesTyped{T1,T2,T3,T4}(string, T1, string, T2, string, T3, string, T4)" />
-	bool ITypedIndexerMatch.MatchesTyped<TActual1, TActual2, TActual3, TActual4>(
-		string n1, TActual1 v1, string n2, TActual2 v2, string n3, TActual3 v3, string n4, TActual4 v4)
-	{
-		if (!MatchesParameter(match1, n1, v1) || !MatchesParameter(match2, n2, v2) ||
-		    !MatchesParameter(match3, n3, v3) || !MatchesParameter(match4, n4, v4))
+		if (!parameter1.Matches(p1) || !parameter2.Matches(p2) ||
+		    !parameter3.Matches(p3) || !parameter4.Matches(p4))
 		{
 			return false;
 		}
 
-		InvokeCallbacksParameter(match1, n1, v1);
-		InvokeCallbacksParameter(match2, n2, v2);
-		InvokeCallbacksParameter(match3, n3, v3);
-		InvokeCallbacksParameter(match4, n4, v4);
+		parameter1.InvokeCallbacks(p1);
+		parameter2.InvokeCallbacks(p2);
+		parameter3.InvokeCallbacks(p3);
+		parameter4.InvokeCallbacks(p4);
 		return true;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetInitialValue{T}" />
-	protected override void GetInitialValue<T>(MockBehavior behavior, Func<T> defaultValueGenerator,
-		INamedParameterValue[] parameters,
-		[NotNullWhen(true)] out T value)
+	/// <summary>
+	///     Check if the setup matches the specified parameter values.
+	/// </summary>
+	public virtual bool Matches(T1 p1, T2 p2, T3 p3, T4 p4, TValue value)
+		=> Matches(p1, p2, p3, p4);
+
+	/// <inheritdoc cref="IndexerSetup.MatchesAccess(IndexerAccess)" />
+	protected override bool MatchesAccess(IndexerAccess access)
 	{
-		if (_initialization is not null &&
-		    parameters.Length == 4 &&
-		    parameters[0].TryGetValue(out T1 p1) &&
-		    parameters[1].TryGetValue(out T2 p2) &&
-		    parameters[2].TryGetValue(out T3 p3) &&
-		    parameters[3].TryGetValue(out T4 p4) &&
-		    _initialization.Invoke(p1, p2, p3, p4) is T initialValue)
+		if (access is IndexerGetterAccess<T1, T2, T3, T4> getter)
 		{
-			value = initialValue;
+			return Matches(getter.Parameter1, getter.Parameter2, getter.Parameter3, getter.Parameter4);
+		}
+
+		if (access is IndexerSetterAccess<T1, T2, T3, T4, TValue> setter)
+		{
+			return Matches(setter.Parameter1, setter.Parameter2, setter.Parameter3, setter.Parameter4,
+				setter.TypedValue);
+		}
+
+		return false;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult baseValue)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3, out T4 p4))
+		{
+			return baseValue;
+		}
+
+		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
+		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
+		access.StoreValue(storage, currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
+	}
+
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		Func<TResult> defaultValueGenerator)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3, out T4 p4))
+		{
+			return defaultValueGenerator();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(storage, out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1, p2, p3, p4);
+		}
+		else
+		{
+			currentValue = TryCast(defaultValueGenerator(), out TValue casted, behavior) ? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
+		access.StoreValue(storage, currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
+	}
+
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+		TResult value)
+	{
+		access.StoreValue(storage, value);
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3, out T4 p4))
+		{
 			return;
 		}
 
-		value = defaultValueGenerator();
+		if (!TryCast(value, out TValue resultValue, behavior))
+		{
+			return;
+		}
+
+		bool wasInvoked = false;
+		int currentSetterCallbacksIndex = _currentSetterCallbacksIndex;
+		for (int i = 0; i < _setterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, T2, T3, T4, TValue>> setterCallback =
+				_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
+			if (setterCallback.Invoke(wasInvoked, ref _currentSetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, p3, p4, resultValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+	}
+
+	private TValue ExecuteGetterCallbacks(T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
+	{
+		bool wasInvoked = false;
+		int currentGetterCallbacksIndex = _currentGetterCallbacksIndex;
+		for (int i = 0; i < _getterCallbacks.Count; i++)
+		{
+			Callback<Action<int, T1, T2, T3, T4, TValue>> getterCallback =
+				_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
+			if (getterCallback.Invoke(wasInvoked, ref _currentGetterCallbacksIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, p3, p4, currentValue)))
+			{
+				wasInvoked = true;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue, out bool matched)
+	{
+		matched = false;
+		foreach (Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> _ in _returnCallbacks)
+		{
+			Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> returnCallback =
+				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
+			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, (invocationCount, @delegate)
+				    => @delegate(invocationCount, p1, p2, p3, p4, currentValue), out TValue? newValue))
+			{
+				matched = true;
+				return newValue!;
+			}
+		}
+
+		return currentValue;
+	}
+
+	private static bool TryExtractParameters(IndexerAccess access,
+		out T1 p1, out T2 p2, out T3 p3, out T4 p4)
+	{
+		if (access is IndexerGetterAccess<T1, T2, T3, T4> getter)
+		{
+			p1 = getter.Parameter1;
+			p2 = getter.Parameter2;
+			p3 = getter.Parameter3;
+			p4 = getter.Parameter4;
+			return true;
+		}
+
+		if (access is IndexerSetterAccess<T1, T2, T3, T4, TValue> setter)
+		{
+			p1 = setter.Parameter1;
+			p2 = setter.Parameter2;
+			p3 = setter.Parameter3;
+			p4 = setter.Parameter4;
+			return true;
+		}
+
+		p1 = default!;
+		p2 = default!;
+		p3 = default!;
+		p4 = default!;
+		return false;
 	}
 }
-#pragma warning restore S2436 // Types and methods should not have too many generic parameters
