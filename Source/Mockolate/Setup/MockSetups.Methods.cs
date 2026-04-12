@@ -76,7 +76,7 @@ internal partial class MockSetups
 
 			return null;
 		}
-		public MethodSetup? GetMatching(string methodName, Func<MethodSetup, bool> predicate)
+		public T? GetMatching<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
 		{
 			List<MethodSetup>? storage = _storage;
 			if (storage is null)
@@ -88,10 +88,11 @@ internal partial class MockSetups
 			{
 				for (int i = storage.Count - 1; i >= 0; i--)
 				{
-					if (storage[i].Name.Equals(methodName) && 
-					    predicate(storage[i]))
+					if (storage[i].Name.Equals(methodName) &&
+					    storage[i] is T methodSetup &&
+					    predicate(methodSetup))
 					{
-						return storage[i];
+						return methodSetup;
 					}
 				}
 			}

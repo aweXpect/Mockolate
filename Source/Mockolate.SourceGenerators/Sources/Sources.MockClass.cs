@@ -1563,8 +1563,29 @@ internal static partial class Sources
 		// TODO: VAB
 		if (method.ReturnType != Type.Void && method.Parameters.Count == 1)
 		{
+			Dictionary<string, string> parameterMapping = [];
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				if (parameter.Type.SpecialGenericType == SpecialGenericType.Span)
+				{
+					string wrapperName = Helpers.GetUniqueLocalVariableName($"{parameter.Name}Wrapper", method.Parameters);
+					sb.Append("var ").Append(wrapperName).Append(" = new global::Mockolate.Setup.SpanWrapper<")
+						.Append(parameter.Type.GenericTypeParameters!.Value.First().Fullname).Append(">(")
+						.Append(parameter.Name).Append(");").AppendLine();
+					parameterMapping.Add(parameter.Name, wrapperName);
+				}
+
+				if (parameter.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+				{
+					string wrapperName = Helpers.GetUniqueLocalVariableName($"{parameter.Name}Wrapper", method.Parameters);
+					sb.Append("var ").Append(wrapperName).Append(" = new global::Mockolate.Setup.ReadOnlySpanWrapper<")
+						.Append(parameter.Type.GenericTypeParameters!.Value.First().Fullname).Append(">(")
+						.Append(parameter.Name).Append(");").AppendLine();
+					parameterMapping.Add(parameter.Name, wrapperName);
+				}
+			}
 			sb.Append("\t\t\tvar ").Append(methodExecutionVarName)
-				.Append(" = ").Append(mockRegistry).Append(".InvokeMethod<")
+				.Append(" = ").Append(mockRegistry).Append(".GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<")
 				.AppendTypeOrWrapper(method.ReturnType);
 			if (useTypedOverload)
 			{
@@ -1574,30 +1595,42 @@ internal static partial class Sources
 				}
 			}
 
-			sb.Append(">(").Append(method.GetUniqueNameString());
+			sb.Append(">>(").Append(method.GetUniqueNameString()).Append(", m => m.Matches(");
+			int i = 0;
 			foreach (MethodParameter p in method.Parameters)
 			{
+				if (i++ > 0)
+				{
+					sb.Append(", ");
+				}
 				if (useTypedOverload)
 				{
-					sb.Append(", \"").Append(p.Name).Append("\", ").Append(
+					sb.Append("\"").Append(p.Name).Append("\", ").Append(
 						p.RefKind switch
 						{
 							RefKind.Out => "default",
-							_ => p.ToNameOrWrapper(),
+							_ => parameterMapping.TryGetValue(p.Name, out var wrapperName) ? wrapperName : p.Name,
 						});
 				}
 				else
 				{
-					sb.Append(", \"").Append(p.Name).Append("\", ").Append(
+					sb.Append("\"").Append(p.Name).Append("\", ").Append(
 						p.RefKind switch
 						{
 							RefKind.Out => "default",
-							_ => p.ToNameOrWrapper(),
+							_ => parameterMapping.TryGetValue(p.Name, out var wrapperName) ? wrapperName : p.Name,
 						});
 				}
 			}
 
-			sb.AppendLine(");");
+			sb.AppendLine("));");
+			sb.Append("\t\t\t").Append(mockRegistryName).Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append('>');
+			}
+			
+			sb.Append("(").Append(method.GetUniqueNameString()).Append(", ").Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrNull()))).Append("));").AppendLine();
 			if (isClassInterface || method.IsAbstract)
 			{
 				if (!explicitInterfaceImplementation && isClassInterface && !method.IsStatic)
@@ -2601,7 +2634,7 @@ internal static partial class Sources
 		{
 			if (useParameters)
 			{
-				sb.Append("(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString()).Append(", parameters);")
+				sb.Append(".WithParameters(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString()).Append(", parameters);")
 					.AppendLine();
 				sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(methodSetup);").AppendLine();
 				sb.Append("\t\t\treturn methodSetup;").AppendLine();
@@ -2609,7 +2642,7 @@ internal static partial class Sources
 			else
 			{
 
-				sb.Append("(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString());
+				sb.Append(".WithParameterCollection(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString());
 				int j = 0;
 				foreach (MethodParameter parameter in method.Parameters)
 				{

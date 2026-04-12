@@ -742,6 +742,11 @@ internal static partial class Sources
 			.Append(typeParams).Append("> callback);").AppendLine();
 		sb.AppendLine();
 
+		sb.AppendXmlSummary("Changes the scenario to the given <paramref name=\"scenarioName\"/> when the method is called.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams).Append("> ChangeScenario(string scenarioName);")
+			.AppendLine();
+		sb.AppendLine();
+
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this method.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(global::System.Func<")
 			.Append(typeParams).Append(", TReturn> callback);").AppendLine();
@@ -788,14 +793,22 @@ internal static partial class Sources
 			$"Sets up a callback for a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
 			"\t");
 		sb.Append("\tinternal interface IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
-			.Append("> : global::Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams).Append(">")
+			.Append("> : global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Runs the callback in parallel to the other callbacks.");
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append("> InParallel();")
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams).Append("> InParallel();")
 			.AppendLine();
+		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
+		sb.AppendXmlSummary(
+			$"Sets up a parallel callback for a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
+			"\t");
+		sb.Append("\tinternal interface IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams)
+			.Append("> : global::Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams).Append(">")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary(
 			"Limits the callback to only execute for method invocations where the predicate returns true.");
 		sb.AppendXmlRemarks(
@@ -895,9 +908,10 @@ internal static partial class Sources
 			.AppendLine();
 		sb.Append("\t\tprivate readonly string _name;").AppendLine();
 		sb.Append("\t\tprivate global::Mockolate.Parameters.IParameters? _matches;").AppendLine();
+		sb.Append("\t\tprivate readonly global::Mockolate.MockRegistry _mockRegistry;").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\tprivate readonly global::Mockolate.Parameters.NamedParameter? _match").Append(i).Append(";").AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Parameters.IParameterMatch<T").Append(i).Append(">? Parameter").Append(i).Append(" { get; }").AppendLine();
 		}
 
 		sb.Append("\t\tprivate bool? _skipBaseClass;").AppendLine();
@@ -911,21 +925,21 @@ internal static partial class Sources
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
 			.AppendLine();
 		sb.Append("\t\tpublic ReturnMethodSetup(").AppendLine();
+		sb.Append("\t\t\t\tglobal::Mockolate.MockRegistry mockRegistry,").AppendLine();
 		sb.Append("\t\t\t\tstring name");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append(',').AppendLine().Append("\t\t\tglobal::Mockolate.Parameters.NamedParameter match").Append(i);
+			sb.Append(',').AppendLine().Append("\t\t\tglobal::Mockolate.Parameters.IParameterMatch<T").Append(i).Append("> parameter").Append(i);
 		}
 
 		sb.Append(')').AppendLine();
-		sb.Append("\t\t\t: base(new global::Mockolate.Setup.MethodParameterMatch(name, [")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"match{i}"))).Append("]))")
-			.AppendLine();
+		sb.Append("\t\t\t: base(name)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_mockRegistry = mockRegistry;").AppendLine();
 		sb.Append("\t\t\t_name = name;").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\t\t_match").Append(i).Append(" = match").Append(i).Append(";").AppendLine();
+			sb.Append("\t\t\tParameter").Append(i).Append(" = parameter").Append(i).Append(";").AppendLine();
 		}
 
 		sb.Append("\t\t}").AppendLine();
@@ -934,9 +948,10 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ")
 			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append("}\" />")
 			.AppendLine();
-		sb.Append("\t\tpublic ReturnMethodSetup(string name, global::Mockolate.Parameters.IParameters matches)").AppendLine();
-		sb.Append("\t\t\t: base(new global::Mockolate.Setup.MethodParametersMatch(name, matches))").AppendLine();
+		sb.Append("\t\tpublic ReturnMethodSetup(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters matches)").AppendLine();
+		sb.Append("\t\t\t: base(name)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\t_mockRegistry = mockRegistry;").AppendLine();
 		sb.Append("\t\t\t_name = name;").AppendLine();
 		sb.Append("\t\t\t_matches = matches;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -985,6 +1000,19 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new(callback);")
 			.AppendLine();
+		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Changes the scenario to the given <paramref name=\"scenarioName\"/> when the method is called.");
+		sb.Append("\t\tpublic global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams)
+			.Append("> ChangeScenario(string scenarioName)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ")
+			.Append(discards).Append(") => _mockRegistry.Scenario = scenarioName);").AppendLine();
+		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
@@ -1093,7 +1121,7 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder{TReturn, ").Append(typeParams)
 			.Append("}.InParallel()\" />").AppendLine();
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams)
 			.Append("> global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
 			.Append(">.InParallel()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -1102,10 +1130,10 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder{TReturn, ").Append(typeParams)
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder{TReturn, ").Append(typeParams)
 			.Append("}.When(global::System.Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
-			.Append("> global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
+			.Append("> global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams)
 			.Append(">.When(global::System.Func<int, bool> predicate)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentCallback?.When(predicate);").AppendLine();
@@ -1216,104 +1244,65 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append(
-				"\t\t/// <inheritdoc cref=\"MethodSetup.GetReturnValue{TResult}(global::Mockolate.Interactions.MethodInvocation, global::Mockolate.MockBehavior, global::System.Func{TResult})\" />")
-			.AppendLine();
-		sb.Append(
-				"\t\tprotected override TResult GetReturnValue<TResult>(global::Mockolate.Interactions.MethodInvocation invocation, global::Mockolate.MockBehavior behavior, global::System.Func<TResult> defaultValueGenerator)")
-			.AppendLine();
-		sb.Append("\t\t\twhere TResult : default").AppendLine();
+		sb.AppendXmlSummary("Gets the flag indicating if the base class implementation should be skipped.");
+		sb.Append("\t\tpublic bool SkipBaseClass(global::Mockolate.MockBehavior behavior)").AppendLine();
+		sb.Append("\t\t\t=> _skipBaseClass ?? behavior.SkipBaseClass;").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Checks if the given parameters match the setup.");
+		sb.Append("\t\tpublic bool Matches(");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			if (i > 1) sb.Append(", ");
+			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+		}
+		sb.Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tif (_matches is not null)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\treturn _matches.Matches([");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			if (i > 1) sb.Append(", ");
+			sb.Append("new global::Mockolate.Parameters.NamedParameterValue<T").Append(i).Append(">(p").Append(i).Append("Name, p").Append(i).Append("Value)");
+		}
+		sb.Append("]);").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t\treturn ");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			if (i > 1) sb.Append(" && ");
+			sb.Append("Parameter").Append(i).Append("!.Matches(p").Append(i).Append("Value)");
+		}
+		sb.Append(";").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Gets the registered return value.");
+		sb.Append("\t\tpublic bool TryGetReturnValue(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} p{i}"))).Append(", out TReturn returnValue)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tvar returnCallback = _returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];").AppendLine();
+		sb.Append("\t\t\t\tif (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)").AppendLine();
+		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append("), out TReturn? newValue))").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\treturnValue = newValue;").AppendLine();
+		sb.Append("\t\t\t\t\treturn true;").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t\treturnValue = default!;").AppendLine();
+		sb.Append("\t\t\treturn false;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Triggers any configured parameter callbacks for the method setup with the specified parameters.");
+		sb.Append("\t\tpublic void TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} parameter{i}"))).Append(")").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.Append("\t\t\tif (!invocation.Parameters[").Append(i - 1)
-				.Append("].TryGetValue(out T").Append(i).Append(" p").Append(i).Append("))").AppendLine();
-			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"The input parameter ").Append(i)
-				.Append(" only supports '{FormatType(typeof(T").Append(i)
-				.Append("))}', but is '{FormatType(invocation.Parameters[")
-				.Append(i - 1).Append("].GetValueType())}'.\");").AppendLine();
-			sb.Append("\t\t\t}").AppendLine();
-			sb.AppendLine();
+			sb.Append("\t\t\tParameter").Append(i).Append("?.InvokeCallbacks(parameter").Append(i).Append(");").AppendLine();
 		}
-
-		sb.Append("\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append(
-				"\t\t\t\tvar returnCallback = _returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];")
-			.AppendLine();
-		sb.Append(
-				"\t\t\t\tif (returnCallback.Invoke<TReturn>(ref _currentReturnCallbackIndex, (invocationCount, @delegate)")
-			.AppendLine();
-		sb.Append("\t\t\t\t\t=> @delegate(invocationCount, ")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}")))
-			.Append("), out TReturn? newValue))").AppendLine();
-		sb.Append("\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\tif (newValue is null)").AppendLine();
-		sb.Append("\t\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\t\treturn default!;").AppendLine();
-		sb.Append("\t\t\t\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t\t\t\tif (!TryCast(newValue, out TResult returnValue, behavior))").AppendLine();
-		sb.Append("\t\t\t\t\t{").AppendLine();
-		sb.Append(
-				"\t\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockException($\"The return callback only supports '{FormatType(typeof(TReturn))}' and not '{FormatType(typeof(TResult))}'.\");")
-			.AppendLine();
-		sb.Append("\t\t\t\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t\t\t\treturn returnValue;").AppendLine();
-		sb.Append("\t\t\t\t}").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t\treturn defaultValueGenerator();").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.TriggerParameterCallbacks(global::Mockolate.Parameters.INamedParameterValue[])\" />").AppendLine();
-		sb.Append("\t\tprotected override void TriggerParameterCallbacks(global::Mockolate.Parameters.INamedParameterValue[] parameters)").AppendLine();
-		sb.Append("\t\t\t=> TriggerCallbacks([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
-			.Append("], parameters);").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.GetSkipBaseClass()\" />").AppendLine();
-		sb.Append("\t\tprotected override bool? GetSkipBaseClass()").AppendLine();
-		sb.Append("\t\t\t=> _skipBaseClass;").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.HasReturnCalls()\" />").AppendLine();
-		sb.Append("\t\tprotected override bool HasReturnCalls()").AppendLine();
-		sb.Append("\t\t\t=> _returnCallbacks.Count > 0;").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.SetOutParameter{T}(string, global::System.Func{T})\" />").AppendLine();
-		sb.Append("\t\tprotected override T SetOutParameter<T>(string parameterName, global::System.Func<T> defaultValueGenerator)")
-			.AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tif (HasOutParameter([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
-			.Append("], parameterName, out global::Mockolate.Parameters.IOutParameter<T>? outParameter))").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn outParameter.GetValue(defaultValueGenerator);").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t\treturn defaultValueGenerator();").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc cref=\"MethodSetup.SetRefParameter{T}(string, T, global::Mockolate.MockBehavior)\" />")
-			.AppendLine();
-		sb.Append("\t\tprotected override T SetRefParameter<T>(string parameterName, T value, global::Mockolate.MockBehavior behavior)")
-			.AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tif (HasRefParameter([")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"_match{x}")))
-			.Append("], parameterName, out global::Mockolate.Parameters.IRefParameter<T>? refParameter))").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn refParameter.GetValue(value);").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t\treturn value;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
@@ -1326,7 +1315,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\treturn $\"{FormatType(typeof(TReturn))} {SubstringAfterLast(_name, '.')}(")
-			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{_match{x}}}")))
+			.Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"{{Parameter{x}}}")))
 			.Append(")\";").AppendLine();
 		sb.Append("\t\t\tstatic string SubstringAfterLast(string name, char c)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();

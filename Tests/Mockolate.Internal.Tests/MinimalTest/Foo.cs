@@ -17,7 +17,6 @@ public class Foo
 
 		var result1 = sut.MyMethod(6);
 		var result2 = sut.MyMethod(5);
-		
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEmpty();
@@ -45,7 +44,8 @@ public class Mock
 		
 		public string MyMethod(int value)
 		{
-			var setup = Registry.InvokeMethod<string, int>(nameof(MyMethod), "value", value);
+			var setup = Registry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, int>>(nameof(MyMethod), m => m.Matches("value", value));
+			Registry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>(nameof(MyMethod), value));
 			if (!(setup?.SkipBaseClass(Registry.Behavior) ?? Registry.Behavior.SkipBaseClass))
 			{
 				//base.MyMethod(value);
@@ -58,13 +58,37 @@ public class Mock
 			}
 			return Registry.Behavior.DefaultValue.Generate(default(string)!, [new NamedParameterValue<int>("value", value)]);
 		}
+#if NET8_0_OR_GREATER
+		/// <inheritdoc cref="global::System.IO.Abstractions.IPath.Combine(global::System.ReadOnlySpan{string})" />
+		public string Combine(params global::System.ReadOnlySpan<string> paths)
+		{
+			var pathsWrapper = new global::Mockolate.Setup.ReadOnlySpanWrapper<string>(paths);
+			var methodSetup = this.Registry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, global::Mockolate.Setup.ReadOnlySpanWrapper<string>>>("global::System.IO.Abstractions.IPath.Combine", m => m.Matches("paths", pathsWrapper));
+			Registry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<string>>("global::System.IO.Abstractions.IPath.Combine", null));
+			if (this.Registry.Wraps is IFoo wraps)
+			{
+				var baseResult = wraps.Combine(paths);
+				if (methodSetup is not null)
+				{
+					methodSetup?.TriggerCallbacks(new global::Mockolate.Setup.ReadOnlySpanWrapper<string>(paths));
+					return baseResult;
+				}
+			}
+			methodSetup?.TriggerCallbacks(new global::Mockolate.Setup.ReadOnlySpanWrapper<string>(paths));
+			if(methodSetup?.TryGetReturnValue(new global::Mockolate.Setup.ReadOnlySpanWrapper<string>(paths), out var returnValue) == true)
+			{
+				return returnValue;
+			}
+			return this.Registry.Behavior.DefaultValue.Generate(default(string)!);
+		}
+	#endif
 
 		public string MyOtherMethod(int value, ref int v1, out bool v2)
 			=> throw new NotImplementedException();
 
 		IReturnMethodSetup<string, int> ISetupForIFoo.MyMethod(IParameter<int> value)
 		{
-			var methodSetup = new ReturnMethodSetup<string, int>(Registry, nameof(MyMethod), (IParameterMatch<int>)value);
+			var methodSetup = new ReturnMethodSetup<string, int>.WithParameterCollection(Registry, nameof(MyMethod), (IParameterMatch<int>)value);
 			this.Registry.SetupMethod(methodSetup);
 			return methodSetup;
 		}
@@ -195,5 +219,8 @@ public interface IFoo
 {
 	string MyMethod(int value);
 	string MyOtherMethod(int value, ref int v1, out bool v2);
+#if NET8_0_OR_GREATER
+	string Combine(params global::System.ReadOnlySpan<string> paths);
+#endif
 }
 

@@ -20,7 +20,7 @@
 	</ItemGroup>
 	
 	<PropertyGroup>
-		<NoWarn>CS0618</NoWarn>
+		<NoWarn>CS0618;CS0672</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -269,51 +269,33 @@ public class ReturnMethodSetup<TReturn>(string name)
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>, IReturnMethodSetupParameterIgnorer<TReturn, T1>
+public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
+	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>
 {
-	private readonly List<Callback<Action<int, T1>>> _callbacks = [];
-	public IParameterMatch<T1>? Parameter1 { get; }
-	private IParameters? _matches;
 	private readonly MockRegistry _mockRegistry;
-	private readonly string _name;
-	private readonly List<Callback<Func<int, T1, TReturn>>> _returnCallbacks = [];
-	private Callback? _currentCallback;
-	private int _currentCallbacksIndex;
-	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex;
+	private Callbacks<Action<int, T1>>? _callbacks = [];
+	private Callbacks<Func<int, T1, TReturn>>? _returnCallbacks = [];
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
-	public ReturnMethodSetup(MockRegistry mockRegistry, string name, IParameterMatch<T1> parameter1)
-		: base(name)
+	protected ReturnMethodSetup(MockRegistry mockRegistry, string name) : base(name)
 	{
 		_mockRegistry = mockRegistry;
-		_name = name;
-		Parameter1 = parameter1;
-	}
-
-	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
-	public ReturnMethodSetup(MockRegistry mockRegistry, string name, IParameters matches)
-		: base(name)
-	{
-		_mockRegistry = mockRegistry;
-		_name = name;
-		_matches = matches;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.SkippingBaseClass(bool)" />
-	public IReturnMethodSetup<TReturn, T1> SkippingBaseClass(bool skipBaseClass = true)
+	IReturnMethodSetup<TReturn, T1> IReturnMethodSetup<TReturn, T1>.SkippingBaseClass(bool skipBaseClass)
 	{
 		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action)" />
-	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action callback)
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Do(Action callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -325,10 +307,11 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{T1})" />
-	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback)
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -340,29 +323,33 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{int, T1})" />
-	public IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback)
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.ChangeScenario(string)" />
-	public IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> ChangeScenario(string scenarioName)
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.ChangeScenario(
+		string scenarioName)
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, _) => _mockRegistry.Scenario = scenarioName);
 		currentCallback.InParallel();
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{T1, TReturn})" />
-	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback)
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Returns(Func<T1, TReturn> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -374,10 +361,11 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{TReturn})" />
-	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<TReturn> callback)
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Returns(Func<TReturn> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -389,10 +377,11 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(TReturn)" />
-	public IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(TReturn returnValue)
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Returns(TReturn returnValue)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -404,11 +393,11 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws{TException}()" />
-	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
-		where TException : Exception, new()
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Throws<TException>()
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -420,10 +409,11 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Exception)" />
-	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Exception exception)
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Throws(Exception exception)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -435,10 +425,11 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Func{Exception})" />
-	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<Exception> callback)
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -450,10 +441,11 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Func{T1, Exception})" />
-	public IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<T1, Exception> callback)
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Throws(Func<T1, Exception> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -467,7 +459,7 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1}.InParallel()" />
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> IReturnMethodSetupCallbackBuilder<TReturn, T1>.InParallel()
 	{
-		_currentCallback?.InParallel();
+		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
@@ -475,21 +467,21 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> IReturnMethodSetupParallelCallbackBuilder<TReturn, T1>.When(
 		Func<int, bool> predicate)
 	{
-		_currentCallback?.When(predicate);
+		_callbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackWhenBuilder{TReturn, T1}.For(int)" />
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>.For(int times)
 	{
-		_currentCallback?.For(times);
+		_callbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackWhenBuilder{TReturn, T1}.Only(int)" />
 	IReturnMethodSetup<TReturn, T1> IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>.Only(int times)
 	{
-		_currentCallback?.Only(times);
+		_callbacks?.Active?.Only(times);
 		return this;
 	}
 
@@ -497,92 +489,52 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1> IReturnMethodSetupReturnBuilder<TReturn, T1>.When(
 		Func<int, bool> predicate)
 	{
-		_currentReturnCallback?.When(predicate);
+		_returnCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupReturnWhenBuilder{TReturn, T1}.For(int)" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1> IReturnMethodSetupReturnWhenBuilder<TReturn, T1>.For(int times)
 	{
-		_currentReturnCallback?.For(times);
+		_returnCallbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupReturnWhenBuilder{TReturn, T1}.Only(int)" />
 	IReturnMethodSetup<TReturn, T1> IReturnMethodSetupReturnWhenBuilder<TReturn, T1>.Only(int times)
 	{
-		_currentReturnCallback?.Only(times);
+		_returnCallbacks?.Active?.Only(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1}.AnyParameters()" />
-	public IReturnMethodSetup<TReturn, T1> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
-		return this;
-	}
-
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
-	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
-	{
-		if (invocation.Parameters[0].TryGetValue(out T1 p1))
-		{
-			bool wasInvoked = false;
-			int currentCallbacksIndex = _currentCallbacksIndex;
-			for (int i = 0; i < _callbacks.Count; i++)
-			{
-				Callback<Action<int, T1>> callback =
-					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
-				{
-					wasInvoked = true;
-				}
-			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1> @delegate)
-		{
-			@delegate(invocationCount, p1);
-		}
-	}
-	
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
 	public bool SkipBaseClass(MockBehavior behavior)
-	{
-		return _skipBaseClass ?? behavior.SkipBaseClass;
-	}
-	public bool Matches(string p1Name, T1 p1Value)
-	{
-		if (_matches is not null)
-		{
-			return _matches.Matches([new NamedParameterValue<T1>(p1Name, p1Value)]);
-		}
-		return Parameter1!.Matches( p1Value);
-	}
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
 
 	/// <summary>
-	///     Gets the registered return value.
+	///     Tries to get the registered return value if any is set up for the specified parameter value <paramref name="p1" />.
 	/// </summary>
 	public bool TryGetReturnValue(T1 p1, out TReturn returnValue)
 	{
-		foreach (Callback<Func<int, T1, TReturn>> _ in _returnCallbacks)
+		if (_returnCallbacks != null)
 		{
-			Callback<Func<int, T1, TReturn>> returnCallback =
-				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback, out TReturn? newValue))
+			foreach (Callback<Func<int, T1, TReturn>> _ in _returnCallbacks)
 			{
-				returnValue = newValue;
-				return true;
+				Callback<Func<int, T1, TReturn>> returnCallback =
+					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback, out TReturn? newValue))
+				{
+					returnValue = newValue;
+					return true;
+				}
 			}
 		}
 
 		returnValue = default!;
 		return false;
-		
+
 		[DebuggerNonUserCode]
 		TReturn Callback(int invocationCount, Func<int, T1, TReturn> @delegate)
 		{
@@ -591,18 +543,87 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <summary>
+	///     Check if the setup matches the specified parameter value <paramref name="p1Value" /> for the parameter with the
+	///     specified name <paramref name="p1Name" />.
+	/// </summary>
+	public abstract bool Matches(string p1Name, T1 p1Value);
+
+	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameter1" />.
 	/// </summary>
-	public void TriggerCallbacks(T1 parameter1)
+	public abstract void TriggerCallbacks(T1 parameter1);
+
+	/// <summary>
+	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
+	/// </summary>
+	public class WithParameters : ReturnMethodSetup<TReturn, T1>
 	{
-		Parameter1?.InvokeCallbacks(parameter1);
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+			: base(mockRegistry, name)
+		{
+			Parameters = parameters;
+		}
+
+		/// <summary>
+		///     The parameters match for the method.
+		/// </summary>
+		private IParameters Parameters { get; }
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(string, T1)" />
+		public override bool Matches(string p1Name, T1 p1Value)
+			=> Parameters.Matches([new NamedParameterValue<T1>(p1Name, p1Value),]);
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.TriggerCallbacks(T1)" />
+		public override void TriggerCallbacks(T1 parameter1)
+		{
+			// No callbacks get triggered for IParameters
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"{FormatType(typeof(TReturn))} {Name.SubstringAfterLast('.')}({Parameters})";
 	}
 
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-		=> _matches is not null
-			? $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({_matches})"
-			: $"{FormatType(typeof(TReturn))} {_name.SubstringAfterLast('.')}({Parameter1})";
+	/// <summary>
+	///     Setup for a method with one parameter matching against individual <see cref="IParameterMatch{T}" />.
+	/// </summary>
+	public class WithParameterCollection : ReturnMethodSetup<TReturn, T1>,
+		IReturnMethodSetupParameterIgnorer<TReturn, T1>
+	{
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
+		public WithParameterCollection(MockRegistry mockRegistry, string name, IParameterMatch<T1> parameter1)
+			: base(mockRegistry, name)
+		{
+			Parameter1 = parameter1;
+		}
+
+		/// <summary>
+		///     The single parameter of the method.
+		/// </summary>
+		public IParameterMatch<T1> Parameter1 { get; }
+
+		/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1}.AnyParameters()" />
+		IReturnMethodSetup<TReturn, T1> IReturnMethodSetupParameterIgnorer<TReturn, T1>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(string, T1)" />
+		public override bool Matches(string p1Name, T1 p1Value)
+			=> _matchAnyParameters || Parameter1.Matches(p1Value);
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.TriggerCallbacks(T1)" />
+		public override void TriggerCallbacks(T1 parameter1)
+			=> Parameter1.InvokeCallbacks(parameter1);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"{FormatType(typeof(TReturn))} {Name.SubstringAfterLast('.')}({Parameter1})";
+	}
 }
 
 /// <summary>
@@ -613,18 +634,19 @@ public class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>,
+	IReturnMethodSetupParameterIgnorer<TReturn, T1, T2>
 {
 	private readonly List<Callback<Action<int, T1, T2>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
-	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, TReturn>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private IParameters? _matches;
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
@@ -826,6 +848,14 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2}.AnyParameters()" />
+	public IReturnMethodSetup<TReturn, T1, T2> AnyParameters()
+	{
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
+		return this;
+	}
+
 	/// <inheritdoc cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2}.When(Func{int, bool})" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> IReturnMethodSetupReturnBuilder<TReturn, T1, T2>.When(
 		Func<int, bool> predicate)
@@ -846,14 +876,6 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetup<TReturn, T1, T2> IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>.Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
-		return this;
-	}
-
-	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2}.AnyParameters()" />
-	public IReturnMethodSetup<TReturn, T1, T2> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 
@@ -974,19 +996,20 @@ public class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>,
+	IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
 	private readonly NamedParameter? _match3;
-	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, T3, TReturn>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private IParameters? _matches;
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
@@ -1194,6 +1217,14 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2, T3}.AnyParameters()" />
+	public IReturnMethodSetup<TReturn, T1, T2, T3> AnyParameters()
+	{
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
+		return this;
+	}
+
 	/// <inheritdoc cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2, T3}.When(Func{int, bool})" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>.When(
 		Func<int, bool> predicate)
@@ -1214,14 +1245,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetup<TReturn, T1, T2, T3> IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>.Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
-		return this;
-	}
-
-	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2, T3}.AnyParameters()" />
-	public IReturnMethodSetup<TReturn, T1, T2, T3> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 
@@ -1350,20 +1373,22 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3, T4>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>,
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>,
+	IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3, T4>
 {
 	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _callbacks = [];
 	private readonly NamedParameter? _match1;
 	private readonly NamedParameter? _match2;
 	private readonly NamedParameter? _match3;
 	private readonly NamedParameter? _match4;
-	private IParameters? _matches;
 	private readonly string _name;
 	private readonly List<Callback<Func<int, T1, T2, T3, T4, TReturn>>> _returnCallbacks = [];
 	private Callback? _currentCallback;
 	private int _currentCallbacksIndex;
 	private Callback? _currentReturnCallback;
 	private int _currentReturnCallbackIndex;
+	private IParameters? _matches;
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
@@ -1575,6 +1600,14 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2, T3, T4}.AnyParameters()" />
+	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> AnyParameters()
+	{
+		_matches = Match.AnyParameters();
+		MethodMatch = new MethodParametersMatch(_name, _matches);
+		return this;
+	}
+
 	/// <inheritdoc cref="IReturnMethodSetupReturnBuilder{TReturn, T1, T2, T3, T4}.When(Func{int, bool})" />
 	IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>
 		IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>.When(Func<int, bool> predicate)
@@ -1597,14 +1630,6 @@ public class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		Only(int times)
 	{
 		_currentReturnCallback?.Only(times);
-		return this;
-	}
-
-	/// <inheritdoc cref="IReturnMethodSetupParameterIgnorer{TReturn, T1, T2, T3, T4}.AnyParameters()" />
-	public IReturnMethodSetup<TReturn, T1, T2, T3, T4> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
 		return this;
 	}
 

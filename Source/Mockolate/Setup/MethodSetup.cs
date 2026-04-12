@@ -18,7 +18,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	/// <summary>
 	///     Base class for method setups.
 	/// </summary>
-	// TODO VAB: Remove
+	[Obsolete("TODO VAB: Remove")]
 	protected MethodSetup(IMethodMatch methodMatch)
 	{
 		Name = "TODO";
@@ -41,30 +41,36 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	/// <summary>
 	///     The method match associated with this method setup.
 	/// </summary>
-	// TODO VAB: Remove
+	[Obsolete("TODO VAB: Remove")]
 	protected IMethodMatch MethodMatch { get; set; } = null!;
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.HasReturnCalls()" />
+	[Obsolete("TODO VAB: Remove")]
 	bool IInteractiveMethodSetup.HasReturnCalls()
 		=> HasReturnCalls();
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.SetOutParameter{T}(string, Func{T})" />
+	[Obsolete("TODO VAB: Remove")]
 	T IInteractiveMethodSetup.SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 		=> SetOutParameter(parameterName, defaultValueGenerator);
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
+	[Obsolete("TODO VAB: Remove")]
 	T IInteractiveMethodSetup.SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 		=> SetRefParameter(parameterName, value, behavior);
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.Matches(MethodInvocation)" />
+	[Obsolete("TODO VAB: Remove")]
 	bool IInteractiveMethodSetup.Matches(MethodInvocation methodInvocation)
 		=> MethodMatch.Matches(methodInvocation);
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.SkipBaseClass()" />
+	[Obsolete("TODO VAB: Remove")]
 	bool? IInteractiveMethodSetup.SkipBaseClass()
 		=> GetSkipBaseClass();
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.Invoke{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
+	[Obsolete("TODO VAB: Remove")]
 	TResult IInteractiveMethodSetup.Invoke<TResult>(MethodInvocation methodInvocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 	{
@@ -73,26 +79,30 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	}
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.Invoke(MethodInvocation, MockBehavior)" />
+	[Obsolete("TODO VAB: Remove")]
 	void IInteractiveMethodSetup.Invoke(MethodInvocation methodInvocation, MockBehavior behavior)
 		=> ExecuteCallback(methodInvocation, behavior);
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.TriggerCallbacks(INamedParameterValue[])" />
+	[Obsolete("TODO VAB: Remove")]
 	public void TriggerCallbacks(INamedParameterValue[] parameters)
 		=> TriggerParameterCallbacks(parameters);
 
 	/// <inheritdoc cref="IVerifiableMethodSetup.GetMatch()" />
+	[Obsolete("TODO VAB: Remove")]
 	public IMethodMatch GetMatch()
 		=> MethodMatch;
 
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	// TODO VAB: Remove
+	[Obsolete("TODO VAB: Remove")]
 	protected virtual bool? GetSkipBaseClass() => null;
 
 	/// <summary>
 	///     Gets a value indicating whether this setup has return calls configured.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	protected virtual bool HasReturnCalls() => false;
 
 	/// <summary>
@@ -103,7 +113,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="defaultValueGenerator" />.
 	/// </remarks>
-	// TODO VAB: Remove
+	[Obsolete("TODO VAB: Remove")]
 	protected virtual T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
 	{
 		throw new NotImplementedException();
@@ -117,7 +127,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="behavior" />.
 	/// </remarks>
-	// TODO VAB: Remove
+	[Obsolete("TODO VAB: Remove")]
 	protected virtual T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
 	{
 		throw new NotImplementedException();
@@ -126,12 +136,16 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	/// <summary>
 	///     Execute a potentially registered callback.
 	/// </summary>
-	protected abstract void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior);
+	[Obsolete("TODO VAB: Remove")]
+	protected virtual void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+	{
+		throw new NotImplementedException();
+	}
 
 	/// <summary>
 	///     Gets the registered return value.
 	/// </summary>
-	// TODO VAB: Remove
+	[Obsolete("TODO VAB: Remove")]
 	protected virtual TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 	{
@@ -141,7 +155,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
 	/// </summary>
-	// TODO VAB: Remove
+	[Obsolete("TODO VAB: Remove")]
 	protected virtual void TriggerParameterCallbacks(INamedParameterValue[] parameters)
 	{
 		
@@ -151,6 +165,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	///     Determines whether the specified collection of named parameters contains a reference parameter of the given name
 	///     and type.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	protected static bool HasRefParameter<T>(NamedParameter?[] namedParameters, string parameterName,
 		[NotNullWhen(true)] out IRefParameter<T>? parameter)
 	{
@@ -173,6 +188,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	///     Determines whether the specified collection of named parameters contains an out parameter with the given name and
 	///     type.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	protected static bool HasOutParameter<T>(NamedParameter?[] namedParameters, string parameterName,
 		[NotNullWhen(true)] out IOutParameter<T>? parameter)
 	{
@@ -195,6 +211,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	///     Triggers the parameter callbacks for each value in the specified array according to
 	///     the corresponding named parameter.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	protected static void TriggerCallbacks(NamedParameter?[] namedParameters, INamedParameterValue[] values)
 	{
 		if (namedParameters.Length != values.Length)
@@ -217,6 +234,7 @@ public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSe
 	///     result is set to the default value for type <typeparamref name="T" /> as provided
 	///     by the <paramref name="behavior" />.
 	/// </remarks>
+	[Obsolete("TODO VAB: Remove")]
 	protected static bool TryCast<T>([NotNullWhen(false)] object? value, out T result, MockBehavior behavior)
 	{
 		if (value is T typedValue)

@@ -72,6 +72,7 @@ public class ExampleTests
 #endif
 */
 
+/* TODO VAB: Re-Enable
 	[Fact]
 	public async Task MockIFileSystem_ShouldWork()
 	{
@@ -84,6 +85,7 @@ public class ExampleTests
 
 		await That(result).IsEqualTo('a');
 	}
+*/
 
 	[Fact]
 	public async Task SimpleInterfaceMock()

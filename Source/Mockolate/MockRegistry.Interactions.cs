@@ -23,19 +23,15 @@ public partial class MockRegistry
 	public void ClearAllInteractions()
 		=> Interactions.Clear();
 
-	public ReturnMethodSetup<TReturn, T1>? InvokeMethod<TReturn, T1>(string methodName, string p1Name, T1 p1)
+	public T? GetMethodSetup<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
 	{
-		var methodSetup = Setup.Methods.GetMatching(methodName, m => m is ReturnMethodSetup<TReturn, T1> x && x.Matches(p1Name, p1));
-		if (methodSetup is ReturnMethodSetup<TReturn, T1> matching)
-		{
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation<T1>(methodName, p1));
-			return matching;
-		}
-		((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation<T1>(methodName, p1));
-
-		return null;
+		return Setup.Methods.GetMatching(methodName, predicate);
 	}
-
+	public void RegisterInteraction(IInteraction interaction)
+	{
+		((IMockInteractions)Interactions).RegisterInteraction(interaction);
+	}
+	
 	/// <summary>
 	///     Executes the method with <paramref name="methodName" /> and one typed parameter and gets the setup return value.
 	///     Matching runs against the typed value directly; <see cref="Parameters.NamedParameterValue{T}" /> is only
