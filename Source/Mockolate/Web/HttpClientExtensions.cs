@@ -50,27 +50,23 @@ public static partial class HttpClientExtensions
 	private sealed class HttpRequestMessageParameters(
 		HttpMethod method,
 		params IHttpRequestMessageParameter[] parameters)
-		: IParameter
+		: IParameterMatch<HttpRequestMessage>
 	{
-		public bool Matches(INamedParameterValue value)
+		public bool Matches(HttpRequestMessage value)
 		{
-			if (value.TryGetValue(out HttpRequestMessage requestMessage) &&
-			    requestMessage.Method == method)
+			if (value.Method == method)
 			{
-				return parameters.All(parameter => parameter.Matches(requestMessage));
+				return parameters.All(parameter => parameter.Matches(value));
 			}
 
 			return false;
 		}
 
-		public void InvokeCallbacks(INamedParameterValue value)
+		public void InvokeCallbacks(HttpRequestMessage value)
 		{
-			if (value.TryGetValue(out HttpRequestMessage typedValue))
+			foreach (IHttpRequestMessageParameter parameter in parameters)
 			{
-				foreach (IHttpRequestMessageParameter parameter in parameters)
-				{
-					parameter.InvokeCallbacks(typedValue);
-				}
+				parameter.InvokeCallbacks(value);
 			}
 		}
 

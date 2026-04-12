@@ -76,6 +76,28 @@ internal partial class MockSetups
 
 			return null;
 		}
+		public MethodSetup? GetMatching(string methodName, Func<MethodSetup, bool> predicate)
+		{
+			List<MethodSetup>? storage = _storage;
+			if (storage is null)
+			{
+				return null;
+			}
+
+			lock (storage)
+			{
+				for (int i = storage.Count - 1; i >= 0; i--)
+				{
+					if (storage[i].Name.Equals(methodName) && 
+					    predicate(storage[i]))
+					{
+						return storage[i];
+					}
+				}
+			}
+
+			return null;
+		}
 
 		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{

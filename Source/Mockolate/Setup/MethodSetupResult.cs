@@ -69,6 +69,7 @@ public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior beha
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
+// TODO: Remove
 public class MethodSetupResult<TResult>(IInteractiveMethodSetup? setup, MockBehavior behavior, TResult result)
 	: MethodSetupResult(setup, behavior)
 {

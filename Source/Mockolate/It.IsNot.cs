@@ -65,15 +65,16 @@ public partial class It
 			return !EqualityComparer<T>.Default.Equals(value, _value);
 		}
 
-		public override bool Matches(INamedParameterValue value)
-		{
-			if (value.TryGetValue(out T typedValue))
-			{
-				return Matches(typedValue);
-			}
-
-			return !value.IsNull || Matches(default(T)!);
-		}
+		// TODO VAB: Remove and clarify null handling
+		//public override bool Matches(INamedParameterValue value)
+		//{
+		//	if (value.TryGetValue(out T typedValue))
+		//	{
+		//		return Matches(typedValue);
+		//	}
+//
+		//	return !value.IsNull || Matches(default(T)!);
+		//}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()

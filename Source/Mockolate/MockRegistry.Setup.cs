@@ -1,7 +1,3 @@
-using System;
-using System.Diagnostics;
-using Mockolate.Interactions;
-using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate;

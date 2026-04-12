@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -87,6 +88,7 @@ public partial class MockRegistry
 	///     Counts the setter accesses of property <paramref name="propertyName" />
 	///     with the matching <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	public VerificationResult<T> Property<T>(T subject, string propertyName,
 		IParameter value)
 	{
@@ -108,6 +110,7 @@ public partial class MockRegistry
 	///     Counts the getter accesses of the indexer with matching <paramref name="parameters" /> on the
 	///     <paramref name="subject" />.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	public VerificationResult<T> Indexer<T>(T subject,
 		params NamedParameter[] parameters)
 	{
@@ -141,6 +144,7 @@ public partial class MockRegistry
 	///     Counts the setter accesses of the indexer with matching <paramref name="parameters" /> to the given
 	///     <paramref name="value" /> on the <paramref name="subject" />.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	public VerificationResult<T> Indexer<T>(T subject, IParameter value,
 		params NamedParameter[] parameters)
 	{

@@ -97,6 +97,46 @@ internal static partial class Sources
 		          	}
 		          }
 		          """).AppendLine();
+		sb.Append("namespace Mockolate.Interactions").AppendLine();
+		sb.Append("{").AppendLine();
+		foreach (int count in methodSetups.GroupBy(x => x.Item1).Select(x => x.Key))
+		{
+			sb.AppendXmlSummary($"An invocation of a method with {count} parameters {string.Join(", ", Enumerable.Range(1, count - 1).Select(x => $"<paramref name=\"parameter{x}\"/>"))} and <paramref name=\"parameter{count}\"/>.", "\t");
+			sb.Append("\t[global::System.Diagnostics.DebuggerDisplay(\"{ToString()}\")]").AppendLine();
+#if !DEBUG
+			sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+			sb.Append("\tpublic class MethodInvocation<")
+				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x}"))).Append(">(string name, ")
+				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x} parameter{x}")))
+				.Append(") : IInteraction, ISettableInteraction").AppendLine();
+			sb.Append("\t{").AppendLine();
+			sb.AppendXmlSummary("The name of the method.");
+			sb.Append("\t\tpublic string Name { get; } = name;").AppendLine();
+			for (int i = 1; i <= count; i++)
+			{
+				string comment = i switch
+				{
+					1 => "first",
+					2 => "second",
+					3 => "third",
+					_ => $"{i}th"
+				};
+				sb.AppendXmlSummary($"The {comment} parameter of the method.");
+				sb.Append("\t\tpublic T").Append(i).Append(" Parameter").Append(i).Append(" { get; } = parameter").Append(i).Append(";").AppendLine();
+			}
+
+			sb.Append("\t\t/// <inheritdoc cref=\"IInteraction.Index\" />").AppendLine();
+			sb.Append("\t\tpublic int Index => _index.GetValueOrDefault();").AppendLine();
+			sb.Append("\t\tprivate int? _index;").AppendLine();
+			sb.Append("\t\tvoid ISettableInteraction.SetIndex(int value) => _index ??= value;").AppendLine();
+			sb.Append("\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
+			sb.Append("\t\tpublic override string ToString()").AppendLine();
+			sb.Append("\t\t\t=> $\"[{Index}] invoke method {Name}(")
+				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"{{Parameter{x}}}"))).Append(")\";").AppendLine();
+			sb.Append("\t}").AppendLine();
+		}
+		sb.Append("}").AppendLine();
 		sb.AppendLine();
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();

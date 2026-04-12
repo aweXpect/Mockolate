@@ -34,6 +34,7 @@ public interface IInteractiveMethodSetup : ISetup
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
+	// TODO VAB: Remove
 	bool? SkipBaseClass();
 
 	/// <summary>
@@ -256,6 +257,11 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
+	///     Changes the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	/// </summary>
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> ChangeScenario(string scenarioName);
+
+	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback);
@@ -296,13 +302,20 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>
+	: IReturnMethodSetupParallelCallbackBuilder<TReturn, T1>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> InParallel();
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> InParallel();
+}
 
+/// <summary>
+///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>

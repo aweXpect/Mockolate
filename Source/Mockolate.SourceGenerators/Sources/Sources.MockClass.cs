@@ -1472,7 +1472,8 @@ internal static partial class Sources
 		sb.AppendLine("\t\t}");
 	}
 
-	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method, string mockRegistryName, string className,
+	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method,
+		string mockRegistryName, string className,
 		bool explicitInterfaceImplementation, bool isClassInterface, Class @class)
 	{
 		string mockRegistry = method.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
@@ -1556,12 +1557,13 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
-		string methodExecutionVarName = Helpers.GetUniqueLocalVariableName("methodExecution", method.Parameters);
+		string methodExecutionVarName = Helpers.GetUniqueLocalVariableName("methodSetup", method.Parameters);
 		bool useTypedOverload = method.Parameters.Count is >= 1 and <= MaxExplicitParameters;
-		if (method.ReturnType != Type.Void)
+
+		// TODO: VAB
+		if (method.ReturnType != Type.Void && method.Parameters.Count == 1)
 		{
-			sb.Append("\t\t\tglobal::Mockolate.Setup.MethodSetupResult<")
-				.AppendTypeOrWrapper(method.ReturnType).Append("> ").Append(methodExecutionVarName)
+			sb.Append("\t\t\tvar ").Append(methodExecutionVarName)
 				.Append(" = ").Append(mockRegistry).Append(".InvokeMethod<")
 				.AppendTypeOrWrapper(method.ReturnType);
 			if (useTypedOverload)
@@ -1572,232 +1574,466 @@ internal static partial class Sources
 				}
 			}
 
-			sb.Append(">(").Append(method.GetUniqueNameString()).Append(", ");
-			if (method.Parameters.Count == 0)
+			sb.Append(">(").Append(method.GetUniqueNameString());
+			foreach (MethodParameter p in method.Parameters)
 			{
-				sb.Append("() => ")
-					.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue");
-			}
-			else
-			{
-				string parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
-				sb.Append(parameterVarName).Append(" => ")
-					.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
-						parameterVarName);
-			}
-		}
-		else
-		{
-			sb.Append("\t\t\tglobal::Mockolate.Setup.MethodSetupResult ").Append(methodExecutionVarName)
-				.Append(" = ").Append(mockRegistry).Append(".InvokeMethod");
-			if (useTypedOverload)
-			{
-				sb.Append('<');
-				bool first = true;
-				foreach (MethodParameter p in method.Parameters)
+				if (useTypedOverload)
 				{
-					if (!first)
-					{
-						sb.Append(", ");
-					}
-
-					sb.AppendTypeOrWrapper(p.Type);
-					first = false;
-				}
-
-				sb.Append('>');
-			}
-
-			sb.Append('(').Append(method.GetUniqueNameString());
-		}
-
-		foreach (MethodParameter p in method.Parameters)
-		{
-			if (useTypedOverload)
-			{
-				sb.Append(", \"").Append(p.Name).Append("\", ").Append(
-					p.RefKind switch
-					{
-						RefKind.Out => "default",
-						_ => p.ToNameOrWrapper(),
-					});
-			}
-			else
-			{
-				sb.Append(", new global::Mockolate.Parameters.NamedParameterValue<").AppendTypeOrWrapper(p.Type)
-					.Append(">(\"").Append(p.Name).Append("\", ").Append(
+					sb.Append(", \"").Append(p.Name).Append("\", ").Append(
 						p.RefKind switch
 						{
 							RefKind.Out => "default",
 							_ => p.ToNameOrWrapper(),
-						}).Append(')');
-			}
-		}
-
-		sb.AppendLine(");");
-
-		if (isClassInterface || method.IsAbstract)
-		{
-			if (!explicitInterfaceImplementation && isClassInterface && !method.IsStatic)
-			{
-				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
-				if (method.ReturnType != Type.Void)
-				{
-					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps").Append(".")
-						.Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
+						});
 				}
 				else
 				{
-					sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\twraps").Append(".")
-						.Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
+					sb.Append(", \"").Append(p.Name).Append("\", ").Append(
+						p.RefKind switch
+						{
+							RefKind.Out => "default",
+							_ => p.ToNameOrWrapper(),
+						});
+				}
+			}
+
+			sb.AppendLine(");");
+			if (isClassInterface || method.IsAbstract)
+			{
+				if (!explicitInterfaceImplementation && isClassInterface && !method.IsStatic)
+				{
+					string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
+					if (method.ReturnType != Type.Void)
+					{
+						sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps").Append(".")
+							.Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\twraps").Append(".")
+							.Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+
+					AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
+						$"{mockRegistry}.Behavior.DefaultValue");
+
+					if (method.ReturnType != Type.Void)
+					{
+						sb.Append("\t\t\t\tif (").Append(methodExecutionVarName).Append(" is not null)")
+							.AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						AppendTriggerCallbacks_VAB(sb, "\t\t\t\t\t", methodExecutionVarName, method.Parameters);
+						sb.Append("\t\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
+					}
+
+					sb.Append("\t\t\t}").AppendLine();
 				}
 
-				AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
+				AppendOutRefParameterHandling(sb, "\t\t\t", method.Parameters, methodExecutionVarName,
 					$"{mockRegistry}.Behavior.DefaultValue");
 
+				AppendTriggerCallbacks_VAB(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
 				if (method.ReturnType != Type.Void)
 				{
+					sb.Append("\t\t\tif(").Append(methodExecutionVarName).Append("?.TryGetReturnValue(")
+						.Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper())))
+						.Append(", out var returnValue) == true)").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					// TODO: VAB: Ensure uniqueness of returnValue name
+					sb.Append("\t\t\t\treturn returnValue;").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+					sb.Append("\t\t\treturn ")
+						.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue")
+						.Append(';').AppendLine();
+				}
+			}
+			else
+			{
+				sb.Append("\t\t\tif (!(").Append(methodExecutionVarName).Append("?.SkipBaseClass(").Append(mockRegistry).Append(".Behavior) ?? ").Append(mockRegistry).Append(".Behavior.SkipBaseClass))").AppendLine();
+				sb.Append("\t\t\t{").AppendLine();
+				if (method.ReturnType != Type.Void)
+				{
+					string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
+
+					if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
+					    @class is { ClassFullName: "global::System.Net.Http.HttpClient", })
+					{
+						sb.Append("\t\t\t\t#if NETFRAMEWORK").AppendLine();
+						sb.Append(
+								"\t\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework")
+							.AppendLine();
+						sb.Append("\t\t\t\tif (request.Content != null)").AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						sb.Append(
+								"\t\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
+							.AppendLine();
+						sb.Append("\t\t\t\t\tusing global::System.IO.MemoryStream ms = new();").AppendLine();
+						sb.Append("\t\t\t\t\tstream.CopyTo(ms);").AppendLine();
+						sb.Append("\t\t\t\t\tbyte[] bytes = ms.ToArray();").AppendLine();
+						sb.Append("\t\t\t\t\tstream.Position = 0L;").AppendLine();
+						sb.Append("\t\t\t\t\trequest.Properties.Add(\"Mockolate:HttpContent\", bytes);").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\t#endif").AppendLine();
+					}
+
+					if (method is { IsStatic: false, IsProtected: false, })
+					{
+						sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = ").Append(mockRegistry)
+							.Append(".Wraps is ").Append(className).Append(" wraps ? wraps.").Append(method.Name)
+							.Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(") : base.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name)
+							.Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+
+					AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
+						$"{mockRegistry}.Behavior.DefaultValue");
+
+					sb.Append("\t\t\t\tif (").Append(methodExecutionVarName).Append(" is not null)").AppendLine();
+					sb.Append("\t\t\t\t{").AppendLine();
+					AppendTriggerCallbacks_VAB(sb, "\t\t\t\t\t", methodExecutionVarName, method.Parameters);
+					sb.Append("\t\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
+					sb.Append("\t\t\t\t}").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+					if (method.Parameters.Any(p => p.RefKind == RefKind.Ref || p.RefKind == RefKind.Out))
+					{
+						sb.Append("\t\t\telse").AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						AppendOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
+							$"{mockRegistry}.Behavior.DefaultValue");
+						sb.Append("\t\t\t}").AppendLine();
+					}
+
+					sb.AppendLine();
+					AppendTriggerCallbacks_VAB(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
+					sb.Append("\t\t\tif(").Append(methodExecutionVarName).Append("?.TryGetReturnValue(")
+						.Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper())))
+						.Append(", out var returnValue) == true)").AppendLine();
+					sb.Append("\t\t\t{").AppendLine();
+					// TODO: VAB: Ensure uniqueness of returnValue name
+					sb.Append("\t\t\t\treturn returnValue;").AppendLine();
+					sb.Append("\t\t\t}").AppendLine();
+					sb.Append("\t\t\treturn ")
+						.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue").Append(';').AppendLine();
+				}
+				else
+				{
+					if (method is { IsStatic: false, IsProtected: false, })
+					{
+						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\twraps.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\telse").AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\tbase.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+					}
+
+					sb.Append("\t\t\t}").AppendLine();
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						if (parameter.RefKind == RefKind.Out)
+						{
+							sb.AppendLine();
+							sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
+								.Append(".SetOutParameter<")
+								.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
+								.Append("\", () => ")
+								.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
+								.Append(");").AppendLine();
+						}
+						else if (parameter.RefKind == RefKind.Ref)
+						{
+							sb.AppendLine();
+							sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
+								.Append(".SetRefParameter<")
+								.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+								.Append(parameter.Name).Append(");").AppendLine();
+						}
+
+						AppendTriggerCallbacks_VAB(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (method.ReturnType != Type.Void)
+			{
+				sb.Append("\t\t\tglobal::Mockolate.Setup.MethodSetupResult<")
+					.AppendTypeOrWrapper(method.ReturnType).Append("> ").Append(methodExecutionVarName)
+					.Append(" = ").Append(mockRegistry).Append(".InvokeMethod<")
+					.AppendTypeOrWrapper(method.ReturnType);
+				if (useTypedOverload)
+				{
+					foreach (MethodParameter p in method.Parameters)
+					{
+						sb.Append(", ").AppendTypeOrWrapper(p.Type);
+					}
+				}
+
+				sb.Append(">(").Append(method.GetUniqueNameString()).Append(", ");
+				if (method.Parameters.Count == 0)
+				{
+					sb.Append("() => ")
+						.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue");
+				}
+				else
+				{
+					string parameterVarName = Helpers.GetUniqueLocalVariableName("p", method.Parameters);
+					sb.Append(parameterVarName).Append(" => ")
+						.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
+							parameterVarName);
+				}
+			}
+			else
+			{
+				sb.Append("\t\t\tglobal::Mockolate.Setup.MethodSetupResult ").Append(methodExecutionVarName)
+					.Append(" = ").Append(mockRegistry).Append(".InvokeMethod");
+				if (useTypedOverload)
+				{
+					sb.Append('<');
+					bool first = true;
+					foreach (MethodParameter p in method.Parameters)
+					{
+						if (!first)
+						{
+							sb.Append(", ");
+						}
+
+						sb.AppendTypeOrWrapper(p.Type);
+						first = false;
+					}
+
+					sb.Append('>');
+				}
+
+				sb.Append('(').Append(method.GetUniqueNameString());
+			}
+
+
+			foreach (MethodParameter p in method.Parameters)
+			{
+				if (useTypedOverload)
+				{
+					sb.Append(", \"").Append(p.Name).Append("\", ").Append(
+						p.RefKind switch
+						{
+							RefKind.Out => "default",
+							_ => p.ToNameOrWrapper(),
+						});
+				}
+				else
+				{
+					sb.Append(", new global::Mockolate.Parameters.NamedParameterValue<").AppendTypeOrWrapper(p.Type)
+						.Append(">(\"").Append(p.Name).Append("\", ").Append(
+							p.RefKind switch
+							{
+								RefKind.Out => "default",
+								_ => p.ToNameOrWrapper(),
+							}).Append(')');
+				}
+			}
+
+			sb.AppendLine(");");
+			if (isClassInterface || method.IsAbstract)
+			{
+				if (!explicitInterfaceImplementation && isClassInterface && !method.IsStatic)
+				{
+					string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
+					if (method.ReturnType != Type.Void)
+					{
+						sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = wraps").Append(".")
+							.Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\twraps").Append(".")
+							.Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+
+					AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
+						$"{mockRegistry}.Behavior.DefaultValue");
+
+					if (method.ReturnType != Type.Void)
+					{
+						sb.Append("\t\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)")
+							.AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						AppendTriggerCallbacks(sb, "\t\t\t\t\t", methodExecutionVarName, method.Parameters);
+						sb.Append("\t\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
+					}
+
+					sb.Append("\t\t\t}").AppendLine();
+				}
+
+				AppendOutRefParameterHandling(sb, "\t\t\t", method.Parameters, methodExecutionVarName,
+					$"{mockRegistry}.Behavior.DefaultValue");
+
+				AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
+				if (method.ReturnType != Type.Void)
+				{
+					sb.Append("\t\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
+				}
+			}
+			else
+			{
+				sb.Append("\t\t\tif (!").Append(methodExecutionVarName).Append(".SkipBaseClass)").AppendLine();
+				sb.Append("\t\t\t{").AppendLine();
+				if (method.ReturnType != Type.Void)
+				{
+					string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
+
+					if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
+					    @class is { ClassFullName: "global::System.Net.Http.HttpClient", })
+					{
+						sb.Append("\t\t\t\t#if NETFRAMEWORK").AppendLine();
+						sb.Append(
+								"\t\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework")
+							.AppendLine();
+						sb.Append("\t\t\t\tif (request.Content != null)").AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						sb.Append(
+								"\t\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
+							.AppendLine();
+						sb.Append("\t\t\t\t\tusing global::System.IO.MemoryStream ms = new();").AppendLine();
+						sb.Append("\t\t\t\t\tstream.CopyTo(ms);").AppendLine();
+						sb.Append("\t\t\t\t\tbyte[] bytes = ms.ToArray();").AppendLine();
+						sb.Append("\t\t\t\t\tstream.Position = 0L;").AppendLine();
+						sb.Append("\t\t\t\t\trequest.Properties.Add(\"Mockolate:HttpContent\", bytes);").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\t#endif").AppendLine();
+					}
+
+					if (method is { IsStatic: false, IsProtected: false, })
+					{
+						sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = ").Append(mockRegistry)
+							.Append(".Wraps is ").Append(className).Append(" wraps ? wraps.").Append(method.Name)
+							.Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(") : base.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name)
+							.Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters))
+							.Append(");").AppendLine();
+					}
+
+					AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
+						$"{mockRegistry}.Behavior.DefaultValue");
+
 					sb.Append("\t\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					AppendTriggerCallbacks(sb, "\t\t\t\t\t", methodExecutionVarName, method.Parameters);
 					sb.Append("\t\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
-				}
-
-				sb.Append("\t\t\t}").AppendLine();
-			}
-
-			AppendOutRefParameterHandling(sb, "\t\t\t", method.Parameters, methodExecutionVarName,
-				$"{mockRegistry}.Behavior.DefaultValue");
-
-			AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
-			if (method.ReturnType != Type.Void)
-			{
-				sb.Append("\t\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
-			}
-		}
-		else
-		{
-			sb.Append("\t\t\tif (!").Append(methodExecutionVarName).Append(".SkipBaseClass)").AppendLine();
-			sb.Append("\t\t\t{").AppendLine();
-			if (method.ReturnType != Type.Void)
-			{
-				string baseResultVarName = Helpers.GetUniqueLocalVariableName("baseResult", method.Parameters);
-
-				if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
-				    @class is { ClassFullName: "global::System.Net.Http.HttpClient", })
-				{
-					sb.Append("\t\t\t\t#if NETFRAMEWORK").AppendLine();
-					sb.Append(
-							"\t\t\t\t// Persist the HttpContent, because it gets automatically disposed on .NET Framework")
-						.AppendLine();
-					sb.Append("\t\t\t\tif (request.Content != null)").AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append(
-							"\t\t\t\t\tvar stream = request.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();")
-						.AppendLine();
-					sb.Append("\t\t\t\t\tusing global::System.IO.MemoryStream ms = new();").AppendLine();
-					sb.Append("\t\t\t\t\tstream.CopyTo(ms);").AppendLine();
-					sb.Append("\t\t\t\t\tbyte[] bytes = ms.ToArray();").AppendLine();
-					sb.Append("\t\t\t\t\tstream.Position = 0L;").AppendLine();
-					sb.Append("\t\t\t\t\trequest.Properties.Add(\"Mockolate:HttpContent\", bytes);").AppendLine();
-					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\t#endif").AppendLine();
-				}
-
-				if (method is { IsStatic: false, IsProtected: false, })
-				{
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = ").Append(mockRegistry)
-						.Append(".Wraps is ").Append(className).Append(" wraps ? wraps.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(") : base.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
-				}
-				else
-				{
-					sb.Append("\t\t\t\tvar ").Append(baseResultVarName).Append(" = base.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters))
-						.Append(");").AppendLine();
-				}
-
-				AppendConditionalOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
-					$"{mockRegistry}.Behavior.DefaultValue");
-
-				sb.Append("\t\t\t\tif (!").Append(methodExecutionVarName).Append(".HasSetupResult)").AppendLine();
-				sb.Append("\t\t\t\t{").AppendLine();
-				AppendTriggerCallbacks(sb, "\t\t\t\t\t", methodExecutionVarName, method.Parameters);
-				sb.Append("\t\t\t\t\treturn ").Append(baseResultVarName).Append(";").AppendLine();
-				sb.Append("\t\t\t\t}").AppendLine();
-				sb.Append("\t\t\t}").AppendLine();
-				if (method.Parameters.Any(p => p.RefKind == RefKind.Ref || p.RefKind == RefKind.Out))
-				{
-					sb.Append("\t\t\telse").AppendLine();
-					sb.Append("\t\t\t{").AppendLine();
-					AppendOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
-						$"{mockRegistry}.Behavior.DefaultValue");
 					sb.Append("\t\t\t}").AppendLine();
-				}
+					if (method.Parameters.Any(p => p.RefKind == RefKind.Ref || p.RefKind == RefKind.Out))
+					{
+						sb.Append("\t\t\telse").AppendLine();
+						sb.Append("\t\t\t{").AppendLine();
+						AppendOutRefParameterHandling(sb, "\t\t\t\t", method.Parameters, methodExecutionVarName,
+							$"{mockRegistry}.Behavior.DefaultValue");
+						sb.Append("\t\t\t}").AppendLine();
+					}
 
-				sb.AppendLine();
-				AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
-				sb.Append("\t\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
-			}
-			else
-			{
-				if (method is { IsStatic: false, IsProtected: false, })
-				{
-					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\twraps.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
-					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\telse").AppendLine();
-					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\tbase.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
-					sb.Append("\t\t\t\t}").AppendLine();
+					sb.AppendLine();
+					AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
+					sb.Append("\t\t\treturn ").Append(methodExecutionVarName).Append(".Result;").AppendLine();
 				}
 				else
 				{
-					sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(')
-						.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
-				}
-
-				sb.Append("\t\t\t}").AppendLine();
-				foreach (MethodParameter parameter in method.Parameters)
-				{
-					if (parameter.RefKind == RefKind.Out)
+					if (method is { IsStatic: false, IsProtected: false, })
 					{
-						sb.AppendLine();
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetOutParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-							.Append("\", () => ")
-							.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
-							.Append(");").AppendLine();
+						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							.Append(" wraps)").AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\twraps.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\telse").AppendLine();
+						sb.Append("\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\tbase.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
+						sb.Append("\t\t\t\t}").AppendLine();
 					}
-					else if (parameter.RefKind == RefKind.Ref)
+					else
 					{
-						sb.AppendLine();
-						sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
-							.Append(".SetRefParameter<")
-							.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
-							.Append(parameter.Name).Append(");").AppendLine();
+						sb.Append("\t\t\t\tbase.").Append(method.Name).Append('(')
+							.Append(FormatMethodParametersWithRefKind(method.Parameters)).Append(");").AppendLine();
 					}
 
-					AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
+					sb.Append("\t\t\t}").AppendLine();
+					foreach (MethodParameter parameter in method.Parameters)
+					{
+						if (parameter.RefKind == RefKind.Out)
+						{
+							sb.AppendLine();
+							sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
+								.Append(".SetOutParameter<")
+								.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
+								.Append("\", () => ")
+								.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
+								.Append(");").AppendLine();
+						}
+						else if (parameter.RefKind == RefKind.Ref)
+						{
+							sb.AppendLine();
+							sb.Append("\t\t\t").Append(parameter.Name).Append(" = ").Append(methodExecutionVarName)
+								.Append(".SetRefParameter<")
+								.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
+								.Append(parameter.Name).Append(");").AppendLine();
+						}
+
+						AppendTriggerCallbacks(sb, "\t\t\t", methodExecutionVarName, method.Parameters);
+					}
 				}
 			}
 		}
+
 
 		sb.AppendLine("\t\t}");
 	}
@@ -2360,7 +2596,42 @@ internal static partial class Sources
 			}
 		}
 
-		if (useParameters)
+		// TODO: VAB
+		if (method.ReturnType != Type.Void && method.Parameters.Count == 1)
+		{
+			if (useParameters)
+			{
+				sb.Append("(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString()).Append(", parameters);")
+					.AppendLine();
+				sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(methodSetup);").AppendLine();
+				sb.Append("\t\t\treturn methodSetup;").AppendLine();
+			}
+			else
+			{
+
+				sb.Append("(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString());
+				int j = 0;
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					sb.Append(", ");
+					if (valueFlags?[j] == true)
+					{
+						AppendNamedValueParameter_VAB(sb, parameter);
+					}
+					else
+					{
+						AppendNamedParameter_VAB(sb, parameter);
+					}
+
+					j++;
+				}
+
+				sb.Append(");").AppendLine();
+				sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(methodSetup);").AppendLine();
+				sb.Append("\t\t\treturn methodSetup;").AppendLine();
+			}
+		}
+		else if (useParameters)
 		{
 			sb.Append("(").Append(method.GetUniqueNameString()).Append(", parameters);")
 				.AppendLine();

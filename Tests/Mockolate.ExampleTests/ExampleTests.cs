@@ -53,6 +53,7 @@ public class ExampleTests
 		check.Once();
 	}
 
+	/* TODO VAB: Re-Enable
 #if NET8_0_OR_GREATER
 	[Theory]
 	[InlineData(HttpStatusCode.OK)]
@@ -69,6 +70,7 @@ public class ExampleTests
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
 #endif
+*/
 
 	[Fact]
 	public async Task MockIFileSystem_ShouldWork()

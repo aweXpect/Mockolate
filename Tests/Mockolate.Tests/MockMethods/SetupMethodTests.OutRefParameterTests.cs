@@ -214,7 +214,7 @@ public sealed partial class SetupMethodTests
 			}
 
 			private class MyReturnMethodSetup<T1>(string name)
-				: ReturnMethodSetup<int, T1>(name, new NamedParameter("p1", (IParameter)It.Satisfies<T1>(_ => false)))
+				: ReturnMethodSetup<int, T1>(MockBehavior.Default, name, (IParameterMatch<T1>)It.Satisfies<T1>(_ => false))
 			{
 				public T SetOutParameter<T>(string parameterName)
 					=> base.SetOutParameter<T>(parameterName, () => default!);

@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.Linq;
 using Mockolate.Internals;
@@ -34,4 +33,182 @@ public class MethodInvocation(string name, INamedParameterValue[] parameters) : 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 		=> $"[{Index}] invoke method {Name.SubstringAfterLast('.')}({string.Join(", ", Parameters.Select(p => p.ToString()))})";
+}
+
+/* TODO VAB: Replace with this
+/// <summary>
+///     An invocation of a method without parameters.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class MethodInvocation(string name) : IInteraction, ISettableInteraction
+{
+	private int? _index;
+	/// <summary>
+	///     The name of the method.
+	/// </summary>
+	public string Name { get; } = name;
+
+	/// <inheritdoc cref="IInteraction.Index" />
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"[{Index}] invoke method {Name}()";
+}
+*/
+
+/// <summary>
+///     An invocation of a method with a single <paramref name="parameter"/>.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISettableInteraction
+{
+	private int? _index;
+	/// <summary>
+	///     The name of the method.
+	/// </summary>
+	public string Name { get; } = name;
+
+	/// <summary>
+	///     The single parameter of the method.
+	/// </summary>
+	public T1 Parameter { get; } = parameter;
+
+	/// <inheritdoc cref="IInteraction.Index" />
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"[{Index}] invoke method {Name}({Parameter})";
+}
+
+/// <summary>
+///     An invocation of a method with two parameters <paramref name="parameter1"/> and <paramref name="parameter2"/>.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class MethodInvocation<T1, T2>(string name, T1 parameter1, T2 parameter2) : IInteraction, ISettableInteraction
+{
+	private int? _index;
+	/// <summary>
+	///     The name of the method.
+	/// </summary>
+	public string Name { get; } = name;
+
+	/// <summary>
+	///     The first parameter of the method.
+	/// </summary>
+	public T1 Parameter1 { get; } = parameter1;
+
+	/// <summary>
+	///     The second parameter of the method.
+	/// </summary>
+	public T2 Parameter2 { get; } = parameter2;
+
+	/// <inheritdoc cref="IInteraction.Index" />
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"[{Index}] invoke method {Name}({Parameter1}, {Parameter2})";
+}
+
+
+/// <summary>
+///     An invocation of a method with three parameters <paramref name="parameter1"/>, <paramref name="parameter2"/> and <paramref name="parameter3"/>.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class MethodInvocation<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3) : IInteraction, ISettableInteraction
+{
+	private int? _index;
+	/// <summary>
+	///     The name of the method.
+	/// </summary>
+	public string Name { get; } = name;
+
+	/// <summary>
+	///     The first parameter of the method.
+	/// </summary>
+	public T1 Parameter1 { get; } = parameter1;
+
+	/// <summary>
+	///     The second parameter of the method.
+	/// </summary>
+	public T2 Parameter2 { get; } = parameter2;
+
+	/// <summary>
+	///     The third parameter of the method.
+	/// </summary>
+	public T3 Parameter3 { get; } = parameter3;
+
+	/// <inheritdoc cref="IInteraction.Index" />
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"[{Index}] invoke method {Name}({Parameter1}, {Parameter2}, {Parameter3})";
+}
+
+/// <summary>
+///     An invocation of a method with four parameters <paramref name="parameter1"/>, <paramref name="parameter2"/>, <paramref name="parameter3"/> and <paramref name="parameter4"/>.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class MethodInvocation<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) : IInteraction, ISettableInteraction
+{
+	private int? _index;
+	/// <summary>
+	///     The name of the method.
+	/// </summary>
+	public string Name { get; } = name;
+
+	/// <summary>
+	///     The first parameter of the method.
+	/// </summary>
+	public T1 Parameter1 { get; } = parameter1;
+
+	/// <summary>
+	///     The second parameter of the method.
+	/// </summary>
+	public T2 Parameter2 { get; } = parameter2;
+
+	/// <summary>
+	///     The third parameter of the method.
+	/// </summary>
+	public T3 Parameter3 { get; } = parameter3;
+
+	/// <summary>
+	///     The fourth parameter of the method.
+	/// </summary>
+	public T4 Parameter4 { get; } = parameter4;
+
+	/// <inheritdoc cref="IInteraction.Index" />
+	public int Index => _index.GetValueOrDefault();
+
+	void ISettableInteraction.SetIndex(int value) => _index ??= value;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"[{Index}] invoke method {Name}({Parameter1}, {Parameter2}, {Parameter3}, {Parameter4})";
 }

@@ -61,7 +61,7 @@ public static partial class ItExtensions
 	}
 
 	private sealed class HttpContentParameter
-		: IHttpContentHeaderParameter, IHttpRequestMessagePropertyParameter<HttpContent?>, IParameter
+		: IHttpContentHeaderParameter, IHttpRequestMessagePropertyParameter<HttpContent?>, IParameterMatch<HttpContent?>
 	{
 		private BinaryMatcher? _binaryContentMatcher;
 		private List<Action<HttpContent?>>? _callbacks;
@@ -145,16 +145,16 @@ public static partial class ItExtensions
 			return true;
 		}
 
-		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
-		public bool Matches(INamedParameterValue value)
-			=> value.TryGetValue<HttpContent>(out var typedValue) && Matches(typedValue, null);
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
+		public bool Matches(HttpContent? value)
+			=> Matches(value, null);
 
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
-		public void InvokeCallbacks(INamedParameterValue value)
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		public void InvokeCallbacks(HttpContent? value)
 		{
-			if (_callbacks is not null && value.TryGetValue(out HttpContent typedValue))
+			if (_callbacks is not null)
 			{
-				_callbacks.ForEach(a => a.Invoke(typedValue));
+				_callbacks.ForEach(a => a.Invoke(value));
 			}
 		}
 
@@ -302,7 +302,7 @@ public static partial class ItExtensions
 	///     An abstract wrapper base class for <see cref="IHttpContentParameter" />.
 	/// </summary>
 	public abstract class HttpContentParameterWrapper(IHttpContentParameter parameter, Func<string> parameterString) : IHttpContentParameter,
-		IHttpRequestMessagePropertyParameter<HttpContent?>, IParameter
+		IHttpRequestMessagePropertyParameter<HttpContent?>, IParameterMatch<HttpContent?>
 	{
 		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
 		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
@@ -333,16 +333,16 @@ public static partial class ItExtensions
 				return requestMessagePropertyParameter.Matches(value, requestMessage);
 			}
 
-			return Matches(new NamedParameterValue<HttpContent?>(string.Empty, value));
+			return Matches(value);
 		}
 
-		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
-		public bool Matches(INamedParameterValue value)
-			=> ((IParameter)parameter).Matches(value);
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
+		public bool Matches(HttpContent? value)
+			=> ((IParameterMatch<HttpContent>)parameter).Matches(value);
 
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
-		public void InvokeCallbacks(INamedParameterValue value)
-			=> ((IParameter)parameter).InvokeCallbacks(value);
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		public void InvokeCallbacks(HttpContent? value)
+			=> ((IParameterMatch<HttpContent>)parameter).InvokeCallbacks(value);
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()

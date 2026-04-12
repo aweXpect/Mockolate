@@ -33,21 +33,13 @@ public partial class It
 #if !DEBUG
 	[DebuggerNonUserCode]
 #endif
-	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
+	private sealed class ParameterEqualsMatch<T>(T value, string valueExpression) : TypedMatch<T>, IIsParameter<T>
 	{
-		private readonly T _value;
-		private readonly string _valueExpression;
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
 
-		public ParameterEqualsMatch(T value, string valueExpression)
-		{
-			_value = value;
-			_valueExpression = valueExpression;
-		}
-
 		/// <inheritdoc cref="IIsParameter{T}.Using(IEqualityComparer{T}, string)" />
-		public IIsParameter<T> Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue = "")
+		IIsParameter<T> IIsParameter<T>.Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue)
 		{
 			_comparer = comparer;
 			_comparerExpression = doNotPopulateThisValue;
@@ -55,14 +47,14 @@ public partial class It
 		}
 
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
-		protected override bool Matches(T value)
+		protected override bool Matches(T value1)
 		{
 			if (_comparer is not null)
 			{
-				return _comparer.Equals(value, _value);
+				return _comparer.Equals(value1, value);
 			}
 
-			return EqualityComparer<T>.Default.Equals(value, _value);
+			return EqualityComparer<T>.Default.Equals(value1, value);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
@@ -70,10 +62,10 @@ public partial class It
 		{
 			if (_comparer is not null)
 			{
-				return $"It.Is({_valueExpression}).Using({_comparerExpression})";
+				return $"It.Is({valueExpression}).Using({_comparerExpression})";
 			}
 
-			return _valueExpression;
+			return valueExpression;
 		}
 	}
 }

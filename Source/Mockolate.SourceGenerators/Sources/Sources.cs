@@ -68,6 +68,14 @@ internal static partial class Sources
 			.Append(string.Join(", ", parameters.Select(p =>
 				$"new global::Mockolate.Parameters.NamedParameterValue<{p.ToTypeOrWrapper()}>(\"{p.Name}\", {p.ToNameOrWrapper()})")))
 			.Append(");").AppendLine();
+	/// <summary>
+	///     Appends a TriggerCallbacks invocation.
+	/// </summary>
+	private static void AppendTriggerCallbacks_VAB(StringBuilder sb, string indent, string varName,
+		IEnumerable<MethodParameter> parameters)
+		=> sb.Append(indent).Append(varName).Append("?.TriggerCallbacks(")
+			.Append(string.Join(", ", parameters.Select(p => p.ToNameOrWrapper())))
+			.Append(");").AppendLine();
 
 	/// <summary>
 	///     Formats method parameters with ref/out keywords and names for method invocations.
@@ -204,12 +212,42 @@ internal static partial class Sources
 
 		sb.Append("))");
 	}
+	/// <summary>
+	///     Appends a NamedParameter with nullable handling.
+	/// </summary>
+	private static void AppendNamedParameter_VAB(StringBuilder sb, MethodParameter parameter)
+	{
+		sb.Append("(global::Mockolate.Parameters.IParameterMatch<");
+		sb.AppendTypeOrWrapper(parameter.Type);
+		sb.Append(">)(");
+		sb.Append(parameter.Name);
+		if (parameter.CanUseNullableParameterOverload())
+		{
+			if (parameter.HasExplicitDefaultValue)
+			{
+				sb.Append(" ?? global::Mockolate.It.Is<").Append(parameter.ToNullableType()).Append(">(")
+					.Append(parameter.ExplicitDefaultValue).Append(")");
+			}
+			else
+			{
+				sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType()).Append(">(\"null\")");
+			}
+		}
+
+		sb.Append(")");
+	}
 
 	/// <summary>
 	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>.
 	/// </summary>
 	private static void AppendNamedValueParameter(StringBuilder sb, MethodParameter parameter)
 		=> AppendNamedValueParameter(sb, parameter, parameter.Name);
+
+	/// <summary>
+	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>.
+	/// </summary>
+	private static void AppendNamedValueParameter_VAB(StringBuilder sb, MethodParameter parameter)
+		=> AppendNamedValueParameter_VAB(sb, parameter, parameter.Name);
 
 	/// <summary>
 	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>, using the given variable reference
@@ -247,6 +285,44 @@ internal static partial class Sources
 		}
 
 		sb.Append("))");
+	}
+	/// <summary>
+	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>, using the given variable reference
+	///     name.
+	/// </summary>
+	private static void AppendNamedValueParameter_VAB(StringBuilder sb, MethodParameter parameter, string paramRef)
+	{
+		sb.Append("(global::Mockolate.Parameters.IParameterMatch<");
+		sb.AppendTypeOrWrapper(parameter.Type);
+		sb.Append(">)global::Mockolate.It.Is<")
+			.Append(parameter.ToNullableType()).Append(">(").Append(paramRef).Append(", ");
+		if (parameter.Type.SpecialType == SpecialType.System_String)
+		{
+			sb.Append("$\"\\\"{").Append(paramRef).Append("}\\\"\"");
+		}
+		else if (parameter.Type.CanBeNullable)
+		{
+			sb.Append(paramRef).Append(" is null ? \"null\" : ");
+			if (parameter.Type.IsFormattable)
+			{
+				sb.Append("((global::System.IFormattable)").Append(paramRef).Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
+			}
+			else
+			{
+				sb.Append(paramRef).Append(".ToString()");
+			}
+		}
+		else if (parameter.Type.IsFormattable)
+		{
+			sb.Append("((global::System.IFormattable)").Append(paramRef)
+				.Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
+		}
+		else
+		{
+			sb.Append(paramRef).Append(".ToString()");
+		}
+
+		sb.Append(")");
 	}
 
 	/// <summary>

@@ -1,6 +1,6 @@
 namespace Mockolate.Interactions;
 
-internal interface ISettableInteraction
+public interface ISettableInteraction
 {
 	void SetIndex(int index);
 }

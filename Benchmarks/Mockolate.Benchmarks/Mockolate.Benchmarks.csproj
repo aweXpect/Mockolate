@@ -15,6 +15,7 @@
 		<PackageReference Include="aweXpect"/>
 		<ProjectReference Include="..\..\Source\Mockolate.SourceGenerators\Mockolate.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
 		<ProjectReference Include="..\..\Source\Mockolate\Mockolate.csproj"/>
+		<ProjectReference Include="..\..\Tests\Mockolate.Internal.Tests\Mockolate.Internal.Tests.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

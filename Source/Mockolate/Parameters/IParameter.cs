@@ -5,6 +5,7 @@ namespace Mockolate.Parameters;
 /// <summary>
 ///     Matches a method parameter against an expectation.
 /// </summary>
+[Obsolete("TODO VAB: Remove")]
 public interface IParameter
 {
 	/// <summary>

@@ -13,12 +13,36 @@ namespace Mockolate.Setup;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethodSetup, IVerifiableMethodSetup
+public abstract class MethodSetup : IInteractiveMethodSetup, IVerifiableMethodSetup
 {
+	/// <summary>
+	///     Base class for method setups.
+	/// </summary>
+	// TODO VAB: Remove
+	protected MethodSetup(IMethodMatch methodMatch)
+	{
+		Name = "TODO";
+		MethodMatch = methodMatch;
+	}
+
+	/// <summary>
+	///     Base class for method setups.
+	/// </summary>
+	protected MethodSetup(string name)
+	{
+		Name = name;
+	}
+
+	/// <summary>
+	///     The name of the method.
+	/// </summary>
+	public string Name { get; }
+
 	/// <summary>
 	///     The method match associated with this method setup.
 	/// </summary>
-	protected IMethodMatch MethodMatch { get; set; } = methodMatch;
+	// TODO VAB: Remove
+	protected IMethodMatch MethodMatch { get; set; } = null!;
 
 	/// <inheritdoc cref="IInteractiveMethodSetup.HasReturnCalls()" />
 	bool IInteractiveMethodSetup.HasReturnCalls()
@@ -63,7 +87,8 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	/// <summary>
 	///     Gets the flag indicating if the base class implementation should be skipped.
 	/// </summary>
-	protected abstract bool? GetSkipBaseClass();
+	// TODO VAB: Remove
+	protected virtual bool? GetSkipBaseClass() => null;
 
 	/// <summary>
 	///     Gets a value indicating whether this setup has return calls configured.
@@ -78,7 +103,11 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="defaultValueGenerator" />.
 	/// </remarks>
-	protected abstract T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator);
+	// TODO VAB: Remove
+	protected virtual T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+	{
+		throw new NotImplementedException();
+	}
 
 	/// <summary>
 	///     Sets an <see langword="ref" /> parameter with the specified name and the initial <paramref name="value" /> and
@@ -88,7 +117,11 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	///     If a setup is configured, the value is generated according to the setup; otherwise, a default value
 	///     is generated using the current <paramref name="behavior" />.
 	/// </remarks>
-	protected abstract T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior);
+	// TODO VAB: Remove
+	protected virtual T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	{
+		throw new NotImplementedException();
+	}
 
 	/// <summary>
 	///     Execute a potentially registered callback.
@@ -98,13 +131,21 @@ public abstract class MethodSetup(IMethodMatch methodMatch) : IInteractiveMethod
 	/// <summary>
 	///     Gets the registered return value.
 	/// </summary>
-	protected abstract TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
-		Func<TResult> defaultValueGenerator);
+	// TODO VAB: Remove
+	protected virtual TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
+	{
+		return defaultValueGenerator();
+	}
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameters" />.
 	/// </summary>
-	protected abstract void TriggerParameterCallbacks(INamedParameterValue[] parameters);
+	// TODO VAB: Remove
+	protected virtual void TriggerParameterCallbacks(INamedParameterValue[] parameters)
+	{
+		
+	}
 
 	/// <summary>
 	///     Determines whether the specified collection of named parameters contains a reference parameter of the given name

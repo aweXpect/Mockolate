@@ -11,6 +11,7 @@ namespace Mockolate.Parameters;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
+[Obsolete("TODO VAB: Remove")]
 public record NamedParameter(string Name, IParameter Parameter)
 {
 	/// <inheritdoc cref="object.ToString()" />
