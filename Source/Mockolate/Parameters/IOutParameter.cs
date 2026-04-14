@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mockolate.Parameters;
 
@@ -10,7 +11,13 @@ public interface IOutParameter<T>
 	/// <summary>
 	///     Retrieves the value to which the <see langword="out" /> parameter should be set.
 	/// </summary>
+	[Obsolete("TODO VAB: Remove")]
 	T GetValue(Func<T> defaultValue);
+
+	/// <summary>
+	///  Tries to get the value to which the <see langword="out" /> parameter should be set.
+	/// </summary>
+	bool TryGetValue([NotNullWhen(true)] out T? value);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to execute for matching parameters.

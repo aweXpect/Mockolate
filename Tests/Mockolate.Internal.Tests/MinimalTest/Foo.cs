@@ -39,14 +39,104 @@ public class Mock
 {
 	public class IFoo : Mockolate.Internal.Tests.MinimalTest.IFoo, ISetupForIFoo
 	{
-		private MockRegistry Registry { get; } = new(MockBehavior.Default);
+		private MockRegistry MockRegistry { get; } = new(MockBehavior.Default);
 		public ISetupForIFoo MockSetup => this;
 		
+		/// <inheritdoc cref="global::Mockolate.Internal.Tests.MinimalTest.IFoo.MyOtherMethod(int, ref int, out bool)" />
+		public string MyOtherMethod(int value, ref int v1, out bool v2)
+		{
+			var refv1 = v1;
+			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, int, int, bool>>("global::Mockolate.Internal.Tests.MinimalTest.IFoo.MyOtherMethod", m => m.Matches("value", value, "v1", refv1, "v2", default));
+			bool hasWrappedResult = false;
+			string wrappedResult = default!;
+			if (this.MockRegistry.Wraps is global::Mockolate.Internal.Tests.MinimalTest.IFoo wraps)
+			{
+				wrappedResult = wraps.MyOtherMethod(value, ref v1, out v2);
+				hasWrappedResult = true;
+			}
+			else
+			{
+				v2 = default!;
+			}
+			if (!hasWrappedResult || methodSetup is null || methodSetup is global::Mockolate.Setup.ReturnMethodSetup<string, int, int, bool>.WithParameterCollection)
+			{
+				if (methodSetup is global::Mockolate.Setup.ReturnMethodSetup<string, int, int, bool>.WithParameterCollection wpc)
+				{
+					if (wpc.Parameter2 is global::Mockolate.Parameters.IRefParameter<int> refParam2)
+					{
+						v1 = refParam2.GetValue(v1);
+					}
+					if (wpc.Parameter3 is not global::Mockolate.Parameters.IOutParameter<bool> outParam3 || !outParam3.TryGetValue(out v2))
+					{
+						v2 = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
+					}
+				}
+				else
+				{
+					v2 = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
+				}
+			}
+			MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, int, bool>("global::Mockolate.Internal.Tests.MinimalTest.IFoo.MyOtherMethod", value, v1, v2));
+			methodSetup?.TriggerCallbacks(value, v1, v2);
+			if (hasWrappedResult && methodSetup is not null)
+			{
+				return wrappedResult;
+			}
+			return methodSetup?.TryGetReturnValue(value, v1, v2, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!);
+		}
+		/// <inheritdoc cref="global::Mockolate.ExampleTests.TestData.IOrderRepository.TryDelete(global::System.Guid, out string?)" />
+		public bool TryDelete(global::System.Guid id, out string? user)
+		{
+			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, Guid, string?>>("global::Mockolate.ExampleTests.TestData.IOrderRepository.TryDelete", m => m.Matches("id", id, "user", default));
+			bool hasWrappedResult = false;
+			bool wrappedResult = default;
+			if (MockRegistry.Wraps is Mockolate.Internal.Tests.MinimalTest.IFoo wraps)
+			{
+				wrappedResult = wraps.TryDelete(id, out user);
+				hasWrappedResult = true;
+			}
+			else
+			{
+				user = default!;
+			}
+
+			if (!hasWrappedResult ||
+			    methodSetup is null ||
+			    methodSetup is ReturnMethodSetup<bool, Guid, string>.WithParameterCollection)
+			{
+				if (methodSetup is ReturnMethodSetup<bool, Guid, string?>.WithParameterCollection wpc)
+				{
+					// Each out parameter resolved independently
+					if (wpc.Parameter2 is not IOutParameter<string?> outParam2 || !outParam2.TryGetValue(out user))
+					{
+						user = MockRegistry.Behavior.DefaultValue.Generate(default(string?)!);
+					}
+				}
+				else
+				{
+					// Not WPC (or null): all out params get defaults
+					user = MockRegistry.Behavior.DefaultValue.Generate(default(string?)!);
+				}
+			}
+
+			MockRegistry.RegisterInteraction(
+				new global::Mockolate.Interactions.MethodInvocation<global::System.Guid, string?>(nameof(TryDelete), id, user));
+			methodSetup?.TriggerCallbacks(id, user);
+
+			if (hasWrappedResult && methodSetup is not null)
+			{
+				return wrappedResult;
+			}
+
+			return methodSetup?.TryGetReturnValue(id, user, out bool returnValue) == true
+				? returnValue
+				: MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
+		}
 		public string MyMethod(int value)
 		{
-			var setup = Registry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, int>>(nameof(MyMethod), m => m.Matches("value", value));
-			Registry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>(nameof(MyMethod), value));
-			if (!(setup?.SkipBaseClass(Registry.Behavior) ?? Registry.Behavior.SkipBaseClass))
+			var setup = MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, int>>(nameof(MyMethod), m => m.Matches("value", value));
+			MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>(nameof(MyMethod), value));
+			if (!(setup?.SkipBaseClass(MockRegistry.Behavior) ?? MockRegistry.Behavior.SkipBaseClass))
 			{
 				//base.MyMethod(value);
 			}
@@ -56,16 +146,16 @@ public class Mock
 			{
 				return returnValue;
 			}
-			return Registry.Behavior.DefaultValue.Generate(default(string)!, [new NamedParameterValue<int>("value", value)]);
+			return MockRegistry.Behavior.DefaultValue.Generate(default(string)!, [new NamedParameterValue<int>("value", value)]);
 		}
 #if NET8_0_OR_GREATER
 		/// <inheritdoc cref="global::System.IO.Abstractions.IPath.Combine(global::System.ReadOnlySpan{string})" />
 		public string Combine(params global::System.ReadOnlySpan<string> paths)
 		{
 			var pathsWrapper = new global::Mockolate.Setup.ReadOnlySpanWrapper<string>(paths);
-			var methodSetup = this.Registry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, global::Mockolate.Setup.ReadOnlySpanWrapper<string>>>("global::System.IO.Abstractions.IPath.Combine", m => m.Matches("paths", pathsWrapper));
-			Registry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<string>>("global::System.IO.Abstractions.IPath.Combine", null));
-			if (this.Registry.Wraps is IFoo wraps)
+			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, global::Mockolate.Setup.ReadOnlySpanWrapper<string>>>("global::System.IO.Abstractions.IPath.Combine", m => m.Matches("paths", pathsWrapper));
+			MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<string>>("global::System.IO.Abstractions.IPath.Combine", null));
+			if (this.MockRegistry.Wraps is IFoo wraps)
 			{
 				var baseResult = wraps.Combine(paths);
 				if (methodSetup is not null)
@@ -79,17 +169,14 @@ public class Mock
 			{
 				return returnValue;
 			}
-			return this.Registry.Behavior.DefaultValue.Generate(default(string)!);
+			return this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!);
 		}
 	#endif
 
-		public string MyOtherMethod(int value, ref int v1, out bool v2)
-			=> throw new NotImplementedException();
-
 		IReturnMethodSetup<string, int> ISetupForIFoo.MyMethod(IParameter<int> value)
 		{
-			var methodSetup = new ReturnMethodSetup<string, int>.WithParameterCollection(Registry, nameof(MyMethod), (IParameterMatch<int>)value);
-			this.Registry.SetupMethod(methodSetup);
+			var methodSetup = new ReturnMethodSetup<string, int>.WithParameterCollection(MockRegistry, nameof(MyMethod), (IParameterMatch<int>)value);
+			this.MockRegistry.SetupMethod(methodSetup);
 			return methodSetup;
 		}
 	}
@@ -219,6 +306,7 @@ public interface IFoo
 {
 	string MyMethod(int value);
 	string MyOtherMethod(int value, ref int v1, out bool v2);
+	bool TryDelete(global::System.Guid id, out string? user);
 #if NET8_0_OR_GREATER
 	string Combine(params global::System.ReadOnlySpan<string> paths);
 #endif

@@ -281,6 +281,20 @@ internal static class Helpers
 		}
 	}
 
+	public static string ToTypeOrWrapper(this Type type)
+	{
+		if (type.SpecialGenericType == SpecialGenericType.Span)
+		{
+			return $"global::Mockolate.Setup.SpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
+		}
+		if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+		{
+			return $"global::Mockolate.Setup.ReadOnlySpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
+		}
+
+		return type.Fullname;
+	}
+
 	extension(MethodParameter parameter)
 	{
 		public string ToNameOrWrapper()

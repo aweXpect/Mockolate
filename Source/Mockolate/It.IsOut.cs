@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -41,6 +42,13 @@ public partial class It
 	{
 		/// <inheritdoc cref="IOutParameter{T}.GetValue(Func{T})" />
 		public override T GetValue(Func<T> defaultValue) => setter();
+		
+		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
+		public override bool TryGetValue([NotNullWhen(true)] out T? value)
+		{
+			value = setter()!;
+			return true;
+		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"It.IsOut<{typeof(T).FormatType()}>({setterExpression})";
@@ -94,6 +102,13 @@ public partial class It
 		/// <inheritdoc cref="IOutParameter{T}.GetValue(Func{T})" />
 		public virtual T GetValue(Func<T> defaultValue)
 			=> defaultValue();
+
+		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
+		public virtual bool TryGetValue([NotNullWhen(true)] out T? value)
+		{
+			value = default;
+			return false;
+		}
 
 		/// <inheritdoc cref="IOutParameter{T}.Do(Action{T})" />
 		public IOutParameter<T> Do(Action<T> callback)
