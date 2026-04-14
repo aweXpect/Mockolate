@@ -1,41 +1,7 @@
 using System.Diagnostics;
-using System.Linq;
-using Mockolate.Internals;
-using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
 
-/// <summary>
-///     An invocation of a method.
-/// </summary>
-[DebuggerDisplay("{ToString()}")]
-#if !DEBUG
-[DebuggerNonUserCode]
-#endif
-public class MethodInvocation(string name, INamedParameterValue[] parameters) : IInteraction, ISettableInteraction
-{
-	private int? _index;
-	/// <summary>
-	///     The name of the method.
-	/// </summary>
-	public string Name { get; } = name;
-
-	/// <summary>
-	///     The named parameters of the method.
-	/// </summary>
-	public INamedParameterValue[] Parameters { get; } = parameters;
-
-	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index => _index.GetValueOrDefault();
-
-	void ISettableInteraction.SetIndex(int value) => _index ??= value;
-
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-		=> $"[{Index}] invoke method {Name.SubstringAfterLast('.')}({string.Join(", ", Parameters.Select(p => p.ToString()))})";
-}
-
-/* TODO VAB: Replace with this
 /// <summary>
 ///     An invocation of a method without parameters.
 /// </summary>
@@ -46,6 +12,7 @@ public class MethodInvocation(string name, INamedParameterValue[] parameters) : 
 public class MethodInvocation(string name) : IInteraction, ISettableInteraction
 {
 	private int? _index;
+
 	/// <summary>
 	///     The name of the method.
 	/// </summary>
@@ -60,10 +27,9 @@ public class MethodInvocation(string name) : IInteraction, ISettableInteraction
 	public override string ToString()
 		=> $"[{Index}] invoke method {Name}()";
 }
-*/
 
 /// <summary>
-///     An invocation of a method with a single <paramref name="parameter"/>.
+///     An invocation of a method with a single <paramref name="parameter" />.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 #if !DEBUG
@@ -72,6 +38,7 @@ public class MethodInvocation(string name) : IInteraction, ISettableInteraction
 public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISettableInteraction
 {
 	private int? _index;
+
 	/// <summary>
 	///     The name of the method.
 	/// </summary>
@@ -93,7 +60,7 @@ public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISe
 }
 
 /// <summary>
-///     An invocation of a method with two parameters <paramref name="parameter1"/> and <paramref name="parameter2"/>.
+///     An invocation of a method with two parameters <paramref name="parameter1" /> and <paramref name="parameter2" />.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 #if !DEBUG
@@ -102,6 +69,7 @@ public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISe
 public class MethodInvocation<T1, T2>(string name, T1 parameter1, T2 parameter2) : IInteraction, ISettableInteraction
 {
 	private int? _index;
+
 	/// <summary>
 	///     The name of the method.
 	/// </summary>
@@ -127,17 +95,19 @@ public class MethodInvocation<T1, T2>(string name, T1 parameter1, T2 parameter2)
 		=> $"[{Index}] invoke method {Name}({Parameter1}, {Parameter2})";
 }
 
-
 /// <summary>
-///     An invocation of a method with three parameters <paramref name="parameter1"/>, <paramref name="parameter2"/> and <paramref name="parameter3"/>.
+///     An invocation of a method with three parameters <paramref name="parameter1" />, <paramref name="parameter2" /> and
+///     <paramref name="parameter3" />.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class MethodInvocation<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3) : IInteraction, ISettableInteraction
+public class MethodInvocation<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
+	: IInteraction, ISettableInteraction
 {
 	private int? _index;
+
 	/// <summary>
 	///     The name of the method.
 	/// </summary>
@@ -169,15 +139,18 @@ public class MethodInvocation<T1, T2, T3>(string name, T1 parameter1, T2 paramet
 }
 
 /// <summary>
-///     An invocation of a method with four parameters <paramref name="parameter1"/>, <paramref name="parameter2"/>, <paramref name="parameter3"/> and <paramref name="parameter4"/>.
+///     An invocation of a method with four parameters <paramref name="parameter1" />, <paramref name="parameter2" />,
+///     <paramref name="parameter3" /> and <paramref name="parameter4" />.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class MethodInvocation<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) : IInteraction, ISettableInteraction
+public class MethodInvocation<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
+	: IInteraction, ISettableInteraction
 {
 	private int? _index;
+
 	/// <summary>
 	///     The name of the method.
 	/// </summary>

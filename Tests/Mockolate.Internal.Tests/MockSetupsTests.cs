@@ -35,7 +35,7 @@ public partial class MockSetupsTests
 
 		for (int i = 0; i < methodCount; i++)
 		{
-			mock.MockRegistry.SetupMethod(new ReturnMethodSetup<int>($"my.method{i}"));
+			mock.MockRegistry.SetupMethod(new ReturnMethodSetup<int>.WithParameterCollection(MockBehavior.Default, $"my.method{i}"));
 		}
 
 		for (int i = 0; i < propertyCount; i++)

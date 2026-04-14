@@ -53,7 +53,7 @@ public sealed class InteractionIndexTests
 	[Fact]
 	public async Task MethodInvocation_SetIndexTwice_ShouldRemainUnchanged()
 	{
-		MethodInvocation interaction = new("SomeMethod", []);
+		MethodInvocation interaction = new("SomeMethod");
 		((ISettableInteraction)interaction).SetIndex(1);
 
 		((ISettableInteraction)interaction).SetIndex(2);

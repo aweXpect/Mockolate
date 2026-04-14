@@ -24,21 +24,22 @@ public readonly struct MethodParameterMatch(string methodName, NamedParameter[] 
 	/// <inheritdoc cref="IMethodMatch.Matches(MethodInvocation)" />
 	public bool Matches(MethodInvocation methodInvocation)
 	{
-		if (!methodInvocation.Name.Equals(methodName) ||
-		    methodInvocation.Parameters.Length != parameters.Length)
-		{
-			return false;
-		}
-
-		for (int i = 0; i < parameters.Length; i++)
-		{
-			if (!parameters[i].Matches(methodInvocation.Parameters[i]))
-			{
-				return false;
-			}
-		}
-
-		return true;
+		throw new NotImplementedException("TODO: VAB");
+		//if (!methodInvocation.Name.Equals(methodName) ||
+		//    methodInvocation.Parameters.Length != parameters.Length)
+		//{
+		//	return false;
+		//}
+//
+		//for (int i = 0; i < parameters.Length; i++)
+		//{
+		//	if (!parameters[i].Matches(methodInvocation.Parameters[i]))
+		//	{
+		//		return false;
+		//	}
+		//}
+//
+		//return true;
 	}
 
 	/// <inheritdoc cref="ITypedMethodMatch.MatchesTyped{T1}" />

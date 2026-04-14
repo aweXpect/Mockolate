@@ -14,30 +14,33 @@ namespace Mockolate.Setup;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class VoidMethodSetup(string name)
-	: MethodSetup(new MethodParameterMatch(name, [])),
+public abstract class VoidMethodSetup : MethodSetup,
 		IVoidMethodSetupCallbackBuilder, IVoidMethodSetupReturnBuilder
 {
-	private readonly List<Callback<Action<int>>> _callbacks = [];
-	private readonly List<Callback<Action<int>>> _returnCallbacks = [];
-	private Callback? _currentCallback;
-	private int _currentCallbacksIndex;
-	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex;
+	private readonly MockRegistry _mockRegistry;
+	private Callbacks<Action<int>>? _callbacks = [];
+	private Callbacks<Action<int>>? _returnCallbacks = [];
 	private bool? _skipBaseClass;
 
+	/// <inheritdoc cref="VoidMethodSetup{TReturn, T1}" />
+	protected VoidMethodSetup(MockRegistry mockRegistry, string name) : base(name)
+	{
+		_mockRegistry = mockRegistry;
+	}
+	
 	/// <inheritdoc cref="IVoidMethodSetup.SkippingBaseClass(bool)" />
-	public IVoidMethodSetup SkippingBaseClass(bool skipBaseClass = true)
+	IVoidMethodSetup IVoidMethodSetup.SkippingBaseClass(bool skipBaseClass)
 	{
 		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Do(Action)" />
-	public IVoidMethodSetupCallbackBuilder Do(Action callback)
+	IVoidMethodSetupCallbackBuilder IVoidMethodSetup.Do(Action callback)
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -49,19 +52,21 @@ public class VoidMethodSetup(string name)
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Do(Action{int})" />
-	public IVoidMethodSetupCallbackBuilder Do(Action<int> callback)
+	IVoidMethodSetupCallbackBuilder IVoidMethodSetup.Do(Action<int> callback)
 	{
 		Callback<Action<int>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.DoesNotThrow()" />
-	public IVoidMethodSetup DoesNotThrow()
+	IVoidMethodSetup IVoidMethodSetup.DoesNotThrow()
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -72,11 +77,11 @@ public class VoidMethodSetup(string name)
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Throws{TException}()" />
-	public IVoidMethodSetupReturnBuilder Throws<TException>()
-		where TException : Exception, new()
+	IVoidMethodSetupReturnBuilder IVoidMethodSetup.Throws<TException>()
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -88,10 +93,11 @@ public class VoidMethodSetup(string name)
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Throws(Exception)" />
-	public IVoidMethodSetupReturnBuilder Throws(Exception exception)
+	IVoidMethodSetupReturnBuilder IVoidMethodSetup.Throws(Exception exception)
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -103,10 +109,11 @@ public class VoidMethodSetup(string name)
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup.Throws(Func{Exception})" />
-	public IVoidMethodSetupReturnBuilder Throws(Func<Exception> callback)
+	IVoidMethodSetupReturnBuilder IVoidMethodSetup.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -120,74 +127,93 @@ public class VoidMethodSetup(string name)
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder.InParallel()" />
 	IVoidMethodSetupCallbackBuilder IVoidMethodSetupCallbackBuilder.InParallel()
 	{
-		_currentCallback?.InParallel();
+		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" />
 	IVoidMethodSetupCallbackWhenBuilder IVoidMethodSetupCallbackBuilder.When(Func<int, bool> predicate)
 	{
-		_currentCallback?.When(predicate);
+		_callbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder IVoidMethodSetupCallbackWhenBuilder.For(int times)
 	{
-		_currentCallback?.For(times);
+		_callbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder.Only(int)" />
 	IVoidMethodSetup IVoidMethodSetupCallbackWhenBuilder.Only(int times)
 	{
-		_currentCallback?.Only(times);
+		_callbacks?.Active?.Only(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder.When(Func{int, bool})" />
 	IVoidMethodSetupReturnWhenBuilder IVoidMethodSetupReturnBuilder.When(Func<int, bool> predicate)
 	{
-		_currentReturnCallback?.When(predicate);
+		_returnCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder IVoidMethodSetupReturnWhenBuilder.For(int times)
 	{
-		_currentReturnCallback?.For(times);
+		_returnCallbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder.Only(int)" />
 	IVoidMethodSetup IVoidMethodSetupReturnWhenBuilder.Only(int times)
 	{
-		_currentReturnCallback?.Only(times);
+		_returnCallbacks?.Active?.Only(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
-	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be skipped.
+	/// </summary>
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
+
+	/// <summary>
+	///     Check if the setup matches the specified parameters.
+	/// </summary>
+	public abstract bool Matches();
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup without parameters.
+	/// </summary>
+	public void TriggerCallbacks()
 	{
 		bool wasInvoked = false;
-		int currentCallbacksIndex = _currentCallbacksIndex;
-		for (int i = 0; i < _callbacks.Count; i++)
+		if (_callbacks is not null)
 		{
-			Callback<Action<int>> callback =
-				_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-			if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
+			int currentCallbacksIndex = _callbacks.CurrentIndex;
+			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				wasInvoked = true;
+				Callback<Action<int>> callback =
+					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				{
+					wasInvoked = true;
+				}
 			}
 		}
 
-		foreach (Callback<Action<int>> _ in _returnCallbacks)
+		if (_returnCallbacks is not null)
 		{
-			Callback<Action<int>> returnCallback =
-				_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-			if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
+			foreach (Callback<Action<int>> _ in _returnCallbacks)
 			{
-				return;
+				Callback<Action<int>> returnCallback =
+					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
+				{
+					return;
+				}
 			}
 		}
 
@@ -197,33 +223,28 @@ public class VoidMethodSetup(string name)
 			@delegate(invocationCount);
 		}
 	}
-
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
-		Func<TResult> defaultValueGenerator)
-		where TResult : default
-		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
-	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
+	
+	/// <summary>
+	///     Setup for a method with three parameters matching against individual <see cref="NamedParameter" />.
+	/// </summary>
+	public class WithParameterCollection : VoidMethodSetup
 	{
-		// No parameters to trigger
+		/// <inheritdoc cref="VoidMethodSetup" />
+		public WithParameterCollection(
+			MockRegistry mockRegistry,
+			string name)
+			: base(mockRegistry, name)
+		{
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.Matches(string, T1, string, T2, string, T3)" />
+		public override bool Matches()
+			=> true;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}()";
 	}
-
-	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
-		=> _skipBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
-	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
-		=> defaultValueGenerator();
-
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
-		=> value;
-
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"void {name.SubstringAfterLast('.')}()";
 }
 
 /// <summary>
@@ -232,48 +253,34 @@ public class VoidMethodSetup(string name)
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class VoidMethodSetup<T1> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1>, IVoidMethodSetupReturnBuilder<T1>, IVoidMethodSetupParameterIgnorer<T1>
+public abstract class VoidMethodSetup<T1> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1>, IVoidMethodSetupReturnBuilder<T1>
 {
-	private readonly List<Callback<Action<int, T1>>> _callbacks = [];
-	private readonly NamedParameter? _match1;
-	private IParameters? _matches;
-	private readonly string _name;
-	private readonly List<Callback<Action<int, T1>>> _returnCallbacks = [];
-	private Callback? _currentCallback;
-	private int _currentCallbacksIndex;
-	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex;
+	private readonly MockRegistry _mockRegistry;
+	private Callbacks<Action<int, T1>>? _callbacks = [];
+	private Callbacks<Action<int, T1>>? _returnCallbacks = [];
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1}" />
-	public VoidMethodSetup(string name, NamedParameter match1)
-		: base(new MethodParameterMatch(name, [match1,]))
+	public VoidMethodSetup(MockRegistry mockRegistry, string name)
+		: base(name)
 	{
-		_name = name;
-		_match1 = match1;
-	}
-
-	/// <inheritdoc cref="VoidMethodSetup{T1}" />
-	public VoidMethodSetup(string name, IParameters matches)
-		: base(new MethodParametersMatch(name, matches))
-	{
-		_name = name;
-		_matches = matches;
+		_mockRegistry = mockRegistry;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.SkippingBaseClass(bool)" />
-	public IVoidMethodSetup<T1> SkippingBaseClass(bool skipBaseClass = true)
+	IVoidMethodSetup<T1> IVoidMethodSetup<T1>.SkippingBaseClass(bool skipBaseClass)
 	{
 		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action)" />
-	public IVoidMethodSetupCallbackBuilder<T1> Do(Action callback)
+	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -285,10 +292,11 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{T1})" />
-	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback)
+	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -300,19 +308,21 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{int, T1})" />
-	public IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback)
+	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.DoesNotThrow()" />
-	public IVoidMethodSetup<T1> DoesNotThrow()
+	IVoidMethodSetup<T1> IVoidMethodSetup<T1>.DoesNotThrow()
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -323,11 +333,11 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws{TException}()" />
-	public IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
-		where TException : Exception, new()
+	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws<TException>()
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -339,10 +349,11 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Exception)" />
-	public IVoidMethodSetupReturnBuilder<T1> Throws(Exception exception)
+	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -354,10 +365,11 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Func{Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -369,10 +381,11 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Func{T1, Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1> Throws(Func<T1, Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws(Func<T1, Exception> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -386,82 +399,91 @@ public class VoidMethodSetup<T1> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1}.InParallel()" />
 	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetupCallbackBuilder<T1>.InParallel()
 	{
-		_currentCallback?.InParallel();
+		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1}.When(Func{int, bool})" />
 	IVoidMethodSetupCallbackWhenBuilder<T1> IVoidMethodSetupCallbackBuilder<T1>.When(Func<int, bool> predicate)
 	{
-		_currentCallback?.When(predicate);
+		_callbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1}.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder<T1> IVoidMethodSetupCallbackWhenBuilder<T1>.For(int times)
 	{
-		_currentCallback?.For(times);
+		_callbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1}.Only(int)" />
 	IVoidMethodSetup<T1> IVoidMethodSetupCallbackWhenBuilder<T1>.Only(int times)
 	{
-		_currentCallback?.Only(times);
+		_callbacks?.Active?.Only(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1}.When(Func{int, bool})" />
 	IVoidMethodSetupReturnWhenBuilder<T1> IVoidMethodSetupReturnBuilder<T1>.When(Func<int, bool> predicate)
 	{
-		_currentReturnCallback?.When(predicate);
+		_returnCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1> IVoidMethodSetupReturnWhenBuilder<T1>.For(int times)
 	{
-		_currentReturnCallback?.For(times);
+		_returnCallbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1}.Only(int)" />
 	IVoidMethodSetup<T1> IVoidMethodSetupReturnWhenBuilder<T1>.Only(int times)
 	{
-		_currentReturnCallback?.Only(times);
+		_returnCallbacks?.Active?.Only(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1}.AnyParameters()" />
-	public IVoidMethodSetup<T1> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
-		return this;
-	}
+	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be skipped.
+	/// </summary>
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
-	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter value <paramref name="p1Value" /> for the parameter with the
+	///     specified name <paramref name="p1Name" />.
+	/// </summary>
+	public abstract bool Matches(string p1Name, T1 p1Value);
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameter1" />.
+	/// </summary>
+	public virtual void TriggerCallbacks(T1 parameter1)
 	{
-		if (invocation.Parameters[0].TryGetValue(out T1 p1))
+		if (_callbacks is not null)
 		{
 			bool wasInvoked = false;
-			int currentCallbacksIndex = _currentCallbacksIndex;
+			int currentCallbacksIndex = _callbacks.CurrentIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
 				Callback<Action<int, T1>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
 
+		if (_returnCallbacks is not null)
+		{
 			foreach (Callback<Action<int, T1>> _ in _returnCallbacks)
 			{
 				Callback<Action<int, T1>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
+					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
 				{
 					return;
 				}
@@ -471,51 +493,77 @@ public class VoidMethodSetup<T1> : MethodSetup,
 		[DebuggerNonUserCode]
 		void Callback(int invocationCount, Action<int, T1> @delegate)
 		{
-			@delegate(invocationCount, p1);
+			@delegate(invocationCount, parameter1);
 		}
 	}
-
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
-		Func<TResult> defaultValueGenerator)
-		where TResult : default
-		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
-	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
-		=> TriggerCallbacks([_match1,], parameters);
-
-	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
-		=> _skipBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
-	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+	/// <summary>
+	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
+	/// </summary>
+	public class WithParameters : VoidMethodSetup<T1>
 	{
-		if (HasOutParameter([_match1,], parameterName, out IOutParameter<T>? outParameter))
+		/// <inheritdoc cref="VoidMethodSetup{T1}" />
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+			: base(mockRegistry, name)
 		{
-			return outParameter.GetValue(defaultValueGenerator);
+			Parameters = parameters;
 		}
 
-		return defaultValueGenerator();
+		/// <summary>
+		///     The parameters match for the method.
+		/// </summary>
+		private IParameters Parameters { get; }
+
+		/// <inheritdoc cref="VoidMethodSetup{T1}.Matches(string, T1)" />
+		public override bool Matches(string p1Name, T1 p1Value)
+			=> Parameters.Matches([new NamedParameterValue<T1>(p1Name, p1Value),]);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameters})";
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	/// <summary>
+	///     Setup for a method with one parameter matching against individual <see cref="IParameterMatch{T}" />.
+	/// </summary>
+	public class WithParameterCollection : VoidMethodSetup<T1>,
+		IVoidMethodSetupParameterIgnorer<T1>
 	{
-		if (HasRefParameter([_match1,], parameterName, out IRefParameter<T>? refParameter))
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1}" />
+		public WithParameterCollection(MockRegistry mockRegistry, string name, IParameterMatch<T1> parameter1)
+			: base(mockRegistry, name)
 		{
-			return refParameter.GetValue(value);
+			Parameter1 = parameter1;
 		}
 
-		return value;
-	}
+		/// <summary>
+		///     The single parameter of the method.
+		/// </summary>
+		public IParameterMatch<T1> Parameter1 { get; }
 
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-		=> _matches is not null
-			? $"void {_name.SubstringAfterLast('.')}({_matches})"
-			: $"void {_name.SubstringAfterLast('.')}({_match1})";
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1}.AnyParameters()" />
+		IVoidMethodSetup<T1> IVoidMethodSetupParameterIgnorer<T1>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1}.Matches(string, T1)" />
+		public override bool Matches(string p1Name, T1 p1Value)
+			=> _matchAnyParameters || Parameter1.Matches(p1Value);
+
+		/// <inheritdoc cref="VoidMethodSetup{T1}.TriggerCallbacks(T1)" />
+		public override void TriggerCallbacks(T1 parameter1)
+		{
+			Parameter1.InvokeCallbacks(parameter1);
+			base.TriggerCallbacks(parameter1);
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameter1})";
+	}
 }
 
 /// <summary>
@@ -525,50 +573,34 @@ public class VoidMethodSetup<T1> : MethodSetup,
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class VoidMethodSetup<T1, T2> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>, IVoidMethodSetupParameterIgnorer<T1, T2>
+public abstract  class VoidMethodSetup<T1, T2> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>
 {
-	private readonly List<Callback<Action<int, T1, T2>>> _callbacks = [];
-	private readonly NamedParameter? _match1;
-	private readonly NamedParameter? _match2;
-	private IParameters? _matches;
-	private readonly string _name;
-	private readonly List<Callback<Action<int, T1, T2>>> _returnCallbacks = [];
-	private Callback? _currentCallback;
-	private int _currentCallbacksIndex;
-	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex;
+	private readonly MockRegistry _mockRegistry;
+	private Callbacks<Action<int, T1, T2>>? _callbacks = [];
+	private Callbacks<Action<int, T1, T2>>? _returnCallbacks = [];
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
-	public VoidMethodSetup(string name, NamedParameter match1, NamedParameter match2)
-		: base(new MethodParameterMatch(name, [match1, match2,]))
+	public VoidMethodSetup(MockRegistry mockRegistry, string name)
+		: base(name)
 	{
-		_name = name;
-		_match1 = match1;
-		_match2 = match2;
-	}
-
-	/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
-	public VoidMethodSetup(string name, IParameters matches)
-		: base(new MethodParametersMatch(name, matches))
-	{
-		_name = name;
-		_matches = matches;
+		_mockRegistry = mockRegistry;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.SkippingBaseClass(bool)" />
-	public IVoidMethodSetup<T1, T2> SkippingBaseClass(bool skipBaseClass = true)
+	IVoidMethodSetup<T1, T2> IVoidMethodSetup<T1, T2>.SkippingBaseClass(bool skipBaseClass)
 	{
 		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action)" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -580,10 +612,11 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{T1, T2})" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -595,19 +628,21 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{int, T1, T2})" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.DoesNotThrow()" />
-	public IVoidMethodSetup<T1, T2> DoesNotThrow()
+	IVoidMethodSetup<T1, T2> IVoidMethodSetup<T1, T2>.DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -618,11 +653,11 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws{TException}()" />
-	public IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
-		where TException : Exception, new()
+	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws<TException>()
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -634,10 +669,11 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Exception)" />
-	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Exception exception)
+	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -649,10 +685,11 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Func{Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -664,10 +701,11 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Func{T1, T2, Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<T1, T2, Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws(Func<T1, T2, Exception> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -681,83 +719,91 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2}.InParallel()" />
 	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetupCallbackBuilder<T1, T2>.InParallel()
 	{
-		_currentCallback?.InParallel();
+		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2}.When(Func{int, bool})" />
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2> IVoidMethodSetupCallbackBuilder<T1, T2>.When(Func<int, bool> predicate)
 	{
-		_currentCallback?.When(predicate);
+		_callbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2}.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2> IVoidMethodSetupCallbackWhenBuilder<T1, T2>.For(int times)
 	{
-		_currentCallback?.For(times);
+		_callbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2}.Only(int)" />
 	IVoidMethodSetup<T1, T2> IVoidMethodSetupCallbackWhenBuilder<T1, T2>.Only(int times)
 	{
-		_currentCallback?.Only(times);
+		_callbacks?.Active?.Only(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnBuilder{T1, T2}.When(Func{int, bool})" />
 	IVoidMethodSetupReturnWhenBuilder<T1, T2> IVoidMethodSetupReturnBuilder<T1, T2>.When(Func<int, bool> predicate)
 	{
-		_currentReturnCallback?.When(predicate);
+		_returnCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1, T2> IVoidMethodSetupReturnWhenBuilder<T1, T2>.For(int times)
 	{
-		_currentReturnCallback?.For(times);
+		_returnCallbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2}.Only(int)" />
 	IVoidMethodSetup<T1, T2> IVoidMethodSetupReturnWhenBuilder<T1, T2>.Only(int times)
 	{
-		_currentReturnCallback?.Only(times);
+		_returnCallbacks?.Active?.Only(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2}.AnyParameters()" />
-	public IVoidMethodSetup<T1, T2> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
-		return this;
-	}
+	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be skipped.
+	/// </summary>
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
-	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter values <paramref name="p1Value" /> and
+	///     <paramref name="p2Value" />.
+	/// </summary>
+	public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value);
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameter1" />.
+	/// </summary>
+	public virtual void TriggerCallbacks(T1 parameter1, T2 parameter2)
 	{
-		if (invocation.Parameters[0].TryGetValue(out T1 p1) &&
-		    invocation.Parameters[1].TryGetValue(out T2 p2))
+		if (_callbacks is not null)
 		{
 			bool wasInvoked = false;
-			int currentCallbacksIndex = _currentCallbacksIndex;
+			int currentCallbacksIndex = _callbacks.CurrentIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
 				Callback<Action<int, T1, T2>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
 
+		if (_returnCallbacks is not null)
+		{
 			foreach (Callback<Action<int, T1, T2>> _ in _returnCallbacks)
 			{
 				Callback<Action<int, T1, T2>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
+					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
 				{
 					return;
 				}
@@ -767,51 +813,90 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 		[DebuggerNonUserCode]
 		void Callback(int invocationCount, Action<int, T1, T2> @delegate)
 		{
-			@delegate(invocationCount, p1, p2);
+			@delegate(invocationCount, parameter1, parameter2);
 		}
 	}
-
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
-		Func<TResult> defaultValueGenerator)
-		where TResult : default
-		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
-	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
-		=> TriggerCallbacks([_match1, _match2,], parameters);
-
-	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
-		=> _skipBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
-	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+	/// <summary>
+	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
+	/// </summary>
+	public class WithParameters : VoidMethodSetup<T1, T2>
 	{
-		if (HasOutParameter([_match1, _match2,], parameterName, out IOutParameter<T>? outParameter))
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+			: base(mockRegistry, name)
 		{
-			return outParameter.GetValue(defaultValueGenerator);
+			Parameters = parameters;
 		}
 
-		return defaultValueGenerator();
+		/// <summary>
+		///     The parameters match for the method.
+		/// </summary>
+		private IParameters Parameters { get; }
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2}.Matches(string, T1, string, T2)" />
+		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value)
+			=> Parameters.Matches([
+				new NamedParameterValue<T1>(p1Name, p1Value),
+				new NamedParameterValue<T2>(p2Name, p2Value)]);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameters})";
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	/// <summary>
+	///     Setup for a method with one parameter matching against individual <see cref="IParameterMatch{T}" />.
+	/// </summary>
+	public class WithParameterCollection : VoidMethodSetup<T1, T2>,
+		IVoidMethodSetupParameterIgnorer<T1, T2>
 	{
-		if (HasRefParameter([_match1, _match2,], parameterName, out IRefParameter<T>? refParameter))
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
+		public WithParameterCollection(MockRegistry mockRegistry, string name,
+			IParameterMatch<T1> parameter1,
+			IParameterMatch<T2> parameter2)
+			: base(mockRegistry, name)
 		{
-			return refParameter.GetValue(value);
+			Parameter1 = parameter1;
+			Parameter2 = parameter2;
 		}
 
-		return value;
-	}
+		/// <summary>
+		///     The first parameter of the method.
+		/// </summary>
+		public IParameterMatch<T1> Parameter1 { get; }
 
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-		=> _matches is not null
-			? $"void {_name.SubstringAfterLast('.')}({_matches})"
-			: $"void {_name.SubstringAfterLast('.')}({_match1}, {_match2})";
+		/// <summary>
+		///     The second parameter of the method.
+		/// </summary>
+		public IParameterMatch<T2> Parameter2 { get; }
+
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2}.AnyParameters()" />
+		IVoidMethodSetup<T1, T2> IVoidMethodSetupParameterIgnorer<T1, T2>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2}.Matches(string, T1, string, T2)" />
+		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value)
+			=> _matchAnyParameters || (
+				Parameter1.Matches(p1Value) &&
+				Parameter2.Matches(p2Value));
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2}.TriggerCallbacks(T1, T2)" />
+		public override void TriggerCallbacks(T1 parameter1, T2 parameter2)
+		{
+			Parameter1.InvokeCallbacks(parameter1);
+			Parameter2.InvokeCallbacks(parameter2);
+			base.TriggerCallbacks(parameter1, parameter2);
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameter1}, {Parameter2})";
+	}
 }
 
 /// <summary>
@@ -821,56 +906,34 @@ public class VoidMethodSetup<T1, T2> : MethodSetup,
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3>, IVoidMethodSetupReturnBuilder<T1, T2, T3>, IVoidMethodSetupParameterIgnorer<T1, T2, T3>
+public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3>, IVoidMethodSetupReturnBuilder<T1, T2, T3>
 {
-	private readonly List<Callback<Action<int, T1, T2, T3>>> _callbacks = [];
-	private readonly NamedParameter? _match1;
-	private readonly NamedParameter? _match2;
-	private readonly NamedParameter? _match3;
-	private IParameters? _matches;
-	private readonly string _name;
-	private readonly List<Callback<Action<int, T1, T2, T3>>> _returnCallbacks = [];
-	private Callback? _currentCallback;
-	private int _currentCallbacksIndex;
-	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex;
+	private readonly MockRegistry _mockRegistry;
+	private Callbacks<Action<int, T1, T2, T3>>? _callbacks = [];
+	private Callbacks<Action<int, T1, T2, T3>>? _returnCallbacks = [];
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
-	public VoidMethodSetup(
-		string name,
-		NamedParameter match1,
-		NamedParameter match2,
-		NamedParameter match3)
-		: base(new MethodParameterMatch(name, [match1, match2, match3,]))
+	public VoidMethodSetup(MockRegistry mockRegistry, string name)
+		: base(name)
 	{
-		_name = name;
-		_match1 = match1;
-		_match2 = match2;
-		_match3 = match3;
-	}
-
-	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
-	public VoidMethodSetup(string name, IParameters matches)
-		: base(new MethodParametersMatch(name, matches))
-	{
-		_name = name;
-		_matches = matches;
+		_mockRegistry = mockRegistry;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.SkippingBaseClass(bool)" />
-	public IVoidMethodSetup<T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true)
+	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.SkippingBaseClass(bool skipBaseClass)
 	{
 		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action)" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -882,10 +945,11 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{T1, T2, T3})" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -897,19 +961,21 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action<int, T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.DoesNotThrow()" />
-	public IVoidMethodSetup<T1, T2, T3> DoesNotThrow()
+	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -920,11 +986,11 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws{TException}()" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
-		where TException : Exception, new()
+	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws<TException>()
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -936,10 +1002,11 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Exception)" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Exception exception)
+	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -951,10 +1018,11 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Func{Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -966,10 +1034,11 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws(Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -983,7 +1052,7 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3}.InParallel()" />
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.InParallel()
 	{
-		_currentCallback?.InParallel();
+		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
@@ -991,21 +1060,21 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.When(
 		Func<int, bool> predicate)
 	{
-		_currentCallback?.When(predicate);
+		_callbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2, T3}.For(int)" />
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>.For(int times)
 	{
-		_currentCallback?.For(times);
+		_callbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2, T3}.Only(int)" />
 	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>.Only(int times)
 	{
-		_currentCallback?.Only(times);
+		_callbacks?.Active?.Only(times);
 		return this;
 	}
 
@@ -1013,56 +1082,63 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> IVoidMethodSetupReturnBuilder<T1, T2, T3>.When(
 		Func<int, bool> predicate)
 	{
-		_currentReturnCallback?.When(predicate);
+		_returnCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>.For(int times)
 	{
-		_currentReturnCallback?.For(times);
+		_returnCallbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3}.Only(int)" />
 	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>.Only(int times)
 	{
-		_currentReturnCallback?.Only(times);
+		_returnCallbacks?.Active?.Only(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3}.AnyParameters()" />
-	public IVoidMethodSetup<T1, T2, T3> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
-		return this;
-	}
+	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be skipped.
+	/// </summary>
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
-	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter values <paramref name="p1Value" />,
+	///     <paramref name="p2Value" /> and <paramref name="p3Value" />.
+	/// </summary>
+	public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value);
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameter1" />.
+	/// </summary>
+	public virtual void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3)
 	{
-		if (invocation.Parameters[0].TryGetValue(out T1 p1) &&
-		    invocation.Parameters[1].TryGetValue(out T2 p2) &&
-		    invocation.Parameters[2].TryGetValue(out T3 p3))
+		if (_callbacks is not null)
 		{
 			bool wasInvoked = false;
-			int currentCallbacksIndex = _currentCallbacksIndex;
+			int currentCallbacksIndex = _callbacks.CurrentIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
 				Callback<Action<int, T1, T2, T3>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
 
+		if (_returnCallbacks is not null)
+		{
 			foreach (Callback<Action<int, T1, T2, T3>> _ in _returnCallbacks)
 			{
 				Callback<Action<int, T1, T2, T3>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
+					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
 				{
 					return;
 				}
@@ -1072,51 +1148,98 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		[DebuggerNonUserCode]
 		void Callback(int invocationCount, Action<int, T1, T2, T3> @delegate)
 		{
-			@delegate(invocationCount, p1, p2, p3);
+			@delegate(invocationCount, parameter1, parameter2, parameter3);
 		}
 	}
-
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
-		Func<TResult> defaultValueGenerator)
-		where TResult : default
-		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
-	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
-		=> TriggerCallbacks([_match1, _match2, _match3,], parameters);
-
-	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
-		=> _skipBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
-	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+	/// <summary>
+	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
+	/// </summary>
+	public class WithParameters : VoidMethodSetup<T1, T2, T3>
 	{
-		if (HasOutParameter([_match1, _match2, _match3,], parameterName, out IOutParameter<T>? outParameter))
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+			: base(mockRegistry, name)
 		{
-			return outParameter.GetValue(defaultValueGenerator);
+			Parameters = parameters;
 		}
 
-		return defaultValueGenerator();
+		/// <summary>
+		///     The parameters match for the method.
+		/// </summary>
+		private IParameters Parameters { get; }
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}.Matches(string, T1, string, T2, string, T3)" />
+		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value)
+			=> Parameters.Matches([
+				new NamedParameterValue<T1>(p1Name, p1Value),
+				new NamedParameterValue<T2>(p2Name, p2Value)]);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameters})";
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	/// <summary>
+	///     Setup for a method with one parameter matching against individual <see cref="IParameterMatch{T}" />.
+	/// </summary>
+	public class WithParameterCollection : VoidMethodSetup<T1, T2, T3>,
+		IVoidMethodSetupParameterIgnorer<T1, T2, T3>
 	{
-		if (HasRefParameter([_match1, _match2, _match3,], parameterName, out IRefParameter<T>? refParameter))
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
+		public WithParameterCollection(MockRegistry mockRegistry, string name,
+			IParameterMatch<T1> parameter1,
+			IParameterMatch<T2> parameter2,
+			IParameterMatch<T3> parameter3)
+			: base(mockRegistry, name)
 		{
-			return refParameter.GetValue(value);
+			Parameter1 = parameter1;
+			Parameter2 = parameter2;
+			Parameter3 = parameter3;
 		}
 
-		return value;
-	}
+		/// <summary>
+		///     The first parameter of the method.
+		/// </summary>
+		public IParameterMatch<T1> Parameter1 { get; }
 
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-		=> _matches is not null
-			? $"void {_name.SubstringAfterLast('.')}({_matches})"
-			: $"void {_name.SubstringAfterLast('.')}({_match1}, {_match2}, {_match3})";
+		/// <summary>
+		///     The second parameter of the method.
+		/// </summary>
+		public IParameterMatch<T2> Parameter2 { get; }
+
+		/// <summary>
+		///     The third parameter of the method.
+		/// </summary>
+		public IParameterMatch<T3> Parameter3 { get; }
+
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3}.AnyParameters()" />
+		IVoidMethodSetup<T1, T2, T3> IVoidMethodSetupParameterIgnorer<T1, T2, T3>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}.Matches(string, T1, string, T2, string, T3)" />
+		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value)
+			=> _matchAnyParameters || (
+				Parameter1.Matches(p1Value) &&
+				Parameter2.Matches(p2Value));
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}.TriggerCallbacks(T1, T2, T3)" />
+		public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3)
+		{
+			Parameter1.InvokeCallbacks(parameter1);
+			Parameter2.InvokeCallbacks(parameter2);
+			Parameter3.InvokeCallbacks(parameter3);
+			base.TriggerCallbacks(parameter1, parameter2, parameter3);
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameter1}, {Parameter2})";
+	}
 }
 
 /// <summary>
@@ -1126,59 +1249,34 @@ public class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>
+public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>
 {
-	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _callbacks = [];
-	private readonly NamedParameter? _match1;
-	private readonly NamedParameter? _match2;
-	private readonly NamedParameter? _match3;
-	private readonly NamedParameter? _match4;
-	private IParameters? _matches;
-	private readonly string _name;
-	private readonly List<Callback<Action<int, T1, T2, T3, T4>>> _returnCallbacks = [];
-	private Callback? _currentCallback;
-	private int _currentCallbacksIndex;
-	private Callback? _currentReturnCallback;
-	private int _currentReturnCallbackIndex;
+	private readonly MockRegistry _mockRegistry;
+	private Callbacks<Action<int, T1, T2, T3, T4>>? _callbacks = [];
+	private Callbacks<Action<int, T1, T2, T3, T4>>? _returnCallbacks = [];
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
-	public VoidMethodSetup(
-		string name,
-		NamedParameter match1,
-		NamedParameter match2,
-		NamedParameter match3,
-		NamedParameter match4)
-		: base(new MethodParameterMatch(name, [match1, match2, match3, match4,]))
+	public VoidMethodSetup(MockRegistry mockRegistry, string name)
+		: base(name)
 	{
-		_name = name;
-		_match1 = match1;
-		_match2 = match2;
-		_match3 = match3;
-		_match4 = match4;
-	}
-
-	/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
-	public VoidMethodSetup(string name, IParameters matches)
-		: base(new MethodParametersMatch(name, matches))
-	{
-		_name = name;
-		_matches = matches;
+		_mockRegistry = mockRegistry;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.SkippingBaseClass(bool)" />
-	public IVoidMethodSetup<T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true)
+	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.SkippingBaseClass(bool skipBaseClass)
 	{
 		_skipBaseClass = skipBaseClass;
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action)" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -1190,10 +1288,11 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 
@@ -1205,19 +1304,21 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
-	public IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback)
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action<int, T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
-		_currentCallback = currentCallback;
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.DoesNotThrow()" />
-	public IVoidMethodSetup<T1, T2, T3, T4> DoesNotThrow()
+	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -1228,11 +1329,11 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws{TException}()" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
-		where TException : Exception, new()
+	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws<TException>()
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -1244,10 +1345,11 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Exception)" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Exception exception)
+	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -1259,10 +1361,11 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Func{Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -1274,10 +1377,11 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
-	public IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
+	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_currentReturnCallback = currentCallback;
+		_returnCallbacks ??= [];
+		_returnCallbacks.Active = currentCallback;
 		_returnCallbacks.Add(currentCallback);
 		return this;
 
@@ -1291,7 +1395,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3, T4}.InParallel()" />
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.InParallel()
 	{
-		_currentCallback?.InParallel();
+		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
@@ -1299,7 +1403,7 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.When(
 		Func<int, bool> predicate)
 	{
-		_currentCallback?.When(predicate);
+		_callbacks?.Active?.When(predicate);
 		return this;
 	}
 
@@ -1307,14 +1411,14 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>.
 		For(int times)
 	{
-		_currentCallback?.For(times);
+		_callbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackWhenBuilder{T1, T2, T3, T4}.Only(int)" />
 	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>.Only(int times)
 	{
-		_currentCallback?.Only(times);
+		_callbacks?.Active?.Only(times);
 		return this;
 	}
 
@@ -1322,57 +1426,62 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>.When(
 		Func<int, bool> predicate)
 	{
-		_currentReturnCallback?.When(predicate);
+		_returnCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3, T4}.For(int)" />
 	IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>.For(int times)
 	{
-		_currentReturnCallback?.For(times);
+		_returnCallbacks?.Active?.For(times);
 		return this;
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupReturnWhenBuilder{T1, T2, T3, T4}.Only(int)" />
 	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>.Only(int times)
 	{
-		_currentReturnCallback?.Only(times);
+		_returnCallbacks?.Active?.Only(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3, T4}.AnyParameters()" />
-	public IVoidMethodSetup<T1, T2, T3, T4> AnyParameters()
-	{
-		_matches = Match.AnyParameters();
-		MethodMatch = new MethodParametersMatch(_name, _matches);
-		return this;
-	}
+	/// <summary>
+	///     Gets the flag indicating if the base class implementation should be skipped.
+	/// </summary>
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
 
-	/// <inheritdoc cref="MethodSetup.ExecuteCallback(MethodInvocation, MockBehavior)" />
-	protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
+	/// <summary>
+	///     Check if the setup matches the specified parameter values <paramref name="p1Value" />,
+	///     <paramref name="p2Value" />, <paramref name="p3Value" /> and <paramref name="p4Value" />.
+	/// </summary>
+	public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value);
+
+	/// <summary>
+	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameter1" />.
+	/// </summary>
+	public virtual void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 	{
-		if (invocation.Parameters[0].TryGetValue(out T1 p1) &&
-		    invocation.Parameters[1].TryGetValue(out T2 p2) &&
-		    invocation.Parameters[2].TryGetValue(out T3 p3) &&
-		    invocation.Parameters[3].TryGetValue(out T4 p4))
+		if (_callbacks is not null)
 		{
 			bool wasInvoked = false;
-			int currentCallbacksIndex = _currentCallbacksIndex;
+			int currentCallbacksIndex = _callbacks.CurrentIndex;
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
-				Callback<Action<int, T1, T2, T3, T4>> callback =
-					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _currentCallbacksIndex, Callback))
+				Callback<Action<int, T1, T2, T3, T4>> callback = _callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
 				{
 					wasInvoked = true;
 				}
 			}
+		}
 
+		if (_returnCallbacks is not null)
+		{
 			foreach (Callback<Action<int, T1, T2, T3, T4>> _ in _returnCallbacks)
 			{
 				Callback<Action<int, T1, T2, T3, T4>> returnCallback =
-					_returnCallbacks[_currentReturnCallbackIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _currentReturnCallbackIndex, Callback))
+					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
 				{
 					return;
 				}
@@ -1382,51 +1491,104 @@ public class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		[DebuggerNonUserCode]
 		void Callback(int invocationCount, Action<int, T1, T2, T3, T4> @delegate)
 		{
-			@delegate(invocationCount, p1, p2, p3, p4);
+			@delegate(invocationCount, parameter1, parameter2, parameter3, parameter4);
 		}
 	}
-
-	/// <inheritdoc cref="MethodSetup.GetReturnValue{TResult}(MethodInvocation, MockBehavior, Func{TResult})" />
-	protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
-		Func<TResult> defaultValueGenerator)
-		where TResult : default
-		=> throw new MockException("The method setup does not support return values.");
-
-	/// <inheritdoc cref="MethodSetup.TriggerParameterCallbacks(INamedParameterValue[])" />
-	protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
-		=> TriggerCallbacks([_match1, _match2, _match3, _match4,], parameters);
-
-	/// <inheritdoc cref="MethodSetup.GetSkipBaseClass()" />
-	protected override bool? GetSkipBaseClass()
-		=> _skipBaseClass;
-
-	/// <inheritdoc cref="MethodSetup.SetOutParameter{T}(string, Func{T})" />
-	protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
+	/// <summary>
+	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
+	/// </summary>
+	public class WithParameters : VoidMethodSetup<T1, T2, T3, T4>
 	{
-		if (HasOutParameter([_match1, _match2, _match3, _match4,], parameterName,
-			    out IOutParameter<T>? outParameter))
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+			: base(mockRegistry, name)
 		{
-			return outParameter.GetValue(defaultValueGenerator);
+			Parameters = parameters;
 		}
 
-		return defaultValueGenerator();
+		/// <summary>
+		///     The parameters match for the method.
+		/// </summary>
+		private IParameters Parameters { get; }
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}.Matches(string, T1, string, T2, string, T3, string, T4)" />
+		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value)
+			=> Parameters.Matches([
+				new NamedParameterValue<T1>(p1Name, p1Value),
+				new NamedParameterValue<T2>(p2Name, p2Value)]);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameters})";
 	}
 
-	/// <inheritdoc cref="MethodSetup.SetRefParameter{T}(string, T, MockBehavior)" />
-	protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
+	/// <summary>
+	///     Setup for a method with one parameter matching against individual <see cref="IParameterMatch{T}" />.
+	/// </summary>
+	public class WithParameterCollection : VoidMethodSetup<T1, T2, T3, T4>,
+		IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>
 	{
-		if (HasRefParameter([_match1, _match2, _match3, _match4,], parameterName,
-			    out IRefParameter<T>? refParameter))
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
+		public WithParameterCollection(MockRegistry mockRegistry, string name,
+			IParameterMatch<T1> parameter1,
+			IParameterMatch<T2> parameter2,
+			IParameterMatch<T3> parameter3,
+			IParameterMatch<T4> parameter4)
+			: base(mockRegistry, name)
 		{
-			return refParameter.GetValue(value);
+			Parameter1 = parameter1;
+			Parameter2 = parameter2;
+			Parameter3 = parameter3;
+			Parameter4 = parameter4;
 		}
 
-		return value;
-	}
+		/// <summary>
+		///     The first parameter of the method.
+		/// </summary>
+		public IParameterMatch<T1> Parameter1 { get; }
 
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-		=> _matches is not null
-			? $"void {_name.SubstringAfterLast('.')}({_matches})"
-			: $"void {_name.SubstringAfterLast('.')}({_match1}, {_match2}, {_match3}, {_match4})";
+		/// <summary>
+		///     The second parameter of the method.
+		/// </summary>
+		public IParameterMatch<T2> Parameter2 { get; }
+
+		/// <summary>
+		///     The third parameter of the method.
+		/// </summary>
+		public IParameterMatch<T3> Parameter3 { get; }
+		
+		/// <summary>
+		///     The fourth parameter of the method.
+		/// </summary>
+		public IParameterMatch<T4> Parameter4 { get; }
+
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3, T4}.AnyParameters()" />
+		IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}.Matches(string, T1, string, T2, string, T3, string, T4)" />
+		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value)
+			=> _matchAnyParameters || (
+				Parameter1.Matches(p1Value) &&
+				Parameter2.Matches(p2Value));
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}.TriggerCallbacks(T1, T2, T3, T4)" />
+		public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
+		{
+			Parameter1.InvokeCallbacks(parameter1);
+			Parameter2.InvokeCallbacks(parameter2);
+			Parameter3.InvokeCallbacks(parameter3);
+			Parameter4.InvokeCallbacks(parameter4);
+			base.TriggerCallbacks(parameter1, parameter2, parameter3, parameter4);
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({Parameter1}, {Parameter2})";
+	}
 }
