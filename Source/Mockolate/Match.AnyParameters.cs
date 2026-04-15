@@ -17,10 +17,6 @@ public partial class Match
 #endif
 	private sealed class AnyParametersMatch : IParameters
 	{
-		/// <inheritdoc cref="IParameters.Matches" />
-		public bool Matches(INamedParameterValue[] values)
-			=> true;
-
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => "Match.AnyParameters()";
 	}

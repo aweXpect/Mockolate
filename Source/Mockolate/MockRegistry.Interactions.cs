@@ -21,9 +21,16 @@ public partial class MockRegistry
 	public void ClearAllInteractions()
 		=> Interactions.Clear();
 
+	/// <summary>
+	///     Get the latest method setup matching the given <paramref name="methodName" /> and <paramref name="predicate" />,
+	///     or returns <see langword="null" /> if no matching setup is found.
+	/// </summary>
 	public T? GetMethodSetup<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
 		=> Setup.Methods.GetMatching(methodName, predicate);
 
+	/// <summary>
+	///     Register an <paramref name="interaction" /> with the mock.
+	/// </summary>
 	public void RegisterInteraction(IInteraction interaction)
 		=> ((IMockInteractions)Interactions).RegisterInteraction(interaction);
 

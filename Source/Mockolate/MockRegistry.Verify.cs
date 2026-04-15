@@ -14,6 +14,26 @@ namespace Mockolate;
 public partial class MockRegistry
 {
 	/// <summary>
+	///     Counts the invocations of methods with <paramref name="methodName"/> matching the <paramref name="predicate" /> on the <paramref name="subject" />.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, TMethod>(T subject, string methodName, Func<TMethod, bool> predicate, Func<string> expectation) where TMethod : IMethodInteraction
+	{
+		return new VerificationResult<T>.IgnoreParameters(
+			subject,
+			Interactions,
+			Predicate,
+			expectation);
+
+		[DebuggerNonUserCode]
+		bool Predicate(IInteraction interaction)
+		{
+			return interaction is TMethod method &&
+			       method.Name == methodName &&
+			       predicate(method);
+		}
+	}
+
+	/// <summary>
 	///     Counts the invocations of methods matching the <paramref name="methodSetup" /> on the <paramref name="subject" />.
 	/// </summary>
 	public VerificationResult<T> Method<T>(T subject, IMethodSetup methodSetup)
@@ -43,28 +63,6 @@ public partial class MockRegistry
 			return interaction is MethodInvocation method &&
 			       methodMatch.Matches(method);
 		}
-	}
-
-	/// <summary>
-	///     Counts the invocations of methods matching the <paramref name="methodMatch" /> on the <paramref name="subject" />,
-	///     allowing to ignore the explicit parameters via <see cref="Verify.VerificationResultParameterIgnorer{T}.AnyParameters()" />.
-	/// </summary>
-	public VerificationResultParameterIgnorer<T> Method<T>(T subject, IMethodMatch methodMatch, string methodName)
-	{
-		throw new NotImplementedException("TODO: VAB");
-		//return new Verify.VerificationResultParameterIgnorer<T>(
-		//	subject,
-		//	Interactions,
-		//	Predicate,
-		//	() => $"invoked method {methodMatch}",
-		//	() => Method(subject, new MethodParametersMatch(methodName, Match.AnyParameters())));
-//
-		//[DebuggerNonUserCode]
-		//bool Predicate(IInteraction interaction)
-		//{
-		//	return interaction is MethodInvocation method &&
-		//	       methodMatch.Matches(method);
-		//}
 	}
 
 	/// <summary>

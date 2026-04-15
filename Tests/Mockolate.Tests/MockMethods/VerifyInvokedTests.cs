@@ -10,6 +10,7 @@ public sealed partial class VerifyInvokedTests
 	public async Task Equals_ShouldWork()
 	{
 		object obj = new();
+// TODO: Ensure that IMethodService is available
 		IMethodService sut = IMethodService.CreateMock();
 
 		_ = sut.Equals(obj);

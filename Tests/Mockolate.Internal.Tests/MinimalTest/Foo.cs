@@ -4,6 +4,7 @@ using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
+using Mockolate.Verify;
 
 namespace Mockolate.Internal.Tests.MinimalTest;
 
@@ -32,6 +33,17 @@ public class Foo
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Mockolate_Verify()
+	{
+		var sut = IFoo.CreateMock();
+		sut.Mock.Setup.MyMethod(It.Is(6)).Returns("foo");
+
+		_ = sut.MyMethod(6);
+
+		sut.Mock.Verify.MyMethod(It.Is(6)).Once();
 	}
 }
 
@@ -132,6 +144,13 @@ public class Mock
 				? returnValue
 				: MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
 		}
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IFoo> VerifyMyMethod(global::Mockolate.Parameters.IParameter<int>? value)
+		{
+			return this.MockRegistry.VerifyMethod<IFoo, MethodInvocation<int>>(this, nameof(MyMethod),
+				i => value is IParameterMatch<int> valueMatch ? valueMatch.Matches(i.Parameter1) : i.Parameter1 is default(int), () => $"MyMethod({value})");
+		}
+
 		public string MyMethod(int value)
 		{
 			var setup = MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, int>>(nameof(MyMethod), m => m.Matches("value", value));
@@ -215,33 +234,10 @@ public class Mock
 
 		public void RegisterMethodInvocation<TReturn, T1>(string methodName, T1 value, MethodSetup<TReturn, T1>? setup)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation2<T1>(methodName, value));
+			((IMockInteractions)Interactions).RegisterInteraction(new MethodInvocation<T1>(methodName, value));
 		}
 	}
 }
-public class MethodInvocation2<T1>(string name, T1 parameter) : IInteraction, ISettableInteraction
-{
-	private int? _index;
-	/// <summary>
-	///     The name of the method.
-	/// </summary>
-	public string Name { get; } = name;
-
-	/// <summary>
-	///     The named parameters of the method.
-	/// </summary>
-	public T1 Parameter1 { get; } = parameter;
-
-	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index => _index.GetValueOrDefault();
-
-	void ISettableInteraction.SetIndex(int value) => _index ??= value;
-
-	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString()
-		=> $"[{Index}] invoke method {Name}({Parameter1})";
-}
-
 public interface IMethodSetup<TReturn, T>
 {
 	IMethodSetup<TReturn, T> Returns(TReturn value);

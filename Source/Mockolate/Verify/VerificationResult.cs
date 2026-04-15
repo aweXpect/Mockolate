@@ -18,7 +18,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 {
 	private readonly Func<string> _expectationFactory;
 	private readonly MockInteractions _interactions;
-	private readonly Func<IInteraction, bool> _predicate;
+	private Func<IInteraction, bool> _predicate;
 	private readonly TVerify _verify;
 
 	/// <inheritdoc cref="VerificationResult{TMock}" />
@@ -54,6 +54,11 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	internal VerificationResult<T> Map<T>(T mock)
 		=> new(mock, _interactions, _predicate, _expectationFactory);
+
+	private void ReplacePredicate(Func<IInteraction, bool> predicate)
+	{
+		_predicate = predicate;
+	}
 
 	/// <summary>
 	///     Makes the verification result awaitable, using the specified <paramref name="timeout" /> to wait for the expected
@@ -229,4 +234,31 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	}
 
 	#endregion
+	
+	/// <summary>
+	///     Represents the result of a verification that contains the matching interactions and allows ignoring explicit parameters.
+	/// </summary>
+#if !DEBUG
+	[DebuggerNonUserCode]
+#endif
+	public class IgnoreParameters : VerificationResult<TVerify>
+	{
+		internal IgnoreParameters(
+			TVerify verify,
+			MockInteractions interactions,
+			Func<IInteraction, bool> predicate,
+			Func<string> expectation)
+			: base(verify, interactions, predicate, expectation)
+		{
+		}
+
+		/// <summary>
+		///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
+		/// </summary>
+		public VerificationResult<TVerify> AnyParameters()
+		{
+			ReplacePredicate(_ => true);
+			return this;
+		}
+	}
 }

@@ -1717,10 +1717,13 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
 		string methodSetup = Helpers.GetUniqueLocalVariableName("methodSetup", method.Parameters);
-		string methodSetupType =
-			method.ReturnType == Type.Void
-				? $"global::Mockolate.Setup.VoidMethodSetup<{string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>"
-				: $"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}{(method.Parameters.Count > 0 ? $", {string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}" : "")}>";
+		string methodSetupType = (method.ReturnType == Type.Void, method.Parameters.Count) switch
+		{
+			(true, 0) => "global::Mockolate.Setup.VoidMethodSetup",
+			(true, _) => $"global::Mockolate.Setup.VoidMethodSetup<{string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
+			(_, 0) => $"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}>",
+			(_, _) => $"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}, {string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
+		};
 		bool hasOutParams = method.Parameters.Any(p => p.RefKind is RefKind.Out);
 		bool hasRefParams = method.Parameters.Any(p => p.RefKind is RefKind.Ref);
 		string hasWrappedResult = Helpers.GetUniqueLocalVariableName("hasWrappedResult", method.Parameters);
@@ -3072,8 +3075,8 @@ internal static partial class Sources
 		sb.Append("\t\t/// </summary>").AppendLine();
 		if (valueFlags?.All(x => x) == true)
 		{
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<").Append(verifyName)
-				.Append("> ").Append(methodName).Append("(");
+			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName)
+				.Append(">.IgnoreParameters ").Append(methodName).Append("(");
 		}
 		else
 		{
@@ -3282,10 +3285,13 @@ internal static partial class Sources
 	{
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append(valueFlags?.All(x => x) == true
-			? "\t\tglobal::Mockolate.Verify.VerificationResultParameterIgnorer<"
-			: "\t\tglobal::Mockolate.Verify.VerificationResult<");
-		sb.Append(verifyName).Append("> ").Append(verifyName).Append('.').Append(methodName).Append("(");
+		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<");
+		sb.Append(verifyName).Append('>');
+		if (valueFlags?.All(x => x) == true)
+		{
+			sb.Append(".IgnoreParameters");
+		}
+		sb.Append(' ').Append(verifyName).Append('.').Append(methodName).Append("(");
 		if (useParameters)
 		{
 			sb.Append("global::Mockolate.Parameters.IParameters parameters");
@@ -3330,47 +3336,55 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
-
-		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".Method<").Append(verifyName).Append(">(this, ");
-
+		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".VerifyMethod<").Append(verifyName)
+			.Append(", global::Mockolate.Interactions.MethodInvocation");
+		if (method.Parameters.Count > 0)
+		{
+			sb.Append("<").Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append(">");
+		}
+		
+		sb.Append(">(this, ").Append(method.GetUniqueNameString());
 		if (useParameters)
 		{
-			sb.Append("new global::Mockolate.Setup.MethodParametersMatch(").Append(method.GetUniqueNameString())
-				.Append(", parameters");
+			sb.Append(", i => parameters switch").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, method.Parameters.Count).Select(i => $"i.Parameter{i}"))).Append("]),").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", method.Parameters.Select((p, i) =>  $"(\"{p.Name}\", i.Parameter{i+1})"))).Append("]),").AppendLine();
+			sb.Append("\t\t\t\t\t_ => true").AppendLine();
+			sb.Append("\t\t\t\t}");
+		}
+		else if (method.Parameters.Count == 0)
+		{
+			sb.Append(", i => true");
 		}
 		else
 		{
-			sb.Append("new global::Mockolate.Setup.MethodParameterMatch(").Append(method.GetUniqueNameString())
-				.Append(", [ ");
-			int j = 0;
+			sb.Append(", i => ");
+			
+			int i = 0;
 			foreach (MethodParameter parameter in method.Parameters)
 			{
-				if (valueFlags?[j] == true)
+				if (i > 0)
 				{
-					AppendNamedValueParameter(sb, parameter);
+					sb.Append(" && ");
+				}
+				sb.AppendLine().Append("\t\t\t\t");
+
+				bool isValueParam = valueFlags?[i] == true;
+				if (isValueParam)
+				{
+					sb.Append($"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, i.Parameter{i+1}))");
 				}
 				else
 				{
-					AppendNamedParameter(sb, parameter);
+					sb.Append($"({parameter.Name} is global::Mockolate.Parameters.IParameterMatch<{parameter.ToTypeOrWrapper()}> {parameter.Name}Match ? {parameter.Name}Match.Matches(i.Parameter{i+1}) : i.Parameter{i+1} == default({parameter.ToTypeOrWrapper()}))");
 				}
 
-				sb.Append(", ");
-				j++;
+				i++;
 			}
-
-			sb.Append(']');
 		}
 
-		if (!useParameters && valueFlags?.All(x => x) == true)
-		{
-			sb.Append("), ").Append(method.GetUniqueNameString()).AppendLine(");");
-		}
-		else
-		{
-			sb.AppendLine("));");
-		}
-
-		sb.AppendLine();
+		sb.Append(", () => $\"").Append(method.Name).Append("(").Append(useParameters ? "{parameters}" : string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}"))).Append(")\");").AppendLine();
 	}
 
 	#endregion Verify Helpers

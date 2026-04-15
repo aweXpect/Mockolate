@@ -9,7 +9,7 @@ namespace Mockolate.Interactions;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class MethodInvocation(string name) : IInteraction, ISettableInteraction
+public class MethodInvocation(string name) : IMethodInteraction, ISettableInteraction
 {
 	private int? _index;
 
@@ -29,13 +29,13 @@ public class MethodInvocation(string name) : IInteraction, ISettableInteraction
 }
 
 /// <summary>
-///     An invocation of a method with a single <paramref name="parameter" />.
+///     An invocation of a method with a single <paramref name="parameter1" />.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISettableInteraction
+public class MethodInvocation<T1>(string name, T1 parameter1) : IMethodInteraction, ISettableInteraction
 {
 	private int? _index;
 
@@ -47,7 +47,7 @@ public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISe
 	/// <summary>
 	///     The single parameter of the method.
 	/// </summary>
-	public T1 Parameter { get; } = parameter;
+	public T1 Parameter1 { get; } = parameter1;
 
 	/// <inheritdoc cref="IInteraction.Index" />
 	public int Index => _index.GetValueOrDefault();
@@ -56,7 +56,7 @@ public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISe
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"[{Index}] invoke method {Name}({Parameter})";
+		=> $"[{Index}] invoke method {Name}({Parameter1})";
 }
 
 /// <summary>
@@ -66,7 +66,7 @@ public class MethodInvocation<T1>(string name, T1 parameter) : IInteraction, ISe
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class MethodInvocation<T1, T2>(string name, T1 parameter1, T2 parameter2) : IInteraction, ISettableInteraction
+public class MethodInvocation<T1, T2>(string name, T1 parameter1, T2 parameter2) : IMethodInteraction, ISettableInteraction
 {
 	private int? _index;
 
@@ -104,7 +104,7 @@ public class MethodInvocation<T1, T2>(string name, T1 parameter1, T2 parameter2)
 [DebuggerNonUserCode]
 #endif
 public class MethodInvocation<T1, T2, T3>(string name, T1 parameter1, T2 parameter2, T3 parameter3)
-	: IInteraction, ISettableInteraction
+	: IMethodInteraction, ISettableInteraction
 {
 	private int? _index;
 
@@ -147,7 +147,7 @@ public class MethodInvocation<T1, T2, T3>(string name, T1 parameter1, T2 paramet
 [DebuggerNonUserCode]
 #endif
 public class MethodInvocation<T1, T2, T3, T4>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
-	: IInteraction, ISettableInteraction
+	: IMethodInteraction, ISettableInteraction
 {
 	private int? _index;
 

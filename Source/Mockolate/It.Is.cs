@@ -33,7 +33,7 @@ public partial class It
 #if !DEBUG
 	[DebuggerNonUserCode]
 #endif
-	private sealed class ParameterEqualsMatch<T>(T value, string valueExpression) : TypedMatch<T>, IIsParameter<T>
+	private sealed class ParameterEqualsMatch<T>(T value, string valueExpression) : TypedMatch<T>, IIsParameter<T>, IParameter
 	{
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
@@ -66,6 +66,21 @@ public partial class It
 			}
 
 			return valueExpression;
+		}
+
+		public bool Matches(INamedParameterValue value)
+		{
+			if (value.TryGetValue(out T? typedValue))
+			{
+				return Matches(typedValue!);
+			}
+
+			return false;
+		}
+
+		public void InvokeCallbacks(INamedParameterValue value)
+		{
+			// TODO: VAB: DELETE IParameter
 		}
 	}
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Linq;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -515,7 +516,12 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 
 		/// <inheritdoc cref="VoidMethodSetup{T1}.Matches(string, T1)" />
 		public override bool Matches(string p1Name, T1 p1Value)
-			=> Parameters.Matches([new NamedParameterValue<T1>(p1Name, p1Value),]);
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1Value]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value)]),
+				_ => true,
+			};
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
@@ -835,9 +841,12 @@ public abstract  class VoidMethodSetup<T1, T2> : MethodSetup,
 
 		/// <inheritdoc cref="VoidMethodSetup{T1, T2}.Matches(string, T1, string, T2)" />
 		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value)
-			=> Parameters.Matches([
-				new NamedParameterValue<T1>(p1Name, p1Value),
-				new NamedParameterValue<T2>(p2Name, p2Value)]);
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1Value, p2Value]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value)]),
+				_ => true,
+			};
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
@@ -1170,9 +1179,12 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 
 		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}.Matches(string, T1, string, T2, string, T3)" />
 		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value)
-			=> Parameters.Matches([
-				new NamedParameterValue<T1>(p1Name, p1Value),
-				new NamedParameterValue<T2>(p2Name, p2Value)]);
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value)]),
+				_ => true,
+			};
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
@@ -1513,9 +1525,12 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 
 		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}.Matches(string, T1, string, T2, string, T3, string, T4)" />
 		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value)
-			=> Parameters.Matches([
-				new NamedParameterValue<T1>(p1Name, p1Value),
-				new NamedParameterValue<T2>(p2Name, p2Value)]);
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value, p4Value]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value), (p4Name, p4Value)]),
+				_ => true,
+			};
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()

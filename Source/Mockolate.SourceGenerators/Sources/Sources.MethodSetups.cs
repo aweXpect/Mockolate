@@ -1,4 +1,6 @@
+using System.Reflection.Metadata;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Mockolate.SourceGenerators.Sources;
 
@@ -109,7 +111,7 @@ internal static partial class Sources
 			sb.Append("\tpublic class MethodInvocation<")
 				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x}"))).Append(">(string name, ")
 				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x} parameter{x}")))
-				.Append(") : IInteraction, ISettableInteraction").AppendLine();
+				.Append(") : IMethodInteraction, ISettableInteraction").AppendLine();
 			sb.Append("\t{").AppendLine();
 			sb.AppendXmlSummary("The name of the method.");
 			sb.Append("\t\tpublic string Name { get; } = name;").AppendLine();
@@ -641,13 +643,12 @@ internal static partial class Sources
 			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 		sb.Append(")").AppendLine();
-		sb.Append("\t\t\t\t=> Parameters.Matches([");
-		for (int i = 1; i <= numberOfParameters; i++)
-		{
-			if (i > 1) sb.Append(", ");
-			sb.Append("new global::Mockolate.Parameters.NamedParameterValue<T").Append(i).Append(">(p").Append(i).Append("Name, p").Append(i).Append("Value)");
-		}
-		sb.Append("]);").AppendLine();
+		sb.Append("\t\t\t\t=> Parameters switch").AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}Value"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(p{i}Name, p{i}Value)"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\t_ => true,").AppendLine();
+		sb.Append("\t\t\t\t\t};").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}.TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append(")\" />").AppendLine();
 		sb.Append("\t\t\tpublic override void TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} parameter{i}"))).Append(")").AppendLine();
@@ -1257,13 +1258,12 @@ internal static partial class Sources
 			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 		sb.Append(")").AppendLine();
-		sb.Append("\t\t\t\t=> Parameters.Matches([");
-		for (int i = 1; i <= numberOfParameters; i++)
-		{
-			if (i > 1) sb.Append(", ");
-			sb.Append("new global::Mockolate.Parameters.NamedParameterValue<T").Append(i).Append(">(p").Append(i).Append("Name, p").Append(i).Append("Value)");
-		}
-		sb.Append("]);").AppendLine();
+		sb.Append("\t\t\t\t=> Parameters switch").AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}Value"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(p{i}Name, p{i}Value)"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\t_ => true,").AppendLine();
+		sb.Append("\t\t\t\t\t};").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append(")\" />").AppendLine();
 		sb.Append("\t\t\tpublic override void TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} parameter{i}"))).Append(")").AppendLine();
