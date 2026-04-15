@@ -9,16 +9,10 @@ namespace Mockolate.Interactions;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public abstract class IndexerAccess(INamedParameterValue[] parameters) : IInteraction, ISettableInteraction
+public abstract class IndexerAccess(INamedParameterValue[] parameters) : IInteraction
 {
-	private int? _index;
 	/// <summary>
 	///     The parameters of the indexer.
 	/// </summary>
 	public INamedParameterValue[] Parameters { get; } = parameters;
-
-	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index => _index.GetValueOrDefault();
-
-	void ISettableInteraction.SetIndex(int value) => _index ??= value;
 }

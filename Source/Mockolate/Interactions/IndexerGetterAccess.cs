@@ -15,5 +15,5 @@ public class IndexerGetterAccess(INamedParameterValue[] parameters) : IndexerAcc
 {
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"[{Index}] get indexer [{string.Join(", ", Parameters.Select(p => p.ToString()))}]";
+		=> $"get indexer [{string.Join(", ", Parameters.Select(p => p.ToString()))}]";
 }

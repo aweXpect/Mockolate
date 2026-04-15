@@ -13,5 +13,5 @@ namespace Mockolate.Interactions;
 public class PropertyGetterAccess(string propertyName) : PropertyAccess(propertyName)
 {
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"[{Index}] get property {Name.SubstringAfterLast('.')}";
+	public override string ToString() => $"get property {Name.SubstringAfterLast('.')}";
 }

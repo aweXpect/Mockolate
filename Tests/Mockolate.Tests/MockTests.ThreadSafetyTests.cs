@@ -35,7 +35,6 @@ public sealed partial class MockTests
 
 			await That(sut.Mock.Verify.MyEvent.Subscribed()).Exactly(taskCount * iterationsPerTask);
 			await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Exactly(taskCount * iterationsPerTask);
-			await ValidateInteractionIndices(sut);
 		}
 
 		[Fact]
@@ -95,7 +94,6 @@ public sealed partial class MockTests
 				await That(sut.Mock.Verify.MyEvent.Subscribed()).Exactly(subscriberCount);
 				await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Exactly(subscriberCount);
 				await That(handlerCallCount).IsLessThanOrEqualTo(subscriberCount * eventsPerSubscriber * subscriberCount);
-				await ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -178,7 +176,6 @@ public sealed partial class MockTests
 					string expectedValue = $"key-{kvp.Key}";
 					return kvp.Value.All(v => v == expectedValue);
 				});
-				await ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -229,7 +226,6 @@ public sealed partial class MockTests
 			await That(sut.Mock.Verify[0].Set(It.IsAny<string>())).Exactly(writerCount * iterationsPerWriter);
 			await That(sut.Mock.Verify[1].Set(It.IsAny<string>())).Exactly(writerCount * iterationsPerWriter);
 			await That(values).Contains("hello").Exactly(readerCount * iterationsPerReader * 2);
-			await ValidateInteractionIndices(sut);
 		}
 
 		[Fact]
@@ -262,7 +258,6 @@ public sealed partial class MockTests
 				int expectedCalls = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == 42);
 				await That(sut.Mock.Verify.MyMethod(It.IsAny<int>())).Exactly(expectedCalls);
-				await ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -293,7 +288,6 @@ public sealed partial class MockTests
 
 			await That(sut.Mock.Verify.MyMethod(It.IsAny<int>())).Exactly(taskCount * iterationsPerTask);
 			await That(values).Contains(42).Exactly(taskCount * iterationsPerTask);
-			await ValidateInteractionIndices(sut);
 		}
 
 		[Fact]
@@ -326,7 +320,6 @@ public sealed partial class MockTests
 				int expectedReads = taskCount * iterationsPerTask;
 				await That(values).All().Satisfy(v => v == "test-value");
 				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(expectedReads);
-				await ValidateInteractionIndices(sut);
 			}
 		}
 
@@ -384,18 +377,6 @@ public sealed partial class MockTests
 				.Exactly(writerCount * iterationsPerWriter);
 			await That(stringValues).All().Satisfy(v => v == "hello");
 			await That(guidValues).All().Satisfy(v => v == expectedGuid);
-			await ValidateInteractionIndices(sut);
-		}
-
-		private static async Task ValidateInteractionIndices(IMyThreadSafetyService sut)
-		{
-			MockRegistry registry = ((IMock)sut).MockRegistry;
-			int[] indices = registry.Interactions
-				.Select(i => i.Index)
-				.ToArray();
-
-			await That(indices).AreAllUnique();
-			await That(indices).IsInAscendingOrder();
 		}
 
 		internal interface IMyThreadSafetyService

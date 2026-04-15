@@ -92,7 +92,5 @@ public sealed class MockRegistryTests
 		await Task.WhenAll(tasks);
 
 		await That(sut.Interactions.Count).IsEqualTo(1000);
-		await That(sut.Interactions).IsInAscendingOrder(x => x.Index);
-		await That(sut.Interactions.Select(i => i.Index)).AreAllUnique();
 	}
 }

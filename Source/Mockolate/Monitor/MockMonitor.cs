@@ -83,11 +83,14 @@ public abstract class MockMonitor
 	{
 		if (_monitoringStart >= 0)
 		{
+			int copied = 0;
 			foreach (IInteraction interaction in _monitoredInteractions.Skip(_monitoringStart))
 			{
 				((IMockInteractions)Interactions).RegisterInteraction(interaction);
-				_monitoringStart = interaction.Index + 1;
+				copied++;
 			}
+
+			_monitoringStart += copied;
 		}
 	}
 

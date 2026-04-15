@@ -12,7 +12,7 @@ public sealed class InteractionsTests
 		MockInteractions interactions = new();
 		EventSubscription interaction = ((IMockInteractions)interactions).RegisterInteraction(
 			new EventSubscription("global::Mockolate.InteractionsTests.SomeEvent", this, Helper.GetMethodInfo()));
-		string expectedValue = "[0] subscribe to event SomeEvent";
+		string expectedValue = "subscribe to event SomeEvent";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
@@ -23,7 +23,7 @@ public sealed class InteractionsTests
 		MockInteractions interactions = new();
 		EventUnsubscription interaction = ((IMockInteractions)interactions).RegisterInteraction(
 			new EventUnsubscription("global::Mockolate.InteractionsTests.SomeEvent", this, Helper.GetMethodInfo()));
-		string expectedValue = "[0] unsubscribe from event SomeEvent";
+		string expectedValue = "unsubscribe from event SomeEvent";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
