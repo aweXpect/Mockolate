@@ -20,5 +20,5 @@ public class IndexerSetterAccess(INamedParameterValue[] parameters, INamedParame
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"[{Index}] set indexer [{string.Join(", ", Parameters.Select(p => p.ToString()))}] to {Value}";
+		=> $"set indexer [{string.Join(", ", Parameters.Select(p => p.ToString()))}] to {Value}";
 }

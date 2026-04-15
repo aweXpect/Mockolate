@@ -1,9 +1,7 @@
-﻿using System.Diagnostics;
-
-namespace Mockolate.Internals;
+﻿namespace Mockolate.Internals;
 
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 internal static class StringExtensions
 {

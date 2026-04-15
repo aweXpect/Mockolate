@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace Mockolate.Internals;
 
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 internal readonly struct Wildcard
 {

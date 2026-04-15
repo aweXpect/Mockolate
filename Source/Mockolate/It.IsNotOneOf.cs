@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
@@ -30,7 +29,7 @@ public partial class It
 	}
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class ParameterIsNotOneOfMatch<T>(T[] values) : TypedMatch<T>, IIsNotOneOfParameter<T>
 	{

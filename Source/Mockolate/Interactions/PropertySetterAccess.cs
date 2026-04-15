@@ -19,5 +19,5 @@ public class PropertySetterAccess(string propertyName, INamedParameterValue valu
 	public INamedParameterValue Value { get; } = value;
 
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"[{Index}] set property {Name.SubstringAfterLast('.')} to {Value}";
+	public override string ToString() => $"set property {Name.SubstringAfterLast('.')} to {Value}";
 }

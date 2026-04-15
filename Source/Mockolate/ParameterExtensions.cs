@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -8,7 +7,7 @@ namespace Mockolate;
 ///     Extension methods for <see cref="IParameter" />s.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public static class ParameterExtensions
 {

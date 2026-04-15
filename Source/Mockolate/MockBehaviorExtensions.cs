@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 
 namespace Mockolate;
 
@@ -7,7 +6,7 @@ namespace Mockolate;
 ///     Extension methods for <see cref="MockBehavior" />.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public static class MockBehaviorExtensions
 {

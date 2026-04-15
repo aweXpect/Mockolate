@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Mockolate.Parameters;
@@ -11,7 +10,7 @@ namespace Mockolate;
 ///     The behavior of the mock.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public record MockBehavior : IMockBehaviorAccess
 {

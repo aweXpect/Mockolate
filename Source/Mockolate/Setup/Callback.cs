@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
@@ -9,7 +8,7 @@ namespace Mockolate.Setup;
 ///     A callback wrapper that allows conditional invocation based on predicates.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class Callback
 {
@@ -101,7 +100,7 @@ public class Callback
 ///     A callback wrapper for the <paramref name="delegate" /> that allows conditional invocation based on predicates.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate : Delegate
 {

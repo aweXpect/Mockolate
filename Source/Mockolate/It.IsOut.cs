@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -35,7 +34,7 @@ public partial class It
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : TypedOutMatch<T>
 	{
@@ -50,7 +49,7 @@ public partial class It
 	///     Matches an <see langword="out" /> parameter against an expectation.
 	/// </summary>
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class AnyOutParameterMatch<T> : TypedOutMatch<T>
 	{
@@ -62,7 +61,7 @@ public partial class It
 	///     Matches any <see langword="out" /> parameter.
 	/// </summary>
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class InvokedOutParameterMatch<T> : IVerifyOutParameter<T>, IParameter, ITypedParameter<T>
 	{
@@ -87,7 +86,7 @@ public partial class It
 	///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 	/// </summary>
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private abstract class TypedOutMatch<T> : IOutParameter<T>, IParameter, ITypedParameter<T>
 	{

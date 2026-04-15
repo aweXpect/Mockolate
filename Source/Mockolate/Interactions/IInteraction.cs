@@ -5,8 +5,4 @@ namespace Mockolate.Interactions;
 /// </summary>
 public interface IInteraction
 {
-	/// <summary>
-	///     The index of the interaction.
-	/// </summary>
-	int Index { get; }
 }

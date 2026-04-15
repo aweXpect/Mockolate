@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -8,7 +7,7 @@ namespace Mockolate.Verify;
 ///     Verifications on a property of type <typeparamref name="TParameter" />.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class VerificationPropertyResult<TSubject, TParameter>
 {

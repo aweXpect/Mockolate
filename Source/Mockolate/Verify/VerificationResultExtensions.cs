@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
@@ -12,7 +11,7 @@ namespace Mockolate.Verify;
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public static class VerificationResultExtensions
 {
@@ -366,6 +365,13 @@ public static class VerificationResultExtensions
 			List<string> expectations = [];
 			IVerificationResult result = verificationResult;
 			TMock mockVerify = ((IVerificationResult<TMock>)verificationResult).Object;
+			IInteraction[] snapshot = result.MockInteractions.ToArray();
+			Dictionary<IInteraction, int> positions = new(snapshot.Length);
+			for (int i = 0; i < snapshot.Length; i++)
+			{
+				positions[snapshot[i]] = i;
+			}
+
 			int after = -1;
 			foreach (Func<TMock, VerificationResult<TMock>> check in orderedChecks)
 			{
@@ -386,12 +392,21 @@ public static class VerificationResultExtensions
 
 			bool VerifyInteractions(IInteraction[] interactions, IVerificationResult currentResult)
 			{
-				IInteraction? firstInteraction = interactions
-					.Where(x => x.Index > after)
-					.OrderBy(x => x.Index)
-					.FirstOrDefault();
+				int bestPosition = int.MaxValue;
+				IInteraction? firstInteraction = null;
+				foreach (IInteraction candidate in interactions)
+				{
+					if (positions.TryGetValue(candidate, out int position) &&
+					    position > after &&
+					    position < bestPosition)
+					{
+						bestPosition = position;
+						firstInteraction = candidate;
+					}
+				}
+
 				bool hasInteractionAfter = firstInteraction is not null;
-				after = firstInteraction?.Index ?? int.MaxValue;
+				after = hasInteractionAfter ? bestPosition : int.MaxValue;
 				if (!hasInteractionAfter && error is null)
 				{
 					error = interactions.Length > 0

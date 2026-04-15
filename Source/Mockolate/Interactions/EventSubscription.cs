@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 using System.Reflection;
 using Mockolate.Internals;
@@ -11,9 +10,8 @@ namespace Mockolate.Interactions;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class EventSubscription(string name, object? target, MethodInfo method) : IInteraction, ISettableInteraction
+public class EventSubscription(string name, object? target, MethodInfo method) : IInteraction
 {
-	private int? _index;
 	/// <summary>
 	///     The name of the event.
 	/// </summary>
@@ -29,11 +27,6 @@ public class EventSubscription(string name, object? target, MethodInfo method) :
 	/// </summary>
 	public MethodInfo Method { get; } = method;
 
-	/// <inheritdoc cref="IInteraction.Index" />
-	public int Index => _index.GetValueOrDefault();
-
-	void ISettableInteraction.SetIndex(int value) => _index ??= value;
-
 	/// <inheritdoc cref="object.ToString()" />
-	public override string ToString() => $"[{Index}] subscribe to event {Name.SubstringAfterLast('.')}";
+	public override string ToString() => $"subscribe to event {Name.SubstringAfterLast('.')}";
 }

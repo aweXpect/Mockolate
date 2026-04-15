@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Mockolate.Parameters;
 
@@ -10,7 +9,7 @@ namespace Mockolate.Parameters;
 /// <param name="Name">The name of the parameter.</param>
 /// <param name="Value">The parameter value.</param>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public record NamedParameterValue<T>(
 	string Name,

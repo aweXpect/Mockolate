@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 
@@ -15,7 +14,7 @@ public partial class It
 		=> new NotNullParameterMatch<T>(toString);
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class NotNullParameterMatch<T>(string? toString) : TypedMatch<T>
 	{

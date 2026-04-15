@@ -28,7 +28,7 @@ public partial class It
 		=> new SpanParameterMatch<T>(predicate, doNotPopulateThisValue);
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class SpanParameterMatch<T>(Func<T[], bool>? predicate, string? predicateExpression = null)
 		: TypedMatch<SpanWrapper<T>>, IVerifySpanParameter<T>

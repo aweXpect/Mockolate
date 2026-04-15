@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -31,7 +30,7 @@ public partial class It
 	}
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class ParameterEqualsNotMatch<T> : TypedMatch<T>, IIsNotParameter<T>
 	{

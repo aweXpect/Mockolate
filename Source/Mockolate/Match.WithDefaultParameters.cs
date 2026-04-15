@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -13,7 +12,7 @@ public partial class Match
 		=> new DefaultEventParameters();
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class DefaultEventParameters : IDefaultEventParameters
 	{

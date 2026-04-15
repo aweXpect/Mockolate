@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 #if NET10_0_OR_GREATER
 using System.Threading;
 #endif
@@ -23,27 +22,20 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _listLock = new();
+	private readonly Lock _verifiedLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _listLock = new();
+	private readonly object _verifiedLock = new();
 #endif
 
-	private int _index = -1;
-	private List<IInteraction>? _missingVerification;
+	private HashSet<IInteraction>? _verified;
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
-		if (interaction is not ISettableInteraction settableInteraction)
+		lock (_listLock)
 		{
-			// ReSharper disable once LocalizableElement
-			throw new ArgumentException("Only settable interactions can be registered.", nameof(interaction));
-		}
-
-		lock (_lock)
-		{
-			_missingVerification?.Add(interaction);
-			settableInteraction.SetIndex(++_index);
 			_interactions.Add(interaction);
 		}
 
@@ -58,7 +50,7 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 	{
 		get
 		{
-			lock (_lock)
+			lock (_listLock)
 			{
 				return _interactions.Count;
 			}
@@ -67,12 +59,7 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 
 	/// <inheritdoc cref="IEnumerable{IInteraction}.GetEnumerator()" />
 	public IEnumerator<IInteraction> GetEnumerator()
-	{
-		lock (_lock)
-		{
-			return _interactions.ToList().GetEnumerator();
-		}
-	}
+		=> ((IEnumerable<IInteraction>)Snapshot()).GetEnumerator();
 
 	/// <inheritdoc cref="IEnumerable.GetEnumerator()" />
 	IEnumerator IEnumerable.GetEnumerator()
@@ -83,10 +70,24 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 	/// </summary>
 	public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
 	{
-		lock (_lock)
+		IInteraction[] snapshot = Snapshot();
+		lock (_verifiedLock)
 		{
-			_missingVerification ??= _interactions.ToList();
-			return _missingVerification;
+			if (_verified is null || _verified.Count == 0)
+			{
+				return snapshot;
+			}
+
+			List<IInteraction> result = new(snapshot.Length);
+			foreach (IInteraction interaction in snapshot)
+			{
+				if (!_verified.Contains(interaction))
+				{
+					result.Add(interaction);
+				}
+			}
+
+			return result;
 		}
 	}
 
@@ -95,25 +96,36 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 
 	internal void Verified(IEnumerable<IInteraction> interactions)
 	{
-		lock (_lock)
+		lock (_verifiedLock)
 		{
-			_missingVerification ??= _interactions.ToList();
+			_verified ??= [];
 			foreach (IInteraction interaction in interactions)
 			{
-				_missingVerification.Remove(interaction);
+				_verified.Add(interaction);
 			}
 		}
 	}
 
 	internal void Clear()
 	{
-		lock (_lock)
+		lock (_listLock)
 		{
-			_missingVerification = null;
 			_interactions.Clear();
-			_index = -1;
+		}
+
+		lock (_verifiedLock)
+		{
+			_verified = null;
 		}
 
 		OnClearing?.Invoke(this, EventArgs.Empty);
+	}
+
+	private IInteraction[] Snapshot()
+	{
+		lock (_listLock)
+		{
+			return _interactions.ToArray();
+		}
 	}
 }

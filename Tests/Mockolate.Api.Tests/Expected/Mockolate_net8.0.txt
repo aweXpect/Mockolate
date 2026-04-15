@@ -542,7 +542,6 @@ namespace Mockolate.Interactions
     public class EventSubscription : Mockolate.Interactions.IInteraction
     {
         public EventSubscription(string name, object? target, System.Reflection.MethodInfo method) { }
-        public int Index { get; }
         public System.Reflection.MethodInfo Method { get; }
         public string Name { get; }
         public object? Target { get; }
@@ -552,16 +551,12 @@ namespace Mockolate.Interactions
     public class EventUnsubscription : Mockolate.Interactions.IInteraction
     {
         public EventUnsubscription(string name, object? target, System.Reflection.MethodInfo method) { }
-        public int Index { get; }
         public System.Reflection.MethodInfo Method { get; }
         public string Name { get; }
         public object? Target { get; }
         public override string ToString() { }
     }
-    public interface IInteraction
-    {
-        int Index { get; }
-    }
+    public interface IInteraction { }
     public interface IMockInteractions
     {
         TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
@@ -570,7 +565,6 @@ namespace Mockolate.Interactions
     public abstract class IndexerAccess : Mockolate.Interactions.IInteraction
     {
         protected IndexerAccess(Mockolate.Parameters.INamedParameterValue[] parameters) { }
-        public int Index { get; }
         public Mockolate.Parameters.INamedParameterValue[] Parameters { get; }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
@@ -590,7 +584,6 @@ namespace Mockolate.Interactions
     public class MethodInvocation : Mockolate.Interactions.IInteraction
     {
         public MethodInvocation(string name, Mockolate.Parameters.INamedParameterValue[] parameters) { }
-        public int Index { get; }
         public string Name { get; }
         public Mockolate.Parameters.INamedParameterValue[] Parameters { get; }
         public override string ToString() { }
@@ -607,7 +600,6 @@ namespace Mockolate.Interactions
     public abstract class PropertyAccess : Mockolate.Interactions.IInteraction
     {
         protected PropertyAccess(string propertyName) { }
-        public int Index { get; }
         public string Name { get; }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]

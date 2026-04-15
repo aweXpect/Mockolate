@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -13,7 +12,7 @@ namespace Mockolate.Setup;
 ///     and the <paramref name="parameters" /> are matched against the parameters in the method invocation.
 /// </remarks>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public readonly struct MethodParametersMatch(string methodName, IParameters parameters) : IMethodMatch
 {

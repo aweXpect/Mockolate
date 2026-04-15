@@ -75,7 +75,7 @@ public sealed partial class InteractionsTests
 				new NamedParameterValue<long?>("p2", null),
 				new NamedParameterValue<TimeSpan>("p3", 90.Seconds()),
 			]));
-		string expectedValue = "[0] invoke method SomeMethod(1, null, 00:01:30)";
+		string expectedValue = "invoke method SomeMethod(1, null, 00:01:30)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}

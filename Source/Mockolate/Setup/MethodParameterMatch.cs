@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -16,7 +15,7 @@ namespace Mockolate.Setup;
 ///     invocation.
 /// </remarks>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public readonly struct MethodParameterMatch(string methodName, NamedParameter[] parameters)
 	: IMethodMatch, ITypedMethodMatch
