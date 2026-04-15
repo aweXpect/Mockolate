@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Mockolate.Setup;
 
 namespace Mockolate;
@@ -7,7 +6,7 @@ namespace Mockolate;
 ///     Extensions for indexer, property and method setups.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public static class SetupExtensions
 {

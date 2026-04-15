@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Mockolate.Internals;
@@ -42,7 +41,7 @@ public partial class It
 	}
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class MatchesAsWildcardMatch(string pattern) : TypedMatch<string>, IParameterMatches
 	{

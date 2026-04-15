@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -14,7 +13,7 @@ public partial class It
 		=> new TrueParameterMatch();
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class TrueParameterMatch : TypedMatch<bool>
 	{

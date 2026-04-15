@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -38,7 +37,7 @@ public partial class It
 	}
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class InRangeMatch<T> : TypedMatch<T>, IInRangeParameter<T>
 		where T : IComparable<T>

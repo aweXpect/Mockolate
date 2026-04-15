@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
@@ -7,7 +6,7 @@ namespace Mockolate.Interactions;
 ///     An access of an indexer.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public abstract class IndexerAccess(INamedParameterValue[] parameters) : IInteraction
 {

@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Linq;
 using Mockolate.Interactions;
 
@@ -15,7 +14,7 @@ namespace Mockolate.Monitor;
 ///     method and dispose the returned scope to finalize monitoring.
 /// </remarks>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public abstract class MockMonitor
 {
@@ -111,7 +110,7 @@ public abstract class MockMonitor
 ///     dispose the returned scope to finalize monitoring.
 /// </remarks>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public sealed class MockMonitor<T> : MockMonitor
 {

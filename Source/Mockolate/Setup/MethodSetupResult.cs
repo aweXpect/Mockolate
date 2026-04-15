@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
@@ -8,7 +7,7 @@ namespace Mockolate.Setup;
 ///     A result of a method setup invocation.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior behavior)
 {
@@ -67,7 +66,7 @@ public class MethodSetupResult(IInteractiveMethodSetup? setup, MockBehavior beha
 ///     A result of a method setup invocation with return type <typeparamref name="TResult" />.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class MethodSetupResult<TResult>(IInteractiveMethodSetup? setup, MockBehavior behavior, TResult result)
 	: MethodSetupResult(setup, behavior)

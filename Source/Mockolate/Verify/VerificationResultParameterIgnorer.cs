@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Mockolate.Interactions;
 
 namespace Mockolate.Verify;
@@ -8,7 +7,7 @@ namespace Mockolate.Verify;
 ///     Represents the result of a verification that contains the matching interactions and allows ignoring explicit parameters.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class VerificationResultParameterIgnorer<TVerify> : VerificationResult<TVerify>
 {

@@ -1,12 +1,10 @@
-using System.Diagnostics;
-
 namespace Mockolate.Verify;
 
 /// <summary>
 ///     Verifications on an event.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class VerificationEventResult<TSubject>
 {

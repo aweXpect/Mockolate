@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -19,7 +18,7 @@ public partial class It
 		=> new SatisfiesPredicateMatch<T>(predicate, doNotPopulateThisValue);
 
 #if !DEBUG
-	[DebuggerNonUserCode]
+	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class SatisfiesPredicateMatch<T>(Func<T, bool> predicate, string predicateExpression) : TypedMatch<T>
 	{

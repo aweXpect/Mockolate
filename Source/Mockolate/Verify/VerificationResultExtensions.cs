@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
@@ -12,7 +11,7 @@ namespace Mockolate.Verify;
 ///     The expectation contains the matching interactions for verification.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public static class VerificationResultExtensions
 {

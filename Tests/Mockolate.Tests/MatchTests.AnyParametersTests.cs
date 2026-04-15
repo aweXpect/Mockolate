@@ -1,4 +1,3 @@
-using System.Linq;
 using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
