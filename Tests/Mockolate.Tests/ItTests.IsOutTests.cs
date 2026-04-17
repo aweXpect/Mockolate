@@ -35,31 +35,21 @@ public sealed partial class ItTests
 		{
 			IOutParameter<int?> sut = It.IsOut(() => value);
 
-			int? result = sut.GetValue(() => null);
+			bool found = sut.TryGetValue(out int? result);
 
+			await That(found).IsTrue();
 			await That(result).IsEqualTo(value);
 		}
 
 		[Fact]
-		public async Task WithOut_Verify_Long_ShouldAlwaysMatch()
+		public async Task WithOut_Verify_ShouldAlwaysMatch()
 		{
 			IVerifyOutParameter<int?> sut = It.IsOut<int?>();
 
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<long>(string.Empty, 42L));
+			bool result = ((IParameterMatch<int?>)sut).Matches(42);
 
 			await That(result).IsTrue();
-			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();
-		}
-
-		[Fact]
-		public async Task WithOut_Verify_String_ShouldAlwaysMatch()
-		{
-			IVerifyOutParameter<int?> sut = It.IsOut<int?>();
-
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
-
-			await That(result).IsTrue();
-			await That(() => ((IParameter)sut).InvokeCallbacks(new NamedParameterValue<int>("", 0))).DoesNotThrow();
+			await That(() => ((IParameterMatch<int?>)sut).InvokeCallbacks(0)).DoesNotThrow();
 		}
 	}
 }

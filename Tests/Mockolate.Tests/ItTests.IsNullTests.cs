@@ -38,7 +38,7 @@ public sealed partial class ItTests
 		{
 			IParameter<string?> sut = It.IsNull<string?>();
 
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string?>(string.Empty, value));
+			bool result = ((IParameterMatch<string?>)sut).Matches(value);
 
 			await That(result).IsEqualTo(expectMatch);
 		}

@@ -158,7 +158,7 @@ public sealed partial class VerifyInvokedTests
 
 		await That(Act).Throws<MockNotSetupException>().OnlyIf(throwWhenNotSetup)
 			.WithMessage("""
-			             The method 'global::Mockolate.Tests.MockTests.IMyService.SetIsValid(bool, Func<bool>)' was invoked without prior setup.
+			             The method 'global::Mockolate.Tests.MockTests.IMyService.SetIsValid(bool, Func<bool>?)' was invoked without prior setup.
 			             """);
 	}
 

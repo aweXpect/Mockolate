@@ -9,40 +9,12 @@ namespace Mockolate.Internal.Tests;
 public class WebTests
 {
 	[Fact]
-	public async Task HttpContentParameter_MatchesSomeOtherObject_ShouldReturnFalse()
-	{
-		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
-		IParameter parameter = (IParameter)sut;
-
-		bool result = parameter.Matches(new NamedParameterValue<SomeOtherObject>(string.Empty, new SomeOtherObject()));
-
-		await That(result).IsFalse();
-	}
-
-	[Fact]
-	public async Task WhenParameterDoesNotImplementIHttpRequestMessagePropertyParameter_ShouldFallbackToParameterMatch()
-	{
-		ItExtensions.IHttpContentParameter parameter =
-			ItExtensions.IHttpContentParameter.CreateMock().Implementing<IParameter>();
-		parameter.Mock.As<IParameter>().Setup.Matches(It.IsAny<INamedParameterValue>()).Returns(true);
-
-		ItExtensions.IStringContentBodyParameter sut = parameter.WithString("foo");
-
-		bool result = ((IHttpRequestMessagePropertyParameter<HttpContent?>)sut).Matches(null, null);
-
-		await That(result).IsTrue();
-		await That(parameter.Mock.As<IParameter>().Verify
-				.Matches(It.IsAny<INamedParameterValue>()))
-			.Once();
-	}
-
-	[Fact]
 	public async Task WhenParameterImplementsIHttpRequestMessagePropertyParameter_ShouldUseThisMatch()
 	{
 		ItExtensions.IHttpContentParameter parameter = ItExtensions.IHttpContentParameter.CreateMock()
-			.Implementing<IParameter>()
+			.Implementing<IParameterMatch<HttpContent?>>()
 			.Implementing<IHttpRequestMessagePropertyParameter<HttpContent?>>();
-		parameter.Mock.As<IParameter>().Setup.Matches(It.IsAny<INamedParameterValue>()).Returns(false);
+		parameter.Mock.As<IParameterMatch<HttpContent?>>().Setup.Matches(It.IsAny<HttpContent?>()).Returns(false);
 		parameter.Mock.As<IHttpRequestMessagePropertyParameter<HttpContent?>>().Setup
 			.Matches(It.IsAny<HttpContent?>(), It.IsAny<HttpRequestMessage?>()).Returns(true);
 
@@ -54,8 +26,8 @@ public class WebTests
 		await That(parameter.Mock.As<IHttpRequestMessagePropertyParameter<HttpContent?>>().Verify
 				.Matches(It.IsNull<HttpContent?>(), It.IsNull<HttpRequestMessage?>()))
 			.Once();
-		await That(parameter.Mock.As<IParameter>().Verify
-				.Matches(It.IsAny<INamedParameterValue>()))
+		await That(parameter.Mock.As<IParameterMatch<HttpContent?>>().Verify
+				.Matches(It.IsAny<HttpContent?>()))
 			.Never();
 	}
 
@@ -63,9 +35,9 @@ public class WebTests
 	public async Task WithoutMediaTypeHeader_WhenNoneIsRequired_ShouldReturnTrue()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent();
-		IParameter parameter = (IParameter)sut;
+		IParameterMatch<HttpContent?> parameter = (IParameterMatch<HttpContent?>)sut;
 
-		bool result = parameter.Matches(new NamedParameterValue<MyHttpContent>(string.Empty, new MyHttpContent()));
+		bool result = parameter.Matches(new MyHttpContent());
 
 		await That(result).IsTrue();
 	}
@@ -74,9 +46,9 @@ public class WebTests
 	public async Task WithoutMediaTypeHeader_WhenOneIsRequired_ShouldReturnFalse()
 	{
 		ItExtensions.IHttpContentParameter sut = It.IsHttpContent("*");
-		IParameter parameter = (IParameter)sut;
+		IParameterMatch<HttpContent?> parameter = (IParameterMatch<HttpContent?>)sut;
 
-		bool result = parameter.Matches(new NamedParameterValue<MyHttpContent>(string.Empty, new MyHttpContent()));
+		bool result = parameter.Matches(new MyHttpContent());
 
 		await That(result).IsFalse();
 	}
@@ -92,6 +64,4 @@ public class WebTests
 			return false;
 		}
 	}
-
-	private sealed class SomeOtherObject;
 }

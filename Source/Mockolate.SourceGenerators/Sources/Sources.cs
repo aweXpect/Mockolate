@@ -64,9 +64,8 @@ internal static partial class Sources
 	/// </summary>
 	private static void AppendTriggerCallbacks(StringBuilder sb, string indent, string varName,
 		IEnumerable<MethodParameter> parameters)
-		=> sb.Append(indent).Append(varName).Append(".TriggerCallbacks(")
-			.Append(string.Join(", ", parameters.Select(p =>
-				$"new global::Mockolate.Parameters.NamedParameterValue<{p.ToTypeOrWrapper()}>(\"{p.Name}\", {p.ToNameOrWrapper()})")))
+		=> sb.Append(indent).Append(varName).Append("?.TriggerCallbacks(")
+			.Append(string.Join(", ", parameters.Select(p => p.ToNameOrWrapper())))
 			.Append(");").AppendLine();
 
 	/// <summary>
@@ -76,91 +75,111 @@ internal static partial class Sources
 		=> string.Join(", ", parameters.Select(p => $"{p.RefKind.GetString(true)}{p.Name}"));
 
 	/// <summary>
-	///     Formats indexer parameters as comma-separated names or wrappers.
+	///     Appends a typed parameter list for indexer accesses, e.g. <c>T1, T2</c>.
 	/// </summary>
-	private static string FormatIndexerParametersAsNameOrWrapper(EquatableArray<MethodParameter> parameters)
-		=> string.Join(", ",
-			parameters.Select(p
-				=> $"new global::Mockolate.Parameters.NamedParameterValue<{p.ToTypeOrWrapper()}>(\"{p.Name}\", {p.ToNameOrWrapper()})"));
-
-	/// <summary>
-	///     Appends a typed <c>GetIndexer</c> call, using the typed overload for 1–4 parameters
-	///     and falling back to the <c>params INamedParameterValue[]</c> overload otherwise.
-	/// </summary>
-	private static void AppendGetIndexerCall(
-		StringBuilder sb, Type propertyType, EquatableArray<MethodParameter> parameters)
+	private static void AppendIndexerParameterTypes(StringBuilder sb,
+		EquatableArray<MethodParameter> parameters)
 	{
-		bool useTypedOverload = parameters.Count is >= 1 and <= MaxExplicitParameters;
-		sb.Append(".GetIndexer<").AppendTypeOrWrapper(propertyType);
-		if (useTypedOverload)
+		bool first = true;
+		foreach (MethodParameter p in parameters)
 		{
-			foreach (Type? type in parameters.Select(p => p.Type))
+			if (!first)
 			{
-				sb.Append(", ").AppendTypeOrWrapper(type);
+				sb.Append(", ");
 			}
-		}
 
-		sb.Append(">(");
-		if (useTypedOverload)
-		{
-			bool first = true;
-			foreach (MethodParameter p in parameters)
-			{
-				if (!first)
-				{
-					sb.Append(", ");
-				}
-
-				sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
-				first = false;
-			}
+			sb.AppendTypeOrWrapper(p.Type);
+			first = false;
 		}
-		else
-		{
-			sb.Append(FormatIndexerParametersAsNameOrWrapper(parameters));
-		}
-
-		sb.Append(')');
 	}
 
 	/// <summary>
-	///     Appends a typed <c>SetIndexer</c> call, using the typed overload for 1–4 parameters
-	///     and falling back to the <c>params INamedParameterValue[]</c> overload otherwise.
+	///     Appends a constructor-argument list of the form
+	///     <c>"p1", p1, "p2", p2</c>.
 	/// </summary>
-	private static void AppendSetIndexerCall(
-		StringBuilder sb, Type propertyType, EquatableArray<MethodParameter> parameters)
+	private static void AppendIndexerParameterArguments(StringBuilder sb,
+		EquatableArray<MethodParameter> parameters)
 	{
-		bool useTypedOverload = parameters.Count is >= 1 and <= MaxExplicitParameters;
-		sb.Append(".SetIndexer<").Append(propertyType.Fullname);
-		if (useTypedOverload)
+		bool first = true;
+		foreach (MethodParameter p in parameters)
 		{
-			foreach (Type? type in parameters.Select(p => p.Type))
+			if (!first)
 			{
-				sb.Append(", ").AppendTypeOrWrapper(type);
+				sb.Append(", ");
 			}
-		}
 
-		sb.Append(">(value, ");
-		if (useTypedOverload)
+			sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
+			first = false;
+		}
+	}
+
+	/// <summary>
+	///     Emits variable declarations for the indexer getter access and matching setup:
+	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;("p", p, ...);
+	///     mockRegistry.RegisterInteraction(access);
+	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(s =&gt; s.Matches(p, ...));</code>
+	/// </summary>
+	private static void EmitIndexerGetterAccessAndSetup(StringBuilder sb, string indent,
+		string mockRegistry, string accessVarName, string setupVarName,
+		Type propertyType, EquatableArray<MethodParameter> parameters)
+	{
+		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerGetterAccess<");
+		AppendIndexerParameterTypes(sb, parameters);
+		sb.Append("> ").Append(accessVarName).Append(" = new(");
+		AppendIndexerParameterArguments(sb, parameters);
+		sb.Append(");").AppendLine();
+
+		sb.Append(indent).Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+			.AppendLine();
+
+		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
+		foreach (MethodParameter p in parameters)
 		{
-			bool first = true;
-			foreach (MethodParameter p in parameters)
-			{
-				if (!first)
-				{
-					sb.Append(", ");
-				}
-
-				sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
-				first = false;
-			}
+			sb.Append(", ").AppendTypeOrWrapper(p.Type);
 		}
-		else
+
+		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry)
+			.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
+		foreach (MethodParameter p in parameters)
 		{
-			sb.Append(FormatIndexerParametersAsNameOrWrapper(parameters));
+			sb.Append(", ").AppendTypeOrWrapper(p.Type);
 		}
 
-		sb.Append(')');
+		sb.Append(">>(s => ((global::Mockolate.Setup.IInteractiveIndexerSetup)s).Matches(")
+			.Append(accessVarName).Append("));").AppendLine();
+	}
+
+	/// <summary>
+	///     Emits variable declarations for the indexer setter access and matching setup.
+	/// </summary>
+	private static void EmitIndexerSetterAccessAndSetup(StringBuilder sb, string indent,
+		string mockRegistry, string accessVarName, string setupVarName,
+		Type propertyType, EquatableArray<MethodParameter> parameters)
+	{
+		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerSetterAccess<");
+		AppendIndexerParameterTypes(sb, parameters);
+		sb.Append(", ").AppendTypeOrWrapper(propertyType).Append("> ").Append(accessVarName).Append(" = new(");
+		AppendIndexerParameterArguments(sb, parameters);
+		sb.Append(", value);").AppendLine();
+
+		sb.Append(indent).Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+			.AppendLine();
+
+		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
+		foreach (MethodParameter p in parameters)
+		{
+			sb.Append(", ").AppendTypeOrWrapper(p.Type);
+		}
+
+		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry)
+			.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
+		foreach (MethodParameter p in parameters)
+		{
+			sb.Append(", ").AppendTypeOrWrapper(p.Type);
+		}
+
+		sb.Append(">>(s => ((global::Mockolate.Setup.IInteractiveIndexerSetup)s).Matches(")
+			.Append(accessVarName).Append("));").AppendLine();
 	}
 
 	/// <summary>
@@ -186,8 +205,24 @@ internal static partial class Sources
 	/// </summary>
 	private static void AppendNamedParameter(StringBuilder sb, MethodParameter parameter)
 	{
-		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name)
-			.Append("\", (global::Mockolate.Parameters.IParameter)(");
+		bool useCovarianceAdapter = parameter.RefKind == RefKind.None;
+		if (useCovarianceAdapter)
+		{
+			// Setup parameter is IParameter<T> (or nullable) — use CovariantParameterAdapter to support covariant
+			// widening (e.g. passing an IParameter<Derived> where IParameter<Base> is expected).
+			sb.Append("CovariantParameterAdapter<");
+			sb.AppendTypeOrWrapper(parameter.Type);
+			sb.Append(">.Wrap(");
+		}
+		else
+		{
+			// out/ref setup parameters use IOutParameter<T> / IRefParameter<T>, which don't inherit from
+			// IParameter<T> — covariance isn't applicable, so keep the direct IParameterMatch<T> cast.
+			sb.Append("(global::Mockolate.Parameters.IParameterMatch<");
+			sb.AppendTypeOrWrapper(parameter.Type);
+			sb.Append(">)(");
+		}
+
 		sb.Append(parameter.Name);
 		if (parameter.CanUseNullableParameterOverload())
 		{
@@ -202,7 +237,7 @@ internal static partial class Sources
 			}
 		}
 
-		sb.Append("))");
+		sb.Append(")");
 	}
 
 	/// <summary>
@@ -217,8 +252,9 @@ internal static partial class Sources
 	/// </summary>
 	private static void AppendNamedValueParameter(StringBuilder sb, MethodParameter parameter, string paramRef)
 	{
-		sb.Append("new global::Mockolate.Parameters.NamedParameter(\"").Append(parameter.Name)
-			.Append("\", (global::Mockolate.Parameters.IParameter)global::Mockolate.It.Is<")
+		sb.Append("(global::Mockolate.Parameters.IParameterMatch<");
+		sb.AppendTypeOrWrapper(parameter.Type);
+		sb.Append(">)global::Mockolate.It.Is<")
 			.Append(parameter.ToNullableType()).Append(">(").Append(paramRef).Append(", ");
 		if (parameter.Type.SpecialType == SpecialType.System_String)
 		{
@@ -246,75 +282,7 @@ internal static partial class Sources
 			sb.Append(paramRef).Append(".ToString()");
 		}
 
-		sb.Append("))");
-	}
-
-	/// <summary>
-	///     Generates code to set an out parameter.
-	/// </summary>
-	private static void AppendSetOutParameter(StringBuilder sb, string indent, MethodParameter parameter,
-		string varName, string defaultValueBehavior)
-		=> sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
-			.Append(".SetOutParameter<")
-			.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name)
-			.Append("\", () => ")
-			.AppendDefaultValueGeneratorFor(parameter.Type, defaultValueBehavior)
-			.Append(");").AppendLine();
-
-	/// <summary>
-	///     Generates code to set a ref parameter.
-	/// </summary>
-	private static void AppendSetRefParameter(StringBuilder sb, string indent, MethodParameter parameter,
-		string varName)
-		=> sb.Append(indent).Append(parameter.Name).Append(" = ").Append(varName)
-			.Append(".SetRefParameter<")
-			.Append(parameter.Type.Fullname).Append(">(\"").Append(parameter.Name).Append("\", ")
-			.Append(parameter.Name).Append(");").AppendLine();
-
-	/// <summary>
-	///     Handles out and ref parameters for a method.
-	/// </summary>
-	private static void AppendOutRefParameterHandling(StringBuilder sb, string indent,
-		IEnumerable<MethodParameter> parameters, string methodExecutionVarName, string defaultValueBehavior)
-	{
-		foreach (MethodParameter parameter in parameters)
-		{
-			if (parameter.RefKind == RefKind.Out)
-			{
-				AppendSetOutParameter(sb, indent, parameter, methodExecutionVarName, defaultValueBehavior);
-			}
-			else if (parameter.RefKind == RefKind.Ref)
-			{
-				AppendSetRefParameter(sb, indent, parameter, methodExecutionVarName);
-			}
-		}
-	}
-
-	/// <summary>
-	///     Handles out and ref parameters conditionally (when HasSetupResult == true).
-	/// </summary>
-	private static void AppendConditionalOutRefParameterHandling(StringBuilder sb, string indent,
-		IEnumerable<MethodParameter> parameters, string methodExecutionVarName, string defaultValueBehavior)
-	{
-		foreach (MethodParameter parameter in parameters)
-		{
-			if (parameter.RefKind == RefKind.Out)
-			{
-				sb.Append(indent).Append("if (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
-					.AppendLine();
-				sb.Append(indent).Append("{").AppendLine();
-				AppendSetOutParameter(sb, indent + "\t", parameter, methodExecutionVarName, defaultValueBehavior);
-				sb.Append(indent).Append("}").AppendLine().AppendLine();
-			}
-			else if (parameter.RefKind == RefKind.Ref)
-			{
-				sb.Append(indent).Append("if (").Append(methodExecutionVarName).Append(".HasSetupResult == true)")
-					.AppendLine();
-				sb.Append(indent).Append("{").AppendLine();
-				AppendSetRefParameter(sb, indent + "\t", parameter, methodExecutionVarName);
-				sb.Append(indent).Append("}").AppendLine().AppendLine();
-			}
-		}
+		sb.Append(")");
 	}
 
 	private static string CreateUniqueParameterName(EquatableArray<MethodParameter> parameters, string name)

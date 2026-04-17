@@ -1,9 +1,12 @@
 using Mockolate.Interactions;
-using Mockolate.Parameters;
 
 namespace Mockolate.Internal.Tests.TestHelpers;
 
 internal sealed class FakeIndexerAccess : IndexerAccess
 {
-	internal FakeIndexerAccess() : base(Array.Empty<INamedParameterValue>()) { }
+	public override bool IsSetter => false;
+
+	public override int ParameterCount => 0;
+
+	public override object? GetParameterValueAt(int index) => null;
 }

@@ -1,4 +1,3 @@
-using Mockolate.Parameters;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
@@ -114,8 +113,8 @@ public sealed partial class MockBehaviorTests
 
 	private sealed class MyDefaultValueGenerator : IDefaultValueGenerator
 	{
-		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(Type, INamedParameterValue[])" />
-		public object? GenerateValue(Type type, params INamedParameterValue[] parameters)
+		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" />
+		public object? GenerateValue(Type type, params object?[] parameters)
 		{
 			if (type == typeof(string))
 			{

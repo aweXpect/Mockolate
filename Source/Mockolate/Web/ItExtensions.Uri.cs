@@ -75,7 +75,7 @@ public static partial class ItExtensions
 		IUriParameter WithQuery(params IEnumerable<(string Key, HttpQueryParameterValue Value)> parameters);
 	}
 
-	private sealed class UriParameter(string? pattern) : IUriParameter, IParameter
+	private sealed class UriParameter(string? pattern) : IUriParameter, IParameterMatch<Uri?>
 	{
 		private List<Action<Uri?>>? _callbacks;
 		private string? _hostPattern;
@@ -84,9 +84,22 @@ public static partial class ItExtensions
 		private HttpQueryMatcher? _query;
 		private string? _scheme;
 
-		/// <inheritdoc cref="IParameter.Matches(INamedParameterValue)" />
-		public bool Matches(INamedParameterValue value)
-			=> value.TryGetValue<Uri>(out var uri) && Matches(uri);
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
+		bool IParameter.Matches(object? value)
+			=> value is Uri uri ? Matches(uri) : value is null && Matches(null);
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		void IParameter.InvokeCallbacks(object? value)
+		{
+			if (value is Uri uri)
+			{
+				((IParameterMatch<Uri?>)this).InvokeCallbacks(uri);
+			}
+			else if (value is null)
+			{
+				((IParameterMatch<Uri?>)this).InvokeCallbacks(null);
+			}
+		}
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 		private bool Matches(Uri? uri)
@@ -139,14 +152,9 @@ public static partial class ItExtensions
 		}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(INamedParameterValue)" />
-		public void InvokeCallbacks(INamedParameterValue value)
-		{
-			if (_callbacks is not null && value.TryGetValue(out Uri uri))
-			{
-				_callbacks.ForEach(a => a.Invoke(uri));
-			}
-		}
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		void IParameterMatch<Uri?>.InvokeCallbacks(Uri? value)
+			=> _callbacks?.ForEach(a => a.Invoke(value));
 
 		public IParameter<Uri?> Do(Action<Uri?> callback)
 		{
@@ -247,6 +255,9 @@ public static partial class ItExtensions
 			string result = sb.ToString();
 			return result == "Uri" ? "any Uri" : result;
 		}
+
+		bool IParameterMatch<Uri?>.Matches(Uri? value)
+			=> Matches(value);
 	}
 }
 #pragma warning restore S2325 // Methods and properties that don't access instance data should be static

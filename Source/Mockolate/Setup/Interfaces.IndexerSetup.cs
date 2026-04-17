@@ -1,7 +1,5 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using Mockolate.Interactions;
-using Mockolate.Parameters;
 
 namespace Mockolate.Setup;
 
@@ -19,13 +17,6 @@ public interface IInteractiveIndexerSetup : ISetup
 	///     Checks if the <paramref name="indexerAccess" /> matches the setup.
 	/// </summary>
 	bool Matches(IndexerAccess indexerAccess);
-
-	/// <summary>
-	///     Attempts to retrieve the initial <paramref name="value" /> for the <paramref name="parameters" />, if an
-	///     initialization is set up.
-	/// </summary>
-	void GetInitialValue<TValue>(MockBehavior behavior, Func<TValue> defaultValueGenerator, INamedParameterValue[] parameters,
-		[NotNullWhen(true)] out TValue value);
 }
 
 /// <summary>

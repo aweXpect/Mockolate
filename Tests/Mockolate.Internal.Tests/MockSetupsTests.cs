@@ -35,7 +35,7 @@ public partial class MockSetupsTests
 
 		for (int i = 0; i < methodCount; i++)
 		{
-			mock.MockRegistry.SetupMethod(new ReturnMethodSetup<int>($"my.method{i}"));
+			mock.MockRegistry.SetupMethod(new ReturnMethodSetup<int>.WithParameterCollection(MockBehavior.Default, $"my.method{i}"));
 		}
 
 		for (int i = 0; i < propertyCount; i++)
@@ -46,7 +46,7 @@ public partial class MockSetupsTests
 		for (int i = 0; i < indexerCount; i++)
 		{
 			mock.MockRegistry.SetupIndexer(new IndexerSetup<string, int>(
-				new NamedParameter("index1", (IParameter)It.IsAny<int>())));
+				(IParameterMatch<int>)It.IsAny<int>()));
 		}
 
 		for (int i = 0; i < eventCount; i++)

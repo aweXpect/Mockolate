@@ -32,10 +32,10 @@ public sealed class InteractionsTests
 	public async Task Subscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
-		registration.AddEvent("foo.bar", this, Helper.GetMethodInfo());
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+		registry.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(sut, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registry.SubscribedTo(sut, "baz.bar");
 
 		await That(result).Never();
 	}
@@ -44,10 +44,10 @@ public sealed class InteractionsTests
 	public async Task Subscribed_WhenNameMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
-		registration.AddEvent("foo.bar", this, Helper.GetMethodInfo());
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+		registry.AddEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(sut, "foo.bar");
+		VerificationResult<IChocolateDispenser> result = registry.SubscribedTo(sut, "foo.bar");
 
 		await That(result).Once();
 	}
@@ -56,9 +56,9 @@ public sealed class InteractionsTests
 	public async Task Subscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
+		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		VerificationResult<IChocolateDispenser> result = registration.SubscribedTo(sut, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registry.SubscribedTo(sut, "baz.bar");
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event bar");
@@ -68,10 +68,10 @@ public sealed class InteractionsTests
 	public async Task Unsubscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
-		registration.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+		registry.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(sut, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registry.UnsubscribedFrom(sut, "baz.bar");
 
 		await That(result).Never();
 	}
@@ -80,10 +80,10 @@ public sealed class InteractionsTests
 	public async Task Unsubscribed_WhenNameMatches_ShouldReturnOnce()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
-		registration.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+		registry.RemoveEvent("foo.bar", this, Helper.GetMethodInfo());
 
-		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(sut, "foo.bar");
+		VerificationResult<IChocolateDispenser> result = registry.UnsubscribedFrom(sut, "foo.bar");
 
 		await That(result).Once();
 	}
@@ -92,9 +92,9 @@ public sealed class InteractionsTests
 	public async Task Unsubscribed_WithoutInteractions_ShouldReturnNeverResult()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
+		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		VerificationResult<IChocolateDispenser> result = registration.UnsubscribedFrom(sut, "baz.bar");
+		VerificationResult<IChocolateDispenser> result = registry.UnsubscribedFrom(sut, "baz.bar");
 
 		await That(result).Never();
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event bar");

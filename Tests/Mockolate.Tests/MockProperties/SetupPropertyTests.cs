@@ -41,13 +41,13 @@ public sealed partial class SetupPropertyTests
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		IPropertyService sut = IPropertyService.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
+		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		int result0 = registration.GetProperty("my.other.property", () => 0, null);
+		int result0 = registry.GetProperty("my.other.property", () => 0, null);
 		PropertySetup<int> setup = new("my.property");
 		((IInteractivePropertySetup)setup).InitializeWith(42);
-		registration.SetupProperty(setup);
-		int result1 = registration.GetProperty("my.property", () => 0, null);
+		registry.SetupProperty(setup);
+		int result1 = registry.GetProperty("my.property", () => 0, null);
 
 		await That(result0).IsEqualTo(0);
 		await That(result1).IsEqualTo(42);
@@ -102,12 +102,12 @@ public sealed partial class SetupPropertyTests
 	public async Task ShouldStoreLastValue()
 	{
 		IPropertyService sut = IPropertyService.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
+		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		string result0 = registration.GetProperty<string>("my.property", () => "", null);
-		registration.SetProperty("my.property", "foo");
-		string result1 = registration.GetProperty<string>("my.property", () => "", null);
-		string result2 = registration.GetProperty<string>("my.other.property", () => "", null);
+		string result0 = registry.GetProperty<string>("my.property", () => "", null);
+		registry.SetProperty("my.property", "foo");
+		string result1 = registry.GetProperty<string>("my.property", () => "", null);
+		string result2 = registry.GetProperty<string>("my.other.property", () => "", null);
 
 		await That(result0).IsEmpty();
 		await That(result1).IsEqualTo("foo");

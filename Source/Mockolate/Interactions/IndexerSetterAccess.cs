@@ -1,24 +1,262 @@
 using System.Diagnostics;
-using System.Linq;
-using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
 
 /// <summary>
-///     An access of an indexer setter.
+///     An access of an indexer setter with a single typed parameter.
 /// </summary>
 [DebuggerDisplay("{ToString()}")]
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerSetterAccess(INamedParameterValue[] parameters, INamedParameterValue value) : IndexerAccess(parameters)
+public class IndexerSetterAccess<T1, TValue>(string parameterName1, T1 parameter1, TValue value) : IndexerAccess
 {
 	/// <summary>
-	///     The value the indexer was being set to.
+	///     The single parameter name of the indexer.
 	/// </summary>
-	public INamedParameterValue Value { get; } = value;
+	public string ParameterName1 { get; } = parameterName1;
+
+	/// <summary>
+	///     The single parameter value of the indexer.
+	/// </summary>
+	public T1 Parameter1 { get; } = parameter1;
+
+	/// <summary>
+	///     The typed value the indexer was being set to.
+	/// </summary>
+	public TValue TypedValue { get; } = value;
+
+	/// <inheritdoc cref="IndexerAccess.IsSetter" />
+	public override bool IsSetter => true;
+
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 1;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
+		{
+			0 => Parameter1,
+			_ => null,
+		};
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"set indexer [{string.Join(", ", Parameters.Select(p => p.ToString()))}] to {Value}";
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
+}
+
+/// <summary>
+///     An access of an indexer setter with two typed parameters.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class IndexerSetterAccess<T1, T2, TValue>(
+	string parameterName1,
+	T1 parameter1,
+	string parameterName2,
+	T2 parameter2,
+	TValue value) : IndexerAccess
+{
+	/// <summary>
+	///     The first parameter name of the indexer.
+	/// </summary>
+	public string ParameterName1 { get; } = parameterName1;
+
+	/// <summary>
+	///     The first parameter value of the indexer.
+	/// </summary>
+	public T1 Parameter1 { get; } = parameter1;
+
+	/// <summary>
+	///     The second parameter name of the indexer.
+	/// </summary>
+	public string ParameterName2 { get; } = parameterName2;
+
+	/// <summary>
+	///     The second parameter value of the indexer.
+	/// </summary>
+	public T2 Parameter2 { get; } = parameter2;
+
+	/// <summary>
+	///     The typed value the indexer was being set to.
+	/// </summary>
+	public TValue TypedValue { get; } = value;
+
+	/// <inheritdoc cref="IndexerAccess.IsSetter" />
+	public override bool IsSetter => true;
+
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 2;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
+		{
+			0 => Parameter1,
+			1 => Parameter2,
+			_ => null,
+		};
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}, {Parameter2?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
+}
+
+/// <summary>
+///     An access of an indexer setter with three typed parameters.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class IndexerSetterAccess<T1, T2, T3, TValue>(
+	string parameterName1,
+	T1 parameter1,
+	string parameterName2,
+	T2 parameter2,
+	string parameterName3,
+	T3 parameter3,
+	TValue value) : IndexerAccess
+{
+	/// <summary>
+	///     The first parameter name of the indexer.
+	/// </summary>
+	public string ParameterName1 { get; } = parameterName1;
+
+	/// <summary>
+	///     The first parameter value of the indexer.
+	/// </summary>
+	public T1 Parameter1 { get; } = parameter1;
+
+	/// <summary>
+	///     The second parameter name of the indexer.
+	/// </summary>
+	public string ParameterName2 { get; } = parameterName2;
+
+	/// <summary>
+	///     The second parameter value of the indexer.
+	/// </summary>
+	public T2 Parameter2 { get; } = parameter2;
+
+	/// <summary>
+	///     The third parameter name of the indexer.
+	/// </summary>
+	public string ParameterName3 { get; } = parameterName3;
+
+	/// <summary>
+	///     The third parameter value of the indexer.
+	/// </summary>
+	public T3 Parameter3 { get; } = parameter3;
+
+	/// <summary>
+	///     The typed value the indexer was being set to.
+	/// </summary>
+	public TValue TypedValue { get; } = value;
+
+	/// <inheritdoc cref="IndexerAccess.IsSetter" />
+	public override bool IsSetter => true;
+
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 3;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
+		{
+			0 => Parameter1,
+			1 => Parameter2,
+			2 => Parameter3,
+			_ => null,
+		};
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}, {Parameter2?.ToString() ?? "null"}, {Parameter3?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
+}
+
+/// <summary>
+///     An access of an indexer setter with four typed parameters.
+/// </summary>
+[DebuggerDisplay("{ToString()}")]
+#if !DEBUG
+[DebuggerNonUserCode]
+#endif
+public class IndexerSetterAccess<T1, T2, T3, T4, TValue>(
+	string parameterName1,
+	T1 parameter1,
+	string parameterName2,
+	T2 parameter2,
+	string parameterName3,
+	T3 parameter3,
+	string parameterName4,
+	T4 parameter4,
+	TValue value) : IndexerAccess
+{
+	/// <summary>
+	///     The first parameter name of the indexer.
+	/// </summary>
+	public string ParameterName1 { get; } = parameterName1;
+
+	/// <summary>
+	///     The first parameter value of the indexer.
+	/// </summary>
+	public T1 Parameter1 { get; } = parameter1;
+
+	/// <summary>
+	///     The second parameter name of the indexer.
+	/// </summary>
+	public string ParameterName2 { get; } = parameterName2;
+
+	/// <summary>
+	///     The second parameter value of the indexer.
+	/// </summary>
+	public T2 Parameter2 { get; } = parameter2;
+
+	/// <summary>
+	///     The third parameter name of the indexer.
+	/// </summary>
+	public string ParameterName3 { get; } = parameterName3;
+
+	/// <summary>
+	///     The third parameter value of the indexer.
+	/// </summary>
+	public T3 Parameter3 { get; } = parameter3;
+
+	/// <summary>
+	///     The fourth parameter name of the indexer.
+	/// </summary>
+	public string ParameterName4 { get; } = parameterName4;
+
+	/// <summary>
+	///     The fourth parameter value of the indexer.
+	/// </summary>
+	public T4 Parameter4 { get; } = parameter4;
+
+	/// <summary>
+	///     The typed value the indexer was being set to.
+	/// </summary>
+	public TValue TypedValue { get; } = value;
+
+	/// <inheritdoc cref="IndexerAccess.IsSetter" />
+	public override bool IsSetter => true;
+
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 4;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
+		{
+			0 => Parameter1,
+			1 => Parameter2,
+			2 => Parameter3,
+			3 => Parameter4,
+			_ => null,
+		};
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}, {Parameter2?.ToString() ?? "null"}, {Parameter3?.ToString() ?? "null"}, {Parameter4?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
 }

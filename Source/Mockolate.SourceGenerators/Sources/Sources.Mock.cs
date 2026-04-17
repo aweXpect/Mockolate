@@ -81,6 +81,26 @@ internal static partial class Sources
 		              			throw new global::Mockolate.Exceptions.MockException($"This method should not be called directly. Either '{typeof(TInterface)}' is not mockable or the source generator did not run correctly.");
 		              		}
 		              	}
+
+		              	/// <summary>
+		              	///     Adapts an <see cref="global::Mockolate.Parameters.IParameter" /> (non-generic) to
+		              	///     <see cref="global::Mockolate.Parameters.IParameterMatch{T}" /> so that covariant parameter
+		              	///     references (e.g. an <c>IParameter&lt;Derived&gt;</c> passed through an <c>IParameter&lt;Base&gt;</c>
+		              	///     slot) can still be invoked at setup/verify time. Only allocated when the direct
+		              	///     <see cref="global::Mockolate.Parameters.IParameterMatch{T}" /> cast fails.
+		              	/// </summary>
+		              	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		              	private sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>
+		              	{
+		              		public bool Matches(T value) => inner.Matches(value);
+		              		public void InvokeCallbacks(T value) => inner.InvokeCallbacks(value);
+		              		public override string? ToString() => inner.ToString();
+
+		              		public static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)
+		              			=> parameter is global::Mockolate.Parameters.IParameterMatch<T> direct
+		              				? direct
+		              				: new CovariantParameterAdapter<T>(parameter);
+		              	}
 		              }
 		              #nullable disable
 		              """);

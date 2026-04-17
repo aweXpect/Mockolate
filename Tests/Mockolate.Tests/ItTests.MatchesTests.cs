@@ -92,13 +92,13 @@ public sealed partial class ItTests
 		{
 			It.IParameterMatches match = It.Matches("F*o");
 			match.CaseSensitive();
-			IParameter parameter = (IParameter)match;
+			IParameterMatch<string> parameter = (IParameterMatch<string>)match;
 
-			bool result1 = parameter.Matches(new NamedParameterValue<string>(string.Empty, "foo"));
+			bool result1 = parameter.Matches("foo");
 
 			match.CaseSensitive(false);
 
-			bool result2 = parameter.Matches(new NamedParameterValue<string>(string.Empty, "foo"));
+			bool result2 = parameter.Matches("foo");
 
 			await That(result1).IsFalse();
 			await That(result2).IsFalse();

@@ -7,31 +7,11 @@ public sealed partial class ItTests
 	public sealed class IsAnyRefTests
 	{
 		[Fact]
-		public async Task ShouldNotMatchLong()
-		{
-			IRefParameter<int?> sut = It.IsAnyRef<int?>();
-
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<long>(string.Empty, 42L));
-
-			await That(result).IsFalse();
-		}
-
-		[Fact]
-		public async Task ShouldNotMatchString()
-		{
-			IRefParameter<int?> sut = It.IsAnyRef<int?>();
-
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<string>(string.Empty, "foo"));
-
-			await That(result).IsFalse();
-		}
-
-		[Fact]
 		public async Task ShouldMatchNull()
 		{
 			IRefParameter<int?> sut = It.IsAnyRef<int?>();
 
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int?>(string.Empty, null));
+			bool result = ((IParameterMatch<int?>)sut).Matches(null);
 
 			await That(result).IsTrue();
 		}
@@ -41,7 +21,7 @@ public sealed partial class ItTests
 		{
 			IRefParameter<int?> sut = It.IsAnyRef<int?>();
 
-			bool result = ((IParameter)sut).Matches(new NamedParameterValue<int?>(string.Empty, 123));
+			bool result = ((IParameterMatch<int?>)sut).Matches(123);
 
 			await That(result).IsTrue();
 		}

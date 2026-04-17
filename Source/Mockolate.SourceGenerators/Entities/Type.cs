@@ -8,12 +8,14 @@ internal record Type
 	private Type(string fullname)
 	{
 		Fullname = fullname;
+		DisplayName = fullname;
 	}
 
 	internal Type(ITypeSymbol typeSymbol)
 	{
 		// Removes '*' from multi-dimensional array types
 		Fullname = typeSymbol.ToDisplayString(Helpers.TypeDisplayFormat).Replace("*", "");
+		DisplayName = typeSymbol.ToDisplayString(Helpers.TypeDisplayShortFormat).Replace("*", "");
 		Namespace = typeSymbol.ContainingNamespace?.ToString();
 		if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
 		{
@@ -50,6 +52,8 @@ internal record Type
 	internal static Type Void { get; } = new("void");
 
 	public string Fullname { get; }
+
+	public string DisplayName { get; }
 
 	private static bool IsIFormattable(ITypeSymbol typeSymbol)
 	{

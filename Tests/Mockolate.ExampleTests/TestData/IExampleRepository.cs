@@ -9,7 +9,7 @@ public abstract class MyClass
 		Value = value;
 	}
 
-	public int Value { get; }
+	public virtual int Value { get; }
 
 	protected virtual int Multiplier { get; set; } = 3;
 

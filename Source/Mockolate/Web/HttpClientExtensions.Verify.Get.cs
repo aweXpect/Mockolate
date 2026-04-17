@@ -2,8 +2,8 @@ using System;
 using System.Net.Http;
 using System.Threading;
 using Mockolate.Exceptions;
+using Mockolate.Interactions;
 using Mockolate.Parameters;
-using Mockolate.Setup;
 using Mockolate.Verify;
 
 // ReSharper disable once CheckNamespace
@@ -45,12 +45,13 @@ public static partial class HttpClientExtensions
 			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				return httpMessageHandlerMock.MockRegistry.Method(
-						httpClientMock.MockRegistry.ConstructorParameters[0],
-						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
-							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Get, new HttpStringUriParameter(requestUri))),
-							new NamedParameter("cancellationToken", (IParameter)cancellationToken),
-						]))
+				HttpRequestMessageParameters requestMatcher = new(HttpMethod.Get, new HttpStringUriParameter(requestUri));
+				IParameterMatch<CancellationToken> cancellationTokenMatcher = cancellationToken.AsParameterMatch();
+				return httpMessageHandlerMock.MockRegistry.VerifyMethod<object, MethodInvocation<HttpRequestMessage, CancellationToken>>(
+						httpClientMock.MockRegistry.ConstructorParameters[0]!,
+						"global::System.Net.Http.HttpMessageHandler.SendAsync",
+						method => requestMatcher.Matches(method.Parameter1) && cancellationTokenMatcher.Matches(method.Parameter2),
+						() => $"SendAsync({requestMatcher}, {cancellationTokenMatcher})")
 					.Map(httpClient);
 			}
 
@@ -69,13 +70,14 @@ public static partial class HttpClientExtensions
 			if (verify is HttpClient httpClient and IMock { MockRegistry.ConstructorParameters.Length: > 0, } httpClientMock &&
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
-				return httpMessageHandlerMock.MockRegistry.Method(
-						httpClientMock.MockRegistry.ConstructorParameters[0],
-						new MethodParameterMatch("global::System.Net.Http.HttpMessageHandler.SendAsync", [
-							new NamedParameter("request", new HttpRequestMessageParameters(HttpMethod.Get,
-								new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri))),
-							new NamedParameter("cancellationToken", (IParameter)cancellationToken),
-						]))
+				HttpRequestMessageParameters requestMatcher = new(HttpMethod.Get,
+					new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri));
+				IParameterMatch<CancellationToken> cancellationTokenMatcher = cancellationToken.AsParameterMatch();
+				return httpMessageHandlerMock.MockRegistry.VerifyMethod<object, MethodInvocation<HttpRequestMessage, CancellationToken>>(
+						httpClientMock.MockRegistry.ConstructorParameters[0]!,
+						"global::System.Net.Http.HttpMessageHandler.SendAsync",
+						method => requestMatcher.Matches(method.Parameter1) && cancellationTokenMatcher.Matches(method.Parameter2),
+						() => $"SendAsync({requestMatcher}, {cancellationTokenMatcher})")
 					.Map(httpClient);
 			}
 

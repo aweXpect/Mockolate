@@ -10,6 +10,11 @@ namespace Mockolate.Setup;
 #endif
 internal partial class MockSetups
 {
+	internal EventSetups Events { get; } = new();
+	internal IndexerSetups Indexers { get; } = new();
+	internal MethodSetups Methods { get; } = new();
+	internal PropertySetups Properties { get; } = new();
+
 	/// <inheritdoc cref="object.ToString()" />
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public override string ToString()

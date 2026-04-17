@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -60,136 +59,6 @@ public sealed partial class SetupMethodTests
 		int result = sut.GetHashCode();
 
 		await That(result).IsEqualTo(expectedResult);
-	}
-
-	[Fact]
-	public async Task HasOutParameter_WhenNameAndTypeMatches_ShouldReturnParameter()
-	{
-		IOutParameter<int> expectedParameter = It.IsAnyOut<int>();
-
-		bool result = MyMethodSetup.MyHasOutParameter(
-			[new NamedParameter("foo", (IParameter)expectedParameter),],
-			"foo",
-			out IOutParameter<int>? parameter);
-
-		await That(result).IsTrue();
-		await That(parameter).IsSameAs(expectedParameter);
-	}
-
-	[Fact]
-	public async Task HasOutParameter_WhenNamedParameterIsNull_ShouldIgnore()
-	{
-		bool result = MyMethodSetup.MyHasOutParameter(
-			[null,],
-			"foo",
-			out IOutParameter<int>? parameter);
-
-		await That(result).IsFalse();
-		await That(parameter).IsNull();
-	}
-
-	[Fact]
-	public async Task HasOutParameter_WhenNameIsDifferent_ShouldIgnore()
-	{
-		IOutParameter<int> expectedParameter = It.IsAnyOut<int>();
-
-		bool result = MyMethodSetup.MyHasOutParameter(
-			[new NamedParameter("FOO", (IParameter)expectedParameter),],
-			"foo",
-			out IOutParameter<int>? parameter);
-
-		await That(result).IsFalse();
-		await That(parameter).IsNull();
-	}
-
-	[Fact]
-	public async Task HasOutParameter_WhenTypeIsDifferent_ShouldIgnore()
-	{
-		IOutParameter<int> expectedParameter = It.IsAnyOut<int>();
-
-		bool result = MyMethodSetup.MyHasOutParameter(
-			[new NamedParameter("foo", (IParameter)expectedParameter),],
-			"foo",
-			out IOutParameter<long>? parameter);
-
-		await That(result).IsFalse();
-		await That(parameter).IsNull();
-	}
-
-	[Fact]
-	public async Task HasRefParameter_WhenNameAndTypeMatches_ShouldReturnParameter()
-	{
-		IRefParameter<int> expectedParameter = It.IsAnyRef<int>();
-
-		bool result = MyMethodSetup.MyHasRefParameter(
-			[new NamedParameter("foo", (IParameter)expectedParameter),],
-			"foo",
-			out IRefParameter<int>? parameter);
-
-		await That(result).IsTrue();
-		await That(parameter).IsSameAs(expectedParameter);
-	}
-
-	[Fact]
-	public async Task HasRefParameter_WhenNamedParameterIsNull_ShouldIgnore()
-	{
-		bool result = MyMethodSetup.MyHasRefParameter(
-			[null,],
-			"foo",
-			out IRefParameter<int>? parameter);
-
-		await That(result).IsFalse();
-		await That(parameter).IsNull();
-	}
-
-	[Fact]
-	public async Task HasRefParameter_WhenNameIsDifferent_ShouldIgnore()
-	{
-		IRefParameter<int> expectedParameter = It.IsAnyRef<int>();
-
-		bool result = MyMethodSetup.MyHasRefParameter(
-			[new NamedParameter("FOO", (IParameter)expectedParameter),],
-			"foo",
-			out IRefParameter<int>? parameter);
-
-		await That(result).IsFalse();
-		await That(parameter).IsNull();
-	}
-
-	[Fact]
-	public async Task HasRefParameter_WhenTypeIsDifferent_ShouldIgnore()
-	{
-		IRefParameter<int> expectedParameter = It.IsAnyRef<int>();
-
-		bool result = MyMethodSetup.MyHasRefParameter(
-			[new NamedParameter("foo", (IParameter)expectedParameter),],
-			"foo",
-			out IRefParameter<long>? parameter);
-
-		await That(result).IsFalse();
-		await That(parameter).IsNull();
-	}
-
-	[Fact]
-	public async Task HasReturnCalls_ShouldDefaultToFalse()
-	{
-		MyMethodSetup sut = new();
-
-		bool result = sut.GetHasReturnCalls();
-
-		await That(result).IsFalse();
-	}
-
-	[Fact]
-	public async Task MethodSetupResult_TriggerCallbacks_Null_ShouldTriggerCallbacksWithEmptyArray()
-	{
-		IInteractiveMethodSetup methodSetup = IInteractiveMethodSetup.CreateMock();
-		MethodSetupResult sut = new(methodSetup, MockBehavior.Default);
-
-		sut.TriggerCallbacks(null);
-
-		await That(methodSetup.Mock.Verify.TriggerCallbacks(
-			It.Satisfies<INamedParameterValue[]>(arr => arr.Length == 0))).Once();
 	}
 
 	[Fact]
@@ -305,17 +174,14 @@ public sealed partial class SetupMethodTests
 	[Fact]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
-		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
+		IMethodService sut = IMethodService.CreateMock();
 
-		MethodSetupResult<int> result0 = registration.InvokeMethod("my.method", _ => 0);
-		ReturnMethodSetup<int> setup = new("my.method");
-		setup.Returns(42);
-		registration.SetupMethod(setup);
-		MethodSetupResult<int> result1 = registration.InvokeMethod("my.method", _ => 0);
+		int result0 = sut.MyIntMethodWithoutParameters();
+		sut.Mock.Setup.MyIntMethodWithoutParameters().Returns(42);
+		int result1 = sut.MyIntMethodWithoutParameters();
 
-		await That(result0.Result).IsEqualTo(0);
-		await That(result1.Result).IsEqualTo(42);
+		await That(result0).IsEqualTo(0);
+		await That(result1).IsEqualTo(42);
 	}
 
 	[Fact]
@@ -532,33 +398,6 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task TriggerCallbacks_WhenParameterCountDoesNotMatch_ShouldNotInvokeParameterCallbacks()
-	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
-		MyMethodSetup.DoTriggerCallbacks([
-			new NamedParameter("foo", (IParameter)parameter),
-		], [
-			new NamedParameterValue<int>("foo", 4),
-			new NamedParameterValue<int>("foo", 5),
-		]);
-
-		await That(monitor.Values).IsEmpty();
-	}
-
-	[Fact]
-	public async Task TriggerCallbacks_WhenParameterCountMatches_ShouldInvokeParameterCallbacks()
-	{
-		IParameter<int> parameter = It.IsAny<int>().Monitor(out IParameterMonitor<int> monitor);
-		MyMethodSetup.DoTriggerCallbacks([
-			new NamedParameter("foo", (IParameter)parameter),
-		], [
-			new NamedParameterValue<int>("foo", 4),
-		]);
-
-		await That(monitor.Values).IsEqualTo([4,]);
-	}
-
-	[Fact]
 	public async Task VoidMethod_Callback_ShouldExecuteWhenInvoked()
 	{
 		int callCount = 0;
@@ -570,37 +409,6 @@ public sealed partial class SetupMethodTests
 		sut.MethodWithoutOtherOverloads(1, 2, 3);
 
 		await That(callCount).IsEqualTo(1);
-	}
-
-	[Theory]
-	[InlineData("Method0")]
-	[InlineData("Method1", 1)]
-	[InlineData("Method2", 1, 2)]
-	[InlineData("Method3", 1, 2, 3)]
-	[InlineData("Method4", 1, 2, 3, 4)]
-	[InlineData("Method5", 1, 2, 3, 4, 5)]
-	public async Task VoidMethod_GetReturnValue_ShouldThrowMockException(string methodName, params int[] parameters)
-	{
-		IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
-
-		sut.Mock.Setup.Method0();
-		sut.Mock.Setup.Method1(It.IsAny<int>());
-		sut.Mock.Setup.Method2(It.IsAny<int>(), It.IsAny<int>());
-		sut.Mock.Setup.Method3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
-		sut.Mock.Setup.Method4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>());
-		sut.Mock.Setup.Method5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
-			It.IsAny<int>());
-
-		void Act()
-		{
-			registration.InvokeMethod(
-				$"global::Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.{methodName}", _ => 0,
-				parameters.Select(x => new NamedParameterValue<int>("", x)).Cast<INamedParameterValue>().ToArray());
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The method setup does not support return values.");
 	}
 
 	[Fact]
@@ -616,27 +424,6 @@ public sealed partial class SetupMethodTests
 
 		await That(callCount).IsEqualTo(1);
 		await That(sut.Mock.Verify.MethodWithoutOtherOverloads(Match.AnyParameters())).Once();
-	}
-
-	[Fact]
-	public async Task VoidMethod_WithParameters_GetReturnValue_ShouldThrowMockException()
-	{
-		IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
-		MockRegistry registration = ((IMock)sut).MockRegistry;
-
-		sut.Mock.Setup.UniqueMethodWithParameters(Match.AnyParameters());
-
-		void Act()
-		{
-			registration.InvokeMethod(
-				"global::Mockolate.Tests.MockMethods.SetupMethodTests.IVoidMethodSetupTest.UniqueMethodWithParameters",
-				_ => 0,
-				new NamedParameterValue<int>("p1", 1),
-				new NamedParameterValue<int>("p2", 2));
-		}
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("The method setup does not support return values.");
 	}
 
 	[Fact]
@@ -757,7 +544,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int> setup = new("Foo");
+			ReturnMethodSetup<int>.WithParameterCollection setup = new(MockBehavior.Default, "Foo");
 
 			string result = setup.ToString();
 
@@ -814,7 +601,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string> setup = new("Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -837,8 +624,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string> setup = new("Foo",
-				new NamedParameter("bar", (IParameter)It.IsAny<string>()));
+			ReturnMethodSetup<int, string>.WithParameterCollection setup = new(MockBehavior.Default, "Foo", (IParameterMatch<string>)It.IsAny<string>());
 
 			string result = setup.ToString();
 
@@ -911,7 +697,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long> setup = new("Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -934,9 +720,10 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()));
+			ReturnMethodSetup<int, string, long>.WithParameterCollection setup = new(
+				MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>());
 
 			string result = setup.ToString();
 
@@ -1041,7 +828,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int> setup = new("Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -1064,10 +851,11 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()),
-				new NamedParameter("p3", (IParameter)It.IsAny<int>()));
+			ReturnMethodSetup<int, string, long, int>.WithParameterCollection setup = new(
+				MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>(),
+				(IParameterMatch<int>)It.IsAny<int>());
 
 			string result = setup.ToString();
 
@@ -1240,7 +1028,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -1263,11 +1051,12 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()),
-				new NamedParameter("p3", (IParameter)It.IsAny<int>()),
-				new NamedParameter("p4", (IParameter)It.IsAny<int>()));
+			ReturnMethodSetup<int, string, long, int, int>.WithParameterCollection setup = new(
+				MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
 
 			string result = setup.ToString();
 
@@ -1586,7 +1375,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -1609,12 +1398,13 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int, int> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()),
-				new NamedParameter("p3", (IParameter)It.IsAny<int>()),
-				new NamedParameter("p4", (IParameter)It.IsAny<int>()),
-				new NamedParameter("p5", (IParameter)It.IsAny<int>()));
+			ReturnMethodSetup<int, string, long, int, int, int>.WithParameterCollection setup = new(
+				MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
 
 			string result = setup.ToString();
 
@@ -1682,7 +1472,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup setup = new("Foo");
+			VoidMethodSetup.WithParameterCollection setup = new(MockBehavior.Default, "Foo");
 
 			string result = setup.ToString();
 
@@ -1723,7 +1513,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string> setup = new("Foo", Match.AnyParameters());
+			VoidMethodSetup<string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -1746,8 +1536,8 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string> setup = new("Foo",
-				new NamedParameter("bar", (IParameter)It.IsAny<string>()));
+			VoidMethodSetup<string>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>());
 
 			string result = setup.ToString();
 
@@ -1789,7 +1579,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long> setup = new("Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -1812,9 +1602,9 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()));
+			VoidMethodSetup<string, long>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>());
 
 			string result = setup.ToString();
 
@@ -1856,7 +1646,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int> setup = new("Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -1879,10 +1669,10 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()),
-				new NamedParameter("p3", (IParameter)It.IsAny<int>()));
+			VoidMethodSetup<string, long, int>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>(),
+				(IParameterMatch<int>)It.IsAny<int>());
 
 			string result = setup.ToString();
 
@@ -1924,7 +1714,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int> setup = new("Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -1947,11 +1737,11 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()),
-				new NamedParameter("p3", (IParameter)It.IsAny<int>()),
-				new NamedParameter("p4", (IParameter)It.IsAny<int>()));
+			VoidMethodSetup<string, long, int, int>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
 
 			string result = setup.ToString();
 
@@ -1995,7 +1785,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int, int> setup = new("Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
 
 			string result = setup.ToString();
 
@@ -2018,12 +1808,13 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int, int> setup = new("Foo",
-				new NamedParameter("p1", (IParameter)It.IsAny<string>()),
-				new NamedParameter("p2", (IParameter)It.IsAny<long>()),
-				new NamedParameter("p3", (IParameter)It.IsAny<int>()),
-				new NamedParameter("p4", (IParameter)It.IsAny<int>()),
-				new NamedParameter("p5", (IParameter)It.IsAny<int>()));
+			VoidMethodSetup<string, long, int, int, int>.WithParameterCollection setup = new(
+				MockBehavior.Default, "Foo",
+				(IParameterMatch<string>)It.IsAny<string>(),
+				(IParameterMatch<long>)It.IsAny<long>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
 
 			string result = setup.ToString();
 
@@ -2047,42 +1838,6 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo(4);
 			await That(sut.Mock.Verify.MethodWithDefaultParameter(It.IsAny<int>())).Once();
 		}
-	}
-
-	public class MyMethodSetup() : MethodSetup(new MethodParameterMatch("", []))
-	{
-		public static void DoTriggerCallbacks(NamedParameter?[] namedParameters, INamedParameterValue[] values)
-			=> TriggerCallbacks(namedParameters, values);
-
-		public bool GetHasReturnCalls()
-			=> base.HasReturnCalls();
-
-		public static bool MyHasOutParameter<T>(NamedParameter?[] namedParameters, string parameterName,
-			out IOutParameter<T>? parameter)
-			=> HasOutParameter(namedParameters, parameterName, out parameter);
-
-		public static bool MyHasRefParameter<T>(NamedParameter?[] namedParameters, string parameterName,
-			out IRefParameter<T>? parameter)
-			=> HasRefParameter(namedParameters, parameterName, out parameter);
-
-		protected override bool? GetSkipBaseClass()
-			=> throw new NotSupportedException();
-
-		protected override T SetOutParameter<T>(string parameterName, Func<T> defaultValueGenerator)
-			=> throw new NotSupportedException();
-
-		protected override T SetRefParameter<T>(string parameterName, T value, MockBehavior behavior)
-			=> throw new NotSupportedException();
-
-		protected override void ExecuteCallback(MethodInvocation invocation, MockBehavior behavior)
-			=> throw new NotSupportedException();
-
-		protected override TResult GetReturnValue<TResult>(MethodInvocation invocation, MockBehavior behavior,
-			Func<TResult> defaultValueGenerator)
-			=> throw new NotSupportedException();
-
-		protected override void TriggerParameterCallbacks(INamedParameterValue[] parameters)
-			=> throw new NotSupportedException();
 	}
 
 	public interface IVoidMethodSetupWithParametersTest

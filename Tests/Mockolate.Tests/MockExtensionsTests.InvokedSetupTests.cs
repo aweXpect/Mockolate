@@ -42,6 +42,7 @@ public sealed partial class MockExtensionsTests
 
 		private sealed class MyMethodSetup : IMethodSetup
 		{
+			public string Name { get; } = "Foo";
 		}
 	}
 }

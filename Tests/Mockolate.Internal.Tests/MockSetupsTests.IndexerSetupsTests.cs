@@ -17,7 +17,8 @@ public partial class MockSetupsTests
 			setups.Add(setup1);
 			setups.Add(setup2);
 
-			IndexerSetup? result = setups.GetLatestOrDefault(access);
+			FakeIndexerSetup? result = setups.GetMatching<FakeIndexerSetup>(
+				s => ((IInteractiveIndexerSetup)s).Matches(access));
 
 			await That(result).IsEqualTo(setup1);
 		}
@@ -47,13 +48,15 @@ public partial class MockSetupsTests
 				FakeIndexerSetup setup = new(shouldMatch);
 				setups.Add(setup);
 				FakeIndexerAccess access = new();
-				_ = setups.GetLatestOrDefault(access);
+				_ = setups.GetMatching<FakeIndexerSetup>(
+					s => ((IInteractiveIndexerSetup)s).Matches(access));
 			});
 			FakeIndexerSetup finalMatch = new(true);
 			setups.Add(finalMatch);
 			FakeIndexerAccess finalAccess = new();
 
-			IndexerSetup? result = setups.GetLatestOrDefault(finalAccess);
+			FakeIndexerSetup? result = setups.GetMatching<FakeIndexerSetup>(
+				s => ((IInteractiveIndexerSetup)s).Matches(finalAccess));
 
 			await That(result).IsEqualTo(finalMatch);
 		}
