@@ -64,6 +64,12 @@ public interface IPropertyGetterSetup<T>
 	///     parameter.
 	/// </remarks>
 	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenarioName" /> whenever the property is read.
+	/// </summary>
+	/// <param name="scenarioName">The name of the new scenario.</param>
+	IPropertySetupCallbackBuilder<T> TransitionTo(string scenarioName);
 }
 
 /// <summary>
@@ -92,6 +98,12 @@ public interface IPropertySetterSetup<T>
 	///     second parameter.
 	/// </remarks>
 	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenarioName" /> whenever the property is written to.
+	/// </summary>
+	/// <param name="scenarioName">The name of the new scenario.</param>
+	IPropertySetupCallbackBuilder<T> TransitionTo(string scenarioName);
 }
 
 /// <summary>

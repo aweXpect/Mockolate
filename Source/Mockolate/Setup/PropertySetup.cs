@@ -22,6 +22,11 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	public abstract string Name { get; }
 
 	/// <summary>
+	///     The mock registry this setup belongs to. Set by <see cref="MockRegistry.SetupProperty(PropertySetup)" />.
+	/// </summary>
+	internal MockRegistry? MockRegistry { get; set; }
+
+	/// <summary>
 	///     Gets whether the property has already been initialized with a value.
 	/// </summary>
 	internal abstract bool IsValueInitialized { get; }
@@ -404,6 +409,36 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<int, T> callback)
 	{
 		Callback<Action<int, T>> item = new(callback);
+		_currentCallback = item;
+		(_getterCallbacks ??= []).Add(item);
+		return this;
+	}
+
+	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenarioName)
+	{
+		Callback<Action<int, T>> item = new((_, _) =>
+		{
+			if (MockRegistry is not null)
+			{
+				MockRegistry.Scenario = scenarioName;
+			}
+		});
+		item.InParallel();
+		_currentCallback = item;
+		(_setterCallbacks ??= []).Add(item);
+		return this;
+	}
+
+	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenarioName)
+	{
+		Callback<Action<int, T>> item = new((_, _) =>
+		{
+			if (MockRegistry is not null)
+			{
+				MockRegistry.Scenario = scenarioName;
+			}
+		});
+		item.InParallel();
 		_currentCallback = item;
 		(_getterCallbacks ??= []).Add(item);
 		return this;
