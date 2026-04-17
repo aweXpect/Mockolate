@@ -355,11 +355,11 @@ public static partial class ItExtensions
 
 		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
 		public bool Matches(HttpContent? value)
-			=> ((IParameterMatch<HttpContent?>)parameter).Matches(value);
+			=> parameter.AsParameterMatch().Matches(value);
 
 		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
 		public void InvokeCallbacks(HttpContent? value)
-			=> ((IParameterMatch<HttpContent?>)parameter).InvokeCallbacks(value);
+			=> parameter.AsParameterMatch().InvokeCallbacks(value);
 
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		bool IParameter.Matches(object? value)

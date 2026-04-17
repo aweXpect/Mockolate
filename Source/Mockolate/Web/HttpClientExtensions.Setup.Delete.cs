@@ -50,7 +50,7 @@ public static partial class HttpClientExtensions
 						"global::System.Net.Http.HttpMessageHandler.SendAsync",
 						new HttpRequestMessageParameters(HttpMethod.Delete,
 							new HttpStringUriParameter(requestUri)),
-						(IParameterMatch<CancellationToken>)cancellationToken);
+						cancellationToken.AsParameterMatch());
 				httpMessageHandlerMock.MockRegistry.SetupMethod(methodSetup);
 				return methodSetup;
 			}
@@ -76,7 +76,7 @@ public static partial class HttpClientExtensions
 						"global::System.Net.Http.HttpMessageHandler.SendAsync",
 						new HttpRequestMessageParameters(HttpMethod.Delete,
 							new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri)),
-						(IParameterMatch<CancellationToken>)cancellationToken);
+						cancellationToken.AsParameterMatch());
 				httpMessageHandlerMock.MockRegistry.SetupMethod(methodSetup);
 				return methodSetup;
 			}

@@ -57,12 +57,12 @@ public static partial class HttpClientExtensions
 				HttpRequestMessageParameters requestMatcher = new(HttpMethod.Post,
 					new HttpStringUriParameter(requestUri),
 					new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content));
-				IParameterMatch<CancellationToken> cancellationTokenMatcher = (IParameterMatch<CancellationToken>)cancellationToken;
+				IParameterMatch<CancellationToken> cancellationTokenMatcher = cancellationToken.AsParameterMatch();
 				return httpMessageHandlerMock.MockRegistry.VerifyMethod<object, MethodInvocation<HttpRequestMessage, CancellationToken>>(
 						httpClientMock.MockRegistry.ConstructorParameters[0]!,
 						"global::System.Net.Http.HttpMessageHandler.SendAsync",
 						method => requestMatcher.Matches(method.Parameter1) && cancellationTokenMatcher.Matches(method.Parameter2),
-						() => $"invoked method SendAsync({requestMatcher}, {cancellationTokenMatcher})")
+						() => $"SendAsync({requestMatcher}, {cancellationTokenMatcher})")
 					.Map(httpClient);
 			}
 
@@ -86,12 +86,12 @@ public static partial class HttpClientExtensions
 				HttpRequestMessageParameters requestMatcher = new(HttpMethod.Post,
 					new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri),
 					new HttpRequestMessageParameter<HttpContent?>(r => r.Content, content));
-				IParameterMatch<CancellationToken> cancellationTokenMatcher = (IParameterMatch<CancellationToken>)cancellationToken;
+				IParameterMatch<CancellationToken> cancellationTokenMatcher = cancellationToken.AsParameterMatch();
 				return httpMessageHandlerMock.MockRegistry.VerifyMethod<object, MethodInvocation<HttpRequestMessage, CancellationToken>>(
 						httpClientMock.MockRegistry.ConstructorParameters[0]!,
 						"global::System.Net.Http.HttpMessageHandler.SendAsync",
 						method => requestMatcher.Matches(method.Parameter1) && cancellationTokenMatcher.Matches(method.Parameter2),
-						() => $"invoked method SendAsync({requestMatcher}, {cancellationTokenMatcher})")
+						() => $"SendAsync({requestMatcher}, {cancellationTokenMatcher})")
 					.Map(httpClient);
 			}
 

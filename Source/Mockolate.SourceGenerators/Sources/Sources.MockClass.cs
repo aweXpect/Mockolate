@@ -575,7 +575,7 @@ internal static partial class Sources
 			? $"global::Mockolate.MockExtensionsFor{name}.IMockSetupInitializationFor{name}"
 			: $"global::Mockolate.Mock.IMockSetupFor{name}";
 		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents,
-			hasStaticMembers, hasStaticEvents, setupType);
+			hasStaticMembers, hasStaticEvents);
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
@@ -952,8 +952,7 @@ internal static partial class Sources
 
 #pragma warning disable S107 // Methods should not have too many parameters
 	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name,
-		bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents,
-		string setupType)
+		bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
 	{
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append(

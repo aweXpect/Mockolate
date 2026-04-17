@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -40,9 +39,9 @@ public partial class It
 	private sealed class OutParameterMatch<T>(Func<T> setter, string setterExpression) : TypedOutMatch<T>
 	{
 		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
-		public override bool TryGetValue([NotNullWhen(true)] out T? value)
+		public override bool TryGetValue(out T value)
 		{
-			value = setter()!;
+			value = setter();
 			return true;
 		}
 
@@ -59,9 +58,9 @@ public partial class It
 	private sealed class AnyOutParameterMatch<T> : TypedOutMatch<T>
 	{
 		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
-		public override bool TryGetValue([NotNullWhen(true)] out T? value)
+		public override bool TryGetValue(out T value)
 		{
-			value = default;
+			value = default!;
 			return false;
 		}
 
@@ -102,7 +101,7 @@ public partial class It
 		private List<Action<T>>? _callbacks;
 
 		/// <inheritdoc cref="IOutParameter{T}.TryGetValue(out T)" />
-		public abstract bool TryGetValue([NotNullWhen(true)] out T? value);
+		public abstract bool TryGetValue(out T value);
 
 		/// <inheritdoc cref="IOutParameter{T}.Do(Action{T})" />
 		public IOutParameter<T> Do(Action<T> callback)

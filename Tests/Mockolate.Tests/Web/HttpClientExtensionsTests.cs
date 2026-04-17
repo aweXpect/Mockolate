@@ -12,7 +12,7 @@ namespace Mockolate.Tests.Web;
 public sealed partial class HttpClientExtensionsTests
 {
 	[Fact]
-	public async Task InvalidParameter_ShouldReturnTrue()
+	public async Task CustomParameter_WithoutIParameterMatch_ShouldBeInvokedViaAdapter()
 	{
 		HttpClient httpClient = HttpClient.CreateMock();
 		IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> setup = httpClient
@@ -22,10 +22,14 @@ public sealed partial class HttpClientExtensionsTests
 		ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 			(ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>)setup;
 
-		bool result = methodSetup.Matches("request", new HttpRequestMessage(), "cancellationToken",
-			CancellationToken.None);
+		void Act()
+		{
+			methodSetup.Matches("request",
+				new HttpRequestMessage(HttpMethod.Get, "http://localhost/"),
+				"cancellationToken", CancellationToken.None);
+		}
 
-		await That(result).IsTrue();
+		await That(Act).Throws<NotSupportedException>();
 	}
 
 	[Fact]

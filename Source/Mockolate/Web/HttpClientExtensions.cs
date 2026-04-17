@@ -37,8 +37,8 @@ public static partial class HttpClientExtensions
 				ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>.WithParameterCollection methodSetup =
 					new(httpMessageHandlerMock.MockRegistry,
 						"global::System.Net.Http.HttpMessageHandler.SendAsync",
-						(IParameterMatch<HttpRequestMessage>)request,
-						(IParameterMatch<CancellationToken>)It.IsAny<CancellationToken>());
+						request.AsParameterMatch(),
+						It.IsAny<CancellationToken>().AsParameterMatch());
 				httpMessageHandlerMock.MockRegistry.SetupMethod(methodSetup);
 				return methodSetup;
 			}
@@ -97,16 +97,11 @@ public static partial class HttpClientExtensions
 				return httpRequestMessageParameter.Matches(valueSelector(value), value);
 			}
 
-			return ((IParameterMatch<T>)parameter).Matches(valueSelector(value));
+			return parameter.AsParameterMatch().Matches(valueSelector(value));
 		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)
-		{
-			if (parameter is IParameterMatch<T> invokableParameter)
-			{
-				invokableParameter.InvokeCallbacks(valueSelector(value));
-			}
-		}
+			=> parameter.AsParameterMatch().InvokeCallbacks(valueSelector(value));
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string? ToString()
@@ -118,28 +113,19 @@ public static partial class HttpClientExtensions
 	{
 		public bool Matches(HttpRequestMessage value)
 		{
-			if (parameter is not IParameterMatch<string> invokableParameter)
-			{
-				return true;
-			}
-
 			if (value.RequestUri is null)
 			{
 				return false;
 			}
 
-			string requestUri1 = value.RequestUri.ToString();
-			return invokableParameter.Matches(requestUri1) ||
-			       (requestUri1.EndsWith('/') && invokableParameter.Matches(requestUri1.TrimEnd('/')));
+			IParameterMatch<string?> matcher = parameter.AsParameterMatch();
+			string requestUri = value.RequestUri.ToString();
+			return matcher.Matches(requestUri) ||
+			       (requestUri.EndsWith('/') && matcher.Matches(requestUri.TrimEnd('/')));
 		}
 
 		public void InvokeCallbacks(HttpRequestMessage value)
-		{
-			if (parameter is IParameterMatch<string?> invokableParameter)
-			{
-				invokableParameter.InvokeCallbacks(value.RequestUri?.ToString());
-			}
-		}
+			=> parameter.AsParameterMatch().InvokeCallbacks(value.RequestUri?.ToString());
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()

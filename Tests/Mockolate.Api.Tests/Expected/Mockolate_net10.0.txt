@@ -790,7 +790,7 @@ namespace Mockolate.Parameters
     public interface IOutParameter<T>
     {
         Mockolate.Parameters.IOutParameter<T> Do(System.Action<T> callback);
-        bool TryGetValue([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out T? value);
+        bool TryGetValue(out T value);
     }
     public interface IParameter
     {

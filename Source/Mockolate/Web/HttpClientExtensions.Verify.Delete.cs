@@ -46,12 +46,12 @@ public static partial class HttpClientExtensions
 			    httpClientMock.MockRegistry.ConstructorParameters[0] is IMock httpMessageHandlerMock)
 			{
 				HttpRequestMessageParameters requestMatcher = new(HttpMethod.Delete, new HttpStringUriParameter(requestUri));
-				IParameterMatch<CancellationToken> cancellationTokenMatcher = (IParameterMatch<CancellationToken>)cancellationToken;
+				IParameterMatch<CancellationToken> cancellationTokenMatcher = cancellationToken.AsParameterMatch();
 				return httpMessageHandlerMock.MockRegistry.VerifyMethod<object, MethodInvocation<HttpRequestMessage, CancellationToken>>(
 						httpClientMock.MockRegistry.ConstructorParameters[0]!,
 						"global::System.Net.Http.HttpMessageHandler.SendAsync",
 						method => requestMatcher.Matches(method.Parameter1) && cancellationTokenMatcher.Matches(method.Parameter2),
-						() => $"invoked method SendAsync({requestMatcher}, {cancellationTokenMatcher})")
+						() => $"SendAsync({requestMatcher}, {cancellationTokenMatcher})")
 					.Map(httpClient);
 			}
 
@@ -73,12 +73,12 @@ public static partial class HttpClientExtensions
 			{
 				HttpRequestMessageParameters requestMatcher = new(HttpMethod.Delete,
 					new HttpRequestMessageParameter<Uri?>(r => r.RequestUri, requestUri));
-				IParameterMatch<CancellationToken> cancellationTokenMatcher = (IParameterMatch<CancellationToken>)cancellationToken;
+				IParameterMatch<CancellationToken> cancellationTokenMatcher = cancellationToken.AsParameterMatch();
 				return httpMessageHandlerMock.MockRegistry.VerifyMethod<object, MethodInvocation<HttpRequestMessage, CancellationToken>>(
 						httpClientMock.MockRegistry.ConstructorParameters[0]!,
 						"global::System.Net.Http.HttpMessageHandler.SendAsync",
 						method => requestMatcher.Matches(method.Parameter1) && cancellationTokenMatcher.Matches(method.Parameter2),
-						() => $"invoked method SendAsync({requestMatcher}, {cancellationTokenMatcher})")
+						() => $"SendAsync({requestMatcher}, {cancellationTokenMatcher})")
 					.Map(httpClient);
 			}
 

@@ -129,13 +129,13 @@ public static partial class ItExtensions
 			}
 
 			if (_uriParameter is not null &&
-			    !((IParameterMatch<Uri?>)_uriParameter).Matches(value.RequestUri))
+			    !_uriParameter.AsParameterMatch().Matches(value.RequestUri))
 			{
 				return false;
 			}
 
 			if (_contentParameter is not null &&
-			    !((IParameterMatch<HttpContent?>)_contentParameter).Matches(value.Content))
+			    !_contentParameter.AsParameterMatch().Matches(value.Content))
 			{
 				return false;
 			}

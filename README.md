@@ -550,14 +550,14 @@ int result = sut.Process("HELLO");
 When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:
 
 - `Match.AnyParameters()`: Matches any parameter combination.
-- `Match.Parameters(Func<NamedParameterValue[], bool> predicate)`: Matches parameters based on a custom predicate.
+- `Match.Parameters(Func<object?[], bool> predicate)`: Matches parameters based on a custom predicate.
 
 ```csharp
 // Example: Custom parameter predicate
-sut.Mock.Setup.Process(Match.Parameters(args => 
-    args.Length == 2 && 
-    args[0].Value is string s && s.StartsWith("test") &&
-    args[1].Value is int i && i > 0))
+sut.Mock.Setup.Process(Match.Parameters(args =>
+    args.Length == 2 &&
+    args[0] is string s && s.StartsWith("test") &&
+    args[1] is int i && i > 0))
     .Returns(true);
 
 bool result = sut.Process("test123", 5);

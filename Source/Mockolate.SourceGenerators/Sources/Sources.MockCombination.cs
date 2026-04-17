@@ -325,7 +325,7 @@ internal static partial class Sources
 		string setupType = hasProtectedMembers
 			? $"global::Mockolate.MockExtensionsFor{name}.IMockSetupInitializationFor{name}"
 			: $"global::Mockolate.Mock.IMockSetupFor{name}";
-		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents, setupType);
+		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
 		foreach ((string additionalInterfaceName, Class additionalInterface) in additionalInterfaces)
 		{
 			ImplementMockForInterface(sb, mockRegistryName, additionalInterfaceName,
@@ -333,8 +333,7 @@ internal static partial class Sources
 				false /* Interfaces cannot have protected members */,
 				false /* Interfaces cannot have protected events */,
 				additionalInterface.AllMethods().Any(x => x.IsStatic) || additionalInterface.AllProperties().Any(x => x.IsStatic),
-				additionalInterface.AllEvents().Any(x => x.IsStatic),
-				$"global::Mockolate.Mock.IMockSetupFor{additionalInterfaceName}");
+				additionalInterface.AllEvents().Any(x => x.IsStatic));
 		}
 		
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
