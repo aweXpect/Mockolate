@@ -12,13 +12,13 @@ internal sealed class FakeIndexerSetup : IndexerSetup
 
 	public override bool? SkipBaseClass() => null;
 
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage, TResult baseValue)
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult baseValue)
 		=> baseValue;
 
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage, Func<TResult> defaultValueGenerator)
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		=> defaultValueGenerator();
 
-	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage, TResult value)
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult value)
 	{
 	}
 }

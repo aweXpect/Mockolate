@@ -1,84 +1,152 @@
 using aweXpect.Chronology;
 using Mockolate.Interactions;
-using Mockolate.Parameters;
-using Mockolate.Setup;
-using Mockolate.Tests.TestHelpers;
-using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class InteractionsTests
 {
 	[Fact]
-	public async Task Method_WhenNameAndValueMatches_ShouldReturnOnce()
-	{
-		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registry = ((IMock)sut).MockRegistry;
-		registry.RegisterInteraction(new MethodInvocation<int>("foo.bar", "p1", 4));
-
-		VerificationResult<IChocolateDispenser> result =
-			registry.Method(sut,
-				new VoidMethodSetup<int>.WithParameterCollection(registry, "foo.bar",
-					(IParameterMatch<int>)It.IsAny<int>()));
-
-		await That(result).Once();
-	}
-
-	[Fact]
-	public async Task Method_WhenOnlyNameMatches_ShouldReturnNever()
-	{
-		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registry = ((IMock)sut).MockRegistry;
-		registry.RegisterInteraction(new MethodInvocation<int>("foo.bar", "p1", 4));
-
-		VerificationResult<IChocolateDispenser> result =
-			registry.Method(sut,
-				new VoidMethodSetup<string>.WithParameterCollection(registry, "foo.bar",
-					(IParameterMatch<string>)It.IsAny<string>()));
-
-		await That(result).Never();
-	}
-
-	[Fact]
-	public async Task Method_WhenOnlyValueMatches_ShouldReturnNever()
-	{
-		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registry = ((IMock)sut).MockRegistry;
-		registry.RegisterInteraction(new MethodInvocation<int>("foo.bar", "p1", 4));
-
-		VerificationResult<IChocolateDispenser> result =
-			registry.Method(sut,
-				new VoidMethodSetup<int>.WithParameterCollection(registry, "baz.bar",
-					(IParameterMatch<int>)It.IsAny<int>()));
-
-		await That(result).Never();
-	}
-
-	[Fact]
-	public async Task Method_WithoutInteractions_ShouldReturnNeverResult()
-	{
-		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockRegistry registry = ((IMock)sut).MockRegistry;
-
-		VerificationResult<IChocolateDispenser> result =
-			registry.Method(sut,
-				new VoidMethodSetup<int>.WithParameterCollection(registry, "foo.bar",
-					(IParameterMatch<int>)It.IsAny<int>()));
-
-		await That(result).Never();
-		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method void bar(It.IsAny<int>())");
-	}
-
-	[Fact]
 	public async Task MethodInvocation_ToString_ShouldReturnExpectedValue()
 	{
 		MockInteractions interactions = new();
+		MethodInvocation interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation("global::Mockolate.InteractionsTests.SomeMethod"));
+		string expectedValue = "invoke method SomeMethod()";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation1_ToString_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<int> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<int>(
+				"global::Mockolate.InteractionsTests.SomeMethod",
+				"p1", 5));
+		string expectedValue = "invoke method SomeMethod(5)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation1_ToString_WithNull_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<string?> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string?>(
+				"SomeMethod",
+				"p1", null));
+		string expectedValue = "invoke method SomeMethod(null)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation2_ToString_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<int, string> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<int, string>(
+				"global::Mockolate.InteractionsTests.SomeMethod",
+				"p1", 5,
+				"p2", "foo"));
+		string expectedValue = "invoke method SomeMethod(5, foo)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation2_ToString_WithNull_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<string?, long?> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string?, long?>(
+				"SomeMethod",
+				"p1", null,
+				"p2", null));
+		string expectedValue = "invoke method SomeMethod(null, null)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation3_ToString_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
 		MethodInvocation<int, long?, TimeSpan> interaction = ((IMockInteractions)interactions).RegisterInteraction(
-			new MethodInvocation<int, long?, TimeSpan>("global::Mockolate.InteractionsTests.SomeMethod",
+			new MethodInvocation<int, long?, TimeSpan>(
+				"global::Mockolate.InteractionsTests.SomeMethod",
 				"p1", 1,
 				"p2", null,
 				"p3", 90.Seconds()));
 		string expectedValue = "invoke method SomeMethod(1, null, 00:01:30)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation4_ToString_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<string, int, long?, TimeSpan> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string, int, long?, TimeSpan>(
+				"global::Mockolate.InteractionsTests.SomeMethod",
+				"p1", "foo",
+				"p2", 4,
+				"p3", 7L,
+				"p4", 150.Seconds()));
+		string expectedValue = "invoke method SomeMethod(foo, 4, 7, 00:02:30)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation4_ToString_WithNull_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<string?, int, long?, TimeSpan> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string?, int, long?, TimeSpan>(
+				"SomeMethod",
+				"p1", null,
+				"p2", 4,
+				"p3", null,
+				"p4", 150.Seconds()));
+		string expectedValue = "invoke method SomeMethod(null, 4, null, 00:02:30)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation5_ToString_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<string, int, long?, TimeSpan, bool> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string, int, long?, TimeSpan, bool>(
+				"global::Mockolate.InteractionsTests.SomeMethod",
+				"p1", "foo",
+				"p2", 4,
+				"p3", 7L,
+				"p4", 150.Seconds(),
+				"p5", true));
+		string expectedValue = "invoke method SomeMethod(foo, 4, 7, 00:02:30, True)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
+	public async Task MethodInvocation5_ToString_WithNull_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<string?, int, long?, TimeSpan, bool?> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string?, int, long?, TimeSpan, bool?>(
+				"SomeMethod",
+				"p1", null,
+				"p2", 4,
+				"p3", null,
+				"p4", 150.Seconds(),
+				"p5", null));
+		string expectedValue = "invoke method SomeMethod(null, 4, null, 00:02:30, null)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}

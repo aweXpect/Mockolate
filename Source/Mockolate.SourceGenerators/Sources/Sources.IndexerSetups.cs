@@ -120,13 +120,12 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.IsSetter\" />").AppendLine();
 		sb.Append("\t\tpublic override bool IsSetter => false;").AppendLine();
 
-		AppendTryFindStoredValueOverride(sb, numberOfParameters);
-		AppendStoreValueOverride(sb, numberOfParameters);
+		AppendParameterHooks(sb, numberOfParameters);
 
 		sb.Append("\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\t\tpublic override string ToString()").AppendLine();
 		sb.Append("\t\t\t=> $\"get indexer [").Append(string.Join(", ",
-			Enumerable.Range(1, numberOfParameters).Select(i => $"{{Parameter{i}}}"))).Append("]\";").AppendLine();
+			Enumerable.Range(1, numberOfParameters).Select(i => $"{{Parameter{i}?.ToString() ?? \"null\"}}"))).Append("]\";").AppendLine();
 		sb.Append("\t}").AppendLine();
 	}
 
@@ -160,81 +159,31 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.IsSetter\" />").AppendLine();
 		sb.Append("\t\tpublic override bool IsSetter => true;").AppendLine();
 
-		AppendTryFindStoredValueOverride(sb, numberOfParameters);
-		AppendStoreValueOverride(sb, numberOfParameters);
+		AppendParameterHooks(sb, numberOfParameters);
 
 		sb.Append("\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\t\tpublic override string ToString()").AppendLine();
 		sb.Append("\t\t\t=> $\"set indexer [").Append(string.Join(", ",
-			Enumerable.Range(1, numberOfParameters).Select(i => $"{{Parameter{i}}}"))).Append("] to {TypedValue}\";").AppendLine();
+			Enumerable.Range(1, numberOfParameters).Select(i => $"{{Parameter{i}?.ToString() ?? \"null\"}}"))).Append("] to {TypedValue?.ToString() ?? \"null\"}\";").AppendLine();
 		sb.Append("\t}").AppendLine();
 	}
 
-	private static void AppendTryFindStoredValueOverride(StringBuilder sb, int numberOfParameters)
+	private static void AppendParameterHooks(StringBuilder sb, int numberOfParameters)
 	{
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.TryFindStoredValue{T}(global::Mockolate.Setup.ValueStorage, out T)\" />").AppendLine();
-		sb.Append("\t\tpublic override bool TryFindStoredValue<T>(global::Mockolate.Setup.ValueStorage storage, out T value)")
-			.AppendLine();
-		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.ParameterCount\" />").AppendLine();
+		sb.Append("\t\tpublic override int ParameterCount => ").Append(numberOfParameters).Append(";").AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.GetParameterValueAt(int)\" />").AppendLine();
+		sb.Append("\t\tpublic override object? GetParameterValueAt(int index)").AppendLine();
+		sb.Append("\t\t\t=> index switch").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			string indent = new string('\t', 2 + i);
-			sb.Append(indent).Append("global::Mockolate.Setup.ValueStorage? level").Append(i).Append(" = ");
-			if (i == 1)
-			{
-				sb.Append("storage");
-			}
-			else
-			{
-				sb.Append("level").Append(i - 1);
-			}
-
-			sb.Append(".GetChild(Parameter").Append(i).Append(");").AppendLine();
-			sb.Append(indent).Append("if (level").Append(i).Append(" is not null)").AppendLine();
-			sb.Append(indent).Append("{").AppendLine();
+			sb.Append("\t\t\t\t").Append(i - 1).Append(" => Parameter").Append(i).Append(",").AppendLine();
 		}
 
-		string innerIndent = new string('\t', 3 + numberOfParameters);
-		sb.Append(innerIndent).Append("if (level").Append(numberOfParameters).Append(".Value is T typedValue)")
-			.AppendLine();
-		sb.Append(innerIndent).Append("{").AppendLine();
-		sb.Append(innerIndent).Append("\tvalue = typedValue;").AppendLine();
-		sb.Append(innerIndent).Append("\treturn true;").AppendLine();
-		sb.Append(innerIndent).Append("}").AppendLine();
-
-		for (int i = numberOfParameters; i >= 1; i--)
-		{
-			sb.Append(new string('\t', 2 + i)).Append("}").AppendLine();
-		}
-
-		sb.Append("\t\t\tvalue = default!;").AppendLine();
-		sb.Append("\t\t\treturn false;").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-	}
-
-	private static void AppendStoreValueOverride(StringBuilder sb, int numberOfParameters)
-	{
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.StoreValue{T}(global::Mockolate.Setup.ValueStorage, T)\" />").AppendLine();
-		sb.Append("\t\tpublic override void StoreValue<T>(global::Mockolate.Setup.ValueStorage storage, T value)")
-			.AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		for (int i = 1; i <= numberOfParameters; i++)
-		{
-			sb.Append("\t\t\tglobal::Mockolate.Setup.ValueStorage level").Append(i).Append(" = ");
-			if (i == 1)
-			{
-				sb.Append("storage");
-			}
-			else
-			{
-				sb.Append("level").Append(i - 1);
-			}
-
-			sb.Append(".GetOrAddChild(Parameter").Append(i).Append("!);").AppendLine();
-		}
-
-		sb.Append("\t\t\tlevel").Append(numberOfParameters).Append(".Value = value;").AppendLine();
-		sb.Append("\t\t}").AppendLine();
+		sb.Append("\t\t\t\t_ => null,").AppendLine();
+		sb.Append("\t\t\t};").AppendLine();
 	}
 
 	private static void AppendIndexerSetup(StringBuilder sb, int numberOfParameters)
@@ -925,8 +874,8 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// GetResult(TResult baseValue)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior, global::Mockolate.Setup.ValueStorage, TResult)\" />").AppendLine();
-		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior, global::Mockolate.Setup.ValueStorage storage, TResult baseValue)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior, TResult)\" />").AppendLine();
+		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior, TResult baseValue)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (!TryExtractParameters(access");
 		for (int i = 1; i <= numberOfParameters; i++)
@@ -941,14 +890,14 @@ internal static partial class Sources
 		sb.Append("\t\t\tTValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;").AppendLine();
 		sb.Append("\t\t\tcurrentValue = ExecuteGetterCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
 		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue, out _);").AppendLine();
-		sb.Append("\t\t\taccess.StoreValue(storage, currentValue);").AppendLine();
+		sb.Append("\t\t\taccess.StoreValue(currentValue);").AppendLine();
 		sb.Append("\t\t\treturn TryCast(currentValue, out TResult result, behavior) ? result : baseValue;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
 		// GetResult(Func<TResult> defaultValueGenerator)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior, global::Mockolate.Setup.ValueStorage, global::System.Func{TResult})\" />").AppendLine();
-		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior, global::Mockolate.Setup.ValueStorage storage, global::System.Func<TResult> defaultValueGenerator)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior, global::System.Func{TResult})\" />").AppendLine();
+		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior, global::System.Func<TResult> defaultValueGenerator)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (!TryExtractParameters(access");
 		for (int i = 1; i <= numberOfParameters; i++)
@@ -961,7 +910,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tTValue currentValue;").AppendLine();
-		sb.Append("\t\t\tif (access.TryFindStoredValue(storage, out TValue existing))").AppendLine();
+		sb.Append("\t\t\tif (access.TryFindStoredValue(out TValue existing))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tcurrentValue = existing;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
@@ -976,16 +925,16 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t\tcurrentValue = ExecuteGetterCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
 		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue, out _);").AppendLine();
-		sb.Append("\t\t\taccess.StoreValue(storage, currentValue);").AppendLine();
+		sb.Append("\t\t\taccess.StoreValue(currentValue);").AppendLine();
 		sb.Append("\t\t\treturn TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
 		// SetResult
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.SetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior, global::Mockolate.Setup.ValueStorage, TResult)\" />").AppendLine();
-		sb.Append("\t\tpublic override void SetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior, global::Mockolate.Setup.ValueStorage storage, TResult value)").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.SetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior, TResult)\" />").AppendLine();
+		sb.Append("\t\tpublic override void SetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior, TResult value)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\taccess.StoreValue(storage, value);").AppendLine();
+		sb.Append("\t\t\taccess.StoreValue(value);").AppendLine();
 		sb.Append("\t\t\tif (!TryExtractParameters(access");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{

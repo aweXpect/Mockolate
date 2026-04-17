@@ -180,7 +180,6 @@ namespace Mockolate
         public MockRegistry(Mockolate.MockRegistry registry, object?[] constructorParameters) { }
         public Mockolate.MockBehavior Behavior { get; }
         public object?[]? ConstructorParameters { get; }
-        public Mockolate.Setup.ValueStorage IndexerStorage { get; }
         public Mockolate.Interactions.MockInteractions Interactions { get; }
         public string Scenario { get; set; }
         [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
@@ -565,8 +564,10 @@ namespace Mockolate.Interactions
     {
         protected IndexerAccess() { }
         public abstract bool IsSetter { get; }
-        public abstract void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value);
-        public abstract bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value);
+        public abstract int ParameterCount { get; }
+        public abstract object? GetParameterValueAt(int index);
+        public void StoreValue<T>(T value) { }
+        public bool TryFindStoredValue<T>(out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1> : Mockolate.Interactions.IndexerAccess
@@ -574,10 +575,10 @@ namespace Mockolate.Interactions
         public IndexerGetterAccess(string parameterName1, T1 parameter1) { }
         public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2> : Mockolate.Interactions.IndexerAccess
@@ -586,11 +587,11 @@ namespace Mockolate.Interactions
         public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
         public string ParameterName2 { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2, T3> : Mockolate.Interactions.IndexerAccess
@@ -600,12 +601,12 @@ namespace Mockolate.Interactions
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
         public string ParameterName2 { get; }
         public string ParameterName3 { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2, T3, T4> : Mockolate.Interactions.IndexerAccess
@@ -616,13 +617,13 @@ namespace Mockolate.Interactions
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
         public T4 Parameter4 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
         public string ParameterName2 { get; }
         public string ParameterName3 { get; }
         public string ParameterName4 { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, TValue> : Mockolate.Interactions.IndexerAccess
@@ -630,11 +631,11 @@ namespace Mockolate.Interactions
         public IndexerSetterAccess(string parameterName1, T1 parameter1, TValue value) { }
         public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
         public TValue TypedValue { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, TValue> : Mockolate.Interactions.IndexerAccess
@@ -643,12 +644,12 @@ namespace Mockolate.Interactions
         public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
         public string ParameterName2 { get; }
         public TValue TypedValue { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, T3, TValue> : Mockolate.Interactions.IndexerAccess
@@ -658,13 +659,13 @@ namespace Mockolate.Interactions
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
         public string ParameterName2 { get; }
         public string ParameterName3 { get; }
         public TValue TypedValue { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, T3, T4, TValue> : Mockolate.Interactions.IndexerAccess
@@ -675,14 +676,14 @@ namespace Mockolate.Interactions
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
         public T4 Parameter4 { get; }
+        public override int ParameterCount { get; }
         public string ParameterName1 { get; }
         public string ParameterName2 { get; }
         public string ParameterName3 { get; }
         public string ParameterName4 { get; }
         public TValue TypedValue { get; }
-        public override void StoreValue<T>(Mockolate.Setup.ValueStorage storage, T value) { }
+        public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
-        public override bool TryFindStoredValue<T>(Mockolate.Setup.ValueStorage storage, out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
@@ -1537,10 +1538,10 @@ namespace Mockolate.Setup
     public abstract class IndexerSetup : Mockolate.Setup.IInteractiveIndexerSetup, Mockolate.Setup.ISetup
     {
         protected IndexerSetup() { }
-        public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, System.Func<TResult> defaultValueGenerator);
-        public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult baseValue);
+        public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
+        public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue);
         protected abstract bool MatchesAccess(Mockolate.Interactions.IndexerAccess access);
-        public abstract void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult value);
+        public abstract void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult value);
         public abstract bool? SkipBaseClass();
         protected static string FormatType(System.Type type) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
@@ -1550,8 +1551,8 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1> OnSet { get; }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, System.Func<TResult> defaultValueGenerator) { }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult baseValue) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1> InitializeWith(System.Func<T1, TValue> valueGenerator) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1> InitializeWith(TValue value) { }
         public virtual bool Matches(T1 p1) { }
@@ -1561,7 +1562,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue) { }
-        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult value) { }
+        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult value) { }
         public override bool? SkipBaseClass() { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1> SkippingBaseClass(bool skipBaseClass = true) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1> Throws(System.Exception exception) { }
@@ -1577,8 +1578,8 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2> OnSet { get; }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, System.Func<TResult> defaultValueGenerator) { }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult baseValue) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2> InitializeWith(System.Func<T1, T2, TValue> valueGenerator) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2> InitializeWith(TValue value) { }
         public virtual bool Matches(T1 p1, T2 p2) { }
@@ -1588,7 +1589,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue) { }
-        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult value) { }
+        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult value) { }
         public override bool? SkipBaseClass() { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2> SkippingBaseClass(bool skipBaseClass = true) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(System.Exception exception) { }
@@ -1604,8 +1605,8 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3> OnSet { get; }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, System.Func<TResult> defaultValueGenerator) { }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult baseValue) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> InitializeWith(System.Func<T1, T2, T3, TValue> valueGenerator) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> InitializeWith(TValue value) { }
         public virtual bool Matches(T1 p1, T2 p2, T3 p3) { }
@@ -1615,7 +1616,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue) { }
-        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult value) { }
+        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult value) { }
         public override bool? SkipBaseClass() { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Exception exception) { }
@@ -1631,8 +1632,8 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet { get; }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, System.Func<TResult> defaultValueGenerator) { }
-        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult baseValue) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(System.Func<T1, T2, T3, T4, TValue> valueGenerator) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(TValue value) { }
         public virtual bool Matches(T1 p1, T2 p2, T3 p3, T4 p4) { }
@@ -1642,7 +1643,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue, TValue> callback) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue) { }
-        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, Mockolate.Setup.ValueStorage storage, TResult value) { }
+        public override void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult value) { }
         public override bool? SkipBaseClass() { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true) { }
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Exception exception) { }
@@ -1825,13 +1826,6 @@ namespace Mockolate.Setup
         public T[] SpanValues { get; }
         public static System.Span<T> op_Implicit(Mockolate.Setup.SpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.SpanWrapper<T> op_Implicit(System.Span<T> span) { }
-    }
-    public sealed class ValueStorage
-    {
-        public ValueStorage() { }
-        public object? Value { get; set; }
-        public Mockolate.Setup.ValueStorage? GetChild(object? key) { }
-        public Mockolate.Setup.ValueStorage GetOrAddChild(object? key) { }
     }
     public abstract class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupReturnBuilder, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder
     {

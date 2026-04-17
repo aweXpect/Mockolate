@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using Mockolate.Setup;
 
 namespace Mockolate.Interactions;
 
@@ -30,30 +29,20 @@ public class IndexerSetterAccess<T1, TValue>(string parameterName1, T1 parameter
 	/// <inheritdoc cref="IndexerAccess.IsSetter" />
 	public override bool IsSetter => true;
 
-	/// <inheritdoc cref="IndexerAccess.TryFindStoredValue{T}(ValueStorage, out T)" />
-	public override bool TryFindStoredValue<T>(ValueStorage storage, out T value)
-	{
-		ValueStorage? child = storage.GetChild(Parameter1);
-		if (child is not null && child.Value is T typedValue)
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 1;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
 		{
-			value = typedValue;
-			return true;
-		}
-
-		value = default!;
-		return false;
-	}
-
-	/// <inheritdoc cref="IndexerAccess.StoreValue{T}(ValueStorage, T)" />
-	public override void StoreValue<T>(ValueStorage storage, T value)
-	{
-		ValueStorage child = storage.GetOrAddChild(Parameter1!);
-		child.Value = value;
-	}
+			0 => Parameter1,
+			_ => null,
+		};
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"set indexer [{Parameter1}] to {TypedValue}";
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
 }
 
 /// <summary>
@@ -64,8 +53,10 @@ public class IndexerSetterAccess<T1, TValue>(string parameterName1, T1 parameter
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetterAccess<T1, T2, TValue>(
-	string parameterName1, T1 parameter1,
-	string parameterName2, T2 parameter2,
+	string parameterName1,
+	T1 parameter1,
+	string parameterName2,
+	T2 parameter2,
 	TValue value) : IndexerAccess
 {
 	/// <summary>
@@ -96,35 +87,21 @@ public class IndexerSetterAccess<T1, T2, TValue>(
 	/// <inheritdoc cref="IndexerAccess.IsSetter" />
 	public override bool IsSetter => true;
 
-	/// <inheritdoc cref="IndexerAccess.TryFindStoredValue{T}(ValueStorage, out T)" />
-	public override bool TryFindStoredValue<T>(ValueStorage storage, out T value)
-	{
-		ValueStorage? level1 = storage.GetChild(Parameter1);
-		if (level1 is not null)
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 2;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
 		{
-			ValueStorage? level2 = level1.GetChild(Parameter2);
-			if (level2 is not null && level2.Value is T typedValue)
-			{
-				value = typedValue;
-				return true;
-			}
-		}
-
-		value = default!;
-		return false;
-	}
-
-	/// <inheritdoc cref="IndexerAccess.StoreValue{T}(ValueStorage, T)" />
-	public override void StoreValue<T>(ValueStorage storage, T value)
-	{
-		ValueStorage level1 = storage.GetOrAddChild(Parameter1!);
-		ValueStorage level2 = level1.GetOrAddChild(Parameter2!);
-		level2.Value = value;
-	}
+			0 => Parameter1,
+			1 => Parameter2,
+			_ => null,
+		};
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"set indexer [{Parameter1}, {Parameter2}] to {TypedValue}";
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}, {Parameter2?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
 }
 
 /// <summary>
@@ -135,9 +112,12 @@ public class IndexerSetterAccess<T1, T2, TValue>(
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetterAccess<T1, T2, T3, TValue>(
-	string parameterName1, T1 parameter1,
-	string parameterName2, T2 parameter2,
-	string parameterName3, T3 parameter3,
+	string parameterName1,
+	T1 parameter1,
+	string parameterName2,
+	T2 parameter2,
+	string parameterName3,
+	T3 parameter3,
 	TValue value) : IndexerAccess
 {
 	/// <summary>
@@ -178,40 +158,22 @@ public class IndexerSetterAccess<T1, T2, T3, TValue>(
 	/// <inheritdoc cref="IndexerAccess.IsSetter" />
 	public override bool IsSetter => true;
 
-	/// <inheritdoc cref="IndexerAccess.TryFindStoredValue{T}(ValueStorage, out T)" />
-	public override bool TryFindStoredValue<T>(ValueStorage storage, out T value)
-	{
-		ValueStorage? level1 = storage.GetChild(Parameter1);
-		if (level1 is not null)
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 3;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
 		{
-			ValueStorage? level2 = level1.GetChild(Parameter2);
-			if (level2 is not null)
-			{
-				ValueStorage? level3 = level2.GetChild(Parameter3);
-				if (level3 is not null && level3.Value is T typedValue)
-				{
-					value = typedValue;
-					return true;
-				}
-			}
-		}
-
-		value = default!;
-		return false;
-	}
-
-	/// <inheritdoc cref="IndexerAccess.StoreValue{T}(ValueStorage, T)" />
-	public override void StoreValue<T>(ValueStorage storage, T value)
-	{
-		ValueStorage level1 = storage.GetOrAddChild(Parameter1!);
-		ValueStorage level2 = level1.GetOrAddChild(Parameter2!);
-		ValueStorage level3 = level2.GetOrAddChild(Parameter3!);
-		level3.Value = value;
-	}
+			0 => Parameter1,
+			1 => Parameter2,
+			2 => Parameter3,
+			_ => null,
+		};
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"set indexer [{Parameter1}, {Parameter2}, {Parameter3}] to {TypedValue}";
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}, {Parameter2?.ToString() ?? "null"}, {Parameter3?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
 }
 
 /// <summary>
@@ -222,10 +184,14 @@ public class IndexerSetterAccess<T1, T2, T3, TValue>(
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetterAccess<T1, T2, T3, T4, TValue>(
-	string parameterName1, T1 parameter1,
-	string parameterName2, T2 parameter2,
-	string parameterName3, T3 parameter3,
-	string parameterName4, T4 parameter4,
+	string parameterName1,
+	T1 parameter1,
+	string parameterName2,
+	T2 parameter2,
+	string parameterName3,
+	T3 parameter3,
+	string parameterName4,
+	T4 parameter4,
 	TValue value) : IndexerAccess
 {
 	/// <summary>
@@ -276,43 +242,21 @@ public class IndexerSetterAccess<T1, T2, T3, T4, TValue>(
 	/// <inheritdoc cref="IndexerAccess.IsSetter" />
 	public override bool IsSetter => true;
 
-	/// <inheritdoc cref="IndexerAccess.TryFindStoredValue{T}(ValueStorage, out T)" />
-	public override bool TryFindStoredValue<T>(ValueStorage storage, out T value)
-	{
-		ValueStorage? level1 = storage.GetChild(Parameter1);
-		if (level1 is not null)
+	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
+	public override int ParameterCount => 4;
+
+	/// <inheritdoc cref="IndexerAccess.GetParameterValueAt(int)" />
+	public override object? GetParameterValueAt(int index)
+		=> index switch
 		{
-			ValueStorage? level2 = level1.GetChild(Parameter2);
-			if (level2 is not null)
-			{
-				ValueStorage? level3 = level2.GetChild(Parameter3);
-				if (level3 is not null)
-				{
-					ValueStorage? level4 = level3.GetChild(Parameter4);
-					if (level4 is not null && level4.Value is T typedValue)
-					{
-						value = typedValue;
-						return true;
-					}
-				}
-			}
-		}
-
-		value = default!;
-		return false;
-	}
-
-	/// <inheritdoc cref="IndexerAccess.StoreValue{T}(ValueStorage, T)" />
-	public override void StoreValue<T>(ValueStorage storage, T value)
-	{
-		ValueStorage level1 = storage.GetOrAddChild(Parameter1!);
-		ValueStorage level2 = level1.GetOrAddChild(Parameter2!);
-		ValueStorage level3 = level2.GetOrAddChild(Parameter3!);
-		ValueStorage level4 = level3.GetOrAddChild(Parameter4!);
-		level4.Value = value;
-	}
+			0 => Parameter1,
+			1 => Parameter2,
+			2 => Parameter3,
+			3 => Parameter4,
+			_ => null,
+		};
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"set indexer [{Parameter1}, {Parameter2}, {Parameter3}, {Parameter4}] to {TypedValue}";
+		=> $"set indexer [{Parameter1?.ToString() ?? "null"}, {Parameter2?.ToString() ?? "null"}, {Parameter3?.ToString() ?? "null"}, {Parameter4?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
 }

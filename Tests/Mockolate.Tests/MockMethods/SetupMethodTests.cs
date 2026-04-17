@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -1998,88 +1997,88 @@ public sealed partial class SetupMethodTests
 	}
 
 #if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
-[Fact]
-public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
-{
-int isCalled = 0;
-IMyServiceWithMethodsWithMoreThan16Parameters sut =
-	IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
+	[Fact]
+	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
+	{
+		int isCalled = 0;
+		IMyServiceWithMethodsWithMoreThan16Parameters sut =
+			IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
 
-sut.Mock.Setup.ReturnMethod17(
-		It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
-		It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
-		It.Is(17))
-	.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
-		=> isCalled++)
-	.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
-		=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17);
+		sut.Mock.Setup.ReturnMethod17(
+				It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
+				It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
+				It.Is(17))
+			.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
+				=> isCalled++)
+			.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17)
+				=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17);
 
-int result = sut.ReturnMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+		int result = sut.ReturnMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
 
-await That(isCalled).IsEqualTo(1);
-await That(result).IsEqualTo(153);
-}
+		await That(isCalled).IsEqualTo(1);
+		await That(result).IsEqualTo(153);
+	}
 
-[Fact]
-public async Task ReturnMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
-{
-int isCalled = 0;
-IMyServiceWithMethodsWithMoreThan16Parameters sut =
-	IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
+	[Fact]
+	public async Task ReturnMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
+	{
+		int isCalled = 0;
+		IMyServiceWithMethodsWithMoreThan16Parameters sut =
+			IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
 
-sut.Mock.Setup.ReturnMethod18(
-		It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
-		It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
-		It.Is(17), It.Is(18))
-	.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
-		=> isCalled++)
-	.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
-		=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17 + p18);
+		sut.Mock.Setup.ReturnMethod18(
+				It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
+				It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
+				It.Is(17), It.Is(18))
+			.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
+				=> isCalled++)
+			.Returns((p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18)
+				=> p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9 + p10 + p11 + p12 + p13 + p14 + p15 + p16 + p17 + p18);
 
-int result = sut.ReturnMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+		int result = sut.ReturnMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
 
-await That(isCalled).IsEqualTo(1);
-await That(result).IsEqualTo(171);
-}
+		await That(isCalled).IsEqualTo(1);
+		await That(result).IsEqualTo(171);
+	}
 #endif
 
 #if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
-[Fact]
-public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
-{
-int isCalled = 0;
-IMyServiceWithMethodsWithMoreThan16Parameters sut =
-	IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
+	[Fact]
+	public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
+	{
+		int isCalled = 0;
+		IMyServiceWithMethodsWithMoreThan16Parameters sut =
+			IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
 
-sut.Mock.Setup.VoidMethod17(
-		It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
-		It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
-		It.Is(17))
-	.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
-		=> isCalled++);
+		sut.Mock.Setup.VoidMethod17(
+				It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
+				It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
+				It.Is(17))
+			.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
+				=> isCalled++);
 
-sut.VoidMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
+		sut.VoidMethod17(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17);
 
-await That(isCalled).IsEqualTo(1);
-}
+		await That(isCalled).IsEqualTo(1);
+	}
 
-[Fact]
-public async Task VoidMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
-{
-int isCalled = 0;
-IMyServiceWithMethodsWithMoreThan16Parameters sut =
-	IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
+	[Fact]
+	public async Task VoidMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
+	{
+		int isCalled = 0;
+		IMyServiceWithMethodsWithMoreThan16Parameters sut =
+			IMyServiceWithMethodsWithMoreThan16Parameters.CreateMock();
 
-sut.Mock.Setup.VoidMethod18(
-		It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
-		It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
-		It.Is(17), It.Is(18))
-	.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
-		=> isCalled++);
+		sut.Mock.Setup.VoidMethod18(
+				It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5), It.Is(6), It.Is(7), It.Is(8),
+				It.Is(9), It.Is(10), It.Is(11), It.Is(12), It.Is(13), It.Is(14), It.Is(15), It.Is(16),
+				It.Is(17), It.Is(18))
+			.Do((_, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _, _)
+				=> isCalled++);
 
-sut.VoidMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
+		sut.VoidMethod18(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18);
 
-await That(isCalled).IsEqualTo(1);
-}
+		await That(isCalled).IsEqualTo(1);
+	}
 #endif
 }

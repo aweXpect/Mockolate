@@ -244,7 +244,7 @@ public sealed partial class SetupIndexerTests
 		}
 
 		await That(Act).Throws<MockNotSetupException>()
-			.WithMessage("The indexer get indexer [, 1, 2] was accessed without prior setup.");
+			.WithMessage("get indexer [null, 1, 2] was accessed without prior setup.");
 	}
 
 #if NET8_0_OR_GREATER

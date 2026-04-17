@@ -132,8 +132,15 @@ internal static partial class Sources
 
 			sb.Append("\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 			sb.Append("\t\tpublic override string ToString()").AppendLine();
-			sb.Append("\t\t\t=> $\"invoke method {Name}(")
-				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"{{Parameter{x}}}"))).Append(")\";").AppendLine();
+			sb.Append("\t\t{").AppendLine();
+			sb.Append("\t\t\treturn $\"invoke method {SubstringAfterLast(Name, '.')}(")
+				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"{{Parameter{x}?.ToString() ?? \"null\"}}"))).Append(")\";").AppendLine();
+			sb.Append("\t\t\tstatic string SubstringAfterLast(string name, char c)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\tint index = name.LastIndexOf(c);").AppendLine();
+			sb.Append("\t\t\t\treturn index >= 0 ? name.Substring(index + 1) : name;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+			sb.Append("\t\t}").AppendLine();
 			sb.Append("\t}").AppendLine();
 		}
 

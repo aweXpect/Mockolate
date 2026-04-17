@@ -33,21 +33,19 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	/// <summary>
 	///     Invokes the getter flow for the given <paramref name="access" /> using <paramref name="baseValue" /> as the seed.
 	/// </summary>
-	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
-		TResult baseValue);
+	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult baseValue);
 
 	/// <summary>
 	///     Invokes the getter flow for the given <paramref name="access" /> using the <paramref name="defaultValueGenerator" />
 	///     when no value has been stored or initialized.
 	/// </summary>
-	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Invokes the setter flow for the given <paramref name="access" /> with the given <paramref name="value" />.
 	/// </summary>
-	public abstract void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
-		TResult value);
+	public abstract void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult value);
 
 	/// <summary>
 	///     Attempts to cast the specified value to the type parameter <typeparamref name="T" />,
@@ -475,8 +473,8 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 		return false;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult baseValue)
 	{
 		if (!TryExtractParameter(access, out T1 p1))
@@ -488,12 +486,12 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 		currentValue = ExecuteGetterCallbacks(p1, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, currentValue, out bool returnCallbackMatched);
 		TValue stored = returnCallbackMatched ? currentValue : currentValue;
-		access.StoreValue(storage, stored);
+		access.StoreValue(stored);
 		return TryCast(stored, out TResult result, behavior) ? result : baseValue;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 	{
 		if (!TryExtractParameter(access, out T1 p1))
@@ -502,7 +500,7 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 		}
 
 		TValue currentValue;
-		if (access.TryFindStoredValue(storage, out TValue existing))
+		if (access.TryFindStoredValue(out TValue existing))
 		{
 			currentValue = existing;
 		}
@@ -517,15 +515,15 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 
 		currentValue = ExecuteGetterCallbacks(p1, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, currentValue, out _);
-		access.StoreValue(storage, currentValue);
+		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
 
-	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult value)
 	{
-		access.StoreValue(storage, value);
+		access.StoreValue(value);
 		if (!TryExtractParameter(access, out T1 p1))
 		{
 			return;
@@ -1007,8 +1005,8 @@ public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParam
 		return false;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult baseValue)
 	{
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2))
@@ -1019,12 +1017,12 @@ public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParam
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
-		access.StoreValue(storage, currentValue);
+		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 	{
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2))
@@ -1033,7 +1031,7 @@ public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParam
 		}
 
 		TValue currentValue;
-		if (access.TryFindStoredValue(storage, out TValue existing))
+		if (access.TryFindStoredValue(out TValue existing))
 		{
 			currentValue = existing;
 		}
@@ -1048,15 +1046,15 @@ public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParam
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
-		access.StoreValue(storage, currentValue);
+		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
 
-	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult value)
 	{
-		access.StoreValue(storage, value);
+		access.StoreValue(value);
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2))
 		{
 			return;
@@ -1552,8 +1550,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return false;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult baseValue)
 	{
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3))
@@ -1564,12 +1562,12 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
-		access.StoreValue(storage, currentValue);
+		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 	{
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3))
@@ -1578,7 +1576,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 
 		TValue currentValue;
-		if (access.TryFindStoredValue(storage, out TValue existing))
+		if (access.TryFindStoredValue(out TValue existing))
 		{
 			currentValue = existing;
 		}
@@ -1593,15 +1591,15 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
-		access.StoreValue(storage, currentValue);
+		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
 
-	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult value)
 	{
-		access.StoreValue(storage, value);
+		access.StoreValue(value);
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3))
 		{
 			return;
@@ -2105,8 +2103,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return false;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult baseValue)
 	{
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3, out T4 p4))
@@ -2117,12 +2115,12 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
-		access.StoreValue(storage, currentValue);
+		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
-	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, Func{TResult})" />
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 	{
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3, out T4 p4))
@@ -2131,7 +2129,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 
 		TValue currentValue;
-		if (access.TryFindStoredValue(storage, out TValue existing))
+		if (access.TryFindStoredValue(out TValue existing))
 		{
 			currentValue = existing;
 		}
@@ -2146,15 +2144,15 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
-		access.StoreValue(storage, currentValue);
+		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
 
-	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, ValueStorage, TResult)" />
-	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, ValueStorage storage,
+	/// <inheritdoc cref="IndexerSetup.SetResult{TResult}(IndexerAccess, MockBehavior, TResult)" />
+	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		TResult value)
 	{
-		access.StoreValue(storage, value);
+		access.StoreValue(value);
 		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3, out T4 p4))
 		{
 			return;

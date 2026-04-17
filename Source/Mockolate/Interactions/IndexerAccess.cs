@@ -16,12 +16,67 @@ public abstract class IndexerAccess : IInteraction
 	public abstract bool IsSetter { get; }
 
 	/// <summary>
-	///     Attempts to find a previously stored value for this access inside the given <paramref name="storage" />.
+	///     The number of indexer parameters.
 	/// </summary>
-	public abstract bool TryFindStoredValue<T>(ValueStorage storage, out T value);
+	public abstract int ParameterCount { get; }
 
 	/// <summary>
-	///     Stores the given <paramref name="value" /> for this access inside the given <paramref name="storage" />.
+	///     Returns the indexer parameter value at the given <paramref name="index" />.
 	/// </summary>
-	public abstract void StoreValue<T>(ValueStorage storage, T value);
+	public abstract object? GetParameterValueAt(int index);
+
+	internal ValueStorage? Storage { get; set; }
+
+	/// <summary>
+	///     Attempts to find a previously stored value for this access.
+	/// </summary>
+	public bool TryFindStoredValue<T>(out T value)
+	{
+		ValueStorage? current = Storage;
+		if (current is null)
+		{
+			value = default!;
+			return false;
+		}
+
+		int count = ParameterCount;
+		for (int i = 0; i < count; i++)
+		{
+			current = current.GetChild(GetParameterValueAt(i));
+			if (current is null)
+			{
+				value = default!;
+				return false;
+			}
+		}
+
+		if (current.Value is T typedValue)
+		{
+			value = typedValue;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
+
+	/// <summary>
+	///     Stores the given <paramref name="value" /> for this access.
+	/// </summary>
+	public void StoreValue<T>(T value)
+	{
+		ValueStorage? current = Storage;
+		if (current is null)
+		{
+			return;
+		}
+
+		int count = ParameterCount;
+		for (int i = 0; i < count; i++)
+		{
+			current = current.GetOrAddChild(GetParameterValueAt(i)!);
+		}
+
+		current.Value = value;
+	}
 }

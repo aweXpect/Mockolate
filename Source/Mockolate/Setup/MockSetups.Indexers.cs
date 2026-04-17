@@ -141,7 +141,7 @@ internal partial class MockSetups
 ///     Object-keyed tree used to store indexer values by their typed parameter path.
 /// </summary>
 [DebuggerNonUserCode]
-public sealed class ValueStorage
+internal sealed class ValueStorage
 {
 	private readonly List<KeyValueEntry> _storage = [];
 

@@ -13,10 +13,7 @@ public partial class MockRegistry
 	/// </summary>
 	public MockInteractions Interactions { get; }
 
-	/// <summary>
-	///     Gets the <see cref="ValueStorage" /> used to track indexer values for the current scenario.
-	/// </summary>
-	public ValueStorage IndexerStorage
+	private ValueStorage IndexerStorage
 		=> Setup.GetScenario(Scenario).Indexers.ValueStorage;
 
 	/// <summary>
@@ -45,14 +42,14 @@ public partial class MockRegistry
 	/// </summary>
 	public TResult GetIndexerValue<TResult>(IndexerAccess access, Func<TResult> defaultValueGenerator)
 	{
-		ValueStorage storage = IndexerStorage;
-		if (access.TryFindStoredValue(storage, out TResult value))
+		access.Storage = IndexerStorage;
+		if (access.TryFindStoredValue(out TResult value))
 		{
 			return value;
 		}
 
 		value = defaultValueGenerator();
-		access.StoreValue(storage, value);
+		access.StoreValue(value);
 		return value;
 	}
 
@@ -60,7 +57,10 @@ public partial class MockRegistry
 	///     Stores the given <paramref name="value" /> for the given indexer <paramref name="access" />.
 	/// </summary>
 	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value)
-		=> access.StoreValue(IndexerStorage, value);
+	{
+		access.Storage = IndexerStorage;
+		access.StoreValue(value);
+	}
 
 	/// <summary>
 	///     Applies an indexer getter using a pre-computed <paramref name="baseValue" /> and an optional matching
@@ -72,19 +72,19 @@ public partial class MockRegistry
 	/// </remarks>
 	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult baseValue)
 	{
-		ValueStorage storage = IndexerStorage;
+		access.Storage = IndexerStorage;
 		if (setup is null)
 		{
-			if (access.TryFindStoredValue(storage, out TResult stored))
+			if (access.TryFindStoredValue(out TResult stored))
 			{
 				return stored;
 			}
 
-			access.StoreValue(storage, baseValue);
+			access.StoreValue(baseValue);
 			return baseValue;
 		}
 
-		return setup.GetResult(access, Behavior, storage, baseValue);
+		return setup.GetResult(access, Behavior, baseValue);
 	}
 
 	/// <summary>
@@ -100,25 +100,25 @@ public partial class MockRegistry
 	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup,
 		Func<TResult> defaultValueGenerator)
 	{
-		ValueStorage storage = IndexerStorage;
+		access.Storage = IndexerStorage;
 		if (setup is null)
 		{
-			if (access.TryFindStoredValue(storage, out TResult stored))
+			if (access.TryFindStoredValue(out TResult stored))
 			{
 				return stored;
 			}
 
 			if (Behavior.ThrowWhenNotSetup)
 			{
-				throw new MockNotSetupException($"The indexer {access} was accessed without prior setup.");
+				throw new MockNotSetupException($"{access} was accessed without prior setup.");
 			}
 
 			TResult value = defaultValueGenerator();
-			access.StoreValue(storage, value);
+			access.StoreValue(value);
 			return value;
 		}
 
-		return setup.GetResult(access, Behavior, storage, defaultValueGenerator);
+		return setup.GetResult(access, Behavior, defaultValueGenerator);
 	}
 
 	/// <summary>
@@ -133,7 +133,8 @@ public partial class MockRegistry
 			return Behavior.SkipBaseClass;
 		}
 
-		setup.SetResult(access, Behavior, IndexerStorage, value);
+		access.Storage = IndexerStorage;
+		setup.SetResult(access, Behavior, value);
 		return setup.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 
@@ -155,7 +156,8 @@ public partial class MockRegistry
 			return Behavior.SkipBaseClass;
 		}
 
-		setup.SetResult(access, Behavior, IndexerStorage, value);
+		access.Storage = IndexerStorage;
+		setup.SetResult(access, Behavior, value);
 		return setup.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 
@@ -200,6 +202,7 @@ public partial class MockRegistry
 		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private PropertySetup ResolvePropertySetup<TResult>(
 		string propertyName,
 		Func<TResult>? defaultValueGenerator,
@@ -252,6 +255,7 @@ public partial class MockRegistry
 				: baseValueAccessor.Invoke();
 		}
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	/// <summary>
 	///     Associates the specified event <paramref name="method" /> on the <paramref name="target" /> with the event
