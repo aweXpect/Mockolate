@@ -14,7 +14,7 @@ public partial class MockRegistry
 	public MockInteractions Interactions { get; }
 
 	private ValueStorage IndexerStorage
-		=> Setup.GetScenario(Scenario).Indexers.ValueStorage;
+		=> Setup.Indexers.ValueStorage;
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -34,7 +34,7 @@ public partial class MockRegistry
 	///     or returns <see langword="null" /> if no matching setup is found.
 	/// </summary>
 	public T? GetIndexerSetup<T>(Func<T, bool> predicate) where T : IndexerSetup
-		=> Setup.GetScenario(Scenario).Indexers.GetMatching(predicate);
+		=> Setup.Indexers.GetMatching(predicate);
 
 	/// <summary>
 	///     Retrieves the stored value for the given indexer <paramref name="access" />, or

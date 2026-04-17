@@ -356,18 +356,6 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.ChangeScenario(string)" />
-	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.ChangeScenario(
-		string scenarioName)
-	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => _mockRegistry.Scenario = scenarioName);
-		currentCallback.InParallel();
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
-		return this;
-	}
-
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{T1, TReturn})" />
 	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Returns(Func<T1, TReturn> callback)
 	{

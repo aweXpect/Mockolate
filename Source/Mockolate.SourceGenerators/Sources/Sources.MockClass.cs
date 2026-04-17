@@ -758,18 +758,6 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary($"Set up a scenario on the mock of <see cref=\"{escapedClassName}\" />.");
-		sb.Append("\t\t").Append(setupType).Append(" SetupScenario(string scenarioName);").AppendLine();
-		sb.AppendLine();
-
-		sb.AppendXmlSummary($"Set up a scenario on the mock of <see cref=\"{escapedClassName}\" />.");
-		sb.Append("\t\tIMockFor").Append(name).Append(" SetupScenario(string scenarioName, global::System.Action<")
-			.Append(setupType).Append("> setup);").AppendLine();
-		sb.AppendLine();
-		sb.AppendXmlSummary($"Change the active scenario on the mock of <see cref=\"{escapedClassName}\" />.");
-		sb.Append("\t\tIMockFor").Append(name).Append(" ChangeScenario(string scenarioName);").AppendLine();
-		sb.AppendLine();
-
 		if (hasEvents)
 		{
 			sb.AppendXmlSummary($"Raise events on the mock of <see cref=\"{escapedClassName}\" />.");
@@ -1003,34 +991,6 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 		}
-
-		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\t").Append(setupType).Append(" IMockFor").Append(name)
-			.Append(".SetupScenario(string scenarioName)").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = scenarioName;").AppendLine();
-		sb.Append("\t\t\treturn this;").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-
-		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name)
-			.Append(".SetupScenario(string scenarioName, global::System.Action<").Append(setupType)
-			.Append("> setup)").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = scenarioName;").AppendLine();
-		sb.Append("\t\t\tsetup.Invoke(this);").AppendLine();
-		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupScenario = \"\";").AppendLine();
-		sb.Append("\t\t\treturn this;").AppendLine();
-		sb.Append("\t\t}").AppendLine();
-		sb.AppendLine();
-		sb.Append("\t\t/// <inheritdoc />").AppendLine();
-		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name)
-			.Append(".ChangeScenario(string scenarioName)").AppendLine();
-		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".Scenario = scenarioName;").AppendLine();
-		sb.Append("\t\t\treturn this;").AppendLine();
-		sb.Append("\t\t}").AppendLine();
 
 		if (hasEvents)
 		{

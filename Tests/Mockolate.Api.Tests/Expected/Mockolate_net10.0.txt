@@ -181,9 +181,6 @@ namespace Mockolate
         public Mockolate.MockBehavior Behavior { get; }
         public object?[]? ConstructorParameters { get; }
         public Mockolate.Interactions.MockInteractions Interactions { get; }
-        public string Scenario { get; set; }
-        [System.Diagnostics.DebuggerBrowsable(System.Diagnostics.DebuggerBrowsableState.Never)]
-        public string SetupScenario { get; set; }
         public object? Wraps { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, System.Func<TResult> defaultValueGenerator) { }
@@ -1122,14 +1119,12 @@ namespace Mockolate.Setup
     public interface IMockSetup<out T> : Mockolate.IInteractiveMock<T> { }
     public interface IPropertyGetterSetup<T>
     {
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> ChangeScenario(string scenarioName);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
     }
     public interface IPropertySetterSetup<T>
     {
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> ChangeScenario(string scenarioName);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
@@ -1297,7 +1292,6 @@ namespace Mockolate.Setup
     }
     public interface IReturnMethodSetup<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
-        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> ChangeScenario(string scenarioName);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(System.Action callback);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(System.Action<T1> callback);
         Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(System.Action<int, T1> callback);

@@ -203,11 +203,6 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
-	///     Changes the scenario to the given <paramref name="scenarioName"/> when the method is called.
-	/// </summary>
-	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> ChangeScenario(string scenarioName);
-
-	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback);
