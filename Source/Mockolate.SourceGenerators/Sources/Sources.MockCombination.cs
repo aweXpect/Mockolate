@@ -322,9 +322,6 @@ internal static partial class Sources
 		sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; }").AppendLine();
 		sb.AppendLine();
 		
-		string setupType = hasProtectedMembers
-			? $"global::Mockolate.MockExtensionsFor{name}.IMockSetupInitializationFor{name}"
-			: $"global::Mockolate.Mock.IMockSetupFor{name}";
 		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
 		foreach ((string additionalInterfaceName, Class additionalInterface) in additionalInterfaces)
 		{

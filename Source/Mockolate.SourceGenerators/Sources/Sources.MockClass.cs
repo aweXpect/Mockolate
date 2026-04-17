@@ -571,9 +571,6 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
-		setupType = hasProtectedMembers
-			? $"global::Mockolate.MockExtensionsFor{name}.IMockSetupInitializationFor{name}"
-			: $"global::Mockolate.Mock.IMockSetupFor{name}";
 		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents,
 			hasStaticMembers, hasStaticEvents);
 

@@ -35,7 +35,7 @@ public sealed partial class ItTests
 		{
 			IOutParameter<int?> sut = It.IsOut(() => value);
 
-			var found = sut.TryGetValue(out int? result);
+			bool found = sut.TryGetValue(out int? result);
 
 			await That(found).IsTrue();
 			await That(result).IsEqualTo(value);

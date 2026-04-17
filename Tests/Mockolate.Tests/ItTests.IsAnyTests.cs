@@ -12,7 +12,7 @@ public sealed partial class ItTests
 		[InlineData("foo")]
 		public async Task ShouldAlwaysMatch(string? value)
 		{
-			IParameter<string> sut = It.IsAny<string>();
+			IParameter<string?> sut = It.IsAny<string?>();
 
 			bool result = ((IParameterMatch<string?>)sut).Matches(value);
 
