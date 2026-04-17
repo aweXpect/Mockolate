@@ -18,7 +18,7 @@
 	<ItemGroup>
 		<InternalsVisibleTo Include="Mockolate.Internal.Tests" PublicKey="$(PublicKey)"/>
 	</ItemGroup>
-	
+
 	<PropertyGroup>
 		<NoWarn>CS0618;CS0672</NoWarn>
 	</PropertyGroup>

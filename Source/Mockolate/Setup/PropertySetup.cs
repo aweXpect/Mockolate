@@ -414,13 +414,13 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		return this;
 	}
 
-	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenarioName)
+	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T>> item = new((_, _) =>
 		{
 			if (MockRegistry is not null)
 			{
-				MockRegistry.Scenario = scenarioName;
+				MockRegistry.Scenario = scenario;
 			}
 		});
 		item.InParallel();
@@ -429,13 +429,13 @@ public class PropertySetup<T>(string name) : PropertySetup,
 		return this;
 	}
 
-	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenarioName)
+	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T>> item = new((_, _) =>
 		{
 			if (MockRegistry is not null)
 			{
-				MockRegistry.Scenario = scenarioName;
+				MockRegistry.Scenario = scenario;
 			}
 		});
 		item.InParallel();

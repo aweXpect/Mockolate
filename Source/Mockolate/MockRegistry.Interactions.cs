@@ -212,7 +212,7 @@ public partial class MockRegistry
 	{
 		PropertySetup? existingSetup = null;
 		if (!string.IsNullOrEmpty(Scenario) &&
-			Setup.GetScenario(Scenario).Properties.TryGetValue(propertyName, out PropertySetup? scopedSetup))
+		    Setup.GetScenario(Scenario).Properties.TryGetValue(propertyName, out PropertySetup? scopedSetup))
 		{
 			existingSetup = scopedSetup;
 		}

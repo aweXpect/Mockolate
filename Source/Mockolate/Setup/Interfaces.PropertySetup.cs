@@ -66,10 +66,10 @@ public interface IPropertyGetterSetup<T>
 	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName" /> whenever the property is read.
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the property is read.
 	/// </summary>
-	/// <param name="scenarioName">The name of the new scenario.</param>
-	IPropertySetupCallbackBuilder<T> TransitionTo(string scenarioName);
+	/// <param name="scenario">The name of the new scenario.</param>
+	IPropertySetupCallbackBuilder<T> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -100,10 +100,10 @@ public interface IPropertySetterSetup<T>
 	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName" /> whenever the property is written to.
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the property is written to.
 	/// </summary>
-	/// <param name="scenarioName">The name of the new scenario.</param>
-	IPropertySetupCallbackBuilder<T> TransitionTo(string scenarioName);
+	/// <param name="scenario">The name of the new scenario.</param>
+	IPropertySetupCallbackBuilder<T> TransitionTo(string scenario);
 }
 
 /// <summary>

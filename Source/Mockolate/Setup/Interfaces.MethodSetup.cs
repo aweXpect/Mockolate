@@ -52,9 +52,9 @@ public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn> Do(Action<int> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName" /> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn> TransitionTo(string scenarioName);
+	IReturnMethodSetupCallbackBuilder<TReturn> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -208,9 +208,9 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> TransitionTo(string scenarioName);
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -393,9 +393,9 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenarioName);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -571,9 +571,9 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMetho
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenarioName);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -750,9 +750,9 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> 
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenarioName);
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -924,9 +924,9 @@ public interface IVoidMethodSetup : IMethodSetup
 	IVoidMethodSetupCallbackBuilder Do(Action<int> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder TransitionTo(string scenarioName);
+	IVoidMethodSetupCallbackBuilder TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1067,9 +1067,9 @@ public interface IVoidMethodSetup<out T1> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> TransitionTo(string scenarioName);
+	IVoidMethodSetupCallbackBuilder<T1> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1231,9 +1231,9 @@ public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> TransitionTo(string scenarioName);
+	IVoidMethodSetupCallbackBuilder<T1, T2> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1395,9 +1395,9 @@ public interface IVoidMethodSetup<out T1, out T2, out T3> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> TransitionTo(string scenarioName);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1559,9 +1559,9 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenarioName"/> when the method is called.
+	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenarioName);
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.

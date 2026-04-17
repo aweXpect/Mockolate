@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 

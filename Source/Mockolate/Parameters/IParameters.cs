@@ -1,5 +1,3 @@
-using System;
-
 namespace Mockolate.Parameters;
 
 /// <summary>

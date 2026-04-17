@@ -747,10 +747,10 @@ internal static partial class Sources
 		sb.Append("\t\tprivate string _scenarioName;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\tpublic MockInScenarioFor").Append(name)
-			.Append("(global::Mockolate.MockRegistry mockRegistry, string scenarioName)").AppendLine();
+			.Append("(global::Mockolate.MockRegistry mockRegistry, string scenario)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = mockRegistry;").AppendLine();
-		sb.Append("\t\t\t_scenarioName = scenarioName;").AppendLine();
+		sb.Append("\t\t\t_scenarioName = scenario;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -807,11 +807,11 @@ internal static partial class Sources
 		}
 
 		sb.AppendXmlSummary($"Enter a scenario scope on the mock of <see cref=\"{escapedClassName}\" />.");
-		sb.Append("\t\tIMockInScenarioFor").Append(name).Append(" InScenario(string scenarioName);").AppendLine();
+		sb.Append("\t\tIMockInScenarioFor").Append(name).Append(" InScenario(string scenario);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary($"Enter a scenario scope on the mock of <see cref=\"{escapedClassName}\" /> and invoke the <paramref name=\"setup\" />.");
-		sb.Append("\t\tIMockFor").Append(name).Append(" InScenario(string scenarioName, global::System.Action<IMockInScenarioFor")
+		sb.Append("\t\tIMockFor").Append(name).Append(" InScenario(string scenario, global::System.Action<IMockInScenarioFor")
 			.Append(name).Append("> setup);").AppendLine();
 		sb.AppendLine();
 
@@ -1069,18 +1069,18 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tIMockInScenarioFor").Append(name).Append(" IMockFor").Append(name)
-			.Append(".InScenario(string scenarioName)").AppendLine();
+			.Append(".InScenario(string scenario)").AppendLine();
 		sb.Append("\t\t\t=> new MockInScenarioFor").Append(name).Append("(this.").Append(mockRegistryName)
-			.Append(", scenarioName);").AppendLine();
+			.Append(", scenario);").AppendLine();
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name)
-			.Append(".InScenario(string scenarioName, global::System.Action<IMockInScenarioFor").Append(name)
+			.Append(".InScenario(string scenario, global::System.Action<IMockInScenarioFor").Append(name)
 			.Append("> setup)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tsetup.Invoke(new MockInScenarioFor").Append(name).Append("(this.").Append(mockRegistryName)
-			.Append(", scenarioName));").AppendLine();
+			.Append(", scenario));").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 

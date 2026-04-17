@@ -3,6 +3,7 @@ using System.Reflection;
 using Mockolate.Internals;
 
 namespace Mockolate.Interactions;
+
 /// <summary>
 ///     A subscription to an event.
 /// </summary>

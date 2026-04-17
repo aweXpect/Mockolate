@@ -26,6 +26,7 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 	private readonly Lock _verifiedLock = new();
 #else
 	private readonly object _listLock = new();
+
 	private readonly object _verifiedLock = new();
 #endif
 

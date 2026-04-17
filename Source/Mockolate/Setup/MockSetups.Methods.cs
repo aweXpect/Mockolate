@@ -76,6 +76,7 @@ internal partial class MockSetups
 
 			return null;
 		}
+
 		public T? GetMatching<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
 		{
 			List<MethodSetup>? storage = _storage;

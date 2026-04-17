@@ -56,9 +56,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		=> new(mock, _interactions, _predicate, _expectationFactory);
 
 	private void ReplacePredicate(Func<IInteraction, bool> predicate)
-	{
-		_predicate = predicate;
-	}
+		=> _predicate = predicate;
 
 	/// <summary>
 	///     Makes the verification result awaitable, using the specified <paramref name="timeout" /> to wait for the expected
@@ -234,7 +232,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	}
 
 	#endregion
-	
+
 	/// <summary>
 	///     Represents the result of a verification that contains the matching interactions and allows ignoring explicit parameters.
 	/// </summary>

@@ -188,13 +188,13 @@ namespace Mockolate
         public void SetIndexerValue<TResult>(Mockolate.Interactions.IndexerAccess access, TResult value) { }
         public bool SetProperty<T>(string propertyName, T value) { }
         public void SetupEvent(Mockolate.Setup.EventSetup eventSetup) { }
-        public void SetupEvent(string scenarioName, Mockolate.Setup.EventSetup eventSetup) { }
+        public void SetupEvent(string scenario, Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
-        public void SetupIndexer(string scenarioName, Mockolate.Setup.IndexerSetup indexerSetup) { }
+        public void SetupIndexer(string scenario, Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
-        public void SetupMethod(string scenarioName, Mockolate.Setup.MethodSetup methodSetup) { }
+        public void SetupMethod(string scenario, Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
-        public void SetupProperty(string scenarioName, Mockolate.Setup.PropertySetup propertySetup) { }
+        public void SetupProperty(string scenario, Mockolate.Setup.PropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
         public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T, TMethod>(T subject, string methodName, System.Func<TMethod, bool> predicate, System.Func<string> expectation)
@@ -1069,14 +1069,14 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> TransitionTo(string scenarioName);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> TransitionTo(string scenario);
     }
     public interface IPropertySetterSetup<T>
     {
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> TransitionTo(string scenarioName);
+        Mockolate.Setup.IPropertySetupCallbackBuilder<T> TransitionTo(string scenario);
     }
     public interface IPropertySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
@@ -1238,7 +1238,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> TransitionTo(string scenarioName);
+        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> TransitionTo(string scenario);
     }
     public interface IReturnMethodSetup<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1254,7 +1254,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(System.Func<T1, System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> TransitionTo(string scenarioName);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> TransitionTo(string scenario);
     }
     public interface IReturnMethodSetup<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1270,7 +1270,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenarioName);
+        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
     }
     public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1286,7 +1286,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenarioName);
+        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1302,7 +1302,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenarioName);
+        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
     }
     public interface ISetup { }
     public interface IVerifiableMethodSetup
@@ -1319,7 +1319,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder TransitionTo(string scenarioName);
+        Mockolate.Setup.IVoidMethodSetupCallbackBuilder TransitionTo(string scenario);
     }
     public interface IVoidMethodSetupCallbackBuilder : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder
     {
@@ -1444,7 +1444,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1> Throws(System.Func<T1, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1> TransitionTo(string scenarioName);
+        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1> TransitionTo(string scenario);
     }
     public interface IVoidMethodSetup<out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1458,7 +1458,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2> Throws(System.Func<T1, T2, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2> TransitionTo(string scenarioName);
+        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2> TransitionTo(string scenario);
     }
     public interface IVoidMethodSetup<out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1472,7 +1472,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3> TransitionTo(string scenarioName);
+        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1486,7 +1486,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenarioName);
+        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
     }
     public abstract class IndexerSetup : Mockolate.Setup.IInteractiveIndexerSetup, Mockolate.Setup.ISetup
     {

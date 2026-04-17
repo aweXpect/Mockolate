@@ -10,31 +10,31 @@ public partial class MockRegistry
 	internal MockSetups Setup { get; }
 
 	/// <summary>
-	///     Registers the <paramref name="indexerSetup" /> in the mock for the given <paramref name="scenarioName" />.
+	///     Registers the <paramref name="indexerSetup" /> in the mock for the given <paramref name="scenario" />.
 	/// </summary>
-	public void SetupIndexer(string scenarioName, IndexerSetup indexerSetup)
-		=> Setup.GetScenario(scenarioName).Indexers.Add(indexerSetup);
+	public void SetupIndexer(string scenario, IndexerSetup indexerSetup)
+		=> Setup.GetScenario(scenario).Indexers.Add(indexerSetup);
 
 	/// <summary>
-	///     Registers the <paramref name="methodSetup" /> in the mock for the given <paramref name="scenarioName" />.
+	///     Registers the <paramref name="methodSetup" /> in the mock for the given <paramref name="scenario" />.
 	/// </summary>
-	public void SetupMethod(string scenarioName, MethodSetup methodSetup)
-		=> Setup.GetScenario(scenarioName).Methods.Add(methodSetup);
+	public void SetupMethod(string scenario, MethodSetup methodSetup)
+		=> Setup.GetScenario(scenario).Methods.Add(methodSetup);
 
 	/// <summary>
-	///     Registers the <paramref name="propertySetup" /> in the mock for the given <paramref name="scenarioName" />.
+	///     Registers the <paramref name="propertySetup" /> in the mock for the given <paramref name="scenario" />.
 	/// </summary>
-	public void SetupProperty(string scenarioName, PropertySetup propertySetup)
+	public void SetupProperty(string scenario, PropertySetup propertySetup)
 	{
 		propertySetup.MockRegistry = this;
-		Setup.GetScenario(scenarioName).Properties.Add(propertySetup);
+		Setup.GetScenario(scenario).Properties.Add(propertySetup);
 	}
 
 	/// <summary>
-	///     Registers the <paramref name="eventSetup" /> in the mock for the given <paramref name="scenarioName" />.
+	///     Registers the <paramref name="eventSetup" /> in the mock for the given <paramref name="scenario" />.
 	/// </summary>
-	public void SetupEvent(string scenarioName, EventSetup eventSetup)
-		=> Setup.GetScenario(scenarioName).Events.Add(eventSetup);
+	public void SetupEvent(string scenario, EventSetup eventSetup)
+		=> Setup.GetScenario(scenario).Events.Add(eventSetup);
 
 	/// <summary>
 	///     Registers the <paramref name="indexerSetup" /> in the mock.

@@ -84,6 +84,13 @@ public static partial class ItExtensions
 		private HttpQueryMatcher? _query;
 		private string? _scheme;
 
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		void IParameterMatch<Uri?>.InvokeCallbacks(Uri? value)
+			=> _callbacks?.ForEach(a => a.Invoke(value));
+
+		bool IParameterMatch<Uri?>.Matches(Uri? value)
+			=> Matches(value);
+
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		bool IParameter.Matches(object? value)
 			=> value is Uri uri ? Matches(uri) : value is null && Matches(null);
@@ -100,61 +107,6 @@ public static partial class ItExtensions
 				((IParameterMatch<Uri?>)this).InvokeCallbacks(null);
 			}
 		}
-
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-		private bool Matches(Uri? uri)
-		{
-			if (uri is null)
-			{
-				return false;
-			}
-
-			if (pattern is not null)
-			{
-				string requestUri1 = uri.ToString();
-				Wildcard wildcard = Wildcard.Pattern(pattern, true, false);
-				if (!wildcard.Matches(requestUri1) &&
-				    (!requestUri1.EndsWith('/') || !wildcard.Matches(requestUri1.TrimEnd('/'))))
-				{
-					return false;
-				}
-			}
-
-			if (_scheme is not null &&
-			    !string.Equals(_scheme, uri.Scheme, StringComparison.OrdinalIgnoreCase))
-			{
-				return false;
-			}
-
-			if (_port is not null && _port != uri.Port)
-			{
-				return false;
-			}
-
-			if (_hostPattern is not null &&
-			    !Wildcard.Pattern(_hostPattern, true).Matches(uri.Host))
-			{
-				return false;
-			}
-
-			if (_pathPattern is not null &&
-			    !Wildcard.Pattern(_pathPattern, true).Matches(WebUtility.UrlDecode(uri.AbsolutePath)))
-			{
-				return false;
-			}
-
-			if (_query is not null && !_query.Matches(uri))
-			{
-				return false;
-			}
-
-			return true;
-		}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
-
-		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
-		void IParameterMatch<Uri?>.InvokeCallbacks(Uri? value)
-			=> _callbacks?.ForEach(a => a.Invoke(value));
 
 		public IParameter<Uri?> Do(Action<Uri?> callback)
 		{
@@ -214,6 +166,57 @@ public static partial class ItExtensions
 			return this;
 		}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
+		private bool Matches(Uri? uri)
+		{
+			if (uri is null)
+			{
+				return false;
+			}
+
+			if (pattern is not null)
+			{
+				string requestUri1 = uri.ToString();
+				Wildcard wildcard = Wildcard.Pattern(pattern, true, false);
+				if (!wildcard.Matches(requestUri1) &&
+				    (!requestUri1.EndsWith('/') || !wildcard.Matches(requestUri1.TrimEnd('/'))))
+				{
+					return false;
+				}
+			}
+
+			if (_scheme is not null &&
+			    !string.Equals(_scheme, uri.Scheme, StringComparison.OrdinalIgnoreCase))
+			{
+				return false;
+			}
+
+			if (_port is not null && _port != uri.Port)
+			{
+				return false;
+			}
+
+			if (_hostPattern is not null &&
+			    !Wildcard.Pattern(_hostPattern, true).Matches(uri.Host))
+			{
+				return false;
+			}
+
+			if (_pathPattern is not null &&
+			    !Wildcard.Pattern(_pathPattern, true).Matches(WebUtility.UrlDecode(uri.AbsolutePath)))
+			{
+				return false;
+			}
+
+			if (_query is not null && !_query.Matches(uri))
+			{
+				return false;
+			}
+
+			return true;
+		}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
+
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
@@ -255,9 +258,6 @@ public static partial class ItExtensions
 			string result = sb.ToString();
 			return result == "Uri" ? "any Uri" : result;
 		}
-
-		bool IParameterMatch<Uri?>.Matches(Uri? value)
-			=> Matches(value);
 	}
 }
 #pragma warning restore S2325 // Methods and properties that don't access instance data should be static
