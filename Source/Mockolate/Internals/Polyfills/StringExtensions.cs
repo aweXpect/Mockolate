@@ -9,7 +9,7 @@ namespace Mockolate.Internals.Polyfills;
 /// </summary>
 [ExcludeFromCodeCoverage]
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 internal static class StringExtensionMethods
 {

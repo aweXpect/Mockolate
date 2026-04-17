@@ -741,6 +741,7 @@ internal static partial class Sources
 		{
 			sb.Append(", global::Mockolate.Mock.IMockProtectedSetupFor").Append(name);
 		}
+
 		sb.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; }").AppendLine();
@@ -766,6 +767,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t=> this;").AppendLine();
 			sb.AppendLine();
 		}
+
 		sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 		sb.AppendLine();
 		ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockSetupFor{name}", MemberType.Public, "_scenarioName");
@@ -778,6 +780,7 @@ internal static partial class Sources
 			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}", MemberType.Protected, "_scenarioName");
 			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 		}
+
 		sb.Append("\t}").AppendLine();
 
 		#endregion MockForXXX
@@ -889,6 +892,7 @@ internal static partial class Sources
 			sb.AppendXmlSummary($"Set up protected members of the mock of <see cref=\"{escapedClassName}\" /> within the scenario scope.");
 			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" SetupProtected { get; }").AppendLine();
 		}
+
 		sb.Append("\t}").AppendLine();
 
 		#endregion IMockInScenarioForXXX
@@ -2397,6 +2401,7 @@ internal static partial class Sources
 		string setupName, MemberType memberType, string? scopeExpression = null)
 	{
 		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
+
 		#region Properties
 
 		Func<Property, bool> propertyPredicate = property
@@ -2535,7 +2540,7 @@ internal static partial class Sources
 
 		#endregion
 	}
-
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendMethodSetupImplementation(StringBuilder sb, Method method, string mockRegistryName,
 		string setupName,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
@@ -2699,6 +2704,7 @@ internal static partial class Sources
 		sb.AppendLine("\t\t}");
 		sb.AppendLine();
 	}
+#pragma warning restore S107 // Methods should not have too many parameters
 
 	private static void AppendIndexerSetupDefinition(StringBuilder sb, Property indexer, bool[]? valueFlags = null,
 		bool hasOverloadResolutionPriority = false)

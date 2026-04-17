@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Mockolate.Setup;
@@ -13,7 +14,7 @@ internal partial class MockSetups : MockScenarioSetup
 {
 	internal Dictionary<string, MockScenarioSetup>? Scenarios { get; private set; }
 
-	public MockScenarioSetup GetScenario(string setupScenario)
+	public MockScenarioSetup GetOrCreateScenario(string setupScenario)
 	{
 		if (string.IsNullOrEmpty(setupScenario))
 		{
@@ -29,6 +30,23 @@ internal partial class MockSetups : MockScenarioSetup
 		scenario = new MockScenarioSetup();
 		Scenarios.Add(setupScenario, scenario);
 		return scenario;
+	}
+
+	public bool TryGetScenario(string setupScenario, [NotNullWhen(true)] out MockScenarioSetup? scenario)
+	{
+		if (string.IsNullOrEmpty(setupScenario))
+		{
+			scenario = this;
+			return true;
+		}
+
+		if (Scenarios is not null && Scenarios.TryGetValue(setupScenario, out scenario))
+		{
+			return true;
+		}
+
+		scenario = null;
+		return false;
 	}
 }
 

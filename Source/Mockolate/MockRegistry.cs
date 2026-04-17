@@ -33,6 +33,7 @@ public partial class MockRegistry
 		ConstructorParameters = registry.ConstructorParameters;
 		Interactions = new MockInteractions();
 		Setup = registry.Setup;
+		Scenario = registry.Scenario;
 		Wraps = wraps;
 	}
 
@@ -43,6 +44,7 @@ public partial class MockRegistry
 		ConstructorParameters = constructorParameters;
 		Interactions = registry.Interactions;
 		Setup = registry.Setup;
+		Scenario = registry.Scenario;
 		Wraps = registry.Wraps;
 	}
 
@@ -53,6 +55,7 @@ public partial class MockRegistry
 		ConstructorParameters = registry.ConstructorParameters;
 		Interactions = interactions;
 		Setup = registry.Setup;
+		Scenario = registry.Scenario;
 		Wraps = registry.Wraps;
 	}
 

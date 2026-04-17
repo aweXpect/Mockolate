@@ -7,7 +7,7 @@ namespace Mockolate.Setup;
 ///     A wrapper for the list of callbacks.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class Callbacks<T> : List<Callback<T>> where T : Delegate
 {

@@ -8,7 +8,7 @@ namespace Mockolate.Setup;
 ///     Base class for method setups.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public abstract class MethodSetup : IMethodSetup, IVerifiableMethodSetup
 {

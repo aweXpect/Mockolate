@@ -183,7 +183,7 @@ internal static partial class Sources
 			.Append("> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\"/> when the method is called.");
+		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> when the method is called.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<").Append(typeParams).Append("> TransitionTo(string scenario);")
 			.AppendLine();
 		sb.AppendLine();
@@ -826,7 +826,7 @@ internal static partial class Sources
 			.Append(typeParams).Append("> callback);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\"/> when the method is called.");
+		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> when the method is called.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams).Append("> TransitionTo(string scenario);")
 			.AppendLine();
 		sb.AppendLine();

@@ -30,9 +30,10 @@ public partial class MockRegistry
 	/// </summary>
 	public T? GetMethodSetup<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
 	{
-		if (!string.IsNullOrEmpty(Scenario))
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
-			T? scoped = Setup.GetScenario(Scenario).Methods.GetMatching(methodName, predicate);
+			T? scoped = scopedBucket.Methods.GetMatching(methodName, predicate);
 			if (scoped is not null)
 			{
 				return scoped;
@@ -49,9 +50,10 @@ public partial class MockRegistry
 	/// </summary>
 	public T? GetIndexerSetup<T>(Func<T, bool> predicate) where T : IndexerSetup
 	{
-		if (!string.IsNullOrEmpty(Scenario))
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
-			T? scoped = Setup.GetScenario(Scenario).Indexers.GetMatching(predicate);
+			T? scoped = scopedBucket.Indexers.GetMatching(predicate);
 			if (scoped is not null)
 			{
 				return scoped;
@@ -154,11 +156,19 @@ public partial class MockRegistry
 
 	private IEnumerable<EventSetup> GetEventSetupsByName(string name)
 	{
-		if (!string.IsNullOrEmpty(Scenario))
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
-			foreach (EventSetup setup in Setup.GetScenario(Scenario).Events.GetByName(name))
+			bool hasScoped = false;
+			foreach (EventSetup setup in scopedBucket.Events.GetByName(name))
 			{
+				hasScoped = true;
 				yield return setup;
+			}
+
+			if (hasScoped)
+			{
+				yield break;
 			}
 		}
 
@@ -212,7 +222,8 @@ public partial class MockRegistry
 	{
 		PropertySetup? existingSetup = null;
 		if (!string.IsNullOrEmpty(Scenario) &&
-		    Setup.GetScenario(Scenario).Properties.TryGetValue(propertyName, out PropertySetup? scopedSetup))
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket) &&
+		    scopedBucket.Properties.TryGetValue(propertyName, out PropertySetup? scopedSetup))
 		{
 			existingSetup = scopedSetup;
 		}
