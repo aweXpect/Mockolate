@@ -2357,7 +2357,9 @@ internal static partial class Sources
 						.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
 				}
 
-				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
+				sb.Append(method.Parameters.Count > 0
+					? "\t\tglobal::Mockolate.Setup.IReturnMethodSetupWithCallback"
+					: "\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
 			}
 
 			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
@@ -2618,9 +2620,17 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append(valueFlags?.All(x => x) == true
-				? "\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer"
-				: "\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
+			if (valueFlags?.All(x => x) == true)
+			{
+				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer");
+			}
+			else
+			{
+				sb.Append(method.Parameters.Count > 0
+					? "\t\tglobal::Mockolate.Setup.IReturnMethodSetupWithCallback"
+					: "\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
+			}
+
 			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
 			foreach (MethodParameter parameter in method.Parameters)
 			{

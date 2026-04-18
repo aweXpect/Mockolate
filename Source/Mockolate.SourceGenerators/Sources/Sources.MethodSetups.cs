@@ -294,7 +294,7 @@ internal static partial class Sources
 			$"Sets up a when return callback for a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <see langword=\"void\" />.",
 			"\t");
 		sb.Append("\tinternal interface IVoidMethodSetupReturnWhenBuilder<").Append(typeParams)
-			.Append("> : global::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
+			.Append("> : global::Mockolate.Setup.IVoidMethodSetupWithCallback<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Repeats the throw for the given number of <paramref name=\"times\" />.");
 		sb.Append("\t\t/// <remarks>").AppendLine();
@@ -800,24 +800,9 @@ internal static partial class Sources
 			.AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to execute when the method is called.");
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append("> Do(global::System.Action<")
-			.Append(typeParams).Append("> callback);").AppendLine();
-		sb.AppendLine();
-
-		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to execute when the method is called.");
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append("> Do(global::System.Action<int, ")
-			.Append(typeParams).Append("> callback);").AppendLine();
-		sb.AppendLine();
-
 		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> when the method is called.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams).Append("> TransitionTo(string scenario);")
 			.AppendLine();
-		sb.AppendLine();
-
-		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this method.");
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(global::System.Func<")
-			.Append(typeParams).Append(", TReturn> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this method.");
@@ -846,14 +831,37 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary(
 			"Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.");
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws(global::System.Func<")
-			.Append(typeParams).Append(", global::System.Exception> callback);").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
+			.Append("> Throws(global::System.Func<global::System.Exception> callback);").AppendLine();
+		sb.Append("\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary(
+			$"Sets up a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" /> with callback support for the parameters.",
+			"\t");
+		sb.Append("\tinternal interface IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams)
+			.Append("> : global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
+			.AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to execute when the method is called.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append("> Do(global::System.Action<")
+			.Append(typeParams).Append("> callback);").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to execute when the method is called.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append("> Do(global::System.Action<int, ")
+			.Append(typeParams).Append("> callback);").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this method.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(global::System.Func<")
+			.Append(typeParams).Append(", TReturn> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary(
 			"Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the method is invoked.");
-		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
-			.Append("> Throws(global::System.Func<global::System.Exception> callback);").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Throws(global::System.Func<")
+			.Append(typeParams).Append(", global::System.Exception> callback);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -890,7 +898,7 @@ internal static partial class Sources
 			$"Sets up a when callback for a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
 			"\t");
 		sb.Append("\tinternal interface IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams)
-			.Append("> : global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
+			.Append("> : global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 
@@ -929,7 +937,7 @@ internal static partial class Sources
 			$"Sets up a when return callback for a method with {numberOfParameters} parameters {GetTypeParametersDescription(numberOfParameters)} returning <typeparamref name=\"TReturn\" />.",
 			"\t");
 		sb.Append("\tinternal interface IReturnMethodSetupReturnWhenBuilder<TReturn, ").Append(typeParams)
-			.Append("> : global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
+			.Append("> : global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 
@@ -948,7 +956,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Allows ignoring the provided parameters.", "\t");
 		sb.Append("\tinternal interface IReturnMethodSetupParameterIgnorer<TReturn, ").Append(typeParams)
-			.Append("> : global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append(">")
+			.Append("> : global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams).Append(">")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Replaces the explicit parameter matcher with <see cref=\"Match.AnyParameters()\" />.");
@@ -965,6 +973,7 @@ internal static partial class Sources
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tinternal abstract class ReturnMethodSetup<TReturn, ").Append(typeParams)
 			.Append("> : global::Mockolate.Setup.MethodSetup,").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams).Append(">,").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams).Append(">,").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
@@ -1005,9 +1014,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// Do(Action<T1,...>)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Do(global::System.Action{").Append(typeParams).Append("})\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupWithCallback{TReturn, ").Append(typeParams).Append("}.Do(global::System.Action{").Append(typeParams).Append("})\" />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
-			.Append("> global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append("> global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams)
 			.Append(">.Do(global::System.Action<").Append(typeParams).Append("> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(parameters).Append(") => callback(").Append(parameters).Append("));").AppendLine();
@@ -1017,9 +1026,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// Do(Action<int, T1,...>)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Do(global::System.Action{int, ").Append(typeParams).Append("})\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupWithCallback{TReturn, ").Append(typeParams).Append("}.Do(global::System.Action{int, ").Append(typeParams).Append("})\" />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, ").Append(typeParams)
-			.Append("> global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append("> global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams)
 			.Append(">.Do(global::System.Action<int, ").Append(typeParams).Append("> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new(callback);").AppendLine();
@@ -1042,9 +1051,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// Returns(Func<T1,...,TReturn>)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Returns(global::System.Func{").Append(typeParams).Append(", TReturn})\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupWithCallback{TReturn, ").Append(typeParams).Append("}.Returns(global::System.Func{").Append(typeParams).Append(", TReturn})\" />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
-			.Append("> global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append("> global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams)
 			.Append(">.Returns(global::System.Func<").Append(typeParams).Append(", TReturn> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(parameters).Append(") => callback(").Append(parameters).Append("));").AppendLine();
@@ -1102,9 +1111,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// Throws(Func<T1,...,Exception>)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Throws(global::System.Func{").Append(typeParams).Append(", global::System.Exception})\" />").AppendLine();
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetupWithCallback{TReturn, ").Append(typeParams).Append("}.Throws(global::System.Func{").Append(typeParams).Append(", global::System.Exception})\" />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams)
-			.Append("> global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append("> global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, ").Append(typeParams)
 			.Append(">.Throws(global::System.Func<").Append(typeParams).Append(", global::System.Exception> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(parameters).Append(") => throw callback(").Append(parameters).Append("));").AppendLine();
