@@ -44,7 +44,7 @@ public sealed partial class SetupPropertyTests
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
 		int result0 = registry.GetProperty("my.other.property", () => 0, null);
-		PropertySetup<int> setup = new("my.property");
+		PropertySetup<int> setup = new(registry, "my.property");
 		((IInteractivePropertySetup)setup).InitializeWith(42);
 		registry.SetupProperty(setup);
 		int result1 = registry.GetProperty("my.property", () => 0, null);
@@ -132,7 +132,7 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task ToString_ShouldReturnType()
 	{
-		PropertySetup<int> setup = new("Foo");
+		PropertySetup<int> setup = new(new MockRegistry(MockBehavior.Default), "Foo");
 
 		string result = setup.ToString();
 
@@ -168,7 +168,8 @@ public sealed partial class SetupPropertyTests
 		string? MyStringProperty { get; set; }
 	}
 
-	private sealed class MyPropertySetup<T>() : PropertySetup<T>("My.Property")
+	private sealed class MyPropertySetup<T>()
+		: PropertySetup<T>(new MockRegistry(MockBehavior.Default), "My.Property")
 	{
 		public void InvokeSetter<TValue>(TValue value)
 			=> InvokeSetter(value, MockBehavior.Default);
@@ -180,7 +181,7 @@ public sealed partial class SetupPropertyTests
 			=> InitializeValue(value);
 	}
 
-	private sealed class InitializeValueCountingPropertySetup<T>(string name) : PropertySetup<T>(name)
+	private sealed class InitializeValueCountingPropertySetup<T>(string name) : PropertySetup<T>(MockBehavior.Default, name)
 	{
 		public int InitializeValueCallCount { get; private set; }
 

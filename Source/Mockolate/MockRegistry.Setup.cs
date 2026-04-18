@@ -13,23 +13,47 @@ public partial class MockRegistry
 	///     Registers the <paramref name="indexerSetup" /> in the mock.
 	/// </summary>
 	public void SetupIndexer(IndexerSetup indexerSetup)
-		=> Setup.Indexers.Add(indexerSetup);
+		=> SetupIndexer("", indexerSetup);
+
+	/// <summary>
+	///     Registers the <paramref name="indexerSetup" /> in the mock for the given <paramref name="scenario" />.
+	/// </summary>
+	public void SetupIndexer(string scenario, IndexerSetup indexerSetup)
+		=> Setup.GetOrCreateScenario(scenario).Indexers.Add(indexerSetup);
 
 	/// <summary>
 	///     Registers the <paramref name="methodSetup" /> in the mock.
 	/// </summary>
 	public void SetupMethod(MethodSetup methodSetup)
-		=> Setup.Methods.Add(methodSetup);
+		=> SetupMethod("", methodSetup);
+
+	/// <summary>
+	///     Registers the <paramref name="methodSetup" /> in the mock for the given <paramref name="scenario" />.
+	/// </summary>
+	public void SetupMethod(string scenario, MethodSetup methodSetup)
+		=> Setup.GetOrCreateScenario(scenario).Methods.Add(methodSetup);
 
 	/// <summary>
 	///     Registers the <paramref name="propertySetup" /> in the mock.
 	/// </summary>
 	public void SetupProperty(PropertySetup propertySetup)
-		=> Setup.Properties.Add(propertySetup);
+		=> SetupProperty("", propertySetup);
+
+	/// <summary>
+	///     Registers the <paramref name="propertySetup" /> in the mock for the given <paramref name="scenario" />.
+	/// </summary>
+	public void SetupProperty(string scenario, PropertySetup propertySetup)
+		=> Setup.GetOrCreateScenario(scenario).Properties.Add(propertySetup);
 
 	/// <summary>
 	///     Registers the <paramref name="eventSetup" /> in the mock.
 	/// </summary>
 	public void SetupEvent(EventSetup eventSetup)
-		=> Setup.Events.Add(eventSetup);
+		=> SetupEvent("", eventSetup);
+
+	/// <summary>
+	///     Registers the <paramref name="eventSetup" /> in the mock for the given <paramref name="scenario" />.
+	/// </summary>
+	public void SetupEvent(string scenario, EventSetup eventSetup)
+		=> Setup.GetOrCreateScenario(scenario).Events.Add(eventSetup);
 }

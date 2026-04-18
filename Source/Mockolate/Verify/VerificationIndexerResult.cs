@@ -50,7 +50,8 @@ public class VerificationIndexerResult<TSubject, TParameter>
 	/// </summary>
 	[OverloadResolutionPriority(1)]
 	public VerificationResult<TSubject> Set(TParameter value,
-		[CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
+		[CallerArgumentExpression(nameof(value))]
+		string doNotPopulateThisValue = "")
 		=> _mockRegistry.IndexerSet(_subject, _setPredicate,
 			(IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue), _parametersDescription);
 }

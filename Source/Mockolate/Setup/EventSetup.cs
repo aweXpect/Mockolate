@@ -13,9 +13,10 @@ namespace Mockolate.Setup;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class EventSetup(string name) : IEventSetup,
-	IEventSubscriptionSetup, IEventUnsubscriptionSetup,
-	IEventSetupCallbackBuilder, IEventSetupCallbackWhenBuilder
+public class EventSetup(MockRegistry mockRegistry, string name)
+	: IEventSubscriptionSetup,
+		IEventUnsubscriptionSetup,
+		IEventSetupCallbackBuilder
 {
 	private Callback? _currentCallback;
 	private int _currentSubscribedCallbacksIndex;
@@ -34,15 +35,15 @@ public class EventSetup(string name) : IEventSetup,
 	/// <inheritdoc cref="IEventSetup.OnUnsubscribed" />
 	public IEventUnsubscriptionSetup OnUnsubscribed => this;
 
-	/// <inheritdoc cref="IEventSetupCallbackBuilder.When(Func{int, bool})" />
-	IEventSetupCallbackWhenBuilder IEventSetupCallbackBuilder.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IEventSetupParallelCallbackBuilder.When(Func{int, bool})" />
+	IEventSetupCallbackWhenBuilder IEventSetupParallelCallbackBuilder.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IEventSetupCallbackBuilder.InParallel()" />
-	IEventSetupCallbackWhenBuilder IEventSetupCallbackBuilder.InParallel()
+	IEventSetupParallelCallbackBuilder IEventSetupCallbackBuilder.InParallel()
 	{
 		_currentCallback?.InParallel();
 		return this;
@@ -92,6 +93,15 @@ public class EventSetup(string name) : IEventSetup,
 		}
 	}
 
+	IEventSetupParallelCallbackBuilder IEventSubscriptionSetup.TransitionTo(string scenario)
+	{
+		Callback<Action<int, object?, MethodInfo>> item = new((_, _, _) => mockRegistry.TransitionTo(scenario));
+		item.InParallel();
+		_currentCallback = item;
+		(_subscribedCallbacks ??= []).Add(item);
+		return this;
+	}
+
 	/// <inheritdoc cref="IEventUnsubscriptionSetup.Do(Action)" />
 	IEventSetupCallbackBuilder IEventUnsubscriptionSetup.Do(Action callback)
 	{
@@ -120,6 +130,15 @@ public class EventSetup(string name) : IEventSetup,
 		{
 			callback(target, method);
 		}
+	}
+
+	IEventSetupParallelCallbackBuilder IEventUnsubscriptionSetup.TransitionTo(string scenario)
+	{
+		Callback<Action<int, object?, MethodInfo>> item = new((_, _, _) => mockRegistry.TransitionTo(scenario));
+		item.InParallel();
+		_currentCallback = item;
+		(_unsubscribedCallbacks ??= []).Add(item);
+		return this;
 	}
 
 	/// <summary>

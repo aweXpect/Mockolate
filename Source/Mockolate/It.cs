@@ -57,10 +57,12 @@ public partial class It
 			{
 				return Matches(typedValue);
 			}
+
 			if (value is null && default(T) is null)
 			{
 				return Matches(default!);
 			}
+
 			return MatchesOfDifferentType(value);
 		}
 

@@ -82,7 +82,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup("global::MyCode.IMyService.SomeEvent");
+					          				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(MockRegistry, "global::MyCode.IMyService.SomeEvent");
 					          				this.MockRegistry.SetupEvent(eventSetup);
 					          				return eventSetup;
 					          			}

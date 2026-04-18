@@ -110,6 +110,23 @@ public static partial class ItExtensions
 			return this;
 		}
 
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
+		bool IParameter.Matches(object? value)
+			=> value is HttpContent content ? Matches(content) : value is null && Matches(null);
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		void IParameter.InvokeCallbacks(object? value)
+		{
+			if (value is HttpContent content)
+			{
+				InvokeCallbacks(content);
+			}
+			else if (value is null)
+			{
+				InvokeCallbacks(null);
+			}
+		}
+
 		/// <inheritdoc cref="IHttpRequestMessagePropertyParameter{HttpContent}.Matches(HttpContent, HttpRequestMessage)" />
 		public bool Matches(HttpContent? value, HttpRequestMessage? requestMessage)
 		{
@@ -155,23 +172,6 @@ public static partial class ItExtensions
 			if (_callbacks is not null)
 			{
 				_callbacks.ForEach(a => a.Invoke(value));
-			}
-		}
-
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		bool IParameter.Matches(object? value)
-			=> value is HttpContent content ? Matches(content) : value is null && Matches(null);
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		void IParameter.InvokeCallbacks(object? value)
-		{
-			if (value is HttpContent content)
-			{
-				InvokeCallbacks(content);
-			}
-			else if (value is null)
-			{
-				InvokeCallbacks(null);
 			}
 		}
 
@@ -342,6 +342,14 @@ public static partial class ItExtensions
 		public IHttpContentParameter WithMediaType(string? mediaType)
 			=> parameter.WithMediaType(mediaType);
 
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
+		bool IParameter.Matches(object? value)
+			=> parameter.Matches(value);
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		void IParameter.InvokeCallbacks(object? value)
+			=> parameter.InvokeCallbacks(value);
+
 		bool IHttpRequestMessagePropertyParameter<HttpContent?>.Matches(HttpContent? value,
 			HttpRequestMessage? requestMessage)
 		{
@@ -360,14 +368,6 @@ public static partial class ItExtensions
 		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
 		public void InvokeCallbacks(HttpContent? value)
 			=> parameter.AsParameterMatch().InvokeCallbacks(value);
-
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		bool IParameter.Matches(object? value)
-			=> ((IParameter)parameter).Matches(value);
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		void IParameter.InvokeCallbacks(object? value)
-			=> ((IParameter)parameter).InvokeCallbacks(value);
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()

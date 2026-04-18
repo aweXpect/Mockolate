@@ -113,9 +113,25 @@ public static partial class ItExtensions
 			return GetThis;
 		}
 
+		/// <inheritdoc cref="IParameter.Matches(object?)" />
+		bool IParameter.Matches(object? value)
+			=> value is HttpRequestMessage message && Matches(message);
+
+		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
+		void IParameter.InvokeCallbacks(object? value)
+		{
+			if (value is HttpRequestMessage message)
+			{
+				InvokeCallbacks(message);
+			}
+		}
+
 		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
 		public void InvokeCallbacks(HttpRequestMessage value)
 			=> _callbacks?.ForEach(a => a.Invoke(value));
+
+		bool IParameterMatch<HttpRequestMessage>.Matches(HttpRequestMessage value)
+			=> Matches(value);
 
 		/// <summary>
 		///     Checks whether the given <see cref="HttpRequestMessage" /> <paramref name="value" /> matches the expectations.
@@ -163,22 +179,6 @@ public static partial class ItExtensions
 			}
 
 			return string.Join(" and ", parts.Where(p => !string.IsNullOrEmpty(p)));
-		}
-
-		bool IParameterMatch<HttpRequestMessage>.Matches(HttpRequestMessage value)
-			=> Matches(value);
-
-		/// <inheritdoc cref="IParameter.Matches(object?)" />
-		bool IParameter.Matches(object? value)
-			=> value is HttpRequestMessage message && Matches(message);
-
-		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
-		void IParameter.InvokeCallbacks(object? value)
-		{
-			if (value is HttpRequestMessage message)
-			{
-				InvokeCallbacks(message);
-			}
 		}
 	}
 

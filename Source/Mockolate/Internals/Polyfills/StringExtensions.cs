@@ -1,6 +1,5 @@
 #if NETSTANDARD2_0
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Mockolate.Internals.Polyfills;
@@ -10,7 +9,7 @@ namespace Mockolate.Internals.Polyfills;
 /// </summary>
 [ExcludeFromCodeCoverage]
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 internal static class StringExtensionMethods
 {

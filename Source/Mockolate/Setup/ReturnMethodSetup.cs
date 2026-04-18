@@ -59,6 +59,17 @@ public abstract class ReturnMethodSetup<TReturn>
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.TransitionTo(string)" />
+	IReturnMethodSetupParallelCallbackBuilder<TReturn> IReturnMethodSetup<TReturn>.TransitionTo(string scenario)
+	{
+		Callback<Action<int>> currentCallback = new(_ => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.Returns(Func{TReturn})" />
 	IReturnMethodSetupReturnBuilder<TReturn> IReturnMethodSetup<TReturn>.Returns(Func<TReturn> callback)
 	{
@@ -140,14 +151,14 @@ public abstract class ReturnMethodSetup<TReturn>
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn}.InParallel()" />
-	IReturnMethodSetupCallbackBuilder<TReturn> IReturnMethodSetupCallbackBuilder<TReturn>.InParallel()
+	IReturnMethodSetupParallelCallbackBuilder<TReturn> IReturnMethodSetupCallbackBuilder<TReturn>.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" />
-	IReturnMethodSetupCallbackWhenBuilder<TReturn> IReturnMethodSetupCallbackBuilder<TReturn>.When(
+	/// <inheritdoc cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" />
+	IReturnMethodSetupCallbackWhenBuilder<TReturn> IReturnMethodSetupParallelCallbackBuilder<TReturn>.When(
 		Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
@@ -350,6 +361,18 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.TransitionTo(string)" />
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.TransitionTo(
+		string scenario)
+	{
+		Callback<Action<int, T1>> currentCallback = new((_, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
@@ -749,6 +772,18 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.TransitionTo(string)" />
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.TransitionTo(
+		string scenario)
+	{
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(Func{T1, T2, TReturn})" />
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.Returns(
 		Func<T1, T2, TReturn> callback)
@@ -865,14 +900,14 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2}.InParallel()" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>.InParallel()
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2}.When(Func{int, bool})" />
-	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>.When(
+	/// <inheritdoc cref="IReturnMethodSetupParallelCallbackBuilder{TReturn, T1, T2}.When(Func{int, bool})" />
+	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2>.When(
 		Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
@@ -1159,6 +1194,18 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.TransitionTo(string)" />
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.TransitionTo(
+		string scenario)
+	{
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(Func{T1, T2, T3, TReturn})" />
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.Returns(
 		Func<T1, T2, T3, TReturn> callback)
@@ -1278,15 +1325,15 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2, T3}.InParallel()" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>.
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>.
 		InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2, T3}.When(Func{int, bool})" />
-	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>.
+	/// <inheritdoc cref="IReturnMethodSetupParallelCallbackBuilder{TReturn, T1, T2, T3}.When(Func{int, bool})" />
+	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3>.
 		When(Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
@@ -1588,6 +1635,18 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.TransitionTo(string)" />
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.TransitionTo(
+		string scenario)
+	{
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TReturn})" />
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.Returns(
 		Func<T1, T2, T3, T4, TReturn> callback)
@@ -1708,16 +1767,16 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2, T3, T4}.InParallel()" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4>
 		IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetupCallbackBuilder{TReturn, T1, T2, T3, T4}.When(Func{int, bool})" />
+	/// <inheritdoc cref="IReturnMethodSetupParallelCallbackBuilder{TReturn, T1, T2, T3, T4}.When(Func{int, bool})" />
 	IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>
-		IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>.When(Func<int, bool> predicate)
+		IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4>.When(Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
 		return this;

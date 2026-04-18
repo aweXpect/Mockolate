@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 
@@ -41,8 +40,8 @@ internal readonly struct Wildcard
 			.Replace("\\?", ".")
 			.Replace("\\*", "(?:.|\\n)*");
 #else
-			.Replace("\\?", ".", StringComparison.Ordinal)
-			.Replace("\\*", "(?:.|\\n)*", StringComparison.Ordinal);
+			.Replace("\\?", ".", System.StringComparison.Ordinal)
+			.Replace("\\*", "(?:.|\\n)*", System.StringComparison.Ordinal);
 #endif
 		if (fullMatch)
 		{

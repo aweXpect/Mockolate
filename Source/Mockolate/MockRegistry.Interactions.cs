@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -24,17 +25,43 @@ public partial class MockRegistry
 
 	/// <summary>
 	///     Get the latest method setup matching the given <paramref name="methodName" /> and <paramref name="predicate" />,
-	///     or returns <see langword="null" /> if no matching setup is found.
+	///     or returns <see langword="null" /> if no matching setup is found. Scenario setups take precedence over
+	///     default-scope setups.
 	/// </summary>
 	public T? GetMethodSetup<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
-		=> Setup.Methods.GetMatching(methodName, predicate);
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Methods.GetMatching(methodName, predicate);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Methods.GetMatching(methodName, predicate);
+	}
 
 	/// <summary>
 	///     Get the latest indexer setup matching the given <paramref name="predicate" />,
-	///     or returns <see langword="null" /> if no matching setup is found.
+	///     or returns <see langword="null" /> if no matching setup is found. Scenario setups take precedence over
+	///     default-scope setups.
 	/// </summary>
 	public T? GetIndexerSetup<T>(Func<T, bool> predicate) where T : IndexerSetup
-		=> Setup.Indexers.GetMatching(predicate);
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers.GetMatching(predicate);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetMatching(predicate);
+	}
 
 	/// <summary>
 	///     Stores the given <paramref name="value" /> for the given indexer <paramref name="access" />.
@@ -127,6 +154,30 @@ public partial class MockRegistry
 	public void RegisterInteraction(IInteraction interaction)
 		=> ((IMockInteractions)Interactions).RegisterInteraction(interaction);
 
+	private IEnumerable<EventSetup> GetEventSetupsByName(string name)
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			bool hasScoped = false;
+			foreach (EventSetup setup in scopedBucket.Events.GetByName(name))
+			{
+				hasScoped = true;
+				yield return setup;
+			}
+
+			if (hasScoped)
+			{
+				yield break;
+			}
+		}
+
+		foreach (EventSetup setup in Setup.Events.GetByName(name))
+		{
+			yield return setup;
+		}
+	}
+
 	/// <summary>
 	///     Accesses the getter of the property with <paramref name="propertyName" />.
 	/// </summary>
@@ -169,7 +220,15 @@ public partial class MockRegistry
 		Func<TResult>? baseValueAccessor,
 		bool forceReinitWhenFound)
 	{
-		if (!Setup.Properties.TryGetValue(propertyName, out PropertySetup? existingSetup))
+		PropertySetup? existingSetup = null;
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket) &&
+		    scopedBucket.Properties.TryGetValue(propertyName, out PropertySetup? scopedSetup))
+		{
+			existingSetup = scopedSetup;
+		}
+
+		if (existingSetup is null && !Setup.Properties.TryGetValue(propertyName, out existingSetup))
 		{
 			if (Behavior.ThrowWhenNotSetup)
 			{
@@ -229,7 +288,7 @@ public partial class MockRegistry
 		}
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
-		foreach (EventSetup setup in Setup.Events.GetByName(name))
+		foreach (EventSetup setup in GetEventSetupsByName(name))
 		{
 			setup.InvokeSubscribed(target, method);
 		}
@@ -247,7 +306,7 @@ public partial class MockRegistry
 		}
 
 		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
-		foreach (EventSetup setup in Setup.Events.GetByName(name))
+		foreach (EventSetup setup in GetEventSetupsByName(name))
 		{
 			setup.InvokeUnsubscribed(target, method);
 		}

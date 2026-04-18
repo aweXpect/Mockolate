@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Mockolate.Setup;
@@ -8,12 +10,52 @@ namespace Mockolate.Setup;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-internal partial class MockSetups
+internal partial class MockSetups : MockScenarioSetup
 {
-	internal EventSetups Events { get; } = new();
-	internal IndexerSetups Indexers { get; } = new();
-	internal MethodSetups Methods { get; } = new();
-	internal PropertySetups Properties { get; } = new();
+	internal Dictionary<string, MockScenarioSetup>? Scenarios { get; private set; }
+
+	public MockScenarioSetup GetOrCreateScenario(string setupScenario)
+	{
+		if (string.IsNullOrEmpty(setupScenario))
+		{
+			return this;
+		}
+
+		Scenarios ??= new Dictionary<string, MockScenarioSetup>();
+		if (Scenarios.TryGetValue(setupScenario, out MockScenarioSetup? scenario))
+		{
+			return scenario;
+		}
+
+		scenario = new MockScenarioSetup();
+		Scenarios.Add(setupScenario, scenario);
+		return scenario;
+	}
+
+	public bool TryGetScenario(string setupScenario, [NotNullWhen(true)] out MockScenarioSetup? scenario)
+	{
+		if (string.IsNullOrEmpty(setupScenario))
+		{
+			scenario = this;
+			return true;
+		}
+
+		if (Scenarios is not null && Scenarios.TryGetValue(setupScenario, out scenario))
+		{
+			return true;
+		}
+
+		scenario = null;
+		return false;
+	}
+}
+
+internal class MockScenarioSetup
+{
+	internal MockSetups.EventSetups Events { get; } = new();
+	internal MockSetups.IndexerSetups Indexers { get; } = new();
+	internal MockSetups.MethodSetups Methods { get; } = new();
+	internal MockSetups.PropertySetups Properties { get; } = new();
 
 	/// <inheritdoc cref="object.ToString()" />
 	[EditorBrowsable(EditorBrowsableState.Never)]

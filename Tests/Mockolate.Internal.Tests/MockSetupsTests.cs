@@ -9,7 +9,7 @@ public partial class MockSetupsTests
 	[Fact]
 	public async Task EventSetup_ToString_ShouldReturnEventName()
 	{
-		EventSetup setup = new("global::MyCode.IMyService.SomeEvent");
+		EventSetup setup = new(new MockRegistry(MockBehavior.Default), "global::MyCode.IMyService.SomeEvent");
 
 		string result = setup.ToString();
 
@@ -40,18 +40,18 @@ public partial class MockSetupsTests
 
 		for (int i = 0; i < propertyCount; i++)
 		{
-			mock.MockRegistry.SetupProperty(new PropertySetup<int>($"my.property{i}"));
+			mock.MockRegistry.SetupProperty(new PropertySetup<int>(mock.MockRegistry, $"my.property{i}"));
 		}
 
 		for (int i = 0; i < indexerCount; i++)
 		{
 			mock.MockRegistry.SetupIndexer(new IndexerSetup<string, int>(
-				(IParameterMatch<int>)It.IsAny<int>()));
+				mock.MockRegistry, (IParameterMatch<int>)It.IsAny<int>()));
 		}
 
 		for (int i = 0; i < eventCount; i++)
 		{
-			mock.MockRegistry.SetupEvent(new EventSetup($"my.event{i}"));
+			mock.MockRegistry.SetupEvent(new EventSetup(mock.MockRegistry, $"my.event{i}"));
 		}
 
 		string result = mock.MockRegistry.Setup.ToString();

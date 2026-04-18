@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml.Linq;
-using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 using Mockolate.Parameters;
@@ -16,7 +13,7 @@ namespace Mockolate.Setup;
 [DebuggerNonUserCode]
 #endif
 public abstract class VoidMethodSetup : MethodSetup,
-		IVoidMethodSetupCallbackBuilder, IVoidMethodSetupReturnBuilder
+	IVoidMethodSetupCallbackBuilder, IVoidMethodSetupReturnBuilder
 {
 	private readonly MockRegistry _mockRegistry;
 	private Callbacks<Action<int>>? _callbacks = [];
@@ -28,7 +25,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	{
 		_mockRegistry = mockRegistry;
 	}
-	
+
 	/// <inheritdoc cref="IVoidMethodSetup.SkippingBaseClass(bool)" />
 	IVoidMethodSetup IVoidMethodSetup.SkippingBaseClass(bool skipBaseClass)
 	{
@@ -56,6 +53,17 @@ public abstract class VoidMethodSetup : MethodSetup,
 	IVoidMethodSetupCallbackBuilder IVoidMethodSetup.Do(Action<int> callback)
 	{
 		Callback<Action<int>> currentCallback = new(callback);
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetup.TransitionTo(string)" />
+	IVoidMethodSetupParallelCallbackBuilder IVoidMethodSetup.TransitionTo(string scenario)
+	{
+		Callback<Action<int>> currentCallback = new(_ => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
@@ -126,14 +134,14 @@ public abstract class VoidMethodSetup : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder.InParallel()" />
-	IVoidMethodSetupCallbackBuilder IVoidMethodSetupCallbackBuilder.InParallel()
+	IVoidMethodSetupParallelCallbackBuilder IVoidMethodSetupCallbackBuilder.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" />
-	IVoidMethodSetupCallbackWhenBuilder IVoidMethodSetupCallbackBuilder.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" />
+	IVoidMethodSetupCallbackWhenBuilder IVoidMethodSetupParallelCallbackBuilder.When(Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
 		return this;
@@ -228,7 +236,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 			@delegate(invocationCount);
 		}
 	}
-	
+
 	/// <summary>
 	///     Setup for a method with three parameters matching against individual typed parameters.
 	/// </summary>
@@ -322,6 +330,17 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IVoidMethodSetup{T1}.TransitionTo(string)" />
+	IVoidMethodSetupParallelCallbackBuilder<T1> IVoidMethodSetup<T1>.TransitionTo(string scenario)
+	{
+		Callback<Action<int, T1>> currentCallback = new((_, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
 	/// <inheritdoc cref="IVoidMethodSetup{T1}.DoesNotThrow()" />
 	IVoidMethodSetup<T1> IVoidMethodSetup<T1>.DoesNotThrow()
 	{
@@ -402,14 +421,14 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1}.InParallel()" />
-	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetupCallbackBuilder<T1>.InParallel()
+	IVoidMethodSetupParallelCallbackBuilder<T1> IVoidMethodSetupCallbackBuilder<T1>.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1}.When(Func{int, bool})" />
-	IVoidMethodSetupCallbackWhenBuilder<T1> IVoidMethodSetupCallbackBuilder<T1>.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IVoidMethodSetupParallelCallbackBuilder{T1}.When(Func{int, bool})" />
+	IVoidMethodSetupCallbackWhenBuilder<T1> IVoidMethodSetupParallelCallbackBuilder<T1>.When(Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
 		return this;
@@ -512,7 +531,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 			@delegate(invocationCount, parameter1);
 		}
 	}
-	
+
 	/// <summary>
 	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
 	/// </summary>
@@ -534,8 +553,8 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 		public override bool Matches(string p1Name, T1 p1Value)
 			=> Parameters switch
 			{
-				IParametersMatch m => m.Matches([p1Value]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value)]),
+				IParametersMatch m => m.Matches([p1Value,]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value),]),
 				_ => true,
 			};
 
@@ -595,7 +614,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public abstract  class VoidMethodSetup<T1, T2> : MethodSetup,
+public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -653,6 +672,17 @@ public abstract  class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.TransitionTo(string)" />
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.TransitionTo(string scenario)
+	{
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;
 		_callbacks.Add(currentCallback);
@@ -739,14 +769,14 @@ public abstract  class VoidMethodSetup<T1, T2> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2}.InParallel()" />
-	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetupCallbackBuilder<T1, T2>.InParallel()
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2> IVoidMethodSetupCallbackBuilder<T1, T2>.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2}.When(Func{int, bool})" />
-	IVoidMethodSetupCallbackWhenBuilder<T1, T2> IVoidMethodSetupCallbackBuilder<T1, T2>.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IVoidMethodSetupParallelCallbackBuilder{T1, T2}.When(Func{int, bool})" />
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2> IVoidMethodSetupParallelCallbackBuilder<T1, T2>.When(Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
 		return this;
@@ -849,6 +879,7 @@ public abstract  class VoidMethodSetup<T1, T2> : MethodSetup,
 			@delegate(invocationCount, parameter1, parameter2);
 		}
 	}
+
 	/// <summary>
 	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
 	/// </summary>
@@ -870,8 +901,8 @@ public abstract  class VoidMethodSetup<T1, T2> : MethodSetup,
 		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value)
 			=> Parameters switch
 			{
-				IParametersMatch m => m.Matches([p1Value, p2Value]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value)]),
+				IParametersMatch m => m.Matches([p1Value, p2Value,]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value),]),
 				_ => true,
 			};
 
@@ -1006,6 +1037,17 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.TransitionTo(string)" />
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.TransitionTo(string scenario)
+	{
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.DoesNotThrow()" />
 	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.DoesNotThrow()
 	{
@@ -1086,14 +1128,14 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3}.InParallel()" />
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.InParallel()
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3}.When(Func{int, bool})" />
-	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupCallbackBuilder<T1, T2, T3>.When(
+	/// <inheritdoc cref="IVoidMethodSetupParallelCallbackBuilder{T1, T2, T3}.When(Func{int, bool})" />
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3>.When(
 		Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
@@ -1198,6 +1240,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 			@delegate(invocationCount, parameter1, parameter2, parameter3);
 		}
 	}
+
 	/// <summary>
 	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
 	/// </summary>
@@ -1219,8 +1262,8 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value)
 			=> Parameters switch
 			{
-				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value)]),
+				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value,]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value),]),
 				_ => true,
 			};
 
@@ -1364,6 +1407,17 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
+	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.TransitionTo(string)" />
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.TransitionTo(string scenario)
+	{
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => _mockRegistry.TransitionTo(scenario));
+		currentCallback.InParallel();
+		_callbacks ??= [];
+		_callbacks.Active = currentCallback;
+		_callbacks.Add(currentCallback);
+		return this;
+	}
+
 	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.DoesNotThrow()" />
 	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.DoesNotThrow()
 	{
@@ -1444,14 +1498,14 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3, T4}.InParallel()" />
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.InParallel()
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.InParallel()
 	{
 		_callbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetupCallbackBuilder{T1, T2, T3, T4}.When(Func{int, bool})" />
-	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>.When(
+	/// <inheritdoc cref="IVoidMethodSetupParallelCallbackBuilder{T1, T2, T3, T4}.When(Func{int, bool})" />
+	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4>.When(
 		Func<int, bool> predicate)
 	{
 		_callbacks?.Active?.When(predicate);
@@ -1556,6 +1610,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 			@delegate(invocationCount, parameter1, parameter2, parameter3, parameter4);
 		}
 	}
+
 	/// <summary>
 	///     Setup for a method with one parameter matching against <see cref="IParameters" />.
 	/// </summary>
@@ -1577,8 +1632,8 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value)
 			=> Parameters switch
 			{
-				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value, p4Value]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value), (p4Name, p4Value)]),
+				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value, p4Value,]),
+				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value), (p4Name, p4Value),]),
 				_ => true,
 			};
 
@@ -1623,7 +1678,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		///     The third parameter of the method.
 		/// </summary>
 		public IParameterMatch<T3> Parameter3 { get; }
-		
+
 		/// <summary>
 		///     The fourth parameter of the method.
 		/// </summary>

@@ -183,6 +183,11 @@ internal static partial class Sources
 			.Append("> callback);").AppendLine();
 		sb.AppendLine();
 
+		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> when the method is called.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<").Append(typeParams).Append("> TransitionTo(string scenario);")
+			.AppendLine();
+		sb.AppendLine();
+
 		sb.AppendXmlSummary("Registers an iteration in the sequence of method invocations, that does not throw.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupReturnBuilder<").Append(typeParams).Append("> DoesNotThrow();").AppendLine();
 		sb.AppendLine();
@@ -245,7 +250,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
 		sb.Append("\t\t/// <remarks>").AppendLine();
 		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupCallbackBuilder{")
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder{")
 			.Append(typeParams).Append("}.When(global::System.Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
@@ -255,7 +260,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Deactivates the callback after the given number of <paramref name=\"times\" />.");
 		sb.Append("\t\t/// <remarks>").AppendLine();
 		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupCallbackBuilder{")
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder{")
 			.Append(typeParams).Append("}.When(global::System.Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
@@ -394,6 +399,21 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
+		// TransitionTo
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IVoidMethodSetup{").Append(typeParams).Append("}.TransitionTo(string)\" />").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<").Append(typeParams)
+			.Append("> global::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams)
+			.Append(">.TransitionTo(string scenario)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.TransitionTo(scenario));").AppendLine();
+		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
+		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
+		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
+		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
 		// Returns(Action<int, T1,...>)
 		sb.AppendXmlSummary("Registers an iteration in the sequence of method invocations, that does not throw.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupReturnBuilder<").Append(typeParams).Append("> global::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams)
@@ -485,7 +505,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// When (callback)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IVoidMethodSetupCallbackBuilder{").Append(typeParams)
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder{").Append(typeParams)
 			.Append("}.When(global::System.Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<").Append(typeParams)
 			.Append("> global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<").Append(typeParams)
@@ -806,6 +826,11 @@ internal static partial class Sources
 			.Append(typeParams).Append("> callback);").AppendLine();
 		sb.AppendLine();
 
+		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> when the method is called.");
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams).Append("> TransitionTo(string scenario);")
+			.AppendLine();
+		sb.AppendLine();
+
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> to setup the return value for this method.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, ").Append(typeParams).Append("> Returns(global::System.Func<")
 			.Append(typeParams).Append(", TReturn> callback);").AppendLine();
@@ -887,14 +912,14 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
 		sb.AppendXmlRemarks(
-			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams).Append("> For(int times);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Deactivates the callback after the given number of <paramref name=\"times\" />.");
 		sb.AppendXmlRemarks(
-			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -1018,6 +1043,21 @@ internal static partial class Sources
 			.Append(">.Do(global::System.Action<int, ").Append(typeParams).Append("> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new(callback);").AppendLine();
+		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
+		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
+		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		// TransitionTo
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.TransitionTo(string)\" />").AppendLine();
+		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, ").Append(typeParams)
+			.Append("> global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams)
+			.Append(">.TransitionTo(string scenario)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.TransitionTo(scenario));").AppendLine();
+		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
 		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
 		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();

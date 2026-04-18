@@ -5,7 +5,11 @@ namespace Mockolate.Internal.Tests.TestHelpers;
 
 internal sealed class FakeIndexerSetup : IndexerSetup
 {
-	internal FakeIndexerSetup(bool match) { ShouldMatch = match; }
+	internal FakeIndexerSetup(bool match) : base(new MockRegistry(MockBehavior.Default))
+	{
+		ShouldMatch = match;
+	}
+
 	internal bool ShouldMatch { get; }
 
 	protected override bool MatchesAccess(IndexerAccess access) => ShouldMatch;

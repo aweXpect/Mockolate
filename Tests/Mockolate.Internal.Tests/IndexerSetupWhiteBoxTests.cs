@@ -224,6 +224,7 @@ public sealed class IndexerSetupWhiteBoxTests
 
 		private sealed class MyIndexerSetup<T1, T2>()
 			: IndexerSetup<string, T1, T2>(
+				new MockRegistry(MockBehavior.Default),
 				(IParameterMatch<T1>)It.IsAny<T1>(),
 				(IParameterMatch<T2>)It.IsAny<T2>())
 		{
@@ -356,6 +357,7 @@ public sealed class IndexerSetupWhiteBoxTests
 
 		private sealed class MyIndexerSetup<T1, T2, T3>()
 			: IndexerSetup<string, T1, T2, T3>(
+				new MockRegistry(MockBehavior.Default),
 				(IParameterMatch<T1>)It.IsAny<T1>(),
 				(IParameterMatch<T2>)It.IsAny<T2>(),
 				(IParameterMatch<T3>)It.IsAny<T3>())
@@ -496,6 +498,7 @@ public sealed class IndexerSetupWhiteBoxTests
 
 		private sealed class MyIndexerSetup<T1, T2, T3, T4>()
 			: IndexerSetup<string, T1, T2, T3, T4>(
+				new MockRegistry(MockBehavior.Default),
 				(IParameterMatch<T1>)It.IsAny<T1>(),
 				(IParameterMatch<T2>)It.IsAny<T2>(),
 				(IParameterMatch<T3>)It.IsAny<T3>(),
@@ -646,6 +649,7 @@ public sealed class IndexerSetupWhiteBoxTests
 
 		private sealed class MyIndexerSetup<T1, T2, T3, T4, T5>()
 			: IndexerSetup<string, T1, T2, T3, T4, T5>(
+				new MockRegistry(MockBehavior.Default),
 				(IParameterMatch<T1>)It.IsAny<T1>(),
 				(IParameterMatch<T2>)It.IsAny<T2>(),
 				(IParameterMatch<T3>)It.IsAny<T3>(),
@@ -672,6 +676,7 @@ public sealed class IndexerSetupWhiteBoxTests
 
 	private sealed class MyIndexerSetup<T1>()
 		: IndexerSetup<string, T1>(
+			new MockRegistry(MockBehavior.Default),
 			(IParameterMatch<T1>)It.IsAny<T1>())
 	{
 		private readonly ValueStorage _storage = new();
