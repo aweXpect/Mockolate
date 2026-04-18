@@ -209,10 +209,10 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+		public async Task WithoutCallback_IIndexerGetterSetupCallbackBuilder_ShouldNotThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
-			IIndexerSetupCallbackBuilder<string, int> setup =
+			IIndexerGetterSetupCallbackBuilder<string, int> setup =
 				sut.Mock.Setup[It.IsAny<int>()];
 
 			void ActWhen()
@@ -236,10 +236,10 @@ public sealed partial class SetupIndexerTests
 		}
 
 		[Fact]
-		public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+		public async Task WithoutCallback_IIndexerGetterSetupCallbackWhenBuilder_ShouldNotThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
-			IIndexerSetupCallbackWhenBuilder<string, int> setup =
+			IIndexerGetterSetupCallbackWhenBuilder<string, int> setup =
 				sut.Mock.Setup[It.IsAny<int>()];
 
 			void ActFor()
@@ -461,10 +461,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackBuilder<string, int, int> setup =
+				IIndexerGetterSetupCallbackBuilder<string, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(),
 						It.IsAny<int>()];
 
@@ -489,10 +489,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackWhenBuilder<string, int, int> setup =
+				IIndexerGetterSetupCallbackWhenBuilder<string, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()
@@ -720,10 +720,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackBuilder<string, int, int, int> setup =
+				IIndexerGetterSetupCallbackBuilder<string, int, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActWhen()
@@ -747,10 +747,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackWhenBuilder<string, int, int, int> setup =
+				IIndexerGetterSetupCallbackWhenBuilder<string, int, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()
@@ -979,10 +979,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackBuilder<string, int, int, int, int> setup =
+				IIndexerGetterSetupCallbackBuilder<string, int, int, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActWhen()
@@ -1006,10 +1006,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackWhenBuilder<string, int, int, int, int> setup =
+				IIndexerGetterSetupCallbackWhenBuilder<string, int, int, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()
@@ -1241,10 +1241,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackBuilder<string, int, int, int, int, int> setup =
+				IIndexerGetterSetupCallbackBuilder<string, int, int, int, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActWhen()
@@ -1268,10 +1268,10 @@ public sealed partial class SetupIndexerTests
 			}
 
 			[Fact]
-			public async Task WithoutCallback_IIndexerSetupCallbackWhenBuilder_ShouldNotThrow()
+			public async Task WithoutCallback_IIndexerGetterSetupCallbackWhenBuilder_ShouldNotThrow()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetupCallbackWhenBuilder<string, int, int, int, int, int> setup =
+				IIndexerGetterSetupCallbackWhenBuilder<string, int, int, int, int, int> setup =
 					sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()];
 
 				void ActFor()

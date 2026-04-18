@@ -241,10 +241,10 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task WithoutCallback_IPropertySetupCallbackBuilder_ShouldNotThrow()
+		public async Task WithoutCallback_IPropertyGetterSetupCallbackBuilder_ShouldNotThrow()
 		{
 			IPropertyService sut = IPropertyService.CreateMock();
-			IPropertySetupCallbackBuilder<int> setup =
+			IPropertyGetterSetupCallbackBuilder<int> setup =
 				sut.Mock.Setup.MyProperty;
 
 			void ActWhen()
@@ -268,10 +268,10 @@ public sealed partial class SetupPropertyTests
 		}
 
 		[Fact]
-		public async Task WithoutCallback_IPropertySetupWhenBuilder_ShouldNotThrow()
+		public async Task WithoutCallback_IPropertyGetterSetupWhenBuilder_ShouldNotThrow()
 		{
 			IPropertyService sut = IPropertyService.CreateMock();
-			IPropertySetupCallbackWhenBuilder<int> setup =
+			IPropertyGetterSetupCallbackWhenBuilder<int> setup =
 				sut.Mock.Setup.MyProperty;
 
 			void ActFor()

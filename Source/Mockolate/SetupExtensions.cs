@@ -29,9 +29,9 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
-	///     Extensions for property callback setups.
+	///     Extensions for property getter callback setups.
 	/// </summary>
-	extension<T>(IPropertySetupCallbackWhenBuilder<T> setup)
+	extension<T>(IPropertyGetterSetupCallbackWhenBuilder<T> setup)
 	{
 		/// <summary>
 		///     Executes the callback only once.
@@ -41,9 +41,39 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
-	///     Extensions for event callback setups.
+	///     Extensions for property setter callback setups.
 	/// </summary>
-	extension(IEventSetupCallbackWhenBuilder setup)
+	extension<T>(IPropertySetterSetupCallbackWhenBuilder<T> setup)
+	{
+		/// <summary>
+		///     Executes the callback only once.
+		/// </summary>
+		public IPropertySetup<T> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for event subscription callback setups.
+	/// </summary>
+	extension(IEventSubscriptionSetupCallbackWhenBuilder setup)
+	{
+		/// <summary>
+		///     Repeats the callback forever.
+		/// </summary>
+		public void Forever()
+			=> setup.For(int.MaxValue);
+
+		/// <summary>
+		///     Executes the callback only once.
+		/// </summary>
+		public IEventSetup OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for event unsubscription callback setups.
+	/// </summary>
+	extension(IEventUnsubscriptionSetupCallbackWhenBuilder setup)
 	{
 		/// <summary>
 		///     Repeats the callback forever.
@@ -77,9 +107,21 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
-	///     Extensions for indexer callback setups with one parameter.
+	///     Extensions for indexer getter callback setups with one parameter.
 	/// </summary>
-	extension<TValue, T1>(IIndexerSetupCallbackWhenBuilder<TValue, T1> setup)
+	extension<TValue, T1>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1> setup)
+	{
+		/// <summary>
+		///     Executes the callback only once.
+		/// </summary>
+		public IIndexerSetup<TValue, T1> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for indexer setter callback setups with one parameter.
+	/// </summary>
+	extension<TValue, T1>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1> setup)
 	{
 		/// <summary>
 		///     Executes the callback only once.
@@ -107,9 +149,21 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
-	///     Extensions for indexer callback setups with two parameters.
+	///     Extensions for indexer getter callback setups with two parameters.
 	/// </summary>
-	extension<TValue, T1, T2>(IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> setup)
+	extension<TValue, T1, T2>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2> setup)
+	{
+		/// <summary>
+		///     Executes the callback only once.
+		/// </summary>
+		public IIndexerSetup<TValue, T1, T2> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for indexer setter callback setups with two parameters.
+	/// </summary>
+	extension<TValue, T1, T2>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2> setup)
 	{
 		/// <summary>
 		///     Executes the callback only once.
@@ -137,9 +191,21 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
-	///     Extensions for indexer callback setups with three parameters.
+	///     Extensions for indexer getter callback setups with three parameters.
 	/// </summary>
-	extension<TValue, T1, T2, T3>(IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
+	extension<TValue, T1, T2, T3>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
+	{
+		/// <summary>
+		///     Executes the callback only once.
+		/// </summary>
+		public IIndexerSetup<TValue, T1, T2, T3> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for indexer setter callback setups with three parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
 	{
 		/// <summary>
 		///     Executes the callback only once.
@@ -167,9 +233,21 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
-	///     Extensions for indexer callback setups with four parameters.
+	///     Extensions for indexer getter callback setups with four parameters.
 	/// </summary>
-	extension<TValue, T1, T2, T3, T4>(IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
+	extension<TValue, T1, T2, T3, T4>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
+	{
+		/// <summary>
+		///     Executes the callback only once.
+		/// </summary>
+		public IIndexerSetup<TValue, T1, T2, T3, T4> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for indexer setter callback setups with four parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3, T4>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
 	{
 		/// <summary>
 		///     Executes the callback only once.

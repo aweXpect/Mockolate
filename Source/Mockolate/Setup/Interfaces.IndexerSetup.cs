@@ -27,7 +27,7 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -35,7 +35,7 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	/// <remarks>
 	///     The callback receives the parameter of the indexer.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<T1> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> Do(Action<T1> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -43,7 +43,7 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	/// <remarks>
 	///     The callback receives the parameter of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<T1, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> Do(Action<T1, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -52,13 +52,13 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value
 	///     of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -69,7 +69,7 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -77,7 +77,7 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	/// <remarks>
 	///     The callback receives the value the indexer is set to as single parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> Do(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -85,7 +85,7 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	/// <remarks>
 	///     The callback receives the parameter of the indexer and the value the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<T1, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> Do(Action<T1, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -94,13 +94,13 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	///     The callback receives an incrementing access counter as first parameter, the parameter of the indexer and the value
 	///     the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -200,20 +200,20 @@ public interface IIndexerSetup<TValue, out T1>
 /// <summary>
 ///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public interface IIndexerSetupCallbackBuilder<TValue, out T1>
-	: IIndexerSetupParallelCallbackBuilder<TValue, T1>
+public interface IIndexerGetterSetupCallbackBuilder<TValue, out T1>
+	: IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1> InParallel();
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> InParallel();
 }
 
 /// <summary>
 ///     Sets up a parallel callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1>
-	: IIndexerSetupCallbackWhenBuilder<TValue, T1>
+public interface IIndexerGetterSetupParallelCallbackBuilder<TValue, out T1>
+	: IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>
 {
 	/// <summary>
 	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
@@ -221,13 +221,13 @@ public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1>
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1> When(Func<int, bool> predicate);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
-public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1>
+public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1>
 	: IIndexerSetup<TValue, T1>
 {
 	/// <summary>
@@ -235,17 +235,71 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
 	///     ).
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1> For(int times);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1> For(int times);
 
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
+	///     ).
+	/// </remarks>
+	IIndexerSetup<TValue, T1> Only(int times);
+}
+
+/// <summary>
+///     Sets up a setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
+/// </summary>
+public interface IIndexerSetterSetupCallbackBuilder<TValue, out T1>
+	: IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>
+{
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1> InParallel();
+}
+
+/// <summary>
+///     Sets up a parallel setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
+/// </summary>
+public interface IIndexerSetterSetupParallelCallbackBuilder<TValue, out T1>
+	: IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>
+{
+	/// <summary>
+	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
+/// </summary>
+public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1>
+	: IIndexerSetup<TValue, T1>
+{
+	/// <summary>
+	///     Repeats the callback for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
+	///     ).
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" /> evaluates to <see langword="true" />
 	///     ).
 	/// </remarks>
 	IIndexerSetup<TValue, T1> Only(int times);
@@ -301,7 +355,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -309,7 +363,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<T1, T2> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<T1, T2> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -317,7 +371,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<T1, T2, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -326,13 +380,13 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
 	///     value of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -344,7 +398,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -352,7 +406,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	/// <remarks>
 	///     The callback receives the value the indexer is set to as single parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -360,7 +414,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<T1, T2, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -369,13 +423,13 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -476,21 +530,21 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 ///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
 ///     <typeparamref name="T2" />.
 /// </summary>
-public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2>
-	: IIndexerSetupParallelCallbackBuilder<TValue, T1, T2>
+public interface IIndexerGetterSetupCallbackBuilder<TValue, out T1, out T2>
+	: IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> InParallel();
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2> InParallel();
 }
 
 /// <summary>
 ///     Sets up a parallel callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
 ///     <typeparamref name="T2" />.
 /// </summary>
-public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2>
-	: IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>
+public interface IIndexerGetterSetupParallelCallbackBuilder<TValue, out T1, out T2>
+	: IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>
 {
 	/// <summary>
 	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
@@ -498,14 +552,14 @@ public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2>
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> When(Func<int, bool> predicate);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
 ///     <typeparamref name="T2" />.
 /// </summary>
-public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2>
+public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1, out T2>
 	: IIndexerSetup<TValue, T1, T2>
 {
 	/// <summary>
@@ -513,17 +567,74 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> For(int times);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2> For(int times);
 
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IIndexerSetup<TValue, T1, T2> Only(int times);
+}
+
+/// <summary>
+///     Sets up a setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
+/// </summary>
+public interface IIndexerSetterSetupCallbackBuilder<TValue, out T1, out T2>
+	: IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2>
+{
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2> InParallel();
+}
+
+/// <summary>
+///     Sets up a parallel setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
+/// </summary>
+public interface IIndexerSetterSetupParallelCallbackBuilder<TValue, out T1, out T2>
+	: IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>
+{
+	/// <summary>
+	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" />.
+/// </summary>
+public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1, out T2>
+	: IIndexerSetup<TValue, T1, T2>
+{
+	/// <summary>
+	///     Repeats the callback for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2> Only(int times);
@@ -584,7 +695,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -592,7 +703,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<T1, T2, T3> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -600,7 +711,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<T1, T2, T3, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -609,13 +720,13 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
 	///     value of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -628,7 +739,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -636,7 +747,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the value the indexer is set to as single parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -644,7 +755,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<T1, T2, T3, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -653,13 +764,13 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -761,21 +872,21 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 ///     Sets up a callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
-public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3>
-	: IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3>
+public interface IIndexerGetterSetupCallbackBuilder<TValue, out T1, out T2, out T3>
+	: IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> InParallel();
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> InParallel();
 }
 
 /// <summary>
 ///     Sets up a parallel callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
-public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3>
-	: IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>
+public interface IIndexerGetterSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3>
+	: IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>
 {
 	/// <summary>
 	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
@@ -783,14 +894,14 @@ public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2, ou
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> When(Func<int, bool> predicate);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
-public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3>
+public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3>
 	: IIndexerSetup<TValue, T1, T2, T3>
 {
 	/// <summary>
@@ -798,18 +909,76 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> For(int times);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> For(int times);
 
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IIndexerSetup<TValue, T1, T2, T3> Only(int times);
+}
+
+/// <summary>
+///     Sets up a setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
+/// </summary>
+public interface IIndexerSetterSetupCallbackBuilder<TValue, out T1, out T2, out T3>
+	: IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>
+{
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> InParallel();
+}
+
+/// <summary>
+///     Sets up a parallel setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
+/// </summary>
+public interface IIndexerSetterSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3>
+	: IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>
+{
+	/// <summary>
+	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
+/// </summary>
+public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3>
+	: IIndexerSetup<TValue, T1, T2, T3>
+{
+	/// <summary>
+	///     Repeats the callback for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />
+	///     ).
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2, T3> Only(int times);
@@ -871,7 +1040,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -879,7 +1048,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -887,7 +1056,7 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
@@ -896,13 +1065,13 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
 	///     value of the indexer as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -914,7 +1083,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -922,7 +1091,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the value the indexer is set to as single parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -930,7 +1099,7 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <remarks>
 	///     The callback receives the parameters of the indexer and the value the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
@@ -939,13 +1108,13 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -1048,13 +1217,13 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface
-	IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4>
-	: IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>
+	IIndexerGetterSetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4>
+	: IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> InParallel();
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> InParallel();
 }
 
 /// <summary>
@@ -1062,8 +1231,8 @@ public interface
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface
-	IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4>
-	: IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4>
+	: IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
@@ -1071,14 +1240,14 @@ public interface
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(Func<int, bool> predicate);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(Func<int, bool> predicate);
 }
 
 /// <summary>
 ///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
-public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4>
+public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4>
 	: IIndexerSetup<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
@@ -1086,17 +1255,76 @@ public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> For(int times);
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> For(int times);
 
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IIndexerSetup<TValue, T1, T2, T3, T4> Only(int times);
+}
+
+/// <summary>
+///     Sets up a setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
+/// </summary>
+public interface
+	IIndexerSetterSetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4>
+	: IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> InParallel();
+}
+
+/// <summary>
+///     Sets up a parallel setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
+/// </summary>
+public interface
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4>
+	: IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Limits the callback to only execute for indexer accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the indexer has been accessed so far.
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Sets up a when setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />,
+///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
+/// </summary>
+public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4>
+	: IIndexerSetup<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Repeats the callback for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
+	///     <see langword="true" />).
+	/// </remarks>
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IIndexerSetup<TValue, T1, T2, T3, T4> Only(int times);

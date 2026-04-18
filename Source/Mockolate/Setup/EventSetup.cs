@@ -15,7 +15,8 @@ namespace Mockolate.Setup;
 public class EventSetup(MockRegistry mockRegistry, string name)
 	: IEventSubscriptionSetup,
 		IEventUnsubscriptionSetup,
-		IEventSetupCallbackBuilder
+		IEventSubscriptionSetupCallbackBuilder,
+		IEventUnsubscriptionSetupCallbackBuilder
 {
 	private Callbacks<Action<int, object?, MethodInfo>>? _subscribedCallbacks;
 	private Callbacks<Action<int, object?, MethodInfo>>? _unsubscribedCallbacks;
@@ -31,41 +32,67 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 	/// <inheritdoc cref="IEventSetup.OnUnsubscribed" />
 	public IEventUnsubscriptionSetup OnUnsubscribed => this;
 
-	/// <inheritdoc cref="IEventSetupParallelCallbackBuilder.When(Func{int, bool})" />
-	IEventSetupCallbackWhenBuilder IEventSetupParallelCallbackBuilder.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IEventSubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" />
+	IEventSubscriptionSetupCallbackWhenBuilder IEventSubscriptionSetupParallelCallbackBuilder.When(Func<int, bool> predicate)
 	{
 		_subscribedCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IEventSetupCallbackBuilder.InParallel()" />
-	IEventSetupParallelCallbackBuilder IEventSetupCallbackBuilder.InParallel()
+	/// <inheritdoc cref="IEventSubscriptionSetupCallbackBuilder.InParallel()" />
+	IEventSubscriptionSetupParallelCallbackBuilder IEventSubscriptionSetupCallbackBuilder.InParallel()
 	{
 		_subscribedCallbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IEventSetupCallbackWhenBuilder.For(int)" />
-	IEventSetupCallbackWhenBuilder IEventSetupCallbackWhenBuilder.For(int times)
+	/// <inheritdoc cref="IEventSubscriptionSetupCallbackWhenBuilder.For(int)" />
+	IEventSubscriptionSetupCallbackWhenBuilder IEventSubscriptionSetupCallbackWhenBuilder.For(int times)
 	{
 		_subscribedCallbacks?.Active?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IEventSetupCallbackWhenBuilder.Only(int)" />
-	IEventSetup IEventSetupCallbackWhenBuilder.Only(int times)
+	/// <inheritdoc cref="IEventSubscriptionSetupCallbackWhenBuilder.Only(int)" />
+	IEventSetup IEventSubscriptionSetupCallbackWhenBuilder.Only(int times)
 	{
 		_subscribedCallbacks?.Active?.Only(times);
 		return this;
 	}
 
+	/// <inheritdoc cref="IEventUnsubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" />
+	IEventUnsubscriptionSetupCallbackWhenBuilder IEventUnsubscriptionSetupParallelCallbackBuilder.When(Func<int, bool> predicate)
+	{
+		_unsubscribedCallbacks?.Active?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IEventUnsubscriptionSetupCallbackBuilder.InParallel()" />
+	IEventUnsubscriptionSetupParallelCallbackBuilder IEventUnsubscriptionSetupCallbackBuilder.InParallel()
+	{
+		_unsubscribedCallbacks?.Active?.InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IEventUnsubscriptionSetupCallbackWhenBuilder.For(int)" />
+	IEventUnsubscriptionSetupCallbackWhenBuilder IEventUnsubscriptionSetupCallbackWhenBuilder.For(int times)
+	{
+		_unsubscribedCallbacks?.Active?.For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IEventUnsubscriptionSetupCallbackWhenBuilder.Only(int)" />
+	IEventSetup IEventUnsubscriptionSetupCallbackWhenBuilder.Only(int times)
+	{
+		_unsubscribedCallbacks?.Active?.Only(times);
+		return this;
+	}
+
 	/// <inheritdoc cref="IEventSubscriptionSetup.Do(Action)" />
-	IEventSetupCallbackBuilder IEventSubscriptionSetup.Do(Action callback)
+	IEventSubscriptionSetupCallbackBuilder IEventSubscriptionSetup.Do(Action callback)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new(Delegate);
-		_subscribedCallbacks ??= [];
-		_subscribedCallbacks.Active = item;
-		_subscribedCallbacks.Add(item);
+		_subscribedCallbacks = _subscribedCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -76,12 +103,10 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 	}
 
 	/// <inheritdoc cref="IEventSubscriptionSetup.Do(Action{object?, MethodInfo})" />
-	IEventSetupCallbackBuilder IEventSubscriptionSetup.Do(Action<object?, MethodInfo> callback)
+	IEventSubscriptionSetupCallbackBuilder IEventSubscriptionSetup.Do(Action<object?, MethodInfo> callback)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new(Delegate);
-		_subscribedCallbacks ??= [];
-		_subscribedCallbacks.Active = item;
-		_subscribedCallbacks.Add(item);
+		_subscribedCallbacks = _subscribedCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -91,23 +116,19 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		}
 	}
 
-	IEventSetupParallelCallbackBuilder IEventSubscriptionSetup.TransitionTo(string scenario)
+	IEventSubscriptionSetupParallelCallbackBuilder IEventSubscriptionSetup.TransitionTo(string scenario)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new((_, _, _) => mockRegistry.TransitionTo(scenario));
 		item.InParallel();
-		_subscribedCallbacks ??= [];
-		_subscribedCallbacks.Active = item;
-		_subscribedCallbacks.Add(item);
+		_subscribedCallbacks = _subscribedCallbacks.Register(item);
 		return this;
 	}
 
 	/// <inheritdoc cref="IEventUnsubscriptionSetup.Do(Action)" />
-	IEventSetupCallbackBuilder IEventUnsubscriptionSetup.Do(Action callback)
+	IEventUnsubscriptionSetupCallbackBuilder IEventUnsubscriptionSetup.Do(Action callback)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new(Delegate);
-		_subscribedCallbacks ??= [];
-		_subscribedCallbacks.Active = item;
-		(_unsubscribedCallbacks ??= []).Add(item);
+		_unsubscribedCallbacks = _unsubscribedCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -118,12 +139,10 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 	}
 
 	/// <inheritdoc cref="IEventUnsubscriptionSetup.Do(Action{object?, MethodInfo})" />
-	IEventSetupCallbackBuilder IEventUnsubscriptionSetup.Do(Action<object?, MethodInfo> callback)
+	IEventUnsubscriptionSetupCallbackBuilder IEventUnsubscriptionSetup.Do(Action<object?, MethodInfo> callback)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new(Delegate);
-		_subscribedCallbacks ??= [];
-		_subscribedCallbacks.Active = item;
-		(_unsubscribedCallbacks ??= []).Add(item);
+		_unsubscribedCallbacks = _unsubscribedCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -133,13 +152,11 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		}
 	}
 
-	IEventSetupParallelCallbackBuilder IEventUnsubscriptionSetup.TransitionTo(string scenario)
+	IEventUnsubscriptionSetupParallelCallbackBuilder IEventUnsubscriptionSetup.TransitionTo(string scenario)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new((_, _, _) => mockRegistry.TransitionTo(scenario));
 		item.InParallel();
-		_subscribedCallbacks ??= [];
-		_subscribedCallbacks.Active = item;
-		(_unsubscribedCallbacks ??= []).Add(item);
+		_unsubscribedCallbacks = _unsubscribedCallbacks.Register(item);
 		return this;
 	}
 

@@ -103,7 +103,8 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 #endif
 public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch<T1> parameter1)
 	: IndexerSetup(mockRegistry),
-		IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
+		IIndexerGetterSetupCallbackBuilder<TValue, T1>, IIndexerSetterSetupCallbackBuilder<TValue, T1>,
+		IIndexerSetupReturnBuilder<TValue, T1>,
 		IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
 {
 	private Callbacks<Action<int, T1, TValue>>? _getterCallbacks;
@@ -113,12 +114,10 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -129,12 +128,10 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1})" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1> callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -145,12 +142,10 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -161,32 +156,26 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.TransitionTo(string scenario)
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -197,12 +186,10 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<TValue> callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -213,12 +200,10 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -229,22 +214,18 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.TransitionTo(string scenario)
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -291,9 +272,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -307,9 +286,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -323,9 +300,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -339,9 +314,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -356,9 +329,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		where TException : Exception, new()
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -372,9 +343,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -388,9 +357,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -404,9 +371,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, Exception> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -420,9 +385,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -432,32 +395,61 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1> IIndexerSetupParallelCallbackBuilder<TValue, T1>.When(
+	/// <inheritdoc cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1> IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>.When(
 		Func<int, bool> predicate)
 	{
 		_getterCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1}.InParallel()" />
-	IIndexerSetupParallelCallbackBuilder<TValue, T1> IIndexerSetupCallbackBuilder<TValue, T1>.InParallel()
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackBuilder{TValue, T1}.InParallel()" />
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> IIndexerGetterSetupCallbackBuilder<TValue, T1>.InParallel()
 	{
 		_getterCallbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1}.For(int)" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1> IIndexerSetupCallbackWhenBuilder<TValue, T1>.For(int times)
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1}.For(int)" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>.For(int times)
 	{
 		_getterCallbacks?.Active?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1}.Only(int)" />
-	IIndexerSetup<TValue, T1> IIndexerSetupCallbackWhenBuilder<TValue, T1>.Only(int times)
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1}.Only(int)" />
+	IIndexerSetup<TValue, T1> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>.Only(int times)
 	{
 		_getterCallbacks?.Active?.Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1> IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>.When(
+		Func<int, bool> predicate)
+	{
+		_setterCallbacks?.Active?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackBuilder{TValue, T1}.InParallel()" />
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1> IIndexerSetterSetupCallbackBuilder<TValue, T1>.InParallel()
+	{
+		_setterCallbacks?.Active?.InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1}.For(int)" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>.For(int times)
+	{
+		_setterCallbacks?.Active?.For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1}.Only(int)" />
+	IIndexerSetup<TValue, T1> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>.Only(int times)
+	{
+		_setterCallbacks?.Active?.Only(times);
 		return this;
 	}
 
@@ -674,7 +666,8 @@ public class IndexerSetup<TValue, T1, T2>(
 	MockRegistry mockRegistry,
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2) : IndexerSetup(mockRegistry),
-	IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>,
+	IIndexerSetupReturnBuilder<TValue, T1, T2>,
 	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
 {
 	private Callbacks<Action<int, T1, T2, TValue>>? _getterCallbacks;
@@ -684,12 +677,10 @@ public class IndexerSetup<TValue, T1, T2>(
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -700,12 +691,10 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2> callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -716,12 +705,10 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -732,33 +719,27 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(
 		Action<int, T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.TransitionTo(string scenario)
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -769,12 +750,10 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<TValue> callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -785,12 +764,10 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -801,23 +778,19 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(
 		Action<int, T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.TransitionTo(string scenario)
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -864,9 +837,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -880,9 +851,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -896,9 +865,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -912,9 +879,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -929,9 +894,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		where TException : Exception, new()
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -945,9 +908,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -961,9 +922,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -977,9 +936,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -993,9 +950,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1005,32 +960,61 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetupParallelCallbackBuilder<TValue, T1, T2>.When(
+	/// <inheritdoc cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2>.When(
 		Func<int, bool> predicate)
 	{
 		_getterCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2}.InParallel()" />
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> IIndexerSetupCallbackBuilder<TValue, T1, T2>.InParallel()
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackBuilder{TValue, T1, T2}.InParallel()" />
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2> IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>.InParallel()
 	{
 		_getterCallbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2}.For(int)" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1,T2}.For(int)" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
 	{
 		_getterCallbacks?.Active?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2}.Only(int)" />
-	IIndexerSetup<TValue, T1, T2> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>.Only(int times)
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1,T2}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>.Only(int times)
 	{
 		_getterCallbacks?.Active?.Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2>.When(
+		Func<int, bool> predicate)
+	{
+		_setterCallbacks?.Active?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackBuilder{TValue, T1, T2}.InParallel()" />
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2> IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>.InParallel()
+	{
+		_setterCallbacks?.Active?.InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1,T2}.For(int)" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>.For(int times)
+	{
+		_setterCallbacks?.Active?.For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1,T2}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>.Only(int times)
+	{
+		_setterCallbacks?.Active?.Only(times);
 		return this;
 	}
 
@@ -1254,7 +1238,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2,
 	IParameterMatch<T3> parameter3) : IndexerSetup(mockRegistry),
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>,
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
 	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>
 {
 	private Callbacks<Action<int, T1, T2, T3, TValue>>? _getterCallbacks;
@@ -1264,12 +1249,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(Action callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1280,13 +1263,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1297,13 +1278,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1314,35 +1293,29 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
 		Action<int, T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.TransitionTo(
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.TransitionTo(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) =>
 			TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(Action callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1353,13 +1326,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
 		Action<TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1370,13 +1341,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1387,25 +1356,21 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
 		Action<int, T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.TransitionTo(
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.TransitionTo(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) =>
 			TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -1452,9 +1417,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1468,9 +1431,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1484,9 +1445,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1500,9 +1459,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1517,9 +1474,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		where TException : Exception, new()
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1533,9 +1488,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1549,9 +1502,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1565,9 +1516,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1581,9 +1530,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1593,33 +1540,63 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3>.When(
+	/// <inheritdoc cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>.When(
 		Func<int, bool> predicate)
 	{
 		_getterCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3}.InParallel()" />
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>.InParallel()
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackBuilder{TValue, T1, T2, T3}.InParallel()" />
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>.InParallel()
 	{
 		_getterCallbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3}.For(int)" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1,T2,T3}.For(int)" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(
 		int times)
 	{
 		_getterCallbacks?.Active?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3}.Only(int)" />
-	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>.Only(int times)
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1,T2,T3}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>.Only(int times)
 	{
 		_getterCallbacks?.Active?.Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>.When(
+		Func<int, bool> predicate)
+	{
+		_setterCallbacks?.Active?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackBuilder{TValue, T1, T2, T3}.InParallel()" />
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>.InParallel()
+	{
+		_setterCallbacks?.Active?.InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1,T2,T3}.For(int)" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(
+		int times)
+	{
+		_setterCallbacks?.Active?.For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1,T2,T3}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>.Only(int times)
+	{
+		_setterCallbacks?.Active?.Only(times);
 		return this;
 	}
 
@@ -1849,7 +1826,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	IParameterMatch<T2> parameter2,
 	IParameterMatch<T3> parameter3,
 	IParameterMatch<T4> parameter4) : IndexerSetup(mockRegistry),
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>,
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
 	IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>
 {
 	private Callbacks<Action<int, T1, T2, T3, T4, TValue>>? _getterCallbacks;
@@ -1859,12 +1837,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	private bool? _skipBaseClass;
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1875,13 +1851,11 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1892,13 +1866,11 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1909,35 +1881,29 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<int, T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.TransitionTo(
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.TransitionTo(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) =>
 			TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		_getterCallbacks.Add(currentCallback);
+		_getterCallbacks = _getterCallbacks.Register(currentCallback);
 		return this;
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1948,13 +1914,11 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1965,13 +1929,11 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1982,25 +1944,21 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
-	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
 		Action<int, T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.TransitionTo(
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.TransitionTo(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) =>
 			TransitionScenario(scenario));
 		currentCallback.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = currentCallback;
-		(_setterCallbacks ??= []).Add(currentCallback);
+		_setterCallbacks = _setterCallbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -2047,9 +2005,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2063,9 +2019,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2079,9 +2033,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2095,9 +2047,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2112,9 +2062,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		where TException : Exception, new()
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2128,9 +2076,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Exception exception)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2144,9 +2090,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2160,9 +2104,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2176,9 +2118,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -2188,34 +2128,65 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>.When(
+	/// <inheritdoc cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>.When(
 		Func<int, bool> predicate)
 	{
 		_getterCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackBuilder{TValue, T1, T2, T3, T4}.InParallel()" />
-	IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>.
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackBuilder{TValue, T1, T2, T3, T4}.InParallel()" />
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>.
 		InParallel()
 	{
 		_getterCallbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.For(int)" />
-	IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.For(int)" />
+	IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.
 		For(int times)
 	{
 		_getterCallbacks?.Active?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.Only(int)" />
-	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
+	/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
 	{
 		_getterCallbacks?.Active?.Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
+	{
+		_setterCallbacks?.Active?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackBuilder{TValue, T1, T2, T3, T4}.InParallel()" />
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>.
+		InParallel()
+	{
+		_setterCallbacks?.Active?.InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.For(int)" />
+	IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.
+		For(int times)
+	{
+		_setterCallbacks?.Active?.For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue,T1,T2,T3,T4}.Only(int)" />
+	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
+	{
+		_setterCallbacks?.Active?.Only(times);
 		return this;
 	}
 

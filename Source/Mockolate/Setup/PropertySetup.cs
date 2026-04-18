@@ -148,7 +148,8 @@ public abstract class PropertySetup : IInteractivePropertySetup
 [DebuggerNonUserCode]
 #endif
 public class PropertySetup<T> : PropertySetup,
-	IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>,
+	IPropertyGetterSetupCallbackBuilder<T>, IPropertySetterSetupCallbackBuilder<T>,
+	IPropertySetupReturnBuilder<T>,
 	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -175,31 +176,59 @@ public class PropertySetup<T> : PropertySetup,
 	/// <inheritdoc cref="PropertySetup.IsValueInitialized" />
 	internal override bool IsValueInitialized => _isInitialized;
 
-	/// <inheritdoc cref="IPropertySetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
-	IPropertySetupCallbackWhenBuilder<T> IPropertySetupParallelCallbackBuilder<T>.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IPropertyGetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
+	IPropertyGetterSetupCallbackWhenBuilder<T> IPropertyGetterSetupParallelCallbackBuilder<T>.When(Func<int, bool> predicate)
 	{
 		_getterCallbacks?.Active?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.InParallel()" />
-	IPropertySetupParallelCallbackBuilder<T> IPropertySetupCallbackBuilder<T>.InParallel()
+	/// <inheritdoc cref="IPropertyGetterSetupCallbackBuilder{T}.InParallel()" />
+	IPropertyGetterSetupParallelCallbackBuilder<T> IPropertyGetterSetupCallbackBuilder<T>.InParallel()
 	{
 		_getterCallbacks?.Active?.InParallel();
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetupCallbackWhenBuilder{T}.For(int)" />
-	IPropertySetupCallbackWhenBuilder<T> IPropertySetupCallbackWhenBuilder<T>.For(int times)
+	/// <inheritdoc cref="IPropertyGetterSetupCallbackWhenBuilder{T}.For(int)" />
+	IPropertyGetterSetupCallbackWhenBuilder<T> IPropertyGetterSetupCallbackWhenBuilder<T>.For(int times)
 	{
 		_getterCallbacks?.Active?.For(times);
 		return this;
 	}
 
-	/// <inheritdoc cref="IPropertySetupCallbackWhenBuilder{T}.Only(int)" />
-	IPropertySetup<T> IPropertySetupCallbackWhenBuilder<T>.Only(int times)
+	/// <inheritdoc cref="IPropertyGetterSetupCallbackWhenBuilder{T}.Only(int)" />
+	IPropertySetup<T> IPropertyGetterSetupCallbackWhenBuilder<T>.Only(int times)
 	{
 		_getterCallbacks?.Active?.Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
+	IPropertySetterSetupCallbackWhenBuilder<T> IPropertySetterSetupParallelCallbackBuilder<T>.When(Func<int, bool> predicate)
+	{
+		_setterCallbacks?.Active?.When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterSetupCallbackBuilder{T}.InParallel()" />
+	IPropertySetterSetupParallelCallbackBuilder<T> IPropertySetterSetupCallbackBuilder<T>.InParallel()
+	{
+		_setterCallbacks?.Active?.InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterSetupCallbackWhenBuilder{T}.For(int)" />
+	IPropertySetterSetupCallbackWhenBuilder<T> IPropertySetterSetupCallbackWhenBuilder<T>.For(int times)
+	{
+		_setterCallbacks?.Active?.For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterSetupCallbackWhenBuilder{T}.Only(int)" />
+	IPropertySetup<T> IPropertySetterSetupCallbackWhenBuilder<T>.Only(int times)
+	{
+		_setterCallbacks?.Active?.Only(times);
 		return this;
 	}
 
@@ -377,12 +406,10 @@ public class PropertySetup<T> : PropertySetup,
 		=> this;
 
 	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action)" />
-	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action callback)
+	IPropertyGetterSetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action callback)
 	{
 		Callback<Action<int, T>> item = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		_getterCallbacks.Add(item);
+		_getterCallbacks = _getterCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -393,12 +420,10 @@ public class PropertySetup<T> : PropertySetup,
 	}
 
 	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{T})" />
-	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<T> callback)
+	IPropertyGetterSetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<T> callback)
 	{
 		Callback<Action<int, T>> item = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		_getterCallbacks.Add(item);
+		_getterCallbacks = _getterCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -409,32 +434,26 @@ public class PropertySetup<T> : PropertySetup,
 	}
 
 	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{int, T})" />
-	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<int, T> callback)
+	IPropertyGetterSetupCallbackBuilder<T> IPropertyGetterSetup<T>.Do(Action<int, T> callback)
 	{
 		Callback<Action<int, T>> item = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		_getterCallbacks.Add(item);
+		_getterCallbacks = _getterCallbacks.Register(item);
 		return this;
 	}
 
-	IPropertySetupParallelCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenario)
+	IPropertySetterSetupParallelCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T>> item = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		item.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		(_setterCallbacks ??= []).Add(item);
+		_setterCallbacks = _setterCallbacks.Register(item);
 		return this;
 	}
 
-	IPropertySetupParallelCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenario)
+	IPropertyGetterSetupParallelCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T>> item = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		item.InParallel();
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		_getterCallbacks.Add(item);
+		_getterCallbacks = _getterCallbacks.Register(item);
 		return this;
 	}
 
@@ -443,12 +462,10 @@ public class PropertySetup<T> : PropertySetup,
 		=> this;
 
 	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action)" />
-	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action callback)
+	IPropertySetterSetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action callback)
 	{
 		Callback<Action<int, T>> item = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		(_setterCallbacks ??= []).Add(item);
+		_setterCallbacks = _setterCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -459,12 +476,10 @@ public class PropertySetup<T> : PropertySetup,
 	}
 
 	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{T})" />
-	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action<T> callback)
+	IPropertySetterSetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action<T> callback)
 	{
 		Callback<Action<int, T>> item = new(Delegate);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		(_setterCallbacks ??= []).Add(item);
+		_setterCallbacks = _setterCallbacks.Register(item);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -475,12 +490,10 @@ public class PropertySetup<T> : PropertySetup,
 	}
 
 	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{int, T})" />
-	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action<int, T> callback)
+	IPropertySetterSetupCallbackBuilder<T> IPropertySetterSetup<T>.Do(Action<int, T> callback)
 	{
 		Callback<Action<int, T>> item = new(callback);
-		_getterCallbacks ??= [];
-		_getterCallbacks.Active = item;
-		(_setterCallbacks ??= []).Add(item);
+		_setterCallbacks = _setterCallbacks.Register(item);
 		return this;
 	}
 
@@ -488,9 +501,7 @@ public class PropertySetup<T> : PropertySetup,
 	public IPropertySetupReturnBuilder<T> Returns(T returnValue)
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -504,9 +515,7 @@ public class PropertySetup<T> : PropertySetup,
 	public IPropertySetupReturnBuilder<T> Returns(Func<T> callback)
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -520,9 +529,7 @@ public class PropertySetup<T> : PropertySetup,
 	public IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback)
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -537,9 +544,7 @@ public class PropertySetup<T> : PropertySetup,
 		where TException : Exception, new()
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -553,9 +558,7 @@ public class PropertySetup<T> : PropertySetup,
 	public IPropertySetupReturnBuilder<T> Throws(Exception exception)
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -569,9 +572,7 @@ public class PropertySetup<T> : PropertySetup,
 	public IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback)
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -585,9 +586,7 @@ public class PropertySetup<T> : PropertySetup,
 	public IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback)
 	{
 		Callback<Func<int, T, T>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]

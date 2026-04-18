@@ -22,5 +22,5 @@ public class Callbacks<T> : List<Callback<T>> where T : Delegate
 	/// <remarks>
 	///     This is used to fluently specify options like `Once` or `InParallel` on the currently active callback.
 	/// </remarks>
-	public Callback<T>? Active { get; set; }
+	public Callback<T>? Active { get; internal set; }
 }

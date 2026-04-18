@@ -364,9 +364,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ")
 			.Append(discards).Append(") => callback());").AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -378,9 +376,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ")
 			.Append(parameters).Append(") => callback(").Append(parameters).Append("));").AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -392,9 +388,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new(callback);")
 			.AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -407,9 +401,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.TransitionTo(scenario));").AppendLine();
 		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -422,9 +414,7 @@ internal static partial class Sources
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>((_, ")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => { });").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -437,9 +427,7 @@ internal static partial class Sources
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>((_, ")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw new TException());").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -452,9 +440,7 @@ internal static partial class Sources
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>((_, ")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw exception);").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -467,9 +453,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>((_, ")
 			.Append(parameters).Append(") => throw callback(").Append(parameters).Append("));").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -485,9 +469,7 @@ internal static partial class Sources
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>((_, ")
 			.Append(string.Join(", ", Enumerable.Range(0, numberOfParameters).Select(_ => "_")))
 			.Append(") => throw callback());").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1015,9 +997,7 @@ internal static partial class Sources
 			.Append(">.Do(global::System.Action callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => callback());").AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1029,9 +1009,7 @@ internal static partial class Sources
 			.Append(">.Do(global::System.Action<").Append(typeParams).Append("> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(parameters).Append(") => callback(").Append(parameters).Append("));").AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1043,9 +1021,7 @@ internal static partial class Sources
 			.Append(">.Do(global::System.Action<int, ").Append(typeParams).Append("> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new(callback);").AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1058,9 +1034,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.TransitionTo(scenario));").AppendLine();
 		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
-		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_callbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_callbacks = _callbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1072,9 +1046,7 @@ internal static partial class Sources
 			.Append(">.Returns(global::System.Func<").Append(typeParams).Append(", TReturn> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(parameters).Append(") => callback(").Append(parameters).Append("));").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1086,9 +1058,7 @@ internal static partial class Sources
 			.Append(">.Returns(global::System.Func<TReturn> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(discards).Append(") => callback());").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1100,9 +1070,7 @@ internal static partial class Sources
 			.Append(">.Returns(TReturn returnValue)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(discards).Append(") => returnValue);").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1114,9 +1082,7 @@ internal static partial class Sources
 			.Append(">.Throws<TException>()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(discards).Append(") => throw new TException());").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1128,9 +1094,7 @@ internal static partial class Sources
 			.Append(">.Throws(global::System.Exception exception)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(discards).Append(") => throw exception);").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1142,9 +1106,7 @@ internal static partial class Sources
 			.Append(">.Throws(global::System.Func<").Append(typeParams).Append(", global::System.Exception> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(parameters).Append(") => throw callback(").Append(parameters).Append("));").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1156,9 +1118,7 @@ internal static partial class Sources
 			.Append(">.Throws(global::System.Func<global::System.Exception> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new global::Mockolate.Setup.Callback<global::System.Func<int, ").Append(typeParams).Append(", TReturn>>((_, ").Append(discards).Append(") => throw callback());").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks ??= [];").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Active = currentCallback;").AppendLine();
-		sb.Append("\t\t\t_returnCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\t_returnCallbacks = _returnCallbacks.Register(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
