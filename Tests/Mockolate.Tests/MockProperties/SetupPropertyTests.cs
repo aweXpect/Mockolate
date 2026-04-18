@@ -99,6 +99,21 @@ public sealed partial class SetupPropertyTests
 	}
 
 	[Fact]
+	public async Task SetProperty_ShouldNotReinitializeSetupOnRepeatedCalls()
+	{
+		IPropertyService sut = IPropertyService.CreateMock();
+		MockRegistry registry = ((IMock)sut).MockRegistry;
+		InitializeValueCountingPropertySetup<int> setup = new("my.property");
+		registry.SetupProperty(setup);
+
+		registry.SetProperty("my.property", 1);
+		registry.SetProperty("my.property", 2);
+		registry.SetProperty("my.property", 3);
+
+		await That(setup.InitializeValueCallCount).IsEqualTo(1);
+	}
+
+	[Fact]
 	public async Task ShouldStoreLastValue()
 	{
 		IPropertyService sut = IPropertyService.CreateMock();
@@ -163,5 +178,16 @@ public sealed partial class SetupPropertyTests
 
 		public void MyInitializeValue(object? value)
 			=> InitializeValue(value);
+	}
+
+	private sealed class InitializeValueCountingPropertySetup<T>(string name) : PropertySetup<T>(name)
+	{
+		public int InitializeValueCallCount { get; private set; }
+
+		protected override void InitializeValue(object? value)
+		{
+			InitializeValueCallCount++;
+			base.InitializeValue(value);
+		}
 	}
 }

@@ -8,6 +8,78 @@ namespace Mockolate.Tests;
 public sealed partial class ItTests
 {
 	[Fact]
+	public async Task InvokeCallbacks_NonGeneric_WithMatchingType_ShouldInvokeCallback()
+	{
+		int isCalled = 0;
+		IParameter<int> sut = It.Satisfies<int>(_ => true)
+			.Do(v => isCalled += v);
+
+		sut.InvokeCallbacks(7);
+
+		await That(isCalled).IsEqualTo(7);
+	}
+
+	[Fact]
+	public async Task InvokeCallbacks_NonGeneric_WithMismatchedType_ShouldNotInvokeCallback()
+	{
+		int isCalled = 0;
+		IParameter<int> sut = It.Satisfies<int>(_ => true)
+			.Do(_ => isCalled++);
+
+		sut.InvokeCallbacks("not-an-int");
+
+		await That(isCalled).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task InvokeCallbacks_NonGeneric_WithNullForNonNullableValueType_ShouldNotInvokeCallback()
+	{
+		int isCalled = 0;
+		IParameter<int> sut = It.Satisfies<int>(_ => true)
+			.Do(_ => isCalled++);
+
+		sut.InvokeCallbacks(null);
+
+		await That(isCalled).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task InvokeCallbacks_NonGeneric_WithNullForNullableValueType_ShouldInvokeCallbackWithDefault()
+	{
+		int isCalled = 0;
+		int? capturedValue = 42;
+		IParameter<int?> sut = It.Satisfies<int?>(_ => true)
+			.Do(v =>
+			{
+				isCalled++;
+				capturedValue = v;
+			});
+
+		sut.InvokeCallbacks(null);
+
+		await That(isCalled).IsEqualTo(1);
+		await That(capturedValue).IsNull();
+	}
+
+	[Fact]
+	public async Task InvokeCallbacks_NonGeneric_WithNullForReferenceType_ShouldInvokeCallbackWithDefault()
+	{
+		int isCalled = 0;
+		string? capturedValue = "not-null";
+		IParameter<string?> sut = It.Satisfies<string?>(_ => true)
+			.Do(v =>
+			{
+				isCalled++;
+				capturedValue = v;
+			});
+
+		sut.InvokeCallbacks(null);
+
+		await That(isCalled).IsEqualTo(1);
+		await That(capturedValue).IsNull();
+	}
+
+	[Fact]
 	public async Task InvokeCallbacks_WithCorrectType_ShouldInvokeCallback()
 	{
 		int isCalled = 0;

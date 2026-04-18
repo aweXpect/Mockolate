@@ -11,11 +11,6 @@ namespace Mockolate.Interactions;
 public abstract class IndexerAccess : IInteraction
 {
 	/// <summary>
-	///     Indicates whether this access is a setter access.
-	/// </summary>
-	public abstract bool IsSetter { get; }
-
-	/// <summary>
 	///     The number of indexer parameters.
 	/// </summary>
 	public abstract int ParameterCount { get; }

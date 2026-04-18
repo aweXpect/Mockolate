@@ -1,4 +1,5 @@
 using Mockolate.Parameters;
+using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;
 
@@ -39,6 +40,17 @@ public sealed partial class ItTests
 			string? result = sut.ToString();
 
 			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task WhenTypeDoesNotMatch_ShouldReturnTrue()
+		{
+			MyFlavor flavor = MyFlavor.Dark;
+			IParameter<string?> sut = It.IsNotNull<string?>();
+
+			bool result = sut.Matches(flavor);
+
+			await That(result).IsTrue();
 		}
 
 		[Theory]

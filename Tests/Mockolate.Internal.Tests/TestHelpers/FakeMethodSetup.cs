@@ -13,4 +13,6 @@ internal sealed class FakeMethodMatch : IMethodMatch
 internal sealed class FakeMethodSetup : MethodSetup
 {
 	internal FakeMethodSetup() : base("foo") { }
+
+	protected override bool MatchesInteraction(IMethodInteraction interaction) => false;
 }

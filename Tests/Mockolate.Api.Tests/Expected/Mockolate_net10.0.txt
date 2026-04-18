@@ -187,11 +187,8 @@ namespace Mockolate
         public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult baseValue) { }
         public bool ApplyIndexerSetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult value) { }
         public void ClearAllInteractions() { }
-        public bool DispatchIndexerSetter<TResult, TSetup>(Mockolate.Interactions.IndexerAccess access, TResult value, System.Func<TSetup, bool> setupPredicate)
-            where TSetup : Mockolate.Setup.IndexerSetup { }
         public T? GetIndexerSetup<T>(System.Func<T, bool> predicate)
             where T : Mockolate.Setup.IndexerSetup { }
-        public TResult GetIndexerValue<TResult>(Mockolate.Interactions.IndexerAccess access, System.Func<TResult> defaultValueGenerator) { }
         public T? GetMethodSetup<T>(string methodName, System.Func<T, bool> predicate)
             where T : Mockolate.Setup.MethodSetup { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
@@ -560,7 +557,6 @@ namespace Mockolate.Interactions
     public abstract class IndexerAccess : Mockolate.Interactions.IInteraction
     {
         protected IndexerAccess() { }
-        public abstract bool IsSetter { get; }
         public abstract int ParameterCount { get; }
         public abstract object? GetParameterValueAt(int index);
         public void StoreValue<T>(T value) { }
@@ -570,7 +566,6 @@ namespace Mockolate.Interactions
     public class IndexerGetterAccess<T1> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerGetterAccess(string parameterName1, T1 parameter1) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public override int ParameterCount { get; }
         public string ParameterName1 { get; }
@@ -581,7 +576,6 @@ namespace Mockolate.Interactions
     public class IndexerGetterAccess<T1, T2> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerGetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public override int ParameterCount { get; }
@@ -594,7 +588,6 @@ namespace Mockolate.Interactions
     public class IndexerGetterAccess<T1, T2, T3> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerGetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
@@ -609,7 +602,6 @@ namespace Mockolate.Interactions
     public class IndexerGetterAccess<T1, T2, T3, T4> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerGetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3, string parameterName4, T4 parameter4) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
@@ -626,7 +618,6 @@ namespace Mockolate.Interactions
     public class IndexerSetterAccess<T1, TValue> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerSetterAccess(string parameterName1, T1 parameter1, TValue value) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public override int ParameterCount { get; }
         public string ParameterName1 { get; }
@@ -638,7 +629,6 @@ namespace Mockolate.Interactions
     public class IndexerSetterAccess<T1, T2, TValue> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerSetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, TValue value) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public override int ParameterCount { get; }
@@ -652,7 +642,6 @@ namespace Mockolate.Interactions
     public class IndexerSetterAccess<T1, T2, T3, TValue> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerSetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3, TValue value) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
@@ -668,7 +657,6 @@ namespace Mockolate.Interactions
     public class IndexerSetterAccess<T1, T2, T3, T4, TValue> : Mockolate.Interactions.IndexerAccess
     {
         public IndexerSetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3, string parameterName4, T4 parameter4, TValue value) { }
-        public override bool IsSetter { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
@@ -1652,7 +1640,7 @@ namespace Mockolate.Setup
     {
         protected MethodSetup(string name) { }
         public string Name { get; }
-        protected virtual bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        protected abstract bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction);
         protected static string FormatType(System.Type type) { }
     }
     public abstract class PropertySetup : Mockolate.Setup.IInteractivePropertySetup, Mockolate.Setup.ISetup
@@ -1987,12 +1975,9 @@ namespace Mockolate.Verify
             public void Then(params System.Func<TMock, Mockolate.Verify.VerificationResult<TMock>>[] orderedChecks) { }
         }
     }
-    public class VerificationResultParameterIgnorer<TVerify> : Mockolate.Verify.VerificationResult<TVerify>
-    {
-        public Mockolate.Verify.VerificationResult<TVerify> AnyParameters() { }
-    }
     public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>
     {
+        public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, System.Func<string> expectation) { }
         public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, string expectation) { }
         public virtual Mockolate.Verify.VerificationResult<TVerify> WithCancellation(System.Threading.CancellationToken cancellationToken) { }
         public virtual Mockolate.Verify.VerificationResult<TVerify> Within(System.TimeSpan timeout) { }

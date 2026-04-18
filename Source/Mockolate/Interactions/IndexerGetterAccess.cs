@@ -21,9 +21,6 @@ public class IndexerGetterAccess<T1>(string parameterName1, T1 parameter1) : Ind
 	/// </summary>
 	public T1 Parameter1 { get; } = parameter1;
 
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => false;
-
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 1;
 
@@ -72,9 +69,6 @@ public class IndexerGetterAccess<T1, T2>(
 	///     The second parameter value of the indexer.
 	/// </summary>
 	public T2 Parameter2 { get; } = parameter2;
-
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => false;
 
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 2;
@@ -137,9 +131,6 @@ public class IndexerGetterAccess<T1, T2, T3>(
 	///     The third parameter value of the indexer.
 	/// </summary>
 	public T3 Parameter3 { get; } = parameter3;
-
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => false;
 
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 3;
@@ -215,9 +206,6 @@ public class IndexerGetterAccess<T1, T2, T3, T4>(
 	///     The fourth parameter value of the indexer.
 	/// </summary>
 	public T4 Parameter4 { get; } = parameter4;
-
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => false;
 
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 4;

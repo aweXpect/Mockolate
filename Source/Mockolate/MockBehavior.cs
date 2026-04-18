@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Mockolate.Parameters;
 
 namespace Mockolate;
 
@@ -141,16 +140,14 @@ public record MockBehavior : IMockBehaviorAccess
 			_ => "Default",
 		};
 
-		int? constructorParameterCount = _constructorParameters?.Count;
-		if (constructorParameterCount > 0)
+		if (_constructorParameters is not null)
 		{
-			baseString += $" with {constructorParameterCount} constructor parameter registrations";
+			baseString += $" with {_constructorParameters.Count} constructor parameter registrations";
 		}
 
-		int? valuesCount = _values?.Count;
-		if (valuesCount > 0)
+		if (_values is not null)
 		{
-			baseString += $" with {valuesCount} setup registrations";
+			baseString += $" with {_values.Count} setup registrations";
 		}
 
 		return baseString;
