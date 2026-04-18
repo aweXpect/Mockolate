@@ -333,7 +333,7 @@ public sealed partial class MockTests
 				await Task.WhenAll(tasks);
 
 				// Each read sees either the pre-setup default or the configured value.
-				await That(stringValues).All().Satisfy(v => v is null or "" or "hello");
+				await That(stringValues).All().Satisfy(v => v is "" or "hello");
 				await That(guidValues).All().Satisfy(v => v == Guid.Empty || v == expectedGuid);
 				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(readerCount * iterationsPerReader);
 				await That(sut.Mock.Verify.MyGuidProperty.Got()).Exactly(readerCount * iterationsPerReader);
