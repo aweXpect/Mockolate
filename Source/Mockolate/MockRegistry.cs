@@ -16,6 +16,9 @@ namespace Mockolate;
 #endif
 public partial class MockRegistry
 {
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private readonly ScenarioState _scenarioState;
+
 	/// <inheritdoc cref="MockRegistry" />
 	public MockRegistry(MockBehavior behavior, object?[]? constructorParameters = null)
 	{
@@ -23,6 +26,7 @@ public partial class MockRegistry
 		ConstructorParameters = constructorParameters;
 		Interactions = new MockInteractions();
 		Setup = new MockSetups();
+		_scenarioState = new ScenarioState();
 		Wraps = null;
 	}
 
@@ -33,7 +37,7 @@ public partial class MockRegistry
 		ConstructorParameters = registry.ConstructorParameters;
 		Interactions = new MockInteractions();
 		Setup = registry.Setup;
-		Scenario = registry.Scenario;
+		_scenarioState = registry._scenarioState;
 		Wraps = wraps;
 	}
 
@@ -44,7 +48,7 @@ public partial class MockRegistry
 		ConstructorParameters = constructorParameters;
 		Interactions = registry.Interactions;
 		Setup = registry.Setup;
-		Scenario = registry.Scenario;
+		_scenarioState = registry._scenarioState;
 		Wraps = registry.Wraps;
 	}
 
@@ -55,21 +59,14 @@ public partial class MockRegistry
 		ConstructorParameters = registry.ConstructorParameters;
 		Interactions = interactions;
 		Setup = registry.Setup;
-		Scenario = registry.Scenario;
+		_scenarioState = registry._scenarioState;
 		Wraps = registry.Wraps;
 	}
 
 	/// <summary>
 	///     The current scenario of the mock. Use <see cref="TransitionTo(string)" /> to change the active scenario.
 	/// </summary>
-	public string Scenario { get; internal set; } = "";
-
-	/// <summary>
-	///     Transitions the mock to the given <paramref name="scenario" />.
-	/// </summary>
-	/// <param name="scenario">The name of the scenario to activate. Use <see cref="string.Empty" /> for the default scope.</param>
-	public void TransitionTo(string scenario)
-		=> Scenario = scenario;
+	public string Scenario => _scenarioState.Current;
 
 	/// <summary>
 	///     Gets the behavior settings used by this mock instance.
@@ -87,11 +84,23 @@ public partial class MockRegistry
 	public object? Wraps { get; }
 
 	/// <summary>
+	///     Transitions the mock to the given <paramref name="scenario" />.
+	/// </summary>
+	/// <param name="scenario">The name of the scenario to activate. Use <see cref="string.Empty" /> for the default scope.</param>
+	public void TransitionTo(string scenario)
+		=> _scenarioState.Current = scenario;
+
+	/// <summary>
 	///     Implicitly converts a <see cref="MockBehavior" /> to a <see cref="MockRegistry" /> with the given behavior and an
 	///     empty interaction collection.
 	/// </summary>
 	public static implicit operator MockRegistry(MockBehavior behavior)
 	{
 		return new MockRegistry(behavior);
+	}
+
+	private sealed class ScenarioState
+	{
+		public string Current { get; set; } = "";
 	}
 }

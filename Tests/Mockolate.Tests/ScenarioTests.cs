@@ -1,3 +1,4 @@
+using Mockolate.Monitor;
 using Mockolate.Tests.Protected;
 using Mockolate.Tests.TestHelpers;
 
@@ -668,6 +669,131 @@ public sealed class ScenarioTests
 			_ = sut.InvokeMyProtectedMethod("anything");
 
 			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+	}
+
+	public sealed class SharedScenarioStateTests
+	{
+		[Fact]
+		public async Task InScenarioSetup_ShouldApplyForDispatchDuringMonitorScope()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.InScenario("scoped").Setup.ReturnMethod0().Returns(42);
+			sut.Mock.Setup.ReturnMethod0().Returns(7);
+			MockMonitor<Mock.IMockVerifyForIScenarioService> monitor = sut.Mock.Monitor();
+
+			int defaultResult;
+			int scopedResult;
+			using (monitor.Run())
+			{
+				defaultResult = sut.ReturnMethod0();
+				sut.Mock.TransitionTo("scoped");
+				scopedResult = sut.ReturnMethod0();
+			}
+
+			await That(defaultResult).IsEqualTo(7);
+			await That(scopedResult).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task InScenarioSetup_ShouldApplyWhenDispatchingViaWrappedMock()
+		{
+			IChocolateDispenser original = IChocolateDispenser.CreateMock();
+			original.Mock.InScenario("scoped").Setup.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(true);
+			original.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(false);
+			IChocolateDispenser wrapped = original.Wrapping(new ScenarioDispenser());
+
+			bool defaultResult = wrapped.Dispense("Milk", 1);
+			((IMock)original).MockRegistry.TransitionTo("scoped");
+			bool scopedResult = wrapped.Dispense("Milk", 1);
+
+			await That(defaultResult).IsFalse();
+			await That(scopedResult).IsTrue();
+		}
+
+		[Fact]
+		public async Task TransitionTo_OnOriginal_ShouldBeVisibleOnWrappedMock()
+		{
+			IChocolateDispenser original = IChocolateDispenser.CreateMock();
+			IChocolateDispenser wrapped = original.Wrapping(new ScenarioDispenser());
+
+			((IMock)original).MockRegistry.TransitionTo("a");
+
+			await That(((IMock)wrapped).MockRegistry.Scenario).IsEqualTo("a");
+		}
+
+		[Fact]
+		public async Task TransitionTo_OnWrappedMock_ShouldBeVisibleOnOriginal()
+		{
+			IChocolateDispenser original = IChocolateDispenser.CreateMock();
+			IChocolateDispenser wrapped = original.Wrapping(new ScenarioDispenser());
+
+			((IMock)wrapped).MockRegistry.TransitionTo("b");
+
+			await That(((IMock)original).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task TransitionToFromSetup_CreatedAfterWrapping_ShouldStillPropagateToWrappedMock()
+		{
+			IChocolateDispenser original = IChocolateDispenser.CreateMock();
+			IChocolateDispenser wrapped = original.Wrapping(new ScenarioDispenser());
+			original.Mock.InScenario("a").Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Returns(true).TransitionTo("b");
+			((IMock)original).MockRegistry.TransitionTo("a");
+
+			wrapped.Dispense("Milk", 1);
+
+			await That(((IMock)wrapped).MockRegistry.Scenario).IsEqualTo("b");
+			await That(((IMock)original).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task TransitionToFromSetup_ShouldFireWhenDispatchingDuringMonitorScope()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.InScenario("a").Setup.ReturnMethod0().Returns(1).TransitionTo("b");
+			sut.Mock.TransitionTo("a");
+			MockMonitor<Mock.IMockVerifyForIScenarioService> monitor = sut.Mock.Monitor();
+
+			using (monitor.Run())
+			{
+				_ = sut.ReturnMethod0();
+			}
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task TransitionToFromSetup_ShouldPropagateToWrappedMock()
+		{
+			IChocolateDispenser original = IChocolateDispenser.CreateMock();
+			original.Mock.InScenario("a").Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
+				.Returns(true).TransitionTo("b");
+			((IMock)original).MockRegistry.TransitionTo("a");
+			IChocolateDispenser wrapped = original.Wrapping(new ScenarioDispenser());
+
+			wrapped.Dispense("Milk", 1);
+
+			await That(((IMock)wrapped).MockRegistry.Scenario).IsEqualTo("b");
+			await That(((IMock)original).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		private sealed class ScenarioDispenser : IChocolateDispenser
+		{
+			public int this[string type]
+			{
+				get => 0;
+				set { }
+			}
+
+			public int TotalDispensed { get; set; }
+
+#pragma warning disable CS0067
+			public event ChocolateDispensedDelegate? ChocolateDispensed;
+#pragma warning restore CS0067
+
+			public bool Dispense(string type, int amount) => false;
 		}
 	}
 }
