@@ -18,68 +18,72 @@ internal partial class MockSetups
 	internal sealed class PropertySetups
 	{
 		private int _count;
-		private List<PropertySetup>? _storage;
+		private PropertySetup[]? _storage;
+#if NET10_0_OR_GREATER
+		private readonly Lock _writeLock = new();
+#else
+		private readonly object _writeLock = new();
+#endif
 
-		// ReSharper disable once InconsistentlySynchronizedField
 		public int Count => Volatile.Read(ref _count);
-
-		private List<PropertySetup> GetOrCreateStorage()
-		{
-			if (_storage is null)
-			{
-				Interlocked.CompareExchange(ref _storage, [], null);
-			}
-
-			return _storage!;
-		}
 
 		public void Add(PropertySetup setup)
 		{
-			List<PropertySetup> storage = GetOrCreateStorage();
-			lock (storage)
+			lock (_writeLock)
 			{
-				for (int i = 0; i < storage.Count; i++)
+				PropertySetup[] old = _storage ?? [];
+				int existingIndex = -1;
+				for (int i = 0; i < old.Length; i++)
 				{
-					if (string.Equals(storage[i].Name, setup.Name, StringComparison.Ordinal))
+					if (string.Equals(old[i].Name, setup.Name, StringComparison.Ordinal))
 					{
-						bool wasDefault = storage[i] is PropertySetup.Default;
-						bool isDefault = setup is PropertySetup.Default;
-						storage[i] = setup;
-						if (wasDefault && !isDefault)
-						{
-							Volatile.Write(ref _count, _count + 1);
-						}
-						else if (!wasDefault && isDefault)
-						{
-							Volatile.Write(ref _count, _count - 1);
-						}
-
-						return;
+						existingIndex = i;
+						break;
 					}
 				}
 
-				storage.Add(setup);
-				if (setup is not PropertySetup.Default)
+				if (existingIndex >= 0)
 				{
-					Volatile.Write(ref _count, _count + 1);
+					bool wasDefault = old[existingIndex] is PropertySetup.Default;
+					bool isDefault = setup is PropertySetup.Default;
+					PropertySetup[] next = new PropertySetup[old.Length];
+					Array.Copy(old, next, old.Length);
+					next[existingIndex] = setup;
+					Volatile.Write(ref _storage, next);
+					if (wasDefault && !isDefault)
+					{
+						Volatile.Write(ref _count, _count + 1);
+					}
+					else if (!wasDefault && isDefault)
+					{
+						Volatile.Write(ref _count, _count - 1);
+					}
+				}
+				else
+				{
+					PropertySetup[] next = new PropertySetup[old.Length + 1];
+					Array.Copy(old, next, old.Length);
+					next[old.Length] = setup;
+					Volatile.Write(ref _storage, next);
+					if (setup is not PropertySetup.Default)
+					{
+						Volatile.Write(ref _count, _count + 1);
+					}
 				}
 			}
 		}
 
 		public bool TryGetValue(string propertyName, [NotNullWhen(true)] out PropertySetup? setup)
 		{
-			List<PropertySetup>? storage = _storage;
+			PropertySetup[]? storage = Volatile.Read(ref _storage);
 			if (storage is not null)
 			{
-				lock (storage)
+				for (int i = 0; i < storage.Length; i++)
 				{
-					for (int i = 0; i < storage.Count; i++)
+					if (string.Equals(storage[i].Name, propertyName, StringComparison.Ordinal))
 					{
-						if (string.Equals(storage[i].Name, propertyName, StringComparison.Ordinal))
-						{
-							setup = storage[i];
-							return true;
-						}
+						setup = storage[i];
+						return true;
 					}
 				}
 			}
@@ -90,57 +94,51 @@ internal partial class MockSetups
 
 		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
-			List<PropertySetup>? storage = _storage;
-			if (storage is null)
+			PropertySetup[]? storage = Volatile.Read(ref _storage);
+			if (storage is null || storage.Length == 0)
 			{
 				return [];
 			}
 
-			lock (storage)
-			{
-				return storage.Where(propertySetup => interactions.OfType<PropertyAccess>()
-						.All(propertyAccess => !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)))
-					.ToList();
-			}
+			return storage.Where(propertySetup => interactions.OfType<PropertyAccess>()
+					.All(propertyAccess => !((IInteractivePropertySetup)propertySetup).Matches(propertyAccess)))
+				.ToList();
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()
 		{
-			List<PropertySetup>? storage = _storage;
-			if (storage is null || storage.Count == 0)
+			PropertySetup[]? storage = Volatile.Read(ref _storage);
+			if (storage is null || storage.Length == 0)
 			{
 				return "0 properties";
 			}
 
-			lock (storage)
+			List<PropertySetup>? setups = null;
+			foreach (PropertySetup setup in storage)
 			{
-				List<PropertySetup>? setups = null;
-				foreach (PropertySetup setup in storage)
+				if (setup is not PropertySetup.Default)
 				{
-					if (setup is not PropertySetup.Default)
-					{
-						setups ??= [];
-						setups.Add(setup);
-					}
+					setups ??= [];
+					setups.Add(setup);
 				}
-
-				if (setups is null || setups.Count == 0)
-				{
-					return "0 properties";
-				}
-
-				StringBuilder sb = new();
-				sb.Append(setups.Count).Append(setups.Count == 1 ? " property:" : " properties:").AppendLine();
-				foreach (PropertySetup item in setups)
-				{
-					sb.Append(item).Append(' ').Append(item.Name).AppendLine();
-				}
-
-				sb.Length -= Environment.NewLine.Length;
-				return sb.ToString();
 			}
+
+			if (setups is null || setups.Count == 0)
+			{
+				return "0 properties";
+			}
+
+			StringBuilder sb = new();
+			sb.Append(setups.Count).Append(setups.Count == 1 ? " property:" : " properties:").AppendLine();
+			foreach (PropertySetup item in setups)
+			{
+				sb.Append(item).Append(' ').Append(item.Name).AppendLine();
+			}
+
+			sb.Length -= Environment.NewLine.Length;
+			return sb.ToString();
 		}
 	}
 }
