@@ -20,19 +20,17 @@ namespace Mockolate.Setup;
 public abstract class IndexerSetup : IInteractiveIndexerSetup
 {
 	/// <summary>
-	///     The mock registry this setup belongs to. Set by <see cref="MockRegistry.SetupIndexer(IndexerSetup)" />.
+	///     The mock registry this setup belongs to.
 	/// </summary>
-	internal MockRegistry? MockRegistry { get; set; }
+	private readonly MockRegistry _mockRegistry;
 
 	/// <summary>
-	///     Transitions the associated mock registry to the given <paramref name="scenario" />, if any.
+	///     Initializes a new instance of the <see cref="IndexerSetup" /> class bound to the given
+	///     <paramref name="mockRegistry" />.
 	/// </summary>
-	protected void TransitionScenario(string scenario)
+	protected IndexerSetup(MockRegistry mockRegistry)
 	{
-		if (MockRegistry is not null)
-		{
-			MockRegistry.Scenario = scenario;
-		}
+		_mockRegistry = mockRegistry;
 	}
 
 	/// <inheritdoc cref="IInteractiveIndexerSetup.Matches(IndexerAccess)" />
@@ -41,6 +39,12 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 
 	/// <inheritdoc cref="IInteractiveIndexerSetup.SkipBaseClass()" />
 	public abstract bool? SkipBaseClass();
+
+	/// <summary>
+	///     Transitions the associated mock registry to the given <paramref name="scenario" />.
+	/// </summary>
+	protected void TransitionScenario(string scenario)
+		=> _mockRegistry.TransitionTo(scenario);
 
 	/// <summary>
 	///     Checks if the <paramref name="access" /> matches the setup.
@@ -98,9 +102,10 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerSetup,
-	IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
-	IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
+public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch<T1> parameter1)
+	: IndexerSetup(mockRegistry),
+		IIndexerSetupCallbackBuilder<TValue, T1>, IIndexerSetupReturnBuilder<TValue, T1>,
+		IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
 {
 	private readonly List<Callback<Action<int, T1, TValue>>> _getterCallbacks = [];
 	private readonly List<Callback<Func<int, T1, TValue, TValue>>> _returnCallbacks = [];
@@ -169,13 +174,7 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.TransitionTo(string scenario)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
@@ -238,13 +237,7 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 
 	IIndexerSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.TransitionTo(string scenario)
 	{
-		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+		Callback<Action<int, T1, TValue>> currentCallback = new((_, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
@@ -655,7 +648,10 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParameterMatch<T2> parameter2) : IndexerSetup,
+public class IndexerSetup<TValue, T1, T2>(
+	MockRegistry mockRegistry,
+	IParameterMatch<T1> parameter1,
+	IParameterMatch<T2> parameter2) : IndexerSetup(mockRegistry),
 	IIndexerSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetupReturnBuilder<TValue, T1, T2>,
 	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
 {
@@ -727,13 +723,7 @@ public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParam
 
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.TransitionTo(string scenario)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
@@ -797,13 +787,7 @@ public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParam
 
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.TransitionTo(string scenario)
 	{
-		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+		Callback<Action<int, T1, T2, TValue>> currentCallback = new((_, _, _, _) => TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
@@ -1221,9 +1205,10 @@ public class IndexerSetup<TValue, T1, T2>(IParameterMatch<T1> parameter1, IParam
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetup<TValue, T1, T2, T3>(
+	MockRegistry mockRegistry,
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2,
-	IParameterMatch<T3> parameter3) : IndexerSetup,
+	IParameterMatch<T3> parameter3) : IndexerSetup(mockRegistry),
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
 	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>
 {
@@ -1299,12 +1284,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+			TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
@@ -1372,12 +1352,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new((_, _, _, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+			TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);
@@ -1801,10 +1776,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetup<TValue, T1, T2, T3, T4>(
+	MockRegistry mockRegistry,
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2,
 	IParameterMatch<T3> parameter3,
-	IParameterMatch<T4> parameter4) : IndexerSetup,
+	IParameterMatch<T4> parameter4) : IndexerSetup(mockRegistry),
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
 	IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>
 {
@@ -1880,12 +1856,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+			TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_getterCallbacks.Add(currentCallback);
@@ -1953,12 +1924,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		string scenario)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new((_, _, _, _, _, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+			TransitionScenario(scenario));
 		currentCallback.InParallel();
 		_currentCallback = currentCallback;
 		_setterCallbacks.Add(currentCallback);

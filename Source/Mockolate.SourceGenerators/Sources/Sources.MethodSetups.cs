@@ -405,7 +405,7 @@ internal static partial class Sources
 			.Append("> global::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams)
 			.Append(">.TransitionTo(string scenario)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.Scenario = scenario);").AppendLine();
+		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.TransitionTo(scenario));").AppendLine();
 		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
 		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
 		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();
@@ -1056,7 +1056,7 @@ internal static partial class Sources
 			.Append("> global::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams)
 			.Append(">.TransitionTo(string scenario)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.Scenario = scenario);").AppendLine();
+		sb.Append("\t\t\tglobal::Mockolate.Setup.Callback<global::System.Action<int, ").Append(typeParams).Append(">>? currentCallback = new((_, ").Append(discards).Append(") => _mockRegistry.TransitionTo(scenario));").AppendLine();
 		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
 		sb.Append("\t\t\t_callbacks ??= [];").AppendLine();
 		sb.Append("\t\t\t_callbacks.Active = currentCallback;").AppendLine();

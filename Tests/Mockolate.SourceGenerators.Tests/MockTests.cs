@@ -446,7 +446,7 @@ public sealed partial class MockTests
 			          		{
 			          			get
 			          			{
-			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")));
+			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")));
 			          				this.MockRegistry.SetupIndexer(indexerSetup);
 			          				return indexerSetup;
 			          			}

@@ -403,9 +403,11 @@ internal static partial class Sources
 #endif
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
 		sb.Append("\tinternal class IndexerSetup<TValue, ").Append(typeParams).Append(">(")
+			.Append("global::Mockolate.MockRegistry mockRegistry")
+			.Append(", ")
 			.Append(
 				string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"global::Mockolate.Parameters.IParameterMatch<T{i}> parameter{i}")))
-			.Append(") : global::Mockolate.Setup.IndexerSetup,")
+			.Append(") : global::Mockolate.Setup.IndexerSetup(mockRegistry),")
 			.AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append(">,").AppendLine();

@@ -60,9 +60,16 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     The current scenario of the mock.
+	///     The current scenario of the mock. Use <see cref="TransitionTo(string)" /> to change the active scenario.
 	/// </summary>
-	public string Scenario { get; set; } = "";
+	public string Scenario { get; internal set; } = "";
+
+	/// <summary>
+	///     Transitions the mock to the given <paramref name="scenario" />.
+	/// </summary>
+	/// <param name="scenario">The name of the scenario to activate. Use <see cref="string.Empty" /> for the default scope.</param>
+	public void TransitionTo(string scenario)
+		=> Scenario = scenario;
 
 	/// <summary>
 	///     Gets the behavior settings used by this mock instance.

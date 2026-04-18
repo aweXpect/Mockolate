@@ -22,11 +22,6 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	public abstract string Name { get; }
 
 	/// <summary>
-	///     The mock registry this setup belongs to. Set by <see cref="MockRegistry.SetupProperty(PropertySetup)" />.
-	/// </summary>
-	internal MockRegistry? MockRegistry { get; set; }
-
-	/// <summary>
 	///     Gets whether the property has already been initialized with a value.
 	/// </summary>
 	internal abstract bool IsValueInitialized { get; }
@@ -106,7 +101,8 @@ public abstract class PropertySetup : IInteractivePropertySetup
 #if !DEBUG
 	[DebuggerNonUserCode]
 #endif
-	internal sealed class Default<T>(string name, T initialValue) : Default(name)
+	internal sealed class Default<T>(string name, T initialValue)
+		: Default(name)
 	{
 		private T _value = initialValue;
 
@@ -152,10 +148,12 @@ public abstract class PropertySetup : IInteractivePropertySetup
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class PropertySetup<T>(string name) : PropertySetup,
+public class PropertySetup<T> : PropertySetup,
 	IPropertySetupCallbackBuilder<T>, IPropertySetupReturnBuilder<T>,
 	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
 {
+	private readonly MockRegistry _mockRegistry;
+	private readonly string _name;
 	private Callback? _currentCallback;
 	private int _currentGetterCallbacksIndex;
 	private Callback? _currentReturnCallback;
@@ -168,8 +166,17 @@ public class PropertySetup<T>(string name) : PropertySetup,
 	private bool? _skipBaseClass;
 	private T _value = default!;
 
+	/// <summary>
+	///     Sets up a property.
+	/// </summary>
+	public PropertySetup(MockRegistry mockRegistry, string name)
+	{
+		_mockRegistry = mockRegistry;
+		_name = name;
+	}
+
 	/// <inheritdoc cref="PropertySetup.Name" />
-	public override string Name => name;
+	public override string Name => _name;
 
 	/// <inheritdoc cref="PropertySetup.IsValueInitialized" />
 	internal override bool IsValueInitialized => _isInitialized;
@@ -225,7 +232,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 
 	/// <inheritdoc cref="PropertySetup.Matches(PropertyAccess)" />
 	protected override bool Matches(PropertyAccess propertyAccess)
-		=> name.Equals(propertyAccess.Name);
+		=> _name.Equals(propertyAccess.Name);
 
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
 	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
@@ -349,7 +356,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
-		=> $"{typeof(T).FormatType()} {name.SubstringAfterLast('.')}";
+		=> $"{typeof(T).FormatType()} {_name.SubstringAfterLast('.')}";
 
 	#region IPropertySetup<T>
 
@@ -416,13 +423,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 
 	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenario)
 	{
-		Callback<Action<int, T>> item = new((_, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+		Callback<Action<int, T>> item = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		item.InParallel();
 		_currentCallback = item;
 		(_setterCallbacks ??= []).Add(item);
@@ -431,13 +432,7 @@ public class PropertySetup<T>(string name) : PropertySetup,
 
 	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenario)
 	{
-		Callback<Action<int, T>> item = new((_, _) =>
-		{
-			if (MockRegistry is not null)
-			{
-				MockRegistry.Scenario = scenario;
-			}
-		});
+		Callback<Action<int, T>> item = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		item.InParallel();
 		_currentCallback = item;
 		(_getterCallbacks ??= []).Add(item);

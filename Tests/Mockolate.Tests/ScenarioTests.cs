@@ -13,7 +13,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[1, 2].Returns(42);
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut[1, 2];
 
@@ -26,7 +26,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[1, 2, 3].Returns(42);
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut[1, 2, 3];
 
@@ -39,7 +39,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[1, 2, 3, 4].Returns(42);
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut[1, 2, 3, 4];
 
@@ -55,7 +55,7 @@ public sealed class ScenarioTests
 			sut.Mock.Setup[1].Returns(7);
 
 			int resultDefault = sut[1];
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 			int resultScoped = sut[1];
 
 			await That(resultDefault).IsEqualTo(7);
@@ -72,7 +72,7 @@ public sealed class ScenarioTests
 				scope.Setup.ReturnMethod1(1).Returns(42);
 				scope.Setup.ReturnMethod2(1, 2).Returns(99);
 			});
-			((IMock)sut).MockRegistry.Scenario = "scoped";
+			sut.Mock.TransitionTo("scoped");
 
 			int r1 = sut.ReturnMethod1(1);
 			int r2 = sut.ReturnMethod2(1, 2);
@@ -90,9 +90,9 @@ public sealed class ScenarioTests
 				.InScenario("a", s => s.Setup.ReturnMethod0().Returns(1))
 				.InScenario("b", s => s.Setup.ReturnMethod0().Returns(2));
 
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 			int ra = sut.ReturnMethod0();
-			((IMock)sut).MockRegistry.Scenario = "b";
+			sut.Mock.TransitionTo("b");
 			int rb = sut.ReturnMethod0();
 
 			await That(ra).IsEqualTo(1);
@@ -119,7 +119,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("scoped").Setup.ReturnMethod1(1).Returns(42);
 			sut.Mock.Setup.ReturnMethod1(1).Returns(7);
-			((IMock)sut).MockRegistry.Scenario = "scoped";
+			sut.Mock.TransitionTo("scoped");
 
 			int result = sut.ReturnMethod1(1);
 
@@ -132,7 +132,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.Setup.ReturnMethod1(1).Returns(7);
-			((IMock)sut).MockRegistry.Scenario = "scoped";
+			sut.Mock.TransitionTo("scoped");
 
 			int result = sut.ReturnMethod1(1);
 
@@ -143,12 +143,66 @@ public sealed class ScenarioTests
 	public sealed class TransitionToTests
 	{
 		[Fact]
+		public async Task EventSubscription_ShouldNotFireOnUnsubscribe()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup.Event.OnSubscribed.TransitionTo("b");
+			sut.Mock.TransitionTo("a");
+			EventHandler handler = (_, _) => { };
+			sut.Mock.TransitionTo("a");
+
+			sut.Event -= handler;
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("a");
+		}
+
+		[Fact]
+		public async Task EventSubscription_ShouldSwitchScenarioWhenSubscribed()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup.Event.OnSubscribed.TransitionTo("b");
+			sut.Mock.TransitionTo("a");
+
+			sut.Event += (_, _) => { };
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task EventUnsubscription_ShouldNotFireOnSubscribe()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup.Event.OnUnsubscribed.TransitionTo("b");
+			sut.Mock.TransitionTo("a");
+
+			sut.Event += (_, _) => { };
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("a");
+		}
+
+		[Fact]
+		public async Task EventUnsubscription_ShouldSwitchScenarioWhenUnsubscribed()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup.Event.OnUnsubscribed.TransitionTo("b");
+			sut.Mock.TransitionTo("a");
+
+			sut.Event -= (_, _) => { };
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
 		public async Task IndexerGetter_Arity1_ShouldSwitchScenarioOnRead()
 		{
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut[1];
 
@@ -161,7 +215,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>()].OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut[1, 2];
 
@@ -175,7 +229,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut[1, 2, 3];
 
@@ -189,7 +243,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut[1, 2, 3, 4];
 
@@ -203,7 +257,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut[1, 2, 3, 4, 5];
 
@@ -216,7 +270,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut[1] = 42;
 
@@ -229,7 +283,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut[1] = 42;
 
@@ -242,7 +296,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>()].OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut[1, 2] = 42;
 
@@ -256,7 +310,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut[1, 2, 3] = 42;
 
@@ -270,7 +324,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut[1, 2, 3, 4] = 42;
 
@@ -284,7 +338,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 				.OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut[1, 2, 3, 4, 5] = 42;
 
@@ -297,7 +351,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut[1];
 
@@ -310,7 +364,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.ReturnMethod0().Returns(1).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut.ReturnMethod0();
 
@@ -324,7 +378,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.ReturnMethod1(It.IsAny<int>()).Returns(1).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut.ReturnMethod1(42);
 
@@ -338,7 +392,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.ReturnMethod2(It.IsAny<int>(), It.IsAny<int>()).Returns(1).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut.ReturnMethod2(1, 2);
 
@@ -354,7 +408,7 @@ public sealed class ScenarioTests
 			sut.Mock.InScenario("a").Setup
 				.ReturnMethod3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.Returns(1).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut.ReturnMethod3(1, 2, 3);
 
@@ -370,7 +424,7 @@ public sealed class ScenarioTests
 			sut.Mock.InScenario("a").Setup
 				.ReturnMethod4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.Returns(1).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut.ReturnMethod4(1, 2, 3, 4);
 
@@ -386,7 +440,7 @@ public sealed class ScenarioTests
 			sut.Mock.InScenario("a").Setup
 				.ReturnMethod5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.Returns(1).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut.ReturnMethod5(1, 2, 3, 4, 5);
 
@@ -400,7 +454,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.VoidMethod0().TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.VoidMethod0();
 
@@ -413,7 +467,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.VoidMethod1(It.IsAny<int>()).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.VoidMethod1(42);
 
@@ -426,7 +480,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.VoidMethod2(It.IsAny<int>(), It.IsAny<int>()).TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.VoidMethod2(1, 2);
 
@@ -441,7 +495,7 @@ public sealed class ScenarioTests
 			sut.Mock.InScenario("a").Setup
 				.VoidMethod3(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.VoidMethod3(1, 2, 3);
 
@@ -456,7 +510,7 @@ public sealed class ScenarioTests
 			sut.Mock.InScenario("a").Setup
 				.VoidMethod4(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.VoidMethod4(1, 2, 3, 4);
 
@@ -471,11 +525,34 @@ public sealed class ScenarioTests
 			sut.Mock.InScenario("a").Setup
 				.VoidMethod5(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())
 				.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.VoidMethod5(1, 2, 3, 4, 5);
 
 			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task Mock_TransitionTo_ShouldReturnMockForChaining()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup.ReturnMethod0().Returns(42);
+			sut.Mock.TransitionTo("a");
+
+			int result = sut.ReturnMethod0();
+
+			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task Mock_TransitionTo_ShouldSetActiveScenario()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.TransitionTo("scoped");
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("scoped");
 		}
 
 		[Fact]
@@ -484,7 +561,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.Property.OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.Property = 42;
 
@@ -497,7 +574,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.Property.OnGet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut.Property;
 
@@ -510,7 +587,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.Property.OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut.Property;
 
@@ -523,7 +600,7 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.Property.OnSet.TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			sut.Property = 42;
 
@@ -542,7 +619,7 @@ public sealed class ScenarioTests
 			{
 				s.SetupProtected.MyProtectedMethod(It.IsAny<string>()).Returns("scoped");
 			});
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			string result = sut.InvokeMyProtectedMethod("anything");
 
@@ -558,7 +635,7 @@ public sealed class ScenarioTests
 			sut.Mock.SetupProtected.MyProtectedMethod(It.IsAny<string>()).Returns("default");
 
 			string defaultResult = sut.InvokeMyProtectedMethod("x");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 			string scopedResult = sut.InvokeMyProtectedMethod("x");
 
 			await That(defaultResult).IsEqualTo("default");
@@ -572,7 +649,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").SetupProtected.MyProtectedProperty.InitializeWith(99);
 			sut.Mock.SetupProtected.MyProtectedProperty.InitializeWith(1);
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			int result = sut.GetMyProtectedProperty();
 
@@ -586,7 +663,7 @@ public sealed class ScenarioTests
 
 			sut.Mock.InScenario("a").SetupProtected.MyProtectedMethod(It.IsAny<string>())
 				.Returns("scoped").TransitionTo("b");
-			((IMock)sut).MockRegistry.Scenario = "a";
+			sut.Mock.TransitionTo("a");
 
 			_ = sut.InvokeMyProtectedMethod("anything");
 

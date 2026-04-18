@@ -167,7 +167,7 @@ namespace Mockolate
         public Mockolate.MockBehavior Behavior { get; }
         public object?[]? ConstructorParameters { get; }
         public Mockolate.Interactions.MockInteractions Interactions { get; }
-        public string Scenario { get; set; }
+        public string Scenario { get; }
         public object? Wraps { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, System.Func<TResult> defaultValueGenerator) { }
@@ -196,6 +196,7 @@ namespace Mockolate
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
         public void SetupProperty(string scenario, Mockolate.Setup.PropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
+        public void TransitionTo(string scenario) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
         public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T, TMethod>(T subject, string methodName, System.Func<TMethod, bool> predicate, System.Func<string> expectation)
             where TMethod : Mockolate.Interactions.IMethodInteraction { }
@@ -807,7 +808,7 @@ namespace Mockolate.Setup
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class EventSetup : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackBuilder, Mockolate.Setup.IEventSetupCallbackWhenBuilder, Mockolate.Setup.IEventSubscriptionSetup, Mockolate.Setup.IEventUnsubscriptionSetup
     {
-        public EventSetup(string name) { }
+        public EventSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public string Name { get; }
         public Mockolate.Setup.IEventSubscriptionSetup OnSubscribed { get; }
         public Mockolate.Setup.IEventUnsubscriptionSetup OnUnsubscribed { get; }
@@ -832,11 +833,13 @@ namespace Mockolate.Setup
     {
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action callback);
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action<object?, System.Reflection.MethodInfo> callback);
+        Mockolate.Setup.IEventSetupCallbackBuilder TransitionTo(string scenario);
     }
     public interface IEventUnsubscriptionSetup
     {
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action callback);
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action<object?, System.Reflection.MethodInfo> callback);
+        Mockolate.Setup.IEventSetupCallbackBuilder TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1>
     {
@@ -1498,7 +1501,7 @@ namespace Mockolate.Setup
     }
     public abstract class IndexerSetup : Mockolate.Setup.IInteractiveIndexerSetup, Mockolate.Setup.ISetup
     {
-        protected IndexerSetup() { }
+        protected IndexerSetup(Mockolate.MockRegistry mockRegistry) { }
         public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
         public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue);
         protected abstract bool MatchesAccess(Mockolate.Interactions.IndexerAccess access);
@@ -1510,7 +1513,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
-        public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
+        public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
@@ -1537,7 +1540,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
     {
-        public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
+        public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
@@ -1564,7 +1567,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
     {
-        public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
+        public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
@@ -1591,7 +1594,7 @@ namespace Mockolate.Setup
     }
     public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
     {
-        public IndexerSetup(Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
+        public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
@@ -1625,7 +1628,7 @@ namespace Mockolate.Setup
     }
     public abstract class PropertySetup : Mockolate.Setup.IInteractivePropertySetup, Mockolate.Setup.ISetup
     {
-        protected PropertySetup() { }
+        protected PropertySetup(Mockolate.MockRegistry mockRegistry) { }
         public abstract string Name { get; }
         protected abstract bool? GetSkipBaseClass();
         protected abstract void InitializeValue(object? value);
@@ -1635,7 +1638,7 @@ namespace Mockolate.Setup
     }
     public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
-        public PropertySetup(string name) { }
+        public PropertySetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public override string Name { get; }
         public Mockolate.Setup.IPropertyGetterSetup<T> OnGet { get; }
         public Mockolate.Setup.IPropertySetterSetup<T> OnSet { get; }

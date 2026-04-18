@@ -4,5 +4,5 @@ namespace Mockolate.Internal.Tests.TestHelpers;
 
 internal sealed class FakePropertySetup : PropertySetup<int>
 {
-	internal FakePropertySetup(string name) : base(name) { }
+	internal FakePropertySetup(string name) : base(new MockRegistry(MockBehavior.Default), name) { }
 }

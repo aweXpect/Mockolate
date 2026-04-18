@@ -1058,7 +1058,7 @@ sut.Mock.InScenario("connected", scope =>
 
 Setups registered via `InScenario` do **not** leak into the default scope.
 
-#### Switching scenarios from a setup
+#### Switching scenarios
 
 Chain `.TransitionTo(name)` on any method, property, or indexer setup to change the active scenario when the setup
 fires. The transition runs as a parallel side-effect &mdash; it does not replace the return value or throw behaviour.
@@ -1075,10 +1075,10 @@ sut.Mock.InScenario("connected")
     .TransitionTo("disconnected");
 ```
 
-You can also set the active scenario directly via `((IMock)sut).MockRegistry.Scenario = "connected";`, which is useful
-for arranging the starting state.
+You can also change the active scenario manually via `sut.Mock.TransitionTo("connected");`, which is useful for
+arranging the starting state.
 
-#### Resolution rules
+**Resolution rules**
 
 When dispatching a call, Mockolate looks up setups in this order:
 

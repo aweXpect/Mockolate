@@ -19,10 +19,7 @@ public partial class MockRegistry
 	///     Registers the <paramref name="indexerSetup" /> in the mock for the given <paramref name="scenario" />.
 	/// </summary>
 	public void SetupIndexer(string scenario, IndexerSetup indexerSetup)
-	{
-		indexerSetup.MockRegistry = this;
-		Setup.GetOrCreateScenario(scenario).Indexers.Add(indexerSetup);
-	}
+		=> Setup.GetOrCreateScenario(scenario).Indexers.Add(indexerSetup);
 
 	/// <summary>
 	///     Registers the <paramref name="methodSetup" /> in the mock.
@@ -46,10 +43,7 @@ public partial class MockRegistry
 	///     Registers the <paramref name="propertySetup" /> in the mock for the given <paramref name="scenario" />.
 	/// </summary>
 	public void SetupProperty(string scenario, PropertySetup propertySetup)
-	{
-		propertySetup.MockRegistry = this;
-		Setup.GetOrCreateScenario(scenario).Properties.Add(propertySetup);
-	}
+		=> Setup.GetOrCreateScenario(scenario).Properties.Add(propertySetup);
 
 	/// <summary>
 	///     Registers the <paramref name="eventSetup" /> in the mock.

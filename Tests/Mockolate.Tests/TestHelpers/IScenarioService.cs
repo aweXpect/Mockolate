@@ -2,6 +2,8 @@ namespace Mockolate.Tests.TestHelpers;
 
 internal interface IScenarioService
 {
+	event EventHandler Event;
+
 	int Property { get; set; }
 
 	int this[int p1] { get; set; }

@@ -62,7 +62,7 @@ public abstract class ReturnMethodSetup<TReturn>
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn}.TransitionTo(string)" />
 	IReturnMethodSetupCallbackBuilder<TReturn> IReturnMethodSetup<TReturn>.TransitionTo(string scenario)
 	{
-		Callback<Action<int>> currentCallback = new(_ => _mockRegistry.Scenario = scenario);
+		Callback<Action<int>> currentCallback = new(_ => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;
@@ -371,7 +371,7 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.TransitionTo(
 		string scenario)
 	{
-		Callback<Action<int, T1>> currentCallback = new((_, _) => _mockRegistry.Scenario = scenario);
+		Callback<Action<int, T1>> currentCallback = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;
@@ -776,7 +776,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.TransitionTo(
 		string scenario)
 	{
-		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => _mockRegistry.Scenario = scenario);
+		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;
@@ -1198,7 +1198,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.TransitionTo(
 		string scenario)
 	{
-		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => _mockRegistry.Scenario = scenario);
+		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;
@@ -1639,7 +1639,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.TransitionTo(
 		string scenario)
 	{
-		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => _mockRegistry.Scenario = scenario);
+		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
 		_callbacks ??= [];
 		_callbacks.Active = currentCallback;

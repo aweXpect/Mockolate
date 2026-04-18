@@ -36,6 +36,12 @@ public interface IEventSubscriptionSetup
 	///     The callback receives the target object and method of the subscribed handler.
 	/// </remarks>
 	IEventSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever a handler is subscribed to the event.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IEventSetupCallbackBuilder TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -55,12 +61,30 @@ public interface IEventUnsubscriptionSetup
 	///     The callback receives the target object and method of the unsubscribed handler.
 	/// </remarks>
 	IEventSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever a handler is unsubscribed from the
+	///     event.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IEventSetupCallbackBuilder TransitionTo(string scenario);
 }
 
 /// <summary>
 ///     Interface for setting up an event with fluent syntax.
 /// </summary>
-public interface IEventSetupCallbackBuilder : IEventSetupCallbackWhenBuilder
+public interface IEventSetupParallelCallbackBuilder : IEventSetupCallbackWhenBuilder
+{
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IEventSetupCallbackWhenBuilder InParallel();
+}
+
+/// <summary>
+///     Interface for setting up an event with fluent syntax.
+/// </summary>
+public interface IEventSetupCallbackBuilder : IEventSetupParallelCallbackBuilder
 {
 	/// <summary>
 	///     Limits the callback to only execute for event interactions where the predicate returns true.
@@ -69,11 +93,6 @@ public interface IEventSetupCallbackBuilder : IEventSetupCallbackWhenBuilder
 	///     Provides a zero-based counter indicating how many times the event has been interacted with so far.
 	/// </remarks>
 	IEventSetupCallbackWhenBuilder When(Func<int, bool> predicate);
-
-	/// <summary>
-	///     Runs the callback in parallel to the other callbacks.
-	/// </summary>
-	IEventSetupCallbackWhenBuilder InParallel();
 }
 
 /// <summary>

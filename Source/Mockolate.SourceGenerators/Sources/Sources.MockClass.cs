@@ -818,6 +818,10 @@ internal static partial class Sources
 			.Append(name).Append("> setup);").AppendLine();
 		sb.AppendLine();
 
+		sb.AppendXmlSummary($"Transitions the mock of <see cref=\"{escapedClassName}\" /> to the given <paramref name=\"scenario\" />.");
+		sb.Append("\t\tIMockFor").Append(name).Append(" TransitionTo(string scenario);").AppendLine();
+		sb.AppendLine();
+
 		if (hasEvents)
 		{
 			sb.AppendXmlSummary($"Raise events on the mock of <see cref=\"{escapedClassName}\" />.");
@@ -1085,6 +1089,15 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tsetup.Invoke(new MockInScenarioFor").Append(name).Append("(this.").Append(mockRegistryName)
 			.Append(", scenario));").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\tIMockFor").Append(name).Append(" IMockFor").Append(name)
+			.Append(".TransitionTo(string scenario)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".TransitionTo(scenario);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 
@@ -2419,7 +2432,8 @@ internal static partial class Sources
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tvar propertySetup = new global::Mockolate.Setup.PropertySetup<")
-				.Append(property.Type.Fullname).Append(">(").Append(property.GetUniqueNameString()).Append(");")
+				.Append(property.Type.Fullname).Append(">(").Append(mockRegistryName).Append(", ")
+				.Append(property.GetUniqueNameString()).Append(");")
 				.AppendLine();
 			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupProperty(").Append(scopePrefix).Append("propertySetup);").AppendLine();
 			sb.Append("\t\t\t\treturn propertySetup;").AppendLine();
@@ -2446,7 +2460,7 @@ internal static partial class Sources
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tglobal::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(")
-				.Append(@event.GetUniqueNameString()).Append(");").AppendLine();
+				.Append(mockRegistryName).Append(", ").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
 			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupEvent(").Append(scopePrefix).Append("eventSetup);").AppendLine();
 			sb.Append("\t\t\t\treturn eventSetup;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
@@ -2808,14 +2822,11 @@ internal static partial class Sources
 			sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
 		}
 
-		sb.Append(">(");
+		sb.Append(">(").Append(mockRegistryName);
 		int j = 0;
 		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
 		{
-			if (j > 0)
-			{
-				sb.Append(", ");
-			}
+			sb.Append(", ");
 
 			bool isValueParam = valueFlags?[j] == true;
 			string paramRef = $"parameter{j + 1}";
