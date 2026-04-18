@@ -13,10 +13,13 @@ namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the simple case of an interface mock, setup a single method that gets called and
-///     verified to be called once.
+///     verified to be called exactly <see cref="InvocationCount" /> times.
 /// </summary>
 public class CompleteMethodBenchmarks : BenchmarksBase
 {
+	[Params(1, 10)]
+	public int InvocationCount { get; set; }
+
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
@@ -26,9 +29,12 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 		IMyMethodInterface sut = IMyMethodInterface.CreateMock();
 		sut.Mock.Setup.MyFunc(It.IsAny<int>()).Returns(true);
 
-		sut.MyFunc(42);
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			sut.MyFunc(42);
+		}
 
-		sut.Mock.Verify.MyFunc(It.IsAny<int>()).Once();
+		sut.Mock.Verify.MyFunc(It.IsAny<int>()).Exactly(InvocationCount);
 	}
 
 	/// <summary>
@@ -40,9 +46,12 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 		Moq.Mock<IMyMethodInterface> mock = new();
 		mock.Setup(x => x.MyFunc(Moq.It.IsAny<int>())).Returns(true);
 
-		mock.Object.MyFunc(42);
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			mock.Object.MyFunc(42);
+		}
 
-		mock.Verify(x => x.MyFunc(Moq.It.IsAny<int>()), Times.Once());
+		mock.Verify(x => x.MyFunc(Moq.It.IsAny<int>()), Times.Exactly(InvocationCount));
 	}
 
 	/// <summary>
@@ -54,9 +63,12 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 		IMyMethodInterface mock = Substitute.For<IMyMethodInterface>();
 		mock.MyFunc(Arg.Any<int>()).Returns(true);
 
-		mock.MyFunc(42);
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			mock.MyFunc(42);
+		}
 
-		mock.Received(1).MyFunc(Arg.Any<int>());
+		mock.Received(InvocationCount).MyFunc(Arg.Any<int>());
 	}
 
 	/// <summary>
@@ -68,9 +80,12 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 		IMyMethodInterface mock = A.Fake<IMyMethodInterface>();
 		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).Returns(true);
 
-		mock.MyFunc(42);
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			mock.MyFunc(42);
+		}
 
-		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(1, FakeItEasy.Times.Exactly);
+		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(InvocationCount, FakeItEasy.Times.Exactly);
 	}
 
 	/// <summary>
@@ -82,9 +97,12 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 		IMyMethodInterfaceImposter imposter = IMyMethodInterface.Imposter();
 		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Returns(true);
 
-		imposter.Instance().MyFunc(42);
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			imposter.Instance().MyFunc(42);
+		}
 
-		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Once());
+		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Exactly(InvocationCount));
 	}
 
 	/// <summary>
@@ -96,9 +114,12 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 		Mock<IMyMethodInterface> mock = TUnit.Mocks.Mock.Of<IMyMethodInterface>();
 		mock.MyFunc(Any<int>()).Returns(true);
 
-		mock.Object.MyFunc(42);
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			mock.Object.MyFunc(42);
+		}
 
-		mock.MyFunc(Any<int>()).WasCalled();
+		mock.MyFunc(Any<int>()).WasCalled(TUnit.Mocks.Times.Exactly(InvocationCount));
 	}
 
 	public interface IMyMethodInterface
