@@ -12,10 +12,13 @@ namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the case of an interface mock with a property, setup the property and verify
-///     the getter was called once.
+///     the getter was called exactly <see cref="InvocationCount" /> times.
 /// </summary>
 public class CompletePropertyBenchmarks : BenchmarksBase
 {
+	[Params(1, 10)]
+	public int InvocationCount { get; set; }
+
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
 	/// </summary>
@@ -25,9 +28,12 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		IMyPropertyInterface sut = IMyPropertyInterface.CreateMock();
 		sut.Mock.Setup.Counter.InitializeWith(42);
 
-		_ = sut.Counter;
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			_ = sut.Counter;
+		}
 
-		sut.Mock.Verify.Counter.Got().Once();
+		sut.Mock.Verify.Counter.Got().Exactly(InvocationCount);
 	}
 
 	/// <summary>
@@ -39,9 +45,12 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		Moq.Mock<IMyPropertyInterface> mock = new();
 		mock.SetupGet(x => x.Counter).Returns(42);
 
-		_ = mock.Object.Counter;
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			_ = mock.Object.Counter;
+		}
 
-		mock.VerifyGet(x => x.Counter, Times.Once());
+		mock.VerifyGet(x => x.Counter, Times.Exactly(InvocationCount));
 	}
 
 	/// <summary>
@@ -53,9 +62,12 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		IMyPropertyInterface mock = Substitute.For<IMyPropertyInterface>();
 		mock.Counter.Returns(42);
 
-		_ = mock.Counter;
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			_ = mock.Counter;
+		}
 
-		_ = mock.Received(1).Counter;
+		_ = mock.Received(InvocationCount).Counter;
 	}
 
 	/// <summary>
@@ -67,9 +79,12 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		IMyPropertyInterface mock = A.Fake<IMyPropertyInterface>();
 		A.CallTo(() => mock.Counter).Returns(42);
 
-		_ = mock.Counter;
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			_ = mock.Counter;
+		}
 
-		A.CallTo(() => mock.Counter).MustHaveHappened(1, FakeItEasy.Times.Exactly);
+		A.CallTo(() => mock.Counter).MustHaveHappened(InvocationCount, FakeItEasy.Times.Exactly);
 	}
 
 	/// <summary>
@@ -81,9 +96,12 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		IMyPropertyInterfaceImposter imposter = IMyPropertyInterface.Imposter();
 		imposter.Counter.Getter().Returns(42);
 
-		_ = imposter.Instance().Counter;
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			_ = imposter.Instance().Counter;
+		}
 
-		imposter.Counter.Getter().Called(Count.Once());
+		imposter.Counter.Getter().Called(Count.Exactly(InvocationCount));
 	}
 
 	/// <summary>
@@ -95,9 +113,12 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		Mock<IMyPropertyInterface> mock = TUnit.Mocks.Mock.Of<IMyPropertyInterface>();
 		mock.Counter.Returns(42);
 
-		_ = mock.Object.Counter;
+		for (int i = 0; i < InvocationCount; i++)
+		{
+			_ = mock.Object.Counter;
+		}
 
-		mock.Counter.WasCalled();
+		mock.Counter.WasCalled(TUnit.Mocks.Times.Exactly(InvocationCount));
 	}
 
 	public interface IMyPropertyInterface
