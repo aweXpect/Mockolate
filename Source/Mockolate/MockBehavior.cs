@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -39,6 +40,21 @@ public record MockBehavior : IMockBehaviorAccess
 	///     its return values are used as default values.
 	/// </remarks>
 	public bool SkipBaseClass { get; init; }
+
+	/// <summary>
+	///     Flag indicating whether interaction recording is skipped for performance.
+	/// </summary>
+	/// <remarks>
+	///     If set to <see langword="false" /> (default value), every interaction with the mock is recorded and
+	///     can be verified later.
+	///     <para />
+	///     When set to <see langword="true" />, the mock skips allocating interaction records, avoids the
+	///     interaction-list lock, and does not raise the
+	///     <see cref="Mockolate.Interactions.MockInteractions" /> added-event. Setups, returns, callbacks, and
+	///     base-class delegation continue to work normally - only verification is disabled. Any attempt to
+	///     verify throws a <see cref="Mockolate.Exceptions.MockException" />.
+	/// </remarks>
+	public bool SkipInteractionRecording { get; init; }
 
 	/// <summary>
 	///     The generator for default values when not specified by a setup.
@@ -132,13 +148,25 @@ public record MockBehavior : IMockBehaviorAccess
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
 	{
-		string baseString = (ThrowWhenNotSetup, SkipBaseClass) switch
+		List<string>? parts = null;
+		if (ThrowWhenNotSetup)
 		{
-			(true, false) => nameof(MockBehaviorExtensions.ThrowingWhenNotSetup),
-			(false, true) => nameof(MockBehaviorExtensions.SkippingBaseClass),
-			(true, true) => $"{nameof(MockBehaviorExtensions.ThrowingWhenNotSetup)} and {nameof(MockBehaviorExtensions.SkippingBaseClass)}",
-			_ => "Default",
-		};
+			(parts ??= []).Add(nameof(MockBehaviorExtensions.ThrowingWhenNotSetup));
+		}
+
+		if (SkipBaseClass)
+		{
+			(parts ??= []).Add(nameof(MockBehaviorExtensions.SkippingBaseClass));
+		}
+
+		if (SkipInteractionRecording)
+		{
+			(parts ??= []).Add(nameof(MockBehaviorExtensions.SkippingInteractionRecording));
+		}
+
+		string baseString = parts is null
+			? "Default"
+			: string.Join(" and ", parts);
 
 		if (_constructorParameters is not null)
 		{

@@ -35,6 +35,11 @@ MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(["Dark", 42], b
 - `ThrowWhenNotSetup` (bool):
   - If `false` (default), the mock will return a default value (see `DefaultValue`), when no matching setup is found.
   - If `true`, the mock will throw an exception when no matching setup is found.
+- `SkipInteractionRecording` (bool):
+  - If `false` (default), every interaction with the mock is recorded and can be verified later.
+  - If `true`, the mock skips recording interactions for faster execution.
+    Setups, returns, callbacks and base-class delegation continue to work - only verification is disabled. Any
+    attempt to call `.Verify.X()` throws a `MockException`.
 - `DefaultValue` (IDefaultValueGenerator):
   - Customizes how default values are generated for methods/properties that are not set up.
   - The default implementation provides sensible defaults for the most common use cases:

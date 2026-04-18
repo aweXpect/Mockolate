@@ -32,6 +32,13 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 
 	private HashSet<IInteraction>? _verified;
 
+	/// <summary>
+	///     Whether interactions are being recorded. When <see langword="false" />, the mock does not
+	///     record any interactions and attempts to verify throw a
+	///     <see cref="Mockolate.Exceptions.MockException" />.
+	/// </summary>
+	public bool RecordingEnabled { get; init; } = true;
+
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{

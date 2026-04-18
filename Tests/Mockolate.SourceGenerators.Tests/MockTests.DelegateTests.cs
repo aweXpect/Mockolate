@@ -1,4 +1,4 @@
-﻿namespace Mockolate.SourceGenerators.Tests;
+namespace Mockolate.SourceGenerators.Tests;
 
 public sealed partial class MockTests
 {
@@ -81,7 +81,10 @@ public sealed partial class MockTests
 				          		private global::System.Span<char> Invoke(int x)
 				          		{
 				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int>>("global::MyCode.Program.DoSomething1.Invoke", m => m.Matches("x", x));
-				          			MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething1.Invoke", "x", x));
+				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
+				          			{
+				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething1.Invoke", "x", x));
+				          			}
 				          			if (methodSetup is null && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 				          			{
 				          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.Program.DoSomething1.Invoke(int)' was invoked without prior setup.");
@@ -97,7 +100,10 @@ public sealed partial class MockTests
 				          		private global::System.ReadOnlySpan<char> Invoke(int x)
 				          		{
 				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int>>("global::MyCode.Program.DoSomething2.Invoke", m => m.Matches("x", x));
-				          			MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething2.Invoke", "x", x));
+				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
+				          			{
+				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething2.Invoke", "x", x));
+				          			}
 				          			if (methodSetup is null && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 				          			{
 				          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.Program.DoSomething2.Invoke(int)' was invoked without prior setup.");

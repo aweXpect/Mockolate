@@ -29,7 +29,7 @@ public class MethodInvocation(string name) : IMethodInteraction
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class MethodInvocation<T1>(string name, string parameterName1, T1 parameter1) : IMethodInteraction
+public struct MethodInvocation<T1>(string name, string parameterName1, T1 parameter1) : IMethodInteraction
 {
 	/// <summary>
 	///     The name of the method.

@@ -2019,7 +2019,9 @@ internal static partial class Sources
 			sb.Append("\t\t\t}").AppendLine();
 		}
 
-		sb.Append("\t\t\t").Append(mockRegistry)
+		sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t").Append(mockRegistry)
 			.Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
 		if (method.Parameters.Count > 0)
 		{
@@ -2033,6 +2035,7 @@ internal static partial class Sources
 		}
 
 		sb.Append("));").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
 
 		string displayMethodName = $"{method.ContainingType}.{method.Name}({string.Join(", ", method.Parameters.Select(p => p.Type.DisplayName))})";
 		sb.Append("\t\t\tif (").Append(methodSetup).Append(" is null && !").Append(hasWrappedResult).Append(" && ").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)").AppendLine();

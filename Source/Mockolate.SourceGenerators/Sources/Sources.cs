@@ -129,8 +129,11 @@ internal static partial class Sources
 		AppendIndexerParameterArguments(sb, parameters);
 		sb.Append(");").AppendLine();
 
-		sb.Append(indent).Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
+		sb.Append(indent).Append("{").AppendLine();
+		sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
 			.AppendLine();
+		sb.Append(indent).Append("}").AppendLine();
 
 		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
 		foreach (MethodParameter p in parameters)
@@ -162,8 +165,11 @@ internal static partial class Sources
 		AppendIndexerParameterArguments(sb, parameters);
 		sb.Append(", value);").AppendLine();
 
-		sb.Append(indent).Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
+		sb.Append(indent).Append("{").AppendLine();
+		sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
 			.AppendLine();
+		sb.Append(indent).Append("}").AppendLine();
 
 		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
 		foreach (MethodParameter p in parameters)
