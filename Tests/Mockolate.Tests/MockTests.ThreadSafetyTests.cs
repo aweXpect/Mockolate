@@ -335,8 +335,12 @@ public sealed partial class MockTests
 				// Each read sees either the pre-setup default or the configured value.
 				await That(stringValues).All().Satisfy(v => v is "" or "hello");
 				await That(guidValues).All().Satisfy(v => v == Guid.Empty || v == expectedGuid);
-				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(readerCount * iterationsPerReader);
-				await That(sut.Mock.Verify.MyGuidProperty.Got()).Exactly(readerCount * iterationsPerReader);
+				// Both setup tasks have finished by now, so the configured value
+				// must win — a racing default insert must not have overwritten it.
+				await That(sut.MyStringProperty).IsEqualTo("hello");
+				await That(sut.MyGuidProperty).IsEqualTo(expectedGuid);
+				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(readerCount * iterationsPerReader + 1);
+				await That(sut.Mock.Verify.MyGuidProperty.Got()).Exactly(readerCount * iterationsPerReader + 1);
 			}
 		}
 
