@@ -92,6 +92,7 @@ namespace Mockolate
     }
     public class It
     {
+        public static Mockolate.It.IContainsParameter<T> Contains<T>(T item, [System.Runtime.CompilerServices.CallerArgumentExpression("item")] string doNotPopulateThisValue = "") { }
         public static Mockolate.It.IIsParameter<T> Is<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IParameter<T> IsAny<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsAnyOut<T>() { }
@@ -117,6 +118,11 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameter<bool> IsTrue() { }
         public static Mockolate.It.IParameterMatches Matches(string pattern) { }
         public static Mockolate.Parameters.IParameter<T> Satisfies<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.It.ISequenceEqualsParameter<T> SequenceEquals<T>(System.Collections.Generic.IEnumerable<T> values) { }
+        public interface IContainsParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Collections.Generic.HashSet<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.ICollection<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IEnumerable<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IList<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IReadOnlyCollection<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IReadOnlyList<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.ISet<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.List<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.Queue<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.Stack<T>>, Mockolate.Parameters.IParameter<T[]>
+        {
+            Mockolate.It.IContainsParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
+        }
         public interface IInRangeParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<T>
         {
             Mockolate.Parameters.IParameter<T> Exclusive();
@@ -142,6 +148,10 @@ namespace Mockolate
         {
             Mockolate.It.IParameterMatches AsRegex(System.Text.RegularExpressions.RegexOptions options = 0, System.TimeSpan? timeout = default, [System.Runtime.CompilerServices.CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "");
             Mockolate.It.IParameterMatches CaseSensitive(bool caseSensitive = true);
+        }
+        public interface ISequenceEqualsParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Collections.Generic.HashSet<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.ICollection<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IEnumerable<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IList<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IReadOnlyCollection<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.IReadOnlyList<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.ISet<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.List<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.Queue<T>>, Mockolate.Parameters.IParameter<System.Collections.Generic.Stack<T>>, Mockolate.Parameters.IParameter<T[]>
+        {
+            Mockolate.It.ISequenceEqualsParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
         }
     }
     public class Match
