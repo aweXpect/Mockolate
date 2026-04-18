@@ -250,7 +250,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
 		sb.Append("\t\t/// <remarks>").AppendLine();
 		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupCallbackBuilder{")
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder{")
 			.Append(typeParams).Append("}.When(global::System.Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
@@ -260,7 +260,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Deactivates the callback after the given number of <paramref name=\"times\" />.");
 		sb.Append("\t\t/// <remarks>").AppendLine();
 		sb.Append(
-				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupCallbackBuilder{")
+				"\t\t///     The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder{")
 			.Append(typeParams).Append("}.When(global::System.Func{int, bool})\" /> evaluates to <see langword=\"true\" />).")
 			.AppendLine();
 		sb.Append("\t\t/// </remarks>").AppendLine();
@@ -505,7 +505,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// When (callback)
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IVoidMethodSetupCallbackBuilder{").Append(typeParams)
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder{").Append(typeParams)
 			.Append("}.When(global::System.Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<").Append(typeParams)
 			.Append("> global::Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<").Append(typeParams)
@@ -912,14 +912,14 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
 		sb.AppendXmlRemarks(
-			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, ").Append(typeParams).Append("> For(int times);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Deactivates the callback after the given number of <paramref name=\"times\" />.");
 		sb.AppendXmlRemarks(
-			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+			$"The number of times is only counted for actual executions (<see cref=\"global::Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder{{TReturn, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();

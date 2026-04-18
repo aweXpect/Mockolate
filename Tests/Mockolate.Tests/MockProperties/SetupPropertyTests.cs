@@ -181,7 +181,7 @@ public sealed partial class SetupPropertyTests
 			=> InitializeValue(value);
 	}
 
-	private sealed class InitializeValueCountingPropertySetup<T>(string name) : PropertySetup<T>(name)
+	private sealed class InitializeValueCountingPropertySetup<T>(string name) : PropertySetup<T>(MockBehavior.Default, name)
 	{
 		public int InitializeValueCallCount { get; private set; }
 

@@ -31,10 +31,10 @@ internal static partial class Sources
 		sb.Append("[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
 		sb.AppendLine("""
-		          	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-		          	internal static class IndexerSetupExtensions
-		          	{
-		          """).AppendLine();
+		              	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+		              	internal static class IndexerSetupExtensions
+		              	{
+		              """).AppendLine();
 		foreach (int item in indexerSetups)
 		{
 			string types = GetGenericTypeParameters(item);
@@ -218,7 +218,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> whenever the indexer is read.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> TransitionTo(string scenario);")
+		sb.Append("\t\tIIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams).Append("> TransitionTo(string scenario);")
 			.AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -250,7 +250,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> whenever the indexer is written to.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> TransitionTo(string scenario);")
+		sb.Append("\t\tIIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams).Append("> TransitionTo(string scenario);")
 			.AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -342,12 +342,18 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Sets up a callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 		sb.Append("\tinternal interface IIndexerSetupCallbackBuilder<TValue, ").Append(outTypeParams)
-			.Append("> : IIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append(">").AppendLine();
+			.Append("> : IIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Runs the callback in parallel to the other callbacks.");
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> InParallel();")
+		sb.Append("\t\tIIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams).Append("> InParallel();")
 			.AppendLine();
+		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
+
+		sb.AppendXmlSummary($"Sets up a parallel callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
+		sb.Append("\tinternal interface IIndexerSetupParallelCallbackBuilder<TValue, ").Append(outTypeParams)
+			.Append("> : IIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append(">").AppendLine();
+		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary("Limits the callback to only execute for indexer accesses where the predicate returns true.");
 		sb.AppendXmlRemarks("Provides a zero-based counter indicating how many times the indexer has been accessed so far.");
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
@@ -361,12 +367,12 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 
 		sb.AppendXmlSummary("Repeats the callback for the given number of <paramref name=\"times\" />.");
-		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupParallelCallbackBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams).Append("> For(int times);")
 			.AppendLine();
 		sb.AppendLine();
 		sb.AppendXmlSummary("Deactivates the callback after the given number of <paramref name=\"times\" />.");
-		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupCallbackBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
+		sb.AppendXmlRemarks($"The number of times is only counted for actual executions (<see cref=\"IIndexerSetupParallelCallbackBuilder{{TValue, {typeParams}}}.When(global::System.Func{{int, bool}})\" /> evaluates to <see langword=\"true\" />).");
 		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams).Append("> Only(int times);").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -547,7 +553,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+		sb.Append("\t\tIIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerGetterSetup<TValue, ").Append(typeParams)
 			.Append(">.TransitionTo(string scenario)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -628,7 +634,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+		sb.Append("\t\tIIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetterSetup<TValue, ").Append(typeParams)
 			.Append(">.TransitionTo(string scenario)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -771,10 +777,10 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupCallbackBuilder{TValue, ").Append(typeParams)
+		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupParallelCallbackBuilder{TValue, ").Append(typeParams)
 			.Append("}.When(global::System.Func{int, bool})\" />").AppendLine();
 		sb.Append("\t\tIIndexerSetupCallbackWhenBuilder<TValue, ").Append(typeParams)
-			.Append("> IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams)
 			.Append(">.When(global::System.Func<int, bool> predicate)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t_currentCallback?.When(predicate);").AppendLine();
@@ -784,7 +790,7 @@ internal static partial class Sources
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetupCallbackBuilder{TValue, ").Append(typeParams)
 			.Append("}.InParallel()\" />").AppendLine();
-		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+		sb.Append("\t\tIIndexerSetupParallelCallbackBuilder<TValue, ").Append(typeParams)
 			.Append("> IIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
 			.Append(">.InParallel()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -869,6 +875,7 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tparameter").Append(i).Append(".InvokeCallbacks(p").Append(i).Append(");").AppendLine();
 		}
+
 		sb.Append("\t\t\treturn true;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -917,6 +924,7 @@ internal static partial class Sources
 		{
 			sb.Append(", out T").Append(i).Append(" p").Append(i);
 		}
+
 		sb.Append("))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn baseValue;").AppendLine();
@@ -939,6 +947,7 @@ internal static partial class Sources
 		{
 			sb.Append(", out T").Append(i).Append(" p").Append(i);
 		}
+
 		sb.Append("))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn defaultValueGenerator();").AppendLine();
@@ -975,6 +984,7 @@ internal static partial class Sources
 		{
 			sb.Append(", out T").Append(i).Append(" p").Append(i);
 		}
+
 		sb.Append("))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn;").AppendLine();
@@ -1048,6 +1058,7 @@ internal static partial class Sources
 		{
 			sb.Append(", out T").Append(i).Append(" p").Append(i);
 		}
+
 		sb.Append(")").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (access is global::Mockolate.Interactions.IndexerGetterAccess<").Append(typeParams).Append("> getter)").AppendLine();
@@ -1056,6 +1067,7 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\t\tp").Append(i).Append(" = getter.Parameter").Append(i).Append(";").AppendLine();
 		}
+
 		sb.Append("\t\t\t\treturn true;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1065,6 +1077,7 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\t\tp").Append(i).Append(" = setter.Parameter").Append(i).Append(";").AppendLine();
 		}
+
 		sb.Append("\t\t\t\treturn true;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1072,6 +1085,7 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tp").Append(i).Append(" = default!;").AppendLine();
 		}
+
 		sb.Append("\t\t\treturn false;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();

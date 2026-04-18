@@ -628,6 +628,50 @@ public sealed class ScenarioTests
 		}
 
 		[Fact]
+		public async Task IndexerGetter_Arity5_WithWhenAndFor_ShouldRespectBothConstraints()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.Setup[
+					It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+					It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.TransitionTo("b").When(i => i > 0).For(1);
+
+			_ = sut[1, 2, 3, 4, 5];
+			string afterFirst = ((IMock)sut).MockRegistry.Scenario;
+			_ = sut[1, 2, 3, 4, 5];
+			string afterSecond = ((IMock)sut).MockRegistry.Scenario;
+			((IMock)sut).MockRegistry.TransitionTo("reset");
+			_ = sut[1, 2, 3, 4, 5];
+			string afterThird = ((IMock)sut).MockRegistry.Scenario;
+
+			await That(afterFirst).IsEqualTo("");
+			await That(afterSecond).IsEqualTo("b");
+			await That(afterThird).IsEqualTo("reset");
+		}
+
+		[Fact]
+		public async Task IndexerSetter_Arity5_WithWhenAndFor_ShouldRespectBothConstraints()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.Setup[
+					It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
+					It.IsAny<int>(), It.IsAny<int>()]
+				.OnSet.TransitionTo("b").When(i => i > 0).For(1);
+
+			sut[1, 2, 3, 4, 5] = 10;
+			string afterFirst = ((IMock)sut).MockRegistry.Scenario;
+			sut[1, 2, 3, 4, 5] = 20;
+			string afterSecond = ((IMock)sut).MockRegistry.Scenario;
+			((IMock)sut).MockRegistry.TransitionTo("reset");
+			sut[1, 2, 3, 4, 5] = 30;
+			string afterThird = ((IMock)sut).MockRegistry.Scenario;
+
+			await That(afterFirst).IsEqualTo("");
+			await That(afterSecond).IsEqualTo("b");
+			await That(afterThird).IsEqualTo("reset");
+		}
+
+		[Fact]
 		public async Task When_PredicateNeverTrue_ShouldNotTransition()
 		{
 			IScenarioService sut = IScenarioService.CreateMock();
