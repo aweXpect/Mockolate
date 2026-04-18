@@ -291,6 +291,60 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Property_ConcurrentSetupAndRead_ShouldBeThreadSafe()
+		{
+			for (int round = 0; round < 10; round++)
+			{
+				IMyThreadSafetyService sut = IMyThreadSafetyService.CreateMock();
+				Guid expectedGuid = Guid.NewGuid();
+				ManualResetEventSlim barrier = new(false);
+				int readerCount = 30;
+				int iterationsPerReader = 50;
+				Task[] tasks = new Task[readerCount + 2];
+				ConcurrentQueue<string?> stringValues = [];
+				ConcurrentQueue<Guid> guidValues = [];
+
+				tasks[0] = Task.Run(() =>
+				{
+					barrier.Wait();
+					sut.Mock.Setup.MyStringProperty.InitializeWith("hello");
+				}, CancellationToken.None);
+
+				tasks[1] = Task.Run(() =>
+				{
+					barrier.Wait();
+					sut.Mock.Setup.MyGuidProperty.InitializeWith(expectedGuid);
+				}, CancellationToken.None);
+
+				for (int i = 0; i < readerCount; i++)
+				{
+					tasks[2 + i] = Task.Run(() =>
+					{
+						barrier.Wait();
+						for (int j = 0; j < iterationsPerReader; j++)
+						{
+							stringValues.Enqueue(sut.MyStringProperty);
+							guidValues.Enqueue(sut.MyGuidProperty);
+						}
+					}, CancellationToken.None);
+				}
+
+				barrier.Set();
+				await Task.WhenAll(tasks);
+
+				// Each read sees either the pre-setup default or the configured value.
+				await That(stringValues).All().Satisfy(v => v is "" or "hello");
+				await That(guidValues).All().Satisfy(v => v == Guid.Empty || v == expectedGuid);
+				// Both setup tasks have finished by now, so the configured value
+				// must win — a racing default insert must not have overwritten it.
+				await That(sut.MyStringProperty).IsEqualTo("hello");
+				await That(sut.MyGuidProperty).IsEqualTo(expectedGuid);
+				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(readerCount * iterationsPerReader + 1);
+				await That(sut.Mock.Verify.MyGuidProperty.Got()).Exactly(readerCount * iterationsPerReader + 1);
+			}
+		}
+
+		[Fact]
 		public async Task Property_HighContention_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 10; round++)
