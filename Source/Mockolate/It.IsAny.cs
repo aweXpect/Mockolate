@@ -11,7 +11,7 @@ public partial class It
 	///     Matches any parameter of type <typeparamref name="T" />.
 	/// </summary>
 	/// <remarks>Also matches, if the method parameter is <see langword="null" />.</remarks>
-	public static IParameter<T> IsAny<T>()
+	public static IParameterWithCallback<T> IsAny<T>()
 		=> new AnyParameterMatch<T>();
 
 #if !DEBUG

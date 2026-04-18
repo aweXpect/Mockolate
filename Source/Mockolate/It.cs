@@ -30,12 +30,12 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private abstract class TypedMatch<T> : IParameter<T>, IParameterMatch<T>
+	private abstract class TypedMatch<T> : IParameterWithCallback<T>, IParameterMatch<T>
 	{
 		private List<Action<T>>? _callbacks;
 
-		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-		IParameter<T> IParameter<T>.Do(Action<T> callback)
+		/// <inheritdoc cref="IParameterWithCallback{T}.Do(Action{T})" />
+		IParameterWithCallback<T> IParameterWithCallback<T>.Do(Action<T> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);

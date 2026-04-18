@@ -10,7 +10,7 @@ public partial class It
 	/// <summary>
 	///     Matches any parameter that is not <see langword="null" />.
 	/// </summary>
-	public static IParameter<T> IsNotNull<T>(string? toString = null)
+	public static IParameterWithCallback<T> IsNotNull<T>(string? toString = null)
 		=> new NotNullParameterMatch<T>(toString);
 
 #if !DEBUG
