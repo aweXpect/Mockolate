@@ -609,6 +609,74 @@ public sealed class ScenarioTests
 		}
 	}
 
+	public sealed class TransitionToConditionalTests
+	{
+		[Fact]
+		public async Task For_ShouldLimitTransitionsToGivenCount()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.Setup.ReturnMethod0().Returns(1).TransitionTo("b").When(_ => true).For(1);
+
+			_ = sut.ReturnMethod0();
+			string afterFirst = ((IMock)sut).MockRegistry.Scenario;
+			((IMock)sut).MockRegistry.TransitionTo("reset");
+			_ = sut.ReturnMethod0();
+			string afterSecond = ((IMock)sut).MockRegistry.Scenario;
+
+			await That(afterFirst).IsEqualTo("b");
+			await That(afterSecond).IsEqualTo("reset");
+		}
+
+		[Fact]
+		public async Task When_PredicateNeverTrue_ShouldNotTransition()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.InScenario("a").Setup.ReturnMethod0().Returns(1).TransitionTo("b").When(_ => false);
+			sut.Mock.TransitionTo("a");
+
+			_ = sut.ReturnMethod0();
+			_ = sut.ReturnMethod0();
+			_ = sut.ReturnMethod0();
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("a");
+		}
+
+		[Fact]
+		public async Task When_ShouldDeferTransitionUntilPredicateMatches()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.InScenario("a").Setup.ReturnMethod0().Returns(1).TransitionTo("b").When(i => i > 0);
+			sut.Mock.TransitionTo("a");
+
+			_ = sut.ReturnMethod0();
+			string afterFirst = ((IMock)sut).MockRegistry.Scenario;
+			_ = sut.ReturnMethod0();
+			string afterSecond = ((IMock)sut).MockRegistry.Scenario;
+
+			await That(afterFirst).IsEqualTo("a");
+			await That(afterSecond).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task WhenAndFor_ShouldRespectBothConstraints()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+			sut.Mock.Setup.ReturnMethod0().Returns(1).TransitionTo("b").When(i => i > 0).For(1);
+
+			_ = sut.ReturnMethod0();
+			string afterFirst = ((IMock)sut).MockRegistry.Scenario;
+			_ = sut.ReturnMethod0();
+			string afterSecond = ((IMock)sut).MockRegistry.Scenario;
+			((IMock)sut).MockRegistry.TransitionTo("reset");
+			_ = sut.ReturnMethod0();
+			string afterThird = ((IMock)sut).MockRegistry.Scenario;
+
+			await That(afterFirst).IsEqualTo("");
+			await That(afterSecond).IsEqualTo("b");
+			await That(afterThird).IsEqualTo("reset");
+		}
+	}
+
 	public sealed class ProtectedTests
 	{
 		[Fact]
