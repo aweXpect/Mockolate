@@ -238,7 +238,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.InitializeWith(TValue)" />
-	public IIndexerSetup<TValue, T1> InitializeWith(TValue value)
+	public IIndexerSetupWithCallback<TValue, T1> InitializeWith(TValue value)
 	{
 		if (_initialization is not null)
 		{
@@ -248,6 +248,9 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		_initialization = _ => value;
 		return this;
 	}
+
+	IIndexerSetup<TValue, T1> IIndexerSetup<TValue, T1>.InitializeWith(TValue value)
+		=> InitializeWith(value);
 
 	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1}.InitializeWith(Func{T1, TValue})" />
 	public IIndexerSetup<TValue, T1> InitializeWith(Func<T1, TValue> valueGenerator)
@@ -804,7 +807,7 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.InitializeWith(TValue)" />
-	public IIndexerSetup<TValue, T1, T2> InitializeWith(TValue value)
+	public IIndexerSetupWithCallback<TValue, T1, T2> InitializeWith(TValue value)
 	{
 		if (_initialization is not null)
 		{
@@ -814,6 +817,9 @@ public class IndexerSetup<TValue, T1, T2>(
 		_initialization = (_, _) => value;
 		return this;
 	}
+
+	IIndexerSetup<TValue, T1, T2> IIndexerSetup<TValue, T1, T2>.InitializeWith(TValue value)
+		=> InitializeWith(value);
 
 	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2}.InitializeWith(Func{T1, T2, TValue})" />
 	public IIndexerSetup<TValue, T1, T2> InitializeWith(Func<T1, T2, TValue> valueGenerator)
@@ -1385,7 +1391,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.InitializeWith(TValue)" />
-	public IIndexerSetup<TValue, T1, T2, T3> InitializeWith(TValue value)
+	public IIndexerSetupWithCallback<TValue, T1, T2, T3> InitializeWith(TValue value)
 	{
 		if (_initialization is not null)
 		{
@@ -1395,6 +1401,9 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		_initialization = (_, _, _) => value;
 		return this;
 	}
+
+	IIndexerSetup<TValue, T1, T2, T3> IIndexerSetup<TValue, T1, T2, T3>.InitializeWith(TValue value)
+		=> InitializeWith(value);
 
 	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3}.InitializeWith(Func{T1, T2, T3, TValue})" />
 	public IIndexerSetup<TValue, T1, T2, T3> InitializeWith(Func<T1, T2, T3, TValue> valueGenerator)
@@ -1974,7 +1983,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.InitializeWith(TValue)" />
-	public IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(TValue value)
+	public IIndexerSetupWithCallback<TValue, T1, T2, T3, T4> InitializeWith(TValue value)
 	{
 		if (_initialization is not null)
 		{
@@ -1984,6 +1993,9 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		_initialization = (_, _, _, _) => value;
 		return this;
 	}
+
+	IIndexerSetup<TValue, T1, T2, T3, T4> IIndexerSetup<TValue, T1, T2, T3, T4>.InitializeWith(TValue value)
+		=> InitializeWith(value);
 
 	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4}.InitializeWith(Func{T1, T2, T3, T4, TValue})" />
 	public IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(Func<T1, T2, T3, T4, TValue> valueGenerator)

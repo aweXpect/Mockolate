@@ -434,7 +434,7 @@ public sealed partial class MockTests
 
 		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
 			.Contains("""
-			          		global::Mockolate.Setup.IVoidMethodSetup<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
+			          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
 			          		{
 			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.DoSomething", CovariantParameterAdapter<int>.Wrap(@event ?? global::Mockolate.It.IsNull<int>("null")));
 			          			this.MockRegistry.SetupMethod(methodSetup);
