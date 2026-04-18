@@ -109,9 +109,10 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 #endif
 public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch<T1> parameter1)
 	: IndexerSetup(mockRegistry),
+		IIndexerSetupWithCallback<TValue, T1>,
 		IIndexerGetterSetupCallbackBuilder<TValue, T1>, IIndexerSetterSetupCallbackBuilder<TValue, T1>,
 		IIndexerSetupReturnBuilder<TValue, T1>,
-		IIndexerGetterSetup<TValue, T1>, IIndexerSetterSetup<TValue, T1>
+		IIndexerGetterSetupWithCallback<TValue, T1>, IIndexerSetterSetupWithCallback<TValue, T1>
 {
 	private Callbacks<Action<int, T1, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, TValue, TValue>>? _returnCallbacks;
@@ -133,8 +134,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1> callback)
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1}.Do(Action{T1})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetupWithCallback<TValue, T1>.Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_getterCallbacks = _getterCallbacks.Register(currentCallback);
@@ -147,8 +148,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1}.Do(Action{T1, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetupWithCallback<TValue, T1>.Do(Action<T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_getterCallbacks = _getterCallbacks.Register(currentCallback);
@@ -161,8 +162,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1}.Do(Action{int, T1, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1> IIndexerGetterSetupWithCallback<TValue, T1>.Do(Action<int, T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
 		_getterCallbacks = _getterCallbacks.Register(currentCallback);
@@ -205,8 +206,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<T1, TValue> callback)
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1}.Do(Action{T1, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetupWithCallback<TValue, T1>.Do(Action<T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(Delegate);
 		_setterCallbacks = _setterCallbacks.Register(currentCallback);
@@ -219,8 +220,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetup<TValue, T1>.Do(Action<int, T1, TValue> callback)
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1}.Do(Action{int, T1, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1> IIndexerSetterSetupWithCallback<TValue, T1>.Do(Action<int, T1, TValue> callback)
 	{
 		Callback<Action<int, T1, TValue>> currentCallback = new(callback);
 		_setterCallbacks = _setterCallbacks.Register(currentCallback);
@@ -254,7 +255,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.InitializeWith(Func{T1, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1}.InitializeWith(Func{T1, TValue})" />
 	public IIndexerSetup<TValue, T1> InitializeWith(Func<T1, TValue> valueGenerator)
 	{
 		if (_initialization is not null)
@@ -267,11 +268,11 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnGet" />
-	public IIndexerGetterSetup<TValue, T1> OnGet
+	public IIndexerGetterSetupWithCallback<TValue, T1> OnGet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.OnSet" />
-	public IIndexerSetterSetup<TValue, T1> OnSet
+	public IIndexerSetterSetupWithCallback<TValue, T1> OnSet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(TValue)" />
@@ -302,7 +303,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(Func{T1, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1}.Returns(Func{T1, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
@@ -316,7 +317,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Returns(Func{T1, TValue, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1}.Returns(Func{T1, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
@@ -373,7 +374,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Throws(Func{T1, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1}.Throws(Func{T1, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, Exception> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
@@ -387,7 +388,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1}.Throws(Func{T1, TValue, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1}.Throws(Func{T1, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<T1, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, TValue, TValue>> currentCallback = new(Delegate);
@@ -703,9 +704,10 @@ public class IndexerSetup<TValue, T1, T2>(
 	MockRegistry mockRegistry,
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2) : IndexerSetup(mockRegistry),
+	IIndexerSetupWithCallback<TValue, T1, T2>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2>,
-	IIndexerGetterSetup<TValue, T1, T2>, IIndexerSetterSetup<TValue, T1, T2>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2>, IIndexerSetterSetupWithCallback<TValue, T1, T2>
 {
 	private Callbacks<Action<int, T1, T2, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, TValue, TValue>>? _returnCallbacks;
@@ -727,8 +729,8 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2> callback)
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2}.Do(Action{T1, T2})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetupWithCallback<TValue, T1, T2>.Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_getterCallbacks = _getterCallbacks.Register(currentCallback);
@@ -741,8 +743,8 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetupWithCallback<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_getterCallbacks = _getterCallbacks.Register(currentCallback);
@@ -755,8 +757,8 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetup<TValue, T1, T2>.Do(
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> IIndexerGetterSetupWithCallback<TValue, T1, T2>.Do(
 		Action<int, T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
@@ -800,8 +802,8 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetupWithCallback<TValue, T1, T2>.Do(Action<T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(Delegate);
 		_setterCallbacks = _setterCallbacks.Register(currentCallback);
@@ -814,8 +816,8 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetup<TValue, T1, T2>.Do(
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> IIndexerSetterSetupWithCallback<TValue, T1, T2>.Do(
 		Action<int, T1, T2, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, TValue>> currentCallback = new(callback);
@@ -850,7 +852,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.InitializeWith(Func{T1, T2, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2}.InitializeWith(Func{T1, T2, TValue})" />
 	public IIndexerSetup<TValue, T1, T2> InitializeWith(Func<T1, T2, TValue> valueGenerator)
 	{
 		if (_initialization is not null)
@@ -863,11 +865,11 @@ public class IndexerSetup<TValue, T1, T2>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnGet" />
-	public IIndexerGetterSetup<TValue, T1, T2> OnGet
+	public IIndexerGetterSetupWithCallback<TValue, T1, T2> OnGet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.OnSet" />
-	public IIndexerSetterSetup<TValue, T1, T2> OnSet
+	public IIndexerSetterSetupWithCallback<TValue, T1, T2> OnSet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(TValue)" />
@@ -898,7 +900,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(Func{T1, T2, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2}.Returns(Func{T1, T2, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
@@ -912,7 +914,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Returns(Func{T1, T2, TValue, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2}.Returns(Func{T1, T2, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
@@ -969,7 +971,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Throws(Func{T1, T2, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2}.Throws(Func{T1, T2, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
@@ -983,7 +985,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2}.Throws(Func{T1, T2, TValue, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2}.Throws(Func{T1, T2, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<T1, T2, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TValue, TValue>> currentCallback = new(Delegate);
@@ -1306,9 +1308,10 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2,
 	IParameterMatch<T3> parameter3) : IndexerSetup(mockRegistry),
+	IIndexerSetupWithCallback<TValue, T1, T2, T3>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
-	IIndexerGetterSetup<TValue, T1, T2, T3>, IIndexerSetterSetup<TValue, T1, T2, T3>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>
 {
 	private Callbacks<Action<int, T1, T2, T3, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, T3, TValue, TValue>>? _returnCallbacks;
@@ -1330,8 +1333,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3}.Do(Action{T1, T2, T3})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
@@ -1345,8 +1348,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
@@ -1360,8 +1363,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetup<TValue, T1, T2, T3>.Do(
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>.Do(
 		Action<int, T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
@@ -1408,8 +1411,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>.Do(
 		Action<T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(Delegate);
@@ -1423,8 +1426,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetup<TValue, T1, T2, T3>.Do(
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>.Do(
 		Action<int, T1, T2, T3, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, TValue>> currentCallback = new(callback);
@@ -1461,7 +1464,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.InitializeWith(Func{T1, T2, T3, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3}.InitializeWith(Func{T1, T2, T3, TValue})" />
 	public IIndexerSetup<TValue, T1, T2, T3> InitializeWith(Func<T1, T2, T3, TValue> valueGenerator)
 	{
 		if (_initialization is not null)
@@ -1474,11 +1477,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnGet" />
-	public IIndexerGetterSetup<TValue, T1, T2, T3> OnGet
+	public IIndexerGetterSetupWithCallback<TValue, T1, T2, T3> OnGet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.OnSet" />
-	public IIndexerSetterSetup<TValue, T1, T2, T3> OnSet
+	public IIndexerSetterSetupWithCallback<TValue, T1, T2, T3> OnSet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(TValue)" />
@@ -1509,7 +1512,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
@@ -1523,7 +1526,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
@@ -1580,7 +1583,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
@@ -1594,7 +1597,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, TValue, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<T1, T2, T3, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TValue, TValue>> currentCallback = new(Delegate);
@@ -1925,9 +1928,10 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	IParameterMatch<T2> parameter2,
 	IParameterMatch<T3> parameter3,
 	IParameterMatch<T4> parameter4) : IndexerSetup(mockRegistry),
+	IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
-	IIndexerGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterSetup<TValue, T1, T2, T3, T4>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>
 {
 	private Callbacks<Action<int, T1, T2, T3, T4, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, T3, T4, TValue, TValue>>? _returnCallbacks;
@@ -1949,8 +1953,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
@@ -1964,8 +1968,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
@@ -1979,8 +1983,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
-	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetup<TValue, T1, T2, T3, T4>.Do(
+	/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
+	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>.Do(
 		Action<int, T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
@@ -2027,8 +2031,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(Delegate);
@@ -2042,8 +2046,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
-	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetup<TValue, T1, T2, T3, T4>.Do(
+	/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
+	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>.Do(
 		Action<int, T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4, TValue>> currentCallback = new(callback);
@@ -2080,7 +2084,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return this;
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.InitializeWith(Func{T1, T2, T3, T4, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4}.InitializeWith(Func{T1, T2, T3, T4, TValue})" />
 	public IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(Func<T1, T2, T3, T4, TValue> valueGenerator)
 	{
 		if (_initialization is not null)
@@ -2093,11 +2097,11 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	}
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnGet" />
-	public IIndexerGetterSetup<TValue, T1, T2, T3, T4> OnGet
+	public IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4> OnGet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.OnSet" />
-	public IIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet
+	public IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4> OnSet
 		=> this;
 
 	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(TValue)" />
@@ -2128,7 +2132,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
@@ -2142,7 +2146,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue, TValue})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue, TValue})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue, TValue> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
@@ -2199,7 +2203,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);
@@ -2213,7 +2217,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 	}
 
-	/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, TValue, Exception})" />
+	/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, TValue, Exception})" />
 	public IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, TValue, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> currentCallback = new(Delegate);

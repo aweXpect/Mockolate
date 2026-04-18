@@ -30,6 +30,18 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1> Do(Action callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" /> with callback support for the parameter.
+/// </summary>
+public interface IIndexerGetterSetupWithCallback<TValue, out T1> : IIndexerGetterSetup<TValue, T1>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -53,12 +65,6 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	///     of the indexer as last parameter.
 	/// </remarks>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -80,6 +86,18 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1> Do(Action<TValue> callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" /> with callback support for the parameter.
+/// </summary>
+public interface IIndexerSetterSetupWithCallback<TValue, out T1> : IIndexerSetterSetup<TValue, T1>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -95,12 +113,6 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	///     the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -111,12 +123,12 @@ public interface IIndexerSetup<TValue, out T1>
 	/// <summary>
 	///     Sets up callbacks on the getter.
 	/// </summary>
-	IIndexerGetterSetup<TValue, T1> OnGet { get; }
+	IIndexerGetterSetupWithCallback<TValue, T1> OnGet { get; }
 
 	/// <summary>
 	///     Sets up callbacks on the setter.
 	/// </summary>
-	IIndexerSetterSetup<TValue, T1> OnSet { get; }
+	IIndexerSetterSetupWithCallback<TValue, T1> OnSet { get; }
 
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -135,11 +147,6 @@ public interface IIndexerSetup<TValue, out T1>
 	IIndexerSetup<TValue, T1> InitializeWith(TValue value);
 
 	/// <summary>
-	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
-	/// </summary>
-	IIndexerSetup<TValue, T1> InitializeWith(Func<T1, TValue> valueGenerator);
-
-	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1> Returns(TValue returnValue);
@@ -148,6 +155,32 @@ public interface IIndexerSetup<TValue, out T1>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<TValue> callback);
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>() where TException : Exception, new();
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1> Throws(Exception exception);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> with callback support for the parameter.
+/// </summary>
+public interface IIndexerSetupWithCallback<TValue, out T1> : IIndexerSetup<TValue, T1>
+{
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	IIndexerSetup<TValue, T1> InitializeWith(Func<T1, TValue> valueGenerator);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -164,21 +197,6 @@ public interface IIndexerSetup<TValue, out T1>
 	///     The callback receives the parameter of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1> Returns(Func<T1, TValue, TValue> callback);
-
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1> Throws<TException>() where TException : Exception, new();
-
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1> Throws(Exception exception);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
@@ -228,7 +246,7 @@ public interface IIndexerGetterSetupParallelCallbackBuilder<TValue, out T1>
 ///     Sets up a when callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
 public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1>
-	: IIndexerSetup<TValue, T1>
+	: IIndexerSetupWithCallback<TValue, T1>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -282,7 +300,7 @@ public interface IIndexerSetterSetupParallelCallbackBuilder<TValue, out T1>
 ///     Sets up a when setter callback for a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />.
 /// </summary>
 public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1>
-	: IIndexerSetup<TValue, T1>
+	: IIndexerSetupWithCallback<TValue, T1>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -325,7 +343,7 @@ public interface IIndexerSetupReturnBuilder<TValue, out T1>
 ///     <typeparamref name="T1" />.
 /// </summary>
 public interface IIndexerSetupReturnWhenBuilder<TValue, out T1>
-	: IIndexerSetup<TValue, T1>
+	: IIndexerSetupWithCallback<TValue, T1>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
@@ -358,6 +376,19 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> Do(Action callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerGetterSetupWithCallback<TValue, out T1, out T2> : IIndexerGetterSetup<TValue, T1, T2>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -381,12 +412,6 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -409,6 +434,19 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<TValue> callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" /> and
+///     <typeparamref name="T2" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerSetterSetupWithCallback<TValue, out T1, out T2> : IIndexerSetterSetup<TValue, T1, T2>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -424,12 +462,6 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -440,12 +472,12 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	/// <summary>
 	///     Sets up callbacks on the getter.
 	/// </summary>
-	IIndexerGetterSetup<TValue, T1, T2> OnGet { get; }
+	IIndexerGetterSetupWithCallback<TValue, T1, T2> OnGet { get; }
 
 	/// <summary>
 	///     Sets up callbacks on the setter.
 	/// </summary>
-	IIndexerSetterSetup<TValue, T1, T2> OnSet { get; }
+	IIndexerSetterSetupWithCallback<TValue, T1, T2> OnSet { get; }
 
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -464,11 +496,6 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	IIndexerSetup<TValue, T1, T2> InitializeWith(TValue value);
 
 	/// <summary>
-	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
-	/// </summary>
-	IIndexerSetup<TValue, T1, T2> InitializeWith(Func<T1, T2, TValue> valueGenerator);
-
-	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue);
@@ -477,6 +504,33 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<TValue> callback);
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws<TException>() where TException : Exception, new();
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Exception exception);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" /> and <typeparamref name="T2" />
+///     with callback support for the parameters.
+/// </summary>
+public interface IIndexerSetupWithCallback<TValue, out T1, out T2> : IIndexerSetup<TValue, T1, T2>
+{
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	IIndexerSetup<TValue, T1, T2> InitializeWith(Func<T1, T2, TValue> valueGenerator);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -493,21 +547,6 @@ public interface IIndexerSetup<TValue, out T1, out T2>
 	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1, T2> Returns(Func<T1, T2, TValue, TValue> callback);
-
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws<TException>() where TException : Exception, new();
-
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Exception exception);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
@@ -560,7 +599,7 @@ public interface IIndexerGetterSetupParallelCallbackBuilder<TValue, out T1, out 
 ///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1, out T2>
-	: IIndexerSetup<TValue, T1, T2>
+	: IIndexerSetupWithCallback<TValue, T1, T2>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -617,7 +656,7 @@ public interface IIndexerSetterSetupParallelCallbackBuilder<TValue, out T1, out 
 ///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1, out T2>
-	: IIndexerSetup<TValue, T1, T2>
+	: IIndexerSetupWithCallback<TValue, T1, T2>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -662,7 +701,7 @@ public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2>
 ///     <typeparamref name="T2" />.
 /// </summary>
 public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2>
-	: IIndexerSetup<TValue, T1, T2>
+	: IIndexerSetupWithCallback<TValue, T1, T2>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
@@ -698,6 +737,19 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" />, <typeparamref name="T2" />
+///     and <typeparamref name="T3" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerGetterSetupWithCallback<TValue, out T1, out T2, out T3> : IIndexerGetterSetup<TValue, T1, T2, T3>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -721,12 +773,6 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -750,6 +796,19 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<TValue> callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" />, <typeparamref name="T2" />
+///     and <typeparamref name="T3" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerSetterSetupWithCallback<TValue, out T1, out T2, out T3> : IIndexerSetterSetup<TValue, T1, T2, T3>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -765,12 +824,6 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -782,12 +835,12 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	/// <summary>
 	///     Sets up callbacks on the getter.
 	/// </summary>
-	IIndexerGetterSetup<TValue, T1, T2, T3> OnGet { get; }
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3> OnGet { get; }
 
 	/// <summary>
 	///     Sets up callbacks on the setter.
 	/// </summary>
-	IIndexerSetterSetup<TValue, T1, T2, T3> OnSet { get; }
+	IIndexerSetterSetupWithCallback<TValue, T1, T2, T3> OnSet { get; }
 
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -806,11 +859,6 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	IIndexerSetup<TValue, T1, T2, T3> InitializeWith(TValue value);
 
 	/// <summary>
-	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
-	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3> InitializeWith(Func<T1, T2, T3, TValue> valueGenerator);
-
-	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue);
@@ -819,6 +867,33 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<TValue> callback);
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>() where TException : Exception, new();
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Exception exception);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" /> and
+///     <typeparamref name="T3" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerSetupWithCallback<TValue, out T1, out T2, out T3> : IIndexerSetup<TValue, T1, T2, T3>
+{
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	IIndexerSetup<TValue, T1, T2, T3> InitializeWith(Func<T1, T2, T3, TValue> valueGenerator);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -835,21 +910,6 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3>
 	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Returns(Func<T1, T2, T3, TValue, TValue> callback);
-
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>() where TException : Exception, new();
-
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Exception exception);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
@@ -902,7 +962,7 @@ public interface IIndexerGetterSetupParallelCallbackBuilder<TValue, out T1, out 
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3>
-	: IIndexerSetup<TValue, T1, T2, T3>
+	: IIndexerSetupWithCallback<TValue, T1, T2, T3>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -960,7 +1020,7 @@ public interface IIndexerSetterSetupParallelCallbackBuilder<TValue, out T1, out 
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3>
-	: IIndexerSetup<TValue, T1, T2, T3>
+	: IIndexerSetupWithCallback<TValue, T1, T2, T3>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -1006,7 +1066,7 @@ public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3>
 ///     <typeparamref name="T2" /> and <typeparamref name="T3" />.
 /// </summary>
 public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2, out T3>
-	: IIndexerSetup<TValue, T1, T2, T3>
+	: IIndexerSetupWithCallback<TValue, T1, T2, T3>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
@@ -1043,6 +1103,19 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer getter for <typeparamref name="T1" />, <typeparamref name="T2" />,
+///     <typeparamref name="T3" /> and <typeparamref name="T4" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerGetterSetupWithCallback<TValue, out T1, out T2, out T3, out T4> : IIndexerGetterSetup<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's getter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -1066,12 +1139,6 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -1094,6 +1161,19 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<TValue> callback);
 
 	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer setter for <typeparamref name="T1" />, <typeparamref name="T2" />,
+///     <typeparamref name="T3" /> and <typeparamref name="T4" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerSetterSetupWithCallback<TValue, out T1, out T2, out T3, out T4> : IIndexerSetterSetup<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
 	///     Registers a callback to be invoked whenever the indexer's setter is accessed.
 	/// </summary>
 	/// <remarks>
@@ -1109,12 +1189,6 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
-
-	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
-	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
-	IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -1126,12 +1200,12 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	/// <summary>
 	///     Sets up callbacks on the getter.
 	/// </summary>
-	IIndexerGetterSetup<TValue, T1, T2, T3, T4> OnGet { get; }
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4> OnGet { get; }
 
 	/// <summary>
 	///     Sets up callbacks on the setter.
 	/// </summary>
-	IIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet { get; }
+	IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4> OnSet { get; }
 
 	/// <summary>
 	///     Specifies if calling the base class implementation should be skipped.
@@ -1150,11 +1224,6 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(TValue value);
 
 	/// <summary>
-	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
-	/// </summary>
-	IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(Func<T1, T2, T3, T4, TValue> valueGenerator);
-
-	/// <summary>
 	///     Registers the <paramref name="returnValue" /> for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
@@ -1163,6 +1232,33 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
 	/// </summary>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<TValue> callback);
+
+	/// <summary>
+	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>() where TException : Exception, new();
+
+	/// <summary>
+	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Exception exception);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
+	/// </summary>
+	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a <typeparamref name="TValue" /> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />,
+///     <typeparamref name="T3" /> and <typeparamref name="T4" /> with callback support for the parameters.
+/// </summary>
+public interface IIndexerSetupWithCallback<TValue, out T1, out T2, out T3, out T4> : IIndexerSetup<TValue, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Initializes the indexer according to the given <paramref name="valueGenerator" />.
+	/// </summary>
+	IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(Func<T1, T2, T3, T4, TValue> valueGenerator);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this indexer.
@@ -1179,21 +1275,6 @@ public interface IIndexerSetup<TValue, out T1, out T2, out T3, out T4>
 	///     The callback receives the parameters of the indexer and the value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TValue, TValue> callback);
-
-	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>() where TException : Exception, new();
-
-	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Exception exception);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
-	/// </summary>
-	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the indexer is read.
@@ -1248,7 +1329,7 @@ public interface
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface IIndexerGetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4>
-	: IIndexerSetup<TValue, T1, T2, T3, T4>
+	: IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -1307,7 +1388,7 @@ public interface
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface IIndexerSetterSetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4>
-	: IIndexerSetup<TValue, T1, T2, T3, T4>
+	: IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -1352,7 +1433,7 @@ public interface IIndexerSetupReturnBuilder<TValue, out T1, out T2, out T3, out 
 ///     <typeparamref name="T2" />, <typeparamref name="T3" /> and <typeparamref name="T4" />.
 /// </summary>
 public interface IIndexerSetupReturnWhenBuilder<TValue, out T1, out T2, out T3, out T4>
-	: IIndexerSetup<TValue, T1, T2, T3, T4>
+	: IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
