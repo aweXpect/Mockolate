@@ -143,6 +143,168 @@ public sealed class ScenarioTests
 	public sealed class TransitionToTests
 	{
 		[Fact]
+		public async Task IndexerGetter_Arity1_ShouldSwitchScenarioOnRead()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnGet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			_ = sut[1];
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerGetter_Arity2_ShouldSwitchScenarioOnRead()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>()].OnGet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			_ = sut[1, 2];
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerGetter_Arity3_ShouldSwitchScenarioOnRead()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			_ = sut[1, 2, 3];
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerGetter_Arity4_ShouldSwitchScenarioOnRead()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			_ = sut[1, 2, 3, 4];
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerGetter_Arity5_ShouldSwitchScenarioOnRead()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			_ = sut[1, 2, 3, 4, 5];
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerGetter_ShouldNotFireOnWrite()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnGet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			sut[1] = 42;
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("a");
+		}
+
+		[Fact]
+		public async Task IndexerSetter_Arity1_ShouldSwitchScenarioOnWrite()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnSet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			sut[1] = 42;
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerSetter_Arity2_ShouldSwitchScenarioOnWrite()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>()].OnSet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			sut[1, 2] = 42;
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerSetter_Arity3_ShouldSwitchScenarioOnWrite()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnSet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			sut[1, 2, 3] = 42;
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerSetter_Arity4_ShouldSwitchScenarioOnWrite()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnSet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			sut[1, 2, 3, 4] = 42;
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerSetter_Arity5_ShouldSwitchScenarioOnWrite()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnSet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			sut[1, 2, 3, 4, 5] = 42;
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task IndexerSetter_ShouldNotFireOnRead()
+		{
+			IScenarioService sut = IScenarioService.CreateMock();
+
+			sut.Mock.InScenario("a").Setup[It.IsAny<int>()].OnSet.TransitionTo("b");
+			((IMock)sut).MockRegistry.Scenario = "a";
+
+			_ = sut[1];
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("a");
+		}
+
+		[Fact]
 		public async Task Method_ReturnArity0_ShouldSwitchScenarioWhenInvoked()
 		{
 			IScenarioService sut = IScenarioService.CreateMock();

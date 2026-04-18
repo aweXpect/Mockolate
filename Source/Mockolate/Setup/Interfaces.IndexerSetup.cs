@@ -53,6 +53,12 @@ public interface IIndexerGetterSetup<TValue, out T1>
 	///     of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -89,6 +95,12 @@ public interface IIndexerSetterSetup<TValue, out T1>
 	///     the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1> Do(Action<int, T1, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -308,6 +320,12 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2>
 	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -345,6 +363,12 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2>
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(Action<int, T1, T2, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -571,6 +595,12 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
 	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -609,6 +639,12 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(Action<int, T1, T2, T3, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -838,6 +874,12 @@ public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     value of the indexer as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is read.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -875,6 +917,12 @@ public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
 	///     value the indexer is set to as last parameter.
 	/// </remarks>
 	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4, TValue> callback);
+
+	/// <summary>
+	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the indexer is written to.
+	/// </summary>
+	/// <param name="scenario">The name of the new scenario.</param>
+	IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
 }
 
 /// <summary>

@@ -844,6 +844,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<T1> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<T1, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<int, T1, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1, out T2>
     {
@@ -851,6 +852,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<int, T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
     {
@@ -858,6 +860,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<int, T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
     {
@@ -865,6 +868,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<int, T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1>
     {
@@ -872,6 +876,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<T1, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<int, T1, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1, out T2>
     {
@@ -879,6 +884,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<int, T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
     {
@@ -886,6 +892,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<int, T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
     {
@@ -893,6 +900,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<int, T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
     }
     public interface IIndexerSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
@@ -1496,6 +1504,7 @@ namespace Mockolate.Setup
         protected abstract bool MatchesAccess(Mockolate.Interactions.IndexerAccess access);
         public abstract void SetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult value);
         public abstract bool? SkipBaseClass();
+        protected void TransitionScenario(string scenario) { }
         protected static string FormatType(System.Type type) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }

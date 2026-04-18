@@ -215,6 +215,11 @@ internal static partial class Sources
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action<int, ")
 			.Append(typeParams)
 			.Append(", TValue> callback);").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> whenever the indexer is read.");
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> TransitionTo(string scenario);")
+			.AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -242,6 +247,11 @@ internal static partial class Sources
 		sb.AppendXmlRemarks("The callback receives an incrementing access counter as first parameter, the parameters of the indexer and the value the indexer is set to as last parameter.");
 		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> Do(global::System.Action<int, ")
 			.Append(typeParams).Append(", TValue> callback);").AppendLine();
+		sb.AppendLine();
+
+		sb.AppendXmlSummary("Transitions the scenario to the given <paramref name=\"scenario\" /> whenever the indexer is written to.");
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams).Append("> TransitionTo(string scenario);")
+			.AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
@@ -535,6 +545,20 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerGetterSetup<TValue, ").Append(typeParams)
+			.Append(">.TransitionTo(string scenario)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams)
+			.Append(", TValue>>? currentCallback = new((_, ")
+			.Append(discards).Append(", _) => TransitionScenario(scenario));").AppendLine();
+		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
+		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t\t_getterCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.OnSet\" />")
 			.AppendLine();
 		sb.Append("\t\tpublic IIndexerSetterSetup<TValue, ").Append(typeParams)
@@ -596,6 +620,20 @@ internal static partial class Sources
 		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams)
 			.Append(", TValue>>? currentCallback = new(callback);")
 			.AppendLine();
+		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
+		sb.Append("\t\t\t_setterCallbacks.Add(currentCallback);").AppendLine();
+		sb.Append("\t\t\treturn this;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\tIIndexerSetupCallbackBuilder<TValue, ").Append(typeParams)
+			.Append("> IIndexerSetterSetup<TValue, ").Append(typeParams)
+			.Append(">.TransitionTo(string scenario)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tCallback<global::System.Action<int, ").Append(typeParams)
+			.Append(", TValue>>? currentCallback = new((_, ")
+			.Append(discards).Append(", _) => TransitionScenario(scenario));").AppendLine();
+		sb.Append("\t\t\tcurrentCallback.InParallel();").AppendLine();
 		sb.Append("\t\t\t_currentCallback = currentCallback;").AppendLine();
 		sb.Append("\t\t\t_setterCallbacks.Add(currentCallback);").AppendLine();
 		sb.Append("\t\t\treturn this;").AppendLine();
