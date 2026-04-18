@@ -15,15 +15,17 @@ public partial class It
 	/// <remarks>
 	///     Supports method parameters declared as <see cref="IEnumerable{T}" />, <see cref="ICollection{T}" />,
 	///     <see cref="IList{T}" />, <see cref="IReadOnlyCollection{T}" />, <see cref="IReadOnlyList{T}" />,
-	///     <see cref="ISet{T}" />, <typeparamref name="T" /> arrays, <see cref="List{T}" />,
-	///     <see cref="HashSet{T}" />, <see cref="Queue{T}" /> or <see cref="Stack{T}" />.
+	///     <typeparamref name="T" /> arrays, <see cref="List{T}" />, <see cref="Queue{T}" /> or
+	///     <see cref="Stack{T}" />. Unordered shapes such as <see cref="ISet{T}" /> and
+	///     <see cref="HashSet{T}" /> are intentionally not supported, as their enumeration order
+	///     is not guaranteed.
 	/// </remarks>
 	public static ISequenceEqualsParameter<T> SequenceEquals<T>(params IEnumerable<T> values)
 		=> new ParameterSequenceEqualsMatch<T>(values.ToArray());
 
 	/// <summary>
-	///     An <see cref="IParameter{T}" /> that matches any supported collection parameter whose elements equal an
-	///     expected sequence.
+	///     An <see cref="IParameter{T}" /> that matches any supported ordered collection parameter whose
+	///     elements equal an expected sequence.
 	/// </summary>
 	public interface ISequenceEqualsParameter<T> :
 		IParameter<IEnumerable<T>>,
@@ -31,10 +33,8 @@ public partial class It
 		IParameter<IList<T>>,
 		IParameter<IReadOnlyCollection<T>>,
 		IParameter<IReadOnlyList<T>>,
-		IParameter<ISet<T>>,
 		IParameter<T[]>,
 		IParameter<List<T>>,
-		IParameter<HashSet<T>>,
 		IParameter<Queue<T>>,
 		IParameter<Stack<T>>
 	{
@@ -50,7 +50,7 @@ public partial class It
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class ParameterSequenceEqualsMatch<T>(T[] expected)
-		: CollectionMatch<T>, ISequenceEqualsParameter<T>
+		: OrderedCollectionMatch<T>, ISequenceEqualsParameter<T>
 	{
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
@@ -64,17 +64,17 @@ public partial class It
 			return this;
 		}
 
-		/// <inheritdoc cref="CollectionMatch{T}.MatchesCollection(IEnumerable{T})" />
+		/// <inheritdoc cref="CollectionMatchCore{T}.MatchesCollection(IEnumerable{T})" />
 		protected override bool MatchesCollection(IEnumerable<T> value)
 		{
-			var comparer = _comparer ?? EqualityComparer<T>.Default;
+			IEqualityComparer<T> comparer = _comparer ?? EqualityComparer<T>.Default;
 			return value.SequenceEqual(expected, comparer);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			var result =
+			string result =
 				$"It.SequenceEquals({string.Join(", ", expected.Select(v => v is string ? $"\"{v}\"" : v?.ToString() ?? "null"))})";
 			if (_comparer is not null) result += $".Using({_comparerExpression})";
 
