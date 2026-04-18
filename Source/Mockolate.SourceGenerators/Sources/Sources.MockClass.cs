@@ -2332,7 +2332,9 @@ internal static partial class Sources
 						.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
 				}
 
-				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+				sb.Append(method.Parameters.Count > 0
+					? "\t\tglobal::Mockolate.Setup.IVoidMethodSetupWithCallback"
+					: "\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
 			}
 
 			if (method.Parameters.Count > 0)
@@ -2579,9 +2581,17 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append(valueFlags?.All(x => x) == true
-				? "\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer"
-				: "\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			if (valueFlags?.All(x => x) == true)
+			{
+				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer");
+			}
+			else
+			{
+				sb.Append(method.Parameters.Count > 0
+					? "\t\tglobal::Mockolate.Setup.IVoidMethodSetupWithCallback"
+					: "\t\tglobal::Mockolate.Setup.IVoidMethodSetup");
+			}
+
 			if (method.Parameters.Count > 0)
 			{
 				sb.Append('<');
