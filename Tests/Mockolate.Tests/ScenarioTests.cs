@@ -83,7 +83,7 @@ public sealed class ScenarioTests
 		}
 
 		[Fact]
-		public async Task InScenario_LambdaOverload_ShouldReturnMockForToAllowFurtherChaining()
+		public async Task InScenario_LambdaOverload_ShouldReturnMockToAllowFurtherChaining()
 		{
 			IScenarioService sut = IScenarioService.CreateMock();
 
@@ -539,11 +539,12 @@ public sealed class ScenarioTests
 			IScenarioService sut = IScenarioService.CreateMock();
 
 			sut.Mock.InScenario("a").Setup.ReturnMethod0().Returns(42);
-			sut.Mock.TransitionTo("a");
+			Mock.IMockForIScenarioService changedSut = sut.Mock.TransitionTo("a");
 
 			int result = sut.ReturnMethod0();
 
 			await That(result).IsEqualTo(42);
+			await That(changedSut).IsSameAs(sut);
 		}
 
 		[Fact]

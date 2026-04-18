@@ -31,8 +31,9 @@ Setups registered via `InScenario` do **not** leak into the default scope.
 
 ## Switching scenarios
 
-Chain `.TransitionTo(name)` on any method, property, or indexer setup to change the active scenario when the setup
-fires. The transition runs as a parallel side-effect &mdash; it does not replace the return value or throw behaviour.
+Chain `.TransitionTo(name)` on any method, property, indexer, or event subscription/unsubscription setup to change
+the active scenario when the setup fires. The transition runs as a parallel side-effect &mdash; it does not replace
+the return value or throw behaviour.
 
 ```csharp
 sut.Mock.InScenario("disconnected")
