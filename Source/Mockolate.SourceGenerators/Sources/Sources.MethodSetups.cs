@@ -619,7 +619,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
-		sb.Append("\t\t\tvoid Callback(int invocationCount, Action<int, ").Append(typeParams).Append("> @delegate)").AppendLine();
+		sb.Append("\t\t\tvoid Callback(int invocationCount, global::System.Action<int, ").Append(typeParams).Append("> @delegate)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t@delegate(invocationCount, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"parameter{x}"))).Append(");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
