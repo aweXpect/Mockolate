@@ -185,7 +185,11 @@ namespace Mockolate
         public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, System.Func<TResult> defaultValueGenerator) { }
         public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult baseValue) { }
         public bool ApplyIndexerSetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult value) { }
+        public TResult ApplyIndexerSetup<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup setup) { }
         public void ClearAllInteractions() { }
+        public TResult GetIndexerFallback<TResult>(Mockolate.Interactions.IndexerAccess access) { }
+        public T? GetIndexerSetup<T>(Mockolate.Interactions.IndexerAccess access)
+            where T : Mockolate.Setup.IndexerSetup { }
         public T? GetIndexerSetup<T>(System.Func<T, bool> predicate)
             where T : Mockolate.Setup.IndexerSetup { }
         public T? GetMethodSetup<T>(string methodName, System.Func<T, bool> predicate)
@@ -849,6 +853,8 @@ namespace Mockolate.Setup
         public bool Invoke(ref int index, System.Action<int, TDelegate> callback) { }
         public bool Invoke(bool wasInvoked, ref int index, System.Action<int, TDelegate> callback) { }
         public bool Invoke<TReturn>(ref int index, System.Func<int, TDelegate, TReturn> callback, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TReturn? returnValue) { }
+        public bool Invoke<TState>(bool wasInvoked, ref int index, TState state, System.Action<int, TDelegate, TState> callback) { }
+        public bool Invoke<TState, TReturn>(ref int index, TState state, System.Func<int, TDelegate, TState, TReturn> callback, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TReturn? returnValue) { }
     }
     public static class CallbacksExtensions
     {
@@ -1682,6 +1688,7 @@ namespace Mockolate.Setup
     public abstract class IndexerSetup : Mockolate.Setup.IInteractiveIndexerSetup, Mockolate.Setup.ISetup
     {
         protected IndexerSetup(Mockolate.MockRegistry mockRegistry) { }
+        public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior);
         public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
         public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue);
         protected abstract bool MatchesAccess(Mockolate.Interactions.IndexerAccess access);
@@ -1696,6 +1703,7 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1> OnSet { get; }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1> InitializeWith(System.Func<T1, TValue> valueGenerator) { }
@@ -1723,6 +1731,7 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2> OnSet { get; }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2> InitializeWith(System.Func<T1, T2, TValue> valueGenerator) { }
@@ -1750,6 +1759,7 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3> OnSet { get; }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3> InitializeWith(System.Func<T1, T2, T3, TValue> valueGenerator) { }
@@ -1777,6 +1787,7 @@ namespace Mockolate.Setup
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet { get; }
+        public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator) { }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue) { }
         public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> InitializeWith(System.Func<T1, T2, T3, T4, TValue> valueGenerator) { }

@@ -210,4 +210,85 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 		returnValue = callback(_invocationCount - 1, @delegate)!;
 		return true;
 	}
+
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
+	/// <summary>
+	///     Invokes the callback if the predicates are satisfied, passing the caller-supplied <paramref name="state" />
+	///     to the non-capturing <paramref name="callback" />. Equivalent in behavior to
+	///     <see cref="Invoke(bool, ref int, Action{int, TDelegate})" /> but allocation-free on the hot path.
+	/// </summary>
+	public bool Invoke<TState>(bool wasInvoked, ref int index, TState state,
+		Action<int, TDelegate, TState> callback)
+	{
+		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
+		{
+			_invocationCount++;
+			return false;
+		}
+
+		_invocationCount++;
+
+		if (RunInParallel)
+		{
+			if (!wasInvoked)
+			{
+				Interlocked.Increment(ref index);
+			}
+
+			_forIterationCount++;
+			_matchingCount++;
+			callback(_invocationCount - 1, @delegate, state);
+		}
+		else if (!wasInvoked)
+		{
+			if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
+			{
+				Interlocked.Increment(ref index);
+				_forIterationCount = 0;
+			}
+			else
+			{
+				_forIterationCount++;
+			}
+
+			_matchingCount++;
+			callback(_invocationCount - 1, @delegate, state);
+		}
+
+		return !RunInParallel;
+	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
+
+	/// <summary>
+	///     Invokes the callback if the predicates are satisfied, passing the caller-supplied <paramref name="state" />
+	///     to the non-capturing <paramref name="callback" />. Equivalent in behavior to
+	///     <see cref="Invoke{TReturn}(ref int, Func{int, TDelegate, TReturn}, out TReturn)" /> but allocation-free.
+	/// </summary>
+	public bool Invoke<TState, TReturn>(ref int index, TState state,
+		Func<int, TDelegate, TState, TReturn> callback,
+		[NotNullWhen(true)] out TReturn? returnValue)
+	{
+		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
+		{
+			_invocationCount++;
+			returnValue = default;
+			Interlocked.Increment(ref index);
+			return false;
+		}
+
+		if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
+		{
+			Interlocked.Increment(ref index);
+			_forIterationCount = 0;
+		}
+		else
+		{
+			_forIterationCount++;
+		}
+
+		_invocationCount++;
+		_matchingCount++;
+		returnValue = callback(_invocationCount - 1, @delegate, state)!;
+		return true;
+	}
 }

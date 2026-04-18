@@ -1469,10 +1469,14 @@ internal static partial class Sources
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className)
 						.Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
-						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", () => ")
-						.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
-						.Append(");").AppendLine();
+					sb.Append("\t\t\t\t\treturn ").Append(setupVarName).Append(" is null")
+						.AppendLine();
+					sb.Append("\t\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(")")
+						.AppendLine();
+					sb.Append("\t\t\t\t\t\t: ").Append(mockRegistry).Append(".ApplyIndexerSetup<")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
+						.Append(setupVarName).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 					sb.Append("\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ').Append(baseResultVarName)
 						.Append(" = wraps[")
@@ -1540,10 +1544,13 @@ internal static partial class Sources
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", ")
 						.Append(baseResultVarName).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
-					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
-						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", () => ")
-						.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
-						.Append(");").AppendLine();
+					sb.Append("\t\t\t\treturn ").Append(setupVarName).Append(" is null").AppendLine();
+					sb.Append("\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(")")
+						.AppendLine();
+					sb.Append("\t\t\t\t\t: ").Append(mockRegistry).Append(".ApplyIndexerSetup<")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
+						.Append(setupVarName).Append(");").AppendLine();
 				}
 				else
 				{
@@ -1574,10 +1581,13 @@ internal static partial class Sources
 
 				EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 					property.Type, property.IndexerParameters.Value);
-				sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
-					.Append(accessVarName).Append(", ").Append(setupVarName).Append(", () => ")
-					.AppendDefaultValueGeneratorFor(property.Type, $"this.{mockRegistryName}.Behavior.DefaultValue")
-					.Append(");").AppendLine();
+				sb.Append("\t\t\t\treturn ").Append(setupVarName).Append(" is null").AppendLine();
+				sb.Append("\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
+					.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(")")
+					.AppendLine();
+				sb.Append("\t\t\t\t\t: ").Append(mockRegistry).Append(".ApplyIndexerSetup<")
+					.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
+					.Append(setupVarName).Append(");").AppendLine();
 			}
 			else
 			{

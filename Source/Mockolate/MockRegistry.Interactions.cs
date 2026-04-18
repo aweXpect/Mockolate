@@ -64,12 +64,65 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Get the latest indexer setup matching the given <paramref name="access" />,
+	///     or returns <see langword="null" /> if no matching setup is found. Scenario setups take precedence over
+	///     default-scope setups.
+	/// </summary>
+	public T? GetIndexerSetup<T>(IndexerAccess access) where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers.GetMatching<T>(access);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetMatching<T>(access);
+	}
+
+	/// <summary>
 	///     Stores the given <paramref name="value" /> for the given indexer <paramref name="access" />.
 	/// </summary>
 	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value)
 	{
 		access.Storage = IndexerStorage;
 		access.StoreValue(value);
+	}
+
+	/// <summary>
+	///     Handles the no-matching-setup fallback for an indexer getter: returns any previously stored value, throws
+	///     when <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />, or otherwise stores and
+	///     returns the <see cref="MockBehavior.DefaultValue" />.
+	/// </summary>
+	public TResult GetIndexerFallback<TResult>(IndexerAccess access)
+	{
+		access.Storage = IndexerStorage;
+		if (access.TryFindStoredValue(out TResult stored))
+		{
+			return stored;
+		}
+
+		if (Behavior.ThrowWhenNotSetup)
+		{
+			throw new MockNotSetupException($"{access} was accessed without prior setup.");
+		}
+
+		TResult value = Behavior.DefaultValue.GenerateTyped<TResult>();
+		access.StoreValue(value);
+		return value;
+	}
+
+	/// <summary>
+	///     Invokes the getter flow of the given <paramref name="setup" /> for the given <paramref name="access" />,
+	///     ensuring the indexer value storage is wired up before dispatching.
+	/// </summary>
+	public TResult ApplyIndexerSetup<TResult>(IndexerAccess access, IndexerSetup setup)
+	{
+		access.Storage = IndexerStorage;
+		return setup.GetResult<TResult>(access, Behavior);
 	}
 
 	/// <summary>

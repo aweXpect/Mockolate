@@ -13,3 +13,16 @@ public interface IDefaultValueGenerator
 	/// </summary>
 	object? GenerateValue(Type type, params object?[] parameters);
 }
+
+internal static class DefaultValueGeneratorInternalExtensions
+{
+	internal static T GenerateTyped<T>(this IDefaultValueGenerator generator)
+	{
+		if (generator.GenerateValue(typeof(T)) is T value)
+		{
+			return value;
+		}
+
+		return default!;
+	}
+}

@@ -198,6 +198,7 @@ internal static partial class Sources
 		string typeParams = GetGenericTypeParameters(numberOfParameters);
 		string outTypeParams = GetOutGenericTypeParameters(numberOfParameters);
 		string parameters = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}"));
+		string stateParameters = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"state.p{i}"));
 		string discards = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(_ => "_"));
 
 		sb.AppendXmlSummary($"Sets up a <typeparamref name=\"TValue\"/> indexer getter for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
@@ -933,6 +934,42 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
+		// GetResult(behavior) — no-closure entry point used by the generated mock indexer body
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior)\" />").AppendLine();
+		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tif (!TryExtractParameters(access");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(", out T").Append(i).Append(" p").Append(i);
+		}
+
+		sb.Append("))").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\treturn behavior.DefaultValue.Generate(default(TResult)!);").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t\tTValue currentValue;").AppendLine();
+		sb.Append("\t\t\tif (access.TryFindStoredValue(out TValue existing))").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tcurrentValue = existing;").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t\telse if (_initialization is not null)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tcurrentValue = _initialization.Invoke(").Append(parameters).Append(");").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t\telse").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tcurrentValue = TryCast(behavior.DefaultValue.Generate(default(TValue)!), out TValue casted, behavior) ? casted : default!;").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t\tcurrentValue = ExecuteGetterCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
+		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue, out _);").AppendLine();
+		sb.Append("\t\t\taccess.StoreValue(currentValue);").AppendLine();
+		sb.Append("\t\t\treturn TryCast(currentValue, out TResult result, behavior) ? result : behavior.DefaultValue.Generate(default(TResult)!);").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
 		// GetResult(Func<TResult> defaultValueGenerator)
 		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior, global::System.Func{TResult})\" />").AppendLine();
 		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior, global::System.Func<TResult> defaultValueGenerator)").AppendLine();
@@ -998,8 +1035,8 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>> setterCallback =").AppendLine();
 		sb.Append("\t\t\t\t\t\t_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\t\tif (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (invocationCount, @delegate)").AppendLine();
-		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, ").Append(parameters).Append(", resultValue)))").AppendLine();
+		sb.Append("\t\t\t\t\tif (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (").Append(parameters).Append(", resultValue),").AppendLine();
+		sb.Append("\t\t\t\t\t\tstatic (count, @delegate, state) => @delegate(count, ").Append(stateParameters).Append(", state.resultValue)))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
@@ -1020,8 +1057,8 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tCallback<global::System.Action<int, ").Append(typeParams).Append(", TValue>> getterCallback =").AppendLine();
 		sb.Append("\t\t\t\t\t\t_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\t\tif (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (invocationCount, @delegate)").AppendLine();
-		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, ").Append(parameters).Append(", currentValue)))").AppendLine();
+		sb.Append("\t\t\t\t\tif (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (").Append(parameters).Append(", currentValue),").AppendLine();
+		sb.Append("\t\t\t\t\t\tstatic (count, @delegate, state) => @delegate(count, ").Append(stateParameters).Append(", state.currentValue)))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
@@ -1043,8 +1080,9 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tCallback<global::System.Func<int, ").Append(typeParams).Append(", TValue, TValue>> returnCallback =").AppendLine();
 		sb.Append("\t\t\t\t\t\t_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\t\tif (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (invocationCount, @delegate)").AppendLine();
-		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, ").Append(parameters).Append(", currentValue), out TValue? newValue))").AppendLine();
+		sb.Append("\t\t\t\t\tif (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (").Append(parameters).Append(", currentValue),").AppendLine();
+		sb.Append("\t\t\t\t\t\tstatic (count, @delegate, state) => @delegate(count, ").Append(stateParameters).Append(", state.currentValue),").AppendLine();
+		sb.Append("\t\t\t\t\t\tout TValue? newValue))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tmatched = true;").AppendLine();
 		sb.Append("\t\t\t\t\t\treturn newValue!;").AppendLine();
