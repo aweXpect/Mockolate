@@ -25,7 +25,7 @@ public abstract class MockMonitor
 	protected MockMonitor(MockInteractions mockInteractions)
 	{
 		_monitoredInteractions = mockInteractions;
-		Interactions = new MockInteractions();
+		Interactions = new MockInteractions { SkipInteractionRecording = mockInteractions.SkipInteractionRecording };
 	}
 
 	/// <summary>

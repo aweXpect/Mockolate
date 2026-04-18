@@ -58,6 +58,18 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	private void ReplacePredicate(Func<IInteraction, bool> predicate)
 		=> _predicate = predicate;
 
+	private static void ThrowIfRecordingDisabled(MockInteractions interactions)
+	{
+		if (interactions.SkipInteractionRecording)
+		{
+			throw new MockException(
+				"""
+				Cannot verify interactions because interaction recording is disabled. To re-enable verifications, set MockBehavior.SkipInteractionRecording to false."
+				"""
+			);
+		}
+	}
+
 	/// <summary>
 	///     Makes the verification result awaitable, using the specified <paramref name="timeout" /> to wait for the expected
 	///     interactions to occur.
@@ -105,6 +117,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
 		bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)
 		{
+			ThrowIfRecordingDisabled(_interactions);
 			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
 			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
@@ -119,6 +132,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		/// <inheritdoc cref="IAsyncVerificationResult.VerifyAsync(Func{IInteraction[], Boolean})" />
 		public async Task<bool> VerifyAsync(Func<IInteraction[], bool> predicate)
 		{
+			ThrowIfRecordingDisabled(_interactions);
 			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
 			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
@@ -226,6 +240,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
 	bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)
 	{
+		ThrowIfRecordingDisabled(_interactions);
 		IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
 		_interactions.Verified(matchingInteractions);
 		return predicate(matchingInteractions);

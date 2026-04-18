@@ -24,7 +24,7 @@ public partial class MockRegistry
 	{
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
-		Interactions = new MockInteractions();
+		Interactions = new MockInteractions { SkipInteractionRecording = behavior.SkipInteractionRecording };
 		Setup = new MockSetups();
 		_scenarioState = new ScenarioState();
 		Wraps = null;
@@ -35,7 +35,7 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Interactions = new MockInteractions();
+		Interactions = new MockInteractions { SkipInteractionRecording = registry.Behavior.SkipInteractionRecording };
 		Setup = registry.Setup;
 		_scenarioState = registry._scenarioState;
 		Wraps = wraps;

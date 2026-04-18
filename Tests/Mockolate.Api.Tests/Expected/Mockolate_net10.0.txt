@@ -156,6 +156,7 @@ namespace Mockolate
         public MockBehavior(Mockolate.IDefaultValueGenerator defaultValue) { }
         public Mockolate.IDefaultValueGenerator DefaultValue { get; init; }
         public bool SkipBaseClass { get; init; }
+        public bool SkipInteractionRecording { get; init; }
         public bool ThrowWhenNotSetup { get; init; }
         public override string ToString() { }
         public Mockolate.MockBehavior UseConstructorParametersFor<T>(System.Func<object?[]> parameters) { }
@@ -168,6 +169,7 @@ namespace Mockolate
         {
             public Mockolate.MockBehavior SkippingBaseClass(bool skipBaseClass = true) { }
             public Mockolate.MockBehavior ThrowingWhenNotSetup(bool throwWhenNotSetup = true) { }
+            public Mockolate.MockBehavior SkippingInteractionRecording(bool skipInteractionRecording = true) { }
             public Mockolate.MockBehavior WithDefaultValueFor<T>(System.Func<T> factory) { }
         }
     }
@@ -1232,8 +1234,8 @@ namespace Mockolate.Setup
     public interface IInteractivePropertySetup : Mockolate.Setup.ISetup
     {
         void InitializeWith(object? value);
-        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
-        void InvokeSetter<T>(Mockolate.Interactions.IInteraction invocation, T value, Mockolate.MockBehavior behavior);
+        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction? invocation, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
+        void InvokeSetter<T>(Mockolate.Interactions.IInteraction? invocation, T value, Mockolate.MockBehavior behavior);
         bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
         bool? SkipBaseClass();
     }
