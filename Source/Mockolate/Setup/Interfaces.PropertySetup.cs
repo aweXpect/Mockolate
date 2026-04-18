@@ -11,13 +11,21 @@ public interface IInteractivePropertySetup : ISetup
 	/// <summary>
 	///     Invokes the setter logic for the <paramref name="invocation" /> and <paramref name="value" />.
 	/// </summary>
-	void InvokeSetter<T>(IInteraction invocation, T value, MockBehavior behavior);
+	/// <remarks>
+	///     <paramref name="invocation" /> may be <see langword="null" /> when interaction recording is skipped
+	///     (see <see cref="MockBehavior.SkipInteractionRecording" />).
+	/// </remarks>
+	void InvokeSetter<T>(IInteraction? invocation, T value, MockBehavior behavior);
 
 	/// <summary>
 	///     Invokes the getter logic for the <paramref name="invocation" /> and returns the value of type
 	///     <typeparamref name="TResult" />.
 	/// </summary>
-	TResult InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator);
+	/// <remarks>
+	///     <paramref name="invocation" /> may be <see langword="null" /> when interaction recording is skipped
+	///     (see <see cref="MockBehavior.SkipInteractionRecording" />).
+	/// </remarks>
+	TResult InvokeGetter<TResult>(IInteraction? invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Checks if the <paramref name="propertyAccess" /> matches the setup.

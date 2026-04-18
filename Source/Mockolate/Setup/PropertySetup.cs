@@ -25,12 +25,12 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	/// </summary>
 	internal abstract bool IsValueInitialized { get; }
 
-	/// <inheritdoc cref="IInteractivePropertySetup.InvokeSetter{T}(IInteraction, T, MockBehavior)" />
-	void IInteractivePropertySetup.InvokeSetter<T>(IInteraction invocation, T value, MockBehavior behavior)
+	/// <inheritdoc cref="IInteractivePropertySetup.InvokeSetter{T}(IInteraction?, T, MockBehavior)" />
+	void IInteractivePropertySetup.InvokeSetter<T>(IInteraction? invocation, T value, MockBehavior behavior)
 		=> InvokeSetter(value, behavior);
 
-	/// <inheritdoc cref="IInteractivePropertySetup.InvokeGetter{TResult}(IInteraction, MockBehavior, Func{TResult}?)" />
-	TResult IInteractivePropertySetup.InvokeGetter<TResult>(IInteraction invocation, MockBehavior behavior,
+	/// <inheritdoc cref="IInteractivePropertySetup.InvokeGetter{TResult}(IInteraction?, MockBehavior, Func{TResult}?)" />
+	TResult IInteractivePropertySetup.InvokeGetter<TResult>(IInteraction? invocation, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
 		=> InvokeGetter(behavior, defaultValueGenerator);
 

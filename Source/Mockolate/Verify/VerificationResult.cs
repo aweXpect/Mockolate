@@ -63,8 +63,9 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		if (!interactions.RecordingEnabled)
 		{
 			throw new MockException(
-				"Cannot verify interactions because MockBehavior.SkipInteractionRecording is true. " +
-				"Remove SkippingInteractionRecording from the mock's MockBehavior to use verifications.");
+				"Cannot verify interactions because interaction recording is disabled. " +
+				"To re-enable verifications, set MockBehavior.SkipInteractionRecording to false " +
+				"(for example, via `MockBehavior.Default.SkippingInteractionRecording(false)`).");
 		}
 	}
 

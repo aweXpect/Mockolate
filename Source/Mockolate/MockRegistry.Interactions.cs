@@ -203,7 +203,7 @@ public partial class MockRegistry
 			propertyName, defaultValueGenerator, baseValueAccessor,
 			baseValueAccessor is not null);
 
-		return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction!, Behavior,
+		return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
 			defaultValueGenerator);
 	}
 
@@ -225,7 +225,7 @@ public partial class MockRegistry
 
 		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
 
-		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction!, value, Behavior);
+		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction, value, Behavior);
 		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}
 

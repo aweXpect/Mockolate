@@ -74,7 +74,6 @@ public sealed partial class MockBehaviorTests
 
 			MockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 			await That(interactions.Count).IsEqualTo(0);
-			await That(interactions.RecordingEnabled).IsFalse();
 		}
 
 		[Fact]

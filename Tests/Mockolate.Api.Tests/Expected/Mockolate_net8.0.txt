@@ -725,7 +725,7 @@ namespace Mockolate.Interactions
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
-    public struct MethodInvocation<T1> : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
+    public class MethodInvocation<T1> : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
     {
         public MethodInvocation(string name, string parameterName1, T1 parameter1) { }
         public string Name { get; }
@@ -777,7 +777,6 @@ namespace Mockolate.Interactions
     {
         public MockInteractions() { }
         public int Count { get; }
-        public bool RecordingEnabled { get; init; }
         public System.Collections.Generic.IEnumerator<Mockolate.Interactions.IInteraction> GetEnumerator() { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
     }
@@ -1234,8 +1233,8 @@ namespace Mockolate.Setup
     public interface IInteractivePropertySetup : Mockolate.Setup.ISetup
     {
         void InitializeWith(object? value);
-        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction invocation, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
-        void InvokeSetter<T>(Mockolate.Interactions.IInteraction invocation, T value, Mockolate.MockBehavior behavior);
+        TResult InvokeGetter<TResult>(Mockolate.Interactions.IInteraction? invocation, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
+        void InvokeSetter<T>(Mockolate.Interactions.IInteraction? invocation, T value, Mockolate.MockBehavior behavior);
         bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
         bool? SkipBaseClass();
     }
