@@ -65,17 +65,17 @@ public partial class It
 			return this;
 		}
 
-		/// <inheritdoc cref="CollectionMatch{T}.MatchesCollection(IEnumerable{T})" />
+		/// <inheritdoc cref="CollectionMatchCore{T}.MatchesCollection(IEnumerable{T})" />
 		protected override bool MatchesCollection(IEnumerable<T> value)
 		{
-			var comparer = _comparer ?? EqualityComparer<T>.Default;
+			IEqualityComparer<T> comparer = _comparer ?? EqualityComparer<T>.Default;
 			return value.Contains(item, comparer);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			var result = $"It.Contains({itemExpression})";
+			string result = $"It.Contains({itemExpression})";
 			if (_comparer is not null) result += $".Using({_comparerExpression})";
 
 			return result;
