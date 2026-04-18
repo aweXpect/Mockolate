@@ -1,3 +1,4 @@
+using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
@@ -5,6 +6,16 @@ namespace Mockolate.Tests.Verify;
 
 public sealed partial class VerificationResultTests
 {
+	[Fact]
+	public async Task CustomVerificationResult_ShouldKeepExpectation()
+	{
+		VerificationResult<int> sut = new(1, new MockInteractions(), _ => false, "foo");
+
+		string result = ((IVerificationResult)sut).Expectation;
+
+		await That(result).IsEqualTo("foo");
+	}
+
 	[Fact]
 	public async Task VerificationResult_Got_ShouldHaveExpectedValue()
 	{

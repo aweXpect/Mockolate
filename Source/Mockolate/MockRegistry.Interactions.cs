@@ -37,23 +37,6 @@ public partial class MockRegistry
 		=> Setup.Indexers.GetMatching(predicate);
 
 	/// <summary>
-	///     Retrieves the stored value for the given indexer <paramref name="access" />, or
-	///     invokes the <paramref name="defaultValueGenerator" /> and stores its result when no value has been stored yet.
-	/// </summary>
-	public TResult GetIndexerValue<TResult>(IndexerAccess access, Func<TResult> defaultValueGenerator)
-	{
-		access.Storage = IndexerStorage;
-		if (access.TryFindStoredValue(out TResult value))
-		{
-			return value;
-		}
-
-		value = defaultValueGenerator();
-		access.StoreValue(value);
-		return value;
-	}
-
-	/// <summary>
 	///     Stores the given <paramref name="value" /> for the given indexer <paramref name="access" />.
 	/// </summary>
 	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value)
@@ -127,29 +110,6 @@ public partial class MockRegistry
 	/// </summary>
 	public bool ApplyIndexerSetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult value)
 	{
-		if (setup is null)
-		{
-			SetIndexerValue(access, value);
-			return Behavior.SkipBaseClass;
-		}
-
-		access.Storage = IndexerStorage;
-		setup.SetResult(access, Behavior, value);
-		return setup.SkipBaseClass() ?? Behavior.SkipBaseClass;
-	}
-
-	/// <summary>
-	///     Dispatches an indexer setter call against the given <paramref name="access" />: registers the interaction,
-	///     updates the stored value, invokes a matching setup (if any), and returns whether the base class implementation
-	///     should be skipped.
-	/// </summary>
-	public bool DispatchIndexerSetter<TResult, TSetup>(
-		IndexerAccess access,
-		TResult value,
-		Func<TSetup, bool> setupPredicate) where TSetup : IndexerSetup
-	{
-		RegisterInteraction(access);
-		TSetup? setup = GetIndexerSetup(setupPredicate);
 		if (setup is null)
 		{
 			SetIndexerValue(access, value);

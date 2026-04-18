@@ -5,6 +5,131 @@ public sealed partial class MockBehaviorTests
 	public sealed class UseConstructorParametersForTests
 	{
 		[Fact]
+		public async Task TryGetConstructorParameters_Predicate_IsEvaluatedOnEachCall()
+		{
+			int invocationCount = 0;
+			IMockBehaviorAccess sut = MockBehavior.Default
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() =>
+				{
+					invocationCount++;
+					return [invocationCount,];
+				});
+			object?[] expectedFirst = [1,];
+			object?[] expectedSecond = [2,];
+
+			sut.TryGetConstructorParameters<MyServiceWithMultipleConstructors>(out object?[]? first);
+			sut.TryGetConstructorParameters<MyServiceWithMultipleConstructors>(out object?[]? second);
+
+			await That(first).IsEqualTo(expectedFirst);
+			await That(second).IsEqualTo(expectedSecond);
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WhenNoneRegistered_ShouldReturnFalse()
+		{
+			IMockBehaviorAccess sut = MockBehavior.Default;
+
+			bool result = sut.TryGetConstructorParameters<MyServiceWithMultipleConstructors>(out object?[]? parameters);
+
+			await That(result).IsFalse();
+			await That(parameters).IsNull();
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WhenRegisteredForBaseType_ShouldNotMatchDerivedType()
+		{
+			IMockBehaviorAccess sut = MockBehavior.Default
+				.UseConstructorParametersFor<MyBaseService>(1);
+
+			bool result = sut.TryGetConstructorParameters<MyDerivedService>(out object?[]? parameters);
+
+			await That(result).IsFalse();
+			await That(parameters).IsNull();
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WhenRegisteredForDerivedType_ShouldNotMatchBaseType()
+		{
+			IMockBehaviorAccess sut = MockBehavior.Default
+				.UseConstructorParametersFor<MyDerivedService>(1);
+
+			bool result = sut.TryGetConstructorParameters<MyBaseService>(out object?[]? parameters);
+
+			await That(result).IsFalse();
+			await That(parameters).IsNull();
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WhenRegisteredForDifferentType_ShouldReturnFalse()
+		{
+			IMockBehaviorAccess sut = MockBehavior.Default
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(5);
+
+			bool result = sut.TryGetConstructorParameters<MyOtherService>(out object?[]? parameters);
+
+			await That(result).IsFalse();
+			await That(parameters).IsNull();
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WithMultipleRegistrationsForSameType_Predicate_ShouldReturnLatest()
+		{
+			IMockBehaviorAccess sut = MockBehavior.Default
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [1,])
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(() => [2,]);
+			object?[] expected = [2,];
+
+			bool result = sut.TryGetConstructorParameters<MyServiceWithMultipleConstructors>(out object?[]? parameters);
+
+			await That(result).IsTrue();
+			await That(parameters).IsEqualTo(expected);
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WithMultipleRegistrationsForSameType_ShouldReturnLatest()
+		{
+			IMockBehaviorAccess sut = MockBehavior.Default
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(1)
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(2);
+			object?[] expected = [2,];
+
+			bool result = sut.TryGetConstructorParameters<MyServiceWithMultipleConstructors>(out object?[]? parameters);
+
+			await That(result).IsTrue();
+			await That(parameters).IsEqualTo(expected);
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WithMultipleRegistrationsForSameType_UsedByMock_ShouldUseLatest()
+		{
+			MockBehavior behavior = MockBehavior.Default
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(1)
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(2);
+
+			MyServiceWithMultipleConstructors mock = MyServiceWithMultipleConstructors.CreateMock(behavior);
+
+			await That(mock.Value).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task TryGetConstructorParameters_WithRegistrationsForDifferentTypes_ShouldReturnEachCorrectly()
+		{
+			IMockBehaviorAccess sut = MockBehavior.Default
+				.UseConstructorParametersFor<MyServiceWithMultipleConstructors>(1)
+				.UseConstructorParametersFor<MyOtherService>("foo");
+			object?[] expectedForService = [1,];
+			object?[] expectedForOther = ["foo",];
+
+			bool resultForService = sut.TryGetConstructorParameters<MyServiceWithMultipleConstructors>(out object?[]? serviceParameters);
+			bool resultForOther = sut.TryGetConstructorParameters<MyOtherService>(out object?[]? otherParameters);
+
+			await That(resultForService).IsTrue();
+			await That(serviceParameters).IsEqualTo(expectedForService);
+			await That(resultForOther).IsTrue();
+			await That(otherParameters).IsEqualTo(expectedForOther);
+		}
+
+		[Fact]
 		public async Task WithExplicitConstructorParameters_ShouldIgnoreConstructorParametersFromBehavior()
 		{
 			MockBehavior behavior = MockBehavior.Default
@@ -53,6 +178,12 @@ public sealed partial class MockBehaviorTests
 			await That(valueWithDefaultBehavior).IsEqualTo(0);
 			await That(valueWithCustomBehavior).IsEqualTo(5);
 		}
+
+		internal class MyOtherService;
+
+		internal class MyBaseService;
+
+		internal class MyDerivedService : MyBaseService;
 
 		internal class MyServiceWithMultipleConstructors
 		{

@@ -30,6 +30,63 @@ public sealed partial class VerificationResultTests
 		}
 
 		[Fact]
+		public async Task Verify_OnAwaitable_WhenPredicateBecomesSatisfied_ShouldReturnTrue()
+		{
+			IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+			VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result = sut.Mock.Verify.Dispense(Match.AnyParameters())
+				.Within(30.Seconds());
+			using CancellationTokenSource cts = new();
+			CancellationToken token = cts.Token;
+
+			Task backgroundTask = Task.Run(async () =>
+			{
+				for (int i = 0; i < 1000; i++)
+				{
+					await Task.Delay(10, CancellationToken.None).ConfigureAwait(false);
+					sut.Dispense("Dark", i);
+					if (token.IsCancellationRequested)
+					{
+						break;
+					}
+				}
+			}, token);
+
+			await That(((IVerificationResult)result).Verify(l => l.Length > 0)).IsTrue();
+			cts.Cancel();
+			await backgroundTask;
+		}
+
+		[Fact]
+		public async Task Verify_OnAwaitable_WhenPredicateIsAlreadySatisfied_ShouldReturnTrue()
+		{
+			IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+			sut.Dispense("Dark", 1);
+			sut.Dispense("Dark", 2);
+
+			VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result = sut.Mock.Verify.Dispense(Match.AnyParameters())
+				.Within(500.Milliseconds());
+
+			await That(((IVerificationResult)result).Verify(l => l.Length > 0)).IsTrue();
+		}
+
+		[Fact]
+		public async Task Verify_OnAwaitable_WhenPredicateIsNeverSatisfied_ShouldThrowTimeoutException()
+		{
+			IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+			VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result = sut.Mock.Verify.Dispense(Match.AnyParameters())
+				.Within(50.Milliseconds());
+
+			void Act()
+			{
+				((IVerificationResult)result).Verify(l => l.Length > 0);
+			}
+
+			await That(Act).Throws<MockVerificationTimeoutException>();
+		}
+
+		[Fact]
 		public async Task VerifyAsync_WhenAlreadySuccessful_ShouldReturnTrue()
 		{
 			IChocolateDispenser sut = IChocolateDispenser.CreateMock();

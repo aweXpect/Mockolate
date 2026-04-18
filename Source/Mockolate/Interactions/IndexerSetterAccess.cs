@@ -26,9 +26,6 @@ public class IndexerSetterAccess<T1, TValue>(string parameterName1, T1 parameter
 	/// </summary>
 	public TValue TypedValue { get; } = value;
 
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => true;
-
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 1;
 
@@ -83,9 +80,6 @@ public class IndexerSetterAccess<T1, T2, TValue>(
 	///     The typed value the indexer was being set to.
 	/// </summary>
 	public TValue TypedValue { get; } = value;
-
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => true;
 
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 2;
@@ -154,9 +148,6 @@ public class IndexerSetterAccess<T1, T2, T3, TValue>(
 	///     The typed value the indexer was being set to.
 	/// </summary>
 	public TValue TypedValue { get; } = value;
-
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => true;
 
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 3;
@@ -238,9 +229,6 @@ public class IndexerSetterAccess<T1, T2, T3, T4, TValue>(
 	///     The typed value the indexer was being set to.
 	/// </summary>
 	public TValue TypedValue { get; } = value;
-
-	/// <inheritdoc cref="IndexerAccess.IsSetter" />
-	public override bool IsSetter => true;
 
 	/// <inheritdoc cref="IndexerAccess.ParameterCount" />
 	public override int ParameterCount => 4;

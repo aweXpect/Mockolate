@@ -1,4 +1,4 @@
-using aweXpect.Chronology;
+﻿using aweXpect.Chronology;
 using Mockolate.Interactions;
 
 namespace Mockolate.Tests.MockMethods;
@@ -86,6 +86,21 @@ public sealed partial class InteractionsTests
 	}
 
 	[Fact]
+	public async Task MethodInvocation3_ToString_WithNull_ShouldReturnExpectedValue()
+	{
+		MockInteractions interactions = new();
+		MethodInvocation<int?, long?, TimeSpan?> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<int?, long?, TimeSpan?>(
+				"global::Mockolate.InteractionsTests.SomeMethod",
+				"p1", null,
+				"p2", null,
+				"p3", null));
+		string expectedValue = "invoke method SomeMethod(null, null, null)";
+
+		await That(interaction.ToString()).IsEqualTo(expectedValue);
+	}
+
+	[Fact]
 	public async Task MethodInvocation4_ToString_ShouldReturnExpectedValue()
 	{
 		MockInteractions interactions = new();
@@ -105,14 +120,14 @@ public sealed partial class InteractionsTests
 	public async Task MethodInvocation4_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		MockInteractions interactions = new();
-		MethodInvocation<string?, int, long?, TimeSpan> interaction = ((IMockInteractions)interactions).RegisterInteraction(
-			new MethodInvocation<string?, int, long?, TimeSpan>(
+		MethodInvocation<string?, int?, long?, TimeSpan?> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string?, int?, long?, TimeSpan?>(
 				"SomeMethod",
 				"p1", null,
-				"p2", 4,
+				"p2", null,
 				"p3", null,
-				"p4", 150.Seconds()));
-		string expectedValue = "invoke method SomeMethod(null, 4, null, 00:02:30)";
+				"p4", null));
+		string expectedValue = "invoke method SomeMethod(null, null, null, null)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
@@ -138,15 +153,15 @@ public sealed partial class InteractionsTests
 	public async Task MethodInvocation5_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		MockInteractions interactions = new();
-		MethodInvocation<string?, int, long?, TimeSpan, bool?> interaction = ((IMockInteractions)interactions).RegisterInteraction(
-			new MethodInvocation<string?, int, long?, TimeSpan, bool?>(
+		MethodInvocation<string?, int?, long?, TimeSpan?, bool?> interaction = ((IMockInteractions)interactions).RegisterInteraction(
+			new MethodInvocation<string?, int?, long?, TimeSpan?, bool?>(
 				"SomeMethod",
 				"p1", null,
-				"p2", 4,
+				"p2", null,
 				"p3", null,
-				"p4", 150.Seconds(),
+				"p4", null,
 				"p5", null));
-		string expectedValue = "invoke method SomeMethod(null, 4, null, 00:02:30, null)";
+		string expectedValue = "invoke method SomeMethod(null, null, null, null, null)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}

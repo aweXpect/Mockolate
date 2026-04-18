@@ -6,6 +6,7 @@ using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
 using Mockolate.Parameters;
+
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
 
 namespace Mockolate.Setup;
@@ -484,10 +485,9 @@ public class IndexerSetup<TValue, T1>(IParameterMatch<T1> parameter1) : IndexerS
 
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, currentValue, out bool returnCallbackMatched);
-		TValue stored = returnCallbackMatched ? currentValue : currentValue;
-		access.StoreValue(stored);
-		return TryCast(stored, out TResult result, behavior) ? result : baseValue;
+		currentValue = ExecuteReturnCallbacks(p1, currentValue, out _);
+		access.StoreValue(currentValue);
+		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />

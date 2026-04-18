@@ -117,9 +117,6 @@ internal static partial class Sources
 				.Append(i).Append(";").AppendLine();
 		}
 
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.IsSetter\" />").AppendLine();
-		sb.Append("\t\tpublic override bool IsSetter => false;").AppendLine();
-
 		AppendParameterHooks(sb, numberOfParameters);
 
 		sb.Append("\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
@@ -156,8 +153,6 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("The typed value the indexer was being set to.");
 		sb.Append("\t\tpublic TValue TypedValue { get; } = value;").AppendLine();
-		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.IsSetter\" />").AppendLine();
-		sb.Append("\t\tpublic override bool IsSetter => true;").AppendLine();
 
 		AppendParameterHooks(sb, numberOfParameters);
 

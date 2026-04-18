@@ -39,5 +39,5 @@ public abstract class MethodSetup : IMethodSetup, IVerifiableMethodSetup
 	/// <summary>
 	///     Checks if the setup matches the method invocations.
 	/// </summary>
-	protected virtual bool MatchesInteraction(IMethodInteraction interaction) => false;
+	protected abstract bool MatchesInteraction(IMethodInteraction interaction);
 }
