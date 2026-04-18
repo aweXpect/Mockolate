@@ -41,12 +41,12 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 	///     Mirrors <see cref="MockBehavior.SkipInteractionRecording" /> at construction time; kept internal
 	///     because the public knob for this is on <see cref="MockBehavior" />.
 	/// </remarks>
-	internal bool RecordingEnabled { get; init; } = true;
+	internal bool SkipInteractionRecording { get; init; } = false;
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
 	{
-		if (!RecordingEnabled)
+		if (SkipInteractionRecording)
 		{
 			return interaction;
 		}
