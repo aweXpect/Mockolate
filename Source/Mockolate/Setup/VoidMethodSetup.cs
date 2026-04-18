@@ -37,9 +37,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	IVoidMethodSetupCallbackBuilder IVoidMethodSetup.Do(Action callback)
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -53,9 +51,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	IVoidMethodSetupCallbackBuilder IVoidMethodSetup.Do(Action<int> callback)
 	{
 		Callback<Action<int>> currentCallback = new(callback);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -64,9 +60,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	{
 		Callback<Action<int>> currentCallback = new(_ => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -74,9 +68,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	IVoidMethodSetup IVoidMethodSetup.DoesNotThrow()
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -89,9 +81,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	IVoidMethodSetupReturnBuilder IVoidMethodSetup.Throws<TException>()
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -105,9 +95,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	IVoidMethodSetupReturnBuilder IVoidMethodSetup.Throws(Exception exception)
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -121,9 +109,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 	IVoidMethodSetupReturnBuilder IVoidMethodSetup.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -292,9 +278,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -308,9 +292,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -324,9 +306,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -335,9 +315,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	{
 		Callback<Action<int, T1>> currentCallback = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -345,9 +323,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetup<T1> IVoidMethodSetup<T1>.DoesNotThrow()
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -360,9 +336,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws<TException>()
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -376,9 +350,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -392,9 +364,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -408,9 +378,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws(Func<T1, Exception> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -640,9 +608,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -656,9 +622,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -672,9 +636,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -683,9 +645,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new((_, _, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -693,9 +653,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetup<T1, T2> IVoidMethodSetup<T1, T2>.DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -708,9 +666,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws<TException>()
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -724,9 +680,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -740,9 +694,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -756,9 +708,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws(Func<T1, T2, Exception> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -999,9 +949,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1015,9 +963,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1031,9 +977,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action<int, T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -1042,9 +986,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new((_, _, _, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -1052,9 +994,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetup<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1067,9 +1007,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws<TException>()
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1083,9 +1021,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1099,9 +1035,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1115,9 +1049,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws(Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1369,9 +1301,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1385,9 +1315,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1401,9 +1329,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action<int, T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -1412,9 +1338,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new((_, _, _, _, _) => _mockRegistry.TransitionTo(scenario));
 		currentCallback.InParallel();
-		_callbacks ??= [];
-		_callbacks.Active = currentCallback;
-		_callbacks.Add(currentCallback);
+		_callbacks = _callbacks.Register(currentCallback);
 		return this;
 	}
 
@@ -1422,9 +1346,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.DoesNotThrow()
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1437,9 +1359,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws<TException>()
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1453,9 +1373,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws(Exception exception)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1469,9 +1387,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws(Func<Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]
@@ -1485,9 +1401,7 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
-		_returnCallbacks ??= [];
-		_returnCallbacks.Active = currentCallback;
-		_returnCallbacks.Add(currentCallback);
+		_returnCallbacks = _returnCallbacks.Register(currentCallback);
 		return this;
 
 		[DebuggerNonUserCode]

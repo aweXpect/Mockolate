@@ -27,7 +27,7 @@ public interface IEventSubscriptionSetup
 	/// <summary>
 	///     Registers a callback to be invoked whenever a handler is subscribed to the event.
 	/// </summary>
-	IEventSetupCallbackBuilder Do(Action callback);
+	IEventSubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever a handler is subscribed to the event.
@@ -35,13 +35,13 @@ public interface IEventSubscriptionSetup
 	/// <remarks>
 	///     The callback receives the target object and method of the subscribed handler.
 	/// </remarks>
-	IEventSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
+	IEventSubscriptionSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever a handler is subscribed to the event.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IEventSetupParallelCallbackBuilder TransitionTo(string scenario);
+	IEventSubscriptionSetupParallelCallbackBuilder TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -52,7 +52,7 @@ public interface IEventUnsubscriptionSetup
 	/// <summary>
 	///     Registers a callback to be invoked whenever a handler is unsubscribed from the event.
 	/// </summary>
-	IEventSetupCallbackBuilder Do(Action callback);
+	IEventUnsubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever a handler is unsubscribed from the event.
@@ -60,20 +60,20 @@ public interface IEventUnsubscriptionSetup
 	/// <remarks>
 	///     The callback receives the target object and method of the unsubscribed handler.
 	/// </remarks>
-	IEventSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
+	IEventUnsubscriptionSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever a handler is unsubscribed from the
 	///     event.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IEventSetupParallelCallbackBuilder TransitionTo(string scenario);
+	IEventUnsubscriptionSetupParallelCallbackBuilder TransitionTo(string scenario);
 }
 
 /// <summary>
-///     Interface for setting up an event with fluent syntax.
+///     Interface for setting up an event subscription with fluent syntax.
 /// </summary>
-public interface IEventSetupParallelCallbackBuilder : IEventSetupCallbackWhenBuilder
+public interface IEventSubscriptionSetupParallelCallbackBuilder : IEventSubscriptionSetupCallbackWhenBuilder
 {
 	/// <summary>
 	///     Limits the callback to only execute for event interactions where the predicate returns true.
@@ -81,40 +81,89 @@ public interface IEventSetupParallelCallbackBuilder : IEventSetupCallbackWhenBui
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the event has been interacted with so far.
 	/// </remarks>
-	IEventSetupCallbackWhenBuilder When(Func<int, bool> predicate);
+	IEventSubscriptionSetupCallbackWhenBuilder When(Func<int, bool> predicate);
 }
 
 /// <summary>
-///     Interface for setting up an event with fluent syntax.
+///     Interface for setting up an event subscription with fluent syntax.
 /// </summary>
-public interface IEventSetupCallbackBuilder : IEventSetupParallelCallbackBuilder
+public interface IEventSubscriptionSetupCallbackBuilder : IEventSubscriptionSetupParallelCallbackBuilder
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IEventSetupParallelCallbackBuilder InParallel();
+	IEventSubscriptionSetupParallelCallbackBuilder InParallel();
 }
 
 /// <summary>
-///     Interface for setting up an event with fluent syntax.
+///     Interface for setting up an event subscription with fluent syntax.
 /// </summary>
-public interface IEventSetupCallbackWhenBuilder : IEventSetup
+public interface IEventSubscriptionSetupCallbackWhenBuilder : IEventSetup
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IEventSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	///     <see cref="IEventSubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
-	IEventSetupCallbackWhenBuilder For(int times);
+	IEventSubscriptionSetupCallbackWhenBuilder For(int times);
 
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IEventSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	///     <see cref="IEventSubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	/// </remarks>
+	IEventSetup Only(int times);
+}
+
+/// <summary>
+///     Interface for setting up an event unsubscription with fluent syntax.
+/// </summary>
+public interface IEventUnsubscriptionSetupParallelCallbackBuilder : IEventUnsubscriptionSetupCallbackWhenBuilder
+{
+	/// <summary>
+	///     Limits the callback to only execute for event interactions where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the event has been interacted with so far.
+	/// </remarks>
+	IEventUnsubscriptionSetupCallbackWhenBuilder When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Interface for setting up an event unsubscription with fluent syntax.
+/// </summary>
+public interface IEventUnsubscriptionSetupCallbackBuilder : IEventUnsubscriptionSetupParallelCallbackBuilder
+{
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IEventUnsubscriptionSetupParallelCallbackBuilder InParallel();
+}
+
+/// <summary>
+///     Interface for setting up an event unsubscription with fluent syntax.
+/// </summary>
+public interface IEventUnsubscriptionSetupCallbackWhenBuilder : IEventSetup
+{
+	/// <summary>
+	///     Repeats the callback for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IEventUnsubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	/// </remarks>
+	IEventUnsubscriptionSetupCallbackWhenBuilder For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IEventUnsubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
 	IEventSetup Only(int times);
 }

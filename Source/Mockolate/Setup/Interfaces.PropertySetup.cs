@@ -46,7 +46,7 @@ public interface IPropertyGetterSetup<T>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
 	/// </summary>
-	IPropertySetupCallbackBuilder<T> Do(Action callback);
+	IPropertyGetterSetupCallbackBuilder<T> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
@@ -54,7 +54,7 @@ public interface IPropertyGetterSetup<T>
 	/// <remarks>
 	///     The callback receives the value of the property as single parameter.
 	/// </remarks>
-	IPropertySetupCallbackBuilder<T> Do(Action<T> callback);
+	IPropertyGetterSetupCallbackBuilder<T> Do(Action<T> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's getter is accessed.
@@ -63,13 +63,13 @@ public interface IPropertyGetterSetup<T>
 	///     The callback receives an incrementing access counter as first parameter and the value of the property as second
 	///     parameter.
 	/// </remarks>
-	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
+	IPropertyGetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the property is read.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IPropertySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+	IPropertyGetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -80,7 +80,7 @@ public interface IPropertySetterSetup<T>
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's value is set.
 	/// </summary>
-	IPropertySetupCallbackBuilder<T> Do(Action callback);
+	IPropertySetterSetupCallbackBuilder<T> Do(Action callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's value is set.
@@ -88,7 +88,7 @@ public interface IPropertySetterSetup<T>
 	/// <remarks>
 	///     The callback receives the value the property is set to as single parameter.
 	/// </remarks>
-	IPropertySetupCallbackBuilder<T> Do(Action<T> callback);
+	IPropertySetterSetupCallbackBuilder<T> Do(Action<T> callback);
 
 	/// <summary>
 	///     Registers a callback to be invoked whenever the property's value is set.
@@ -97,13 +97,13 @@ public interface IPropertySetterSetup<T>
 	///     The callback receives an incrementing access counter as first parameter and the value the property is set to as
 	///     second parameter.
 	/// </remarks>
-	IPropertySetupCallbackBuilder<T> Do(Action<int, T> callback);
+	IPropertySetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the property is written to.
 	/// </summary>
 	/// <param name="scenario">The name of the new scenario.</param>
-	IPropertySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+	IPropertySetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
 }
 
 /// <summary>
@@ -183,9 +183,9 @@ public interface IPropertySetup<T>
 }
 
 /// <summary>
-///     Interface for setting up a property with fluent syntax.
+///     Interface for setting up a property getter with fluent syntax.
 /// </summary>
-public interface IPropertySetupParallelCallbackBuilder<T> : IPropertySetupCallbackWhenBuilder<T>
+public interface IPropertyGetterSetupParallelCallbackBuilder<T> : IPropertyGetterSetupCallbackWhenBuilder<T>
 {
 	/// <summary>
 	///     Limits the callback to only execute for property accesses where the predicate returns true.
@@ -193,40 +193,89 @@ public interface IPropertySetupParallelCallbackBuilder<T> : IPropertySetupCallba
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
-	IPropertySetupCallbackWhenBuilder<T> When(Func<int, bool> predicate);
+	IPropertyGetterSetupCallbackWhenBuilder<T> When(Func<int, bool> predicate);
 }
 
 /// <summary>
-///     Interface for setting up a property with fluent syntax.
+///     Interface for setting up a property getter with fluent syntax.
 /// </summary>
-public interface IPropertySetupCallbackBuilder<T> : IPropertySetupParallelCallbackBuilder<T>
+public interface IPropertyGetterSetupCallbackBuilder<T> : IPropertyGetterSetupParallelCallbackBuilder<T>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IPropertySetupParallelCallbackBuilder<T> InParallel();
+	IPropertyGetterSetupParallelCallbackBuilder<T> InParallel();
 }
 
 /// <summary>
-///     Interface for setting up a property with fluent syntax.
+///     Interface for setting up a property getter with fluent syntax.
 /// </summary>
-public interface IPropertySetupCallbackWhenBuilder<T> : IPropertySetup<T>
+public interface IPropertyGetterSetupCallbackWhenBuilder<T> : IPropertySetup<T>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IPropertySetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	///     <see cref="IPropertyGetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
-	IPropertySetupCallbackWhenBuilder<T> For(int times);
+	IPropertyGetterSetupCallbackWhenBuilder<T> For(int times);
 
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IPropertySetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	///     <see cref="IPropertyGetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	/// </remarks>
+	IPropertySetup<T> Only(int times);
+}
+
+/// <summary>
+///     Interface for setting up a property setter with fluent syntax.
+/// </summary>
+public interface IPropertySetterSetupParallelCallbackBuilder<T> : IPropertySetterSetupCallbackWhenBuilder<T>
+{
+	/// <summary>
+	///     Limits the callback to only execute for property accesses where the predicate returns true.
+	/// </summary>
+	/// <remarks>
+	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
+	/// </remarks>
+	IPropertySetterSetupCallbackWhenBuilder<T> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Interface for setting up a property setter with fluent syntax.
+/// </summary>
+public interface IPropertySetterSetupCallbackBuilder<T> : IPropertySetterSetupParallelCallbackBuilder<T>
+{
+	/// <summary>
+	///     Runs the callback in parallel to the other callbacks.
+	/// </summary>
+	IPropertySetterSetupParallelCallbackBuilder<T> InParallel();
+}
+
+/// <summary>
+///     Interface for setting up a property setter with fluent syntax.
+/// </summary>
+public interface IPropertySetterSetupCallbackWhenBuilder<T> : IPropertySetup<T>
+{
+	/// <summary>
+	///     Repeats the callback for the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IPropertySetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
+	/// </remarks>
+	IPropertySetterSetupCallbackWhenBuilder<T> For(int times);
+
+	/// <summary>
+	///     Deactivates the callback after the given number of <paramref name="times" />.
+	/// </summary>
+	/// <remarks>
+	///     The number of times is only counted for actual executions (
+	///     <see cref="IPropertySetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
 	IPropertySetup<T> Only(int times);
 }
