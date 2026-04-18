@@ -852,7 +852,7 @@ namespace Mockolate.Setup
         public Mockolate.Setup.Callback<T>? Active { get; set; }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
-    public class EventSetup : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackBuilder, Mockolate.Setup.IEventSetupCallbackWhenBuilder, Mockolate.Setup.IEventSubscriptionSetup, Mockolate.Setup.IEventUnsubscriptionSetup
+    public class EventSetup : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackBuilder, Mockolate.Setup.IEventSetupCallbackWhenBuilder, Mockolate.Setup.IEventSetupParallelCallbackBuilder, Mockolate.Setup.IEventSubscriptionSetup, Mockolate.Setup.IEventUnsubscriptionSetup
     {
         public EventSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public string Name { get; }
@@ -865,27 +865,30 @@ namespace Mockolate.Setup
         Mockolate.Setup.IEventSubscriptionSetup OnSubscribed { get; }
         Mockolate.Setup.IEventUnsubscriptionSetup OnUnsubscribed { get; }
     }
-    public interface IEventSetupCallbackBuilder : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackWhenBuilder
+    public interface IEventSetupCallbackBuilder : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackWhenBuilder, Mockolate.Setup.IEventSetupParallelCallbackBuilder
     {
-        Mockolate.Setup.IEventSetupCallbackWhenBuilder InParallel();
-        Mockolate.Setup.IEventSetupCallbackWhenBuilder When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IEventSetupParallelCallbackBuilder InParallel();
     }
     public interface IEventSetupCallbackWhenBuilder : Mockolate.Setup.IEventSetup
     {
         Mockolate.Setup.IEventSetupCallbackWhenBuilder For(int times);
         Mockolate.Setup.IEventSetup Only(int times);
     }
+    public interface IEventSetupParallelCallbackBuilder : Mockolate.Setup.IEventSetup, Mockolate.Setup.IEventSetupCallbackWhenBuilder
+    {
+        Mockolate.Setup.IEventSetupCallbackWhenBuilder When(System.Func<int, bool> predicate);
+    }
     public interface IEventSubscriptionSetup
     {
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action callback);
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action<object?, System.Reflection.MethodInfo> callback);
-        Mockolate.Setup.IEventSetupCallbackBuilder TransitionTo(string scenario);
+        Mockolate.Setup.IEventSetupParallelCallbackBuilder TransitionTo(string scenario);
     }
     public interface IEventUnsubscriptionSetup
     {
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action callback);
         Mockolate.Setup.IEventSetupCallbackBuilder Do(System.Action<object?, System.Reflection.MethodInfo> callback);
-        Mockolate.Setup.IEventSetupCallbackBuilder TransitionTo(string scenario);
+        Mockolate.Setup.IEventSetupParallelCallbackBuilder TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1>
     {
@@ -893,7 +896,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<T1> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<T1, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<int, T1, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1, out T2>
     {
@@ -901,7 +904,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<int, T1, T2, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3>
     {
@@ -909,7 +912,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<int, T1, T2, T3, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IIndexerGetterSetup<TValue, out T1, out T2, out T3, out T4>
     {
@@ -917,7 +920,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<int, T1, T2, T3, T4, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1>
     {
@@ -925,7 +928,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<T1, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> Do(System.Action<int, T1, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1, out T2>
     {
@@ -933,7 +936,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> Do(System.Action<int, T1, T2, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3>
     {
@@ -941,7 +944,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<int, T1, T2, T3, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IIndexerSetterSetup<TValue, out T1, out T2, out T3, out T4>
     {
@@ -949,27 +952,23 @@ namespace Mockolate.Setup
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4, TValue> callback);
         Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<int, T1, T2, T3, T4, TValue> callback);
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
     }
-    public interface IIndexerSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
+    public interface IIndexerSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1> InParallel();
-        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1> InParallel();
     }
-    public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
+    public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
     {
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2> InParallel();
-        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2> InParallel();
     }
-    public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
+    public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
     {
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3> InParallel();
-        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3> InParallel();
     }
-    public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
+    public interface IIndexerSetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
     {
-        Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4> InParallel();
-        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> InParallel();
     }
     public interface IIndexerSetupCallbackWhenBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
@@ -990,6 +989,22 @@ namespace Mockolate.Setup
     {
         Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> For(int times);
         Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> Only(int times);
+    }
+    public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerSetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
     }
     public interface IIndexerSetupReturnBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
@@ -1126,24 +1141,27 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> TransitionTo(string scenario);
+        Mockolate.Setup.IPropertySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
     }
     public interface IPropertySetterSetup<T>
     {
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
-        Mockolate.Setup.IPropertySetupCallbackBuilder<T> TransitionTo(string scenario);
+        Mockolate.Setup.IPropertySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
     }
-    public interface IPropertySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    public interface IPropertySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
-        Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> InParallel();
-        Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IPropertySetupParallelCallbackBuilder<T> InParallel();
     }
     public interface IPropertySetupCallbackWhenBuilder<T> : Mockolate.Setup.IPropertySetup<T>
     {
         Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> For(int times);
         Mockolate.Setup.IPropertySetup<T> Only(int times);
+    }
+    public interface IPropertySetupParallelCallbackBuilder<T> : Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    {
+        Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T> When(System.Func<int, bool> predicate);
     }
     public interface IPropertySetupReturnBuilder<T> : Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
@@ -1170,29 +1188,25 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws<TException>()
             where TException : System.Exception, new ();
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
     {
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> InParallel();
-        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn> InParallel();
     }
     public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>, Mockolate.Setup.ISetup
     {
         Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> InParallel();
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
     {
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> InParallel();
-        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> InParallel();
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
     {
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> InParallel();
-        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> InParallel();
     }
-    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
+    public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
     {
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> InParallel();
-        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4> InParallel();
     }
     public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
     {
@@ -1219,9 +1233,25 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> For(int times);
         Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4> Only(int times);
     }
+    public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn> When(System.Func<int, bool> predicate);
+    }
     public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>, Mockolate.Setup.ISetup
     {
         Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> When(System.Func<int, bool> predicate);
+    }
+    public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> When(System.Func<int, bool> predicate);
+    }
+    public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> When(System.Func<int, bool> predicate);
+    }
+    public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
     }
     public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>, Mockolate.Setup.ISetup
     {
@@ -1295,7 +1325,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn> TransitionTo(string scenario);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn> TransitionTo(string scenario);
     }
     public interface IReturnMethodSetup<in TReturn, out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1327,7 +1357,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
     }
     public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1343,7 +1373,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1359,7 +1389,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback);
         Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
+        Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
     }
     public interface ISetup { }
     public interface IVerifiableMethodSetup
@@ -1376,32 +1406,27 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder TransitionTo(string scenario);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder TransitionTo(string scenario);
     }
-    public interface IVoidMethodSetupCallbackBuilder : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder
+    public interface IVoidMethodSetupCallbackBuilder : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder
     {
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder InParallel();
-        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder InParallel();
     }
-    public interface IVoidMethodSetupCallbackBuilder<out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
+    public interface IVoidMethodSetupCallbackBuilder<out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
     {
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1> InParallel();
-        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1> InParallel();
     }
-    public interface IVoidMethodSetupCallbackBuilder<out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
+    public interface IVoidMethodSetupCallbackBuilder<out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
     {
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2> InParallel();
-        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2> InParallel();
     }
-    public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
+    public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
     {
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3> InParallel();
-        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> InParallel();
     }
-    public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
+    public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
     {
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> InParallel();
-        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> When(System.Func<int, bool> predicate);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> InParallel();
     }
     public interface IVoidMethodSetupCallbackWhenBuilder : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup
     {
@@ -1427,6 +1452,26 @@ namespace Mockolate.Setup
     {
         Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> For(int times);
         Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4> Only(int times);
+    }
+    public interface IVoidMethodSetupParallelCallbackBuilder : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder
+    {
+        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder When(System.Func<int, bool> predicate);
+    }
+    public interface IVoidMethodSetupParallelCallbackBuilder<out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
+    {
+        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1> When(System.Func<int, bool> predicate);
+    }
+    public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
+    {
+        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2> When(System.Func<int, bool> predicate);
+    }
+    public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
+    {
+        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> When(System.Func<int, bool> predicate);
+    }
+    public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> When(System.Func<int, bool> predicate);
     }
     public interface IVoidMethodSetupParameterIgnorer<out T1> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup<T1>
     {
@@ -1501,7 +1546,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1> Throws(System.Func<T1, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1> TransitionTo(string scenario);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1> TransitionTo(string scenario);
     }
     public interface IVoidMethodSetup<out T1, out T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1515,7 +1560,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2> Throws(System.Func<T1, T2, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2> TransitionTo(string scenario);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2> TransitionTo(string scenario);
     }
     public interface IVoidMethodSetup<out T1, out T2, out T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1529,7 +1574,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
     }
     public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
@@ -1543,7 +1588,7 @@ namespace Mockolate.Setup
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback);
         Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
-        Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
+        Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
     }
     public abstract class IndexerSetup : Mockolate.Setup.IInteractiveIndexerSetup, Mockolate.Setup.ISetup
     {
@@ -1557,7 +1602,7 @@ namespace Mockolate.Setup
         protected static string FormatType(System.Type type) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
-    public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
+    public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1> OnGet { get; }
@@ -1584,7 +1629,7 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
+    public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2> OnGet { get; }
@@ -1611,7 +1656,7 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
+    public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3> OnGet { get; }
@@ -1638,7 +1683,7 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
+    public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
         public Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4> OnGet { get; }
@@ -1674,7 +1719,7 @@ namespace Mockolate.Setup
     }
     public abstract class PropertySetup : Mockolate.Setup.IInteractivePropertySetup, Mockolate.Setup.ISetup
     {
-        protected PropertySetup(Mockolate.MockRegistry mockRegistry) { }
+        protected PropertySetup() { }
         public abstract string Name { get; }
         protected abstract bool? GetSkipBaseClass();
         protected abstract void InitializeValue(object? value);
@@ -1682,7 +1727,7 @@ namespace Mockolate.Setup
         protected abstract void InvokeSetter<TValue>(TValue value, Mockolate.MockBehavior behavior);
         protected abstract bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
-    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         public PropertySetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public override string Name { get; }
@@ -1713,7 +1758,7 @@ namespace Mockolate.Setup
         public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.ReadOnlySpanWrapper<T> op_Implicit(System.ReadOnlySpan<T> span) { }
     }
-    public abstract class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public bool HasReturnCallbacks { get; }
@@ -1753,7 +1798,7 @@ namespace Mockolate.Setup
             public override string ToString() { }
         }
     }
-    public abstract class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public bool HasReturnCallbacks { get; }
@@ -1778,7 +1823,7 @@ namespace Mockolate.Setup
             public override string ToString() { }
         }
     }
-    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public bool HasReturnCallbacks { get; }
@@ -1804,7 +1849,7 @@ namespace Mockolate.Setup
             public override string ToString() { }
         }
     }
-    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public bool HasReturnCallbacks { get; }
@@ -1838,7 +1883,7 @@ namespace Mockolate.Setup
         public static System.Span<T> op_Implicit(Mockolate.Setup.SpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.SpanWrapper<T> op_Implicit(System.Span<T> span) { }
     }
-    public abstract class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupReturnBuilder, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder
+    public abstract class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder, Mockolate.Setup.IVoidMethodSetupReturnBuilder, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder
     {
         protected VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public abstract bool Matches();
@@ -1852,7 +1897,7 @@ namespace Mockolate.Setup
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
+    public abstract class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public abstract bool Matches(string p1Name, T1 p1Value);
@@ -1874,7 +1919,7 @@ namespace Mockolate.Setup
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
+    public abstract class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value);
@@ -1897,7 +1942,7 @@ namespace Mockolate.Setup
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
+    public abstract class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value);
@@ -1921,7 +1966,7 @@ namespace Mockolate.Setup
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
+    public abstract class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value);

@@ -35,15 +35,15 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 	/// <inheritdoc cref="IEventSetup.OnUnsubscribed" />
 	public IEventUnsubscriptionSetup OnUnsubscribed => this;
 
-	/// <inheritdoc cref="IEventSetupCallbackBuilder.When(Func{int, bool})" />
-	IEventSetupCallbackWhenBuilder IEventSetupCallbackBuilder.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IEventSetupParallelCallbackBuilder.When(Func{int, bool})" />
+	IEventSetupCallbackWhenBuilder IEventSetupParallelCallbackBuilder.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
-	/// <inheritdoc cref="IEventSetupParallelCallbackBuilder.InParallel()" />
-	IEventSetupCallbackWhenBuilder IEventSetupParallelCallbackBuilder.InParallel()
+	/// <inheritdoc cref="IEventSetupCallbackBuilder.InParallel()" />
+	IEventSetupParallelCallbackBuilder IEventSetupCallbackBuilder.InParallel()
 	{
 		_currentCallback?.InParallel();
 		return this;
@@ -93,7 +93,7 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		}
 	}
 
-	IEventSetupCallbackBuilder IEventSubscriptionSetup.TransitionTo(string scenario)
+	IEventSetupParallelCallbackBuilder IEventSubscriptionSetup.TransitionTo(string scenario)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new((_, _, _) => mockRegistry.TransitionTo(scenario));
 		item.InParallel();
@@ -132,7 +132,7 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		}
 	}
 
-	IEventSetupCallbackBuilder IEventUnsubscriptionSetup.TransitionTo(string scenario)
+	IEventSetupParallelCallbackBuilder IEventUnsubscriptionSetup.TransitionTo(string scenario)
 	{
 		Callback<Action<int, object?, MethodInfo>> item = new((_, _, _) => mockRegistry.TransitionTo(scenario));
 		item.InParallel();

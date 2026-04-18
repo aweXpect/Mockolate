@@ -54,7 +54,7 @@ public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn> TransitionTo(string scenario);
+	IReturnMethodSetupParallelCallbackBuilder<TReturn> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -87,13 +87,20 @@ public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackBuilder<in TReturn>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn>
+	: IReturnMethodSetupParallelCallbackBuilder<TReturn>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn> InParallel();
+	IReturnMethodSetupParallelCallbackBuilder<TReturn> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -114,7 +121,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -125,7 +132,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -287,7 +294,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -298,7 +305,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -395,7 +402,7 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -438,13 +445,20 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>
+	: IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> InParallel();
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, out T2>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -465,7 +479,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -476,7 +490,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -573,7 +587,7 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMetho
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -616,13 +630,20 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMetho
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>
+	: IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> InParallel();
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, out T2, out T3>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -643,7 +664,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -654,7 +675,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -752,7 +773,7 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> 
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -795,13 +816,20 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> 
 ///     Sets up a callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4>
-	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>
+	: IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> InParallel();
+	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <typeparamref name="TReturn" />.
+/// </summary>
+public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, out T2, out T3, out T4>
+	: IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -822,7 +850,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -833,7 +861,7 @@ public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IReturnMethodSetupCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IReturnMethodSetupParallelCallbackBuilder{TReturn}.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />
 	///     ).
 	/// </remarks>
@@ -926,7 +954,7 @@ public interface IVoidMethodSetup : IMethodSetup
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder TransitionTo(string scenario);
+	IVoidMethodSetupParallelCallbackBuilder TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -953,13 +981,19 @@ public interface IVoidMethodSetup : IMethodSetup
 /// <summary>
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
-public interface IVoidMethodSetupCallbackBuilder : IVoidMethodSetupCallbackWhenBuilder
+public interface IVoidMethodSetupCallbackBuilder : IVoidMethodSetupParallelCallbackBuilder
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder InParallel();
+	IVoidMethodSetupParallelCallbackBuilder InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupParallelCallbackBuilder : IVoidMethodSetupCallbackWhenBuilder
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -979,7 +1013,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder : IVoidMethodSetup
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder For(int times);
@@ -989,7 +1023,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder : IVoidMethodSetup
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup Only(int times);
@@ -1069,7 +1103,7 @@ public interface IVoidMethodSetup<out T1> : IMethodSetup
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> TransitionTo(string scenario);
+	IVoidMethodSetupParallelCallbackBuilder<T1> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1102,13 +1136,20 @@ public interface IVoidMethodSetup<out T1> : IMethodSetup
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackBuilder<out T1>
-	: IVoidMethodSetupCallbackWhenBuilder<T1>
+	: IVoidMethodSetupParallelCallbackBuilder<T1>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> InParallel();
+	IVoidMethodSetupParallelCallbackBuilder<T1> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupParallelCallbackBuilder<out T1>
+	: IVoidMethodSetupCallbackWhenBuilder<T1>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -1129,7 +1170,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1> For(int times);
@@ -1139,7 +1180,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1> Only(int times);
@@ -1233,7 +1274,7 @@ public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> TransitionTo(string scenario);
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1266,13 +1307,20 @@ public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackBuilder<out T1, out T2>
-	: IVoidMethodSetupCallbackWhenBuilder<T1, T2>
+	: IVoidMethodSetupParallelCallbackBuilder<T1, T2>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> InParallel();
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2>
+	: IVoidMethodSetupCallbackWhenBuilder<T1, T2>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -1293,7 +1341,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2> For(int times);
@@ -1303,7 +1351,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2> Only(int times);
@@ -1397,7 +1445,7 @@ public interface IVoidMethodSetup<out T1, out T2, out T3> : IMethodSetup
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1430,13 +1478,20 @@ public interface IVoidMethodSetup<out T1, out T2, out T3> : IMethodSetup
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3>
-	: IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>
+	: IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> InParallel();
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2, out T3>
+	: IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -1457,7 +1512,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> For(int times);
@@ -1467,7 +1522,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3>
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2, T3> Only(int times);
@@ -1561,7 +1616,7 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
 	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
 
 	/// <summary>
 	///     Registers an iteration in the sequence of method invocations, that does not throw.
@@ -1594,13 +1649,20 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
 ///     Sets up a callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackBuilder<out T1, out T2, out T3, out T4>
-	: IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>
+	: IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> InParallel();
+	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> InParallel();
+}
 
+/// <summary>
+///     Sets up a parallel callback for a method returning <see langword="void" />.
+/// </summary>
+public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2, out T3, out T4>
+	: IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>
+{
 	/// <summary>
 	///     Limits the callback to only execute for method invocations where the predicate returns true.
 	/// </summary>
@@ -1621,7 +1683,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> For(int times);
@@ -1631,7 +1693,7 @@ public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out
 	/// </summary>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
-	///     <see cref="IVoidMethodSetupCallbackBuilder.When(Func{int, bool})" /> evaluates to
+	///     <see cref="IVoidMethodSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to
 	///     <see langword="true" />).
 	/// </remarks>
 	IVoidMethodSetup<T1, T2, T3, T4> Only(int times);

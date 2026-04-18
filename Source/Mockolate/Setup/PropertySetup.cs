@@ -181,15 +181,15 @@ public class PropertySetup<T> : PropertySetup,
 	/// <inheritdoc cref="PropertySetup.IsValueInitialized" />
 	internal override bool IsValueInitialized => _isInitialized;
 
-	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.When(Func{int, bool})" />
-	IPropertySetupCallbackWhenBuilder<T> IPropertySetupCallbackBuilder<T>.When(Func<int, bool> predicate)
+	/// <inheritdoc cref="IPropertySetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
+	IPropertySetupCallbackWhenBuilder<T> IPropertySetupParallelCallbackBuilder<T>.When(Func<int, bool> predicate)
 	{
 		_currentCallback?.When(predicate);
 		return this;
 	}
 
 	/// <inheritdoc cref="IPropertySetupCallbackBuilder{T}.InParallel()" />
-	IPropertySetupCallbackWhenBuilder<T> IPropertySetupCallbackBuilder<T>.InParallel()
+	IPropertySetupParallelCallbackBuilder<T> IPropertySetupCallbackBuilder<T>.InParallel()
 	{
 		_currentCallback?.InParallel();
 		return this;
@@ -421,7 +421,7 @@ public class PropertySetup<T> : PropertySetup,
 		return this;
 	}
 
-	IPropertySetupCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenario)
+	IPropertySetupParallelCallbackBuilder<T> IPropertySetterSetup<T>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T>> item = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		item.InParallel();
@@ -430,7 +430,7 @@ public class PropertySetup<T> : PropertySetup,
 		return this;
 	}
 
-	IPropertySetupCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenario)
+	IPropertySetupParallelCallbackBuilder<T> IPropertyGetterSetup<T>.TransitionTo(string scenario)
 	{
 		Callback<Action<int, T>> item = new((_, _) => _mockRegistry.TransitionTo(scenario));
 		item.InParallel();
