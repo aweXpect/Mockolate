@@ -151,8 +151,16 @@ public partial class MockRegistry
 	/// <summary>
 	///     Register an <paramref name="interaction" /> with the mock.
 	/// </summary>
+	/// <remarks>
+	///     Has no effect when <see cref="MockBehavior.SkipInteractionRecording" /> is <see langword="true" />.
+	/// </remarks>
 	public void RegisterInteraction(IInteraction interaction)
-		=> ((IMockInteractions)Interactions).RegisterInteraction(interaction);
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			((IMockInteractions)Interactions).RegisterInteraction(interaction);
+		}
+	}
 
 	private IEnumerable<EventSetup> GetEventSetupsByName(string name)
 	{
@@ -184,8 +192,12 @@ public partial class MockRegistry
 	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator,
 		Func<TResult>? baseValueAccessor)
 	{
-		IInteraction interaction =
-			((IMockInteractions)Interactions).RegisterInteraction(new PropertyGetterAccess(propertyName));
+		IInteraction? interaction = null;
+		if (!Behavior.SkipInteractionRecording)
+		{
+			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+				new PropertyGetterAccess(propertyName));
+		}
 
 		PropertySetup matchingSetup = ResolvePropertySetup(
 			propertyName, defaultValueGenerator, baseValueAccessor,
@@ -204,8 +216,12 @@ public partial class MockRegistry
 	/// </remarks>
 	public bool SetProperty<T>(string propertyName, T value)
 	{
-		IInteraction interaction =
-			((IMockInteractions)Interactions).RegisterInteraction(new PropertySetterAccess<T>(propertyName, value));
+		IInteraction? interaction = null;
+		if (!Behavior.SkipInteractionRecording)
+		{
+			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+				new PropertySetterAccess<T>(propertyName, value));
+		}
 
 		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
 
@@ -287,7 +303,11 @@ public partial class MockRegistry
 			throw new MockException("The method of an event subscription may not be null.");
 		}
 
-		((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
+		if (!Behavior.SkipInteractionRecording)
+		{
+			((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
+		}
+
 		foreach (EventSetup setup in GetEventSetupsByName(name))
 		{
 			setup.InvokeSubscribed(target, method);
@@ -305,7 +325,11 @@ public partial class MockRegistry
 			throw new MockException("The method of an event unsubscription may not be null.");
 		}
 
-		((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
+		if (!Behavior.SkipInteractionRecording)
+		{
+			((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
+		}
+
 		foreach (EventSetup setup in GetEventSetupsByName(name))
 		{
 			setup.InvokeUnsubscribed(target, method);

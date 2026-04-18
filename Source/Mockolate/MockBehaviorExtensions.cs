@@ -41,6 +41,27 @@ public static class MockBehaviorExtensions
 			};
 
 		/// <summary>
+		///     Specifies whether interaction recording should be skipped.
+		/// </summary>
+		/// <remarks>
+		///     If set to <see langword="false" /> (default value), every interaction with the mock is recorded
+		///     and can be verified later.
+		///     <para />
+		///     Skipping interaction recording avoids the per-call allocation of an interaction record, the
+		///     interaction-list lock, and the <see cref="Mockolate.Interactions.MockInteractions" />
+		///     added-event. Setups, returns, callbacks, and base-class delegation continue to work normally -
+		///     only verification is disabled. Any attempt to verify throws a
+		///     <see cref="Mockolate.Exceptions.MockException" />.
+		///     <para />
+		///     Sets the <see cref="MockBehavior.SkipInteractionRecording" /> to <paramref name="skipInteractionRecording" />.
+		/// </remarks>
+		public MockBehavior SkippingInteractionRecording(bool skipInteractionRecording = true)
+			=> mockBehavior with
+			{
+				SkipInteractionRecording = skipInteractionRecording,
+			};
+
+		/// <summary>
 		///     Uses the given <paramref name="factory" /> to create default values for <typeparamref name="T" />.
 		/// </summary>
 		public MockBehavior WithDefaultValueFor<T>(Func<T> factory)
