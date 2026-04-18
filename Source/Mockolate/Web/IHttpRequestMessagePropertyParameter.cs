@@ -6,7 +6,7 @@ namespace Mockolate.Web;
 /// <summary>
 ///     A parameter of type <typeparamref name="T" /> that also gets a <see cref="HttpRequestMessage" />.
 /// </summary>
-internal interface IHttpRequestMessagePropertyParameter<T> : IParameter<T>
+internal interface IHttpRequestMessagePropertyParameter<T> : IParameterWithCallback<T>
 {
 	/// <summary>
 	///     Matches the property of type <typeparamref name="T" /> while also considering the

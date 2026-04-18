@@ -23,7 +23,7 @@ public partial class It
 	/// <summary>
 	///     A string parameter that matches against a pattern.
 	/// </summary>
-	public interface IParameterMatches : IParameter<string>
+	public interface IParameterMatches : IParameterWithCallback<string>
 	{
 		/// <summary>
 		///     Enables case-sensitive matching of the pattern when specified.

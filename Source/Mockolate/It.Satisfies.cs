@@ -12,7 +12,7 @@ public partial class It
 	/// <summary>
 	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
 	/// </summary>
-	public static IParameter<T> Satisfies<T>(Func<T, bool> predicate,
+	public static IParameterWithCallback<T> Satisfies<T>(Func<T, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
 		=> new SatisfiesPredicateMatch<T>(predicate, doNotPopulateThisValue);

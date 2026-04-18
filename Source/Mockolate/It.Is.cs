@@ -19,7 +19,7 @@ public partial class It
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison.
 	/// </summary>
-	public interface IIsParameter<out T> : IParameter<T>
+	public interface IIsParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
 		///     Use the specified comparer to determine equality.

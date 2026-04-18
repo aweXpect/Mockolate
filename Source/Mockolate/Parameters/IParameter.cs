@@ -1,5 +1,3 @@
-using System;
-
 namespace Mockolate.Parameters;
 
 /// <summary>
@@ -25,10 +23,13 @@ public interface IParameter
 /// <summary>
 ///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 /// </summary>
+/// <remarks>
+///     This base contract is callback-free so it can be extended to types that cannot carry
+///     an <see cref="System.Action{T}" /> — such as ref struct parameters. For matchers that
+///     support <c>.Do(...)</c> callbacks, use <see cref="IParameterWithCallback{T}" />.
+/// </remarks>
 public interface IParameter<out T> : IParameter
-{
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute for matching parameters.
-	/// </summary>
-	IParameter<T> Do(Action<T> callback);
-}
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
+	;

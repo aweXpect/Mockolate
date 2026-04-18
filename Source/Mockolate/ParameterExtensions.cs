@@ -14,7 +14,7 @@ public static class ParameterExtensions
 	/// <summary>
 	///     Create a <paramref name="monitor" /> to collect the matched values of the <paramref name="parameter" />.
 	/// </summary>
-	public static IParameter<T> Monitor<T>(this IParameter<T> parameter,
+	public static IParameterWithCallback<T> Monitor<T>(this IParameterWithCallback<T> parameter,
 		out IParameterMonitor<T> monitor)
 	{
 		ParameterMonitor<T> parameterMonitor = new();

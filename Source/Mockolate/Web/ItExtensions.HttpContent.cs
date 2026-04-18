@@ -42,7 +42,7 @@ public static partial class ItExtensions
 	/// <summary>
 	///     Further expectations on the <see cref="HttpContent" />.
 	/// </summary>
-	public interface IHttpContentParameter : IParameter<HttpContent?>, IHttpHeaderParameter<IHttpContentHeaderParameter>
+	public interface IHttpContentParameter : IParameterWithCallback<HttpContent?>, IHttpHeaderParameter<IHttpContentHeaderParameter>
 	{
 		/// <summary>
 		///     Expects the content to have a string body that satisfies the <paramref name="predicate" />.
@@ -102,8 +102,8 @@ public static partial class ItExtensions
 			return this;
 		}
 
-		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
+		/// <inheritdoc cref="IParameterWithCallback{T}.Do(Action{T})" />
+		public IParameterWithCallback<HttpContent?> Do(Action<HttpContent?> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);
@@ -321,8 +321,8 @@ public static partial class ItExtensions
 	public abstract class HttpContentParameterWrapper(IHttpContentParameter parameter, Func<string> parameterString) : IHttpContentParameter,
 		IHttpRequestMessagePropertyParameter<HttpContent?>, IParameterMatch<HttpContent?>
 	{
-		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-		public IParameter<HttpContent?> Do(Action<HttpContent?> callback)
+		/// <inheritdoc cref="IParameterWithCallback{T}.Do(Action{T})" />
+		public IParameterWithCallback<HttpContent?> Do(Action<HttpContent?> callback)
 			=> parameter.Do(callback);
 
 		/// <inheritdoc cref="IHttpHeaderParameter{T}.WithHeaders" />

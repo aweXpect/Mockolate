@@ -94,18 +94,18 @@ namespace Mockolate
     public class It
     {
         public static Mockolate.It.IIsParameter<T> Is<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameter<T> IsAny<T>() { }
+        public static Mockolate.Parameters.IParameterWithCallback<T> IsAny<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsAnyOut<T>() { }
         public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> IsAnyReadOnlySpan<T>() { }
         public static Mockolate.Parameters.IRefParameter<T> IsAnyRef<T>() { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsAnySpan<T>() { }
-        public static Mockolate.Parameters.IParameter<bool> IsFalse() { }
+        public static Mockolate.Parameters.IParameterWithCallback<bool> IsFalse() { }
         public static Mockolate.It.IInRangeParameter<T> IsInRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
             where T : System.IComparable<T> { }
         public static Mockolate.It.IIsNotParameter<T> IsNot<T>(T value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameter<T> IsNotNull<T>(string? toString = null) { }
+        public static Mockolate.Parameters.IParameterWithCallback<T> IsNotNull<T>(string? toString = null) { }
         public static Mockolate.It.IIsNotOneOfParameter<T> IsNotOneOf<T>(System.Collections.Generic.IEnumerable<T> values) { }
-        public static Mockolate.Parameters.IParameter<T> IsNull<T>(string? toString = null) { }
+        public static Mockolate.Parameters.IParameterWithCallback<T> IsNull<T>(string? toString = null) { }
         public static Mockolate.It.IIsOneOfParameter<T> IsOneOf<T>(System.Collections.Generic.IEnumerable<T> values) { }
         public static Mockolate.Parameters.IVerifyOutParameter<T> IsOut<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsOut<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
@@ -115,31 +115,31 @@ namespace Mockolate
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsSpan<T>(System.Func<T[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IParameter<bool> IsTrue() { }
+        public static Mockolate.Parameters.IParameterWithCallback<bool> IsTrue() { }
         public static Mockolate.It.IParameterMatches Matches(string pattern) { }
-        public static Mockolate.Parameters.IParameter<T> Satisfies<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public interface IInRangeParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<T>
+        public static Mockolate.Parameters.IParameterWithCallback<T> Satisfies<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public interface IInRangeParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<T>, Mockolate.Parameters.IParameter<T>
         {
-            Mockolate.Parameters.IParameter<T> Exclusive();
-            Mockolate.Parameters.IParameter<T> Inclusive();
+            Mockolate.Parameters.IParameterWithCallback<T> Exclusive();
+            Mockolate.Parameters.IParameterWithCallback<T> Inclusive();
         }
-        public interface IIsNotOneOfParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<T>
+        public interface IIsNotOneOfParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<T>, Mockolate.Parameters.IParameter<T>
         {
             Mockolate.It.IIsNotOneOfParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
         }
-        public interface IIsNotParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<T>
+        public interface IIsNotParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<T>, Mockolate.Parameters.IParameter<T>
         {
             Mockolate.It.IIsNotParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
         }
-        public interface IIsOneOfParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<T>
+        public interface IIsOneOfParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<T>, Mockolate.Parameters.IParameter<T>
         {
             Mockolate.It.IIsOneOfParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
         }
-        public interface IIsParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<T>
+        public interface IIsParameter<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<T>, Mockolate.Parameters.IParameter<T>
         {
             Mockolate.It.IIsParameter<T> Using(System.Collections.Generic.IEqualityComparer<T> comparer, [System.Runtime.CompilerServices.CallerArgumentExpression("comparer")] string doNotPopulateThisValue = "");
         }
-        public interface IParameterMatches : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<string>
+        public interface IParameterMatches : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<string>, Mockolate.Parameters.IParameter<string>
         {
             Mockolate.It.IParameterMatches AsRegex(System.Text.RegularExpressions.RegexOptions options = 0, System.TimeSpan? timeout = default, [System.Runtime.CompilerServices.CallerArgumentExpression("options")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("timeout")] string doNotPopulateThisValue2 = "");
             Mockolate.It.IParameterMatches CaseSensitive(bool caseSensitive = true);
@@ -221,7 +221,7 @@ namespace Mockolate
     public static class ParameterExtensions
     {
         public static Mockolate.Parameters.IOutParameter<T> Monitor<T>(this Mockolate.Parameters.IOutParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
-        public static Mockolate.Parameters.IParameter<T> Monitor<T>(this Mockolate.Parameters.IParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
+        public static Mockolate.Parameters.IParameterWithCallback<T> Monitor<T>(this Mockolate.Parameters.IParameterWithCallback<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
         public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
     }
     public static class ReturnsThrowsAsyncExtensions
@@ -840,26 +840,27 @@ namespace Mockolate.Parameters
     {
         System.Collections.Generic.IReadOnlyList<T> Values { get; }
     }
-    public interface IParameter<out T> : Mockolate.Parameters.IParameter
+    public interface IParameterWithCallback<out T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<T>
     {
-        Mockolate.Parameters.IParameter<T> Do(System.Action<T> callback);
+        Mockolate.Parameters.IParameterWithCallback<T> Do(System.Action<T> callback);
     }
+    public interface IParameter<out T> : Mockolate.Parameters.IParameter { }
     public interface IParameters { }
     public interface IParametersMatch
     {
         bool Matches(object?[] values);
     }
-    public interface IReadOnlySpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> { }
+    public interface IReadOnlySpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<Mockolate.Setup.ReadOnlySpanWrapper<T>>, Mockolate.Parameters.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> { }
     public interface IRefParameter<T>
     {
         Mockolate.Parameters.IRefParameter<T> Do(System.Action<T> callback);
         T GetValue(T value);
     }
-    public interface ISpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>> { }
+    public interface ISpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>> { }
     public interface IVerifyOutParameter<out T> { }
-    public interface IVerifyReadOnlySpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>>, Mockolate.Parameters.IReadOnlySpanParameter<T> { }
+    public interface IVerifyReadOnlySpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<Mockolate.Setup.ReadOnlySpanWrapper<T>>, Mockolate.Parameters.IParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>>, Mockolate.Parameters.IReadOnlySpanParameter<T> { }
     public interface IVerifyRefParameter<T> { }
-    public interface IVerifySpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Parameters.ISpanParameter<T> { }
+    public interface IVerifySpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Parameters.ISpanParameter<T> { }
 }
 namespace Mockolate.Setup
 {
@@ -2209,10 +2210,10 @@ namespace Mockolate.Web
     }
     public static class ItExtensions
     {
-        public abstract class HttpContentParameterWrapper : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterMatch<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
+        public abstract class HttpContentParameterWrapper : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterMatch<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
             protected HttpContentParameterWrapper(Mockolate.Web.ItExtensions.IHttpContentParameter parameter, System.Func<string> parameterString) { }
-            public Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?> Do(System.Action<System.Net.Http.HttpContent?> callback) { }
+            public Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpContent?> Do(System.Action<System.Net.Http.HttpContent?> callback) { }
             public void InvokeCallbacks(System.Net.Http.HttpContent? value) { }
             public bool Matches(System.Net.Http.HttpContent? value) { }
             public override string ToString() { }
@@ -2223,15 +2224,15 @@ namespace Mockolate.Web
             public Mockolate.Web.ItExtensions.IHttpContentParameter WithMediaType(string? mediaType) { }
             public Mockolate.Web.ItExtensions.IHttpContentParameter WithString(System.Func<string, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         }
-        public interface IFormDataContentParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
+        public interface IFormDataContentParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
             Mockolate.Web.ItExtensions.IFormDataContentParameter Exactly();
         }
-        public interface IHttpContentHeaderParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
+        public interface IHttpContentHeaderParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
             Mockolate.Web.ItExtensions.IHttpContentParameter IncludingRequestHeaders();
         }
-        public interface IHttpContentParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
+        public interface IHttpContentParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
             Mockolate.Web.ItExtensions.IHttpContentParameter WithBytes(System.Func<byte[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "");
             Mockolate.Web.ItExtensions.IHttpContentParameter WithMediaType(string? mediaType);
@@ -2243,24 +2244,24 @@ namespace Mockolate.Web
                     "Name",
                     "Value"})] System.Collections.Generic.IEnumerable<System.ValueTuple<string, Mockolate.Web.HttpHeaderValue>> headers);
         }
-        public interface IHttpRequestMessageParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter>, Mockolate.Web.ItExtensions.IHttpRequestMessageParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter> { }
-        public interface IHttpRequestMessageParameter<out TParameter> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter>
+        public interface IHttpRequestMessageParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpRequestMessage>, Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter>, Mockolate.Web.ItExtensions.IHttpRequestMessageParameter<Mockolate.Web.ItExtensions.IHttpRequestMessageParameter> { }
+        public interface IHttpRequestMessageParameter<out TParameter> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpRequestMessage>, Mockolate.Parameters.IParameter<System.Net.Http.HttpRequestMessage>, Mockolate.Web.ItExtensions.IHttpHeaderParameter<TParameter>
         {
             TParameter WhoseContentIs(System.Action<Mockolate.Web.ItExtensions.IHttpContentParameter> configureContent);
             TParameter WhoseContentIs(string mediaType, System.Action<Mockolate.Web.ItExtensions.IHttpContentParameter>? configureContent = null);
             TParameter WhoseUriIs(System.Action<Mockolate.Web.ItExtensions.IUriParameter> configureUri);
             TParameter WhoseUriIs(string uri, System.Action<Mockolate.Web.ItExtensions.IUriParameter>? configureUri = null);
         }
-        public interface IStringContentBodyMatchingParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>, Mockolate.Web.ItExtensions.IStringContentBodyParameter
+        public interface IStringContentBodyMatchingParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>, Mockolate.Web.ItExtensions.IStringContentBodyParameter
         {
             Mockolate.Web.ItExtensions.IStringContentBodyParameter AsRegex(System.Text.RegularExpressions.RegexOptions options = 0, System.TimeSpan? timeout = default);
         }
-        public interface IStringContentBodyParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
+        public interface IStringContentBodyParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Net.Http.HttpContent?>, Mockolate.Parameters.IParameter<System.Net.Http.HttpContent?>, Mockolate.Web.ItExtensions.IHttpContentParameter, Mockolate.Web.ItExtensions.IHttpHeaderParameter<Mockolate.Web.ItExtensions.IHttpContentHeaderParameter>
         {
             Mockolate.Web.ItExtensions.IStringContentBodyParameter Exactly();
             Mockolate.Web.ItExtensions.IStringContentBodyParameter IgnoringCase();
         }
-        public interface IUriParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameter<System.Uri?>
+        public interface IUriParameter : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<System.Uri?>, Mockolate.Parameters.IParameter<System.Uri?>
         {
             Mockolate.Web.ItExtensions.IUriParameter ForHttp();
             Mockolate.Web.ItExtensions.IUriParameter ForHttps();
