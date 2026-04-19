@@ -196,12 +196,12 @@ namespace Mockolate
         public string Scenario { get; }
         public object? Wraps { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
-        public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, System.Func<TResult> defaultValueGenerator) { }
-        public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult baseValue) { }
-        public bool ApplyIndexerSetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult value) { }
-        public TResult ApplyIndexerSetup<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup setup) { }
+        public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, System.Func<TResult> defaultValueGenerator, int signatureIndex) { }
+        public TResult ApplyIndexerGetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult baseValue, int signatureIndex) { }
+        public bool ApplyIndexerSetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult value, int signatureIndex) { }
+        public TResult ApplyIndexerSetup<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup setup, int signatureIndex) { }
         public void ClearAllInteractions() { }
-        public TResult GetIndexerFallback<TResult>(Mockolate.Interactions.IndexerAccess access) { }
+        public TResult GetIndexerFallback<TResult>(Mockolate.Interactions.IndexerAccess access, int signatureIndex) { }
         public T? GetIndexerSetup<T>(Mockolate.Interactions.IndexerAccess access)
             where T : Mockolate.Setup.IndexerSetup { }
         public T? GetIndexerSetup<T>(System.Func<T, bool> predicate)
@@ -212,10 +212,11 @@ namespace Mockolate
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSet<T, TValue>(T subject, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TValue>, bool> setPredicate, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
+        public void InitializeStorage(int indexerCount) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, Mockolate.Setup.IMethodSetup methodSetup) { }
         public void RegisterInteraction(Mockolate.Interactions.IInteraction interaction) { }
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
-        public void SetIndexerValue<TResult>(Mockolate.Interactions.IndexerAccess access, TResult value) { }
+        public void SetIndexerValue<TResult>(Mockolate.Interactions.IndexerAccess access, TResult value, int signatureIndex) { }
         public bool SetProperty<T>(string propertyName, T value) { }
         public void SetupEvent(Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupEvent(string scenario, Mockolate.Setup.EventSetup eventSetup) { }
@@ -622,6 +623,7 @@ namespace Mockolate.Interactions
         public abstract int ParameterCount { get; }
         public abstract object? GetParameterValueAt(int index);
         public void StoreValue<T>(T value) { }
+        protected abstract Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing);
         public bool TryFindStoredValue<T>(out T value) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
@@ -633,6 +635,7 @@ namespace Mockolate.Interactions
         public string ParameterName1 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2> : Mockolate.Interactions.IndexerAccess
@@ -645,6 +648,7 @@ namespace Mockolate.Interactions
         public string ParameterName2 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2, T3> : Mockolate.Interactions.IndexerAccess
@@ -659,6 +663,7 @@ namespace Mockolate.Interactions
         public string ParameterName3 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2, T3, T4> : Mockolate.Interactions.IndexerAccess
@@ -675,6 +680,7 @@ namespace Mockolate.Interactions
         public string ParameterName4 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, TValue> : Mockolate.Interactions.IndexerAccess
@@ -686,6 +692,7 @@ namespace Mockolate.Interactions
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, TValue> : Mockolate.Interactions.IndexerAccess
@@ -699,6 +706,7 @@ namespace Mockolate.Interactions
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, T3, TValue> : Mockolate.Interactions.IndexerAccess
@@ -714,6 +722,7 @@ namespace Mockolate.Interactions
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, T3, T4, TValue> : Mockolate.Interactions.IndexerAccess
@@ -731,6 +740,7 @@ namespace Mockolate.Interactions
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
+        protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
@@ -1855,6 +1865,12 @@ namespace Mockolate.Setup
         public Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new () { }
         public override string ToString() { }
+    }
+    public abstract class IndexerValueStorage
+    {
+        protected IndexerValueStorage() { }
+        public abstract Mockolate.Setup.IndexerValueStorage? GetChildDispatch<TKey>(TKey key);
+        public abstract Mockolate.Setup.IndexerValueStorage GetOrAddChildDispatch<TKey>(TKey key);
     }
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVerifiableMethodSetup
     {

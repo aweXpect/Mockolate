@@ -18,7 +18,8 @@ internal partial class MockSetups
 	internal sealed class IndexerSetups
 	{
 		private List<IndexerSetup>? _storage;
-		private ValueStorage? _valueStorage;
+		private IndexerValueStorage?[]? _valueStorages;
+		private readonly object _valueStoragesLock = new();
 
 		public int Count
 		{
@@ -38,18 +39,74 @@ internal partial class MockSetups
 		}
 
 		/// <summary>
-		///     The root value storage used to track stored indexer values (keyed by parameter tree).
+		///     Pre-sizes the per-signature value-storage array. Optional — <see cref="GetOrCreateStorage{TValue}(int)" />
+		///     grows lazily if unset. When the total signature count is known at mock-construction time, calling this
+		///     once avoids any reallocations.
 		/// </summary>
-		public ValueStorage ValueStorage
+		internal void InitializeStorageCount(int count)
 		{
-			get
+			if (_valueStorages is null)
 			{
-				if (_valueStorage is null)
+				Interlocked.CompareExchange(ref _valueStorages, new IndexerValueStorage?[count], null);
+			}
+		}
+
+		/// <summary>
+		///     Returns the root value storage for the indexer signature at the given <paramref name="signatureIndex" />,
+		///     creating one if none exists. Grows the backing array on demand when not pre-initialised.
+		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException"><paramref name="signatureIndex" /> is negative.</exception>
+		internal IndexerValueStorage<TValue> GetOrCreateStorage<TValue>(int signatureIndex)
+		{
+			if (signatureIndex < 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(signatureIndex), signatureIndex,
+					"Signature index must be non-negative.");
+			}
+
+			IndexerValueStorage?[]? storages = _valueStorages;
+			if (storages is null || storages.Length <= signatureIndex)
+			{
+				storages = EnsureCapacity(signatureIndex);
+			}
+
+			IndexerValueStorage? slot = storages[signatureIndex];
+			if (slot is null)
+			{
+				IndexerValueStorage<TValue> created = new();
+				slot = Interlocked.CompareExchange(ref storages[signatureIndex], created, null) ?? created;
+			}
+
+			if (slot is not IndexerValueStorage<TValue> typed)
+			{
+				throw new InvalidOperationException(
+					$"Indexer storage at signature index {signatureIndex} was created as '{slot.GetType()}' but is being accessed as 'IndexerValueStorage<{typeof(TValue)}>'. This indicates a signature-index collision between distinct indexer signatures - please report a bug against the source generator.");
+			}
+
+			return typed;
+		}
+
+		private IndexerValueStorage?[] EnsureCapacity(int signatureIndex)
+		{
+			lock (_valueStoragesLock)
+			{
+				IndexerValueStorage?[]? storages = _valueStorages;
+				if (storages is null)
 				{
-					Interlocked.CompareExchange(ref _valueStorage, new ValueStorage(), null);
+					storages = new IndexerValueStorage?[signatureIndex + 1];
+					_valueStorages = storages;
+					return storages;
 				}
 
-				return _valueStorage!;
+				if (storages.Length <= signatureIndex)
+				{
+					IndexerValueStorage?[] grown = new IndexerValueStorage?[signatureIndex + 1];
+					Array.Copy(storages, grown, storages.Length);
+					_valueStorages = grown;
+					return grown;
+				}
+
+				return storages;
 			}
 		}
 
@@ -157,65 +214,5 @@ internal partial class MockSetups
 					.ToList();
 			}
 		}
-	}
-}
-
-/// <summary>
-///     Object-keyed tree used to store indexer values by their typed parameter path.
-/// </summary>
-[DebuggerNonUserCode]
-internal sealed class ValueStorage
-{
-	private readonly List<KeyValueEntry> _storage = [];
-
-	/// <summary>
-	///     The value stored at the current tree node.
-	/// </summary>
-	public object? Value { get; set; }
-
-	/// <summary>
-	///     Returns the child storage for the given <paramref name="key" />, or <see langword="null" /> if none exists.
-	/// </summary>
-	public ValueStorage? GetChild(object? key)
-	{
-		lock (_storage)
-		{
-			foreach (KeyValueEntry entry in _storage)
-			{
-				if (Equals(entry.Key, key))
-				{
-					return entry.Value;
-				}
-			}
-		}
-
-		return null;
-	}
-
-	/// <summary>
-	///     Returns the child storage for the given <paramref name="key" />, or creates one if none exists.
-	/// </summary>
-	public ValueStorage GetOrAddChild(object? key)
-	{
-		lock (_storage)
-		{
-			foreach (KeyValueEntry entry in _storage)
-			{
-				if (Equals(entry.Key, key))
-				{
-					return entry.Value;
-				}
-			}
-
-			ValueStorage newValue = new();
-			_storage.Add(new KeyValueEntry(key, newValue));
-			return newValue;
-		}
-	}
-
-	private readonly struct KeyValueEntry(object? key, ValueStorage value)
-	{
-		internal object? Key { get; } = key;
-		internal ValueStorage Value { get; } = value;
 	}
 }
