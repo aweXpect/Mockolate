@@ -45,10 +45,11 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 	{
 		Moq.Mock<IMyMethodInterface> mock = new();
 		mock.Setup(x => x.MyFunc(Moq.It.IsAny<int>())).Returns(true);
+		IMyMethodInterface sut = mock.Object;
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			mock.Object.MyFunc(42);
+			sut.MyFunc(42);
 		}
 
 		mock.Verify(x => x.MyFunc(Moq.It.IsAny<int>()), Times.Exactly(InvocationCount));
@@ -96,10 +97,11 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 	{
 		IMyMethodInterfaceImposter imposter = IMyMethodInterface.Imposter();
 		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Returns(true);
+		IMyMethodInterface sut = imposter.Instance();
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			imposter.Instance().MyFunc(42);
+			sut.MyFunc(42);
 		}
 
 		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Exactly(InvocationCount));
@@ -113,10 +115,11 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 	{
 		Mock<IMyMethodInterface> mock = TUnit.Mocks.Mock.Of<IMyMethodInterface>();
 		mock.MyFunc(Any<int>()).Returns(true);
+		IMyMethodInterface sut = mock.Object;
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			mock.Object.MyFunc(42);
+			sut.MyFunc(42);
 		}
 
 		mock.MyFunc(Any<int>()).WasCalled(TUnit.Mocks.Times.Exactly(InvocationCount));

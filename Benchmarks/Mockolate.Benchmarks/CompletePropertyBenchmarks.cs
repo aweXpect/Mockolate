@@ -44,10 +44,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 	{
 		Moq.Mock<IMyPropertyInterface> mock = new();
 		mock.SetupGet(x => x.Counter).Returns(42);
+		IMyPropertyInterface sut = mock.Object;
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			_ = mock.Object.Counter;
+			_ = sut.Counter;
 		}
 
 		mock.VerifyGet(x => x.Counter, Times.Exactly(InvocationCount));
@@ -95,10 +96,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 	{
 		IMyPropertyInterfaceImposter imposter = IMyPropertyInterface.Imposter();
 		imposter.Counter.Getter().Returns(42);
+		IMyPropertyInterface sut = imposter.Instance();
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			_ = imposter.Instance().Counter;
+			_ = sut.Counter;
 		}
 
 		imposter.Counter.Getter().Called(Count.Exactly(InvocationCount));
@@ -112,10 +114,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 	{
 		Mock<IMyPropertyInterface> mock = TUnit.Mocks.Mock.Of<IMyPropertyInterface>();
 		mock.Counter.Returns(42);
+		IMyPropertyInterface sut = mock.Object;
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			_ = mock.Object.Counter;
+			_ = sut.Counter;
 		}
 
 		mock.Counter.WasCalled(TUnit.Mocks.Times.Exactly(InvocationCount));

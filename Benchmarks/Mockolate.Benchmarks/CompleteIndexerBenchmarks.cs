@@ -45,10 +45,11 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 	{
 		Moq.Mock<IMyIndexerInterface> mock = new();
 		mock.Setup(x => x[Moq.It.IsAny<int>()]).Returns("foo");
+		IMyIndexerInterface sut = mock.Object;
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			_ = mock.Object[42];
+			_ = sut[42];
 		}
 
 		mock.Verify(x => x[Moq.It.IsAny<int>()], Times.Exactly(InvocationCount));
@@ -96,10 +97,11 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 	{
 		IMyIndexerInterfaceImposter imposter = IMyIndexerInterface.Imposter();
 		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Returns("foo");
+		IMyIndexerInterface sut = imposter.Instance();
 
 		for (int i = 0; i < InvocationCount; i++)
 		{
-			_ = imposter.Instance()[42];
+			_ = sut[42];
 		}
 
 		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Called(Count.Exactly(InvocationCount));
