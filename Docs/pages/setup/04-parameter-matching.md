@@ -198,8 +198,13 @@ generic delegates:
   the fact — the ref-struct value isn't retained past the call. Use a setup-time matcher to
   filter at call time.
 - **Indexer storage.** By default, values written through a ref-struct-keyed indexer setter are
-  not read back by the getter. Use `It.IsRefStructBy<T, TKey>(projection)` on an indexer keyed by
-  a single ref struct to enable write-then-read correlation keyed by the projection.
+  not read back by the getter. Use `It.IsRefStructBy<T, TKey>(projection)` on each ref-struct
+  slot of the indexer to enable write-then-read correlation: the projection output is the
+  dispatch key for that slot. This works at any arity — storage activates when every
+  ref-struct slot supplies a projection. Non-ref-struct slots use their raw value as the key
+  (matched with `It.IsAny<T>()`, `It.Is<T>(...)`, or any other regular matcher). If any
+  ref-struct slot lacks a projection, storage stays disabled for that indexer and the getter
+  returns its configured `Returns(...)` value (or the framework default).
 
 The following cases are rejected at compile time with diagnostic `Mockolate0004`:
 
