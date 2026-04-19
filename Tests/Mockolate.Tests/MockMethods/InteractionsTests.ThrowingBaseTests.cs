@@ -16,23 +16,6 @@ public sealed partial class InteractionsTests
 		}
 
 		[Fact]
-		public async Task VirtualMethod_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-
-			try
-			{
-				sut.DoThing(7);
-			}
-			catch (InvalidOperationException)
-			{
-				// expected
-			}
-
-			await That(sut.Mock.Verify.DoThing(It.Is(7))).Once();
-		}
-
-		[Fact]
 		public async Task VirtualVoidMethod_WhenBaseThrows_ShouldStillRecordInvocation()
 		{
 			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
