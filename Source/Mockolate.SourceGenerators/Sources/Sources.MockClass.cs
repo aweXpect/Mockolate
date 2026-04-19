@@ -1267,8 +1267,11 @@ internal static partial class Sources
 				int signatureIndex = -1;
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
-					string signatureKey = string.Join("|",
-						property.IndexerParameters.Value.Select(p => p.Type.Fullname));
+					string signatureKey = property.ContainingType + "::" +
+						(property.ExplicitImplementation ?? "") + "::" +
+						property.Type.Fullname + "->|" +
+						string.Join("|",
+							property.IndexerParameters.Value.Select(p => p.RefKind + " " + p.Type.Fullname));
 					if (!signatureIndices.TryGetValue(signatureKey, out signatureIndex))
 					{
 						signatureIndex = nextSignatureIndex[0]++;

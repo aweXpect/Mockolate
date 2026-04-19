@@ -215,8 +215,9 @@ public sealed partial class SetupIndexerTests
 		IndexerGetterAccess<int> access1 = new("index", 1);
 		IndexerGetterAccess<int> access2 = new("index", 1);
 		string result1 = registry.ApplyIndexerGetter<string>(access1, stringSetup, () => "", 0);
-		// Use a different signature index for the int-typed access to avoid colliding with the
-		// string-typed storage slot created above: per-signature storage is now TValue-invariant.
+		// Use a different signature index for the int-typed access: each per-signature storage slot
+		// is bound to a single TValue on first access (it is an IndexerValueStorage<TValue>), so
+		// reusing index 0 with TValue=int would now throw an InvalidOperationException.
 		int result2 = registry.ApplyIndexerGetter<int>(access2, stringSetup, () => 0, 100);
 
 		await That(result1).IsEqualTo("foo");

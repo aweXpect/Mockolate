@@ -77,7 +77,13 @@ internal partial class MockSetups
 				slot = Interlocked.CompareExchange(ref storages[signatureIndex], created, null) ?? created;
 			}
 
-			return (IndexerValueStorage<TValue>)slot;
+			if (slot is not IndexerValueStorage<TValue> typed)
+			{
+				throw new InvalidOperationException(
+					$"Indexer storage at signature index {signatureIndex} was created as '{slot.GetType()}' but is being accessed as 'IndexerValueStorage<{typeof(TValue)}>'. This indicates a signature-index collision between distinct indexer signatures - please report a bug against the source generator.");
+			}
+
+			return typed;
 		}
 
 		private IndexerValueStorage?[] EnsureCapacity(int signatureIndex)
