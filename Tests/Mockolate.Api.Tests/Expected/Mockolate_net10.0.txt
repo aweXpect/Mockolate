@@ -1359,6 +1359,46 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws<TException>()
             where TException : System.Exception, new ();
     }
+    public interface IRefStructReturnMethodSetup<TReturn, T> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T> Returns(System.Func<TReturn> returnFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T> Returns(TReturn returnValue);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2> Returns(System.Func<TReturn> returnFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2> Returns(TReturn returnValue);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3> Returns(System.Func<TReturn> returnFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3> Returns(TReturn returnValue);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(System.Func<TReturn> returnFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
     public interface IRefStructVoidMethodSetup<T> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
         Mockolate.Setup.IRefStructVoidMethodSetup<T> DoesNotThrow();
@@ -1988,6 +2028,46 @@ namespace Mockolate.Setup
         public T[] ReadOnlySpanValues { get; }
         public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.ReadOnlySpanWrapper<T> op_Implicit(System.ReadOnlySpan<T> span) { }
+    }
+    public sealed class RefStructReturnMethodSetup<TReturn, T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T>, Mockolate.Setup.ISetup
+    {
+        public RefStructReturnMethodSetup(string name, Mockolate.Parameters.IParameterMatch<T>? matcher = null) { }
+        public bool HasReturnValue { get; }
+        public TReturn Invoke(T value, System.Func<TReturn>? defaultFactory = null) { }
+        public bool Matches(T value) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
+    }
+    public sealed class RefStructReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
+    {
+        public RefStructReturnMethodSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null) { }
+        public bool HasReturnValue { get; }
+        public TReturn Invoke(T1 value1, T2 value2, System.Func<TReturn>? defaultFactory = null) { }
+        public bool Matches(T1 value1, T2 value2) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
+    }
+    public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
+    {
+        public RefStructReturnMethodSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null) { }
+        public bool HasReturnValue { get; }
+        public TReturn Invoke(T1 value1, T2 value2, T3 value3, System.Func<TReturn>? defaultFactory = null) { }
+        public bool Matches(T1 value1, T2 value2, T3 value3) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
+    }
+    public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
+    {
+        public RefStructReturnMethodSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null, Mockolate.Parameters.IParameterMatch<T4>? matcher4 = null) { }
+        public bool HasReturnValue { get; }
+        public TReturn Invoke(T1 value1, T2 value2, T3 value3, T4 value4, System.Func<TReturn>? defaultFactory = null) { }
+        public bool Matches(T1 value1, T2 value2, T3 value3, T4 value4) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
     }
     public sealed class RefStructVoidMethodSetup<T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructVoidMethodSetup<T>, Mockolate.Setup.ISetup
     {
