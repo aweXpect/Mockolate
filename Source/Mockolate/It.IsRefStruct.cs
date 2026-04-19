@@ -35,15 +35,19 @@ public partial class It
 	/// </summary>
 	/// <remarks>
 	///     <para>
-	///         When supplied to a combined ref-struct-keyed indexer setup (arity 1), enables
-	///         write-then-read correlation: values written via the setter are stored keyed by
-	///         the projection, and a subsequent getter call with a key that projects to the same
-	///         scalar returns the stored value.
+	///         When supplied to a combined ref-struct-keyed indexer setup, enables write-then-read
+	///         correlation: values written via the setter are stored keyed by the projection, and a
+	///         subsequent getter call with a key that projects to the same scalar returns the
+	///         stored value. Works at any arity — for multi-parameter indexers, storage activates
+	///         once every ref-struct slot carries a projection; non-ref-struct slots contribute
+	///         their raw value as part of the composite dispatch key.
 	///     </para>
 	///     <para>
-	///         Without a projection matcher, the indexer setup remains storage-less — the getter
-	///         returns its configured <c>Returns(...)</c> value or the framework default,
-	///         regardless of what was written via the setter.
+	///         If any ref-struct slot is matched without a projection (e.g. via
+	///         <see cref="IsAnyRefStruct{T}" /> or <see cref="IsRefStruct{T}(RefStructPredicate{T})" />),
+	///         the indexer setup stays storage-less — the getter returns its configured
+	///         <c>Returns(...)</c> value or the framework default, regardless of what was written
+	///         via the setter.
 	///     </para>
 	/// </remarks>
 	public static IParameter<T> IsRefStructBy<T, TProjected>(

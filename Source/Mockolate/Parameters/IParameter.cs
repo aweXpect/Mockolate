@@ -28,7 +28,7 @@ public interface IParameter
 ///     an <see cref="System.Action{T}" /> — such as ref struct parameters. For matchers that
 ///     support <c>.Do(...)</c> callbacks, use <see cref="IParameterWithCallback{T}" />.
 /// </remarks>
-#pragma warning disable S2326 // Unused type parameters should be removed
+#pragma warning disable S2326 // Unused type parameters should be removed (T retained for covariance)
 public interface IParameter<out T> : IParameter
 #if NET9_0_OR_GREATER
 	where T : allows ref struct

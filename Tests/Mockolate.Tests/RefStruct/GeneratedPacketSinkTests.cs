@@ -5,12 +5,10 @@ using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
-namespace Mockolate.Tests.RefStructPrototype;
+namespace Mockolate.Tests.RefStruct;
 
 /// <summary>
-///     A ref struct used for end-to-end generator tests. Separate from <c>DataPacket</c> so the
-///     hand-written <c>PacketSinkMock</c> prototype is not entangled with the generator-exercising
-///     interfaces below.
+///     A ref struct used for end-to-end generator tests.
 /// </summary>
 public readonly ref struct Packet(int id, ReadOnlySpan<byte> payload)
 {
@@ -540,6 +538,194 @@ public sealed class GeneratedPacketSinkTests
 
 			await That(ActHit).Throws<InvalidOperationException>();
 			await That(ActMiss).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task VoidArity5_ThrowsExceptionInstance_ThrowsSameInstance()
+		{
+			IBigPacketSink sut = IBigPacketSink.CreateMock();
+			InvalidOperationException expected = new("boom");
+			sut.Mock.Setup.Absorb(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>())
+				.Throws(expected);
+
+			Exception thrown = null!;
+			try
+			{
+				sut.Absorb(
+					new Packet(1, []), new Packet(2, []), new Packet(3, []),
+					new Packet(4, []), new Packet(5, []));
+			}
+			catch (Exception ex)
+			{
+				thrown = ex;
+			}
+
+			await That(thrown).IsSameAs(expected);
+		}
+
+		[Fact]
+		public async Task VoidArity5_ThrowsExceptionFactory_InvokedPerCall()
+		{
+			IBigPacketSink sut = IBigPacketSink.CreateMock();
+			int built = 0;
+			sut.Mock.Setup.Absorb(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>())
+				.Throws(() => new InvalidOperationException($"call-{++built}"));
+
+			Exception? first = null;
+			Exception? second = null;
+			try
+			{
+				sut.Absorb(
+					new Packet(1, []), new Packet(2, []), new Packet(3, []),
+					new Packet(4, []), new Packet(5, []));
+			}
+			catch (Exception ex)
+			{
+				first = ex;
+			}
+
+			try
+			{
+				sut.Absorb(
+					new Packet(1, []), new Packet(2, []), new Packet(3, []),
+					new Packet(4, []), new Packet(5, []));
+			}
+			catch (Exception ex)
+			{
+				second = ex;
+			}
+
+			await That(first!.Message).IsEqualTo("call-1");
+			await That(second!.Message).IsEqualTo("call-2");
+		}
+
+		[Fact]
+		public async Task VoidArity5_DoesNotThrow_AfterThrows_OverridesPreviousConfiguration()
+		{
+			IBigPacketSink sut = IBigPacketSink.CreateMock();
+
+			// The ref-struct setup surface uses single-slot last-call-wins throw storage. A later
+			// DoesNotThrow() on the same setup chain must clear the earlier Throws(...).
+			sut.Mock.Setup.Absorb(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>())
+				.Throws<InvalidOperationException>()
+				.DoesNotThrow();
+
+			void Act() => sut.Absorb(
+				new Packet(1, []), new Packet(2, []), new Packet(3, []),
+				new Packet(4, []), new Packet(5, []));
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task ReturnArity6_ReturnsFactory_InvokedPerCall()
+		{
+			IBigPacketParser sut = IBigPacketParser.CreateMock();
+			int counter = 0;
+			sut.Mock.Setup.TryParse(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<int>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<string>())
+				.Returns(() => ++counter);
+
+			int first = sut.TryParse(
+				new Packet(1, []), new Packet(2, []), offset: 10,
+				new Packet(4, []), new Packet(5, []), format: "x");
+			int second = sut.TryParse(
+				new Packet(1, []), new Packet(2, []), offset: 10,
+				new Packet(4, []), new Packet(5, []), format: "x");
+
+			await That(first).IsEqualTo(1);
+			await That(second).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task ReturnArity6_ThrowsExceptionInstance_ThrowsSameInstance()
+		{
+			IBigPacketParser sut = IBigPacketParser.CreateMock();
+			InvalidOperationException expected = new("arity6-boom");
+			sut.Mock.Setup.TryParse(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<int>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<string>())
+				.Throws(expected);
+
+			Exception thrown = null!;
+			try
+			{
+				_ = sut.TryParse(
+					new Packet(1, []), new Packet(2, []), offset: 0,
+					new Packet(4, []), new Packet(5, []), format: "x");
+			}
+			catch (Exception ex)
+			{
+				thrown = ex;
+			}
+
+			await That(thrown).IsSameAs(expected);
+		}
+
+		[Fact]
+		public async Task ReturnArity6_ThrowsExceptionFactory_InvokedPerCall()
+		{
+			IBigPacketParser sut = IBigPacketParser.CreateMock();
+			int built = 0;
+			sut.Mock.Setup.TryParse(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<int>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<string>())
+				.Throws(() => new InvalidOperationException($"call-{++built}"));
+
+			Exception? first = null;
+			try
+			{
+				_ = sut.TryParse(
+					new Packet(1, []), new Packet(2, []), offset: 0,
+					new Packet(4, []), new Packet(5, []), format: "x");
+			}
+			catch (Exception ex)
+			{
+				first = ex;
+			}
+
+			Exception? second = null;
+			try
+			{
+				_ = sut.TryParse(
+					new Packet(1, []), new Packet(2, []), offset: 0,
+					new Packet(4, []), new Packet(5, []), format: "x");
+			}
+			catch (Exception ex)
+			{
+				second = ex;
+			}
+
+			await That(first!.Message).IsEqualTo("call-1");
+			await That(second!.Message).IsEqualTo("call-2");
 		}
 	}
 

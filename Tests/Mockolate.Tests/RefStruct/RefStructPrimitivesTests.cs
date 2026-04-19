@@ -4,7 +4,7 @@ using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
-namespace Mockolate.Tests.RefStructPrototype;
+namespace Mockolate.Tests.RefStruct;
 
 /// <summary>
 ///     Low-level unit coverage for the ref-struct primitives (matchers, setup types, the
@@ -12,7 +12,7 @@ namespace Mockolate.Tests.RefStructPrototype;
 ///     End-to-end coverage through the generator lives in <see cref="GeneratedPacketSinkTests" />,
 ///     which uses the <see cref="Packet" /> ref struct defined alongside it.
 /// </summary>
-public sealed class RefStructPrototypeTests
+public sealed class RefStructPrimitivesTests
 {
 	public sealed class MatcherTests
 	{

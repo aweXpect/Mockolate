@@ -147,8 +147,9 @@ or your own `ref struct Packet`) using these matchers:
 - `It.IsRefStruct<T>(predicate)`: Matches ref-struct values that satisfy the predicate. The
   predicate can read the struct's fields at the time the call is made.
 - `It.IsRefStructBy<T, TKey>(projection)` / `It.IsRefStructBy<T, TKey>(projection, predicate)`:
-  For indexers keyed by a single ref struct, projects the key to an equatable value so that
-  writes and reads can be correlated (see *Indexer storage* in the remarks).
+  For ref-struct-keyed indexers, projects the key to an equatable value so writes and reads can
+  be correlated. Works at any arity — apply it to every ref-struct slot and non-ref-struct slots
+  contribute their raw value to the composite dispatch key (see *Indexer storage* in the remarks).
 
 ```csharp
 public readonly ref struct Packet(int id, ReadOnlySpan<byte> payload)
@@ -198,8 +199,10 @@ generic delegates:
   the fact — the ref-struct value isn't retained past the call. Use a setup-time matcher to
   filter at call time.
 - **Indexer storage.** By default, values written through a ref-struct-keyed indexer setter are
-  not read back by the getter. Use `It.IsRefStructBy<T, TKey>(projection)` on an indexer keyed by
-  a single ref struct to enable write-then-read correlation keyed by the projection.
+  not read back by the getter. Apply `It.IsRefStructBy<T, TKey>(projection)` to every ref-struct
+  slot to enable write-then-read correlation keyed by the projections; non-ref-struct slots
+  contribute their raw value as part of the composite dispatch key. If any ref-struct slot is
+  matched without a projection, storage stays inactive for that setup.
 
 The following cases are rejected at compile time with diagnostic `Mockolate0004`:
 

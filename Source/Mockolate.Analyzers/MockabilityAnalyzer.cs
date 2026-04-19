@@ -112,6 +112,24 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	{
 		bool supportsRefStructPipeline = CompilationSupportsRefStructPipeline(context.Compilation);
 
+		// For delegates only the synthesized Invoke matters — BeginInvoke/EndInvoke are legacy
+		// helpers the generator does not emit overrides for, so we must not flag them.
+		if (type.TypeKind == TypeKind.Delegate)
+		{
+			if (type is INamedTypeSymbol { DelegateInvokeMethod: { } invoke, } &&
+			    TryGetRefStructIssue(invoke, supportsRefStructPipeline, out string? delegateIssue))
+			{
+				context.ReportDiagnostic(Diagnostic.Create(
+					s_refStructRule,
+					location,
+					type.ToDisplayString(),
+					"Invoke",
+					delegateIssue));
+			}
+
+			return;
+		}
+
 		foreach (ISymbol member in EnumerateAllMembers(type))
 		{
 			switch (member)
@@ -135,17 +153,6 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 						issue));
 					break;
 			}
-		}
-
-		if (type.TypeKind == TypeKind.Delegate && type is INamedTypeSymbol { DelegateInvokeMethod: { } invoke, } &&
-		    TryGetRefStructIssue(invoke, supportsRefStructPipeline, out string? delegateIssue))
-		{
-			context.ReportDiagnostic(Diagnostic.Create(
-				s_refStructRule,
-				location,
-				type.ToDisplayString(),
-				"Invoke",
-				delegateIssue));
 		}
 	}
 

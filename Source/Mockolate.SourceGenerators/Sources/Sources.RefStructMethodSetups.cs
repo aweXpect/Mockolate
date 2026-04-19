@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace Mockolate.SourceGenerators.Sources;
@@ -57,16 +55,13 @@ internal static partial class Sources
 		{
 			int arity = kvp.Key;
 			(bool hasGetter, bool hasSetter) = kvp.Value;
-			// Combined setups need both accessors to exist so the facade can compose them.
-			bool needsGetter = hasGetter || (hasGetter && hasSetter);
-			bool needsSetter = hasSetter || (hasGetter && hasSetter);
-			if (needsGetter)
+			if (hasGetter)
 			{
 				sb.AppendLine();
 				AppendRefStructIndexerGetterSetup(sb, arity);
 			}
 
-			if (needsSetter)
+			if (hasSetter)
 			{
 				sb.AppendLine();
 				AppendRefStructIndexerSetterSetup(sb, arity);

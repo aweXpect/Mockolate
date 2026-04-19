@@ -2,7 +2,7 @@
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
-namespace Mockolate.Tests.RefStructPrototype;
+namespace Mockolate.Tests.RefStruct;
 
 /// <summary>
 ///     Tests for projection-based storage on ref-struct-keyed indexers (arity 1). Verifies that

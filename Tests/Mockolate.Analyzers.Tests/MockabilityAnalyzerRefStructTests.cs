@@ -105,6 +105,38 @@ public class MockabilityAnalyzerRefStructTests
 		);
 
 	[Fact]
+	public async Task WhenMockingInterfaceWithRefReadonlyRefStructParameter_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IPacketInspector")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	public interface IPacketInspector
+			  	{
+			  		// `ref readonly` on a parameter produces RefKind.RefReadOnlyParameter, which
+			  		// is explicitly listed alongside Out and Ref in MockabilityAnalyzer.
+			  		void Inspect(ref readonly Packet packet);
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:IPacketInspector|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.IPacketInspector", "Inspect",
+					"out/ref ref-struct parameters are not supported")
+		);
+
+	[Fact]
 	public async Task WhenMockingInterfaceReturningNonSpanRefStruct_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -239,6 +271,196 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """
+		);
+
+	[Fact]
+	public async Task WhenMockingDelegateWithPlainRefStructParameter_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.PacketHandler")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	// Delegate Invoke with a plain ref-struct parameter — routed through the
+			  	// generator's ref-struct pipeline, no diagnostic expected.
+			  	public delegate void PacketHandler(Packet packet);
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			PacketHandler.CreateMock();
+			  		}
+			  	}
+			  }
+			  """
+		);
+
+	[Fact]
+	public async Task WhenMockingDelegateWithOutRefStructParameter_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.PacketProducerDelegate")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	// Delegate Invoke methods are analyzed the same as interface methods; out/ref on
+			  	// a ref-struct parameter must be rejected.
+			  	public delegate void PacketProducerDelegate(out Packet packet);
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:PacketProducerDelegate|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.PacketProducerDelegate", "Invoke",
+					"out/ref ref-struct parameters are not supported")
+		);
+
+	[Fact]
+	public async Task WhenMockingDelegateReturningNonSpanRefStruct_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.PacketFactoryDelegate")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	// Delegate returning a non-span ref struct — same rejection as interface
+			  	// methods with that return shape.
+			  	public delegate Packet PacketFactoryDelegate();
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:PacketFactoryDelegate|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.PacketFactoryDelegate", "Invoke",
+					"methods returning a non-span ref struct are not supported")
+		);
+
+	[Fact]
+	public async Task WhenMockingInterfaceInheritingFromInterfaceWithBadMethod_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IDerivedSink")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	public interface IBaseSink
+			  	{
+			  		void Produce(out Packet packet);
+			  	}
+
+			  	// Inherited members are walked via ITypeSymbol.AllInterfaces — the violation on
+			  	// the base must surface against the derived interface being mocked.
+			  	public interface IDerivedSink : IBaseSink
+			  	{
+			  		void Extra();
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:IDerivedSink|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.IDerivedSink", "Produce",
+					"out/ref ref-struct parameters are not supported")
+		);
+
+	[Fact]
+	public async Task WhenMockingAbstractClassWithInheritedRefStructViolation_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.DerivedProducer")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	public abstract class BaseProducer
+			  	{
+			  		// Virtual members on a base class are also walked and must trip the analyzer.
+			  		public abstract void Produce(out Packet packet);
+			  	}
+
+			  	public abstract class DerivedProducer : BaseProducer
+			  	{
+			  		public abstract void Extra();
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:DerivedProducer|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.DerivedProducer", "Produce",
+					"out/ref ref-struct parameters are not supported")
+		);
+
+	[Fact]
+	public async Task WhenMockingInterfaceWithOverloads_OnlyViolatingOverloadIsFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IOverloadedSink")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	// Two overloads share a name; GetSignatureKey includes RefKind so de-duplication
+			  	// does not collapse them. The plain-parameter overload is fine; the out-parameter
+			  	// overload must produce exactly one diagnostic.
+			  	public interface IOverloadedSink
+			  	{
+			  		void Consume(Packet packet);
+			  		void Consume(out Packet packet);
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:IOverloadedSink|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.IOverloadedSink", "Consume",
+					"out/ref ref-struct parameters are not supported")
 		);
 
 	private static string GeneratedPrefix(string fullyQualifiedTypeName)
