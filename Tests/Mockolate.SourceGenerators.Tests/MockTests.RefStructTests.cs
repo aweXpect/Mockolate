@@ -218,8 +218,9 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
-		public async Task IndexerWithRefStructKey_EmitsNotSupportedException()
+		public async Task IndexerGetterWithRefStructKey_EmitsRefStructDispatch()
 		{
+			// Getter-only ref-struct-keyed indexers route through RefStructIndexerGetterSetup.
 			GeneratorResult result = Generator
 				.Run("""
 				     using System;
@@ -244,8 +245,45 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.IRefStructLookup.g.cs").WhoseValue
-				.Contains("indexer getters with ref-struct keys are not yet supported").And
-				.Contains("throw new global::System.NotSupportedException(");
+				// Body uses the ref-struct dispatch, not NotSupportedException.
+				.Contains("RefStructIndexerGetterSetup<string, global::MyCode.Key>").And
+				.Contains("RefStructMethodInvocation(\"global::MyCode.IRefStructLookup.get_Item\", \"key\")").And
+				// The setup facade exposes the narrow IRefStructIndexerGetterSetup surface.
+				.Contains("IRefStructIndexerGetterSetup<string, global::MyCode.Key>");
+		}
+
+		[Fact]
+		public async Task IndexerWithRefStructKey_AndSetter_StillEmitsNotSupportedException()
+		{
+			// Setter side is out of scope until commit J — keep the unsupported-shape guard.
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Key(int id) { public int Id { get; } = id; }
+
+				     public interface IRefStructStore
+				     {
+				         string this[Key key] { get; set; }
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             #pragma warning disable Mockolate0004
+				             _ = IRefStructStore.CreateMock();
+				             #pragma warning restore Mockolate0004
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.IRefStructStore.g.cs").WhoseValue
+				// Setters keep the runtime NSE until commit J wires IRefStructIndexerSetterSetup.
+				.Contains("indexer setters with ref-struct keys are not supported");
 		}
 	}
 }

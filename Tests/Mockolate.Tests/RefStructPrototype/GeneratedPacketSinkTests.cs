@@ -392,22 +392,90 @@ public sealed class GeneratedPacketSinkTests
 		}
 	}
 
-	public sealed class UnsupportedShapeTests
+	public sealed class IndexerGetterTests
 	{
 		[Fact]
-		public async Task IndexerWithRefStructKey_Getter_ThrowsNotSupportedException()
+		public async Task Returns_ConfiguredValue()
 		{
-			// Ref-struct-keyed indexers are not wired up in commit E. The accessor body throws
-			// so the user gets a clear runtime failure; the analyzer flags this pattern at
-			// build time (commit F, Mockolate0004 — suppressed below, this test verifies the
-			// runtime half of that contract). This test pins the runtime behavior.
-#pragma warning disable Mockolate0004
 			IGeneratedPacketLookup sut = IGeneratedPacketLookup.CreateMock();
-#pragma warning restore Mockolate0004
+			sut.Mock.Setup[It.IsAnyRefStruct<Packet>()].Returns("hit");
+
+			string result = sut[new Packet(1, [])];
+
+			await That(result).IsEqualTo("hit");
+		}
+
+		[Fact]
+		public async Task Returns_Factory_InvokedPerCall()
+		{
+			IGeneratedPacketLookup sut = IGeneratedPacketLookup.CreateMock();
+			int calls = 0;
+			sut.Mock.Setup[It.IsAnyRefStruct<Packet>()].Returns(() => $"call-{++calls}");
+
+			string first = sut[new Packet(1, [])];
+			string second = sut[new Packet(2, [])];
+
+			await That(first).IsEqualTo("call-1");
+			await That(second).IsEqualTo("call-2");
+		}
+
+		[Fact]
+		public async Task Throws_ConfiguredException()
+		{
+			IGeneratedPacketLookup sut = IGeneratedPacketLookup.CreateMock();
+			sut.Mock.Setup[It.IsAnyRefStruct<Packet>()].Throws<System.Collections.Generic.KeyNotFoundException>();
 
 			string Act() => sut[new Packet(1, [])];
 
-			await That(Act).Throws<NotSupportedException>();
+			await That(Act).Throws<System.Collections.Generic.KeyNotFoundException>();
+		}
+
+		[Fact]
+		public async Task Predicate_FiltersByKey_PayloadReadable()
+		{
+			// Predicate reads the inline Span on the ref-struct key — the whole point of the
+			// ref-struct pipeline: the payload flows through to the matcher without ever being
+			// captured in a field.
+			IGeneratedPacketLookup sut = IGeneratedPacketLookup.CreateMock();
+			sut.Mock.Setup[It.IsRefStruct<Packet>(p =>
+					p.Payload.Length > 0 && p.Payload[0] == 0xFF)]
+				.Returns("matched");
+
+			byte[] hitBytes = [0xFF, 0x01];
+			byte[] missBytes = [0x00, 0x01];
+
+			string hit = sut[new Packet(1, hitBytes)];
+			string miss = sut[new Packet(2, missBytes)];
+
+			await That(hit).IsEqualTo("matched");
+			// Nothing matches -> framework default; Mockolate's default for string is "".
+			await That(miss).IsEqualTo("");
+		}
+
+		[Fact]
+		public async Task NoSetup_ReturnsFrameworkDefault()
+		{
+			IGeneratedPacketLookup sut = IGeneratedPacketLookup.CreateMock();
+
+			string result = sut[new Packet(42, [])];
+
+			await That(result).IsEqualTo("");
+		}
+
+		[Fact]
+		public async Task RecordedInteraction_UsesRefStructMethodInvocation()
+		{
+			IGeneratedPacketLookup sut = IGeneratedPacketLookup.CreateMock();
+
+			_ = sut[new Packet(7, [])];
+
+			RefStructMethodInvocation? recorded = ((IMock)sut).MockRegistry.Interactions
+				.OfType<RefStructMethodInvocation>()
+				.SingleOrDefault();
+
+			await That(recorded).IsNotNull();
+			await That(recorded!.Name).EndsWith(".get_Item");
+			await That(recorded.ParameterNames.Single()).IsEqualTo("key");
 		}
 	}
 }

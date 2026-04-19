@@ -1499,9 +1499,7 @@ internal static partial class Sources
 
 			if (isRefStructIndexer)
 			{
-				sb.Append("\t\t\t\tthrow new global::System.NotSupportedException(")
-					.Append("\"Mockolate: indexer getters with ref-struct keys are not yet supported by the generator. ")
-					.Append("Use a non-ref-struct key or a method-based API.\");").AppendLine();
+				AppendRefStructIndexerGetterBody(sb, property, mockRegistry);
 			}
 			else if (isClassInterface && !explicitInterfaceImplementation && property.ExplicitImplementation is null)
 			{
@@ -2295,6 +2293,88 @@ internal static partial class Sources
 				"#error Mockolate: methods with ref-struct parameters require .NET 9 or later (uses the 'allows ref struct' anti-constraint).")
 			.AppendLine();
 		sb.Append("\t\t\tthrow new global::System.NotSupportedException();").AppendLine();
+		sb.Append("#endif").AppendLine();
+	}
+
+	/// <summary>
+	///     Emits the body of an indexer getter whose key list contains at least one ref-struct
+	///     parameter (outside the Span/ReadOnlySpan wrapper carve-out). Mirrors
+	///     <see cref="AppendMockSubject_ImplementClass_AddRefStructMethodBody" /> but uses
+	///     <c>RefStructIndexerGetterSetup&lt;TValue, T1..Tn&gt;</c> and the CLR accessor name
+	///     <c>get_Item</c>.
+	/// </summary>
+	/// <remarks>
+	///     Semantically equivalent to a method <c>TValue get_Item(T1 k1, ..., Tn kn)</c> — the
+	///     setup dispatch, match-then-invoke loop, and fallthrough-to-default behavior all follow
+	///     the return-method pipeline. No value is captured on the recorded interaction (ref-struct
+	///     keys stay on the stack); verify-side matching over keys is not available, same rationale
+	///     as the method-side pipeline.
+	/// </remarks>
+	private static void AppendRefStructIndexerGetterBody(StringBuilder sb, Property property, string mockRegistry)
+	{
+		sb.Append("#if NET9_0_OR_GREATER").AppendLine();
+
+		string typeParams = string.Join(", ",
+			property.IndexerParameters!.Value.Select(p => p.Type.Fullname));
+		string setupType =
+			$"global::Mockolate.Setup.RefStructIndexerGetterSetup<{property.Type.Fullname}, {typeParams}>";
+		string displayName =
+			$"{property.ContainingType}.this[{string.Join(", ", property.IndexerParameters!.Value.Select(p => p.Type.DisplayName))}]";
+		string indexerName = $"\"{property.ContainingType}.get_Item\"";
+
+		// Record the invocation — names only, no values. The ref-struct keys stay on the stack.
+		sb.Append("\t\t\t\t").Append(mockRegistry)
+			.Append(".RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation(")
+			.Append(indexerName);
+		foreach (MethodParameter p in property.IndexerParameters.Value)
+		{
+			sb.Append(", \"").Append(p.Name).Append('"');
+		}
+
+		sb.Append("));").AppendLine();
+
+		// Iterate setups in latest-registered-first order; stop on the first matching setup.
+		string paramNames = string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name));
+		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(" __setup in ").Append(mockRegistry)
+			.Append(".GetMethodSetups<").Append(setupType).Append(">(").Append(indexerName).Append("))")
+			.AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tif (!__setup.Matches(").Append(paramNames).Append("))").AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\tcontinue;").AppendLine();
+		sb.Append("\t\t\t\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\t\t\t\tif (__setup.HasReturnValue)").AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\treturn __setup.Invoke(").Append(paramNames).Append(", () => default!);")
+			.AppendLine();
+		sb.Append("\t\t\t\t\t}").AppendLine();
+		sb.AppendLine();
+
+		// Matching-but-unconfigured setup still invokes (for Throws side effects) and then shadows
+		// later setups in the iteration.
+		sb.Append("\t\t\t\t\t__setup.Invoke(").Append(paramNames).Append(", () => default!);").AppendLine();
+		sb.Append("\t\t\t\t\tbreak;").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+
+		// Not-matched path: respect Behavior.ThrowWhenNotSetup, else the framework default.
+		sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append(
+				"\t\t\t\t\tthrow new global::Mockolate.Exceptions.MockNotSetupException(\"The indexer '")
+			.Append(displayName).Append("' was invoked without prior setup.\");").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+
+		sb.Append("\t\t\t\treturn ")
+			.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue")
+			.Append(';').AppendLine();
+
+		sb.Append("#else").AppendLine();
+		sb.Append(
+				"#error Mockolate: indexer getters with ref-struct keys require .NET 9 or later (uses the 'allows ref struct' anti-constraint).")
+			.AppendLine();
+		sb.Append("\t\t\t\tthrow new global::System.NotSupportedException();").AppendLine();
 		sb.Append("#endif").AppendLine();
 	}
 
@@ -3127,13 +3207,20 @@ internal static partial class Sources
 	private static void AppendIndexerSetupDefinition(StringBuilder sb, Property indexer, bool[]? valueFlags = null,
 		bool hasOverloadResolutionPriority = false)
 	{
-		// Ref-struct-keyed indexers have no setup-facade surface in commit E: the existing
-		// IndexerSetup<TValue, T1..Tn> type doesn't allow ref-struct T (it stores an
-		// IndexerAccess with key-value field slots). The accessor bodies already throw
-		// NotSupportedException. Emission of the setup declaration is suppressed so the
-		// setup interface doesn't contain a dangling member that can't be resolved.
+		// Ref-struct-keyed indexers go through the narrow RefStruct pipeline. For commit I, only
+		// the getter side is wired; indexers with a setter still have no setup surface at all
+		// (the setter-side runtime type comes in commit J). Getter-only indexers emit a
+		// `IRefStructIndexerGetterSetup<TValue, T1..Tn> this[...] { get; }` member. The ref-struct
+		// setup takes `IParameter<T>?` for every key (no by-value overloads), so only the
+		// valueFlags==null caller emits; subsequent variant-flag calls are skipped.
 		if (indexer.IndexerParameters!.Value.Any(p => p.NeedsRefStructPipeline()))
 		{
+			if (valueFlags is not null || indexer.Setter is not null || indexer.Getter is null)
+			{
+				return;
+			}
+
+			AppendRefStructIndexerGetterSetupDefinition(sb, indexer);
 			return;
 		}
 
@@ -3186,10 +3273,17 @@ internal static partial class Sources
 	private static void AppendIndexerSetupImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
 		string setupName, bool[]? valueFlags = null, string? scopeExpression = null)
 	{
-		// Mirror AppendIndexerSetupDefinition: skip the implementation for ref-struct-keyed
-		// indexers so the declaration-free interface member has no orphan implementation.
+		// Mirror AppendIndexerSetupDefinition: for ref-struct-keyed indexers, emit the getter
+		// facade via the ref-struct pipeline. Indexers with a setter are still skipped (commit J
+		// wires the setter side). Only the valueFlags==null caller emits.
 		if (indexer.IndexerParameters!.Value.Any(p => p.NeedsRefStructPipeline()))
 		{
+			if (valueFlags is not null || indexer.Setter is not null || indexer.Getter is null)
+			{
+				return;
+			}
+
+			AppendRefStructIndexerGetterSetupImplementation(sb, indexer, mockRegistryName, setupName, scopeExpression);
 			return;
 		}
 
@@ -3277,6 +3371,97 @@ internal static partial class Sources
 		sb.Append("\t\t\t\treturn indexerSetup;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+	}
+
+	/// <summary>
+	///     Emits the setup-interface declaration for a ref-struct-keyed getter-only indexer.
+	///     Shape: <c>IRefStructIndexerGetterSetup&lt;TValue, T1..Tn&gt; this[IParameter&lt;T1&gt;?, ...] { get; }</c>.
+	/// </summary>
+	private static void AppendRefStructIndexerGetterSetupDefinition(StringBuilder sb, Property indexer)
+	{
+		sb.Append("#if NET9_0_OR_GREATER").AppendLine();
+		sb.AppendXmlSummary(
+			$"Setup for the ref-struct-keyed getter-only indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.Type.Fullname.EscapeForXmlDoc()))}]\" />" +
+			" — narrow setup surface (Returns / Throws / SkippingBaseClass).");
+		sb.Append("\t\tglobal::Mockolate.Setup.IRefStructIndexerGetterSetup<")
+			.Append(indexer.Type.Fullname);
+		foreach (MethodParameter p in indexer.IndexerParameters!.Value)
+		{
+			sb.Append(", ").Append(p.Type.Fullname);
+		}
+
+		sb.Append("> this[");
+		int i = 0;
+		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+		{
+			if (i++ > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append("global::Mockolate.Parameters.IParameter<").Append(parameter.Type.Fullname)
+				.Append(">? ").Append($"parameter{i}");
+		}
+
+		sb.Append("] { get; }").AppendLine();
+		sb.Append("#endif").AppendLine();
+		sb.AppendLine();
+	}
+
+	/// <summary>
+	///     Emits the setup-interface implementation for a ref-struct-keyed getter-only indexer.
+	///     Constructs the concrete <c>RefStructIndexerGetterSetup&lt;TValue, T1..Tn&gt;</c>,
+	///     registers it via <c>SetupMethod</c>, and returns it as its narrow interface.
+	/// </summary>
+	private static void AppendRefStructIndexerGetterSetupImplementation(StringBuilder sb, Property indexer,
+		string mockRegistryName, string setupName, string? scopeExpression)
+	{
+		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
+		string typeParams = string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.Type.Fullname));
+		string iface =
+			$"global::Mockolate.Setup.IRefStructIndexerGetterSetup<{indexer.Type.Fullname}, {typeParams}>";
+		string concrete =
+			$"global::Mockolate.Setup.RefStructIndexerGetterSetup<{indexer.Type.Fullname}, {typeParams}>";
+		string indexerName = $"\"{indexer.ContainingType}.get_Item\"";
+
+		sb.Append("#if NET9_0_OR_GREATER").AppendLine();
+		sb.Append("\t\t/// <inheritdoc />").AppendLine();
+		sb.Append("\t\t").Append(iface).Append(" global::Mockolate.Mock.").Append(setupName).Append(".this[");
+		int i = 0;
+		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+		{
+			if (i++ > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append("global::Mockolate.Parameters.IParameter<").Append(parameter.Type.Fullname)
+				.Append(">? parameter").Append(i);
+		}
+
+		sb.Append(']').AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tget").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tvar indexerSetup = new ").Append(concrete).Append('(').Append(indexerName);
+		int k = 0;
+		foreach (MethodParameter keyParam in indexer.IndexerParameters.Value)
+		{
+			k++;
+			sb.Append(", (global::Mockolate.Parameters.IParameterMatch<")
+				.Append(keyParam.Type.Fullname).Append(">?)parameter").Append(k);
+		}
+
+		sb.Append(");").AppendLine();
+		// Re-use the generic SetupMethod slot. The setup's MatchesInteraction filter on its name
+		// ensures it only participates in get_Item lookups.
+		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix)
+			.Append("indexerSetup);").AppendLine();
+		sb.Append("\t\t\t\treturn indexerSetup;").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.Append("#endif").AppendLine();
 		sb.AppendLine();
 	}
 

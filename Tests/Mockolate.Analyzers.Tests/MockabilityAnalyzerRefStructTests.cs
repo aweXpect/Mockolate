@@ -161,7 +161,7 @@ public class MockabilityAnalyzerRefStructTests
 		);
 
 	[Fact]
-	public async Task WhenMockingInterfaceWithRefStructIndexerKey_ShouldBeFlagged() => await Verifier
+	public async Task WhenMockingInterfaceWithRefStructIndexerKey_GetterOnly_ShouldNotBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
 			  {{GeneratedPrefix("MyNamespace.IRefStructLookup")}}
@@ -172,6 +172,7 @@ public class MockabilityAnalyzerRefStructTests
 
 			  	public interface IRefStructLookup
 			  	{
+			  		// Getter-only: fully supported via the ref-struct indexer pipeline.
 			  		string this[Key key] { get; }
 			  	}
 
@@ -179,15 +180,42 @@ public class MockabilityAnalyzerRefStructTests
 			  	{
 			  		public void MyTest()
 			  		{
-			  			{|#0:IRefStructLookup|}.CreateMock();
+			  			IRefStructLookup.CreateMock();
+			  		}
+			  	}
+			  }
+			  """
+		);
+
+	[Fact]
+	public async Task WhenMockingInterfaceWithRefStructIndexerKeyAndSetter_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IRefStructStore")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Key(int id) { public int Id { get; } = id; }
+
+			  	public interface IRefStructStore
+			  	{
+			  		// Getter-only indexers are supported; the setter side is not yet wired.
+			  		string this[Key key] { get; set; }
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:IRefStructStore|}.CreateMock();
 			  		}
 			  	}
 			  }
 			  """,
 			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
-				.WithArguments("MyNamespace.IRefStructLookup", "this[]",
-					"indexers with ref-struct keys are not yet supported by the generator")
+				.WithArguments("MyNamespace.IRefStructStore", "this[]",
+					"indexers with ref-struct keys and a setter are not yet supported by the generator")
 		);
 
 	[Fact]
