@@ -2137,18 +2137,15 @@ internal static partial class Sources
 			method.Parameters.Any(p =>
 				(p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
 				 p.RefKind == RefKind.RefReadOnlyParameter) && p.NeedsRefStructPipeline());
-		bool arityOutOfRange = method.Parameters.Count > MaxExplicitParameters;
 		bool returnsUnsupportedRefStruct = method.ReturnType.IsRefStruct &&
 		                                   method.ReturnType.SpecialGenericType is not
 			                                   (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
 
-		if (hasUnsupportedParameter || arityOutOfRange || returnsUnsupportedRefStruct)
+		if (hasUnsupportedParameter || returnsUnsupportedRefStruct)
 		{
-			string reason = arityOutOfRange
-				? $"ref-struct parameters are only supported for arities 1-{MaxExplicitParameters}"
-				: returnsUnsupportedRefStruct
-					? "methods returning a non-span ref struct are not supported"
-					: "out/ref ref-struct parameters are not supported";
+			string reason = returnsUnsupportedRefStruct
+				? "methods returning a non-span ref struct are not supported"
+				: "out/ref ref-struct parameters are not supported";
 			sb.Append("\t\t\tthrow new global::System.NotSupportedException(\"Mockolate: ")
 				.Append(reason).Append(". Method '").Append(method.ContainingType).Append('.')
 				.Append(method.Name).Append("'.\");").AppendLine();
@@ -2968,7 +2965,7 @@ internal static partial class Sources
 	private static void AppendRefStructMethodSetupDefinition(StringBuilder sb, Method method,
 		string? methodNameOverride)
 	{
-		bool unsupported = method.Parameters.Count > MaxExplicitParameters || method.Parameters.Any(p =>
+		bool unsupported = method.Parameters.Any(p =>
 			                   p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
 			                   p.RefKind == RefKind.RefReadOnlyParameter) ||
 		                   (method.ReturnType.IsRefStruct && method.ReturnType.SpecialGenericType is not
@@ -3018,7 +3015,7 @@ internal static partial class Sources
 	private static void AppendRefStructMethodSetupImplementation(StringBuilder sb, Method method,
 		string mockRegistryName, string setupName, string? methodNameOverride, string? scopeExpression)
 	{
-		bool unsupported = method.Parameters.Count > MaxExplicitParameters || method.Parameters.Any(p =>
+		bool unsupported = method.Parameters.Any(p =>
 			                   p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
 			                   p.RefKind == RefKind.RefReadOnlyParameter) ||
 		                   (method.ReturnType.IsRefStruct && method.ReturnType.SpecialGenericType is not

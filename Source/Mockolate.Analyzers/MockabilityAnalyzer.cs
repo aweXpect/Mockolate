@@ -205,7 +205,6 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		[NotNullWhen(true)] out string? issue)
 	{
 		bool hasRefStructParam = false;
-		int refStructArity = 0;
 		foreach (IParameterSymbol p in method.Parameters)
 		{
 			if (!NeedsRefStructPipeline(p.Type))
@@ -214,7 +213,6 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			}
 
 			hasRefStructParam = true;
-			refStructArity++;
 
 			if (p.RefKind is RefKind.Out or RefKind.Ref or RefKind.RefReadOnlyParameter)
 			{
@@ -230,12 +228,9 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return true;
 		}
 
-		// The generator emits the narrow surface for ref-struct methods of arity 1-4 only.
-		if (hasRefStructParam && method.Parameters.Length > 4)
-		{
-			issue = "ref-struct parameter methods with arity > 4 are not supported";
-			return true;
-		}
+		// Note: no arity ceiling for ref-struct methods. Arities 1-4 are hand-written types in
+		// Source/Mockolate/Setup/; arity 5+ are emitted by the generator into
+		// RefStructMethodSetups.g.cs.
 
 		// Ref-struct returns are out of scope unless they go through the Span wrapper.
 		if (NeedsRefStructPipeline(method.ReturnType))
