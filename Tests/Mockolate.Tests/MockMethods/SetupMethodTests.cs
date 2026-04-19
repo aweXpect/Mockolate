@@ -1946,6 +1946,7 @@ public sealed partial class SetupMethodTests
 		string Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
 		string Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
 		string UniqueMethodWithParameters(int p1, int p2);
+		string UniqueMethodWith5Parameters(int p1, int p2, int p3, int p4, int p5);
 	}
 
 	public class ReturnMethodSetupTest
@@ -1994,6 +1995,7 @@ public sealed partial class SetupMethodTests
 		void Method5WithOutParameter(out int p1, out int p2, out int p3, out int p4, out int p5);
 		void Method5WithRefParameter(ref int p1, ref int p2, ref int p3, ref int p4, ref int p5);
 		void UniqueMethodWithParameters(int p1, int p2);
+		void UniqueMethodWith5Parameters(int p1, int p2, int p3, int p4, int p5);
 	}
 
 #if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed

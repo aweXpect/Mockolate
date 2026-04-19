@@ -1557,6 +1557,51 @@ public sealed partial class SetupMethodTests
 		public class ReturnMethodWith5Parameters
 		{
 			[Fact]
+			public async Task AnyParameters_Callback_ShouldExecuteWhenInvoked()
+			{
+				int callCount = 0;
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+				sut.Mock.Setup.UniqueMethodWith5Parameters(Match.AnyParameters())
+					.Do(() => { callCount++; })
+					.Returns("a");
+
+				sut.UniqueMethodWith5Parameters(1, 2, 3, 4, 5);
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task AnyParameters_CallbackWithValue_ShouldReceiveAllParameters()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+				sut.Mock.Setup.UniqueMethodWith5Parameters(Match.AnyParameters())
+					.Do((v1, v2, v3, v4, v5) =>
+					{
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					})
+					.Returns("a");
+
+				sut.UniqueMethodWith5Parameters(2, 4, 6, 8, 10);
+
+				await That(receivedValue1).IsEqualTo(2);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(receivedValue4).IsEqualTo(8);
+				await That(receivedValue5).IsEqualTo(10);
+			}
+
+			[Fact]
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
 				int callCount = 0;
@@ -3412,6 +3457,49 @@ public sealed partial class SetupMethodTests
 
 		public class VoidMethodWith5Parameters
 		{
+			[Fact]
+			public async Task AnyParameters_Callback_ShouldExecuteWhenInvoked()
+			{
+				int callCount = 0;
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+				sut.Mock.Setup.UniqueMethodWith5Parameters(Match.AnyParameters())
+					.Do(() => { callCount++; });
+
+				sut.UniqueMethodWith5Parameters(1, 2, 3, 4, 5);
+
+				await That(callCount).IsEqualTo(1);
+			}
+
+			[Fact]
+			public async Task AnyParameters_CallbackWithValue_ShouldReceiveAllParameters()
+			{
+				int receivedValue1 = 0;
+				int receivedValue2 = 0;
+				int receivedValue3 = 0;
+				int receivedValue4 = 0;
+				int receivedValue5 = 0;
+				IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
+
+				sut.Mock.Setup.UniqueMethodWith5Parameters(Match.AnyParameters())
+					.Do((v1, v2, v3, v4, v5) =>
+					{
+						receivedValue1 = v1;
+						receivedValue2 = v2;
+						receivedValue3 = v3;
+						receivedValue4 = v4;
+						receivedValue5 = v5;
+					});
+
+				sut.UniqueMethodWith5Parameters(2, 4, 6, 8, 10);
+
+				await That(receivedValue1).IsEqualTo(2);
+				await That(receivedValue2).IsEqualTo(4);
+				await That(receivedValue3).IsEqualTo(6);
+				await That(receivedValue4).IsEqualTo(8);
+				await That(receivedValue5).IsEqualTo(10);
+			}
+
 			[Fact]
 			public async Task Callback_ShouldExecuteWhenInvoked()
 			{
