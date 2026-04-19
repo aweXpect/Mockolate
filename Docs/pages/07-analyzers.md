@@ -31,3 +31,28 @@ Mocked types must be mockable. This rule will prevent you from using unsupported
   Type must be an interface, a delegate or a supported class (e.g. not sealed)
 - `Implementing<T>()`  
   Type must be an interface
+
+## Mockolate0003
+
+`.Wrap()` arguments must be wrappable. The wrapped type must satisfy the same mockability rules as
+the primary mock target (interface, delegate, or non-sealed class).
+
+## Mockolate0004
+
+Ref-struct parameter mocking is not supported on this compilation. This warning fires when the
+signature of a mocked member routes through the ref-struct pipeline but the current build
+environment can't emit the setup surface:
+
+- Compilation target is older than .NET 9 — the ref-struct pipeline requires the `allows ref struct`
+  anti-constraint introduced in C# 13 / .NET 9.
+- Parameter is `out`, `ref`, or `ref readonly` and its type is a non-`Span<T>` / non-`ReadOnlySpan<T>`
+  ref struct — the mock can't round-trip the value through `IOutParameter<T>` / `IRefParameter<T>`
+  when `T` is a ref struct.
+- Method returns a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct — currently unsupported.
+
+`Span<T>` and `ReadOnlySpan<T>` flow through the existing `SpanWrapper` / `ReadOnlySpanWrapper`
+fallback and are not flagged. Custom ref-struct parameters and indexer keys (both get and set) ARE
+supported on .NET 9+ compilation targets.
+
+See the [Ref Struct Parameters](setup/04-parameter-matching#ref-struct-parameters-net-9) section
+for the supported surface.

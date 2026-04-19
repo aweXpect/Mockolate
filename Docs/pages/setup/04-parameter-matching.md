@@ -138,6 +138,66 @@ bool result = sut.Process(buffer);
 // result == true
 ```
 
+### Ref Struct Parameters (.NET 9+)
+
+For methods, indexers, and indexer setters whose signature uses a custom `ref struct`
+(e.g. `Utf8JsonReader`, or a user-defined `ref struct Packet(int id, ReadOnlySpan<byte> payload)`),
+Mockolate provides a narrow matcher surface:
+
+- `It.IsAnyRefStruct<T>()`: Matches any value of a ref-struct type `T`.
+- `It.IsRefStruct<T>(predicate)`: Matches ref-struct values that satisfy the predicate. The
+  predicate sees the live ref struct and can read into its inline `Span<T>` / `ReadOnlySpan<T>`
+  fields — the whole reason this pipeline exists.
+
+```csharp
+public readonly ref struct Packet(int id, ReadOnlySpan<byte> payload)
+{
+    public int Id { get; } = id;
+    public ReadOnlySpan<byte> Payload { get; } = payload;
+}
+
+public interface IPacketSink
+{
+    void Consume(Packet packet);
+    int TryParse(Packet packet);
+    string this[Packet key] { get; set; }
+}
+
+// Setup: the predicate reads into the inline Span — safe because matching runs
+// synchronously on the caller's stack, without closures.
+sut.Mock.Setup.Consume(It.IsRefStruct<Packet>(p =>
+        p.Payload.Length > 0 && p.Payload[0] == 0xFF))
+    .Throws<InvalidOperationException>();
+
+// Return methods — use Returns(value) or Returns(factory).
+sut.Mock.Setup.TryParse(It.IsAnyRefStruct<Packet>()).Returns(42);
+
+// Indexers — Returns for get, OnSet for set, Throws for both.
+sut.Mock.Setup[It.IsAnyRefStruct<Packet>()]
+    .Returns("got")
+    .OnSet(value => { /* captured write */ });
+```
+
+**Supported:** `void`, non-ref-struct-return, and indexer get/set accessors whose parameters
+contain at least one custom ref struct. Arity up to 4 is supplied as hand-written types; arities
+5+ are emitted by the generator on demand. Setup surface is narrow: `Returns(value)`,
+`Returns(factory)`, `Throws*`, `OnSet(Action<TValue>)` (indexer setters), `SkippingBaseClass`.
+
+**Not supported (compile-time diagnostic `Mockolate0004`):**
+
+- Compilation target older than .NET 9 — the `allows ref struct` anti-constraint is a .NET 9 / C# 13 feature.
+- `out` / `ref` / `ref readonly` parameters with a ref-struct type.
+- Methods that return a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct (e.g. `Utf8JsonReader GetReader()`).
+- The fluent chain that non-ref-struct setups support: `.Do(Action<T>)`, the `Callbacks<T>`
+  builder (`InParallel`, `When`, `For`, `Only`, `TransitionTo`) is unavailable for ref-struct
+  parameters because every link of that chain requires `T` to flow through a delegate type parameter,
+  which is illegal for a ref struct.
+- Post-hoc value-matching in `Verify`: the recorded interaction (`RefStructMethodInvocation`) stores
+  only the method name and parameter names, never the parameter value. Use a setup-time matcher to
+  filter at call time, then count interactions via
+  `((IMock)sut).MockRegistry.Interactions.OfType<RefStructMethodInvocation>().Count(...)`.
+
+
 ## Parameter Predicates
 
 When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:
