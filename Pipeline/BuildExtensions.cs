@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
@@ -87,21 +86,7 @@ public static class BuildExtensions
 					if (fileResponse.IsSuccessStatusCode)
 					{
 						using ZipArchive archive = new(await fileResponse.Content.ReadAsStreamAsync());
-						foreach (ZipArchiveEntry entry in archive.Entries)
-						{
-							string destinationPath = Path.Combine(artifactsDirectory, entry.FullName);
-							string destinationDirectory = Path.GetDirectoryName(destinationPath);
-							if (!string.IsNullOrEmpty(destinationDirectory))
-							{
-								Directory.CreateDirectory(destinationDirectory);
-							}
-
-							if (!string.IsNullOrEmpty(entry.Name))
-							{
-								entry.ExtractToFile(destinationPath, overwrite: true);
-							}
-						}
-
+						archive.ExtractToDirectory(artifactsDirectory, overwriteFiles: true);
 						Log.Information(
 							$"Extracted artifact '{name}' (#{artifactId}) with {archive.Entries.Count} entries to {artifactsDirectory}:\n - {string.Join("\n - ", archive.Entries.Select(entry => $"{entry.Name} ({entry.Length})"))}");
 					}
