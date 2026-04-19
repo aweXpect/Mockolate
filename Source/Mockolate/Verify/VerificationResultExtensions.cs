@@ -131,7 +131,8 @@ public static class VerificationResultExtensions
 		///     Asserts that the verified interaction occurred at most <paramref name="times" /> times.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
-		///     Thrown when the verified interaction occurred more than <paramref name="times" /> times.
+		///     Thrown when the verified interaction occurred more than <paramref name="times" /> times,
+		///     or when a <see cref="VerificationResult{TVerify}.Within(TimeSpan)" /> timeout elapses first.
 		/// </exception>
 		public void AtMost(int times)
 		{
