@@ -191,6 +191,8 @@ namespace Mockolate
             where T : Mockolate.Setup.IndexerSetup { }
         public T? GetMethodSetup<T>(string methodName, System.Func<T, bool> predicate)
             where T : Mockolate.Setup.MethodSetup { }
+        public System.Collections.Generic.IEnumerable<T> GetMethodSetups<T>(string methodName)
+            where T : Mockolate.Setup.MethodSetup { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }

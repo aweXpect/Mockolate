@@ -44,6 +44,40 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Enumerates method setups of type <typeparamref name="T" /> matching <paramref name="methodName" />
+	///     in latest-registered-first order, scenario-scoped setups before default-scope setups.
+	/// </summary>
+	/// <remarks>
+	///     <para>
+	///         This exists as a ref-struct-safe alternative to
+	///         <see cref="GetMethodSetup{T}(string, Func{T, bool})" />: the caller iterates and evaluates the
+	///         matcher on the stack (passing a ref-struct value), so the predicate does not need to
+	///         capture it in a closure.
+	///     </para>
+	///     <para>
+	///         Scenario-scoped results come first; the caller is expected to stop on the first match so
+	///         scenarios override the default scope, matching
+	///         <see cref="GetMethodSetup{T}(string, Func{T, bool})" />'s precedence.
+	///     </para>
+	/// </remarks>
+	public IEnumerable<T> GetMethodSetups<T>(string methodName) where T : MethodSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			foreach (T setup in scopedBucket.Methods.EnumerateByName<T>(methodName))
+			{
+				yield return setup;
+			}
+		}
+
+		foreach (T setup in Setup.Methods.EnumerateByName<T>(methodName))
+		{
+			yield return setup;
+		}
+	}
+
+	/// <summary>
 	///     Get the latest indexer setup matching the given <paramref name="predicate" />,
 	///     or returns <see langword="null" /> if no matching setup is found. Scenario setups take precedence over
 	///     default-scope setups.
