@@ -253,9 +253,10 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
-		public async Task IndexerWithRefStructKey_AndSetter_StillEmitsNotSupportedException()
+		public async Task IndexerWithRefStructKey_AndSetter_EmitsCombinedSetup()
 		{
-			// Setter side is out of scope until commit J — keep the unsupported-shape guard.
+			// Get+set ref-struct-keyed indexer: expose IRefStructIndexerSetup<TValue, T> on the
+			// setup facade and dispatch both accessors through the ref-struct pipeline.
 			GeneratorResult result = Generator
 				.Run("""
 				     using System;
@@ -274,16 +275,49 @@ public sealed partial class MockTests
 				     {
 				         public static void Main(string[] args)
 				         {
-				             #pragma warning disable Mockolate0004
 				             _ = IRefStructStore.CreateMock();
-				             #pragma warning restore Mockolate0004
 				         }
 				     }
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.IRefStructStore.g.cs").WhoseValue
-				// Setters keep the runtime NSE until commit J wires IRefStructIndexerSetterSetup.
-				.Contains("indexer setters with ref-struct keys are not supported");
+				// Combined facade type is the public setup surface.
+				.Contains("IRefStructIndexerSetup<string, global::MyCode.Key>").And
+				// Both accessors now dispatch through the ref-struct pipeline, not NSE.
+				.Contains("RefStructMethodInvocation(\"global::MyCode.IRefStructStore.get_Item\", \"key\")").And
+				.Contains("RefStructMethodInvocation(\"global::MyCode.IRefStructStore.set_Item\", \"key\", \"value\")").And
+				.Contains("RefStructIndexerSetterSetup<string, global::MyCode.Key>");
+		}
+
+		[Fact]
+		public async Task IndexerWithRefStructKey_SetterOnly_EmitsSetterSetup()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Key(int id) { public int Id { get; } = id; }
+
+				     public interface IRefStructWriter
+				     {
+				         string this[Key key] { set; }
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IRefStructWriter.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.IRefStructWriter.g.cs").WhoseValue
+				.Contains("IRefStructIndexerSetterSetup<string, global::MyCode.Key>").And
+				.Contains("RefStructMethodInvocation(\"global::MyCode.IRefStructWriter.set_Item\", \"key\", \"value\")");
 		}
 	}
 }
