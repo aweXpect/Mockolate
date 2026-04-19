@@ -15,14 +15,18 @@ public partial class MockRegistry
 	/// </summary>
 	public MockInteractions Interactions { get; }
 
-	private ValueStorage IndexerStorage
-		=> Setup.Indexers.ValueStorage;
-
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
 	/// </summary>
 	public void ClearAllInteractions()
 		=> Interactions.Clear();
+
+	/// <summary>
+	///     Pre-sizes the mock's internal value-storage arrays. Called once from the generated mock constructor.
+	///     Extend with further parameters (e.g. <c>methodCount</c>) as other subsystems move to fixed-size storage.
+	/// </summary>
+	public void InitializeStorage(int indexerCount)
+		=> Setup.Indexers.InitializeStorageCount(indexerCount);
 
 	/// <summary>
 	///     Get the latest method setup matching the given <paramref name="methodName" /> and <paramref name="predicate" />,
@@ -87,9 +91,9 @@ public partial class MockRegistry
 	/// <summary>
 	///     Stores the given <paramref name="value" /> for the given indexer <paramref name="access" />.
 	/// </summary>
-	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value)
+	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value, int signatureIndex)
 	{
-		access.Storage = IndexerStorage;
+		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
 		access.StoreValue(value);
 	}
 
@@ -98,9 +102,9 @@ public partial class MockRegistry
 	///     when <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />, or otherwise stores and
 	///     returns the <see cref="MockBehavior.DefaultValue" />.
 	/// </summary>
-	public TResult GetIndexerFallback<TResult>(IndexerAccess access)
+	public TResult GetIndexerFallback<TResult>(IndexerAccess access, int signatureIndex)
 	{
-		access.Storage = IndexerStorage;
+		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
 		if (access.TryFindStoredValue(out TResult stored))
 		{
 			return stored;
@@ -120,9 +124,9 @@ public partial class MockRegistry
 	///     Invokes the getter flow of the given <paramref name="setup" /> for the given <paramref name="access" />,
 	///     ensuring the indexer value storage is wired up before dispatching.
 	/// </summary>
-	public TResult ApplyIndexerSetup<TResult>(IndexerAccess access, IndexerSetup setup)
+	public TResult ApplyIndexerSetup<TResult>(IndexerAccess access, IndexerSetup setup, int signatureIndex)
 	{
-		access.Storage = IndexerStorage;
+		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
 		return setup.GetResult<TResult>(access, Behavior);
 	}
 
@@ -134,9 +138,10 @@ public partial class MockRegistry
 	///     When <paramref name="setup" /> is <see langword="null" />, returns any previously stored value or the
 	///     <paramref name="baseValue" /> (which is then stored).
 	/// </remarks>
-	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult baseValue)
+	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult baseValue,
+		int signatureIndex)
 	{
-		access.Storage = IndexerStorage;
+		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
 		if (setup is null)
 		{
 			if (access.TryFindStoredValue(out TResult stored))
@@ -162,9 +167,9 @@ public partial class MockRegistry
 	///     value.
 	/// </remarks>
 	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup,
-		Func<TResult> defaultValueGenerator)
+		Func<TResult> defaultValueGenerator, int signatureIndex)
 	{
-		access.Storage = IndexerStorage;
+		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
 		if (setup is null)
 		{
 			if (access.TryFindStoredValue(out TResult stored))
@@ -189,15 +194,16 @@ public partial class MockRegistry
 	///     Applies an indexer setter for the given <paramref name="access" /> with the given <paramref name="value" /> and
 	///     optional matching <paramref name="setup" />. Returns whether the base class implementation should be skipped.
 	/// </summary>
-	public bool ApplyIndexerSetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult value)
+	public bool ApplyIndexerSetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult value,
+		int signatureIndex)
 	{
+		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
 		if (setup is null)
 		{
-			SetIndexerValue(access, value);
+			access.StoreValue(value);
 			return Behavior.SkipBaseClass;
 		}
 
-		access.Storage = IndexerStorage;
 		setup.SetResult(access, Behavior, value);
 		return setup.SkipBaseClass() ?? Behavior.SkipBaseClass;
 	}

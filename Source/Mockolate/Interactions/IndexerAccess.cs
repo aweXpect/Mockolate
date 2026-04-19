@@ -20,35 +20,38 @@ public abstract class IndexerAccess : IInteraction
 	/// </summary>
 	public abstract object? GetParameterValueAt(int index);
 
-	internal ValueStorage? Storage { get; set; }
+	internal IndexerValueStorage? Storage { get; set; }
+
+	internal void AttachStorage(IndexerValueStorage storage)
+		=> Storage = storage;
+
+	/// <summary>
+	///     Walks the given <paramref name="storage" /> along the typed parameter path for this access,
+	///     returning the leaf node or <see langword="null" /> if no path exists (and
+	///     <paramref name="createMissing" /> is <see langword="false" />).
+	/// </summary>
+	/// <remarks>
+	///     Each concrete <see cref="IndexerAccess" /> subclass knows its parameter types and traverses
+	///     without boxing. Not intended for external implementation — the only supported subclasses are
+	///     <see cref="IndexerGetterAccess{T1}" />, <see cref="IndexerSetterAccess{T1, TValue}" />, their
+	///     multi-parameter siblings, and the source-generated 5+ parameter variants.
+	/// </remarks>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	protected abstract IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing);
 
 	/// <summary>
 	///     Attempts to find a previously stored value for this access.
 	/// </summary>
 	public bool TryFindStoredValue<T>(out T value)
 	{
-		ValueStorage? current = Storage;
-		if (current is null)
+		if (TraverseStorage(Storage, createMissing: false) is IndexerValueStorage<T> typedLeaf && typedLeaf.HasValue)
 		{
-			value = default!;
-			return false;
-		}
-
-		int count = ParameterCount;
-		for (int i = 0; i < count; i++)
-		{
-			current = current.GetChild(GetParameterValueAt(i));
-			if (current is null)
+			T stored = typedLeaf.Value;
+			if (stored is not null)
 			{
-				value = default!;
-				return false;
+				value = stored;
+				return true;
 			}
-		}
-
-		if (current.Value is T typedValue)
-		{
-			value = typedValue;
-			return true;
 		}
 
 		value = default!;
@@ -60,18 +63,10 @@ public abstract class IndexerAccess : IInteraction
 	/// </summary>
 	public void StoreValue<T>(T value)
 	{
-		ValueStorage? current = Storage;
-		if (current is null)
+		if (TraverseStorage(Storage, createMissing: true) is IndexerValueStorage<T> typedLeaf)
 		{
-			return;
+			typedLeaf.Value = value;
+			typedLeaf.HasValue = true;
 		}
-
-		int count = ParameterCount;
-		for (int i = 0; i < count; i++)
-		{
-			current = current.GetOrAddChild(GetParameterValueAt(i)!);
-		}
-
-		current.Value = value;
 	}
 }

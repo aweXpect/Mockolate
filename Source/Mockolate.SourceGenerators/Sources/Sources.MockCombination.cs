@@ -356,11 +356,14 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null);
+		Dictionary<string, int> signatureIndices = new();
+		int[] nextSignatureIndex = [0];
+		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, signatureIndices, nextSignatureIndex);
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
-			AppendMockSubject_ImplementClass(sb, item.Class, mockRegistryName, @class as MockClass);
+			AppendMockSubject_ImplementClass(sb, item.Class, mockRegistryName, @class as MockClass,
+				signatureIndices, nextSignatureIndex);
 		}
 
 		sb.AppendLine();

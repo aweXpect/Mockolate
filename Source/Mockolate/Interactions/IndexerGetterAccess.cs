@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Mockolate.Setup;
 
 namespace Mockolate.Interactions;
 
@@ -31,6 +32,18 @@ public class IndexerGetterAccess<T1>(string parameterName1, T1 parameter1) : Ind
 			0 => Parameter1,
 			_ => null,
 		};
+
+	/// <inheritdoc cref="IndexerAccess.TraverseStorage(Mockolate.Setup.IndexerValueStorage?, bool)" />
+	protected override IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing)
+	{
+		IndexerValueStorage? s = storage;
+		if (s is null)
+		{
+			return null;
+		}
+
+		return createMissing ? s.GetOrAddChildDispatch(Parameter1) : s.GetChildDispatch(Parameter1);
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
@@ -81,6 +94,24 @@ public class IndexerGetterAccess<T1, T2>(
 			1 => Parameter2,
 			_ => null,
 		};
+
+	/// <inheritdoc cref="IndexerAccess.TraverseStorage(Mockolate.Setup.IndexerValueStorage?, bool)" />
+	protected override IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing)
+	{
+		IndexerValueStorage? s = storage;
+		if (s is null)
+		{
+			return null;
+		}
+
+		s = createMissing ? s.GetOrAddChildDispatch(Parameter1) : s.GetChildDispatch(Parameter1);
+		if (s is null)
+		{
+			return null;
+		}
+
+		return createMissing ? s.GetOrAddChildDispatch(Parameter2) : s.GetChildDispatch(Parameter2);
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
@@ -144,6 +175,30 @@ public class IndexerGetterAccess<T1, T2, T3>(
 			2 => Parameter3,
 			_ => null,
 		};
+
+	/// <inheritdoc cref="IndexerAccess.TraverseStorage(Mockolate.Setup.IndexerValueStorage?, bool)" />
+	protected override IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing)
+	{
+		IndexerValueStorage? s = storage;
+		if (s is null)
+		{
+			return null;
+		}
+
+		s = createMissing ? s.GetOrAddChildDispatch(Parameter1) : s.GetChildDispatch(Parameter1);
+		if (s is null)
+		{
+			return null;
+		}
+
+		s = createMissing ? s.GetOrAddChildDispatch(Parameter2) : s.GetChildDispatch(Parameter2);
+		if (s is null)
+		{
+			return null;
+		}
+
+		return createMissing ? s.GetOrAddChildDispatch(Parameter3) : s.GetChildDispatch(Parameter3);
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()
@@ -220,6 +275,36 @@ public class IndexerGetterAccess<T1, T2, T3, T4>(
 			3 => Parameter4,
 			_ => null,
 		};
+
+	/// <inheritdoc cref="IndexerAccess.TraverseStorage(Mockolate.Setup.IndexerValueStorage?, bool)" />
+	protected override IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing)
+	{
+		IndexerValueStorage? s = storage;
+		if (s is null)
+		{
+			return null;
+		}
+
+		s = createMissing ? s.GetOrAddChildDispatch(Parameter1) : s.GetChildDispatch(Parameter1);
+		if (s is null)
+		{
+			return null;
+		}
+
+		s = createMissing ? s.GetOrAddChildDispatch(Parameter2) : s.GetChildDispatch(Parameter2);
+		if (s is null)
+		{
+			return null;
+		}
+
+		s = createMissing ? s.GetOrAddChildDispatch(Parameter3) : s.GetChildDispatch(Parameter3);
+		if (s is null)
+		{
+			return null;
+		}
+
+		return createMissing ? s.GetOrAddChildDispatch(Parameter4) : s.GetChildDispatch(Parameter4);
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	public override string ToString()

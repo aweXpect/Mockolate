@@ -148,16 +148,9 @@ public sealed partial class SetupIndexerTests
 	public async Task ThreeLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
-		MockRegistry registry = ((IMock)sut).MockRegistry;
 
 		int? result0 = sut["foo", 1, 2];
-		registry.SetIndexerValue<int?>(
-			new IndexerSetterAccess<string?, int, int, int?>(
-				"index1", "foo",
-				"index2", 1,
-				"index3", 2,
-				42),
-			42);
+		sut["foo", 1, 2] = 42;
 		int? result1 = sut["foo", 1, 2];
 		int? result2 = sut["bar", 1, 2];
 		int? result3 = sut["foo", 2, 2];
@@ -208,8 +201,10 @@ public sealed partial class SetupIndexerTests
 		IndexerSetup? stringSetup = registry.GetIndexerSetup<IndexerSetup>(s => true);
 		IndexerGetterAccess<int> access1 = new("index", 1);
 		IndexerGetterAccess<int> access2 = new("index", 1);
-		string result1 = registry.ApplyIndexerGetter<string>(access1, stringSetup, () => "");
-		int result2 = registry.ApplyIndexerGetter<int>(access2, stringSetup, () => 0);
+		string result1 = registry.ApplyIndexerGetter<string>(access1, stringSetup, () => "", 0);
+		// Use a different signature index for the int-typed access to avoid colliding with the
+		// string-typed storage slot created above: per-signature storage is now TValue-invariant.
+		int result2 = registry.ApplyIndexerGetter<int>(access2, stringSetup, () => 0, 100);
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEqualTo(0);

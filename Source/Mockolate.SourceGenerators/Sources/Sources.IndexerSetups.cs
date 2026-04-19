@@ -191,6 +191,28 @@ internal static partial class Sources
 
 		sb.Append("\t\t\t\t_ => null,").AppendLine();
 		sb.Append("\t\t\t};").AppendLine();
+
+		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Interactions.IndexerAccess.TraverseStorage(global::Mockolate.Setup.IndexerValueStorage?, bool)\" />").AppendLine();
+		sb.Append("\t\tprotected override global::Mockolate.Setup.IndexerValueStorage? TraverseStorage(global::Mockolate.Setup.IndexerValueStorage? storage, bool createMissing)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tglobal::Mockolate.Setup.IndexerValueStorage? s = storage;").AppendLine();
+		sb.Append("\t\t\tif (s is null)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\treturn null;").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		for (int i = 1; i < numberOfParameters; i++)
+		{
+			sb.Append("\t\t\ts = createMissing ? s.GetOrAddChildDispatch(Parameter").Append(i)
+				.Append(") : s.GetChildDispatch(Parameter").Append(i).Append(");").AppendLine();
+			sb.Append("\t\t\tif (s is null)").AppendLine();
+			sb.Append("\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\treturn null;").AppendLine();
+			sb.Append("\t\t\t}").AppendLine();
+		}
+
+		sb.Append("\t\t\treturn createMissing ? s.GetOrAddChildDispatch(Parameter").Append(numberOfParameters)
+			.Append(") : s.GetChildDispatch(Parameter").Append(numberOfParameters).Append(");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
 	}
 
 	private static void AppendIndexerSetup(StringBuilder sb, int numberOfParameters)
@@ -934,7 +956,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		// GetResult(behavior) — no-closure entry point used by the generated mock indexer body
+		// GetResult(behavior) â€” no-closure entry point used by the generated mock indexer body
 		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior)\" />").AppendLine();
 		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior)").AppendLine();
 		sb.Append("\t\t{").AppendLine();

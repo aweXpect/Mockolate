@@ -1238,7 +1238,8 @@ internal static partial class Sources
 	}
 
 	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockRegistryName,
-		MockClass? mockClass)
+		MockClass? mockClass, Dictionary<string, int>? signatureIndicesOverride = null,
+		int[]? nextSignatureIndexRef = null)
 	{
 		string className = @class.ClassFullName;
 		sb.Append("\t\t#region ").Append(@class.DisplayString).AppendLine();
@@ -1257,13 +1258,27 @@ internal static partial class Sources
 		}
 
 		List<Property>? mockProperties = mockClass?.AllProperties().ToList();
+		Dictionary<string, int> signatureIndices = signatureIndicesOverride ?? new Dictionary<string, int>();
+		int[] nextSignatureIndex = nextSignatureIndexRef ?? [0];
 		foreach (Property property in @class.AllProperties())
 		{
 			if (mockProperties?.All(p => !Property.EqualityComparer.Equals(property, p)) != false)
 			{
+				int signatureIndex = -1;
+				if (property is { IsIndexer: true, IndexerParameters: not null, })
+				{
+					string signatureKey = string.Join("|",
+						property.IndexerParameters.Value.Select(p => p.Type.Fullname));
+					if (!signatureIndices.TryGetValue(signatureKey, out signatureIndex))
+					{
+						signatureIndex = nextSignatureIndex[0]++;
+						signatureIndices[signatureKey] = signatureIndex;
+					}
+				}
+
 				AppendMockSubject_ImplementClass_AddProperty(sb, property, mockRegistryName, className,
 					mockClass is not null,
-					@class.IsInterface);
+					@class.IsInterface, signatureIndex);
 				sb.AppendLine();
 			}
 		}
@@ -1405,7 +1420,7 @@ internal static partial class Sources
 
 	private static void AppendMockSubject_ImplementClass_AddProperty(StringBuilder sb, Property property,
 		string mockRegistryName,
-		string className, bool explicitInterfaceImplementation, bool isClassInterface)
+		string className, bool explicitInterfaceImplementation, bool isClassInterface, int signatureIndex)
 	{
 		string mockRegistry = property.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(property.ContainingType.EscapeForXmlDoc()).Append('.').Append(
@@ -1489,11 +1504,12 @@ internal static partial class Sources
 					sb.Append("\t\t\t\t\treturn ").Append(setupVarName).Append(" is null")
 						.AppendLine();
 					sb.Append("\t\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
-						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(")")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
+						.Append(signatureIndex).Append(")")
 						.AppendLine();
 					sb.Append("\t\t\t\t\t\t: ").Append(mockRegistry).Append(".ApplyIndexerSetup<")
 						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
-						.Append(setupVarName).Append(");").AppendLine();
+						.Append(setupVarName).Append(", ").Append(signatureIndex).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 					sb.Append("\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ').Append(baseResultVarName)
 						.Append(" = wraps[")
@@ -1501,7 +1517,7 @@ internal static partial class Sources
 						.AppendLine();
 					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", ")
-						.Append(baseResultVarName).Append(");").AppendLine();
+						.Append(baseResultVarName).Append(", ").Append(signatureIndex).Append(");").AppendLine();
 				}
 				else
 				{
@@ -1559,15 +1575,16 @@ internal static partial class Sources
 
 					sb.Append("\t\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", ")
-						.Append(baseResultVarName).Append(");").AppendLine();
+						.Append(baseResultVarName).Append(", ").Append(signatureIndex).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 					sb.Append("\t\t\t\treturn ").Append(setupVarName).Append(" is null").AppendLine();
 					sb.Append("\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
-						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(")")
+						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
+						.Append(signatureIndex).Append(")")
 						.AppendLine();
 					sb.Append("\t\t\t\t\t: ").Append(mockRegistry).Append(".ApplyIndexerSetup<")
 						.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
-						.Append(setupVarName).Append(");").AppendLine();
+						.Append(setupVarName).Append(", ").Append(signatureIndex).Append(");").AppendLine();
 				}
 				else
 				{
@@ -1600,11 +1617,12 @@ internal static partial class Sources
 					property.Type, property.IndexerParameters.Value);
 				sb.Append("\t\t\t\treturn ").Append(setupVarName).Append(" is null").AppendLine();
 				sb.Append("\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
-					.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(")")
+					.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
+					.Append(signatureIndex).Append(")")
 					.AppendLine();
 				sb.Append("\t\t\t\t\t: ").Append(mockRegistry).Append(".ApplyIndexerSetup<")
 					.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
-					.Append(setupVarName).Append(");").AppendLine();
+					.Append(setupVarName).Append(", ").Append(signatureIndex).Append(");").AppendLine();
 			}
 			else
 			{
@@ -1641,7 +1659,8 @@ internal static partial class Sources
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
-						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value);")
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
+						.Append(signatureIndex).Append(");")
 						.AppendLine();
 
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
@@ -1679,7 +1698,8 @@ internal static partial class Sources
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value);
 					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".ApplyIndexerSetter(")
-						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value))").AppendLine();
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
+						.Append(signatureIndex).Append("))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property.Setter?.IsProtected != true)
 					{
@@ -1711,7 +1731,8 @@ internal static partial class Sources
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
-						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value);").AppendLine();
+						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
+						.Append(signatureIndex).Append(");").AppendLine();
 				}
 			}
 			else

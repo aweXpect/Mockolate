@@ -228,7 +228,7 @@ public sealed class IndexerSetupWhiteBoxTests
 				(IParameterMatch<T1>)It.IsAny<T1>(),
 				(IParameterMatch<T2>)It.IsAny<T2>())
 		{
-			private readonly ValueStorage _storage = new();
+			private readonly IndexerValueStorage<string> _storage = new();
 
 			public T DoGetResult<T>(
 				IndexerAccess indexerAccess, T value, MockBehavior? behavior = null)
@@ -362,7 +362,7 @@ public sealed class IndexerSetupWhiteBoxTests
 				(IParameterMatch<T2>)It.IsAny<T2>(),
 				(IParameterMatch<T3>)It.IsAny<T3>())
 		{
-			private readonly ValueStorage _storage = new();
+			private readonly IndexerValueStorage<string> _storage = new();
 
 			public T DoGetResult<T>(
 				IndexerAccess indexerAccess, T value, MockBehavior? behavior = null)
@@ -504,7 +504,7 @@ public sealed class IndexerSetupWhiteBoxTests
 				(IParameterMatch<T3>)It.IsAny<T3>(),
 				(IParameterMatch<T4>)It.IsAny<T4>())
 		{
-			private readonly ValueStorage _storage = new();
+			private readonly IndexerValueStorage<string> _storage = new();
 
 			public T DoGetResult<T>(
 				IndexerAccess indexerAccess, T value, MockBehavior? behavior = null)
@@ -656,7 +656,7 @@ public sealed class IndexerSetupWhiteBoxTests
 				(IParameterMatch<T4>)It.IsAny<T4>(),
 				(IParameterMatch<T5>)It.IsAny<T5>())
 		{
-			private readonly ValueStorage _storage = new();
+			private readonly IndexerValueStorage<string> _storage = new();
 
 			public T DoGetResult<T>(
 				IndexerAccess indexerAccess, T value, MockBehavior? behavior = null)
@@ -679,7 +679,7 @@ public sealed class IndexerSetupWhiteBoxTests
 			new MockRegistry(MockBehavior.Default),
 			(IParameterMatch<T1>)It.IsAny<T1>())
 	{
-		private readonly ValueStorage _storage = new();
+		private readonly IndexerValueStorage<string> _storage = new();
 
 		public T DoGetResult<T>(
 			IndexerAccess indexerAccess, T value, MockBehavior? behavior = null)
