@@ -342,5 +342,116 @@ public sealed class RefStructPrototypeTests
 			await That(Act).Throws<NotSupportedException>().WithMessage("arity-4");
 		}
 	}
+
+	public sealed class ReturnSetupTests
+	{
+		[Fact]
+		public async Task Arity1_Returns_Value_ReturnsConfiguredValue()
+		{
+			RefStructReturnMethodSetup<int, DataPacket> setup = new(
+				"TryParse", It.IsAnyRefStruct<DataPacket>() as IParameterMatch<DataPacket>);
+			((IRefStructReturnMethodSetup<int, DataPacket>)setup).Returns(42);
+
+			int result = setup.Invoke(new DataPacket(1, []));
+
+			await That(result).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task Arity1_Returns_Factory_InvokedPerCall()
+		{
+			int calls = 0;
+			RefStructReturnMethodSetup<int, DataPacket> setup = new("TryParse");
+			((IRefStructReturnMethodSetup<int, DataPacket>)setup)
+				.Returns(() => ++calls);
+
+			int first = setup.Invoke(new DataPacket(1, []));
+			int second = setup.Invoke(new DataPacket(2, []));
+
+			await That(first).IsEqualTo(1);
+			await That(second).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task Arity1_NoReturnConfigured_UsesDefaultFactory()
+		{
+			RefStructReturnMethodSetup<string, DataPacket> setup = new("Decode");
+
+			string result = setup.Invoke(new DataPacket(1, []), static () => "fallback");
+
+			await That(result).IsEqualTo("fallback");
+		}
+
+		[Fact]
+		public async Task Arity1_Throws_BeatsReturn_WhenBothConfigured()
+		{
+			RefStructReturnMethodSetup<int, DataPacket> setup = new("TryParse");
+			((IRefStructReturnMethodSetup<int, DataPacket>)setup)
+				.Returns(42)
+				.Throws<InvalidOperationException>();
+
+			void Act() => setup.Invoke(new DataPacket(1, []));
+
+			await That(Act).Throws<InvalidOperationException>();
+		}
+
+		[Fact]
+		public async Task Arity1_HasReturnValue_ReflectsConfiguration()
+		{
+			RefStructReturnMethodSetup<int, DataPacket> setup = new("TryParse");
+			bool before = setup.HasReturnValue;
+
+			((IRefStructReturnMethodSetup<int, DataPacket>)setup).Returns(7);
+
+			await That(before).IsFalse();
+			await That(setup.HasReturnValue).IsTrue();
+		}
+
+		[Fact]
+		public async Task Arity2_Matches_AllMatchersMustAccept()
+		{
+			RefStructReturnMethodSetup<bool, DataPacket, DataPacket> setup = new(
+				"Compare",
+				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
+				It.IsRefStruct<DataPacket>(p => p.Id == 2) as IParameterMatch<DataPacket>);
+			((IRefStructReturnMethodSetup<bool, DataPacket, DataPacket>)setup).Returns(true);
+
+			bool match = setup.Matches(new DataPacket(1, []), new DataPacket(2, []));
+			bool miss = setup.Matches(new DataPacket(1, []), new DataPacket(99, []));
+
+			await That(match).IsTrue();
+			await That(miss).IsFalse();
+		}
+
+		[Fact]
+		public async Task Arity3_Invoke_ReturnsConfiguredValue()
+		{
+			RefStructReturnMethodSetup<string, DataPacket, DataPacket, DataPacket> setup =
+				new("Blend");
+			((IRefStructReturnMethodSetup<string, DataPacket, DataPacket, DataPacket>)setup)
+				.Returns("blended");
+
+			string result = setup.Invoke(
+				new DataPacket(1, []), new DataPacket(2, []), new DataPacket(3, []));
+
+			await That(result).IsEqualTo("blended");
+		}
+
+		[Fact]
+		public async Task Arity4_Invoke_RunsThrowOverReturn()
+		{
+			RefStructReturnMethodSetup<int, DataPacket, DataPacket, DataPacket, DataPacket> setup =
+				new("Combine");
+			((IRefStructReturnMethodSetup<int, DataPacket, DataPacket, DataPacket, DataPacket>)setup)
+				.Returns(99)
+				.Throws(new NotSupportedException());
+
+			void Act() => setup.Invoke(
+				new DataPacket(1, []), new DataPacket(2, []),
+				new DataPacket(3, []), new DataPacket(4, []));
+
+			await That(Act).Throws<NotSupportedException>();
+		}
+	}
 }
 #endif
