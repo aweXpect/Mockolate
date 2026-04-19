@@ -38,7 +38,9 @@ public class DefaultValueFactory
 	/// </summary>
 	/// <param name="type">The runtime type to produce a default value for.</param>
 	/// <param name="parameters">
-	///     Optional context forwarded from the caller; typically empty. See
+	///     The runtime arguments of the mocked invocation, forwarded so the factory can vary its result by
+	///     context (for example, returning a cancelled task when a cancelled
+	///     <see cref="System.Threading.CancellationToken" /> is present). See
 	///     <see cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" /> for details.
 	/// </param>
 	/// <returns>The generated value, or <see langword="null" /> when no generator has been configured.</returns>
