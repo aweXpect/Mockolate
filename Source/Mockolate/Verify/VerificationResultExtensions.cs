@@ -297,7 +297,8 @@ public static class VerificationResultExtensions
 		///     Asserts that the verified interaction never occurred.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
-		///     Thrown when the verified interaction occurred at least once.
+		///     Thrown when the verified interaction occurred at least once,
+		///     or when a <see cref="VerificationResult{TVerify}.Within(TimeSpan)" /> timeout elapses first.
 		/// </exception>
 		public void Never()
 		{
