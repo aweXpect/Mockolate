@@ -13,12 +13,12 @@ namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the case of an interface mock with an indexer, setup the indexer and verify
-///     the getter was called exactly <see cref="InvocationCount" /> times.
+///     the getter was called exactly <see cref="N" /> times.
 /// </summary>
 public class CompleteIndexerBenchmarks : BenchmarksBase
 {
 	[Params(1, 10)]
-	public int InvocationCount { get; set; }
+	public int N { get; set; }
 
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
@@ -29,12 +29,12 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		IMyIndexerInterface sut = IMyIndexerInterface.CreateMock();
 		sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
 
-		for (int i = 0; i < InvocationCount; i++)
+		for (int i = 0; i < N; i++)
 		{
 			_ = sut[42];
 		}
 
-		sut.Mock.Verify[It.IsAny<int>()].Got().Exactly(InvocationCount);
+		sut.Mock.Verify[It.IsAny<int>()].Got().Exactly(N);
 	}
 
 	/// <summary>
@@ -47,12 +47,12 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		mock.Setup(x => x[Moq.It.IsAny<int>()]).Returns("foo");
 		IMyIndexerInterface sut = mock.Object;
 
-		for (int i = 0; i < InvocationCount; i++)
+		for (int i = 0; i < N; i++)
 		{
 			_ = sut[42];
 		}
 
-		mock.Verify(x => x[Moq.It.IsAny<int>()], Times.Exactly(InvocationCount));
+		mock.Verify(x => x[Moq.It.IsAny<int>()], Times.Exactly(N));
 	}
 
 	/// <summary>
@@ -64,12 +64,12 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		IMyIndexerInterface mock = Substitute.For<IMyIndexerInterface>();
 		mock[Arg.Any<int>()].Returns("foo");
 
-		for (int i = 0; i < InvocationCount; i++)
+		for (int i = 0; i < N; i++)
 		{
 			_ = mock[42];
 		}
 
-		_ = mock.Received(InvocationCount)[Arg.Any<int>()];
+		_ = mock.Received(N)[Arg.Any<int>()];
 	}
 
 	/// <summary>
@@ -81,12 +81,12 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		IMyIndexerInterface mock = A.Fake<IMyIndexerInterface>();
 		A.CallTo(() => mock[A<int>.Ignored]).Returns("foo");
 
-		for (int i = 0; i < InvocationCount; i++)
+		for (int i = 0; i < N; i++)
 		{
 			_ = mock[42];
 		}
 
-		A.CallTo(() => mock[A<int>.Ignored]).MustHaveHappened(InvocationCount, FakeItEasy.Times.Exactly);
+		A.CallTo(() => mock[A<int>.Ignored]).MustHaveHappened(N, FakeItEasy.Times.Exactly);
 	}
 
 	/// <summary>
@@ -99,12 +99,12 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Returns("foo");
 		IMyIndexerInterface sut = imposter.Instance();
 
-		for (int i = 0; i < InvocationCount; i++)
+		for (int i = 0; i < N; i++)
 		{
 			_ = sut[42];
 		}
 
-		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Called(Count.Exactly(InvocationCount));
+		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Called(Count.Exactly(N));
 	}
 
 	/* Indexers not supported on TUnit.Mocks
@@ -117,12 +117,12 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		TUnit.Mocks.Mock<IMyIndexerInterface> mock = TUnit.Mocks.Mock.Of<IMyIndexerInterface>();
 		mock[Any<int>()].Returns("foo");
 
-		for (int i = 0; i < InvocationCount; i++)
+		for (int i = 0; i < N; i++)
 		{
 			_ = mock.Object[42];
 		}
 
-		mock[Any<int>()].WasCalled(TUnit.Mocks.Times.Exactly(InvocationCount));
+		mock[Any<int>()].WasCalled(TUnit.Mocks.Times.Exactly(N));
 	}
 	*/
 
