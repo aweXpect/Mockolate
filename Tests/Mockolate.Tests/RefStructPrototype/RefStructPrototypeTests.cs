@@ -1,13 +1,18 @@
 #if NET9_0_OR_GREATER
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.RefStructPrototype;
 
+/// <summary>
+///     Low-level unit coverage for the ref-struct primitives (matchers, setup types, the
+///     <see cref="RefStructMethodInvocation" /> interaction).
+///     End-to-end coverage through the generator lives in <see cref="GeneratedPacketSinkTests" />,
+///     which uses the <see cref="Packet" /> ref struct defined alongside it.
+/// </summary>
 public sealed class RefStructPrototypeTests
 {
 	public sealed class MatcherTests
@@ -15,9 +20,9 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task IsAnyRefStruct_ShouldMatchAnyValue()
 		{
-			IParameter<DataPacket> sut = It.IsAnyRefStruct<DataPacket>();
+			IParameter<Packet> sut = It.IsAnyRefStruct<Packet>();
 
-			bool result = ((IParameterMatch<DataPacket>)sut).Matches(new DataPacket(1, []));
+			bool result = ((IParameterMatch<Packet>)sut).Matches(new Packet(1, []));
 
 			await That(result).IsTrue();
 		}
@@ -25,21 +30,21 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task IsAnyRefStruct_ToString_ShouldIncludeTypeName()
 		{
-			IParameter<DataPacket> sut = It.IsAnyRefStruct<DataPacket>();
+			IParameter<Packet> sut = It.IsAnyRefStruct<Packet>();
 
 			string? result = sut.ToString();
 
-			await That(result).IsEqualTo("It.IsAnyRefStruct<DataPacket>()");
+			await That(result).IsEqualTo("It.IsAnyRefStruct<Packet>()");
 		}
 
 		[Fact]
 		public async Task IsRefStruct_WithPredicate_ShouldFilterById()
 		{
-			IParameter<DataPacket> sut = It.IsRefStruct<DataPacket>(p => p.Id > 100);
-			IParameterMatch<DataPacket> match = (IParameterMatch<DataPacket>)sut;
+			IParameter<Packet> sut = It.IsRefStruct<Packet>(p => p.Id > 100);
+			IParameterMatch<Packet> match = (IParameterMatch<Packet>)sut;
 
-			bool high = match.Matches(new DataPacket(500, []));
-			bool low = match.Matches(new DataPacket(1, []));
+			bool high = match.Matches(new Packet(500, []));
+			bool low = match.Matches(new Packet(1, []));
 
 			await That(high).IsTrue();
 			await That(low).IsFalse();
@@ -51,15 +56,15 @@ public sealed class RefStructPrototypeTests
 			// Demonstrates the predicate can read into the ref struct's inline Span — which is the
 			// whole reason ref-struct parameters exist. A non-ref-struct matcher could never do this
 			// because the Span couldn't flow through the parameter type.
-			IParameter<DataPacket> sut = It.IsRefStruct<DataPacket>(p =>
+			IParameter<Packet> sut = It.IsRefStruct<Packet>(p =>
 				p.Payload.Length > 0 && p.Payload[0] == 0xFF);
-			IParameterMatch<DataPacket> match = (IParameterMatch<DataPacket>)sut;
+			IParameterMatch<Packet> match = (IParameterMatch<Packet>)sut;
 
 			byte[] hit = [0xFF, 0x01];
 			byte[] miss = [0x00, 0x01];
 
-			bool matchedHit = match.Matches(new DataPacket(1, hit));
-			bool matchedMiss = match.Matches(new DataPacket(1, miss));
+			bool matchedHit = match.Matches(new Packet(1, hit));
+			bool matchedMiss = match.Matches(new Packet(1, miss));
 
 			await That(matchedHit).IsTrue();
 			await That(matchedMiss).IsFalse();
@@ -70,7 +75,7 @@ public sealed class RefStructPrototypeTests
 		{
 			// The non-generic IParameter.Matches(object?) is the covariance-safe fallback and is
 			// deliberately inert for ref-struct matchers: the boxed path can never be a ref struct.
-			IParameter sut = It.IsAnyRefStruct<DataPacket>();
+			IParameter sut = It.IsAnyRefStruct<Packet>();
 
 			bool result = sut.Matches(null);
 
@@ -78,191 +83,14 @@ public sealed class RefStructPrototypeTests
 		}
 	}
 
-	public sealed class SetupTests
+	public sealed class InteractionTests
 	{
 		[Fact]
-		public async Task Consume_WithoutSetup_ShouldRunWithoutThrowing()
+		public async Task SingleArityInteraction_RendersParameterNameWithPlaceholder()
 		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
+			RefStructMethodInvocation invocation = new("Consume", "packet");
 
-			sut.Consume(new DataPacket(1, []));
-
-			await That(mock.Verify.ConsumeCount).IsEqualTo(1);
-		}
-
-		[Fact]
-		public async Task Consume_WithAnyMatcher_Throws_ShouldThrowConfiguredException()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			mock.Setup.Consume(It.IsAnyRefStruct<DataPacket>())
-				.Throws<InvalidOperationException>();
-
-			void Act() => sut.Consume(new DataPacket(1, []));
-
-			await That(Act).Throws<InvalidOperationException>();
-		}
-
-		[Fact]
-		public async Task Consume_ThrowsExceptionInstance_ShouldThrowSameInstance()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			InvalidOperationException expected = new("boom");
-			mock.Setup.Consume(It.IsAnyRefStruct<DataPacket>()).Throws(expected);
-
-			try
-			{
-				sut.Consume(new DataPacket(1, []));
-				await That(false).IsTrue().Because("expected throw");
-			}
-			catch (InvalidOperationException actual)
-			{
-				await That(actual).IsSameAs(expected);
-			}
-		}
-
-		[Fact]
-		public async Task Consume_ThrowsFactory_ShouldInvokeFactoryPerCall()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			int factoryCalls = 0;
-			mock.Setup.Consume(It.IsRefStruct<DataPacket>(d => d.Id == 1))
-				.Throws(() =>
-				{
-					factoryCalls++;
-					return new InvalidOperationException($"call #{factoryCalls}");
-				});
-
-			try { sut.Consume(new DataPacket(1, [])); } catch (InvalidOperationException) { }
-			try { sut.Consume(new DataPacket(2, [])); } catch (InvalidOperationException) { }
-
-			await That(factoryCalls).IsEqualTo(1);
-		}
-
-		[Fact]
-		public async Task Consume_PredicateMatches_ShouldThrowOnlyWhenPredicateHolds()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			mock.Setup.Consume(It.IsRefStruct<DataPacket>(p => p.Id == 42))
-				.Throws<InvalidOperationException>();
-
-			void ActMatch() => sut.Consume(new DataPacket(42, []));
-			void ActMiss() => sut.Consume(new DataPacket(7, []));
-
-			await That(ActMatch).Throws<InvalidOperationException>();
-			await That(ActMiss).DoesNotThrow();
-		}
-
-		[Fact]
-		public async Task Consume_MultipleSetups_LatestMatchingWins()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			mock.Setup.Consume(It.IsAnyRefStruct<DataPacket>())
-				.Throws<InvalidOperationException>();
-			mock.Setup.Consume(It.IsRefStruct<DataPacket>(p => p.Id == 42))
-				.Throws<NotSupportedException>();
-
-			void ActSpecific() => sut.Consume(new DataPacket(42, []));
-			void ActFallback() => sut.Consume(new DataPacket(1, []));
-
-			// Registered last with a matching predicate → wins over the any-matcher above.
-			await That(ActSpecific).Throws<NotSupportedException>();
-			// Doesn't match the predicate → falls through to the earlier any-matcher.
-			await That(ActFallback).Throws<InvalidOperationException>();
-		}
-
-		[Fact]
-		public async Task Consume_DoesNotThrow_OverridesEarlierThrows()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			IRefStructVoidMethodSetup<DataPacket> setup = mock.Setup.Consume(
-				It.IsAnyRefStruct<DataPacket>());
-			setup.Throws<InvalidOperationException>();
-			setup.DoesNotThrow();
-
-			sut.Consume(new DataPacket(1, []));
-
-			await That(mock.Verify.ConsumeCount).IsEqualTo(1);
-		}
-
-		[Fact]
-		public async Task Consume_Setup_InspectsSpanPayloadAtCallTime()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			mock.Setup.Consume(It.IsRefStruct<DataPacket>(p =>
-				p.Payload.Length == 3 && p.Payload[0] == 0xFF))
-				.Throws<InvalidOperationException>();
-
-			byte[] hit = [0xFF, 0x00, 0x01];
-			byte[] miss = [0x00, 0x00, 0x01];
-
-			void ActHit() => sut.Consume(new DataPacket(1, hit));
-			void ActMiss() => sut.Consume(new DataPacket(2, miss));
-
-			await That(ActHit).Throws<InvalidOperationException>();
-			await That(ActMiss).DoesNotThrow();
-		}
-	}
-
-	public sealed class VerifyTests
-	{
-		[Fact]
-		public async Task ConsumeCount_ReflectsEveryInvocation()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			sut.Consume(new DataPacket(1, []));
-			sut.Consume(new DataPacket(2, []));
-			sut.Consume(new DataPacket(3, []));
-
-			await That(mock.Verify.ConsumeCount).IsEqualTo(3);
-		}
-
-		[Fact]
-		public async Task RecordedInteraction_IsRefStructMethodInvocation_WithoutParameterValue()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			sut.Consume(new DataPacket(999, []));
-
-			RefStructMethodInvocation? recorded =
-				mock.Registry.Interactions.OfType<RefStructMethodInvocation>().SingleOrDefault();
-
-			await That(recorded).IsNotNull();
-			await That(recorded!.Name).IsEqualTo("Consume");
-			await That(recorded.ParameterNames.Single()).IsEqualTo("packet");
-			// The ref struct value is NOT on the recorded interaction — post-hoc verify can only
-			// count and filter by name. Matching against the value requires setup-time matchers.
-		}
-
-		[Fact]
-		public async Task RecordedInteraction_ToString_ShowsRefStructPlaceholder()
-		{
-			PacketSinkMock mock = new(MockBehavior.Default);
-			IPacketSink sut = mock;
-
-			sut.Consume(new DataPacket(1, []));
-
-			RefStructMethodInvocation recorded =
-				mock.Registry.Interactions.OfType<RefStructMethodInvocation>().Single();
-
-			string? rendered = recorded.ToString();
+			string? rendered = invocation.ToString();
 
 			await That(rendered).IsEqualTo("invoke method Consume(packet: <ref struct>)");
 		}
@@ -284,14 +112,14 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity2_Matches_AllMatchersMustAccept()
 		{
-			RefStructVoidMethodSetup<DataPacket, DataPacket> setup = new(
+			RefStructVoidMethodSetup<Packet, Packet> setup = new(
 				"Encode",
-				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
-				It.IsRefStruct<DataPacket>(p => p.Id == 2) as IParameterMatch<DataPacket>);
+				It.IsRefStruct<Packet>(p => p.Id == 1) as IParameterMatch<Packet>,
+				It.IsRefStruct<Packet>(p => p.Id == 2) as IParameterMatch<Packet>);
 
-			bool bothMatch = setup.Matches(new DataPacket(1, []), new DataPacket(2, []));
-			bool firstOnly = setup.Matches(new DataPacket(1, []), new DataPacket(99, []));
-			bool secondOnly = setup.Matches(new DataPacket(99, []), new DataPacket(2, []));
+			bool bothMatch = setup.Matches(new Packet(1, []), new Packet(2, []));
+			bool firstOnly = setup.Matches(new Packet(1, []), new Packet(99, []));
+			bool secondOnly = setup.Matches(new Packet(99, []), new Packet(2, []));
 
 			await That(bothMatch).IsTrue();
 			await That(firstOnly).IsFalse();
@@ -301,11 +129,11 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity2_Invoke_ThrowsConfiguredException()
 		{
-			RefStructVoidMethodSetup<DataPacket, DataPacket> setup = new("Encode");
-			((IRefStructVoidMethodSetup<DataPacket, DataPacket>)setup)
+			RefStructVoidMethodSetup<Packet, Packet> setup = new("Encode");
+			((IRefStructVoidMethodSetup<Packet, Packet>)setup)
 				.Throws<InvalidOperationException>();
 
-			void Act() => setup.Invoke(new DataPacket(1, []), new DataPacket(2, []));
+			void Act() => setup.Invoke(new Packet(1, []), new Packet(2, []));
 
 			await That(Act).Throws<InvalidOperationException>();
 		}
@@ -313,16 +141,16 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity3_Matches_AllMatchersMustAccept()
 		{
-			RefStructVoidMethodSetup<DataPacket, DataPacket, DataPacket> setup = new(
+			RefStructVoidMethodSetup<Packet, Packet, Packet> setup = new(
 				"Fold",
-				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
+				It.IsRefStruct<Packet>(p => p.Id == 1) as IParameterMatch<Packet>,
 				null,
-				It.IsRefStruct<DataPacket>(p => p.Id == 3) as IParameterMatch<DataPacket>);
+				It.IsRefStruct<Packet>(p => p.Id == 3) as IParameterMatch<Packet>);
 
 			bool match = setup.Matches(
-				new DataPacket(1, []), new DataPacket(99, []), new DataPacket(3, []));
+				new Packet(1, []), new Packet(99, []), new Packet(3, []));
 			bool miss = setup.Matches(
-				new DataPacket(2, []), new DataPacket(99, []), new DataPacket(3, []));
+				new Packet(2, []), new Packet(99, []), new Packet(3, []));
 
 			await That(match).IsTrue();
 			await That(miss).IsFalse();
@@ -331,14 +159,14 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity4_Invoke_ThrowsFromFactory()
 		{
-			RefStructVoidMethodSetup<DataPacket, DataPacket, DataPacket, DataPacket> setup =
+			RefStructVoidMethodSetup<Packet, Packet, Packet, Packet> setup =
 				new("Merge");
-			((IRefStructVoidMethodSetup<DataPacket, DataPacket, DataPacket, DataPacket>)setup)
+			((IRefStructVoidMethodSetup<Packet, Packet, Packet, Packet>)setup)
 				.Throws(() => new NotSupportedException("arity-4"));
 
 			void Act() => setup.Invoke(
-				new DataPacket(1, []), new DataPacket(2, []),
-				new DataPacket(3, []), new DataPacket(4, []));
+				new Packet(1, []), new Packet(2, []),
+				new Packet(3, []), new Packet(4, []));
 
 			await That(Act).Throws<NotSupportedException>().WithMessage("arity-4");
 		}
@@ -349,11 +177,11 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_Returns_Value_ReturnsConfiguredValue()
 		{
-			RefStructReturnMethodSetup<int, DataPacket> setup = new(
-				"TryParse", It.IsAnyRefStruct<DataPacket>() as IParameterMatch<DataPacket>);
-			((IRefStructReturnMethodSetup<int, DataPacket>)setup).Returns(42);
+			RefStructReturnMethodSetup<int, Packet> setup = new(
+				"TryParse", It.IsAnyRefStruct<Packet>() as IParameterMatch<Packet>);
+			((IRefStructReturnMethodSetup<int, Packet>)setup).Returns(42);
 
-			int result = setup.Invoke(new DataPacket(1, []));
+			int result = setup.Invoke(new Packet(1, []));
 
 			await That(result).IsEqualTo(42);
 		}
@@ -362,12 +190,12 @@ public sealed class RefStructPrototypeTests
 		public async Task Arity1_Returns_Factory_InvokedPerCall()
 		{
 			int calls = 0;
-			RefStructReturnMethodSetup<int, DataPacket> setup = new("TryParse");
-			((IRefStructReturnMethodSetup<int, DataPacket>)setup)
+			RefStructReturnMethodSetup<int, Packet> setup = new("TryParse");
+			((IRefStructReturnMethodSetup<int, Packet>)setup)
 				.Returns(() => ++calls);
 
-			int first = setup.Invoke(new DataPacket(1, []));
-			int second = setup.Invoke(new DataPacket(2, []));
+			int first = setup.Invoke(new Packet(1, []));
+			int second = setup.Invoke(new Packet(2, []));
 
 			await That(first).IsEqualTo(1);
 			await That(second).IsEqualTo(2);
@@ -376,9 +204,9 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_NoReturnConfigured_UsesDefaultFactory()
 		{
-			RefStructReturnMethodSetup<string, DataPacket> setup = new("Decode");
+			RefStructReturnMethodSetup<string, Packet> setup = new("Decode");
 
-			string result = setup.Invoke(new DataPacket(1, []), static () => "fallback");
+			string result = setup.Invoke(new Packet(1, []), static () => "fallback");
 
 			await That(result).IsEqualTo("fallback");
 		}
@@ -386,12 +214,12 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_Throws_BeatsReturn_WhenBothConfigured()
 		{
-			RefStructReturnMethodSetup<int, DataPacket> setup = new("TryParse");
-			((IRefStructReturnMethodSetup<int, DataPacket>)setup)
+			RefStructReturnMethodSetup<int, Packet> setup = new("TryParse");
+			((IRefStructReturnMethodSetup<int, Packet>)setup)
 				.Returns(42)
 				.Throws<InvalidOperationException>();
 
-			void Act() => setup.Invoke(new DataPacket(1, []));
+			void Act() => setup.Invoke(new Packet(1, []));
 
 			await That(Act).Throws<InvalidOperationException>();
 		}
@@ -399,10 +227,10 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_HasReturnValue_ReflectsConfiguration()
 		{
-			RefStructReturnMethodSetup<int, DataPacket> setup = new("TryParse");
+			RefStructReturnMethodSetup<int, Packet> setup = new("TryParse");
 			bool before = setup.HasReturnValue;
 
-			((IRefStructReturnMethodSetup<int, DataPacket>)setup).Returns(7);
+			((IRefStructReturnMethodSetup<int, Packet>)setup).Returns(7);
 
 			await That(before).IsFalse();
 			await That(setup.HasReturnValue).IsTrue();
@@ -411,14 +239,14 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity2_Matches_AllMatchersMustAccept()
 		{
-			RefStructReturnMethodSetup<bool, DataPacket, DataPacket> setup = new(
+			RefStructReturnMethodSetup<bool, Packet, Packet> setup = new(
 				"Compare",
-				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
-				It.IsRefStruct<DataPacket>(p => p.Id == 2) as IParameterMatch<DataPacket>);
-			((IRefStructReturnMethodSetup<bool, DataPacket, DataPacket>)setup).Returns(true);
+				It.IsRefStruct<Packet>(p => p.Id == 1) as IParameterMatch<Packet>,
+				It.IsRefStruct<Packet>(p => p.Id == 2) as IParameterMatch<Packet>);
+			((IRefStructReturnMethodSetup<bool, Packet, Packet>)setup).Returns(true);
 
-			bool match = setup.Matches(new DataPacket(1, []), new DataPacket(2, []));
-			bool miss = setup.Matches(new DataPacket(1, []), new DataPacket(99, []));
+			bool match = setup.Matches(new Packet(1, []), new Packet(2, []));
+			bool miss = setup.Matches(new Packet(1, []), new Packet(99, []));
 
 			await That(match).IsTrue();
 			await That(miss).IsFalse();
@@ -427,13 +255,13 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity3_Invoke_ReturnsConfiguredValue()
 		{
-			RefStructReturnMethodSetup<string, DataPacket, DataPacket, DataPacket> setup =
+			RefStructReturnMethodSetup<string, Packet, Packet, Packet> setup =
 				new("Blend");
-			((IRefStructReturnMethodSetup<string, DataPacket, DataPacket, DataPacket>)setup)
+			((IRefStructReturnMethodSetup<string, Packet, Packet, Packet>)setup)
 				.Returns("blended");
 
 			string result = setup.Invoke(
-				new DataPacket(1, []), new DataPacket(2, []), new DataPacket(3, []));
+				new Packet(1, []), new Packet(2, []), new Packet(3, []));
 
 			await That(result).IsEqualTo("blended");
 		}
@@ -441,15 +269,15 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity4_Invoke_RunsThrowOverReturn()
 		{
-			RefStructReturnMethodSetup<int, DataPacket, DataPacket, DataPacket, DataPacket> setup =
+			RefStructReturnMethodSetup<int, Packet, Packet, Packet, Packet> setup =
 				new("Combine");
-			((IRefStructReturnMethodSetup<int, DataPacket, DataPacket, DataPacket, DataPacket>)setup)
+			((IRefStructReturnMethodSetup<int, Packet, Packet, Packet, Packet>)setup)
 				.Returns(99)
 				.Throws(new NotSupportedException());
 
 			void Act() => setup.Invoke(
-				new DataPacket(1, []), new DataPacket(2, []),
-				new DataPacket(3, []), new DataPacket(4, []));
+				new Packet(1, []), new Packet(2, []),
+				new Packet(3, []), new Packet(4, []));
 
 			await That(Act).Throws<NotSupportedException>();
 		}
@@ -460,11 +288,11 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_Returns_Value_ReturnsConfiguredValue()
 		{
-			RefStructIndexerGetterSetup<int, DataPacket> setup = new(
-				"get_Item", It.IsAnyRefStruct<DataPacket>() as IParameterMatch<DataPacket>);
-			((IRefStructIndexerGetterSetup<int, DataPacket>)setup).Returns(7);
+			RefStructIndexerGetterSetup<int, Packet> setup = new(
+				"get_Item", It.IsAnyRefStruct<Packet>() as IParameterMatch<Packet>);
+			((IRefStructIndexerGetterSetup<int, Packet>)setup).Returns(7);
 
-			int result = setup.Invoke(new DataPacket(1, []));
+			int result = setup.Invoke(new Packet(1, []));
 
 			await That(result).IsEqualTo(7);
 		}
@@ -472,13 +300,13 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_PredicateMatches_FiltersByKey()
 		{
-			RefStructIndexerGetterSetup<string, DataPacket> setup = new(
+			RefStructIndexerGetterSetup<string, Packet> setup = new(
 				"get_Item",
-				It.IsRefStruct<DataPacket>(p => p.Id == 42) as IParameterMatch<DataPacket>);
-			((IRefStructIndexerGetterSetup<string, DataPacket>)setup).Returns("hit");
+				It.IsRefStruct<Packet>(p => p.Id == 42) as IParameterMatch<Packet>);
+			((IRefStructIndexerGetterSetup<string, Packet>)setup).Returns("hit");
 
-			bool matchesHit = setup.Matches(new DataPacket(42, []));
-			bool matchesMiss = setup.Matches(new DataPacket(7, []));
+			bool matchesHit = setup.Matches(new Packet(42, []));
+			bool matchesMiss = setup.Matches(new Packet(7, []));
 
 			await That(matchesHit).IsTrue();
 			await That(matchesMiss).IsFalse();
@@ -487,9 +315,9 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_NoReturnConfigured_UsesDefaultFactory()
 		{
-			RefStructIndexerGetterSetup<string, DataPacket> setup = new("get_Item");
+			RefStructIndexerGetterSetup<string, Packet> setup = new("get_Item");
 
-			string result = setup.Invoke(new DataPacket(1, []), static () => "fallback");
+			string result = setup.Invoke(new Packet(1, []), static () => "fallback");
 
 			await That(result).IsEqualTo("fallback");
 		}
@@ -497,12 +325,12 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity1_Throws_TakesPrecedenceOverReturn()
 		{
-			RefStructIndexerGetterSetup<int, DataPacket> setup = new("get_Item");
-			((IRefStructIndexerGetterSetup<int, DataPacket>)setup)
+			RefStructIndexerGetterSetup<int, Packet> setup = new("get_Item");
+			((IRefStructIndexerGetterSetup<int, Packet>)setup)
 				.Returns(42)
 				.Throws<KeyNotFoundException>();
 
-			void Act() => setup.Invoke(new DataPacket(1, []));
+			void Act() => setup.Invoke(new Packet(1, []));
 
 			await That(Act).Throws<KeyNotFoundException>();
 		}
@@ -510,13 +338,13 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity2_Matches_AllMatchersMustAccept()
 		{
-			RefStructIndexerGetterSetup<int, DataPacket, DataPacket> setup = new(
+			RefStructIndexerGetterSetup<int, Packet, Packet> setup = new(
 				"get_Item",
-				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
-				It.IsRefStruct<DataPacket>(p => p.Id == 2) as IParameterMatch<DataPacket>);
+				It.IsRefStruct<Packet>(p => p.Id == 1) as IParameterMatch<Packet>,
+				It.IsRefStruct<Packet>(p => p.Id == 2) as IParameterMatch<Packet>);
 
-			bool bothMatch = setup.Matches(new DataPacket(1, []), new DataPacket(2, []));
-			bool secondOnly = setup.Matches(new DataPacket(99, []), new DataPacket(2, []));
+			bool bothMatch = setup.Matches(new Packet(1, []), new Packet(2, []));
+			bool secondOnly = setup.Matches(new Packet(99, []), new Packet(2, []));
 
 			await That(bothMatch).IsTrue();
 			await That(secondOnly).IsFalse();
@@ -525,14 +353,14 @@ public sealed class RefStructPrototypeTests
 		[Fact]
 		public async Task Arity4_Invoke_ReturnsFactoryValue()
 		{
-			RefStructIndexerGetterSetup<string, DataPacket, DataPacket, DataPacket, DataPacket>
+			RefStructIndexerGetterSetup<string, Packet, Packet, Packet, Packet>
 				setup = new("get_Item");
-			((IRefStructIndexerGetterSetup<string, DataPacket, DataPacket, DataPacket, DataPacket>)
+			((IRefStructIndexerGetterSetup<string, Packet, Packet, Packet, Packet>)
 				setup).Returns(() => "lazy");
 
 			string result = setup.Invoke(
-				new DataPacket(1, []), new DataPacket(2, []),
-				new DataPacket(3, []), new DataPacket(4, []));
+				new Packet(1, []), new Packet(2, []),
+				new Packet(3, []), new Packet(4, []));
 
 			await That(result).IsEqualTo("lazy");
 		}
