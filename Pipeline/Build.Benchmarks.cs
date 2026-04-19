@@ -15,6 +15,9 @@ namespace Build;
 
 partial class Build
 {
+	[Parameter("Filter for BenchmarkDotNet - Default is '*'")]
+	readonly string BenchmarkFilter = "*";
+
 	Target BenchmarkDotNet => _ => _
 		.Executes(() =>
 		{
@@ -27,7 +30,7 @@ partial class Build
 				.EnableNoLogo());
 
 			DotNet(
-				$"{Solution.Benchmarks.Mockolate_Benchmarks.Name}.dll --exporters json --filter * --artifacts \"{benchmarkDirectory}\"",
+				$"{Solution.Benchmarks.Mockolate_Benchmarks.Name}.dll --exporters json --filter {BenchmarkFilter} --artifacts \"{benchmarkDirectory}\"",
 				Solution.Benchmarks.Mockolate_Benchmarks.Directory / "bin" / "Release");
 		});
 
@@ -63,7 +66,7 @@ partial class Build
 	Target BenchmarkComment => _ => _
 		.Executes(async () =>
 		{
-			await "Benchmarks".DownloadArtifactTo(ArtifactsDirectory, GithubToken);
+			await "Benchmarks-".DownloadArtifactsStartingWith(ArtifactsDirectory, GithubToken);
 			if (!Directory.Exists(ArtifactsDirectory / "Benchmarks" / "results"))
 			{
 				Log.Information("Skip benchmark comment, because no results directory was generated.");
