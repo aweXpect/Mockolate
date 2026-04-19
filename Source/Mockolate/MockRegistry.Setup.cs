@@ -17,6 +17,8 @@ public partial class MockRegistry
 
 	/// <summary>
 	///     Registers the <paramref name="indexerSetup" /> in the mock for the given <paramref name="scenario" />.
+	///     The setup only applies while <see cref="Scenario" /> equals <paramref name="scenario" />; it does not leak
+	///     into the default bucket.
 	/// </summary>
 	public void SetupIndexer(string scenario, IndexerSetup indexerSetup)
 		=> Setup.GetOrCreateScenario(scenario).Indexers.Add(indexerSetup);
@@ -29,6 +31,8 @@ public partial class MockRegistry
 
 	/// <summary>
 	///     Registers the <paramref name="methodSetup" /> in the mock for the given <paramref name="scenario" />.
+	///     The setup only applies while <see cref="Scenario" /> equals <paramref name="scenario" />; it does not leak
+	///     into the default bucket.
 	/// </summary>
 	public void SetupMethod(string scenario, MethodSetup methodSetup)
 		=> Setup.GetOrCreateScenario(scenario).Methods.Add(methodSetup);
@@ -41,6 +45,8 @@ public partial class MockRegistry
 
 	/// <summary>
 	///     Registers the <paramref name="propertySetup" /> in the mock for the given <paramref name="scenario" />.
+	///     The setup only applies while <see cref="Scenario" /> equals <paramref name="scenario" />; it does not leak
+	///     into the default bucket.
 	/// </summary>
 	public void SetupProperty(string scenario, PropertySetup propertySetup)
 		=> Setup.GetOrCreateScenario(scenario).Properties.Add(propertySetup);
@@ -53,6 +59,8 @@ public partial class MockRegistry
 
 	/// <summary>
 	///     Registers the <paramref name="eventSetup" /> in the mock for the given <paramref name="scenario" />.
+	///     The setup only applies while <see cref="Scenario" /> equals <paramref name="scenario" />; it does not leak
+	///     into the default bucket.
 	/// </summary>
 	public void SetupEvent(string scenario, EventSetup eventSetup)
 		=> Setup.GetOrCreateScenario(scenario).Events.Add(eventSetup);

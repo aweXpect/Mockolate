@@ -84,8 +84,20 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     The current scenario of the mock. Use <see cref="TransitionTo(string)" /> to change the active scenario.
+	///     The name of the currently active scenario. Defaults to <see cref="string.Empty" />. Use
+	///     <see cref="TransitionTo(string)" /> or the generator-emitted <c>TransitionTo</c> chained onto a setup to
+	///     change it.
 	/// </summary>
+	/// <remarks>
+	///     When a member is invoked, Mockolate resolves a matching setup in this order:
+	///     <list type="number">
+	///         <item><description>the active scenario's bucket, when <see cref="Scenario" /> is not empty;</description></item>
+	///         <item><description>the default bucket (setups registered via <c>sut.Mock.Setup.*</c>);</description></item>
+	///         <item><description>the default response determined by <see cref="Behavior" />.</description></item>
+	///     </list>
+	///     Scenario setups add to, rather than replace, the default bucket - register catch-alls at the default scope
+	///     and override specific members per scenario.
+	/// </remarks>
 	public string Scenario => _scenarioState.Current;
 
 	/// <summary>
@@ -111,9 +123,15 @@ public partial class MockRegistry
 	public object? Wraps { get; }
 
 	/// <summary>
-	///     Transitions the mock to the given <paramref name="scenario" />.
+	///     Transitions the mock to the given <paramref name="scenario" />, so that subsequent member invocations
+	///     look up setups in that scenario's bucket first, and fall back to the default bucket if nothing matches.
 	/// </summary>
 	/// <param name="scenario">The name of the scenario to activate. Use <see cref="string.Empty" /> for the default scope.</param>
+	/// <remarks>
+	///     Transitioning to a scenario name for which no setups were registered via <c>InScenario(name)</c> is
+	///     legal - resolution will simply fall straight through to the default bucket. See <see cref="Scenario" />
+	///     for the full resolution order.
+	/// </remarks>
 	public void TransitionTo(string scenario)
 		=> _scenarioState.Current = scenario;
 
