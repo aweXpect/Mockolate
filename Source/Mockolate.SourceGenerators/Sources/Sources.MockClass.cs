@@ -2693,7 +2693,7 @@ internal static partial class Sources
 		else if (valueFlags.All(x => x))
 		{
 			text = isVerify
-				? "This overload accepts direct values for every parameter and returns a <see cref=\"global::Mockolate.Verify.VerificationResult{T}.IgnoreParameters\" /> whose <see cref=\"global::Mockolate.Verify.VerificationResult{T}.IgnoreParameters.AnyParameters()\" /> drops per-parameter matching entirely."
+				? "This overload accepts direct values for every parameter and returns a <see cref=\"global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters\" /> whose <see cref=\"global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()\" /> drops per-parameter matching entirely."
 				: "This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.";
 		}
 		else
