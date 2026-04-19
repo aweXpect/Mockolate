@@ -130,6 +130,10 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 - `It.IsRef<T>()`: Matches any ref parameter of type `T`
 - `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
   regular expressions instead.
+- `It.Contains<T>(item)`: Matches a collection parameter that contains `item`. With `.Using(IEqualityComparer<T>)`, you
+  can provide a custom equality comparer.
+- `It.SequenceEquals<T>(params IEnumerable<T> values)`: Matches a collection parameter whose elements equal `values` in
+  order. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
 **Example:**
