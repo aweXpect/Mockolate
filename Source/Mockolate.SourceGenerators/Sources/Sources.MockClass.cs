@@ -2670,6 +2670,57 @@ internal static partial class Sources
 		#endregion
 	}
 
+	private static void AppendOverloadDifferentiatorRemark(StringBuilder sb,
+		IReadOnlyList<string> parameterNames, bool useParameters, bool[]? valueFlags,
+		bool isVerify = false)
+	{
+		if (parameterNames.Count == 0)
+		{
+			return;
+		}
+
+		string text;
+		if (useParameters)
+		{
+			text = isVerify
+				? "This overload matches invocations via a custom <see cref=\"global::Mockolate.Match\" /> predicate (for example <see cref=\"global::Mockolate.Match.AnyParameters()\" /> or <see cref=\"global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)\" />) rather than per-parameter matchers."
+				: "This overload configures the setup via a custom <see cref=\"global::Mockolate.Match\" /> predicate (for example <see cref=\"global::Mockolate.Match.AnyParameters()\" /> or <see cref=\"global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)\" />) rather than per-parameter matchers.";
+		}
+		else if (valueFlags is null)
+		{
+			text = "This overload takes <see cref=\"global::Mockolate.It\" /> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.";
+		}
+		else if (valueFlags.All(x => x))
+		{
+			text = isVerify
+				? "This overload accepts direct values for every parameter and returns a <see cref=\"global::Mockolate.Verify.VerificationResult{T}.IgnoreParameters\" /> whose <see cref=\"global::Mockolate.Verify.VerificationResult{T}.IgnoreParameters.AnyParameters()\" /> drops per-parameter matching entirely."
+				: "This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.";
+		}
+		else
+		{
+			List<string> valueParams = [];
+			List<string> matcherParams = [];
+			for (int i = 0; i < parameterNames.Count && i < valueFlags.Length; i++)
+			{
+				if (valueFlags[i])
+				{
+					valueParams.Add($"<paramref name=\"{parameterNames[i]}\" />");
+				}
+				else
+				{
+					matcherParams.Add($"<paramref name=\"{parameterNames[i]}\" />");
+				}
+			}
+
+			string directPart = string.Join(", ", valueParams);
+			string matcherPart = string.Join(", ", matcherParams);
+			text =
+				$"This overload accepts a direct value for {directPart} (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref=\"global::Mockolate.It\" /> matcher for {matcherPart}.";
+		}
+
+		sb.AppendXmlRemarks(text);
+	}
+
 	private static void AppendMethodSetupDefinition(StringBuilder sb, Class @class, Method method,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
 		bool hasOverloadResolutionPriority = false)
@@ -2722,6 +2773,7 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
+		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters, valueFlags);
 		if (method.ReturnType != Type.Void)
 		{
 			if (valueFlags?.All(x => x) == true)
@@ -3337,6 +3389,9 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary(
 			$"Setup for the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />");
+		string[] indexerNames = Enumerable.Range(1, indexer.IndexerParameters!.Value.Count)
+			.Select(i => $"parameter{i}").ToArray();
+		AppendOverloadDifferentiatorRemark(sb, indexerNames, useParameters: false, valueFlags);
 		if (hasOverloadResolutionPriority)
 		{
 			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
@@ -3774,6 +3829,9 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary(
 			$"Verify interactions with the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />.");
+		AppendOverloadDifferentiatorRemark(sb,
+			indexer.IndexerParameters!.Value.Select(p => p.Name).ToArray(),
+			useParameters: false, valueFlags, isVerify: true);
 		if (hasOverloadResolutionPriority)
 		{
 			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
@@ -4218,6 +4276,7 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
+		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters, valueFlags, isVerify: true);
 		if (valueFlags?.All(x => x) == true)
 		{
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName)
