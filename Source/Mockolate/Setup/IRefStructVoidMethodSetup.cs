@@ -58,4 +58,82 @@ public interface IRefStructVoidMethodSetup<T> : IMethodSetup
 	/// </summary>
 	IRefStructVoidMethodSetup<T> Throws(Func<Exception> exceptionFactory);
 }
+
+/// <summary>
+///     Sets up a method returning <see langword="void" /> with two parameters of which at least
+///     one is a ref struct. See <see cref="IRefStructVoidMethodSetup{T}" /> for design rationale.
+/// </summary>
+public interface IRefStructVoidMethodSetup<T1, T2> : IMethodSetup
+	where T1 : allows ref struct
+	where T2 : allows ref struct
+{
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.SkippingBaseClass(bool)" />
+	IRefStructVoidMethodSetup<T1, T2> SkippingBaseClass(bool skipBaseClass = true);
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.DoesNotThrow()" />
+	IRefStructVoidMethodSetup<T1, T2> DoesNotThrow();
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws{TException}()" />
+	IRefStructVoidMethodSetup<T1, T2> Throws<TException>()
+		where TException : Exception, new();
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws(Exception)" />
+	IRefStructVoidMethodSetup<T1, T2> Throws(Exception exception);
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws(Func{Exception})" />
+	IRefStructVoidMethodSetup<T1, T2> Throws(Func<Exception> exceptionFactory);
+}
+
+/// <summary>
+///     Sets up a method returning <see langword="void" /> with three parameters of which at least
+///     one is a ref struct. See <see cref="IRefStructVoidMethodSetup{T}" /> for design rationale.
+/// </summary>
+public interface IRefStructVoidMethodSetup<T1, T2, T3> : IMethodSetup
+	where T1 : allows ref struct
+	where T2 : allows ref struct
+	where T3 : allows ref struct
+{
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.SkippingBaseClass(bool)" />
+	IRefStructVoidMethodSetup<T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.DoesNotThrow()" />
+	IRefStructVoidMethodSetup<T1, T2, T3> DoesNotThrow();
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws{TException}()" />
+	IRefStructVoidMethodSetup<T1, T2, T3> Throws<TException>()
+		where TException : Exception, new();
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws(Exception)" />
+	IRefStructVoidMethodSetup<T1, T2, T3> Throws(Exception exception);
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws(Func{Exception})" />
+	IRefStructVoidMethodSetup<T1, T2, T3> Throws(Func<Exception> exceptionFactory);
+}
+
+/// <summary>
+///     Sets up a method returning <see langword="void" /> with four parameters of which at least
+///     one is a ref struct. See <see cref="IRefStructVoidMethodSetup{T}" /> for design rationale.
+/// </summary>
+public interface IRefStructVoidMethodSetup<T1, T2, T3, T4> : IMethodSetup
+	where T1 : allows ref struct
+	where T2 : allows ref struct
+	where T3 : allows ref struct
+	where T4 : allows ref struct
+{
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.SkippingBaseClass(bool)" />
+	IRefStructVoidMethodSetup<T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.DoesNotThrow()" />
+	IRefStructVoidMethodSetup<T1, T2, T3, T4> DoesNotThrow();
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws{TException}()" />
+	IRefStructVoidMethodSetup<T1, T2, T3, T4> Throws<TException>()
+		where TException : Exception, new();
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws(Exception)" />
+	IRefStructVoidMethodSetup<T1, T2, T3, T4> Throws(Exception exception);
+
+	/// <inheritdoc cref="IRefStructVoidMethodSetup{T}.Throws(Func{Exception})" />
+	IRefStructVoidMethodSetup<T1, T2, T3, T4> Throws(Func<Exception> exceptionFactory);
+}
 #endif

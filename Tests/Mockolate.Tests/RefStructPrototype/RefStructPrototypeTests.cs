@@ -245,7 +245,7 @@ public sealed class RefStructPrototypeTests
 
 			await That(recorded).IsNotNull();
 			await That(recorded!.Name).IsEqualTo("Consume");
-			await That(recorded.ParameterName).IsEqualTo("packet");
+			await That(recorded.ParameterNames.Single()).IsEqualTo("packet");
 			// The ref struct value is NOT on the recorded interaction — post-hoc verify can only
 			// count and filter by name. Matching against the value requires setup-time matchers.
 		}
@@ -264,6 +264,82 @@ public sealed class RefStructPrototypeTests
 			string? rendered = recorded.ToString();
 
 			await That(rendered).IsEqualTo("invoke method Consume(packet: <ref struct>)");
+		}
+
+		[Fact]
+		public async Task MultiArityInteraction_RendersAllParameterNames()
+		{
+			RefStructMethodInvocation invocation = new("Encode", "left", "right", "scratch");
+
+			string? rendered = invocation.ToString();
+
+			await That(rendered).IsEqualTo(
+				"invoke method Encode(left: <ref struct>, right: <ref struct>, scratch: <ref struct>)");
+		}
+	}
+
+	public sealed class MultiAritySetupTests
+	{
+		[Fact]
+		public async Task Arity2_Matches_AllMatchersMustAccept()
+		{
+			RefStructVoidMethodSetup<DataPacket, DataPacket> setup = new(
+				"Encode",
+				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
+				It.IsRefStruct<DataPacket>(p => p.Id == 2) as IParameterMatch<DataPacket>);
+
+			bool bothMatch = setup.Matches(new DataPacket(1, []), new DataPacket(2, []));
+			bool firstOnly = setup.Matches(new DataPacket(1, []), new DataPacket(99, []));
+			bool secondOnly = setup.Matches(new DataPacket(99, []), new DataPacket(2, []));
+
+			await That(bothMatch).IsTrue();
+			await That(firstOnly).IsFalse();
+			await That(secondOnly).IsFalse();
+		}
+
+		[Fact]
+		public async Task Arity2_Invoke_ThrowsConfiguredException()
+		{
+			RefStructVoidMethodSetup<DataPacket, DataPacket> setup = new("Encode");
+			((IRefStructVoidMethodSetup<DataPacket, DataPacket>)setup)
+				.Throws<InvalidOperationException>();
+
+			void Act() => setup.Invoke(new DataPacket(1, []), new DataPacket(2, []));
+
+			await That(Act).Throws<InvalidOperationException>();
+		}
+
+		[Fact]
+		public async Task Arity3_Matches_AllMatchersMustAccept()
+		{
+			RefStructVoidMethodSetup<DataPacket, DataPacket, DataPacket> setup = new(
+				"Fold",
+				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
+				null,
+				It.IsRefStruct<DataPacket>(p => p.Id == 3) as IParameterMatch<DataPacket>);
+
+			bool match = setup.Matches(
+				new DataPacket(1, []), new DataPacket(99, []), new DataPacket(3, []));
+			bool miss = setup.Matches(
+				new DataPacket(2, []), new DataPacket(99, []), new DataPacket(3, []));
+
+			await That(match).IsTrue();
+			await That(miss).IsFalse();
+		}
+
+		[Fact]
+		public async Task Arity4_Invoke_ThrowsFromFactory()
+		{
+			RefStructVoidMethodSetup<DataPacket, DataPacket, DataPacket, DataPacket> setup =
+				new("Merge");
+			((IRefStructVoidMethodSetup<DataPacket, DataPacket, DataPacket, DataPacket>)setup)
+				.Throws(() => new NotSupportedException("arity-4"));
+
+			void Act() => setup.Invoke(
+				new DataPacket(1, []), new DataPacket(2, []),
+				new DataPacket(3, []), new DataPacket(4, []));
+
+			await That(Act).Throws<NotSupportedException>().WithMessage("arity-4");
 		}
 	}
 }
