@@ -1401,6 +1401,86 @@ namespace Mockolate.Setup
         Mockolate.Setup.IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> Throws<TException>()
             where TException : System.Exception, new ();
     }
+    public interface IRefStructIndexerSetterSetup<TValue, T> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructIndexerSetterSetup<TValue, T1, T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructIndexerSetterSetup<TValue, T1, T2, T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructIndexerSetup<TValue, T> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T> Returns(System.Func<TValue> returnFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T> Returns(TValue returnValue);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructIndexerSetup<TValue, T1, T2> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2> Returns(System.Func<TValue> returnFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2> Returns(TValue returnValue);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructIndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3> Returns(System.Func<TValue> returnFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3> Returns(TValue returnValue);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructIndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4> OnSet(System.Action<TValue> callback);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4> Returns(System.Func<TValue> returnFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
     public interface IRefStructReturnMethodSetup<TReturn, T> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
     {
         Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T> Returns(System.Func<TReturn> returnFactory);
@@ -2110,6 +2190,70 @@ namespace Mockolate.Setup
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
         public override string ToString() { }
+    }
+    public sealed class RefStructIndexerSetterSetup<TValue, T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetterSetup(string name, Mockolate.Parameters.IParameterMatch<T>? matcher = null) { }
+        public void Invoke(T key, TValue value) { }
+        public bool Matches(T value) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
+    }
+    public sealed class RefStructIndexerSetterSetup<TValue, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null) { }
+        public void Invoke(T1 k1, T2 k2, TValue value) { }
+        public bool Matches(T1 value1, T2 value2) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
+    }
+    public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null) { }
+        public void Invoke(T1 k1, T2 k2, T3 k3, TValue value) { }
+        public bool Matches(T1 value1, T2 value2, T3 value3) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
+    }
+    public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null, Mockolate.Parameters.IParameterMatch<T4>? matcher4 = null) { }
+        public void Invoke(T1 k1, T2 k2, T3 k3, T4 k4, TValue value) { }
+        public bool Matches(T1 value1, T2 value2, T3 value3, T4 value4) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
+    }
+    public sealed class RefStructIndexerSetup<TValue, T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetup<TValue, T>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetup(string getterName, string setterName, Mockolate.Parameters.IParameterMatch<T>? matcher = null) { }
+        public Mockolate.Setup.RefStructIndexerGetterSetup<TValue, T> Getter { get; }
+        public Mockolate.Setup.RefStructIndexerSetterSetup<TValue, T> Setter { get; }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+    }
+    public sealed class RefStructIndexerSetup<TValue, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetup(string getterName, string setterName, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null) { }
+        public Mockolate.Setup.RefStructIndexerGetterSetup<TValue, T1, T2> Getter { get; }
+        public Mockolate.Setup.RefStructIndexerSetterSetup<TValue, T1, T2> Setter { get; }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+    }
+    public sealed class RefStructIndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetup(string getterName, string setterName, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null) { }
+        public Mockolate.Setup.RefStructIndexerGetterSetup<TValue, T1, T2, T3> Getter { get; }
+        public Mockolate.Setup.RefStructIndexerSetterSetup<TValue, T1, T2, T3> Setter { get; }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+    }
+    public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.ISetup
+    {
+        public RefStructIndexerSetup(string getterName, string setterName, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null, Mockolate.Parameters.IParameterMatch<T4>? matcher4 = null) { }
+        public Mockolate.Setup.RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> Getter { get; }
+        public Mockolate.Setup.RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> Setter { get; }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
     }
     public sealed class RefStructReturnMethodSetup<TReturn, T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructReturnMethodSetup<TReturn, T>, Mockolate.Setup.ISetup
     {

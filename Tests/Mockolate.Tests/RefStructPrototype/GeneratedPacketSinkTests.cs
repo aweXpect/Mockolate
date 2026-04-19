@@ -56,6 +56,24 @@ public interface IGeneratedPacketLookup
 }
 
 /// <summary>
+///     Generator-target: ref-struct-keyed indexer with both a getter and a setter. Exercises the
+///     combined <c>IRefStructIndexerSetup&lt;TValue, T&gt;</c> facade.
+/// </summary>
+public interface IGeneratedPacketStore
+{
+	string this[Packet key] { get; set; }
+}
+
+/// <summary>
+///     Generator-target: ref-struct-keyed indexer with only a setter. Exercises the
+///     setter-only <c>IRefStructIndexerSetterSetup&lt;TValue, T&gt;</c> facade.
+/// </summary>
+public interface IGeneratedPacketSetter
+{
+	string this[Packet key] { set; }
+}
+
+/// <summary>
 ///     Generator-target: an arity-5 ref-struct-parameter void method. The runtime types for
 ///     arity 1-4 are hand-written; arity 5+ are generator-emitted into
 ///     <c>RefStructMethodSetups.g.cs</c>.
@@ -282,6 +300,111 @@ public sealed class GeneratedPacketSinkTests
 			void Act() => sut.TryParse(new Packet(1, []));
 
 			await That(Act).Throws<InvalidOperationException>();
+		}
+	}
+
+	public sealed class IndexerSetterTests
+	{
+		[Fact]
+		public async Task OnSet_Callback_ReceivesValue()
+		{
+			IGeneratedPacketSetter sut = IGeneratedPacketSetter.CreateMock();
+			string? captured = null;
+			sut.Mock.Setup[It.IsAnyRefStruct<Packet>()].OnSet(v => captured = v);
+
+			sut[new Packet(1, [])] = "hello";
+
+			await That(captured).IsEqualTo("hello");
+		}
+
+		[Fact]
+		public async Task Throws_ConfiguredException()
+		{
+			IGeneratedPacketSetter sut = IGeneratedPacketSetter.CreateMock();
+			sut.Mock.Setup[It.IsAnyRefStruct<Packet>()].Throws<InvalidOperationException>();
+
+			void Act() => sut[new Packet(1, [])] = "x";
+
+			await That(Act).Throws<InvalidOperationException>();
+		}
+
+		[Fact]
+		public async Task Predicate_FiltersByKey_OnSetOnlyForHit()
+		{
+			IGeneratedPacketSetter sut = IGeneratedPacketSetter.CreateMock();
+			string? captured = null;
+			sut.Mock.Setup[It.IsRefStruct<Packet>(p => p.Id == 42)].OnSet(v => captured = v);
+
+			sut[new Packet(99, [])] = "no";
+			sut[new Packet(42, [])] = "yes";
+
+			await That(captured).IsEqualTo("yes");
+		}
+
+		[Fact]
+		public async Task RecordedInteraction_UsesSetItemName()
+		{
+			IGeneratedPacketSetter sut = IGeneratedPacketSetter.CreateMock();
+
+			sut[new Packet(1, [])] = "v";
+
+			RefStructMethodInvocation? recorded = ((IMock)sut).MockRegistry.Interactions
+				.OfType<RefStructMethodInvocation>()
+				.SingleOrDefault();
+
+			await That(recorded).IsNotNull();
+			await That(recorded!.Name).EndsWith(".set_Item");
+			await That(recorded.ParameterNames).IsEqualTo(new[] { "key", "value", });
+		}
+	}
+
+	public sealed class CombinedIndexerTests
+	{
+		[Fact]
+		public async Task Returns_ConfiguresGet_OnSet_ConfiguresSet_Independent()
+		{
+			IGeneratedPacketStore sut = IGeneratedPacketStore.CreateMock();
+			string? captured = null;
+			sut.Mock.Setup[It.IsAnyRefStruct<Packet>()]
+				.Returns("get-value")
+				.OnSet(v => captured = v);
+
+			sut[new Packet(1, [])] = "set-value";
+			string result = sut[new Packet(1, [])];
+
+			await That(captured).IsEqualTo("set-value");
+			await That(result).IsEqualTo("get-value");
+		}
+
+		[Fact]
+		public async Task Throws_AppliesToBothAccessors()
+		{
+			IGeneratedPacketStore sut = IGeneratedPacketStore.CreateMock();
+			sut.Mock.Setup[It.IsAnyRefStruct<Packet>()].Throws<InvalidOperationException>();
+
+			void ActGet() => _ = sut[new Packet(1, [])];
+			void ActSet() => sut[new Packet(1, [])] = "x";
+
+			await That(ActGet).Throws<InvalidOperationException>();
+			await That(ActSet).Throws<InvalidOperationException>();
+		}
+
+		[Fact]
+		public async Task Predicate_FiltersByKey_AppliesToBothAccessors()
+		{
+			IGeneratedPacketStore sut = IGeneratedPacketStore.CreateMock();
+			sut.Mock.Setup[It.IsRefStruct<Packet>(p => p.Id == 42)]
+				.Returns("hit")
+				.OnSet(_ => throw new InvalidOperationException("write to 42"));
+
+			string match = sut[new Packet(42, [])];
+			string miss = sut[new Packet(1, [])];
+			void ActWriteHit() => sut[new Packet(42, [])] = "boom";
+
+			await That(match).IsEqualTo("hit");
+			// Nothing matches -> framework default "".
+			await That(miss).IsEqualTo("");
+			await That(ActWriteHit).Throws<InvalidOperationException>();
 		}
 	}
 

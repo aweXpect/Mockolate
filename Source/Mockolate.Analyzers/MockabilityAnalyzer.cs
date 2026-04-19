@@ -269,15 +269,8 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return true;
 		}
 
-		// Getter-only ref-struct-keyed indexers are fully supported via the ref-struct pipeline.
-		// Setter-side is not yet wired, so any indexer with a setter still produces a runtime
-		// NotSupportedException — flag it at build time.
-		if (indexer.SetMethod is not null)
-		{
-			issue = "indexers with ref-struct keys and a setter are not yet supported by the generator";
-			return true;
-		}
-
+		// Ref-struct-keyed indexers (getter-only, setter-only, and get+set) are fully supported
+		// via the ref-struct pipeline.
 		issue = null;
 		return false;
 	}
