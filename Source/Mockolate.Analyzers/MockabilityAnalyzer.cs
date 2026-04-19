@@ -246,22 +246,35 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static bool TryGetRefStructIssueForIndexer(IPropertySymbol indexer, bool supportsRefStructPipeline,
 		[NotNullWhen(true)] out string? issue)
 	{
+		bool hasRefStructKey = false;
 		foreach (IParameterSymbol p in indexer.Parameters)
 		{
-			if (!NeedsRefStructPipeline(p.Type))
+			if (NeedsRefStructPipeline(p.Type))
 			{
-				continue;
+				hasRefStructKey = true;
+				break;
 			}
+		}
 
-			if (!supportsRefStructPipeline)
-			{
-				issue =
-					"ref-struct-keyed indexers require .NET 9 or later, and full getter/setter support is not yet implemented";
-				return true;
-			}
+		if (!hasRefStructKey)
+		{
+			issue = null;
+			return false;
+		}
 
-			// Runtime emits NotSupportedException; surface at build time.
-			issue = "indexers with ref-struct keys are not yet supported by the generator";
+		if (!supportsRefStructPipeline)
+		{
+			issue =
+				"ref-struct-keyed indexers require .NET 9 or later";
+			return true;
+		}
+
+		// Getter-only ref-struct-keyed indexers are fully supported via the ref-struct pipeline.
+		// Setter-side is not yet wired, so any indexer with a setter still produces a runtime
+		// NotSupportedException — flag it at build time.
+		if (indexer.SetMethod is not null)
+		{
+			issue = "indexers with ref-struct keys and a setter are not yet supported by the generator";
 			return true;
 		}
 

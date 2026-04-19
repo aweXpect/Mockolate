@@ -129,10 +129,24 @@ public class MockGenerator : IIncrementalGenerator
 			refStructMethodSetups.Add(item);
 		}
 
-		if (refStructMethodSetups.Any())
+		// Ref-struct-keyed indexer getter setups for arity > 4. Same split as methods: arities 1-4
+		// are hand-written in Source/Mockolate/Setup/RefStructIndexerGetterSetup.cs.
+		HashSet<int> refStructIndexerGetterSetups = new();
+		foreach (int item in mocksToGenerate
+			         .SelectMany(m => m.AllProperties())
+			         .Where(p => p is { IsIndexer: true, IndexerParameters: not null, Getter: not null, Setter: null, } &&
+			                     p.IndexerParameters.Value.Count > 4 &&
+			                     p.IndexerParameters.Value.Any(kp => kp.NeedsRefStructPipeline()))
+			         .Select(p => p.IndexerParameters!.Value.Count))
+		{
+			refStructIndexerGetterSetups.Add(item);
+		}
+
+		if (refStructMethodSetups.Any() || refStructIndexerGetterSetups.Any())
 		{
 			context.AddSource("RefStructMethodSetups.g.cs",
-				SourceText.From(Sources.Sources.RefStructMethodSetups(refStructMethodSetups), Encoding.UTF8));
+				SourceText.From(Sources.Sources.RefStructMethodSetups(refStructMethodSetups, refStructIndexerGetterSetups),
+					Encoding.UTF8));
 		}
 
 		context.AddSource("MockBehaviorExtensions.g.cs",
