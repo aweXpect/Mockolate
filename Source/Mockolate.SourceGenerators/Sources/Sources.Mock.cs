@@ -89,10 +89,17 @@ internal static partial class Sources
 		              	extension(global::Mockolate.Mock.IMockGenerationDidNotRun _)
 		              	{
 		              		/// <summary>
-		              		///     Add an interface <typeparamref name="TInterface" /> that the mock also implements.
+		              		///     Fallback <c>Implementing</c> that is only resolved when the Mockolate source generator did not run or when
+		              		///     <typeparamref name="TInterface" /> is not mockable. Calling it always throws a <see cref="global::Mockolate.Exceptions.MockException" />.
 		              		/// </summary>
 		              		/// <typeparam name="TInterface">Additional interface the mock should implement.</typeparam>
-		              		/// <returns>The same mock, typed so that <typeparamref name="TInterface" /> members are accessible.</returns>
+		              		/// <returns>This method never returns - it always throws.</returns>
+		              		/// <remarks>
+		              		///     The source generator emits a concrete <c>Implementing</c> overload per mockable type with the same shape.
+		              		///     If you see this fallback resolved in your IDE, the generator did not run for <typeparamref name="TInterface" />;
+		              		///     run a clean build (for example <c>dotnet clean &amp;&amp; dotnet build</c>) and verify that the type is mockable.
+		              		/// </remarks>
+		              		/// <exception cref="global::Mockolate.Exceptions.MockException">Always thrown: the source generator did not run or <typeparamref name="TInterface" /> is not mockable.</exception>
 		              		public global::Mockolate.Mock.IMockGenerationDidNotRun Implementing<TInterface>() where TInterface : class
 		              		{
 		              			throw new global::Mockolate.Exceptions.MockException($"This method should not be called directly. Either '{typeof(TInterface)}' is not mockable or the source generator did not run correctly.");
