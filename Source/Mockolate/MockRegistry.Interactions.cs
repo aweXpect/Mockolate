@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -252,12 +253,36 @@ public partial class MockRegistry
 				new PropertyGetterAccess(propertyName));
 		}
 
-		PropertySetup matchingSetup = ResolvePropertySetup(
-			propertyName, defaultValueGenerator, baseValueAccessor,
-			baseValueAccessor is not null);
+		PropertySetup matchingSetup;
+		if (baseValueAccessor is null)
+		{
+			matchingSetup = ResolvePropertySetup(propertyName, defaultValueGenerator, null, false);
 
-		return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
+			return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
+				defaultValueGenerator);
+		}
+		ExceptionDispatchInfo? capturedBaseException = null;
+		Func<TResult> safeBaseValueAccessor = () =>
+			{
+				try
+				{
+					return baseValueAccessor();
+				}
+				catch (Exception ex)
+				{
+					capturedBaseException = ExceptionDispatchInfo.Capture(ex);
+					return default!;
+				}
+			};
+
+		matchingSetup = ResolvePropertySetup(
+			propertyName, defaultValueGenerator, safeBaseValueAccessor, true);
+
+		TResult result = ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
 			defaultValueGenerator);
+
+		capturedBaseException?.Throw();
+		return result;
 	}
 
 	/// <summary>

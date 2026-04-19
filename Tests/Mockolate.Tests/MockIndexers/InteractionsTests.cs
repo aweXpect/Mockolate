@@ -3,7 +3,7 @@ using Mockolate.Interactions;
 
 namespace Mockolate.Tests.MockIndexers;
 
-public sealed class InteractionsTests
+public sealed partial class InteractionsTests
 {
 	[Fact]
 	public async Task IndexerGetterAccess1_ToString_ShouldReturnExpectedValue()
