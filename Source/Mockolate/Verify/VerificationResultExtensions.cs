@@ -207,7 +207,8 @@ public static class VerificationResultExtensions
 		///     Asserts that the verified interaction occurred at most once.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
-		///     Thrown when the verified interaction occurred more than once.
+		///     Thrown when the verified interaction occurred more than once, or when a preceding <c>Within</c> or
+		///     <c>WithCancellation</c> causes verification to time out or be cancelled.
 		/// </exception>
 		public void AtMostOnce()
 		{
