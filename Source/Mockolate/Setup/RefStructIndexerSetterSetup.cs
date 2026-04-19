@@ -20,10 +20,13 @@ namespace Mockolate.Setup;
 ///         struct are out of the scope of this setup.
 ///     </para>
 ///     <para>
-///         Setter-side semantics are deliberately independent from the getter: the
-///         <c>OnSet</c> callback does NOT feed into the getter's <c>Returns</c> slot. A unified
-///         <c>IRefStructIndexerSetup</c> that wires the two halves together is tracked as future
-///         work.
+///         When combined with a getter via <see cref="RefStructIndexerSetup{TValue, T}" /> and
+///         a projection-bearing key matcher
+///         (<see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />),
+///         setter writes are forwarded to the bound getter's storage dictionary so a subsequent
+///         read of a key with the same projection returns the written value. A standalone
+///         setter-only setup (with no bound getter) never stores — there is nothing to read the
+///         value back from.
 ///     </para>
 /// </remarks>
 #if !DEBUG
@@ -49,29 +52,39 @@ public sealed class RefStructIndexerSetterSetup<TValue, T> : MethodSetup, IRefSt
 		_matcher = matcher;
 	}
 
+	/// <summary>
+	///     The companion getter setup whose storage dictionary should receive writes performed
+	///     via this setter. Set by the combined
+	///     <see cref="RefStructIndexerSetup{TValue, T}" /> facade after both inner setups are
+	///     constructed. <see langword="null" /> for setter-only setups — such setups never store.
+	/// </summary>
+	internal RefStructIndexerGetterSetup<TValue, T>? BoundGetter { get; set; }
+
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Matches(T)" />
 	public bool Matches(T value)
 		=> _matcher is null || _matcher.Matches(value);
 
 	/// <summary>
-	///     Invokes matcher callbacks, runs the configured <c>OnSet</c> callback (if any), and then
-	///     applies the configured throw (if any).
+	///     Invokes matcher callbacks, runs the configured <c>OnSet</c> callback (if any),
+	///     applies the configured throw (if any), and finally — if a getter is bound and a
+	///     projection matcher is in place — stores <paramref name="value" /> under the
+	///     projected form of <paramref name="key" /> on the bound getter's storage.
 	/// </summary>
 	public void Invoke(T key, TValue value)
 	{
 		_matcher?.InvokeCallbacks(key);
 		_onSet?.Invoke(value);
 
-		if (_throwAction is null)
+		if (_throwAction is not null)
 		{
-			return;
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
 		}
 
-		Exception? exception = _throwAction();
-		if (exception is not null)
-		{
-			throw exception;
-		}
+		BoundGetter?.StoreValue(key, value);
 	}
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
@@ -128,6 +141,11 @@ public sealed class RefStructIndexerSetterSetup<TValue, T> : MethodSetup, IRefSt
 ///     Concrete setter setup for a ref-struct-keyed indexer with two keys.
 ///     See <see cref="RefStructIndexerSetterSetup{TValue, T}" />.
 /// </summary>
+/// <remarks>
+///     Projection-based write-then-read correlation (available on the arity-1 setup via
+///     <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />) is
+///     not supported at arity &gt; 1 — setter writes do not feed back into getter reads.
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif
@@ -232,6 +250,9 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2> : MethodSetup,
 ///     Concrete setter setup for a ref-struct-keyed indexer with three keys.
 ///     See <see cref="RefStructIndexerSetterSetup{TValue, T}" />.
 /// </summary>
+/// <remarks>
+///     <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T1, T2}" path="/remarks" />
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif
@@ -342,6 +363,9 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3> : MethodSetu
 ///     Concrete setter setup for a ref-struct-keyed indexer with four keys.
 ///     See <see cref="RefStructIndexerSetterSetup{TValue, T}" />.
 /// </summary>
+/// <remarks>
+///     <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T1, T2}" path="/remarks" />
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif

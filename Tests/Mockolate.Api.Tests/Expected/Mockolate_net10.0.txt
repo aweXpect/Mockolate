@@ -117,6 +117,10 @@ namespace Mockolate
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Parameters.IParameter<T> IsRefStruct<T>(Mockolate.RefStructPredicate<T> predicate) { }
+        public static Mockolate.Parameters.IParameter<T> IsRefStructBy<T, TProjected>(Mockolate.RefStructProjection<T, TProjected> projection)
+            where TProjected :  notnull { }
+        public static Mockolate.Parameters.IParameter<T> IsRefStructBy<T, TProjected>(Mockolate.RefStructProjection<T, TProjected> projection, System.Func<TProjected, bool> projectedPredicate)
+            where TProjected :  notnull { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsSpan<T>(System.Func<T[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IParameterWithCallback<bool> IsTrue() { }
         public static Mockolate.It.IParameterMatches Matches(string pattern) { }
@@ -246,6 +250,7 @@ namespace Mockolate
         public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
     }
     public delegate bool RefStructPredicate<T>(T value);
+    public delegate TProjected RefStructProjection<T, TProjected>(T value);
     public static class ReturnsThrowsAsyncExtensions
     {
         public static Mockolate.Setup.IReturnMethodSetupReturnBuilder<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
@@ -894,6 +899,15 @@ namespace Mockolate.Parameters
     {
         Mockolate.Parameters.IRefParameter<T> Do(System.Action<T> callback);
         T GetValue(T value);
+    }
+    public interface IRefStructProjectionMatch<T> : Mockolate.Parameters.IParameterMatch<T>
+    {
+        object Project(T value);
+    }
+    public interface IRefStructProjectionMatch<T, TProjected> : Mockolate.Parameters.IParameterMatch<T>, Mockolate.Parameters.IRefStructProjectionMatch<T>
+        where TProjected :  notnull
+    {
+        TProjected Project(T value);
     }
     public interface ISpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>> { }
     public interface IVerifyOutParameter<out T> { }

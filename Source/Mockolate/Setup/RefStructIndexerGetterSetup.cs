@@ -1,5 +1,6 @@
 #if NET9_0_OR_GREATER
 using System;
+using System.Collections.Generic;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 
@@ -10,11 +11,23 @@ namespace Mockolate.Setup;
 ///     of type <typeparamref name="T" />.
 /// </summary>
 /// <remarks>
-///     Semantically equivalent to a method <c>TValue get_Item(T key)</c>. Uses
-///     <see cref="RefStructMethodInvocation" /> with the CLR getter name convention
-///     (<c>get_Item</c>) for interaction matching rather than introducing a separate indexer
-///     interaction type. See <see cref="RefStructReturnMethodSetup{TReturn, T}" /> for the
-///     underlying design rationale on why the full callback/builder chain is omitted.
+///     <para>
+///         Semantically equivalent to a method <c>TValue get_Item(T key)</c>. Uses
+///         <see cref="RefStructMethodInvocation" /> with the CLR getter name convention
+///         (<c>get_Item</c>) for interaction matching rather than introducing a separate indexer
+///         interaction type. See <see cref="RefStructReturnMethodSetup{TReturn, T}" /> for the
+///         underlying design rationale on why the full callback/builder chain is omitted.
+///     </para>
+///     <para>
+///         When the configured key matcher is a projection matcher
+///         (<see cref="IRefStructProjectionMatch{T}" />, produced by
+///         <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />
+///         and its predicated overload), the setup activates an internal storage dictionary
+///         keyed by the boxed projection. The companion
+///         <see cref="RefStructIndexerSetterSetup{TValue, T}" /> writes into this storage and
+///         <see cref="Invoke(T, Func{TValue})" /> reads from it, providing write-then-read
+///         correlation under the projected key.
+///     </para>
 /// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
@@ -23,6 +36,8 @@ public sealed class RefStructIndexerGetterSetup<TValue, T> : MethodSetup, IRefSt
 	where T : allows ref struct
 {
 	private readonly IParameterMatch<T>? _matcher;
+	private readonly IRefStructProjectionMatch<T>? _projectionMatcher;
+	private readonly Dictionary<object, TValue>? _storage;
 	private Func<TValue>? _returnFactory;
 	private Func<Exception?>? _throwAction;
 	private bool? _skipBaseClass;
@@ -32,16 +47,63 @@ public sealed class RefStructIndexerGetterSetup<TValue, T> : MethodSetup, IRefSt
 	///     The fully qualified indexer getter name. Use <c>"get_Item"</c> to match the CLR
 	///     convention unless the interface declares a custom IndexerName.
 	/// </param>
-	/// <param name="matcher">The key matcher. <see langword="null" /> matches any key.</param>
+	/// <param name="matcher">
+	///     The key matcher. <see langword="null" /> matches any key. If the matcher additionally
+	///     implements <see cref="IRefStructProjectionMatch{T}" />, a projection-keyed storage
+	///     dictionary is activated for setter→getter correlation.
+	/// </param>
 	public RefStructIndexerGetterSetup(string name, IParameterMatch<T>? matcher = null)
 		: base(name)
 	{
 		_matcher = matcher;
+		if (matcher is IRefStructProjectionMatch<T> projectionMatcher)
+		{
+			_projectionMatcher = projectionMatcher;
+			_storage = [];
+		}
 	}
 
 	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.Matches(T)" />
 	public bool Matches(T value)
 		=> _matcher is null || _matcher.Matches(value);
+
+	/// <summary>
+	///     Attempts to read a previously-stored value for the projected form of
+	///     <paramref name="key" />. Returns <see langword="false" /> if storage is inactive
+	///     (no projection matcher was supplied) or no value has been stored for the projected
+	///     key.
+	/// </summary>
+	internal bool TryGetStoredValue(T key, out TValue value)
+	{
+		if (_storage is null || _projectionMatcher is null)
+		{
+			value = default!;
+			return false;
+		}
+
+		object projectedKey = _projectionMatcher.Project(key);
+		return _storage.TryGetValue(projectedKey, out value!);
+	}
+
+	/// <summary>
+	///     Stores <paramref name="value" /> under the projected form of <paramref name="key" />.
+	///     No-op when storage is inactive, or when the configured matcher rejects the key.
+	/// </summary>
+	internal void StoreValue(T key, TValue value)
+	{
+		if (_storage is null || _projectionMatcher is null)
+		{
+			return;
+		}
+
+		if (_matcher is not null && !_matcher.Matches(key))
+		{
+			return;
+		}
+
+		object projectedKey = _projectionMatcher.Project(key);
+		_storage[projectedKey] = value;
+	}
 
 	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.Invoke(T, Func{TReturn})" />
 	public TValue Invoke(T value, Func<TValue>? defaultFactory = null)
@@ -56,6 +118,15 @@ public sealed class RefStructIndexerGetterSetup<TValue, T> : MethodSetup, IRefSt
 			}
 		}
 
+		if (_storage is not null && _projectionMatcher is not null)
+		{
+			object projectedKey = _projectionMatcher.Project(value);
+			if (_storage.TryGetValue(projectedKey, out TValue? stored))
+			{
+				return stored;
+			}
+		}
+
 		if (_returnFactory is not null)
 		{
 			return _returnFactory();
@@ -65,7 +136,13 @@ public sealed class RefStructIndexerGetterSetup<TValue, T> : MethodSetup, IRefSt
 	}
 
 	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.HasReturnValue" />
-	public bool HasReturnValue => _returnFactory is not null;
+	/// <remarks>
+	///     Also reports <see langword="true" /> when the setup has a projection matcher and
+	///     therefore owns a storage dictionary — so that <see cref="Invoke(T, Func{TValue})" />
+	///     is invoked on the return path and can serve stored values (or fall through to the
+	///     default factory if the bucket is empty).
+	/// </remarks>
+	public bool HasReturnValue => _returnFactory is not null || _storage is not null;
 
 	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.SkipBaseClass(MockBehavior)" />
 	public bool SkipBaseClass(MockBehavior behavior)
@@ -127,6 +204,12 @@ public sealed class RefStructIndexerGetterSetup<TValue, T> : MethodSetup, IRefSt
 /// <summary>
 ///     Ref-struct-compatible indexer getter setup for arity 2. See <see cref="RefStructIndexerGetterSetup{TValue, T}" />.
 /// </summary>
+/// <remarks>
+///     Projection-based write-then-read storage (available on the arity-1 setup via
+///     <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />) is
+///     not supported at arity &gt; 1 — setter writes do not feed back into getter reads. Work
+///     around by capturing the value externally or using an arity-1 indexer.
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif
@@ -232,6 +315,9 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2> : MethodSetup, I
 /// <summary>
 ///     Ref-struct-compatible indexer getter setup for arity 3. See <see cref="RefStructIndexerGetterSetup{TValue, T}" />.
 /// </summary>
+/// <remarks>
+///     <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T1, T2}" path="/remarks" />
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif
@@ -343,6 +429,9 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3> : MethodSetu
 /// <summary>
 ///     Ref-struct-compatible indexer getter setup for arity 4. See <see cref="RefStructIndexerGetterSetup{TValue, T}" />.
 /// </summary>
+/// <remarks>
+///     <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T1, T2}" path="/remarks" />
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif

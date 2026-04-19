@@ -148,6 +148,12 @@ Mockolate provides a narrow matcher surface:
 - `It.IsRefStruct<T>(predicate)`: Matches ref-struct values that satisfy the predicate. The
   predicate sees the live ref struct and can read into its inline `Span<T>` / `ReadOnlySpan<T>`
   fields — the whole reason this pipeline exists.
+- `It.IsRefStructBy<T, TProjected>(projection)` / `It.IsRefStructBy<T, TProjected>(projection, projectedPredicate)`:
+  Projection-bearing matcher used for arity-1 ref-struct-keyed indexers. Supplying a
+  projection activates write-then-read storage on the setup — values written via the setter
+  are keyed by `projection(key)` and returned by subsequent reads of any key with the same
+  projection. Without a projection, the setup remains storage-less (getter returns its
+  configured `Returns(...)` value or the framework default, setter writes are not surfaced).
 
 ```csharp
 public readonly ref struct Packet(int id, ReadOnlySpan<byte> payload)
@@ -176,12 +182,23 @@ sut.Mock.Setup.TryParse(It.IsAnyRefStruct<Packet>()).Returns(42);
 sut.Mock.Setup[It.IsAnyRefStruct<Packet>()]
     .Returns("got")
     .OnSet(value => { /* captured write */ });
+
+// Projection-based write-then-read correlation on an arity-1 indexer. The setter writes
+// under the projected key; the getter reads back the stored value for any key with the
+// same projection. Without the projection, this correlation is unavailable — returning the
+// configured default is intentionally preferred over returning a stale/unprojected value.
+sut.Mock.Setup[It.IsRefStructBy<Packet, int>(p => p.Id)].Returns("fallback");
+sut[new Packet(1, [])] = "written";
+string a = sut[new Packet(1, [])];  // "written"
+string b = sut[new Packet(2, [])];  // "fallback"
 ```
 
 **Supported:** `void`, non-ref-struct-return, and indexer get/set accessors whose parameters
 contain at least one custom ref struct. Arity up to 4 is supplied as hand-written types; arities
 5+ are emitted by the generator on demand. Setup surface is narrow: `Returns(value)`,
 `Returns(factory)`, `Throws*`, `OnSet(Action<TValue>)` (indexer setters), `SkippingBaseClass`.
+Projection-based write-then-read storage via `It.IsRefStructBy<T, TProjected>(...)` is
+available for arity-1 indexers.
 
 **Not supported (compile-time diagnostic `Mockolate0004`):**
 
@@ -196,6 +213,9 @@ contain at least one custom ref struct. Arity up to 4 is supplied as hand-writte
   only the method name and parameter names, never the parameter value. Use a setup-time matcher to
   filter at call time, then count interactions via
   `((IMock)sut).MockRegistry.Interactions.OfType<RefStructMethodInvocation>().Count(...)`.
+- Projection-based write-then-read storage on indexers of arity > 1 — setter writes do not feed
+  back into getter reads. Workaround: use an arity-1 indexer where possible or capture the
+  value externally via `OnSet`.
 
 
 ## Parameter Predicates
