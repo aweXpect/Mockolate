@@ -145,6 +145,79 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Arity5VoidMethod_EmitsGeneratedRefStructSetup()
+		{
+			// Arity 5 exceeds the hand-written ceiling (1-4); the generator must emit
+			// RefStructVoidMethodSetup<T1,...,T5> into RefStructMethodSetups.g.cs.
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IBigSink
+				     {
+				         void Consume(Packet p1, Packet p2, Packet p3, Packet p4, Packet p5);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IBigSink.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.IBigSink.g.cs").WhoseValue
+				.Contains("RefStructVoidMethodSetup<global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet>").And
+				// The method body must not bail out to NotSupportedException for this arity.
+				.Contains("__matched = true");
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("#if NET9_0_OR_GREATER").And
+				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5>").And
+				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5>").And
+				// Every generic parameter carries the allows-ref-struct anti-constraint.
+				.Contains("where T5 : allows ref struct");
+		}
+
+		[Fact]
+		public async Task Arity6ReturnMethod_EmitsGeneratedRefStructReturnSetup()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IBigParser
+				     {
+				         int TryParse(Packet p1, Packet p2, int p3, Packet p4, Packet p5, string p6);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IBigParser.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
+				.Contains("public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
+				.Contains("public bool HasReturnValue");
+		}
+
+		[Fact]
 		public async Task IndexerWithRefStructKey_EmitsNotSupportedException()
 		{
 			GeneratorResult result = Generator

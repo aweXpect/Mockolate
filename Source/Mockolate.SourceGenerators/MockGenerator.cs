@@ -116,6 +116,25 @@ public class MockGenerator : IIncrementalGenerator
 					.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
+		// Ref-struct method setups for arity > 4. The hand-written types in
+		// Source/Mockolate/Setup/RefStruct{Void,Return}MethodSetup.cs cover arities 1-4; the
+		// generator mirrors the same shape for arity 5+.
+		HashSet<(int, bool)> refStructMethodSetups = new();
+		foreach ((int Count, bool) item in mocksToGenerate
+			         .SelectMany(m => m.AllMethods())
+			         .Where(m => m.Parameters.Count > 4 &&
+			                     m.Parameters.Any(p => p.NeedsRefStructPipeline()))
+			         .Select(m => (m.Parameters.Count, m.ReturnType == Type.Void)))
+		{
+			refStructMethodSetups.Add(item);
+		}
+
+		if (refStructMethodSetups.Any())
+		{
+			context.AddSource("RefStructMethodSetups.g.cs",
+				SourceText.From(Sources.Sources.RefStructMethodSetups(refStructMethodSetups), Encoding.UTF8));
+		}
+
 		context.AddSource("MockBehaviorExtensions.g.cs",
 			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
 	}

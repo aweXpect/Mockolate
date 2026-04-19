@@ -55,6 +55,26 @@ public interface IGeneratedPacketLookup
 	string this[Packet key] { get; }
 }
 
+/// <summary>
+///     Generator-target: an arity-5 ref-struct-parameter void method. The runtime types for
+///     arity 1-4 are hand-written; arity 5+ are generator-emitted into
+///     <c>RefStructMethodSetups.g.cs</c>.
+/// </summary>
+public interface IBigPacketSink
+{
+	void Absorb(Packet p1, Packet p2, Packet p3, Packet p4, Packet p5);
+}
+
+/// <summary>
+///     Generator-target: an arity-6 ref-struct-parameter return method that mixes Packet with
+///     non-ref-struct types (int, string), verifying <c>allows ref struct</c> is satisfied by any
+///     type and that return-side wiring works at extended arity.
+/// </summary>
+public interface IBigPacketParser
+{
+	int TryParse(Packet p1, Packet p2, int offset, Packet p4, Packet p5, string format);
+}
+
 public sealed class GeneratedPacketSinkTests
 {
 	public sealed class VoidArity1Tests
@@ -262,6 +282,113 @@ public sealed class GeneratedPacketSinkTests
 			void Act() => sut.TryParse(new Packet(1, []));
 
 			await That(Act).Throws<InvalidOperationException>();
+		}
+	}
+
+	public sealed class ExtendedArityTests
+	{
+		[Fact]
+		public async Task VoidArity5_SetupThrows_ShouldThrowConfiguredException()
+		{
+			IBigPacketSink sut = IBigPacketSink.CreateMock();
+			sut.Mock.Setup.Absorb(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>())
+				.Throws<InvalidOperationException>();
+
+			void Act() => sut.Absorb(
+				new Packet(1, []),
+				new Packet(2, []),
+				new Packet(3, []),
+				new Packet(4, []),
+				new Packet(5, []));
+
+			await That(Act).Throws<InvalidOperationException>();
+		}
+
+		[Fact]
+		public async Task VoidArity5_NoSetup_IsNoOp()
+		{
+			IBigPacketSink sut = IBigPacketSink.CreateMock();
+
+			void Act() => sut.Absorb(
+				new Packet(1, []),
+				new Packet(2, []),
+				new Packet(3, []),
+				new Packet(4, []),
+				new Packet(5, []));
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task VoidArity5_PredicateMatchesSelectively()
+		{
+			IBigPacketSink sut = IBigPacketSink.CreateMock();
+			sut.Mock.Setup.Absorb(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsRefStruct<Packet>(p => p.Id == 99))
+				.Throws<InvalidOperationException>();
+
+			void ActHit() => sut.Absorb(
+				new Packet(1, []), new Packet(2, []), new Packet(3, []),
+				new Packet(4, []), new Packet(99, []));
+			void ActMiss() => sut.Absorb(
+				new Packet(1, []), new Packet(2, []), new Packet(3, []),
+				new Packet(4, []), new Packet(5, []));
+
+			await That(ActHit).Throws<InvalidOperationException>();
+			await That(ActMiss).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task ReturnArity6_ReturnsConfiguredValue()
+		{
+			IBigPacketParser sut = IBigPacketParser.CreateMock();
+			sut.Mock.Setup.TryParse(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<int>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<string>())
+				.Returns(1234);
+
+			int result = sut.TryParse(
+				new Packet(1, []), new Packet(2, []), offset: 10,
+				new Packet(4, []), new Packet(5, []), format: "x");
+
+			await That(result).IsEqualTo(1234);
+		}
+
+		[Fact]
+		public async Task ReturnArity6_NonRefStructParameterGates_Matches()
+		{
+			IBigPacketParser sut = IBigPacketParser.CreateMock();
+			sut.Mock.Setup.TryParse(
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.Satisfies<int>(o => o > 0),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAnyRefStruct<Packet>(),
+					It.IsAny<string>())
+				.Throws<InvalidOperationException>();
+
+			void ActHit() => sut.TryParse(
+				new Packet(1, []), new Packet(2, []), offset: 7,
+				new Packet(4, []), new Packet(5, []), format: "x");
+			void ActMiss() => sut.TryParse(
+				new Packet(1, []), new Packet(2, []), offset: -1,
+				new Packet(4, []), new Packet(5, []), format: "x");
+
+			await That(ActHit).Throws<InvalidOperationException>();
+			await That(ActMiss).DoesNotThrow();
 		}
 	}
 
