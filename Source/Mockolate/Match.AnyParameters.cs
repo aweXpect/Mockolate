@@ -6,8 +6,16 @@ namespace Mockolate;
 public partial class Match
 {
 	/// <summary>
-	///     Matches any parameter combination.
+	///     Matches any argument combination passed to the method.
 	/// </summary>
+	/// <returns>
+	///     An <see cref="IParameters" /> usable in generator-emitted <c>Setup.Method(Match.AnyParameters())</c>
+	///     and <c>Verify.Method(Match.AnyParameters())</c> overloads.
+	/// </returns>
+	/// <remarks>
+	///     Only available on methods whose name is unique on the mocked type (no overloads). For overloaded
+	///     methods, combine per-parameter <see cref="It.IsAny{T}" /> matchers instead.
+	/// </remarks>
 	public static IParameters AnyParameters()
 		=> new AnyParametersMatch();
 

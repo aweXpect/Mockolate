@@ -376,6 +376,26 @@ internal static partial class Sources
 			sb.Append(indent).Append("///     ").Append(remarksText).AppendLine();
 			sb.Append(indent).Append("/// </remarks>").AppendLine();
 		}
+
+		/// <summary>
+		///     Appends an XML documentation <c>&lt;param&gt;</c> tag with the given name and description.
+		/// </summary>
+		private void AppendXmlParam(string name, string description, string indent = "\t\t")
+			=> sb.Append(indent).Append("/// <param name=\"").Append(name).Append("\">")
+				.Append(description).Append("</param>").AppendLine();
+
+		/// <summary>
+		///     Appends an XML documentation <c>&lt;typeparam&gt;</c> tag with the given name and description.
+		/// </summary>
+		private void AppendXmlTypeParam(string name, string description, string indent = "\t\t")
+			=> sb.Append(indent).Append("/// <typeparam name=\"").Append(name).Append("\">")
+				.Append(description).Append("</typeparam>").AppendLine();
+
+		/// <summary>
+		///     Appends an XML documentation <c>&lt;returns&gt;</c> tag with the given text.
+		/// </summary>
+		private void AppendXmlReturns(string returnsText, string indent = "\t\t")
+			=> sb.Append(indent).Append("/// <returns>").Append(returnsText).Append("</returns>").AppendLine();
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
