@@ -16,14 +16,23 @@ public static class SetupExtensions
 	extension<T>(IPropertySetupReturnWhenBuilder<T> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IPropertySetup<T> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -34,8 +43,12 @@ public static class SetupExtensions
 	extension<T>(IPropertyGetterSetupCallbackWhenBuilder<T> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IPropertySetup<T> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -46,8 +59,12 @@ public static class SetupExtensions
 	extension<T>(IPropertySetterSetupCallbackWhenBuilder<T> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IPropertySetup<T> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -58,14 +75,22 @@ public static class SetupExtensions
 	extension(IEventSubscriptionSetupCallbackWhenBuilder setup)
 	{
 		/// <summary>
-		///     Repeats the callback forever.
+		///     Terminates the callback sequence by repeating the preceding <c>Do(...)</c> entry forever instead of
+		///     cycling back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Do(...)</c> entry.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IEventSetup OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -76,14 +101,22 @@ public static class SetupExtensions
 	extension(IEventUnsubscriptionSetupCallbackWhenBuilder setup)
 	{
 		/// <summary>
-		///     Repeats the callback forever.
+		///     Terminates the callback sequence by repeating the preceding <c>Do(...)</c> entry forever instead of
+		///     cycling back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Do(...)</c> entry.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IEventSetup OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -94,14 +127,23 @@ public static class SetupExtensions
 	extension<TValue, T1>(IIndexerSetupReturnWhenBuilder<TValue, T1> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -112,8 +154,12 @@ public static class SetupExtensions
 	extension<TValue, T1>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -124,8 +170,12 @@ public static class SetupExtensions
 	extension<TValue, T1>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -136,14 +186,23 @@ public static class SetupExtensions
 	extension<TValue, T1, T2>(IIndexerSetupReturnWhenBuilder<TValue, T1, T2> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -154,8 +213,12 @@ public static class SetupExtensions
 	extension<TValue, T1, T2>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -166,8 +229,12 @@ public static class SetupExtensions
 	extension<TValue, T1, T2>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -178,14 +245,23 @@ public static class SetupExtensions
 	extension<TValue, T1, T2, T3>(IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2, T3> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -196,8 +272,12 @@ public static class SetupExtensions
 	extension<TValue, T1, T2, T3>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2, T3> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -208,8 +288,12 @@ public static class SetupExtensions
 	extension<TValue, T1, T2, T3>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2, T3> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -220,14 +304,23 @@ public static class SetupExtensions
 	extension<TValue, T1, T2, T3, T4>(IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2, T3, T4> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -238,8 +331,12 @@ public static class SetupExtensions
 	extension<TValue, T1, T2, T3, T4>(IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2, T3, T4> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -250,8 +347,12 @@ public static class SetupExtensions
 	extension<TValue, T1, T2, T3, T4>(IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IIndexerSetup<TValue, T1, T2, T3, T4> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -262,14 +363,23 @@ public static class SetupExtensions
 	extension<TReturn>(IReturnMethodSetupReturnWhenBuilder<TReturn> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -280,8 +390,12 @@ public static class SetupExtensions
 	extension<TReturn>(IReturnMethodSetupCallbackWhenBuilder<TReturn> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -292,14 +406,23 @@ public static class SetupExtensions
 	extension<TReturn, T1>(IReturnMethodSetupReturnWhenBuilder<TReturn, T1> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -310,8 +433,12 @@ public static class SetupExtensions
 	extension<TReturn, T1>(IReturnMethodSetupCallbackWhenBuilder<TReturn, T1> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -322,14 +449,23 @@ public static class SetupExtensions
 	extension<TReturn, T1, T2>(IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1, T2> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -340,8 +476,12 @@ public static class SetupExtensions
 	extension<TReturn, T1, T2>(IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1, T2> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -352,14 +492,23 @@ public static class SetupExtensions
 	extension<TReturn, T1, T2, T3>(IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1, T2, T3> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -370,8 +519,12 @@ public static class SetupExtensions
 	extension<TReturn, T1, T2, T3>(IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1, T2, T3> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -382,14 +535,23 @@ public static class SetupExtensions
 	extension<TReturn, T1, T2, T3, T4>(IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1, T2, T3, T4> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -400,8 +562,12 @@ public static class SetupExtensions
 	extension<TReturn, T1, T2, T3, T4>(IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IReturnMethodSetup<TReturn, T1, T2, T3, T4> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -412,14 +578,23 @@ public static class SetupExtensions
 	extension(IVoidMethodSetupReturnWhenBuilder setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -430,8 +605,12 @@ public static class SetupExtensions
 	extension(IVoidMethodSetupCallbackWhenBuilder setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -442,14 +621,23 @@ public static class SetupExtensions
 	extension<T1>(IVoidMethodSetupReturnWhenBuilder<T1> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -460,8 +648,12 @@ public static class SetupExtensions
 	extension<T1>(IVoidMethodSetupCallbackWhenBuilder<T1> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -472,14 +664,23 @@ public static class SetupExtensions
 	extension<T1, T2>(IVoidMethodSetupReturnWhenBuilder<T1, T2> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1, T2> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -490,8 +691,12 @@ public static class SetupExtensions
 	extension<T1, T2>(IVoidMethodSetupCallbackWhenBuilder<T1, T2> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1, T2> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -502,14 +707,23 @@ public static class SetupExtensions
 	extension<T1, T2, T3>(IVoidMethodSetupReturnWhenBuilder<T1, T2, T3> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1, T2, T3> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -520,8 +734,12 @@ public static class SetupExtensions
 	extension<T1, T2, T3>(IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1, T2, T3> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -532,14 +750,23 @@ public static class SetupExtensions
 	extension<T1, T2, T3, T4>(IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4> setup)
 	{
 		/// <summary>
-		///     Returns/throws forever.
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
 		public void Forever()
 			=> setup.For(int.MaxValue);
 
 		/// <summary>
-		///     Uses the return value only once.
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1, T2, T3, T4> OnlyOnce()
 			=> setup.Only(1);
 	}
@@ -550,8 +777,12 @@ public static class SetupExtensions
 	extension<T1, T2, T3, T4>(IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4> setup)
 	{
 		/// <summary>
-		///     Executes the callback only once.
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
 		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
 		public IVoidMethodSetup<T1, T2, T3, T4> OnlyOnce()
 			=> setup.Only(1);
 	}
