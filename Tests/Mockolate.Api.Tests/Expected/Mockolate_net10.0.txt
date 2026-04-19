@@ -98,6 +98,7 @@ namespace Mockolate
         public static Mockolate.Parameters.IOutParameter<T> IsAnyOut<T>() { }
         public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> IsAnyReadOnlySpan<T>() { }
         public static Mockolate.Parameters.IRefParameter<T> IsAnyRef<T>() { }
+        public static Mockolate.Parameters.IParameter<T> IsAnyRefStruct<T>() { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsAnySpan<T>() { }
         public static Mockolate.Parameters.IParameterWithCallback<bool> IsFalse() { }
         public static Mockolate.It.IInRangeParameter<T> IsInRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
@@ -114,6 +115,7 @@ namespace Mockolate
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.Parameters.IParameter<T> IsRefStruct<T>(Mockolate.RefStructPredicate<T> predicate) { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsSpan<T>(System.Func<T[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IParameterWithCallback<bool> IsTrue() { }
         public static Mockolate.It.IParameterMatches Matches(string pattern) { }
@@ -224,6 +226,7 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameterWithCallback<T> Monitor<T>(this Mockolate.Parameters.IParameterWithCallback<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
         public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
     }
+    public delegate bool RefStructPredicate<T>(T value);
     public static class ReturnsThrowsAsyncExtensions
     {
         public static Mockolate.Setup.IReturnMethodSetupReturnBuilder<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
@@ -798,6 +801,14 @@ namespace Mockolate.Interactions
         public T Value { get; }
         public override string ToString() { }
     }
+    [System.Diagnostics.DebuggerDisplay("{ToString()}")]
+    public sealed class RefStructMethodInvocation : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
+    {
+        public RefStructMethodInvocation(string name, string parameterName) { }
+        public string Name { get; }
+        public string ParameterName { get; }
+        public override string ToString() { }
+    }
 }
 namespace Mockolate.Monitor
 {
@@ -1346,6 +1357,15 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws(System.Func<System.Exception> callback);
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws(System.Func<T, System.Exception> callback);
         Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IRefStructVoidMethodSetup<T> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup
+    {
+        Mockolate.Setup.IRefStructVoidMethodSetup<T> DoesNotThrow();
+        Mockolate.Setup.IRefStructVoidMethodSetup<T> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IRefStructVoidMethodSetup<T> Throws(System.Exception exception);
+        Mockolate.Setup.IRefStructVoidMethodSetup<T> Throws(System.Func<System.Exception> exceptionFactory);
+        Mockolate.Setup.IRefStructVoidMethodSetup<T> Throws<TException>()
             where TException : System.Exception, new ();
     }
     public interface IReturnMethodSetupCallbackBuilder<in TReturn> : Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
@@ -1941,6 +1961,15 @@ namespace Mockolate.Setup
         public T[] ReadOnlySpanValues { get; }
         public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.ReadOnlySpanWrapper<T> op_Implicit(System.ReadOnlySpan<T> span) { }
+    }
+    public sealed class RefStructVoidMethodSetup<T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructVoidMethodSetup<T>, Mockolate.Setup.ISetup
+    {
+        public RefStructVoidMethodSetup(string name, Mockolate.Parameters.IParameterMatch<T>? matcher = null) { }
+        public void Invoke(T value) { }
+        public bool Matches(T value) { }
+        protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
+        public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
+        public override string ToString() { }
     }
     public abstract class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
     {
