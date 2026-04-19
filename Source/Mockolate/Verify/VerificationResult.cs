@@ -71,16 +71,37 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	}
 
 	/// <summary>
-	///     Makes the verification result awaitable, using the specified <paramref name="timeout" /> to wait for the expected
-	///     interactions to occur.
+	///     Returns a verification result that, when terminated with a count assertion, waits up to
+	///     <paramref name="timeout" /> for the expected interactions before throwing.
 	/// </summary>
+	/// <param name="timeout">How long to wait for interactions before reporting a timeout failure.</param>
+	/// <remarks>
+	///     The wait is synchronous: the terminating count assertion blocks the calling thread until the expectation
+	///     is satisfied, the timeout elapses, or the <see cref="WithCancellation(CancellationToken)" /> token (if any)
+	///     fires. If a non-blocking wait is needed, use the asynchronous <c>Within(TimeSpan)</c> variant provided by
+	///     the <c>aweXpect.Mockolate</c> extension package.
+	///     <para />
+	///     On timeout, a <see cref="MockVerificationTimeoutException" /> is raised internally and surfaces as a
+	///     <see cref="MockVerificationException" /> from the terminator.
+	/// </remarks>
+	/// <seealso cref="WithCancellation(CancellationToken)" />
 	public virtual VerificationResult<TVerify> Within(TimeSpan timeout)
 		=> new Awaitable(this, timeout);
 
 	/// <summary>
-	///     Makes the verification result awaitable, using the specified <paramref name="cancellationToken" /> to wait for the
-	///     expected interactions to occur.
+	///     Returns a verification result that, when terminated with a count assertion, waits for the expected
+	///     interactions until <paramref name="cancellationToken" /> is cancelled.
 	/// </summary>
+	/// <param name="cancellationToken">Token that signals when to stop waiting.</param>
+	/// <remarks>
+	///     The wait is synchronous: the terminating count assertion blocks the calling thread. Combine with
+	///     <see cref="Within(TimeSpan)" /> to apply both a timeout and an external cancellation; whichever fires
+	///     first wins.
+	///     <para />
+	///     For a non-blocking wait, use the asynchronous variant provided by the <c>aweXpect.Mockolate</c>
+	///     extension package.
+	/// </remarks>
+	/// <seealso cref="Within(TimeSpan)" />
 	public virtual VerificationResult<TVerify> WithCancellation(CancellationToken cancellationToken)
 		=> new Awaitable(this, cancellationToken);
 
