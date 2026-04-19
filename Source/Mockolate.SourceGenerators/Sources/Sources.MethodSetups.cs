@@ -659,12 +659,6 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\t\t_ => true,").AppendLine();
 		sb.Append("\t\t\t\t\t};").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}.TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append(")\" />").AppendLine();
-		sb.Append("\t\t\tpublic override void TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} parameter{i}"))).Append(")").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t// No callbacks get triggered for IParameters").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
-		sb.AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"object.ToString()\" />").AppendLine();
 		sb.Append("\t\t\tpublic override string ToString()").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
