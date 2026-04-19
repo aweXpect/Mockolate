@@ -1931,6 +1931,24 @@ internal static partial class Sources
 			}
 		}
 
+		sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t").Append(mockRegistry)
+			.Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
+		if (method.Parameters.Count > 0)
+		{
+			sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append('>');
+		}
+
+		sb.Append("(").Append(method.GetUniqueNameString());
+		if (method.Parameters.Count > 0)
+		{
+			sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => $"\"{p.Name}\", {p.ToNameOrWrapper()}")));
+		}
+
+		sb.Append("));").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+
 		if (!isAbstractOrInterface)
 		{
 			if (method.Name.StartsWith("Send", StringComparison.Ordinal) &&
@@ -2028,24 +2046,6 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 		}
-
-		sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t").Append(mockRegistry)
-			.Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
-		if (method.Parameters.Count > 0)
-		{
-			sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append('>');
-		}
-
-		sb.Append("(").Append(method.GetUniqueNameString());
-		if (method.Parameters.Count > 0)
-		{
-			sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => $"\"{p.Name}\", {p.ToNameOrWrapper()}")));
-		}
-
-		sb.Append("));").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
 
 		string displayMethodName = $"{method.ContainingType}.{method.Name}({string.Join(", ", method.Parameters.Select(p => p.Type.DisplayName))})";
 		sb.Append("\t\t\tif (").Append(methodSetup).Append(" is null && !").Append(hasWrappedResult).Append(" && ").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)").AppendLine();
