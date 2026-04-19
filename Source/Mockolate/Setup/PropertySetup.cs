@@ -1,6 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+#if NET10_0_OR_GREATER
+using System.Threading;
+#endif
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -154,8 +157,14 @@ public class PropertySetup<T> : PropertySetup,
 {
 	private readonly MockRegistry _mockRegistry;
 	private readonly string _name;
+#if NET10_0_OR_GREATER
+	private readonly Lock _initializationLock = new();
+#else
+	private readonly object _initializationLock = new();
+#endif
 	private Callbacks<Action<int, T>>? _getterCallbacks;
 	private bool _isInitialized;
+	private bool _isUserInitialized;
 	private Callbacks<Func<int, T, T>>? _returnCallbacks;
 	private Callbacks<Action<int, T>>? _setterCallbacks;
 	private bool? _skipBaseClass;
@@ -361,15 +370,21 @@ public class PropertySetup<T> : PropertySetup,
 	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
 	protected override void InitializeValue(object? value)
 	{
-		if (_isInitialized)
+		// Auto-init path (used by the reader when a setup is registered but
+		// not yet user-initialized). A racing user InitializeWith(T) must still
+		// win, so we never clobber a value set through the public API.
+		lock (_initializationLock)
 		{
-			return;
-		}
+			if (_isUserInitialized || _isInitialized)
+			{
+				return;
+			}
 
-		_isInitialized = value is T or null;
-		if (value is T typedValue)
-		{
-			_value = typedValue;
+			_isInitialized = value is T or null;
+			if (value is T typedValue)
+			{
+				_value = typedValue;
+			}
 		}
 	}
 
@@ -397,7 +412,21 @@ public class PropertySetup<T> : PropertySetup,
 	/// <inheritdoc cref="IPropertySetup{T}.InitializeWith(T)" />
 	public IPropertySetup<T> InitializeWith(T value)
 	{
-		InitializeValue(value);
+		// User-explicit init: must win over any racing auto-init performed by a
+		// concurrent reader between `Setup.Prop` (which registers an uninitialized
+		// setup) and this call. Preserves write-once semantics for repeat user calls.
+		lock (_initializationLock)
+		{
+			if (_isUserInitialized)
+			{
+				return this;
+			}
+
+			_value = value;
+			_isInitialized = true;
+			_isUserInitialized = true;
+		}
+
 		return this;
 	}
 
