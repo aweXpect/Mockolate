@@ -101,6 +101,46 @@ internal partial class MockSetups
 			return null;
 		}
 
+		/// <summary>
+		///     Enumerates all method setups of type <typeparamref name="T" /> matching <paramref name="methodName" />
+		///     in latest-registered-first order.
+		/// </summary>
+		/// <remarks>
+		///     Used by the generated code for methods with ref-struct parameters, where the usual
+		///     <c>GetMatching</c> predicate cannot capture the ref-struct value. Callers iterate this
+		///     sequence and evaluate <c>Matches</c> synchronously on the stack, then invoke the first
+		///     matching setup.
+		/// </remarks>
+		public IEnumerable<T> EnumerateByName<T>(string methodName) where T : MethodSetup
+		{
+			List<MethodSetup>? storage = _storage;
+			if (storage is null)
+			{
+				yield break;
+			}
+
+			// Snapshot the matching entries under lock; yield them without holding the lock so the
+			// caller's Matches/Invoke can run user code (including throws) without risk of re-entering
+			// the storage lock on the same thread.
+			List<T> snapshot;
+			lock (storage)
+			{
+				snapshot = new List<T>(storage.Count);
+				for (int i = storage.Count - 1; i >= 0; i--)
+				{
+					if (storage[i].Name.Equals(methodName) && storage[i] is T typed)
+					{
+						snapshot.Add(typed);
+					}
+				}
+			}
+
+			foreach (T item in snapshot)
+			{
+				yield return item;
+			}
+		}
+
 		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
 		{
 			List<MethodSetup>? storage = _storage;

@@ -299,6 +299,25 @@ internal static class Helpers
 		return type.Fullname;
 	}
 
+	/// <summary>
+	///     Returns true if the given type needs the ref-struct setup pipeline: it is a ref-like
+	///     type AND the existing Span/ReadOnlySpan wrapper fallback doesn't apply.
+	/// </summary>
+	/// <remarks>
+	///     <c>System.Span&lt;T&gt;</c> and <c>System.ReadOnlySpan&lt;T&gt;</c> are themselves
+	///     ref-like, but the generator already boxes them into <c>SpanWrapper&lt;T&gt;</c> /
+	///     <c>ReadOnlySpanWrapper&lt;T&gt;</c> (a plain class), so their setup flows through the
+	///     regular <c>VoidMethodSetup</c> hierarchy with a non-ref-struct <c>T</c>. Only types
+	///     outside that wrapping need the <c>RefStructVoidMethodSetup</c> /
+	///     <c>RefStructReturnMethodSetup</c> / <c>RefStructIndexerGetterSetup</c> path.
+	/// </remarks>
+	public static bool NeedsRefStructPipeline(this Type type)
+		=> type.IsRefStruct
+		   && type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
+
+	public static bool NeedsRefStructPipeline(this MethodParameter parameter)
+		=> parameter.Type.NeedsRefStructPipeline();
+
 	extension(MethodParameter parameter)
 	{
 		public string ToNameOrWrapper()
