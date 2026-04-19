@@ -272,8 +272,11 @@ public sealed class GeneratedPacketSinkTests
 		{
 			// Ref-struct-keyed indexers are not wired up in commit E. The accessor body throws
 			// so the user gets a clear runtime failure; the analyzer flags this pattern at
-			// build time (commit F). This test pins the runtime behavior.
+			// build time (commit F, Mockolate0004 — suppressed below, this test verifies the
+			// runtime half of that contract). This test pins the runtime behavior.
+#pragma warning disable Mockolate0004
 			IGeneratedPacketLookup sut = IGeneratedPacketLookup.CreateMock();
+#pragma warning restore Mockolate0004
 
 			string Act() => sut[new Packet(1, [])];
 
