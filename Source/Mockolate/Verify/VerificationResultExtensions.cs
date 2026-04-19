@@ -8,8 +8,15 @@ using Mockolate.Interactions;
 namespace Mockolate.Verify;
 
 /// <summary>
-///     The expectation contains the matching interactions for verification.
+///     Count-assertion extensions on <see cref="VerificationResult{TVerify}" /> that turn a recorded interaction set
+///     into a pass/fail check (for example <c>.Once()</c>, <c>.AtLeast(3)</c>, <c>.Then(...)</c>).
 /// </summary>
+/// <remarks>
+///     These methods are the terminators of a verification chain: each one either returns normally when the observed
+///     interactions match the expectation, or throws a <see cref="MockVerificationException" />. Use <c>Within</c> or
+///     <c>WithCancellation</c> on the <see cref="VerificationResult{TVerify}" /> before a terminator to wait for
+///     interactions produced on a background thread.
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif
