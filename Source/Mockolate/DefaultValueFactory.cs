@@ -34,9 +34,14 @@ public class DefaultValueFactory
 		=> _predicate?.Invoke(type) ?? false;
 
 	/// <summary>
-	///     Generates a default value of the specified <paramref name="type" />, with
-	///     the <paramref name="parameters" /> for context.
+	///     Generates a default value for <paramref name="type" /> using the registered generator delegate.
 	/// </summary>
+	/// <param name="type">The runtime type to produce a default value for.</param>
+	/// <param name="parameters">
+	///     Optional context forwarded from the caller; typically empty. See
+	///     <see cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" /> for details.
+	/// </param>
+	/// <returns>The generated value, or <see langword="null" /> when no generator has been configured.</returns>
 	public virtual object? GenerateValue(Type type, params object?[] parameters)
 		=> _generator?.Invoke(type, parameters);
 }
