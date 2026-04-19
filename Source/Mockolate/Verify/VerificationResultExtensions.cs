@@ -31,7 +31,7 @@ public static class VerificationResultExtensions
 	extension<TMock>(VerificationResult<TMock> verificationResult)
 	{
 		/// <summary>
-		///     …at least the expected number of <paramref name="times" />.
+		///     Asserts that the verified interaction occurred at least <paramref name="times" /> times.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction occurred fewer than <paramref name="times" /> times,
@@ -61,7 +61,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …at least once.
+		///     Asserts that the verified interaction occurred at least once.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction did not occur,
@@ -91,7 +91,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …at least twice.
+		///     Asserts that the verified interaction occurred at least twice.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction occurred fewer than two times,
@@ -121,7 +121,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …at most the expected number of <paramref name="times" />.
+		///     Asserts that the verified interaction occurred at most <paramref name="times" /> times.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction occurred more than <paramref name="times" /> times.
@@ -150,8 +150,8 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     Verifies that the mock was invoked between <paramref name="minimum" /> and <paramref name="maximum" /> times
-		///     (inclusive).
+		///     Asserts that the verified interaction occurred between <paramref name="minimum" /> and
+		///     <paramref name="maximum" /> times, inclusive.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction count falls outside the
@@ -196,7 +196,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …at most once.
+		///     Asserts that the verified interaction occurred at most once.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction occurred more than once.
@@ -225,7 +225,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …at most twice.
+		///     Asserts that the verified interaction occurred at most twice.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction occurred more than two times.
@@ -254,7 +254,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …exactly the expected number of <paramref name="times" />.
+		///     Asserts that the verified interaction occurred exactly <paramref name="times" /> times.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction count is not equal to <paramref name="times" />,
@@ -284,7 +284,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …never.
+		///     Asserts that the verified interaction never occurred.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction occurred at least once.
@@ -313,7 +313,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …exactly once.
+		///     Asserts that the verified interaction occurred exactly once.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction did not occur exactly once,
@@ -343,7 +343,7 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     …exactly twice.
+		///     Asserts that the verified interaction occurred exactly twice.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
 		///     Thrown when the verified interaction did not occur exactly two times,
@@ -412,7 +412,8 @@ public static class VerificationResultExtensions
 		}
 
 		/// <summary>
-		///     Supports fluent chaining of verifications in a given order.
+		///     Asserts that the current verification and each of the <paramref name="orderedChecks" /> occurred in the
+		///     specified order.
 		/// </summary>
 		/// <param name="orderedChecks">
 		///     Each callback returns a follow-up <see cref="VerificationResult{TVerify}" />; that interaction must have been
