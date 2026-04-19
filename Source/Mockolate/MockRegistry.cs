@@ -99,8 +99,15 @@ public partial class MockRegistry
 	public object?[]? ConstructorParameters { get; }
 
 	/// <summary>
-	///     The instance the mock wraps.
+	///     The real instance that public, non-protected calls are forwarded to, or <see langword="null" /> when the
+	///     mock is a plain (non-wrapping) mock.
 	/// </summary>
+	/// <remarks>
+	///     Populated by the generator-emitted <c>Wrapping(instance)</c> extension. Public members delegate to
+	///     <see cref="Wraps" /> unless a matching setup overrides them; protected members still go through the base
+	///     class implementation. All forwarded calls are recorded on <see cref="Interactions" /> and can be verified
+	///     like any other interaction.
+	/// </remarks>
 	public object? Wraps { get; }
 
 	/// <summary>
