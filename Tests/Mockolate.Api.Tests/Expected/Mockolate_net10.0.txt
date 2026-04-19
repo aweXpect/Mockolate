@@ -2218,7 +2218,7 @@ namespace Mockolate.Setup
     {
         public RefStructIndexerGetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null) { }
         public bool HasReturnValue { get; }
-        public TValue Invoke(T1 value1, T2 value2, System.Func<TValue>? defaultFactory = null) { }
+        public TValue Invoke(T1 value1, T2 value2, object? rawKey1 = null, object? rawKey2 = null, System.Func<TValue>? defaultFactory = null) { }
         public bool Matches(T1 value1, T2 value2) { }
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2228,7 +2228,7 @@ namespace Mockolate.Setup
     {
         public RefStructIndexerGetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null) { }
         public bool HasReturnValue { get; }
-        public TValue Invoke(T1 value1, T2 value2, T3 value3, System.Func<TValue>? defaultFactory = null) { }
+        public TValue Invoke(T1 value1, T2 value2, T3 value3, object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null, System.Func<TValue>? defaultFactory = null) { }
         public bool Matches(T1 value1, T2 value2, T3 value3) { }
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2238,7 +2238,7 @@ namespace Mockolate.Setup
     {
         public RefStructIndexerGetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null, Mockolate.Parameters.IParameterMatch<T4>? matcher4 = null) { }
         public bool HasReturnValue { get; }
-        public TValue Invoke(T1 value1, T2 value2, T3 value3, T4 value4, System.Func<TValue>? defaultFactory = null) { }
+        public TValue Invoke(T1 value1, T2 value2, T3 value3, T4 value4, object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null, object? rawKey4 = null, System.Func<TValue>? defaultFactory = null) { }
         public bool Matches(T1 value1, T2 value2, T3 value3, T4 value4) { }
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2256,7 +2256,7 @@ namespace Mockolate.Setup
     public sealed class RefStructIndexerSetterSetup<TValue, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.ISetup
     {
         public RefStructIndexerSetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null) { }
-        public void Invoke(T1 k1, T2 k2, TValue value) { }
+        public void Invoke(T1 k1, T2 k2, TValue value, object? rawKey1 = null, object? rawKey2 = null) { }
         public bool Matches(T1 value1, T2 value2) { }
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2265,7 +2265,7 @@ namespace Mockolate.Setup
     public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.ISetup
     {
         public RefStructIndexerSetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null) { }
-        public void Invoke(T1 k1, T2 k2, T3 k3, TValue value) { }
+        public void Invoke(T1 k1, T2 k2, T3 k3, TValue value, object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null) { }
         public bool Matches(T1 value1, T2 value2, T3 value3) { }
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2274,7 +2274,7 @@ namespace Mockolate.Setup
     public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.ISetup
     {
         public RefStructIndexerSetterSetup(string name, Mockolate.Parameters.IParameterMatch<T1>? matcher1 = null, Mockolate.Parameters.IParameterMatch<T2>? matcher2 = null, Mockolate.Parameters.IParameterMatch<T3>? matcher3 = null, Mockolate.Parameters.IParameterMatch<T4>? matcher4 = null) { }
-        public void Invoke(T1 k1, T2 k2, T3 k3, T4 k4, TValue value) { }
+        public void Invoke(T1 k1, T2 k2, T3 k3, T4 k4, TValue value, object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null, object? rawKey4 = null) { }
         public bool Matches(T1 value1, T2 value2, T3 value3, T4 value4) { }
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }

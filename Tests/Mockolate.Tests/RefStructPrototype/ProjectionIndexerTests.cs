@@ -167,6 +167,59 @@ public sealed class ProjectionIndexerTests
 		}
 	}
 
+	public sealed class MultiParameterTests
+	{
+		[Fact]
+		public async Task MixedIndexer_NormalAndProjection_WritesFeedReadsUnderProjectedKey()
+		{
+			IGeneratedMixedStore sut = IGeneratedMixedStore.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsRefStructBy<Packet, int>(p => p.Id)]
+				.Returns("fallback");
+
+			sut[3, new Packet(1, [])] = "written";
+
+			string hit = sut[3, new Packet(1, [])];
+			string missOnFirstSlot = sut[4, new Packet(1, [])];
+			string missOnSecondSlot = sut[3, new Packet(2, [])];
+
+			await That(hit).IsEqualTo("written");
+			await That(missOnFirstSlot).IsEqualTo("fallback");
+			await That(missOnSecondSlot).IsEqualTo("fallback");
+		}
+
+		[Fact]
+		public async Task MixedIndexer_RefStructWithoutProjection_DisablesStorage()
+		{
+			IGeneratedMixedStore sut = IGeneratedMixedStore.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAnyRefStruct<Packet>()].Returns("fallback");
+
+			sut[3, new Packet(1, [])] = "ignored-by-storage";
+
+			string v = sut[3, new Packet(1, [])];
+
+			await That(v).IsEqualTo("fallback");
+		}
+
+		[Fact]
+		public async Task DoubleRefStructIndexer_BothProjections_WritesFeedReads()
+		{
+			IGeneratedDoublePacketStore sut = IGeneratedDoublePacketStore.CreateMock();
+			sut.Mock.Setup[
+					It.IsRefStructBy<Packet, int>(p => p.Id),
+					It.IsRefStructBy<Packet, int>(p => p.Id)]
+				.Returns("fallback");
+
+			sut[new Packet(1, []), new Packet(2, [])] = "written";
+			byte[] bytes = [0xA];
+			// Same projected ids but different inline spans — still matches the stored bucket.
+			string hit = sut[new Packet(1, bytes), new Packet(2, [])];
+			string miss = sut[new Packet(1, []), new Packet(3, [])];
+
+			await That(hit).IsEqualTo("written");
+			await That(miss).IsEqualTo("fallback");
+		}
+	}
+
 	public sealed class MatcherTests
 	{
 		[Fact]

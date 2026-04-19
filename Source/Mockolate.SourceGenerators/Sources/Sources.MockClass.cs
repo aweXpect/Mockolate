@@ -2342,16 +2342,26 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.AppendLine();
 
+		// Build a comma-separated raw-key list for arity 2+ that pre-boxes non-ref-struct slots
+		// (ref-struct slots receive null and use their projection). At arity 1 no raw keys are
+		// passed — the arity-1 setup owns its own projection dispatch via the matcher.
+		string rawKeysArgs = property.IndexerParameters!.Value.Count >= 2
+			? ", " + string.Join(", ",
+				property.IndexerParameters!.Value.Select(p =>
+					p.NeedsRefStructPipeline() ? "null" : $"(object){p.Name}"))
+			: string.Empty;
+
 		sb.Append("\t\t\t\t\tif (__setup.HasReturnValue)").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\t\treturn __setup.Invoke(").Append(paramNames).Append(", () => default!);")
-			.AppendLine();
+		sb.Append("\t\t\t\t\t\treturn __setup.Invoke(").Append(paramNames).Append(rawKeysArgs)
+			.Append(", () => default!);").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.AppendLine();
 
 		// Matching-but-unconfigured setup still invokes (for Throws side effects) and then shadows
 		// later setups in the iteration.
-		sb.Append("\t\t\t\t\t__setup.Invoke(").Append(paramNames).Append(", () => default!);").AppendLine();
+		sb.Append("\t\t\t\t\t__setup.Invoke(").Append(paramNames).Append(rawKeysArgs)
+			.Append(", () => default!);").AppendLine();
 		sb.Append("\t\t\t\t\tbreak;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 
@@ -2405,8 +2415,18 @@ internal static partial class Sources
 		sb.Append(", \"value\"));").AppendLine();
 
 		// Iterate setter setups latest-first; first match wins. The setter's Invoke handles the
-		// OnSet callback and any configured throw.
+		// OnSet callback and any configured throw, plus projection-keyed storage forwarding to
+		// the companion getter (when both accessors form a combined setup).
 		string keyNames = string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name));
+
+		// Build a comma-separated raw-key list for arity 2+ that pre-boxes non-ref-struct slots.
+		// At arity 1 no raw keys are passed — the arity-1 setup owns its own projection dispatch.
+		string rawKeysArgs = property.IndexerParameters.Value.Count >= 2
+			? ", " + string.Join(", ",
+				property.IndexerParameters.Value.Select(p =>
+					p.NeedsRefStructPipeline() ? "null" : $"(object){p.Name}"))
+			: string.Empty;
+
 		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(" __setup in ").Append(mockRegistry)
 			.Append(".GetMethodSetups<").Append(setupType).Append(">(").Append(indexerName).Append("))")
 			.AppendLine();
@@ -2416,7 +2436,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\t\tcontinue;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t\t\t__setup.Invoke(").Append(keyNames).Append(", value);").AppendLine();
+		sb.Append("\t\t\t\t\t__setup.Invoke(").Append(keyNames).Append(", value").Append(rawKeysArgs).Append(");").AppendLine();
 		sb.Append("\t\t\t\t\treturn;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 

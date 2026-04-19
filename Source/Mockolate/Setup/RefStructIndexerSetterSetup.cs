@@ -142,9 +142,12 @@ public sealed class RefStructIndexerSetterSetup<TValue, T> : MethodSetup, IRefSt
 ///     See <see cref="RefStructIndexerSetterSetup{TValue, T}" />.
 /// </summary>
 /// <remarks>
-///     Projection-based write-then-read correlation (available on the arity-1 setup via
-///     <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />) is
-///     not supported at arity &gt; 1 — setter writes do not feed back into getter reads.
+///     Projection-based write-then-read correlation is supported at arity 2+ when every
+///     ref-struct slot carries an <see cref="IRefStructProjectionMatch{T}" /> matcher and every
+///     non-ref-struct slot supplies a boxed raw key on
+///     <see cref="Invoke(T1, T2, TValue, object?, object?)" />. The combined
+///     <see cref="RefStructIndexerSetup{TValue, T1, T2}" /> facade wires
+///     <see cref="BoundGetter" /> to forward setter writes into the companion getter's storage.
 /// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
@@ -170,6 +173,9 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2> : MethodSetup,
 		_matcher2 = matcher2;
 	}
 
+	/// <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T}.BoundGetter" />
+	internal RefStructIndexerGetterSetup<TValue, T1, T2>? BoundGetter { get; set; }
+
 	/// <summary>
 	///     Checks whether this setup's key matchers accept the given values.
 	/// </summary>
@@ -178,24 +184,28 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2> : MethodSetup,
 		   && (_matcher2 is null || _matcher2.Matches(value2));
 
 	/// <summary>
-	///     Invokes matcher callbacks, runs the <c>OnSet</c> callback, and applies any throw.
+	///     Invokes matcher callbacks, runs the <c>OnSet</c> callback, applies any throw, and —
+	///     if a getter is bound — forwards the write to the getter's storage using the
+	///     per-slot projections plus the caller-supplied <paramref name="rawKey1" />/<paramref name="rawKey2" />
+	///     for non-ref-struct slots.
 	/// </summary>
-	public void Invoke(T1 k1, T2 k2, TValue value)
+	public void Invoke(T1 k1, T2 k2, TValue value,
+		object? rawKey1 = null, object? rawKey2 = null)
 	{
 		_matcher1?.InvokeCallbacks(k1);
 		_matcher2?.InvokeCallbacks(k2);
 		_onSet?.Invoke(value);
 
-		if (_throwAction is null)
+		if (_throwAction is not null)
 		{
-			return;
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
 		}
 
-		Exception? exception = _throwAction();
-		if (exception is not null)
-		{
-			throw exception;
-		}
+		BoundGetter?.StoreValue(k1, k2, value, rawKey1, rawKey2);
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
@@ -281,6 +291,9 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3> : MethodSetu
 		_matcher3 = matcher3;
 	}
 
+	/// <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T}.BoundGetter" />
+	internal RefStructIndexerGetterSetup<TValue, T1, T2, T3>? BoundGetter { get; set; }
+
 	/// <summary>
 	///     Checks whether this setup's key matchers accept the given values.
 	/// </summary>
@@ -290,25 +303,27 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3> : MethodSetu
 		   && (_matcher3 is null || _matcher3.Matches(value3));
 
 	/// <summary>
-	///     Invokes matcher callbacks, runs the <c>OnSet</c> callback, and applies any throw.
+	///     Invokes matcher callbacks, runs the <c>OnSet</c> callback, applies any throw, and —
+	///     if a getter is bound — forwards the write to the getter's storage.
 	/// </summary>
-	public void Invoke(T1 k1, T2 k2, T3 k3, TValue value)
+	public void Invoke(T1 k1, T2 k2, T3 k3, TValue value,
+		object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null)
 	{
 		_matcher1?.InvokeCallbacks(k1);
 		_matcher2?.InvokeCallbacks(k2);
 		_matcher3?.InvokeCallbacks(k3);
 		_onSet?.Invoke(value);
 
-		if (_throwAction is null)
+		if (_throwAction is not null)
 		{
-			return;
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
 		}
 
-		Exception? exception = _throwAction();
-		if (exception is not null)
-		{
-			throw exception;
-		}
+		BoundGetter?.StoreValue(k1, k2, k3, value, rawKey1, rawKey2, rawKey3);
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
@@ -398,6 +413,9 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : Method
 		_matcher4 = matcher4;
 	}
 
+	/// <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T}.BoundGetter" />
+	internal RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>? BoundGetter { get; set; }
+
 	/// <summary>
 	///     Checks whether this setup's key matchers accept the given values.
 	/// </summary>
@@ -408,9 +426,11 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : Method
 		   && (_matcher4 is null || _matcher4.Matches(value4));
 
 	/// <summary>
-	///     Invokes matcher callbacks, runs the <c>OnSet</c> callback, and applies any throw.
+	///     Invokes matcher callbacks, runs the <c>OnSet</c> callback, applies any throw, and —
+	///     if a getter is bound — forwards the write to the getter's storage.
 	/// </summary>
-	public void Invoke(T1 k1, T2 k2, T3 k3, T4 k4, TValue value)
+	public void Invoke(T1 k1, T2 k2, T3 k3, T4 k4, TValue value,
+		object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null, object? rawKey4 = null)
 	{
 		_matcher1?.InvokeCallbacks(k1);
 		_matcher2?.InvokeCallbacks(k2);
@@ -418,16 +438,16 @@ public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : Method
 		_matcher4?.InvokeCallbacks(k4);
 		_onSet?.Invoke(value);
 
-		if (_throwAction is null)
+		if (_throwAction is not null)
 		{
-			return;
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
 		}
 
-		Exception? exception = _throwAction();
-		if (exception is not null)
-		{
-			throw exception;
-		}
+		BoundGetter?.StoreValue(k1, k2, k3, k4, value, rawKey1, rawKey2, rawKey3, rawKey4);
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />

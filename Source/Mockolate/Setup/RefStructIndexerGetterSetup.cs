@@ -205,10 +205,14 @@ public sealed class RefStructIndexerGetterSetup<TValue, T> : MethodSetup, IRefSt
 ///     Ref-struct-compatible indexer getter setup for arity 2. See <see cref="RefStructIndexerGetterSetup{TValue, T}" />.
 /// </summary>
 /// <remarks>
-///     Projection-based write-then-read storage (available on the arity-1 setup via
-///     <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />) is
-///     not supported at arity &gt; 1 — setter writes do not feed back into getter reads. Work
-///     around by capturing the value externally or using an arity-1 indexer.
+///     <para>
+///         Projection-based write-then-read storage is supported at arity 2+ when every
+///         ref-struct slot carries a projection matcher
+///         (<see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />).
+///         Non-ref-struct slots use their raw value (boxed by the caller and passed as
+///         <c>rawKey_i</c>) as the dispatch key. If any ref-struct slot lacks a projection,
+///         storage is not activated — setter writes will not feed back into getter reads.
+///     </para>
 /// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
@@ -219,6 +223,9 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2> : MethodSetup, I
 {
 	private readonly IParameterMatch<T1>? _matcher1;
 	private readonly IParameterMatch<T2>? _matcher2;
+	private readonly IRefStructProjectionMatch<T1>? _projection1;
+	private readonly IRefStructProjectionMatch<T2>? _projection2;
+	private readonly IndexerValueStorage<TValue>? _storage;
 	private Func<TValue>? _returnFactory;
 	private Func<Exception?>? _throwAction;
 	private bool? _skipBaseClass;
@@ -231,6 +238,14 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2> : MethodSetup, I
 	{
 		_matcher1 = matcher1;
 		_matcher2 = matcher2;
+		_projection1 = matcher1 as IRefStructProjectionMatch<T1>;
+		_projection2 = matcher2 as IRefStructProjectionMatch<T2>;
+
+		if (RefStructStorageHelper.IsSlotStorageReady(_projection1) &&
+		    RefStructStorageHelper.IsSlotStorageReady(_projection2))
+		{
+			_storage = new IndexerValueStorage<TValue>();
+		}
 	}
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Matches(T)" />
@@ -238,8 +253,56 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2> : MethodSetup, I
 		=> (_matcher1 is null || _matcher1.Matches(value1))
 		   && (_matcher2 is null || _matcher2.Matches(value2));
 
+	/// <summary>
+	///     Attempts to read a previously-stored value for the keys derived from the ref-struct
+	///     projections and the caller-supplied <paramref name="rawKey1" />/<paramref name="rawKey2" />.
+	///     Returns <see langword="false" /> if storage is inactive or the key path has not been
+	///     written.
+	/// </summary>
+	internal bool TryGetStoredValue(T1 value1, T2 value2, object? rawKey1, object? rawKey2, out TValue value)
+	{
+		if (_storage is null ||
+		    !RefStructStorageHelper.TryResolveKey(_projection1, value1, rawKey1, out object key1) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection2, value2, rawKey2, out object key2))
+		{
+			value = default!;
+			return false;
+		}
+
+		IndexerValueStorage<TValue>? node = _storage.GetChild(key1)?.GetChild(key2);
+		if (node is not null && node.HasValue)
+		{
+			value = node.Value;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
+
+	/// <summary>
+	///     Stores <paramref name="value" /> under the key path derived from the ref-struct
+	///     projections and the caller-supplied <paramref name="rawKey1" />/<paramref name="rawKey2" />.
+	///     No-op when storage is inactive or when the configured matchers reject the keys.
+	/// </summary>
+	internal void StoreValue(T1 value1, T2 value2, TValue value, object? rawKey1, object? rawKey2)
+	{
+		if (_storage is null || !Matches(value1, value2) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection1, value1, rawKey1, out object key1) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection2, value2, rawKey2, out object key2))
+		{
+			return;
+		}
+
+		IndexerValueStorage<TValue> leaf = _storage.GetOrAddChild(key1).GetOrAddChild(key2);
+		leaf.Value = value;
+		leaf.HasValue = true;
+	}
+
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Invoke(T, Func{TValue})" />
-	public TValue Invoke(T1 value1, T2 value2, Func<TValue>? defaultFactory = null)
+	public TValue Invoke(T1 value1, T2 value2,
+		object? rawKey1 = null, object? rawKey2 = null,
+		Func<TValue>? defaultFactory = null)
 	{
 		_matcher1?.InvokeCallbacks(value1);
 		_matcher2?.InvokeCallbacks(value2);
@@ -252,6 +315,12 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2> : MethodSetup, I
 			}
 		}
 
+		if (_storage is not null &&
+		    TryGetStoredValue(value1, value2, rawKey1, rawKey2, out TValue stored))
+		{
+			return stored;
+		}
+
 		if (_returnFactory is not null)
 		{
 			return _returnFactory();
@@ -261,7 +330,7 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2> : MethodSetup, I
 	}
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.HasReturnValue" />
-	public bool HasReturnValue => _returnFactory is not null;
+	public bool HasReturnValue => _returnFactory is not null || _storage is not null;
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
 	public bool SkipBaseClass(MockBehavior behavior)
@@ -329,6 +398,10 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3> : MethodSetu
 	private readonly IParameterMatch<T1>? _matcher1;
 	private readonly IParameterMatch<T2>? _matcher2;
 	private readonly IParameterMatch<T3>? _matcher3;
+	private readonly IRefStructProjectionMatch<T1>? _projection1;
+	private readonly IRefStructProjectionMatch<T2>? _projection2;
+	private readonly IRefStructProjectionMatch<T3>? _projection3;
+	private readonly IndexerValueStorage<TValue>? _storage;
 	private Func<TValue>? _returnFactory;
 	private Func<Exception?>? _throwAction;
 	private bool? _skipBaseClass;
@@ -343,6 +416,16 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3> : MethodSetu
 		_matcher1 = matcher1;
 		_matcher2 = matcher2;
 		_matcher3 = matcher3;
+		_projection1 = matcher1 as IRefStructProjectionMatch<T1>;
+		_projection2 = matcher2 as IRefStructProjectionMatch<T2>;
+		_projection3 = matcher3 as IRefStructProjectionMatch<T3>;
+
+		if (RefStructStorageHelper.IsSlotStorageReady(_projection1) &&
+		    RefStructStorageHelper.IsSlotStorageReady(_projection2) &&
+		    RefStructStorageHelper.IsSlotStorageReady(_projection3))
+		{
+			_storage = new IndexerValueStorage<TValue>();
+		}
 	}
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Matches(T)" />
@@ -351,8 +434,49 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3> : MethodSetu
 		   && (_matcher2 is null || _matcher2.Matches(value2))
 		   && (_matcher3 is null || _matcher3.Matches(value3));
 
+	internal bool TryGetStoredValue(T1 value1, T2 value2, T3 value3,
+		object? rawKey1, object? rawKey2, object? rawKey3, out TValue value)
+	{
+		if (_storage is null ||
+		    !RefStructStorageHelper.TryResolveKey(_projection1, value1, rawKey1, out object key1) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection2, value2, rawKey2, out object key2) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection3, value3, rawKey3, out object key3))
+		{
+			value = default!;
+			return false;
+		}
+
+		IndexerValueStorage<TValue>? node = _storage.GetChild(key1)?.GetChild(key2)?.GetChild(key3);
+		if (node is not null && node.HasValue)
+		{
+			value = node.Value;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
+
+	internal void StoreValue(T1 value1, T2 value2, T3 value3, TValue value,
+		object? rawKey1, object? rawKey2, object? rawKey3)
+	{
+		if (_storage is null || !Matches(value1, value2, value3) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection1, value1, rawKey1, out object key1) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection2, value2, rawKey2, out object key2) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection3, value3, rawKey3, out object key3))
+		{
+			return;
+		}
+
+		IndexerValueStorage<TValue> leaf = _storage.GetOrAddChild(key1).GetOrAddChild(key2).GetOrAddChild(key3);
+		leaf.Value = value;
+		leaf.HasValue = true;
+	}
+
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Invoke(T, Func{TValue})" />
-	public TValue Invoke(T1 value1, T2 value2, T3 value3, Func<TValue>? defaultFactory = null)
+	public TValue Invoke(T1 value1, T2 value2, T3 value3,
+		object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null,
+		Func<TValue>? defaultFactory = null)
 	{
 		_matcher1?.InvokeCallbacks(value1);
 		_matcher2?.InvokeCallbacks(value2);
@@ -366,6 +490,12 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3> : MethodSetu
 			}
 		}
 
+		if (_storage is not null &&
+		    TryGetStoredValue(value1, value2, value3, rawKey1, rawKey2, rawKey3, out TValue stored))
+		{
+			return stored;
+		}
+
 		if (_returnFactory is not null)
 		{
 			return _returnFactory();
@@ -375,7 +505,7 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3> : MethodSetu
 	}
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.HasReturnValue" />
-	public bool HasReturnValue => _returnFactory is not null;
+	public bool HasReturnValue => _returnFactory is not null || _storage is not null;
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
 	public bool SkipBaseClass(MockBehavior behavior)
@@ -445,6 +575,11 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : Method
 	private readonly IParameterMatch<T2>? _matcher2;
 	private readonly IParameterMatch<T3>? _matcher3;
 	private readonly IParameterMatch<T4>? _matcher4;
+	private readonly IRefStructProjectionMatch<T1>? _projection1;
+	private readonly IRefStructProjectionMatch<T2>? _projection2;
+	private readonly IRefStructProjectionMatch<T3>? _projection3;
+	private readonly IRefStructProjectionMatch<T4>? _projection4;
+	private readonly IndexerValueStorage<TValue>? _storage;
 	private Func<TValue>? _returnFactory;
 	private Func<Exception?>? _throwAction;
 	private bool? _skipBaseClass;
@@ -461,6 +596,18 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : Method
 		_matcher2 = matcher2;
 		_matcher3 = matcher3;
 		_matcher4 = matcher4;
+		_projection1 = matcher1 as IRefStructProjectionMatch<T1>;
+		_projection2 = matcher2 as IRefStructProjectionMatch<T2>;
+		_projection3 = matcher3 as IRefStructProjectionMatch<T3>;
+		_projection4 = matcher4 as IRefStructProjectionMatch<T4>;
+
+		if (RefStructStorageHelper.IsSlotStorageReady(_projection1) &&
+		    RefStructStorageHelper.IsSlotStorageReady(_projection2) &&
+		    RefStructStorageHelper.IsSlotStorageReady(_projection3) &&
+		    RefStructStorageHelper.IsSlotStorageReady(_projection4))
+		{
+			_storage = new IndexerValueStorage<TValue>();
+		}
 	}
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Matches(T)" />
@@ -470,8 +617,51 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : Method
 		   && (_matcher3 is null || _matcher3.Matches(value3))
 		   && (_matcher4 is null || _matcher4.Matches(value4));
 
+	internal bool TryGetStoredValue(T1 value1, T2 value2, T3 value3, T4 value4,
+		object? rawKey1, object? rawKey2, object? rawKey3, object? rawKey4, out TValue value)
+	{
+		if (_storage is null ||
+		    !RefStructStorageHelper.TryResolveKey(_projection1, value1, rawKey1, out object key1) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection2, value2, rawKey2, out object key2) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection3, value3, rawKey3, out object key3) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection4, value4, rawKey4, out object key4))
+		{
+			value = default!;
+			return false;
+		}
+
+		IndexerValueStorage<TValue>? node = _storage.GetChild(key1)?.GetChild(key2)?.GetChild(key3)?.GetChild(key4);
+		if (node is not null && node.HasValue)
+		{
+			value = node.Value;
+			return true;
+		}
+
+		value = default!;
+		return false;
+	}
+
+	internal void StoreValue(T1 value1, T2 value2, T3 value3, T4 value4, TValue value,
+		object? rawKey1, object? rawKey2, object? rawKey3, object? rawKey4)
+	{
+		if (_storage is null || !Matches(value1, value2, value3, value4) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection1, value1, rawKey1, out object key1) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection2, value2, rawKey2, out object key2) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection3, value3, rawKey3, out object key3) ||
+		    !RefStructStorageHelper.TryResolveKey(_projection4, value4, rawKey4, out object key4))
+		{
+			return;
+		}
+
+		IndexerValueStorage<TValue> leaf = _storage.GetOrAddChild(key1).GetOrAddChild(key2).GetOrAddChild(key3).GetOrAddChild(key4);
+		leaf.Value = value;
+		leaf.HasValue = true;
+	}
+
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Invoke(T, Func{TValue})" />
-	public TValue Invoke(T1 value1, T2 value2, T3 value3, T4 value4, Func<TValue>? defaultFactory = null)
+	public TValue Invoke(T1 value1, T2 value2, T3 value3, T4 value4,
+		object? rawKey1 = null, object? rawKey2 = null, object? rawKey3 = null, object? rawKey4 = null,
+		Func<TValue>? defaultFactory = null)
 	{
 		_matcher1?.InvokeCallbacks(value1);
 		_matcher2?.InvokeCallbacks(value2);
@@ -486,6 +676,12 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : Method
 			}
 		}
 
+		if (_storage is not null &&
+		    TryGetStoredValue(value1, value2, value3, value4, rawKey1, rawKey2, rawKey3, rawKey4, out TValue stored))
+		{
+			return stored;
+		}
+
 		if (_returnFactory is not null)
 		{
 			return _returnFactory();
@@ -495,7 +691,7 @@ public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : Method
 	}
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.HasReturnValue" />
-	public bool HasReturnValue => _returnFactory is not null;
+	public bool HasReturnValue => _returnFactory is not null || _storage is not null;
 
 	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
 	public bool SkipBaseClass(MockBehavior behavior)

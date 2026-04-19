@@ -74,6 +74,24 @@ public interface IGeneratedPacketSetter
 }
 
 /// <summary>
+///     Generator-target: two-key indexer mixing a non-ref-struct parameter and a ref-struct key.
+///     Exercises arity-2 projection storage with one boxed raw key and one projected key.
+/// </summary>
+public interface IGeneratedMixedStore
+{
+	string this[int priority, Packet key] { get; set; }
+}
+
+/// <summary>
+///     Generator-target: two-key indexer with two ref-struct keys. Exercises arity-2 projection
+///     storage where every slot carries a projection.
+/// </summary>
+public interface IGeneratedDoublePacketStore
+{
+	string this[Packet k1, Packet k2] { get; set; }
+}
+
+/// <summary>
 ///     Generator-target: an arity-5 ref-struct-parameter void method. The runtime types for
 ///     arity 1-4 are hand-written; arity 5+ are generator-emitted into
 ///     <c>RefStructMethodSetups.g.cs</c>.

@@ -193,5 +193,124 @@ public sealed class RefStructProjectionStorageTests
 
 		await That(found).IsFalse();
 	}
+
+	public sealed class Arity2Tests
+	{
+		[Fact]
+		public async Task AllProjections_StoreAndTryGet_RoundTrip()
+		{
+			IParameter<Key> p1 = It.IsRefStructBy<Key, int>(k => k.Id);
+			IParameter<Key> p2 = It.IsRefStructBy<Key, int>(k => k.Id);
+			RefStructIndexerGetterSetup<string, Key, Key> getter = new(
+				"get_Item",
+				(IParameterMatch<Key>)p1, (IParameterMatch<Key>)p2);
+
+			getter.StoreValue(new Key(1), new Key(2), "hit", null, null);
+			bool found = getter.TryGetStoredValue(new Key(1), new Key(2), null, null, out string? value);
+			bool miss = getter.TryGetStoredValue(new Key(1), new Key(99), null, null, out _);
+
+			await That(found).IsTrue();
+			await That(value).IsEqualTo("hit");
+			await That(miss).IsFalse();
+		}
+
+		[Fact]
+		public async Task MixedNormalAndProjection_StoreAndTryGet_RoundTrip()
+		{
+			IParameter<int> normal = It.IsAny<int>();
+			IParameter<Key> projected = It.IsRefStructBy<Key, int>(k => k.Id);
+			RefStructIndexerGetterSetup<string, int, Key> getter = new(
+				"get_Item",
+				(IParameterMatch<int>)normal, (IParameterMatch<Key>)projected);
+
+			getter.StoreValue(3, new Key(7), "hit", 3, null);
+			bool hit = getter.TryGetStoredValue(3, new Key(7), 3, null, out string? value);
+			bool missOnFirst = getter.TryGetStoredValue(4, new Key(7), 4, null, out _);
+			bool missOnSecond = getter.TryGetStoredValue(3, new Key(8), 3, null, out _);
+
+			await That(hit).IsTrue();
+			await That(value).IsEqualTo("hit");
+			await That(missOnFirst).IsFalse();
+			await That(missOnSecond).IsFalse();
+		}
+
+		[Fact]
+		public async Task OneRefStructWithoutProjection_StorageInactive()
+		{
+			IParameter<int> normal = It.IsAny<int>();
+			IParameter<Key> refNoProjection = It.IsAnyRefStruct<Key>();
+			RefStructIndexerGetterSetup<string, int, Key> getter = new(
+				"get_Item",
+				(IParameterMatch<int>)normal, (IParameterMatch<Key>)refNoProjection);
+
+			getter.StoreValue(1, new Key(2), "ignored", 1, null);
+			bool found = getter.TryGetStoredValue(1, new Key(2), 1, null, out _);
+
+			await That(found).IsFalse();
+			await That(getter.HasReturnValue).IsFalse();
+		}
+
+		[Fact]
+		public async Task CombinedSetup_WiresBoundGetter_SetterWrite_FeedsGetterRead()
+		{
+			IParameter<int> normal = It.IsAny<int>();
+			IParameter<Key> projected = It.IsRefStructBy<Key, int>(k => k.Id);
+			RefStructIndexerSetup<string, int, Key> setup = new(
+				"get_Item", "set_Item",
+				(IParameterMatch<int>)normal, (IParameterMatch<Key>)projected);
+
+			await That(setup.Setter.BoundGetter).IsSameAs(setup.Getter);
+
+			setup.Setter.Invoke(3, new Key(7), "stored", 3, null);
+			bool found = setup.Getter.TryGetStoredValue(3, new Key(7), 3, null, out string? value);
+
+			await That(found).IsTrue();
+			await That(value).IsEqualTo("stored");
+		}
+	}
+
+	public sealed class Arity3Tests
+	{
+		[Fact]
+		public async Task MixedProjectionAndNormal_RoundTrip()
+		{
+			IParameter<int> p1 = It.IsAny<int>();
+			IParameter<Key> p2 = It.IsRefStructBy<Key, int>(k => k.Id);
+			IParameter<string> p3 = It.IsAny<string>();
+			RefStructIndexerGetterSetup<string, int, Key, string> getter = new(
+				"get_Item",
+				(IParameterMatch<int>)p1,
+				(IParameterMatch<Key>)p2,
+				(IParameterMatch<string>)p3);
+
+			getter.StoreValue(1, new Key(42), "tag", "v", 1, null, "tag");
+			bool found = getter.TryGetStoredValue(1, new Key(42), "tag", 1, null, "tag", out string? value);
+
+			await That(found).IsTrue();
+			await That(value).IsEqualTo("v");
+		}
+	}
+
+	public sealed class Arity4Tests
+	{
+		[Fact]
+		public async Task AllRefStructWithProjection_RoundTrip()
+		{
+			IParameter<Key> p = It.IsRefStructBy<Key, int>(k => k.Id);
+			RefStructIndexerGetterSetup<string, Key, Key, Key, Key> getter = new(
+				"get_Item",
+				(IParameterMatch<Key>)p, (IParameterMatch<Key>)p,
+				(IParameterMatch<Key>)p, (IParameterMatch<Key>)p);
+
+			getter.StoreValue(new Key(1), new Key(2), new Key(3), new Key(4), "v",
+				null, null, null, null);
+			bool found = getter.TryGetStoredValue(
+				new Key(1), new Key(2), new Key(3), new Key(4),
+				null, null, null, null, out string? value);
+
+			await That(found).IsTrue();
+			await That(value).IsEqualTo("v");
+		}
+	}
 }
 #endif

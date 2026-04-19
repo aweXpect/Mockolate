@@ -120,10 +120,7 @@ public sealed class RefStructIndexerSetup<TValue, T> : MethodSetup, IRefStructIn
 ///     See <see cref="RefStructIndexerSetup{TValue, T}" />.
 /// </summary>
 /// <remarks>
-///     Projection-based write-then-read correlation (available on the arity-1 setup via
-///     <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />) is
-///     not supported at arity &gt; 1 — setter writes do not feed back into getter reads. Work
-///     around by capturing the value externally or using an arity-1 indexer.
+///     <inheritdoc cref="RefStructIndexerSetup{TValue, T}" path="/remarks" />
 /// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
@@ -146,6 +143,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2> : MethodSetup, IRefStr
 	{
 		Getter = new RefStructIndexerGetterSetup<TValue, T1, T2>(getterName, matcher1, matcher2);
 		Setter = new RefStructIndexerSetterSetup<TValue, T1, T2>(setterName, matcher1, matcher2);
+		Setter.BoundGetter = Getter;
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetup{TValue, T}.MatchesInteraction(Mockolate.Interactions.IMethodInteraction)" />
@@ -203,7 +201,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2> : MethodSetup, IRefStr
 ///     See <see cref="RefStructIndexerSetup{TValue, T}" />.
 /// </summary>
 /// <remarks>
-///     <inheritdoc cref="RefStructIndexerSetup{TValue, T1, T2}" path="/remarks" />
+///     <inheritdoc cref="RefStructIndexerSetup{TValue, T}" path="/remarks" />
 /// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
@@ -229,6 +227,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2, T3> : MethodSetup,
 	{
 		Getter = new RefStructIndexerGetterSetup<TValue, T1, T2, T3>(getterName, matcher1, matcher2, matcher3);
 		Setter = new RefStructIndexerSetterSetup<TValue, T1, T2, T3>(setterName, matcher1, matcher2, matcher3);
+		Setter.BoundGetter = Getter;
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetup{TValue, T}.MatchesInteraction(Mockolate.Interactions.IMethodInteraction)" />
@@ -286,7 +285,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2, T3> : MethodSetup,
 ///     See <see cref="RefStructIndexerSetup{TValue, T}" />.
 /// </summary>
 /// <remarks>
-///     <inheritdoc cref="RefStructIndexerSetup{TValue, T1, T2}" path="/remarks" />
+///     <inheritdoc cref="RefStructIndexerSetup{TValue, T}" path="/remarks" />
 /// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
@@ -314,6 +313,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4> : MethodSetup,
 	{
 		Getter = new RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>(getterName, matcher1, matcher2, matcher3, matcher4);
 		Setter = new RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4>(setterName, matcher1, matcher2, matcher3, matcher4);
+		Setter.BoundGetter = Getter;
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetup{TValue, T}.MatchesInteraction(Mockolate.Interactions.IMethodInteraction)" />
