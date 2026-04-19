@@ -110,14 +110,14 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static void ReportRefStructIssuesForType(SyntaxNodeAnalysisContext context, ITypeSymbol type,
 		Location location)
 	{
-		bool supportsRefStructPipeline = CompilationSupportsRefStructPipeline(context.Compilation);
+		string? pipelineUnsupportedReason = GetRefStructPipelineUnsupportedReason(context.Compilation);
 
 		// For delegates only the synthesized Invoke matters — BeginInvoke/EndInvoke are legacy
 		// helpers the generator does not emit overrides for, so we must not flag them.
 		if (type.TypeKind == TypeKind.Delegate)
 		{
 			if (type is INamedTypeSymbol { DelegateInvokeMethod: { } invoke, } &&
-			    TryGetRefStructIssue(invoke, supportsRefStructPipeline, out string? delegateIssue))
+			    TryGetRefStructIssue(invoke, pipelineUnsupportedReason, out string? delegateIssue))
 			{
 				context.ReportDiagnostic(Diagnostic.Create(
 					s_refStructRule,
@@ -135,7 +135,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			switch (member)
 			{
 				case IMethodSymbol { MethodKind: MethodKind.Ordinary, } m
-					when TryGetRefStructIssue(m, supportsRefStructPipeline, out string? issue):
+					when TryGetRefStructIssue(m, pipelineUnsupportedReason, out string? issue):
 					context.ReportDiagnostic(Diagnostic.Create(
 						s_refStructRule,
 						location,
@@ -144,7 +144,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 						issue));
 					break;
 				case IPropertySymbol { IsIndexer: true, } p
-					when TryGetRefStructIssueForIndexer(p, supportsRefStructPipeline, out string? issue):
+					when TryGetRefStructIssueForIndexer(p, pipelineUnsupportedReason, out string? issue):
 					context.ReportDiagnostic(Diagnostic.Create(
 						s_refStructRule,
 						location,
@@ -268,15 +268,31 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	/// <summary>
-	///     Detects the net9.0+ compilation via the presence of
-	///     <c>Mockolate.Setup.IRefStructVoidMethodSetup`1</c> (which itself is
-	///     <c>#if NET9_0_OR_GREATER</c>-gated). Present → the ref-struct pipeline can be emitted;
-	///     absent → all ref-struct parameter methods are unsupported.
+	///     Returns a human-readable reason when the current compilation cannot host the
+	///     ref-struct pipeline, or <see langword="null" /> when it is supported. Both the target
+	///     framework (Mockolate's ref-struct types are <c>#if NET9_0_OR_GREATER</c>-gated) and the
+	///     effective C# language version (<c>allows ref struct</c> is a C# 13 feature) must admit
+	///     the pipeline — a net9.0+ project with <c>&lt;LangVersion&gt;</c> pinned below 13 would
+	///     otherwise silently slip past the type-presence check and then fail to compile generated
+	///     output.
 	/// </summary>
-	private static bool CompilationSupportsRefStructPipeline(Compilation compilation)
-		=> compilation.GetTypeByMetadataName("Mockolate.Setup.IRefStructVoidMethodSetup`1") is not null;
+	private static string? GetRefStructPipelineUnsupportedReason(Compilation compilation)
+	{
+		if (compilation.GetTypeByMetadataName("Mockolate.Setup.IRefStructVoidMethodSetup`1") is null)
+		{
+			return ".NET 9 or later (the referenced Mockolate assembly does not ship the ref-struct pipeline)";
+		}
 
-	private static bool TryGetRefStructIssue(IMethodSymbol method, bool supportsRefStructPipeline,
+		if (compilation is CSharpCompilation { LanguageVersion: < LanguageVersion.CSharp13, } cs)
+		{
+			return
+				$"C# 13 or later (uses the 'allows ref struct' anti-constraint; current LangVersion is {cs.LanguageVersion.ToDisplayString()})";
+		}
+
+		return null;
+	}
+
+	private static bool TryGetRefStructIssue(IMethodSymbol method, string? pipelineUnsupportedReason,
 		[NotNullWhen(true)] out string? issue)
 	{
 		bool hasRefStructParam = false;
@@ -296,10 +312,9 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			}
 		}
 
-		if (hasRefStructParam && !supportsRefStructPipeline)
+		if (hasRefStructParam && pipelineUnsupportedReason is not null)
 		{
-			issue =
-				"ref-struct parameter mocking requires .NET 9 or later (uses the 'allows ref struct' anti-constraint)";
+			issue = $"ref-struct parameter mocking requires {pipelineUnsupportedReason}";
 			return true;
 		}
 
@@ -318,7 +333,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		return false;
 	}
 
-	private static bool TryGetRefStructIssueForIndexer(IPropertySymbol indexer, bool supportsRefStructPipeline,
+	private static bool TryGetRefStructIssueForIndexer(IPropertySymbol indexer, string? pipelineUnsupportedReason,
 		[NotNullWhen(true)] out string? issue)
 	{
 		if (!indexer.Parameters.Any(p => NeedsRefStructPipeline(p.Type)))
@@ -327,10 +342,9 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return false;
 		}
 
-		if (!supportsRefStructPipeline)
+		if (pipelineUnsupportedReason is not null)
 		{
-			issue =
-				"ref-struct-keyed indexers require .NET 9 or later";
+			issue = $"ref-struct-keyed indexers require {pipelineUnsupportedReason}";
 			return true;
 		}
 

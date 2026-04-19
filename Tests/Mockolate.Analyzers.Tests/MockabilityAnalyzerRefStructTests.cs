@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
 using Verifier = Mockolate.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<Mockolate.Analyzers.MockabilityAnalyzer>;
@@ -10,11 +11,12 @@ namespace Mockolate.Analyzers.Tests;
 ///     <see cref="MockabilityAnalyzer" />.
 /// </summary>
 /// <remarks>
-///     The analyzer-test host targets net10.0, so
-///     <c>MockabilityAnalyzer.CompilationSupportsRefStructPipeline</c> is satisfied — the
-///     "requires net9.0+" branch cannot be exercised from this test project. The in-scope
-///     failure modes (out/ref ref-struct params, non-span ref-struct returns, ref-struct-keyed
-///     indexers) are all covered below.
+///     The analyzer-test host targets net10.0 with Mockolate's ref-struct types referenced, so
+///     the "target framework lacks the pipeline" branch of
+///     <c>GetRefStructPipelineUnsupportedReason</c> cannot be exercised here. The C# language
+///     version branch (<c>LangVersion &lt; 13</c>) is reachable via the LanguageVersion-aware
+///     verifier overload. All other failure modes (out/ref ref-struct params, non-span ref-struct
+///     returns, ref-struct-keyed indexers, delegates, inheritance) are covered below.
 /// </remarks>
 public class MockabilityAnalyzerRefStructTests
 {
@@ -427,6 +429,68 @@ public class MockabilityAnalyzerRefStructTests
 				.WithLocation(0)
 				.WithArguments("MyNamespace.DerivedProducer", "Produce",
 					"out/ref ref-struct parameters are not supported")
+		);
+
+	[Fact]
+	public async Task WhenLanguageVersionBelowCSharp13_RefStructParameterMethod_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IPacketSink")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+			  	public interface IPacketSink
+			  	{
+			  		void Consume(Packet packet);
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:IPacketSink|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			LanguageVersion.CSharp12,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.IPacketSink", "Consume",
+					"ref-struct parameter mocking requires C# 13 or later (uses the 'allows ref struct' anti-constraint; current LangVersion is 12.0)")
+		);
+
+	[Fact]
+	public async Task WhenLanguageVersionBelowCSharp13_RefStructKeyedIndexer_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			$$"""
+			  {{GeneratedPrefix("MyNamespace.IRefStructLookup")}}
+
+			  namespace MyNamespace
+			  {
+			  	public readonly ref struct Key(int id) { public int Id { get; } = id; }
+
+			  	public interface IRefStructLookup
+			  	{
+			  		string this[Key key] { get; }
+			  	}
+
+			  	public class MyClass
+			  	{
+			  		public void MyTest()
+			  		{
+			  			{|#0:IRefStructLookup|}.CreateMock();
+			  		}
+			  	}
+			  }
+			  """,
+			LanguageVersion.CSharp12,
+			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.IRefStructLookup", "this[]",
+					"ref-struct-keyed indexers require C# 13 or later (uses the 'allows ref struct' anti-constraint; current LangVersion is 12.0)")
 		);
 
 	[Fact]
