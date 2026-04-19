@@ -19,7 +19,12 @@ public partial class MockRegistry
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private readonly ScenarioState _scenarioState;
 
-	/// <inheritdoc cref="MockRegistry" />
+	/// <summary>
+	///     Creates a new <see cref="MockRegistry" /> with the given <paramref name="behavior" /> and, optionally,
+	///     <paramref name="constructorParameters" /> for a class mock's base-class constructor.
+	/// </summary>
+	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
+	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
 	public MockRegistry(MockBehavior behavior, object?[]? constructorParameters = null)
 	{
 		Behavior = behavior;
@@ -30,7 +35,12 @@ public partial class MockRegistry
 		Wraps = null;
 	}
 
-	/// <inheritdoc cref="MockRegistry" />
+	/// <summary>
+	///     Creates a <see cref="MockRegistry" /> that shares setup and scenario state with <paramref name="registry" />
+	///     but records interactions on a fresh bucket and forwards calls to <paramref name="wraps" />.
+	/// </summary>
+	/// <param name="registry">The source registry whose <see cref="Behavior" />, setups, and scenario state are reused.</param>
+	/// <param name="wraps">The real instance that the mock should delegate calls to. See <see cref="Wraps" />.</param>
 	public MockRegistry(MockRegistry registry, object wraps)
 	{
 		Behavior = registry.Behavior;
@@ -41,7 +51,12 @@ public partial class MockRegistry
 		Wraps = wraps;
 	}
 
-	/// <inheritdoc cref="MockRegistry" />
+	/// <summary>
+	///     Creates a <see cref="MockRegistry" /> that shares all state with <paramref name="registry" /> but exposes
+	///     a different set of <paramref name="constructorParameters" /> to the base-class constructor.
+	/// </summary>
+	/// <param name="registry">The source registry whose setups, interactions, scenario state, and wrapped instance are reused.</param>
+	/// <param name="constructorParameters">Values forwarded to the base-class constructor of the new mock instance.</param>
 	public MockRegistry(MockRegistry registry, object?[] constructorParameters)
 	{
 		Behavior = registry.Behavior;
@@ -52,7 +67,12 @@ public partial class MockRegistry
 		Wraps = registry.Wraps;
 	}
 
-	/// <inheritdoc cref="MockRegistry" />
+	/// <summary>
+	///     Creates a <see cref="MockRegistry" /> that shares all state with <paramref name="registry" /> but records
+	///     into the supplied <paramref name="interactions" /> collection. Used for scoped monitoring.
+	/// </summary>
+	/// <param name="registry">The source registry whose behavior, setups, constructor parameters, scenario state, and wrapped instance are reused.</param>
+	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
 	public MockRegistry(MockRegistry registry, MockInteractions interactions)
 	{
 		Behavior = registry.Behavior;
