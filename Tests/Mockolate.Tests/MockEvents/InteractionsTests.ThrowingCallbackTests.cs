@@ -40,7 +40,9 @@ public sealed class InteractionsThrowingCallbackTests
 
 	public class ThrowingCallbackEventService
 	{
+		#pragma warning disable CA1070
 		public virtual event ThrowingCallbackEventHandler? SomeEvent;
+		#pragma warning restore CA1070
 
 		public void Raise(int value) => SomeEvent?.Invoke(value);
 	}

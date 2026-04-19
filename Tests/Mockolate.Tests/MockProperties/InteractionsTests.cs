@@ -5,7 +5,7 @@ using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockProperties;
 
-public sealed class InteractionsTests
+public sealed partial class InteractionsTests
 {
 	[Fact]
 	public async Task MockGot_WhenNameDoesNotMatch_ShouldReturnNever()
