@@ -1,0 +1,459 @@
+#if NET9_0_OR_GREATER
+using System;
+using Mockolate.Interactions;
+using Mockolate.Parameters;
+
+namespace Mockolate.Setup;
+
+/// <summary>
+///     Concrete ref-struct-compatible indexer getter setup for a single ref struct key
+///     of type <typeparamref name="T" />.
+/// </summary>
+/// <remarks>
+///     Semantically equivalent to a method <c>TValue get_Item(T key)</c>. Uses
+///     <see cref="RefStructMethodInvocation" /> with the CLR getter name convention
+///     (<c>get_Item</c>) for interaction matching rather than introducing a separate indexer
+///     interaction type. See <see cref="RefStructReturnMethodSetup{TReturn, T}" /> for the
+///     underlying design rationale on why the full callback/builder chain is omitted.
+/// </remarks>
+#if !DEBUG
+[System.Diagnostics.DebuggerNonUserCode]
+#endif
+public sealed class RefStructIndexerGetterSetup<TValue, T> : MethodSetup, IRefStructIndexerGetterSetup<TValue, T>
+	where T : allows ref struct
+{
+	private readonly IParameterMatch<T>? _matcher;
+	private Func<TValue>? _returnFactory;
+	private Func<Exception?>? _throwAction;
+	private bool? _skipBaseClass;
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}" />
+	/// <param name="name">
+	///     The fully qualified indexer getter name. Use <c>"get_Item"</c> to match the CLR
+	///     convention unless the interface declares a custom IndexerName.
+	/// </param>
+	/// <param name="matcher">The key matcher. <see langword="null" /> matches any key.</param>
+	public RefStructIndexerGetterSetup(string name, IParameterMatch<T>? matcher = null)
+		: base(name)
+	{
+		_matcher = matcher;
+	}
+
+	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.Matches(T)" />
+	public bool Matches(T value)
+		=> _matcher is null || _matcher.Matches(value);
+
+	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.Invoke(T, Func{TReturn})" />
+	public TValue Invoke(T value, Func<TValue>? defaultFactory = null)
+	{
+		_matcher?.InvokeCallbacks(value);
+		if (_throwAction is not null)
+		{
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
+		}
+
+		if (_returnFactory is not null)
+		{
+			return _returnFactory();
+		}
+
+		return defaultFactory is not null ? defaultFactory() : default!;
+	}
+
+	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.HasReturnValue" />
+	public bool HasReturnValue => _returnFactory is not null;
+
+	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.SkipBaseClass(MockBehavior)" />
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
+
+	/// <inheritdoc cref="IRefStructIndexerGetterSetup{TValue, T}.SkippingBaseClass(bool)" />
+	IRefStructIndexerGetterSetup<TValue, T> IRefStructIndexerGetterSetup<TValue, T>.SkippingBaseClass(bool skipBaseClass)
+	{
+		_skipBaseClass = skipBaseClass;
+		return this;
+	}
+
+	/// <inheritdoc cref="IRefStructIndexerGetterSetup{TValue, T}.Returns(TValue)" />
+	IRefStructIndexerGetterSetup<TValue, T> IRefStructIndexerGetterSetup<TValue, T>.Returns(TValue returnValue)
+	{
+		_returnFactory = () => returnValue;
+		return this;
+	}
+
+	/// <inheritdoc cref="IRefStructIndexerGetterSetup{TValue, T}.Returns(Func{TValue})" />
+	IRefStructIndexerGetterSetup<TValue, T> IRefStructIndexerGetterSetup<TValue, T>.Returns(Func<TValue> returnFactory)
+	{
+		_returnFactory = returnFactory;
+		return this;
+	}
+
+	/// <inheritdoc cref="IRefStructIndexerGetterSetup{TValue, T}.Throws{TException}()" />
+	IRefStructIndexerGetterSetup<TValue, T> IRefStructIndexerGetterSetup<TValue, T>.Throws<TException>()
+	{
+		_throwAction = static () => new TException();
+		return this;
+	}
+
+	/// <inheritdoc cref="IRefStructIndexerGetterSetup{TValue, T}.Throws(Exception)" />
+	IRefStructIndexerGetterSetup<TValue, T> IRefStructIndexerGetterSetup<TValue, T>.Throws(Exception exception)
+	{
+		_throwAction = () => exception;
+		return this;
+	}
+
+	/// <inheritdoc cref="IRefStructIndexerGetterSetup{TValue, T}.Throws(Func{Exception})" />
+	IRefStructIndexerGetterSetup<TValue, T> IRefStructIndexerGetterSetup<TValue, T>.Throws(Func<Exception> exceptionFactory)
+	{
+		_throwAction = exceptionFactory;
+		return this;
+	}
+
+	/// <inheritdoc cref="MethodSetup.MatchesInteraction(IMethodInteraction)" />
+	protected override bool MatchesInteraction(IMethodInteraction interaction)
+		=> interaction is RefStructMethodInvocation invocation && invocation.Name == Name;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> _matcher is null
+			? $"{typeof(TValue).Name} this[<{typeof(T).Name} ref struct>]"
+			: $"{typeof(TValue).Name} this[{_matcher}]";
+}
+
+/// <summary>
+///     Ref-struct-compatible indexer getter setup for arity 2. See <see cref="RefStructIndexerGetterSetup{TValue, T}" />.
+/// </summary>
+#if !DEBUG
+[System.Diagnostics.DebuggerNonUserCode]
+#endif
+public sealed class RefStructIndexerGetterSetup<TValue, T1, T2> : MethodSetup, IRefStructIndexerGetterSetup<TValue, T1, T2>
+	where T1 : allows ref struct
+	where T2 : allows ref struct
+{
+	private readonly IParameterMatch<T1>? _matcher1;
+	private readonly IParameterMatch<T2>? _matcher2;
+	private Func<TValue>? _returnFactory;
+	private Func<Exception?>? _throwAction;
+	private bool? _skipBaseClass;
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T1, T2}" />
+	public RefStructIndexerGetterSetup(string name,
+		IParameterMatch<T1>? matcher1 = null,
+		IParameterMatch<T2>? matcher2 = null)
+		: base(name)
+	{
+		_matcher1 = matcher1;
+		_matcher2 = matcher2;
+	}
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Matches(T)" />
+	public bool Matches(T1 value1, T2 value2)
+		=> (_matcher1 is null || _matcher1.Matches(value1))
+		   && (_matcher2 is null || _matcher2.Matches(value2));
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Invoke(T, Func{TValue})" />
+	public TValue Invoke(T1 value1, T2 value2, Func<TValue>? defaultFactory = null)
+	{
+		_matcher1?.InvokeCallbacks(value1);
+		_matcher2?.InvokeCallbacks(value2);
+		if (_throwAction is not null)
+		{
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
+		}
+
+		if (_returnFactory is not null)
+		{
+			return _returnFactory();
+		}
+
+		return defaultFactory is not null ? defaultFactory() : default!;
+	}
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.HasReturnValue" />
+	public bool HasReturnValue => _returnFactory is not null;
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2> IRefStructIndexerGetterSetup<TValue, T1, T2>.SkippingBaseClass(bool skipBaseClass)
+	{
+		_skipBaseClass = skipBaseClass;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2> IRefStructIndexerGetterSetup<TValue, T1, T2>.Returns(TValue returnValue)
+	{
+		_returnFactory = () => returnValue;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2> IRefStructIndexerGetterSetup<TValue, T1, T2>.Returns(Func<TValue> returnFactory)
+	{
+		_returnFactory = returnFactory;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2> IRefStructIndexerGetterSetup<TValue, T1, T2>.Throws<TException>()
+	{
+		_throwAction = static () => new TException();
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2> IRefStructIndexerGetterSetup<TValue, T1, T2>.Throws(Exception exception)
+	{
+		_throwAction = () => exception;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2> IRefStructIndexerGetterSetup<TValue, T1, T2>.Throws(Func<Exception> exceptionFactory)
+	{
+		_throwAction = exceptionFactory;
+		return this;
+	}
+
+	/// <inheritdoc cref="MethodSetup.MatchesInteraction(IMethodInteraction)" />
+	protected override bool MatchesInteraction(IMethodInteraction interaction)
+		=> interaction is RefStructMethodInvocation invocation && invocation.Name == Name;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{typeof(TValue).Name} this[{_matcher1?.ToString() ?? $"<{typeof(T1).Name} ref struct>"}, {_matcher2?.ToString() ?? $"<{typeof(T2).Name} ref struct>"}]";
+}
+
+/// <summary>
+///     Ref-struct-compatible indexer getter setup for arity 3. See <see cref="RefStructIndexerGetterSetup{TValue, T}" />.
+/// </summary>
+#if !DEBUG
+[System.Diagnostics.DebuggerNonUserCode]
+#endif
+public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3> : MethodSetup, IRefStructIndexerGetterSetup<TValue, T1, T2, T3>
+	where T1 : allows ref struct
+	where T2 : allows ref struct
+	where T3 : allows ref struct
+{
+	private readonly IParameterMatch<T1>? _matcher1;
+	private readonly IParameterMatch<T2>? _matcher2;
+	private readonly IParameterMatch<T3>? _matcher3;
+	private Func<TValue>? _returnFactory;
+	private Func<Exception?>? _throwAction;
+	private bool? _skipBaseClass;
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T1, T2, T3}" />
+	public RefStructIndexerGetterSetup(string name,
+		IParameterMatch<T1>? matcher1 = null,
+		IParameterMatch<T2>? matcher2 = null,
+		IParameterMatch<T3>? matcher3 = null)
+		: base(name)
+	{
+		_matcher1 = matcher1;
+		_matcher2 = matcher2;
+		_matcher3 = matcher3;
+	}
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Matches(T)" />
+	public bool Matches(T1 value1, T2 value2, T3 value3)
+		=> (_matcher1 is null || _matcher1.Matches(value1))
+		   && (_matcher2 is null || _matcher2.Matches(value2))
+		   && (_matcher3 is null || _matcher3.Matches(value3));
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Invoke(T, Func{TValue})" />
+	public TValue Invoke(T1 value1, T2 value2, T3 value3, Func<TValue>? defaultFactory = null)
+	{
+		_matcher1?.InvokeCallbacks(value1);
+		_matcher2?.InvokeCallbacks(value2);
+		_matcher3?.InvokeCallbacks(value3);
+		if (_throwAction is not null)
+		{
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
+		}
+
+		if (_returnFactory is not null)
+		{
+			return _returnFactory();
+		}
+
+		return defaultFactory is not null ? defaultFactory() : default!;
+	}
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.HasReturnValue" />
+	public bool HasReturnValue => _returnFactory is not null;
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3> IRefStructIndexerGetterSetup<TValue, T1, T2, T3>.SkippingBaseClass(bool skipBaseClass)
+	{
+		_skipBaseClass = skipBaseClass;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3> IRefStructIndexerGetterSetup<TValue, T1, T2, T3>.Returns(TValue returnValue)
+	{
+		_returnFactory = () => returnValue;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3> IRefStructIndexerGetterSetup<TValue, T1, T2, T3>.Returns(Func<TValue> returnFactory)
+	{
+		_returnFactory = returnFactory;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3> IRefStructIndexerGetterSetup<TValue, T1, T2, T3>.Throws<TException>()
+	{
+		_throwAction = static () => new TException();
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3> IRefStructIndexerGetterSetup<TValue, T1, T2, T3>.Throws(Exception exception)
+	{
+		_throwAction = () => exception;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3> IRefStructIndexerGetterSetup<TValue, T1, T2, T3>.Throws(Func<Exception> exceptionFactory)
+	{
+		_throwAction = exceptionFactory;
+		return this;
+	}
+
+	/// <inheritdoc cref="MethodSetup.MatchesInteraction(IMethodInteraction)" />
+	protected override bool MatchesInteraction(IMethodInteraction interaction)
+		=> interaction is RefStructMethodInvocation invocation && invocation.Name == Name;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{typeof(TValue).Name} this[{_matcher1?.ToString() ?? $"<{typeof(T1).Name} ref struct>"}, {_matcher2?.ToString() ?? $"<{typeof(T2).Name} ref struct>"}, {_matcher3?.ToString() ?? $"<{typeof(T3).Name} ref struct>"}]";
+}
+
+/// <summary>
+///     Ref-struct-compatible indexer getter setup for arity 4. See <see cref="RefStructIndexerGetterSetup{TValue, T}" />.
+/// </summary>
+#if !DEBUG
+[System.Diagnostics.DebuggerNonUserCode]
+#endif
+public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : MethodSetup, IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>
+	where T1 : allows ref struct
+	where T2 : allows ref struct
+	where T3 : allows ref struct
+	where T4 : allows ref struct
+{
+	private readonly IParameterMatch<T1>? _matcher1;
+	private readonly IParameterMatch<T2>? _matcher2;
+	private readonly IParameterMatch<T3>? _matcher3;
+	private readonly IParameterMatch<T4>? _matcher4;
+	private Func<TValue>? _returnFactory;
+	private Func<Exception?>? _throwAction;
+	private bool? _skipBaseClass;
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T1, T2, T3, T4}" />
+	public RefStructIndexerGetterSetup(string name,
+		IParameterMatch<T1>? matcher1 = null,
+		IParameterMatch<T2>? matcher2 = null,
+		IParameterMatch<T3>? matcher3 = null,
+		IParameterMatch<T4>? matcher4 = null)
+		: base(name)
+	{
+		_matcher1 = matcher1;
+		_matcher2 = matcher2;
+		_matcher3 = matcher3;
+		_matcher4 = matcher4;
+	}
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Matches(T)" />
+	public bool Matches(T1 value1, T2 value2, T3 value3, T4 value4)
+		=> (_matcher1 is null || _matcher1.Matches(value1))
+		   && (_matcher2 is null || _matcher2.Matches(value2))
+		   && (_matcher3 is null || _matcher3.Matches(value3))
+		   && (_matcher4 is null || _matcher4.Matches(value4));
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.Invoke(T, Func{TValue})" />
+	public TValue Invoke(T1 value1, T2 value2, T3 value3, T4 value4, Func<TValue>? defaultFactory = null)
+	{
+		_matcher1?.InvokeCallbacks(value1);
+		_matcher2?.InvokeCallbacks(value2);
+		_matcher3?.InvokeCallbacks(value3);
+		_matcher4?.InvokeCallbacks(value4);
+		if (_throwAction is not null)
+		{
+			Exception? exception = _throwAction();
+			if (exception is not null)
+			{
+				throw exception;
+			}
+		}
+
+		if (_returnFactory is not null)
+		{
+			return _returnFactory();
+		}
+
+		return defaultFactory is not null ? defaultFactory() : default!;
+	}
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.HasReturnValue" />
+	public bool HasReturnValue => _returnFactory is not null;
+
+	/// <inheritdoc cref="RefStructIndexerGetterSetup{TValue, T}.SkipBaseClass(MockBehavior)" />
+	public bool SkipBaseClass(MockBehavior behavior)
+		=> _skipBaseClass ?? behavior.SkipBaseClass;
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>.SkippingBaseClass(bool skipBaseClass)
+	{
+		_skipBaseClass = skipBaseClass;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>.Returns(TValue returnValue)
+	{
+		_returnFactory = () => returnValue;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>.Returns(Func<TValue> returnFactory)
+	{
+		_returnFactory = returnFactory;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>.Throws<TException>()
+	{
+		_throwAction = static () => new TException();
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>.Throws(Exception exception)
+	{
+		_throwAction = () => exception;
+		return this;
+	}
+
+	IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4>.Throws(Func<Exception> exceptionFactory)
+	{
+		_throwAction = exceptionFactory;
+		return this;
+	}
+
+	/// <inheritdoc cref="MethodSetup.MatchesInteraction(IMethodInteraction)" />
+	protected override bool MatchesInteraction(IMethodInteraction interaction)
+		=> interaction is RefStructMethodInvocation invocation && invocation.Name == Name;
+
+	/// <inheritdoc cref="object.ToString()" />
+	public override string ToString()
+		=> $"{typeof(TValue).Name} this[{_matcher1?.ToString() ?? $"<{typeof(T1).Name} ref struct>"}, {_matcher2?.ToString() ?? $"<{typeof(T2).Name} ref struct>"}, {_matcher3?.ToString() ?? $"<{typeof(T3).Name} ref struct>"}, {_matcher4?.ToString() ?? $"<{typeof(T4).Name} ref struct>"}]";
+}
+#endif

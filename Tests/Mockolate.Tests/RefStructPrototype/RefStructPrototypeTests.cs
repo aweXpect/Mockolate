@@ -1,5 +1,6 @@
 #if NET9_0_OR_GREATER
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -451,6 +452,89 @@ public sealed class RefStructPrototypeTests
 				new DataPacket(3, []), new DataPacket(4, []));
 
 			await That(Act).Throws<NotSupportedException>();
+		}
+	}
+
+	public sealed class IndexerGetterSetupTests
+	{
+		[Fact]
+		public async Task Arity1_Returns_Value_ReturnsConfiguredValue()
+		{
+			RefStructIndexerGetterSetup<int, DataPacket> setup = new(
+				"get_Item", It.IsAnyRefStruct<DataPacket>() as IParameterMatch<DataPacket>);
+			((IRefStructIndexerGetterSetup<int, DataPacket>)setup).Returns(7);
+
+			int result = setup.Invoke(new DataPacket(1, []));
+
+			await That(result).IsEqualTo(7);
+		}
+
+		[Fact]
+		public async Task Arity1_PredicateMatches_FiltersByKey()
+		{
+			RefStructIndexerGetterSetup<string, DataPacket> setup = new(
+				"get_Item",
+				It.IsRefStruct<DataPacket>(p => p.Id == 42) as IParameterMatch<DataPacket>);
+			((IRefStructIndexerGetterSetup<string, DataPacket>)setup).Returns("hit");
+
+			bool matchesHit = setup.Matches(new DataPacket(42, []));
+			bool matchesMiss = setup.Matches(new DataPacket(7, []));
+
+			await That(matchesHit).IsTrue();
+			await That(matchesMiss).IsFalse();
+		}
+
+		[Fact]
+		public async Task Arity1_NoReturnConfigured_UsesDefaultFactory()
+		{
+			RefStructIndexerGetterSetup<string, DataPacket> setup = new("get_Item");
+
+			string result = setup.Invoke(new DataPacket(1, []), static () => "fallback");
+
+			await That(result).IsEqualTo("fallback");
+		}
+
+		[Fact]
+		public async Task Arity1_Throws_TakesPrecedenceOverReturn()
+		{
+			RefStructIndexerGetterSetup<int, DataPacket> setup = new("get_Item");
+			((IRefStructIndexerGetterSetup<int, DataPacket>)setup)
+				.Returns(42)
+				.Throws<KeyNotFoundException>();
+
+			void Act() => setup.Invoke(new DataPacket(1, []));
+
+			await That(Act).Throws<KeyNotFoundException>();
+		}
+
+		[Fact]
+		public async Task Arity2_Matches_AllMatchersMustAccept()
+		{
+			RefStructIndexerGetterSetup<int, DataPacket, DataPacket> setup = new(
+				"get_Item",
+				It.IsRefStruct<DataPacket>(p => p.Id == 1) as IParameterMatch<DataPacket>,
+				It.IsRefStruct<DataPacket>(p => p.Id == 2) as IParameterMatch<DataPacket>);
+
+			bool bothMatch = setup.Matches(new DataPacket(1, []), new DataPacket(2, []));
+			bool secondOnly = setup.Matches(new DataPacket(99, []), new DataPacket(2, []));
+
+			await That(bothMatch).IsTrue();
+			await That(secondOnly).IsFalse();
+		}
+
+		[Fact]
+		public async Task Arity4_Invoke_ReturnsFactoryValue()
+		{
+			RefStructIndexerGetterSetup<string, DataPacket, DataPacket, DataPacket, DataPacket>
+				setup = new("get_Item");
+			((IRefStructIndexerGetterSetup<string, DataPacket, DataPacket, DataPacket, DataPacket>)
+				setup).Returns(() => "lazy");
+
+			string result = setup.Invoke(
+				new DataPacket(1, []), new DataPacket(2, []),
+				new DataPacket(3, []), new DataPacket(4, []));
+
+			await That(result).IsEqualTo("lazy");
 		}
 	}
 }
