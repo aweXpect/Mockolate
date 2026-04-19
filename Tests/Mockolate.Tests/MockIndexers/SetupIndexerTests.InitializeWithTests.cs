@@ -27,7 +27,7 @@ public sealed partial class SetupIndexerTests
 		public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
-			IIndexerSetup<string, int> setup = sut.Mock.Setup[It.IsAny<int>()]
+			IIndexerSetupWithCallback<string, int> setup = sut.Mock.Setup[It.IsAny<int>()]
 				.InitializeWith("foo");
 
 			void Act()
@@ -75,7 +75,7 @@ public sealed partial class SetupIndexerTests
 		public async Task InitializeWith_Twice_ShouldThrowMockException()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
-			IIndexerSetup<string, int> setup = sut.Mock.Setup[It.IsAny<int>()]
+			IIndexerSetupWithCallback<string, int> setup = sut.Mock.Setup[It.IsAny<int>()]
 				.InitializeWith("foo");
 
 			void Act()
@@ -111,7 +111,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int> setup = sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
+				IIndexerSetupWithCallback<string, int, int> setup = sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -145,7 +145,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int> setup = sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
+				IIndexerSetupWithCallback<string, int, int> setup = sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
 				void Act()
@@ -185,7 +185,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int, int> setup = sut
+				IIndexerSetupWithCallback<string, int, int, int> setup = sut
 					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
@@ -223,7 +223,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int, int> setup = sut
+				IIndexerSetupWithCallback<string, int, int, int> setup = sut
 					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
@@ -266,7 +266,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int, int, int> setup = sut
+				IIndexerSetupWithCallback<string, int, int, int, int> setup = sut
 					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
@@ -306,7 +306,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int, int, int> setup = sut
+				IIndexerSetupWithCallback<string, int, int, int, int> setup = sut
 					.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
 					.InitializeWith("foo");
 
@@ -351,7 +351,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Callback_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int, int, int, int> setup = sut.Mock.Setup[It.IsAny<int>(),
+				IIndexerSetupWithCallback<string, int, int, int, int, int> setup = sut.Mock.Setup[It.IsAny<int>(),
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>()]
 					.InitializeWith("foo");
@@ -394,7 +394,7 @@ public sealed partial class SetupIndexerTests
 			public async Task InitializeWith_Twice_ShouldThrowMockException()
 			{
 				IIndexerService sut = IIndexerService.CreateMock();
-				IIndexerSetup<string, int, int, int, int, int> setup = sut.Mock.Setup[It.IsAny<int>(),
+				IIndexerSetupWithCallback<string, int, int, int, int, int> setup = sut.Mock.Setup[It.IsAny<int>(),
 						It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(),
 						It.IsAny<int>()]
 					.InitializeWith("foo");

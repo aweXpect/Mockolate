@@ -7,5 +7,5 @@ namespace Mockolate.Parameters;
 ///     Matches a method parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" /> against an
 ///     expectation.
 /// </summary>
-public interface IReadOnlySpanParameter<T> : IParameter<ReadOnlySpanWrapper<T>>;
+public interface IReadOnlySpanParameter<T> : IParameterWithCallback<ReadOnlySpanWrapper<T>>;
 #endif

@@ -205,24 +205,9 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> TransitionTo(string scenario);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -249,6 +234,27 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameter.
+/// </summary>
+public interface IReturnMethodSetupWithCallback<in TReturn, out T1> : IReturnMethodSetup<TReturn, T1>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -287,7 +293,7 @@ public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1>
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1>
-	: IReturnMethodSetup<TReturn, T1>
+	: IReturnMethodSetupWithCallback<TReturn, T1>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -331,7 +337,7 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1>
-	: IReturnMethodSetup<TReturn, T1>
+	: IReturnMethodSetupWithCallback<TReturn, T1>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
@@ -360,7 +366,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1>
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1>
-	: IReturnMethodSetup<TReturn, T1>
+	: IReturnMethodSetupWithCallback<TReturn, T1>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
@@ -390,24 +396,9 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<T1, T2> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<int, T1, T2> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -434,6 +425,27 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameters.
+/// </summary>
+public interface IReturnMethodSetupWithCallback<in TReturn, out T1, out T2> : IReturnMethodSetup<TReturn, T1, T2>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<T1, T2> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<int, T1, T2> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -472,7 +484,7 @@ public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, o
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2>
-	: IReturnMethodSetup<TReturn, T1, T2>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -516,7 +528,7 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2>
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
-	: IReturnMethodSetup<TReturn, T1, T2>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
@@ -545,7 +557,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2>
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2>
-	: IReturnMethodSetup<TReturn, T1, T2>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
@@ -575,24 +587,9 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMetho
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -619,6 +616,27 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMetho
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameters.
+/// </summary>
+public interface IReturnMethodSetupWithCallback<in TReturn, out T1, out T2, out T3> : IReturnMethodSetup<TReturn, T1, T2, T3>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -657,7 +675,7 @@ public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, o
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3>
-	: IReturnMethodSetup<TReturn, T1, T2, T3>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -701,7 +719,7 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3>
-	: IReturnMethodSetup<TReturn, T1, T2, T3>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
@@ -730,7 +748,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, out T3>
-	: IReturnMethodSetup<TReturn, T1, T2, T3>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
@@ -761,24 +779,9 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> 
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
-	/// </summary>
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> to setup the return value for this method.
@@ -805,6 +808,27 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> 
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameters.
+/// </summary>
+public interface IReturnMethodSetupWithCallback<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	/// </summary>
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -843,7 +867,7 @@ public interface IReturnMethodSetupParallelCallbackBuilder<in TReturn, out T1, o
 ///     Sets up a when callback for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupCallbackWhenBuilder<in TReturn, out T1, out T2, out T3, out T4>
-	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -887,7 +911,7 @@ public interface IReturnMethodSetupReturnBuilder<in TReturn, out T1, out T2, out
 ///     Sets up a when builder for returns/throws for a method returning <typeparamref name="TReturn" />.
 /// </summary>
 public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2, out T3, out T4>
-	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Repeats the return/throw for the given number of <paramref name="times" />.
@@ -916,7 +940,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn, out T1, out T2,
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, out T3, out T4>
-	: IReturnMethodSetup<TReturn, T1, T2, T3, T4>
+	: IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
@@ -1091,16 +1115,6 @@ public interface IVoidMethodSetup<out T1> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1> TransitionTo(string scenario);
@@ -1125,6 +1139,22 @@ public interface IVoidMethodSetup<out T1> : IMethodSetup
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IVoidMethodSetupReturnBuilder<T1> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <see langword="void" /> with callback support for the parameter.
+/// </summary>
+public interface IVoidMethodSetupWithCallback<out T1> : IVoidMethodSetup<T1>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -1163,7 +1193,7 @@ public interface IVoidMethodSetupParallelCallbackBuilder<out T1>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackWhenBuilder<out T1>
-	: IVoidMethodSetup<T1>
+	: IVoidMethodSetupWithCallback<T1>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -1205,7 +1235,7 @@ public interface IVoidMethodSetupReturnBuilder<out T1>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupReturnWhenBuilder<out T1>
-	: IVoidMethodSetup<T1>
+	: IVoidMethodSetupWithCallback<T1>
 {
 	/// <summary>
 	///     Repeats the throw for the given number of <paramref name="times" />.
@@ -1232,7 +1262,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1>
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IVoidMethodSetupParameterIgnorer<out T1>
-	: IVoidMethodSetup<T1>
+	: IVoidMethodSetupWithCallback<T1>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
@@ -1262,16 +1292,6 @@ public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1, T2> TransitionTo(string scenario);
@@ -1296,6 +1316,22 @@ public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <see langword="void" /> with callback support for the parameters.
+/// </summary>
+public interface IVoidMethodSetupWithCallback<out T1, out T2> : IVoidMethodSetup<T1, T2>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -1334,7 +1370,7 @@ public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2>
-	: IVoidMethodSetup<T1, T2>
+	: IVoidMethodSetupWithCallback<T1, T2>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -1376,7 +1412,7 @@ public interface IVoidMethodSetupReturnBuilder<out T1, out T2>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2>
-	: IVoidMethodSetup<T1, T2>
+	: IVoidMethodSetupWithCallback<T1, T2>
 {
 	/// <summary>
 	///     Repeats the throw for the given number of <paramref name="times" />.
@@ -1403,7 +1439,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2>
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IVoidMethodSetupParameterIgnorer<out T1, out T2>
-	: IVoidMethodSetup<T1, T2>
+	: IVoidMethodSetupWithCallback<T1, T2>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
@@ -1433,16 +1469,6 @@ public interface IVoidMethodSetup<out T1, out T2, out T3> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
@@ -1467,6 +1493,22 @@ public interface IVoidMethodSetup<out T1, out T2, out T3> : IMethodSetup
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <see langword="void" /> with callback support for the parameters.
+/// </summary>
+public interface IVoidMethodSetupWithCallback<out T1, out T2, out T3> : IVoidMethodSetup<T1, T2, T3>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -1505,7 +1547,7 @@ public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2, out T3>
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3>
-	: IVoidMethodSetup<T1, T2, T3>
+	: IVoidMethodSetupWithCallback<T1, T2, T3>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -1547,7 +1589,7 @@ public interface IVoidMethodSetupReturnBuilder<out T1, out T2, out T3>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3>
-	: IVoidMethodSetup<T1, T2, T3>
+	: IVoidMethodSetupWithCallback<T1, T2, T3>
 {
 	/// <summary>
 	///     Repeats the throw for the given number of <paramref name="times" />.
@@ -1574,7 +1616,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3>
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IVoidMethodSetupParameterIgnorer<out T1, out T2, out T3>
-	: IVoidMethodSetup<T1, T2, T3>
+	: IVoidMethodSetupWithCallback<T1, T2, T3>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
@@ -1604,16 +1646,6 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
-
-	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
-	/// </summary>
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
-
-	/// <summary>
 	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
@@ -1638,6 +1670,22 @@ public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
 	/// </summary>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<Exception> callback);
+}
+
+/// <summary>
+///     Sets up a method returning <see langword="void" /> with callback support for the parameters.
+/// </summary>
+public interface IVoidMethodSetupWithCallback<out T1, out T2, out T3, out T4> : IVoidMethodSetup<T1, T2, T3, T4>
+{
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
+
+	/// <summary>
+	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	/// </summary>
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
 	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
@@ -1676,7 +1724,7 @@ public interface IVoidMethodSetupParallelCallbackBuilder<out T1, out T2, out T3,
 ///     Sets up a when callback for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupCallbackWhenBuilder<out T1, out T2, out T3, out T4>
-	: IVoidMethodSetup<T1, T2, T3, T4>
+	: IVoidMethodSetupWithCallback<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
@@ -1718,7 +1766,7 @@ public interface IVoidMethodSetupReturnBuilder<out T1, out T2, out T3, out T4>
 ///     Sets up a when builder for throws for a method returning <see langword="void" />.
 /// </summary>
 public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3, out T4>
-	: IVoidMethodSetup<T1, T2, T3, T4>
+	: IVoidMethodSetupWithCallback<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Repeats the throw for the given number of <paramref name="times" />.
@@ -1745,7 +1793,7 @@ public interface IVoidMethodSetupReturnWhenBuilder<out T1, out T2, out T3, out T
 ///     Allows ignoring the provided parameters.
 /// </summary>
 public interface IVoidMethodSetupParameterIgnorer<out T1, out T2, out T3, out T4>
-	: IVoidMethodSetup<T1, T2, T3, T4>
+	: IVoidMethodSetupWithCallback<T1, T2, T3, T4>
 {
 	/// <summary>
 	///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.

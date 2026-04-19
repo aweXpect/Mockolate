@@ -9,7 +9,7 @@ public partial class It
 	/// <summary>
 	///     Matches any boolean parameter that is <see langword="false" />.
 	/// </summary>
-	public static IParameter<bool> IsFalse()
+	public static IParameterWithCallback<bool> IsFalse()
 		=> new FalseParameterMatch();
 
 #if !DEBUG

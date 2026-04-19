@@ -4,6 +4,9 @@ namespace Mockolate.Parameters;
 ///     Matches a method parameter of type <typeparamref name="T" /> against an expectation.
 /// </summary>
 public interface IParameterMatch<in T>
+#if NET9_0_OR_GREATER
+	where T : allows ref struct
+#endif
 {
 	/// <summary>
 	///     Checks if the <paramref name="value" /> matches the expectation.

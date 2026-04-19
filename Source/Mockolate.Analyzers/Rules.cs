@@ -27,6 +27,12 @@ public static class Rules
 	public static readonly DiagnosticDescriptor WrappabilityRule =
 		CreateDescriptor("Mockolate0003", UsageCategory, DiagnosticSeverity.Error);
 
+	// Mockolate0004 (ref-struct-mockability) is declared in-place on
+	// <see cref="MockabilityAnalyzer" /> rather than here. The Roslyn
+	// ReleaseTrackingAnalyzer needs the descriptor in the same assembly as the analyzer that
+	// lists it in SupportedDiagnostics; defining it here as a cross-file static confused it
+	// (RS2002).
+
 	private static DiagnosticDescriptor CreateDescriptor(string diagnosticId, string category,
 		DiagnosticSeverity severity) => new(
 		diagnosticId,

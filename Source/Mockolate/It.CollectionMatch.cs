@@ -33,7 +33,10 @@ public partial class It
 
 		protected void InvokeAll(object? value)
 		{
-			if (_callbacks is null || value is not IEnumerable<T>) return;
+			if (_callbacks is null || value is not IEnumerable<T>)
+			{
+				return;
+			}
 
 			_callbacks.ForEach(c => c.Invoke(value));
 		}
@@ -44,7 +47,10 @@ public partial class It
 			_callbacks ??= [];
 			_callbacks.Add(obj =>
 			{
-				if (obj is TCollection typed) callback(typed);
+				if (obj is TCollection typed)
+				{
+					callback(typed);
+				}
 			});
 		}
 	}
@@ -63,17 +69,17 @@ public partial class It
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private abstract class CollectionMatch<T> : CollectionMatchCore<T>,
-		IParameter<IEnumerable<T>>,
-		IParameter<ICollection<T>>,
-		IParameter<IList<T>>,
-		IParameter<IReadOnlyCollection<T>>,
-		IParameter<IReadOnlyList<T>>,
-		IParameter<ISet<T>>,
-		IParameter<T[]>,
-		IParameter<List<T>>,
-		IParameter<HashSet<T>>,
-		IParameter<Queue<T>>,
-		IParameter<Stack<T>>,
+		IParameterWithCallback<IEnumerable<T>>,
+		IParameterWithCallback<ICollection<T>>,
+		IParameterWithCallback<IList<T>>,
+		IParameterWithCallback<IReadOnlyCollection<T>>,
+		IParameterWithCallback<IReadOnlyList<T>>,
+		IParameterWithCallback<ISet<T>>,
+		IParameterWithCallback<T[]>,
+		IParameterWithCallback<List<T>>,
+		IParameterWithCallback<HashSet<T>>,
+		IParameterWithCallback<Queue<T>>,
+		IParameterWithCallback<Stack<T>>,
 		IParameterMatch<IEnumerable<T>>,
 		IParameterMatch<ICollection<T>>,
 		IParameterMatch<IList<T>>,
@@ -86,67 +92,67 @@ public partial class It
 		IParameterMatch<Queue<T>>,
 		IParameterMatch<Stack<T>>
 	{
-		IParameter<IEnumerable<T>> IParameter<IEnumerable<T>>.Do(Action<IEnumerable<T>> callback)
+		IParameterWithCallback<IEnumerable<T>> IParameterWithCallback<IEnumerable<T>>.Do(Action<IEnumerable<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<ICollection<T>> IParameter<ICollection<T>>.Do(Action<ICollection<T>> callback)
+		IParameterWithCallback<ICollection<T>> IParameterWithCallback<ICollection<T>>.Do(Action<ICollection<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<IList<T>> IParameter<IList<T>>.Do(Action<IList<T>> callback)
+		IParameterWithCallback<IList<T>> IParameterWithCallback<IList<T>>.Do(Action<IList<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<IReadOnlyCollection<T>> IParameter<IReadOnlyCollection<T>>.Do(Action<IReadOnlyCollection<T>> callback)
+		IParameterWithCallback<IReadOnlyCollection<T>> IParameterWithCallback<IReadOnlyCollection<T>>.Do(Action<IReadOnlyCollection<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<IReadOnlyList<T>> IParameter<IReadOnlyList<T>>.Do(Action<IReadOnlyList<T>> callback)
+		IParameterWithCallback<IReadOnlyList<T>> IParameterWithCallback<IReadOnlyList<T>>.Do(Action<IReadOnlyList<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<ISet<T>> IParameter<ISet<T>>.Do(Action<ISet<T>> callback)
+		IParameterWithCallback<ISet<T>> IParameterWithCallback<ISet<T>>.Do(Action<ISet<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<T[]> IParameter<T[]>.Do(Action<T[]> callback)
+		IParameterWithCallback<T[]> IParameterWithCallback<T[]>.Do(Action<T[]> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<List<T>> IParameter<List<T>>.Do(Action<List<T>> callback)
+		IParameterWithCallback<List<T>> IParameterWithCallback<List<T>>.Do(Action<List<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<HashSet<T>> IParameter<HashSet<T>>.Do(Action<HashSet<T>> callback)
+		IParameterWithCallback<HashSet<T>> IParameterWithCallback<HashSet<T>>.Do(Action<HashSet<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<Queue<T>> IParameter<Queue<T>>.Do(Action<Queue<T>> callback)
+		IParameterWithCallback<Queue<T>> IParameterWithCallback<Queue<T>>.Do(Action<Queue<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<Stack<T>> IParameter<Stack<T>>.Do(Action<Stack<T>> callback)
+		IParameterWithCallback<Stack<T>> IParameterWithCallback<Stack<T>>.Do(Action<Stack<T>> callback)
 		{
 			Register(callback);
 			return this;
@@ -186,15 +192,15 @@ public partial class It
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private abstract class OrderedCollectionMatch<T> : CollectionMatchCore<T>,
-		IParameter<IEnumerable<T>>,
-		IParameter<ICollection<T>>,
-		IParameter<IList<T>>,
-		IParameter<IReadOnlyCollection<T>>,
-		IParameter<IReadOnlyList<T>>,
-		IParameter<T[]>,
-		IParameter<List<T>>,
-		IParameter<Queue<T>>,
-		IParameter<Stack<T>>,
+		IParameterWithCallback<IEnumerable<T>>,
+		IParameterWithCallback<ICollection<T>>,
+		IParameterWithCallback<IList<T>>,
+		IParameterWithCallback<IReadOnlyCollection<T>>,
+		IParameterWithCallback<IReadOnlyList<T>>,
+		IParameterWithCallback<T[]>,
+		IParameterWithCallback<List<T>>,
+		IParameterWithCallback<Queue<T>>,
+		IParameterWithCallback<Stack<T>>,
 		IParameterMatch<IEnumerable<T>>,
 		IParameterMatch<ICollection<T>>,
 		IParameterMatch<IList<T>>,
@@ -205,55 +211,55 @@ public partial class It
 		IParameterMatch<Queue<T>>,
 		IParameterMatch<Stack<T>>
 	{
-		IParameter<IEnumerable<T>> IParameter<IEnumerable<T>>.Do(Action<IEnumerable<T>> callback)
+		IParameterWithCallback<IEnumerable<T>> IParameterWithCallback<IEnumerable<T>>.Do(Action<IEnumerable<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<ICollection<T>> IParameter<ICollection<T>>.Do(Action<ICollection<T>> callback)
+		IParameterWithCallback<ICollection<T>> IParameterWithCallback<ICollection<T>>.Do(Action<ICollection<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<IList<T>> IParameter<IList<T>>.Do(Action<IList<T>> callback)
+		IParameterWithCallback<IList<T>> IParameterWithCallback<IList<T>>.Do(Action<IList<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<IReadOnlyCollection<T>> IParameter<IReadOnlyCollection<T>>.Do(Action<IReadOnlyCollection<T>> callback)
+		IParameterWithCallback<IReadOnlyCollection<T>> IParameterWithCallback<IReadOnlyCollection<T>>.Do(Action<IReadOnlyCollection<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<IReadOnlyList<T>> IParameter<IReadOnlyList<T>>.Do(Action<IReadOnlyList<T>> callback)
+		IParameterWithCallback<IReadOnlyList<T>> IParameterWithCallback<IReadOnlyList<T>>.Do(Action<IReadOnlyList<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<T[]> IParameter<T[]>.Do(Action<T[]> callback)
+		IParameterWithCallback<T[]> IParameterWithCallback<T[]>.Do(Action<T[]> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<List<T>> IParameter<List<T>>.Do(Action<List<T>> callback)
+		IParameterWithCallback<List<T>> IParameterWithCallback<List<T>>.Do(Action<List<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<Queue<T>> IParameter<Queue<T>>.Do(Action<Queue<T>> callback)
+		IParameterWithCallback<Queue<T>> IParameterWithCallback<Queue<T>>.Do(Action<Queue<T>> callback)
 		{
 			Register(callback);
 			return this;
 		}
 
-		IParameter<Stack<T>> IParameter<Stack<T>>.Do(Action<Stack<T>> callback)
+		IParameterWithCallback<Stack<T>> IParameterWithCallback<Stack<T>>.Do(Action<Stack<T>> callback)
 		{
 			Register(callback);
 			return this;

@@ -116,6 +116,50 @@ public class MockGenerator : IIncrementalGenerator
 					.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
 		}
 
+		// Ref-struct method setups for arity > 4. The hand-written types in
+		// Source/Mockolate/Setup/RefStruct{Void,Return}MethodSetup.cs cover arities 1-4; the
+		// generator mirrors the same shape for arity 5+.
+		HashSet<(int, bool)> refStructMethodSetups = new();
+		foreach ((int Count, bool) item in mocksToGenerate
+			         .SelectMany(m => m.AllMethods())
+			         .Where(m => m.Parameters.Count > 4 &&
+			                     m.Parameters.Any(p => p.NeedsRefStructPipeline()))
+			         .Select(m => (m.Parameters.Count, m.ReturnType == Type.Void)))
+		{
+			refStructMethodSetups.Add(item);
+		}
+
+		// Ref-struct-keyed indexer setups for arity > 4. Same split as methods: arities 1-4 are
+		// hand-written; arity 5+ is generator-emitted. Per arity we track whether the getter,
+		// setter, or both accessors need to be emitted — a single mock source may declare
+		// indexers with different accessor combinations at the same arity.
+		Dictionary<int, (bool HasGetter, bool HasSetter)> refStructIndexerArities = new();
+		foreach (Property indexer in mocksToGenerate
+			         .SelectMany(m => m.AllProperties())
+			         .Where(p => p is { IsIndexer: true, IndexerParameters: not null, } &&
+			                     p.IndexerParameters.Value.Count > 4 &&
+			                     p.IndexerParameters.Value.Any(kp => kp.NeedsRefStructPipeline())))
+		{
+			int arity = indexer.IndexerParameters!.Value.Count;
+			bool hasGetter = indexer.Getter is not null;
+			bool hasSetter = indexer.Setter is not null;
+			if (refStructIndexerArities.TryGetValue(arity, out (bool, bool) existing))
+			{
+				refStructIndexerArities[arity] = (existing.Item1 || hasGetter, existing.Item2 || hasSetter);
+			}
+			else
+			{
+				refStructIndexerArities[arity] = (hasGetter, hasSetter);
+			}
+		}
+
+		if (refStructMethodSetups.Any() || refStructIndexerArities.Any())
+		{
+			context.AddSource("RefStructMethodSetups.g.cs",
+				SourceText.From(Sources.Sources.RefStructMethodSetups(refStructMethodSetups, refStructIndexerArities),
+					Encoding.UTF8));
+		}
+
 		context.AddSource("MockBehaviorExtensions.g.cs",
 			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
 	}

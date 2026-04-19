@@ -20,12 +20,12 @@ public partial class It
 	/// <summary>
 	///     Matches a method parameter of type <typeparamref name="T" /> to be in a given range.
 	/// </summary>
-	public interface IInRangeParameter<out T> : IParameter<T>
+	public interface IInRangeParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
 		///     Exclude the minimum and maximum of the range.
 		/// </summary>
-		IParameter<T> Exclusive();
+		IParameterWithCallback<T> Exclusive();
 
 		/// <summary>
 		///     Include the minimum and maximum of the range.
@@ -33,7 +33,7 @@ public partial class It
 		/// <remarks>
 		///     This is the default behavior.
 		/// </remarks>
-		IParameter<T> Inclusive();
+		IParameterWithCallback<T> Inclusive();
 	}
 
 #if !DEBUG
@@ -64,14 +64,14 @@ public partial class It
 		}
 
 		/// <inheritdoc cref="IInRangeParameter{T}.Exclusive()" />
-		public IParameter<T> Exclusive()
+		public IParameterWithCallback<T> Exclusive()
 		{
 			_includeBounds = false;
 			return this;
 		}
 
 		/// <inheritdoc cref="IInRangeParameter{T}.Inclusive()" />
-		public IParameter<T> Inclusive()
+		public IParameterWithCallback<T> Inclusive()
 		{
 			_includeBounds = true;
 			return this;

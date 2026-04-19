@@ -26,7 +26,7 @@ public static partial class ItExtensions
 	/// <summary>
 	///     Allows adding additional constraints to a <see cref="Uri" /> parameter matcher.
 	/// </summary>
-	public interface IUriParameter : IParameter<Uri?>
+	public interface IUriParameter : IParameterWithCallback<Uri?>
 	{
 		/// <summary>
 		///     Expects the <see cref="Uri.Scheme" /> to be "http".
@@ -108,7 +108,7 @@ public static partial class ItExtensions
 			}
 		}
 
-		public IParameter<Uri?> Do(Action<Uri?> callback)
+		public IParameterWithCallback<Uri?> Do(Action<Uri?> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);

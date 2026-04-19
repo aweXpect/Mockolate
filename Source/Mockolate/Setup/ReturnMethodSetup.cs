@@ -289,6 +289,7 @@ public abstract class ReturnMethodSetup<TReturn>
 [DebuggerNonUserCode]
 #endif
 public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
+	IReturnMethodSetupWithCallback<TReturn, T1>,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -323,8 +324,8 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{T1})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Do(Action<T1> callback)
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1}.Do(Action{T1})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetupWithCallback<TReturn, T1>.Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -337,8 +338,8 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Do(Action{int, T1})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Do(Action<int, T1> callback)
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1}.Do(Action{int, T1})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1> IReturnMethodSetupWithCallback<TReturn, T1>.Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -355,8 +356,8 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Returns(Func{T1, TReturn})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Returns(Func<T1, TReturn> callback)
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1}.Returns(Func{T1, TReturn})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetupWithCallback<TReturn, T1>.Returns(Func<T1, TReturn> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_returnCallbacks = _returnCallbacks.Register(currentCallback);
@@ -439,8 +440,8 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.Throws(Func{T1, Exception})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetup<TReturn, T1>.Throws(Func<T1, Exception> callback)
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1}.Throws(Func{T1, Exception})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1> IReturnMethodSetupWithCallback<TReturn, T1>.Throws(Func<T1, Exception> callback)
 	{
 		Callback<Func<int, T1, TReturn>> currentCallback = new(Delegate);
 		_returnCallbacks = _returnCallbacks.Register(currentCallback);
@@ -671,6 +672,7 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
+	IReturnMethodSetupWithCallback<TReturn, T1, T2>,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -705,8 +707,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action{T1, T2})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.Do(Action<T1, T2> callback)
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2}.Do(Action{T1, T2})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> IReturnMethodSetupWithCallback<TReturn, T1, T2>.Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -719,8 +721,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Do(Action{int, T1, T2})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.Do(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2}.Do(Action{int, T1, T2})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> IReturnMethodSetupWithCallback<TReturn, T1, T2>.Do(
 		Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
@@ -738,8 +740,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Returns(Func{T1, T2, TReturn})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.Returns(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2}.Returns(Func{T1, T2, TReturn})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> IReturnMethodSetupWithCallback<TReturn, T1, T2>.Returns(
 		Func<T1, T2, TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
@@ -824,8 +826,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.Throws(Func{T1, T2, Exception})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.Throws(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2}.Throws(Func{T1, T2, Exception})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> IReturnMethodSetupWithCallback<TReturn, T1, T2>.Throws(
 		Func<T1, T2, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, TReturn>> currentCallback = new(Delegate);
@@ -1069,6 +1071,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
+	IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -1104,8 +1107,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action{T1, T2, T3})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.Do(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3}.Do(Action{T1, T2, T3})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>.Do(
 		Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
@@ -1119,8 +1122,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.Do(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>.Do(
 		Action<int, T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
@@ -1138,8 +1141,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Returns(Func{T1, T2, T3, TReturn})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.Returns(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3}.Returns(Func{T1, T2, T3, TReturn})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>.Returns(
 		Func<T1, T2, T3, TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
@@ -1227,8 +1230,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.Throws(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>.Throws(
 		Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, TReturn>> currentCallback = new(Delegate);
@@ -1486,6 +1489,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
+	IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>,
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>
 {
@@ -1523,8 +1527,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.Do(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>.Do(
 		Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
@@ -1538,8 +1542,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.Do(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>.Do(
 		Action<int, T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
@@ -1557,8 +1561,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		return this;
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TReturn})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.Returns(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TReturn})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>.Returns(
 		Func<T1, T2, T3, T4, TReturn> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);
@@ -1647,8 +1651,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.Throws(
+	/// <inheritdoc cref="IReturnMethodSetupWithCallback{TReturn, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>.Throws(
 		Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Func<int, T1, T2, T3, T4, TReturn>> currentCallback = new(Delegate);

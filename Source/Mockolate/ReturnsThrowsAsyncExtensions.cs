@@ -47,7 +47,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(
-		this IReturnMethodSetup<Task<TReturn>, T1> setup, Func<T1, TReturn> callback)
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1> setup, Func<T1, TReturn> callback)
 		=> setup.Returns(v1 => Task.FromResult(callback(v1)));
 
 	/// <summary>
@@ -68,7 +68,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
-		this IReturnMethodSetup<Task<TReturn>, T1, T2> setup, Func<T1, T2, TReturn> callback)
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2> setup, Func<T1, T2, TReturn> callback)
 		=> setup.Returns((v1, v2) => Task.FromResult(callback(v1, v2)));
 
 	/// <summary>
@@ -89,7 +89,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
-		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3> setup, Func<T1, T2, T3, TReturn> callback)
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3> setup, Func<T1, T2, T3, TReturn> callback)
 		=> setup.Returns((v1, v2, v3) => Task.FromResult(callback(v1, v2, v3)));
 
 	/// <summary>
@@ -110,7 +110,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(
-		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
 		=> setup.Returns((v1, v2, v3, v4) => Task.FromResult(callback(v1, v2, v3, v4)));
 
 #if NET8_0_OR_GREATER
@@ -147,7 +147,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ReturnsAsync<TReturn, T1>(
-		this IReturnMethodSetup<ValueTask<TReturn>, T1> setup, Func<T1, TReturn> callback)
+		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1> setup, Func<T1, TReturn> callback)
 		=> setup.Returns(v1 => ValueTask.FromResult(callback(v1)));
 
 	/// <summary>
@@ -168,7 +168,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
-		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2> setup, Func<T1, T2, TReturn> callback)
+		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2> setup, Func<T1, T2, TReturn> callback)
 		=> setup.Returns((v1, v2) => ValueTask.FromResult(callback(v1, v2)));
 
 	/// <summary>
@@ -189,7 +189,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Registers an <see langword="async" /> <paramref name="callback" /> to setup the return value for this method.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
-		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3> setup, Func<T1, T2, T3, TReturn> callback)
+		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3> setup, Func<T1, T2, T3, TReturn> callback)
 		=> setup.Returns((v1, v2, v3) => ValueTask.FromResult(callback(v1, v2, v3)));
 
 	/// <summary>
@@ -213,7 +213,7 @@ public static class ReturnsThrowsAsyncExtensions
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3,
 		T4>(
-		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
+		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
 		=> setup.Returns((v1, v2, v3, v4) => ValueTask.FromResult(callback(v1, v2, v3, v4)));
 #pragma warning restore CA2012 // Use ValueTasks correctly
 #endif
@@ -257,7 +257,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ThrowsAsync<TReturn, T1>(
-		this IReturnMethodSetup<Task<TReturn>, T1> setup,
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1> setup,
 		Func<T1, Exception> callback)
 		=> setup.Returns(p1 => Task.FromException<TReturn>(callback(p1)));
 
@@ -283,7 +283,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
-		this IReturnMethodSetup<Task<TReturn>, T1, T2> setup,
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2> setup,
 		Func<T1, T2, Exception> callback)
 		=> setup.Returns((p1, p2) => Task.FromException<TReturn>(callback(p1, p2)));
 
@@ -309,7 +309,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
-		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3> setup,
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3> setup,
 		Func<T1, T2, T3, Exception> callback)
 		=> setup.Returns((p1, p2, p3) => Task.FromException<TReturn>(callback(p1, p2, p3)));
 
@@ -335,7 +335,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ThrowsAsync<TReturn, T1, T2, T3, T4>(
-		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4> setup,
+		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3, T4> setup,
 		Func<T1, T2, T3, T4, Exception> callback)
 		=> setup.Returns((p1, p2, p3, p4) => Task.FromException<TReturn>(callback(p1, p2, p3, p4)));
 
@@ -380,7 +380,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ThrowsAsync<TReturn, T1>(
-		this IReturnMethodSetup<ValueTask<TReturn>, T1> setup,
+		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1> setup,
 		Func<T1, Exception> callback)
 		=> setup.Returns(p1 => ValueTask.FromException<TReturn>(callback(p1)));
 
@@ -406,7 +406,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
-		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2> setup,
+		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2> setup,
 		Func<T1, T2, Exception> callback)
 		=> setup.Returns((p1, p2) => ValueTask.FromException<TReturn>(callback(p1, p2)));
 
@@ -432,7 +432,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
-		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3> setup,
+		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3> setup,
 		Func<T1, T2, T3, Exception> callback)
 		=> setup.Returns((p1, p2, p3) => ValueTask.FromException<TReturn>(callback(p1, p2, p3)));
 
@@ -458,7 +458,7 @@ public static class ReturnsThrowsAsyncExtensions
 	///     method is awaited.
 	/// </summary>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4>
-		ThrowsAsync<TReturn, T1, T2, T3, T4>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup,
+		ThrowsAsync<TReturn, T1, T2, T3, T4>(this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3, T4> setup,
 			Func<T1, T2, T3, T4, Exception> callback)
 		=> setup.Returns((p1, p2, p3, p4) => ValueTask.FromException<TReturn>(callback(p1, p2, p3, p4)));
 #pragma warning restore CA2012 // Use ValueTasks correctly

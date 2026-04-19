@@ -18,7 +18,7 @@ public partial class It
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison of a collection of alternatives.
 	/// </summary>
-	public interface IIsNotOneOfParameter<out T> : IParameter<T>
+	public interface IIsNotOneOfParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
 		///     Use the specified comparer to determine equality.

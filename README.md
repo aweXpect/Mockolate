@@ -583,6 +583,79 @@ bool result = sut.Process(buffer);
 // result == true
 ```
 
+**Ref Struct Parameters (.NET 9+)**
+
+You can mock methods and indexers that take custom `ref struct` parameters (e.g. `Utf8JsonReader`
+or your own `ref struct Packet`) using these matchers:
+
+- `It.IsAnyRefStruct<T>()`: Matches any ref-struct value of type `T`.
+- `It.IsRefStruct<T>(predicate)`: Matches ref-struct values that satisfy the predicate. The
+  predicate can read the struct's fields at the time the call is made.
+- `It.IsRefStructBy<T, TKey>(projection)` / `It.IsRefStructBy<T, TKey>(projection, predicate)`:
+  For ref-struct-keyed indexers, projects the key to an equatable value so writes and reads can
+  be correlated. Works at any arity — apply it to every ref-struct slot and non-ref-struct slots
+  contribute their raw value to the composite dispatch key (see *Indexer storage* in the remarks).
+
+```csharp
+public readonly ref struct Packet(int id, ReadOnlySpan<byte> payload)
+{
+    public int Id { get; } = id;
+    public ReadOnlySpan<byte> Payload { get; } = payload;
+}
+
+public interface IPacketSink
+{
+    void Consume(Packet packet);
+    int TryParse(Packet packet);
+    string this[Packet key] { get; set; }
+}
+
+// Match on the live ref struct, including its Span contents.
+sut.Mock.Setup.Consume(It.IsRefStruct<Packet>(p =>
+        p.Payload.Length > 0 && p.Payload[0] == 0xFF))
+    .Throws<InvalidOperationException>();
+
+// Return a value from a ref-struct-parameter method.
+sut.Mock.Setup.TryParse(It.IsAnyRefStruct<Packet>()).Returns(42);
+
+// Ref-struct-keyed indexer: Returns for get, OnSet for observed writes.
+sut.Mock.Setup[It.IsAnyRefStruct<Packet>()]
+    .Returns("got")
+    .OnSet(value => { /* observed write */ });
+
+// Correlate writes and reads by projecting the key to an equatable value.
+sut.Mock.Setup[It.IsRefStructBy<Packet, int>(p => p.Id)].Returns("fallback");
+sut[new Packet(1, [])] = "written";
+string a = sut[new Packet(1, [])];  // "written" matched by Id
+string b = sut[new Packet(2, [])];  // "fallback" no write under Id=2
+```
+
+*Remarks*
+
+The ref-struct pipeline uses a narrower API than the rest of Mockolate. A handful of fluent
+features are unavailable because the C# language does not let `ref struct` values flow through
+generic delegates:
+
+- **Setup surface.** Only `Returns(value)`, `Returns(factory)`, `Throws*`, `OnSet(Action<TValue>)`
+  (indexer setters), and `SkippingBaseClass` are available. The `.Do(...)` callback and the
+  `Callbacks<T>` builder (`InParallel`, `When`, `For`, `Only`, `TransitionTo`) are not offered
+  for ref-struct parameters.
+- **Verify.** `Verify` counts calls to the method but cannot match on the parameter value after
+  the fact — the ref-struct value isn't retained past the call. Use a setup-time matcher to
+  filter at call time.
+- **Indexer storage.** By default, values written through a ref-struct-keyed indexer setter are
+  not read back by the getter. Apply `It.IsRefStructBy<T, TKey>(projection)` to every ref-struct
+  slot to enable write-then-read correlation keyed by the projections; non-ref-struct slots
+  contribute their raw value as part of the composite dispatch key. If any ref-struct slot is
+  matched without a projection, storage stays inactive for that setup.
+
+The following cases are rejected at compile time with diagnostic `Mockolate0004`:
+
+- Targeting older than .NET 9 (the feature relies on `allows ref struct`, a .NET 9 / C# 13
+  feature).
+- `out` / `ref` / `ref readonly` parameters of a ref-struct type.
+- Methods that return a custom ref struct. (`Span<T>` / `ReadOnlySpan<T>` returns are supported.)
+
 #### Parameter Predicates
 
 When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:

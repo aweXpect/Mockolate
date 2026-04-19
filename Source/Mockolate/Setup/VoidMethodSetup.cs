@@ -253,6 +253,7 @@ public abstract class VoidMethodSetup : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public abstract class VoidMethodSetup<T1> : MethodSetup,
+	IVoidMethodSetupWithCallback<T1>,
 	IVoidMethodSetupCallbackBuilder<T1>, IVoidMethodSetupReturnBuilder<T1>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -288,8 +289,8 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{T1})" />
-	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action<T1> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1}.Do(Action{T1})" />
+	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetupWithCallback<T1>.Do(Action<T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -302,8 +303,8 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1}.Do(Action{int, T1})" />
-	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetup<T1>.Do(Action<int, T1> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1}.Do(Action{int, T1})" />
+	IVoidMethodSetupCallbackBuilder<T1> IVoidMethodSetupWithCallback<T1>.Do(Action<int, T1> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(callback);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -374,8 +375,8 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1}.Throws(Func{T1, Exception})" />
-	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetup<T1>.Throws(Func<T1, Exception> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1}.Throws(Func{T1, Exception})" />
+	IVoidMethodSetupReturnBuilder<T1> IVoidMethodSetupWithCallback<T1>.Throws(Func<T1, Exception> callback)
 	{
 		Callback<Action<int, T1>> currentCallback = new(Delegate);
 		_returnCallbacks = _returnCallbacks.Register(currentCallback);
@@ -583,6 +584,7 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
+	IVoidMethodSetupWithCallback<T1, T2>,
 	IVoidMethodSetupCallbackBuilder<T1, T2>, IVoidMethodSetupReturnBuilder<T1, T2>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -618,8 +620,8 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{T1, T2})" />
-	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action<T1, T2> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2}.Do(Action{T1, T2})" />
+	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetupWithCallback<T1, T2>.Do(Action<T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -632,8 +634,8 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Do(Action{int, T1, T2})" />
-	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Do(Action<int, T1, T2> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2}.Do(Action{int, T1, T2})" />
+	IVoidMethodSetupCallbackBuilder<T1, T2> IVoidMethodSetupWithCallback<T1, T2>.Do(Action<int, T1, T2> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(callback);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -704,8 +706,8 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2}.Throws(Func{T1, T2, Exception})" />
-	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetup<T1, T2>.Throws(Func<T1, T2, Exception> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2}.Throws(Func{T1, T2, Exception})" />
+	IVoidMethodSetupReturnBuilder<T1, T2> IVoidMethodSetupWithCallback<T1, T2>.Throws(Func<T1, T2, Exception> callback)
 	{
 		Callback<Action<int, T1, T2>> currentCallback = new(Delegate);
 		_returnCallbacks = _returnCallbacks.Register(currentCallback);
@@ -924,6 +926,7 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
+	IVoidMethodSetupWithCallback<T1, T2, T3>,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3>, IVoidMethodSetupReturnBuilder<T1, T2, T3>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -959,8 +962,8 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{T1, T2, T3})" />
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action<T1, T2, T3> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2, T3}.Do(Action{T1, T2, T3})" />
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetupWithCallback<T1, T2, T3>.Do(Action<T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -973,8 +976,8 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Do(Action<int, T1, T2, T3> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2, T3}.Do(Action{int, T1, T2, T3})" />
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3> IVoidMethodSetupWithCallback<T1, T2, T3>.Do(Action<int, T1, T2, T3> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(callback);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -1045,8 +1048,8 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
-	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetup<T1, T2, T3>.Throws(Func<T1, T2, T3, Exception> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
+	IVoidMethodSetupReturnBuilder<T1, T2, T3> IVoidMethodSetupWithCallback<T1, T2, T3>.Throws(Func<T1, T2, T3, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3>> currentCallback = new(Delegate);
 		_returnCallbacks = _returnCallbacks.Register(currentCallback);
@@ -1276,6 +1279,7 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 [DebuggerNonUserCode]
 #endif
 public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
+	IVoidMethodSetupWithCallback<T1, T2, T3, T4>,
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>
 {
 	private readonly MockRegistry _mockRegistry;
@@ -1311,8 +1315,8 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action<T1, T2, T3, T4> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetupWithCallback<T1, T2, T3, T4>.Do(Action<T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -1325,8 +1329,8 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
-	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Do(Action<int, T1, T2, T3, T4> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4})" />
+	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> IVoidMethodSetupWithCallback<T1, T2, T3, T4>.Do(Action<int, T1, T2, T3, T4> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(callback);
 		_callbacks = _callbacks.Register(currentCallback);
@@ -1397,8 +1401,8 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		}
 	}
 
-	/// <inheritdoc cref="IVoidMethodSetup{T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
-	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetup<T1, T2, T3, T4>.Throws(Func<T1, T2, T3, T4, Exception> callback)
+	/// <inheritdoc cref="IVoidMethodSetupWithCallback{T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
+	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> IVoidMethodSetupWithCallback<T1, T2, T3, T4>.Throws(Func<T1, T2, T3, T4, Exception> callback)
 	{
 		Callback<Action<int, T1, T2, T3, T4>> currentCallback = new(Delegate);
 		_returnCallbacks = _returnCallbacks.Register(currentCallback);

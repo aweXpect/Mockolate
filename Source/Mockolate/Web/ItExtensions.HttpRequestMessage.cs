@@ -27,7 +27,7 @@ public static partial class ItExtensions
 	/// <summary>
 	///     Further expectations on the <see cref="HttpRequestMessage" />.
 	/// </summary>
-	public interface IHttpRequestMessageParameter<out TParameter> : IParameter<HttpRequestMessage>,
+	public interface IHttpRequestMessageParameter<out TParameter> : IParameterWithCallback<HttpRequestMessage>,
 		IHttpHeaderParameter<TParameter>
 	{
 		/// <summary>
@@ -72,8 +72,8 @@ public static partial class ItExtensions
 			return GetThis;
 		}
 
-		/// <inheritdoc cref="IParameter{T}.Do(Action{T})" />
-		public IParameter<HttpRequestMessage> Do(Action<HttpRequestMessage> callback)
+		/// <inheritdoc cref="IParameterWithCallback{T}.Do(Action{T})" />
+		public IParameterWithCallback<HttpRequestMessage> Do(Action<HttpRequestMessage> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);
