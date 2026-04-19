@@ -292,6 +292,28 @@ public sealed partial class InteractionsTests
 			await That(v5.Values).HasSingle().Which.IsEqualTo(5);
 		}
 
+		[Fact]
+		public async Task IndexerGetter_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordAccess()
+		{
+			ThrowingBaseIndexerService sut = ThrowingBaseIndexerService.CreateMock(MockBehavior.Default.SkippingBaseClass());
+
+			void Act() => _ = sut[1];
+
+			await That(Act).DoesNotThrow();
+			await That(sut.Mock.Verify[1].Got()).Once();
+		}
+
+		[Fact]
+		public async Task IndexerSetter_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordAccess()
+		{
+			ThrowingBaseIndexerService sut = ThrowingBaseIndexerService.CreateMock(MockBehavior.Default.SkippingBaseClass());
+
+			void Act() => sut[1] = "value";
+
+			await That(Act).DoesNotThrow();
+			await That(sut.Mock.Verify[1].Set("value")).Once();
+		}
+
 		public class ThrowingBaseIndexerService
 		{
 			public virtual string this[int p1]

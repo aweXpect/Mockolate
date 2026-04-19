@@ -52,6 +52,28 @@ public sealed partial class InteractionsTests
 			await That(receivedValue).IsEqualTo(42);
 		}
 
+		[Fact]
+		public async Task VirtualPropertyGetter_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordAccess()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock(MockBehavior.Default.SkippingBaseClass());
+
+			void Act() => _ = sut.Value;
+
+			await That(Act).DoesNotThrow();
+			await That(sut.Mock.Verify.Value.Got()).Once();
+		}
+
+		[Fact]
+		public async Task VirtualPropertySetter_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordAccess()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock(MockBehavior.Default.SkippingBaseClass());
+
+			void Act() => sut.Value = 42;
+
+			await That(Act).DoesNotThrow();
+			await That(sut.Mock.Verify.Value.Set(It.Is(42))).Once();
+		}
+
 		public class ThrowingBaseService
 		{
 			public virtual int Value

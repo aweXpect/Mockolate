@@ -11,6 +11,7 @@ internal record Event
 	{
 		Accessibility = eventSymbol.DeclaredAccessibility;
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
+		IsAbstract = eventSymbol.IsAbstract;
 		Name = eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name;
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
@@ -41,6 +42,7 @@ internal record Event
 	public Type Type { get; }
 	public string ContainingType { get; }
 	public bool UseOverride { get; }
+	public bool IsAbstract { get; }
 	public bool IsStatic { get; }
 	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal;
 
