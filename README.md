@@ -515,6 +515,53 @@ sut.Increment(ref value);
 // value == 6
 ```
 
+**Collection Matchers**
+
+- `It.Contains<T>(item)`: Matches a collection parameter that contains `item`.
+- `It.SequenceEquals<T>(params IEnumerable<T> values)`: Matches a collection parameter whose elements equal `values` in
+  the same order.
+
+Both matchers support method parameters declared as `IEnumerable<T>`, `ICollection<T>`, `IList<T>`,
+`IReadOnlyCollection<T>`, `IReadOnlyList<T>`, `T[]`, `List<T>`, `Queue<T>` or `Stack<T>`.
+`It.Contains<T>` additionally supports the unordered shapes `ISet<T>` and `HashSet<T>`; `It.SequenceEquals<T>` intentionally
+does not, because their enumeration order is not guaranteed.
+
+Append `.Using(IEqualityComparer<T>)` to either matcher to control element equality.
+
+```csharp
+// Example: Match a list that contains a specific item
+sut.Mock.Setup.Process(It.Contains(5))
+    .Returns(true);
+
+bool result = sut.Process(new[] { 1, 2, 5 });
+// result == true
+
+// Example: Match a sequence of items in order
+sut.Mock.Setup.Process(It.SequenceEquals("a", "b", "c"))
+    .Returns(true);
+
+bool match = sut.Process(new[] { "a", "b", "c" });
+// match == true
+
+// Example: Case-insensitive containment
+sut.Mock.Setup.Process(It.Contains("HELLO").Using(StringComparer.OrdinalIgnoreCase))
+    .Returns(true);
+```
+
+**Custom Equality Comparers**
+
+Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It.Is()` and `It.IsOneOf()`:
+
+```csharp
+// Example: Case-insensitive string comparison
+var comparer = StringComparer.OrdinalIgnoreCase;
+sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
+    .Returns(42);
+
+int result = sut.Process("HELLO");
+// result == 42
+```
+
 **Span Parameters (.NET 8+)**
 
 - `It.IsSpan<T>(predicate)`: Matches `Span<T>` parameters that satisfy the predicate.
@@ -534,20 +581,6 @@ sut.Mock.Setup.Process(It.IsSpan<byte>(data => data.Length > 0))
 Span<byte> buffer = new byte[] { 1, 2, 3 };
 bool result = sut.Process(buffer);
 // result == true
-```
-
-**Custom Equality Comparers**
-
-Use `.Using(IEqualityComparer<T>)` to provide custom equality comparison for `It.Is()` and `It.IsOneOf()`:
-
-```csharp
-// Example: Case-insensitive string comparison
-var comparer = StringComparer.OrdinalIgnoreCase;
-sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
-    .Returns(42);
-
-int result = sut.Process("HELLO");
-// result == 42
 ```
 
 #### Parameter Predicates
@@ -768,6 +801,10 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 - `It.IsRef<T>()`: Matches any ref parameter of type `T`
 - `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
   regular expressions instead.
+- `It.Contains<T>(item)`: Matches a collection parameter that contains `item`. With `.Using(IEqualityComparer<T>)`, you
+  can provide a custom equality comparer.
+- `It.SequenceEquals<T>(params IEnumerable<T> values)`: Matches a collection parameter whose elements equal `values` in
+  order. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
 
 **Example:**
