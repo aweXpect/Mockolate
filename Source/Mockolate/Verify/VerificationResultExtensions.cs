@@ -237,7 +237,8 @@ public static class VerificationResultExtensions
 		///     Asserts that the verified interaction occurred at most twice.
 		/// </summary>
 		/// <exception cref="MockVerificationException">
-		///     Thrown when the verified interaction occurred more than two times.
+		///     Thrown when the verified interaction occurred more than two times, or when verification fails because a
+		///     configured wait or cancellation condition times out or is cancelled.
 		/// </exception>
 		public void AtMostTwice()
 		{
