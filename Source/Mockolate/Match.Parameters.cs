@@ -18,7 +18,7 @@ public partial class Match
 	/// </param>
 	/// <param name="doNotPopulateThisValue">
 	///     Populated by the compiler via <see cref="CallerArgumentExpressionAttribute" /> to include the source
-	///     expression of <paramref name="predicate" /> in the setup's <see cref="object.ToString" /> and in
+	///     expression of <paramref name="predicate" /> in the setup's <see cref="object.ToString()" /> and in
 	///     verification failure messages.
 	/// </param>
 	/// <returns>
