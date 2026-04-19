@@ -8,8 +8,28 @@ namespace Mockolate;
 public partial class Match
 {
 	/// <summary>
-	///     Matches the parameters against the <paramref name="predicate" />.
+	///     Matches an invocation when the supplied <paramref name="predicate" /> returns <see langword="true" />
+	///     for its full argument array.
 	/// </summary>
+	/// <param name="predicate">
+	///     Receives every argument of the invocation, in declaration order, as <see langword="object" />? values.
+	///     Ref and out parameters are passed as their current values. Return <see langword="true" /> to accept the
+	///     invocation.
+	/// </param>
+	/// <param name="doNotPopulateThisValue">
+	///     Populated by the compiler via <see cref="CallerArgumentExpressionAttribute" /> to include the source
+	///     expression of <paramref name="predicate" /> in the setup's <see cref="object.ToString" /> and in
+	///     verification failure messages.
+	/// </param>
+	/// <returns>
+	///     An <see cref="IParameters" /> usable in generator-emitted <c>Setup.Method(Match.Parameters(...))</c>
+	///     and <c>Verify.Method(Match.Parameters(...))</c> overloads.
+	/// </returns>
+	/// <remarks>
+	///     The Mockolate source generator only emits <see cref="IParameters" />-based <c>Setup</c>/<c>Verify</c>
+	///     overloads for methods whose name is unique on the mocked type (no overloads). For overloaded methods,
+	///     use per-parameter <see cref="It" /> matchers instead.
+	/// </remarks>
 	public static IParameters Parameters(Func<object?[], bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
