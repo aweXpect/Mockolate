@@ -46,12 +46,8 @@ public abstract class IndexerAccess : IInteraction
 	{
 		if (TraverseStorage(Storage, createMissing: false) is IndexerValueStorage<T> typedLeaf && typedLeaf.HasValue)
 		{
-			T stored = typedLeaf.Value;
-			if (stored is not null)
-			{
-				value = stored;
-				return true;
-			}
+			value = typedLeaf.Value;
+			return true;
 		}
 
 		value = default!;

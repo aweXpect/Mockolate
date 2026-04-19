@@ -956,7 +956,7 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		// GetResult(behavior) â€” no-closure entry point used by the generated mock indexer body
+		// GetResult(behavior) - no-closure entry point used by the generated mock indexer body
 		sb.Append("\t\t/// <inheritdoc cref=\"global::Mockolate.Setup.IndexerSetup.GetResult{TResult}(global::Mockolate.Interactions.IndexerAccess, global::Mockolate.MockBehavior)\" />").AppendLine();
 		sb.Append("\t\tpublic override TResult GetResult<TResult>(global::Mockolate.Interactions.IndexerAccess access, global::Mockolate.MockBehavior behavior)").AppendLine();
 		sb.Append("\t\t{").AppendLine();

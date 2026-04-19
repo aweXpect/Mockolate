@@ -22,11 +22,22 @@ public partial class MockRegistry
 		=> Interactions.Clear();
 
 	/// <summary>
-	///     Pre-sizes the mock's internal value-storage arrays. Called once from the generated mock constructor.
-	///     Extend with further parameters (e.g. <c>methodCount</c>) as other subsystems move to fixed-size storage.
+	///     Optional pre-sizing hook for the mock's internal indexer value-storage array. When the total number
+	///     of distinct indexer signatures is known up front, calling this once avoids the lazy-grow allocation
+	///     on first access. Safe to skip — storage grows on demand otherwise.
 	/// </summary>
+	/// <param name="indexerCount">The number of distinct indexer signatures. Must be non-negative.</param>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="indexerCount" /> is negative.</exception>
 	public void InitializeStorage(int indexerCount)
-		=> Setup.Indexers.InitializeStorageCount(indexerCount);
+	{
+		if (indexerCount < 0)
+		{
+			throw new ArgumentOutOfRangeException(nameof(indexerCount), indexerCount,
+				"Indexer count must be non-negative.");
+		}
+
+		Setup.Indexers.InitializeStorageCount(indexerCount);
+	}
 
 	/// <summary>
 	///     Get the latest method setup matching the given <paramref name="methodName" /> and <paramref name="predicate" />,

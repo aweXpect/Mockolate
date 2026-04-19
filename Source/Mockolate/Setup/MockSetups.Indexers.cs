@@ -19,6 +19,7 @@ internal partial class MockSetups
 	{
 		private List<IndexerSetup>? _storage;
 		private IndexerValueStorage?[]? _valueStorages;
+		private readonly object _valueStoragesLock = new();
 
 		public int Count
 		{
@@ -54,8 +55,15 @@ internal partial class MockSetups
 		///     Returns the root value storage for the indexer signature at the given <paramref name="signatureIndex" />,
 		///     creating one if none exists. Grows the backing array on demand when not pre-initialised.
 		/// </summary>
+		/// <exception cref="ArgumentOutOfRangeException"><paramref name="signatureIndex" /> is negative.</exception>
 		internal IndexerValueStorage<TValue> GetOrCreateStorage<TValue>(int signatureIndex)
 		{
+			if (signatureIndex < 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(signatureIndex), signatureIndex,
+					"Signature index must be non-negative.");
+			}
+
 			IndexerValueStorage?[]? storages = _valueStorages;
 			if (storages is null || storages.Length <= signatureIndex)
 			{
@@ -74,7 +82,7 @@ internal partial class MockSetups
 
 		private IndexerValueStorage?[] EnsureCapacity(int signatureIndex)
 		{
-			lock (this)
+			lock (_valueStoragesLock)
 			{
 				IndexerValueStorage?[]? storages = _valueStorages;
 				if (storages is null)
