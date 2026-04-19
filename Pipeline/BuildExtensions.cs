@@ -40,7 +40,17 @@ public static class BuildExtensions
 		return settings.SetBranchName(gitVersion.BranchName);
 	}
 
-	public static async Task DownloadArtifactTo(this string artifactName, string artifactsDirectory, string githubToken)
+	public static Task DownloadArtifactTo(this string artifactName, string artifactsDirectory, string githubToken)
+		=> DownloadArtifactsWhere(name => name.Equals(artifactName, StringComparison.OrdinalIgnoreCase),
+			artifactsDirectory, githubToken);
+
+	public static Task DownloadArtifactsStartingWith(this string artifactNamePrefix, string artifactsDirectory,
+		string githubToken)
+		=> DownloadArtifactsWhere(name => name.StartsWith(artifactNamePrefix, StringComparison.OrdinalIgnoreCase),
+			artifactsDirectory, githubToken);
+
+	private static async Task DownloadArtifactsWhere(Func<string, bool> namePredicate, string artifactsDirectory,
+		string githubToken)
 	{
 		string runId = Environment.GetEnvironmentVariable("WorkflowRunId");
 		if (string.IsNullOrEmpty(runId))
@@ -68,7 +78,7 @@ public static class BuildExtensions
 			foreach (JsonElement artifact in jsonDocument.RootElement.GetProperty("artifacts").EnumerateArray())
 			{
 				string name = artifact.GetProperty("name").GetString()!;
-				if (name.Equals(artifactName, StringComparison.OrdinalIgnoreCase))
+				if (namePredicate(name))
 				{
 					long artifactId = artifact.GetProperty("id").GetInt64();
 					HttpResponseMessage fileResponse = await client.GetAsync(
@@ -76,9 +86,9 @@ public static class BuildExtensions
 					if (fileResponse.IsSuccessStatusCode)
 					{
 						using ZipArchive archive = new(await fileResponse.Content.ReadAsStreamAsync());
-						archive.ExtractToDirectory(artifactsDirectory);
+						archive.ExtractToDirectory(artifactsDirectory, overwriteFiles: true);
 						Log.Information(
-							$"Extracted artifact #{artifactId} with {archive.Entries.Count} entries to {artifactsDirectory}:\n - {string.Join("\n - ", archive.Entries.Select(entry => $"{entry.Name} ({entry.Length})"))}");
+							$"Extracted artifact '{name}' (#{artifactId}) with {archive.Entries.Count} entries to {artifactsDirectory}:\n - {string.Join("\n - ", archive.Entries.Select(entry => $"{entry.Name} ({entry.Length})"))}");
 					}
 					else
 					{
