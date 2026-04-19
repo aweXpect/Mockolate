@@ -108,7 +108,7 @@ internal static partial class Sources
 #if !DEBUG
 			sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
-			sb.Append("\tpublic class MethodInvocation<")
+			sb.Append("\tinternal class MethodInvocation<")
 				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x}"))).Append(">(string name, ")
 				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
 				.Append(") : IMethodInteraction").AppendLine();
@@ -628,7 +628,7 @@ internal static partial class Sources
 
 		// WithParameters inner class
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against <see cref=\"global::Mockolate.Parameters.IParameters\" />.</summary>").AppendLine();
-		sb.Append("\t\tpublic class WithParameters : VoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
+		sb.Append("\t\tinternal class WithParameters : VoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}\" />").AppendLine();
 		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters)").AppendLine();
@@ -680,7 +680,7 @@ internal static partial class Sources
 
 		// WithParameterCollection inner class
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against individual <see cref=\"global::Mockolate.Parameters.IParameterMatch{T}\" />.</summary>").AppendLine();
-		sb.Append("\t\tpublic class WithParameterCollection : VoidMethodSetup<").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\t\tinternal class WithParameterCollection : VoidMethodSetup<").Append(typeParams).Append(">,").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tprivate bool _matchAnyParameters;").AppendLine();
@@ -1283,7 +1283,7 @@ internal static partial class Sources
 
 		// WithParameters inner class
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against <see cref=\"global::Mockolate.Parameters.IParameters\" />.</summary>").AppendLine();
-		sb.Append("\t\tpublic class WithParameters : ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">").AppendLine();
+		sb.Append("\t\tinternal class WithParameters : ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}\" />").AppendLine();
 		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters)").AppendLine();
@@ -1329,7 +1329,7 @@ internal static partial class Sources
 
 		// WithParameterCollection inner class
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against individual <see cref=\"global::Mockolate.Parameters.IParameterMatch{T}\" />.</summary>").AppendLine();
-		sb.Append("\t\tpublic class WithParameterCollection : ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">,").AppendLine();
+		sb.Append("\t\tinternal class WithParameterCollection : ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">,").AppendLine();
 		sb.Append("\t\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tprivate bool _matchAnyParameters;").AppendLine();

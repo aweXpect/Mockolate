@@ -113,7 +113,7 @@ internal static partial class Sources
 #if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
-		sb.Append("\tpublic class IndexerGetterAccess<").Append(typeParams).Append(">(")
+		sb.Append("\tinternal class IndexerGetterAccess<").Append(typeParams).Append(">(")
 			.Append(string.Join(", ",
 				Enumerable.Range(1, numberOfParameters).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
 			.Append(")").AppendLine();
@@ -147,7 +147,7 @@ internal static partial class Sources
 #if !DEBUG
 		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
 #endif
-		sb.Append("\tpublic class IndexerSetterAccess<").Append(typeParams).Append(", TValue>(")
+		sb.Append("\tinternal class IndexerSetterAccess<").Append(typeParams).Append(", TValue>(")
 			.Append(string.Join(", ",
 				Enumerable.Range(1, numberOfParameters).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
 			.Append(", TValue value)").AppendLine();
