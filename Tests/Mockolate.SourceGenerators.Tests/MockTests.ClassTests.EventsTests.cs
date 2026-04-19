@@ -358,6 +358,10 @@ public sealed partial class MockTests
 					          				{
 					          					wraps.SomeEvent += value;
 					          				}
+					          				if (!this.MockRegistry.Behavior.SkipBaseClass)
+					          				{
+					          					base.SomeEvent += value;
+					          				}
 					          			}
 					          			remove
 					          			{
@@ -366,6 +370,10 @@ public sealed partial class MockTests
 					          				if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
 					          				{
 					          					wraps.SomeEvent -= value;
+					          				}
+					          				if (!this.MockRegistry.Behavior.SkipBaseClass)
+					          				{
+					          					base.SomeEvent -= value;
 					          				}
 					          			}
 					          		}

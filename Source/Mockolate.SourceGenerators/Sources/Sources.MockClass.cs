@@ -1342,6 +1342,7 @@ internal static partial class Sources
 		sb.AppendLine("\t\t{");
 		bool supportsWrapping = @event is { IsStatic: false, IsProtected: false, ExplicitImplementation: null, } &&
 		                        !explicitInterfaceImplementation;
+		bool supportsBaseForwarding = supportsWrapping && !isClassInterface && @event.UseOverride && !@event.IsAbstract;
 		if (supportsWrapping)
 		{
 			sb.Append("\t\t\tadd").AppendLine();
@@ -1354,6 +1355,14 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" += value;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
+			if (supportsBaseForwarding)
+			{
+				sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".Behavior.SkipBaseClass)").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\tbase.").Append(@event.Name).Append(" += value;").AppendLine();
+				sb.Append("\t\t\t\t}").AppendLine();
+			}
+
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\tremove").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -1365,6 +1374,14 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" -= value;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
+			if (supportsBaseForwarding)
+			{
+				sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".Behavior.SkipBaseClass)").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\tbase.").Append(@event.Name).Append(" -= value;").AppendLine();
+				sb.Append("\t\t\t\t}").AppendLine();
+			}
+
 			sb.Append("\t\t\t}").AppendLine();
 		}
 		else

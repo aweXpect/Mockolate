@@ -316,6 +316,28 @@ public sealed partial class InteractionsTests
 			await That(v5.Values).HasSingle().Which.IsEqualTo(5);
 		}
 
+		[Fact]
+		public async Task VoidMethod_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock(MockBehavior.Default.SkippingBaseClass());
+
+			void Act() => sut.VoidMethodWith0Parameters();
+
+			await That(Act).DoesNotThrow();
+			await That(sut.Mock.Verify.VoidMethodWith0Parameters()).Once();
+		}
+
+		[Fact]
+		public async Task ReturnMethod_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock(MockBehavior.Default.SkippingBaseClass());
+
+			void Act() => sut.ReturnMethodWith0Parameters();
+
+			await That(Act).DoesNotThrow();
+			await That(sut.Mock.Verify.ReturnMethodWith0Parameters()).Once();
+		}
+
 		public class ThrowingBaseService
 		{
 			public virtual void VoidMethodWith0Parameters()
