@@ -342,20 +342,26 @@ public sealed partial class MockTests
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>("global::MyCode.IMyService.MyMethod1", m => m.Matches("index", index));
 					          			bool hasWrappedResult = false;
 					          			bool wrappedResult = default!;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wrappedResult = wraps.MyMethod1(index);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyMethod1", "index", index));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wrappedResult = wraps.MyMethod1(index);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(index);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod1(int)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(index);
 					          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 					          			{
 					          				return wrappedResult;
@@ -369,20 +375,26 @@ public sealed partial class MockTests
 					          		{
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<int, bool>>("global::MyCode.IMyService.MyMethod2", m => m.Matches("index", index, "isReadOnly", isReadOnly));
 					          			bool hasWrappedResult = false;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wraps.MyMethod2(index, isReadOnly);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool>("global::MyCode.IMyService.MyMethod2", "index", index, "isReadOnly", isReadOnly));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wraps.MyMethod2(index, isReadOnly);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(index, isReadOnly);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod2(int, bool)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(index, isReadOnly);
 					          		}
 					          """).IgnoringNewlineStyle();
 			}
@@ -433,20 +445,26 @@ public sealed partial class MockTests
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyService.MyDirectMethod", m => m.Matches("value", value));
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wrappedResult = wraps.MyDirectMethod(value);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyDirectMethod", "value", value));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wrappedResult = wraps.MyDirectMethod(value);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(value);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyDirectMethod(int)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(value);
 					          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 					          			{
 					          				return wrappedResult;
@@ -461,20 +479,26 @@ public sealed partial class MockTests
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyServiceBase1.MyBaseMethod1", m => m.Matches("value", value));
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wrappedResult = wraps.MyBaseMethod1(value);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase1.MyBaseMethod1", "value", value));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wrappedResult = wraps.MyBaseMethod1(value);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(value);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyServiceBase1.MyBaseMethod1(int)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(value);
 					          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 					          			{
 					          				return wrappedResult;
@@ -489,20 +513,26 @@ public sealed partial class MockTests
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyServiceBase2.MyBaseMethod2", m => m.Matches("value", value));
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wrappedResult = wraps.MyBaseMethod2(value);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase2.MyBaseMethod2", "value", value));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wrappedResult = wraps.MyBaseMethod2(value);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(value);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyServiceBase2.MyBaseMethod2(int)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(value);
 					          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 					          			{
 					          				return wrappedResult;
@@ -517,20 +547,26 @@ public sealed partial class MockTests
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyServiceBase3.MyBaseMethod3", m => m.Matches("value", value));
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wrappedResult = wraps.MyBaseMethod3(value);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase3.MyBaseMethod3", "value", value));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wrappedResult = wraps.MyBaseMethod3(value);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(value);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyServiceBase3.MyBaseMethod3(int)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(value);
 					          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 					          			{
 					          				return wrappedResult;
@@ -593,47 +629,50 @@ public sealed partial class MockTests
 					          			var ref_value1 = value1;
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<int, int, bool>>("global::MyCode.MyService.MyMethod1", m => m.Matches("index", index, "value1", ref_value1, "flag", default));
 					          			bool hasWrappedResult = false;
-					          			if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
-					          			{
-					          				wraps.MyMethod1(index, ref value1, out flag);
-					          				hasWrappedResult = true;
-					          			}
-					          			else
-					          			{
-					          				flag = default!;
-					          			}
+					          			flag = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, int, bool>("global::MyCode.MyService.MyMethod1", "index", index, "value1", value1, "flag", flag));
 					          			}
-					          			if (!(methodSetup?.SkipBaseClass(this.MockRegistry.Behavior) ?? this.MockRegistry.Behavior.SkipBaseClass) && !hasWrappedResult)
+					          			try
 					          			{
-					          				base.MyMethod1(index, ref value1, out flag);
-					          				hasWrappedResult = true;
-					          			}
-					          			if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<int, int, bool>.WithParameterCollection)
-					          			{
-					          				if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<int, int, bool>.WithParameterCollection wpc)
+					          				if (this.MockRegistry.Wraps is global::MyCode.MyService wraps)
 					          				{
-					          					if (wpc.Parameter2 is global::Mockolate.Parameters.IRefParameter<int> refParam2)
+					          					wraps.MyMethod1(index, ref value1, out flag);
+					          					hasWrappedResult = true;
+					          				}
+					          				if (!(methodSetup?.SkipBaseClass(this.MockRegistry.Behavior) ?? this.MockRegistry.Behavior.SkipBaseClass) && !hasWrappedResult)
+					          				{
+					          					base.MyMethod1(index, ref value1, out flag);
+					          					hasWrappedResult = true;
+					          				}
+					          				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<int, int, bool>.WithParameterCollection)
+					          				{
+					          					if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<int, int, bool>.WithParameterCollection wpc)
 					          					{
-					          						value1 = refParam2.GetValue(value1);
+					          						if (wpc.Parameter2 is global::Mockolate.Parameters.IRefParameter<int> refParam2)
+					          						{
+					          							value1 = refParam2.GetValue(value1);
+					          						}
+					          						if (wpc.Parameter3 is not global::Mockolate.Parameters.IOutParameter<bool> outParam3 || !outParam3.TryGetValue(out flag))
+					          						{
+					          							flag = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
+					          						}
 					          					}
-					          					if (wpc.Parameter3 is not global::Mockolate.Parameters.IOutParameter<bool> outParam3 || !outParam3.TryGetValue(out flag))
+					          					else
 					          					{
 					          						flag = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
 					          					}
 					          				}
-					          				else
-					          				{
-					          					flag = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
-					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(index, value1, flag);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.MyService.MyMethod1(int, int, bool)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(index, value1, flag);
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
@@ -649,34 +688,40 @@ public sealed partial class MockTests
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool, int, bool>("global::MyCode.MyService.MyMethod2", "index", index, "isReadOnly", isReadOnly, "value1", value1, "flag", flag));
 					          			}
-					          			if (!(methodSetup?.SkipBaseClass(this.MockRegistry.Behavior) ?? this.MockRegistry.Behavior.SkipBaseClass))
+					          			try
 					          			{
-					          				wrappedResult = base.MyMethod2(index, isReadOnly, ref value1, out flag);
-					          				hasWrappedResult = true;
-					          			}
-					          			if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>.WithParameterCollection)
-					          			{
-					          				if (methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>.WithParameterCollection wpc)
+					          				if (!(methodSetup?.SkipBaseClass(this.MockRegistry.Behavior) ?? this.MockRegistry.Behavior.SkipBaseClass))
 					          				{
-					          					if (wpc.Parameter3 is global::Mockolate.Parameters.IRefParameter<int> refParam3)
+					          					wrappedResult = base.MyMethod2(index, isReadOnly, ref value1, out flag);
+					          					hasWrappedResult = true;
+					          				}
+					          				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>.WithParameterCollection)
+					          				{
+					          					if (methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>.WithParameterCollection wpc)
 					          					{
-					          						value1 = refParam3.GetValue(value1);
+					          						if (wpc.Parameter3 is global::Mockolate.Parameters.IRefParameter<int> refParam3)
+					          						{
+					          							value1 = refParam3.GetValue(value1);
+					          						}
+					          						if (wpc.Parameter4 is not global::Mockolate.Parameters.IOutParameter<bool> outParam4 || !outParam4.TryGetValue(out flag))
+					          						{
+					          							flag = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
+					          						}
 					          					}
-					          					if (wpc.Parameter4 is not global::Mockolate.Parameters.IOutParameter<bool> outParam4 || !outParam4.TryGetValue(out flag))
+					          					else
 					          					{
 					          						flag = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
 					          					}
 					          				}
-					          				else
-					          				{
-					          					flag = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
-					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(index, isReadOnly, value1, flag);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.MyService.MyMethod2(int, bool, int, bool)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(index, isReadOnly, value1, flag);
 					          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 					          			{
 					          				return wrappedResult;
@@ -696,11 +741,17 @@ public sealed partial class MockTests
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation("global::MyCode.IMyOtherService.SomeOtherMethod"));
 					          			}
+					          			try
+					          			{
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks();
+					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyOtherService.SomeOtherMethod()' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks();
 					          """).IgnoringNewlineStyle();
 			}
 
@@ -825,33 +876,39 @@ public sealed partial class MockTests
 					          			var ref_index = index;
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<int>>("global::MyCode.IMyService.MyMethod1", m => m.Matches("index", ref_index));
 					          			bool hasWrappedResult = false;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wraps.MyMethod1(ref index);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyMethod1", "index", index));
 					          			}
-					          			if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection)
+					          			try
 					          			{
-					          				if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection wpc)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
-					          					if (wpc.Parameter1 is global::Mockolate.Parameters.IRefParameter<int> refParam1)
+					          					wraps.MyMethod1(ref index);
+					          					hasWrappedResult = true;
+					          				}
+					          				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection)
+					          				{
+					          					if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection wpc)
 					          					{
-					          						index = refParam1.GetValue(index);
+					          						if (wpc.Parameter1 is global::Mockolate.Parameters.IRefParameter<int> refParam1)
+					          						{
+					          							index = refParam1.GetValue(index);
+					          						}
+					          					}
+					          					else
+					          					{
 					          					}
 					          				}
-					          				else
-					          				{
-					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(index);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod1(int)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(index);
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
@@ -861,38 +918,41 @@ public sealed partial class MockTests
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool>>("global::MyCode.IMyService.MyMethod2", m => m.Matches("index", index, "isReadOnly", default));
 					          			bool hasWrappedResult = false;
 					          			bool wrappedResult = default!;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wrappedResult = wraps.MyMethod2(index, out isReadOnly);
-					          				hasWrappedResult = true;
-					          			}
-					          			else
-					          			{
-					          				isReadOnly = default!;
-					          			}
+					          			isReadOnly = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool>("global::MyCode.IMyService.MyMethod2", "index", index, "isReadOnly", isReadOnly));
 					          			}
-					          			if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool>.WithParameterCollection)
+					          			try
 					          			{
-					          				if (methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool>.WithParameterCollection wpc)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
-					          					if (wpc.Parameter2 is not global::Mockolate.Parameters.IOutParameter<bool> outParam2 || !outParam2.TryGetValue(out isReadOnly))
+					          					wrappedResult = wraps.MyMethod2(index, out isReadOnly);
+					          					hasWrappedResult = true;
+					          				}
+					          				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool>.WithParameterCollection)
+					          				{
+					          					if (methodSetup is global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool>.WithParameterCollection wpc)
+					          					{
+					          						if (wpc.Parameter2 is not global::Mockolate.Parameters.IOutParameter<bool> outParam2 || !outParam2.TryGetValue(out isReadOnly))
+					          						{
+					          							isReadOnly = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
+					          						}
+					          					}
+					          					else
 					          					{
 					          						isReadOnly = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
 					          					}
 					          				}
-					          				else
-					          				{
-					          					isReadOnly = this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!);
-					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(index, isReadOnly);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod2(int, bool)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(index, isReadOnly);
 					          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 					          			{
 					          				return wrappedResult;
@@ -907,20 +967,26 @@ public sealed partial class MockTests
 					          			var ref_p1 = p1;
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct>>("global::MyCode.IMyService.MyMethod3", m => m.Matches("p1", ref_p1));
 					          			bool hasWrappedResult = false;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wraps.MyMethod3(in p1);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::MyCode.MyReadonlyStruct>("global::MyCode.IMyService.MyMethod3", "p1", p1));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wraps.MyMethod3(in p1);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(p1);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod3(MyReadonlyStruct)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(p1);
 					          		}
 					          """).IgnoringNewlineStyle().And
 					.Contains("""
@@ -930,20 +996,26 @@ public sealed partial class MockTests
 					          			var ref_p1 = p1;
 					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct>>("global::MyCode.IMyService.MyMethod4", m => m.Matches("p1", ref_p1));
 					          			bool hasWrappedResult = false;
-					          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-					          			{
-					          				wraps.MyMethod4(in p1);
-					          				hasWrappedResult = true;
-					          			}
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
 					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::MyCode.MyReadonlyStruct>("global::MyCode.IMyService.MyMethod4", "p1", p1));
+					          			}
+					          			try
+					          			{
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				{
+					          					wraps.MyMethod4(in p1);
+					          					hasWrappedResult = true;
+					          				}
+					          			}
+					          			finally
+					          			{
+					          				methodSetup?.TriggerCallbacks(p1);
 					          			}
 					          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 					          			{
 					          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod4(MyReadonlyStruct)' was invoked without prior setup.");
 					          			}
-					          			methodSetup?.TriggerCallbacks(p1);
 					          		}
 					          """).IgnoringNewlineStyle();
 			}

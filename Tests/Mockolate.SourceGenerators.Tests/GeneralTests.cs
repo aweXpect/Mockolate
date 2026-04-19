@@ -797,20 +797,26 @@ public class GeneralTests
 			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, string>>("global::MyCode.IMyService.MyMethod", m => m.Matches("message", message));
 			          			bool hasWrappedResult = false;
 			          			string wrappedResult = default!;
-			          			if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
-			          			{
-			          				wrappedResult = wraps.MyMethod(message);
-			          				hasWrappedResult = true;
-			          			}
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
 			          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<string>("global::MyCode.IMyService.MyMethod", "message", message));
+			          			}
+			          			try
+			          			{
+			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+			          				{
+			          					wrappedResult = wraps.MyMethod(message);
+			          					hasWrappedResult = true;
+			          				}
+			          			}
+			          			finally
+			          			{
+			          				methodSetup?.TriggerCallbacks(message);
 			          			}
 			          			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			          			{
 			          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.IMyService.MyMethod(string)' was invoked without prior setup.");
 			          			}
-			          			methodSetup?.TriggerCallbacks(message);
 			          			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 			          			{
 			          				return wrappedResult;

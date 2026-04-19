@@ -4,7 +4,7 @@ using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockEvents;
 
-public sealed class InteractionsTests
+public sealed partial class InteractionsTests
 {
 	[Fact]
 	public async Task EventSubscription_ToString_ShouldReturnExpectedValue()
