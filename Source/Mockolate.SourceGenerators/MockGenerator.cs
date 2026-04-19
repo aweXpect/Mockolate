@@ -129,23 +129,34 @@ public class MockGenerator : IIncrementalGenerator
 			refStructMethodSetups.Add(item);
 		}
 
-		// Ref-struct-keyed indexer getter setups for arity > 4. Same split as methods: arities 1-4
-		// are hand-written in Source/Mockolate/Setup/RefStructIndexerGetterSetup.cs.
-		HashSet<int> refStructIndexerGetterSetups = new();
-		foreach (int item in mocksToGenerate
+		// Ref-struct-keyed indexer setups for arity > 4. Same split as methods: arities 1-4 are
+		// hand-written; arity 5+ is generator-emitted. Per arity we track whether the getter,
+		// setter, or both accessors need to be emitted — a single mock source may declare
+		// indexers with different accessor combinations at the same arity.
+		Dictionary<int, (bool HasGetter, bool HasSetter)> refStructIndexerArities = new();
+		foreach (Property indexer in mocksToGenerate
 			         .SelectMany(m => m.AllProperties())
-			         .Where(p => p is { IsIndexer: true, IndexerParameters: not null, Getter: not null, Setter: null, } &&
+			         .Where(p => p is { IsIndexer: true, IndexerParameters: not null, } &&
 			                     p.IndexerParameters.Value.Count > 4 &&
-			                     p.IndexerParameters.Value.Any(kp => kp.NeedsRefStructPipeline()))
-			         .Select(p => p.IndexerParameters!.Value.Count))
+			                     p.IndexerParameters.Value.Any(kp => kp.NeedsRefStructPipeline())))
 		{
-			refStructIndexerGetterSetups.Add(item);
+			int arity = indexer.IndexerParameters!.Value.Count;
+			bool hasGetter = indexer.Getter is not null;
+			bool hasSetter = indexer.Setter is not null;
+			if (refStructIndexerArities.TryGetValue(arity, out (bool, bool) existing))
+			{
+				refStructIndexerArities[arity] = (existing.Item1 || hasGetter, existing.Item2 || hasSetter);
+			}
+			else
+			{
+				refStructIndexerArities[arity] = (hasGetter, hasSetter);
+			}
 		}
 
-		if (refStructMethodSetups.Any() || refStructIndexerGetterSetups.Any())
+		if (refStructMethodSetups.Any() || refStructIndexerArities.Any())
 		{
 			context.AddSource("RefStructMethodSetups.g.cs",
-				SourceText.From(Sources.Sources.RefStructMethodSetups(refStructMethodSetups, refStructIndexerGetterSetups),
+				SourceText.From(Sources.Sources.RefStructMethodSetups(refStructMethodSetups, refStructIndexerArities),
 					Encoding.UTF8));
 		}
 

@@ -2348,6 +2348,14 @@ namespace Mockolate.Setup
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
         public override string ToString() { }
     }
+    public static class RefStructStorageHelper
+    {
+        public static Mockolate.Setup.IndexerValueStorage CreateStorage<TValue>() { }
+        public static bool IsSlotStorageReady<T>(Mockolate.Parameters.IRefStructProjectionMatch<T>? projection) { }
+        public static void SetLeafValue<TValue>(Mockolate.Setup.IndexerValueStorage leaf, TValue value) { }
+        public static bool TryGetLeafValue<TValue>(Mockolate.Setup.IndexerValueStorage? leaf, out TValue value) { }
+        public static bool TryResolveKey<T>(Mockolate.Parameters.IRefStructProjectionMatch<T>? projection, T value, object? rawKey, out object key) { }
+    }
     public sealed class RefStructVoidMethodSetup<T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructVoidMethodSetup<T>, Mockolate.Setup.ISetup
     {
         public RefStructVoidMethodSetup(string name, Mockolate.Parameters.IParameterMatch<T>? matcher = null) { }

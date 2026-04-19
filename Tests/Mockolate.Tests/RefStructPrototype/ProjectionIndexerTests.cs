@@ -201,6 +201,31 @@ public sealed class ProjectionIndexerTests
 		}
 
 		[Fact]
+		public async Task Arity5_MixedProjectionsAndNormals_WritesFeedReads()
+		{
+			// Exercises the generator-emitted arity 5+ RefStructIndexerSetup class — three
+			// ref-struct slots with projections interleaved with two non-ref-struct slots.
+			IBigPacketStore5 sut = IBigPacketStore5.CreateMock();
+			sut.Mock.Setup[
+					It.IsRefStructBy<Packet, int>(p => p.Id),
+					It.IsAny<int>(),
+					It.IsRefStructBy<Packet, int>(p => p.Id),
+					It.IsAny<string>(),
+					It.IsRefStructBy<Packet, int>(p => p.Id)]
+				.Returns("fallback");
+
+			sut[new Packet(1, []), 10, new Packet(2, []), "tag", new Packet(3, [])] = "written";
+
+			string hit = sut[new Packet(1, []), 10, new Packet(2, []), "tag", new Packet(3, [])];
+			string miss = sut[new Packet(1, []), 10, new Packet(2, []), "tag", new Packet(99, [])];
+			string missOnNormal = sut[new Packet(1, []), 99, new Packet(2, []), "tag", new Packet(3, [])];
+
+			await That(hit).IsEqualTo("written");
+			await That(miss).IsEqualTo("fallback");
+			await That(missOnNormal).IsEqualTo("fallback");
+		}
+
+		[Fact]
 		public async Task DoubleRefStructIndexer_BothProjections_WritesFeedReads()
 		{
 			IGeneratedDoublePacketStore sut = IGeneratedDoublePacketStore.CreateMock();
