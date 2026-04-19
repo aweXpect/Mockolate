@@ -85,6 +85,29 @@ internal partial class MockSetups
 			return null;
 		}
 
+		public T? GetMatching<T>(IndexerAccess access) where T : IndexerSetup
+		{
+			List<IndexerSetup>? storage = _storage;
+			if (storage is null)
+			{
+				return null;
+			}
+
+			lock (storage)
+			{
+				for (int i = storage.Count - 1; i >= 0; i--)
+				{
+					if (storage[i] is T typedSetup &&
+					    ((IInteractiveIndexerSetup)typedSetup).Matches(access))
+					{
+						return typedSetup;
+					}
+				}
+			}
+
+			return null;
+		}
+
 		/// <inheritdoc cref="object.ToString()" />
 		[ExcludeFromCodeCoverage]
 		public override string ToString()

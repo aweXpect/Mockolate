@@ -56,6 +56,12 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult baseValue);
 
 	/// <summary>
+	///     Invokes the getter flow for the given <paramref name="access" />, materializing the default value from the
+	///     <paramref name="behavior" /> inline when no stored value or initialization is present.
+	/// </summary>
+	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior);
+
+	/// <summary>
 	///     Invokes the getter flow for the given <paramref name="access" /> using the <paramref name="defaultValueGenerator" />
 	///     when no value has been stored or initialized.
 	/// </summary>
@@ -534,6 +540,36 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior)
+	{
+		if (!TryExtractParameter(access, out T1 p1))
+		{
+			return behavior.DefaultValue.GenerateTyped<TResult>();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1);
+		}
+		else
+		{
+			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
+				? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, currentValue, out _);
+		access.StoreValue(currentValue);
+		return TryCast(currentValue, out TResult result, behavior)
+			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+	}
+
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
 	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
@@ -586,8 +622,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 			{
 				Callback<Action<int, T1, TValue>> setterCallback =
 					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, resultValue)))
+				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (p1, resultValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.resultValue)))
 				{
 					wasInvoked = true;
 				}
@@ -605,8 +641,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 			{
 				Callback<Action<int, T1, TValue>> getterCallback =
 					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, currentValue)))
+				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (p1, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.currentValue)))
 				{
 					wasInvoked = true;
 				}
@@ -625,8 +661,9 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 			{
 				Callback<Func<int, T1, TValue, TValue>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, currentValue), out TValue? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (p1, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.currentValue),
+					    out TValue? newValue))
 				{
 					matched = true;
 					return newValue!;
@@ -1101,6 +1138,36 @@ public class IndexerSetup<TValue, T1, T2>(
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2))
+		{
+			return behavior.DefaultValue.GenerateTyped<TResult>();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1, p2);
+		}
+		else
+		{
+			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
+				? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
+		access.StoreValue(currentValue);
+		return TryCast(currentValue, out TResult result, behavior)
+			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+	}
+
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
 	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
@@ -1153,8 +1220,8 @@ public class IndexerSetup<TValue, T1, T2>(
 			{
 				Callback<Action<int, T1, T2, TValue>> setterCallback =
 					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, resultValue)))
+				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (p1, p2, resultValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.resultValue)))
 				{
 					wasInvoked = true;
 				}
@@ -1172,8 +1239,8 @@ public class IndexerSetup<TValue, T1, T2>(
 			{
 				Callback<Action<int, T1, T2, TValue>> getterCallback =
 					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, currentValue)))
+				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (p1, p2, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.currentValue)))
 				{
 					wasInvoked = true;
 				}
@@ -1192,8 +1259,9 @@ public class IndexerSetup<TValue, T1, T2>(
 			{
 				Callback<Func<int, T1, T2, TValue, TValue>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, currentValue), out TValue? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (p1, p2, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.currentValue),
+					    out TValue? newValue))
 				{
 					matched = true;
 					return newValue!;
@@ -1685,6 +1753,36 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3))
+		{
+			return behavior.DefaultValue.GenerateTyped<TResult>();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1, p2, p3);
+		}
+		else
+		{
+			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
+				? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
+		access.StoreValue(currentValue);
+		return TryCast(currentValue, out TResult result, behavior)
+			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+	}
+
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
 	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
@@ -1737,8 +1835,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 			{
 				Callback<Action<int, T1, T2, T3, TValue>> setterCallback =
 					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, resultValue)))
+				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (p1, p2, p3, resultValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.resultValue)))
 				{
 					wasInvoked = true;
 				}
@@ -1756,8 +1854,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 			{
 				Callback<Action<int, T1, T2, T3, TValue>> getterCallback =
 					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, currentValue)))
+				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (p1, p2, p3, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.currentValue)))
 				{
 					wasInvoked = true;
 				}
@@ -1776,8 +1874,9 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 			{
 				Callback<Func<int, T1, T2, T3, TValue, TValue>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, currentValue), out TValue? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (p1, p2, p3, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.currentValue),
+					    out TValue? newValue))
 				{
 					matched = true;
 					return newValue!;
@@ -2278,6 +2377,36 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
 
+	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior)" />
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior)
+	{
+		if (!TryExtractParameters(access, out T1 p1, out T2 p2, out T3 p3, out T4 p4))
+		{
+			return behavior.DefaultValue.GenerateTyped<TResult>();
+		}
+
+		TValue currentValue;
+		if (access.TryFindStoredValue(out TValue existing))
+		{
+			currentValue = existing;
+		}
+		else if (_initialization is not null)
+		{
+			currentValue = _initialization.Invoke(p1, p2, p3, p4);
+		}
+		else
+		{
+			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
+				? casted : default!;
+		}
+
+		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
+		access.StoreValue(currentValue);
+		return TryCast(currentValue, out TResult result, behavior)
+			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+	}
+
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
 	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator)
@@ -2330,8 +2459,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 			{
 				Callback<Action<int, T1, T2, T3, T4, TValue>> setterCallback =
 					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4, resultValue)))
+				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, (p1, p2, p3, p4, resultValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.p4, state.resultValue)))
 				{
 					wasInvoked = true;
 				}
@@ -2349,8 +2478,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 			{
 				Callback<Action<int, T1, T2, T3, T4, TValue>> getterCallback =
 					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4, currentValue)))
+				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, (p1, p2, p3, p4, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.p4, state.currentValue)))
 				{
 					wasInvoked = true;
 				}
@@ -2369,8 +2498,9 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 			{
 				Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (invocationCount, @delegate)
-					    => @delegate(invocationCount, p1, p2, p3, p4, currentValue), out TValue? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (p1, p2, p3, p4, currentValue),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.p4, state.currentValue),
+					    out TValue? newValue))
 				{
 					matched = true;
 					return newValue!;

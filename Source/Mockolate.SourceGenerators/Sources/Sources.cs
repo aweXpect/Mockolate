@@ -117,7 +117,7 @@ internal static partial class Sources
 	///     Emits variable declarations for the indexer getter access and matching setup:
 	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;("p", p, ...);
 	///     mockRegistry.RegisterInteraction(access);
-	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(s =&gt; s.Matches(p, ...));</code>
+	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(access);</code>
 	/// </summary>
 	private static void EmitIndexerGetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
@@ -148,8 +148,7 @@ internal static partial class Sources
 			sb.Append(", ").AppendTypeOrWrapper(p.Type);
 		}
 
-		sb.Append(">>(s => ((global::Mockolate.Setup.IInteractiveIndexerSetup)s).Matches(")
-			.Append(accessVarName).Append("));").AppendLine();
+		sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
 	}
 
 	/// <summary>
@@ -184,8 +183,7 @@ internal static partial class Sources
 			sb.Append(", ").AppendTypeOrWrapper(p.Type);
 		}
 
-		sb.Append(">>(s => ((global::Mockolate.Setup.IInteractiveIndexerSetup)s).Matches(")
-			.Append(accessVarName).Append("));").AppendLine();
+		sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
 	}
 
 	/// <summary>

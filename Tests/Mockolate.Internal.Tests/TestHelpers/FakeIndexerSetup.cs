@@ -19,6 +19,9 @@ internal sealed class FakeIndexerSetup : IndexerSetup
 	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult baseValue)
 		=> baseValue;
 
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior)
+		=> default!;
+
 	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, Func<TResult> defaultValueGenerator)
 		=> defaultValueGenerator();
 
