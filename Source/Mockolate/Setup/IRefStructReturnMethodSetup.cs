@@ -113,6 +113,7 @@ public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3> : IMethodSetup
 ///     Sets up a method returning <typeparamref name="TReturn" /> with four parameters of which
 ///     at least one is a ref struct. See <see cref="IRefStructReturnMethodSetup{TReturn, T}" />.
 /// </summary>
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> : IMethodSetup
 	where T1 : allows ref struct
 	where T2 : allows ref struct
@@ -138,4 +139,5 @@ public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> : IMethodS
 	/// <inheritdoc cref="IRefStructReturnMethodSetup{TReturn, T}.Throws(Func{Exception})" />
 	IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> Throws(Func<Exception> exceptionFactory);
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 #endif

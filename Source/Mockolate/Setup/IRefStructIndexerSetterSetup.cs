@@ -99,6 +99,7 @@ public interface IRefStructIndexerSetterSetup<TValue, T1, T2, T3> : IMethodSetup
 ///     Setter setup for a ref-struct-keyed indexer with four keys.
 ///     See <see cref="IRefStructIndexerSetterSetup{TValue, T}" />.
 /// </summary>
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 public interface IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : IMethodSetup
 	where T1 : allows ref struct
 	where T2 : allows ref struct
@@ -121,4 +122,5 @@ public interface IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> : IMethodS
 	/// <inheritdoc cref="IRefStructIndexerSetterSetup{TValue, T}.Throws(Func{Exception})" />
 	IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4> Throws(Func<Exception> exceptionFactory);
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 #endif

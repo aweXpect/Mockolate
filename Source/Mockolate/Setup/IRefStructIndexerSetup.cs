@@ -15,9 +15,16 @@ namespace Mockolate.Setup;
 ///         invoked). <c>SkippingBaseClass</c> forwards to both underlying setups.
 ///     </para>
 ///     <para>
-///         The two halves do not share state beyond the matcher and the throw slot — a value
-///         written via the setter is NOT automatically read back via the getter. That
-///         "initialize-via-set" semantic stays out of scope for this commit.
+///         Write→read correlation depends on the supplied matcher. When the matcher is a
+///         projection matcher (<see cref="Mockolate.Parameters.IRefStructProjectionMatch{T}" />,
+///         produced by
+///         <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />),
+///         a value written via the setter is stored under the projected key and returned by
+///         subsequent getter reads of any key with the same projection. With a non-projection
+///         matcher (e.g. <see cref="It.IsAnyRefStruct{T}" /> or <see cref="It.IsRefStruct{T}" />)
+///         the two halves share only the matcher and throw slot — the getter always returns its
+///         configured <c>Returns(...)</c> value or the framework default, never a prior setter
+///         write.
 ///     </para>
 /// </remarks>
 public interface IRefStructIndexerSetup<TValue, T> : IMethodSetup
@@ -113,6 +120,7 @@ public interface IRefStructIndexerSetup<TValue, T1, T2, T3> : IMethodSetup
 ///     Combined getter + setter setup for a ref-struct-keyed indexer with four keys.
 ///     See <see cref="IRefStructIndexerSetup{TValue, T}" />.
 /// </summary>
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 public interface IRefStructIndexerSetup<TValue, T1, T2, T3, T4> : IMethodSetup
 	where T1 : allows ref struct
 	where T2 : allows ref struct
@@ -141,4 +149,5 @@ public interface IRefStructIndexerSetup<TValue, T1, T2, T3, T4> : IMethodSetup
 	/// <inheritdoc cref="IRefStructIndexerSetup{TValue, T}.Throws(Func{Exception})" />
 	IRefStructIndexerSetup<TValue, T1, T2, T3, T4> Throws(Func<Exception> exceptionFactory);
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 #endif

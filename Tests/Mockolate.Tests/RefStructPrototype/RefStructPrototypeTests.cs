@@ -1,5 +1,4 @@
 #if NET9_0_OR_GREATER
-using System;
 using System.Collections.Generic;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -114,8 +113,8 @@ public sealed class RefStructPrototypeTests
 		{
 			RefStructVoidMethodSetup<Packet, Packet> setup = new(
 				"Encode",
-				It.IsRefStruct<Packet>(p => p.Id == 1) as IParameterMatch<Packet>,
-				It.IsRefStruct<Packet>(p => p.Id == 2) as IParameterMatch<Packet>);
+				(IParameterMatch<Packet>)It.IsRefStruct<Packet>(p => p.Id == 1),
+				(IParameterMatch<Packet>)It.IsRefStruct<Packet>(p => p.Id == 2));
 
 			bool bothMatch = setup.Matches(new Packet(1, []), new Packet(2, []));
 			bool firstOnly = setup.Matches(new Packet(1, []), new Packet(99, []));

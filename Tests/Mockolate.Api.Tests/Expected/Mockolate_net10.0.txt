@@ -249,8 +249,8 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameterWithCallback<T> Monitor<T>(this Mockolate.Parameters.IParameterWithCallback<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
         public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
     }
-    public delegate bool RefStructPredicate<T>(T value);
-    public delegate TProjected RefStructProjection<T, TProjected>(T value);
+    public delegate bool RefStructPredicate<in T>(T value);
+    public delegate TProjected RefStructProjection<in T, out TProjected>(T value);
     public static class ReturnsThrowsAsyncExtensions
     {
         public static Mockolate.Setup.IReturnMethodSetupReturnBuilder<System.Threading.Tasks.Task<TReturn>> ReturnsAsync<TReturn>(this Mockolate.Setup.IReturnMethodSetup<System.Threading.Tasks.Task<TReturn>> setup, System.Func<TReturn> callback) { }
@@ -900,11 +900,11 @@ namespace Mockolate.Parameters
         Mockolate.Parameters.IRefParameter<T> Do(System.Action<T> callback);
         T GetValue(T value);
     }
-    public interface IRefStructProjectionMatch<T> : Mockolate.Parameters.IParameterMatch<T>
+    public interface IRefStructProjectionMatch<in T> : Mockolate.Parameters.IParameterMatch<T>
     {
         object Project(T value);
     }
-    public interface IRefStructProjectionMatch<T, TProjected> : Mockolate.Parameters.IParameterMatch<T>, Mockolate.Parameters.IRefStructProjectionMatch<T>
+    public interface IRefStructProjectionMatch<in T, TProjected> : Mockolate.Parameters.IParameterMatch<T>, Mockolate.Parameters.IRefStructProjectionMatch<T>
         where TProjected :  notnull
     {
         TProjected Project(T value);

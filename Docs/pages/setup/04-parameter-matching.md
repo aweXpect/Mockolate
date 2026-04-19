@@ -140,20 +140,15 @@ bool result = sut.Process(buffer);
 
 ### Ref Struct Parameters (.NET 9+)
 
-For methods, indexers, and indexer setters whose signature uses a custom `ref struct`
-(e.g. `Utf8JsonReader`, or a user-defined `ref struct Packet(int id, ReadOnlySpan<byte> payload)`),
-Mockolate provides a narrow matcher surface:
+You can mock methods and indexers that take custom `ref struct` parameters (e.g. `Utf8JsonReader`
+or your own `ref struct Packet`) using these matchers:
 
-- `It.IsAnyRefStruct<T>()`: Matches any value of a ref-struct type `T`.
+- `It.IsAnyRefStruct<T>()`: Matches any ref-struct value of type `T`.
 - `It.IsRefStruct<T>(predicate)`: Matches ref-struct values that satisfy the predicate. The
-  predicate sees the live ref struct and can read into its inline `Span<T>` / `ReadOnlySpan<T>`
-  fields — the whole reason this pipeline exists.
-- `It.IsRefStructBy<T, TProjected>(projection)` / `It.IsRefStructBy<T, TProjected>(projection, projectedPredicate)`:
-  Projection-bearing matcher used for arity-1 ref-struct-keyed indexers. Supplying a
-  projection activates write-then-read storage on the setup — values written via the setter
-  are keyed by `projection(key)` and returned by subsequent reads of any key with the same
-  projection. Without a projection, the setup remains storage-less (getter returns its
-  configured `Returns(...)` value or the framework default, setter writes are not surfaced).
+  predicate can read the struct's fields at the time the call is made.
+- `It.IsRefStructBy<T, TKey>(projection)` / `It.IsRefStructBy<T, TKey>(projection, predicate)`:
+  For indexers keyed by a single ref struct, projects the key to an equatable value so that
+  writes and reads can be correlated (see *Indexer storage* in the remarks).
 
 ```csharp
 public readonly ref struct Packet(int id, ReadOnlySpan<byte> payload)
@@ -169,53 +164,49 @@ public interface IPacketSink
     string this[Packet key] { get; set; }
 }
 
-// Setup: the predicate reads into the inline Span — safe because matching runs
-// synchronously on the caller's stack, without closures.
+// Match on the live ref struct, including its Span contents.
 sut.Mock.Setup.Consume(It.IsRefStruct<Packet>(p =>
         p.Payload.Length > 0 && p.Payload[0] == 0xFF))
     .Throws<InvalidOperationException>();
 
-// Return methods — use Returns(value) or Returns(factory).
+// Return a value from a ref-struct-parameter method.
 sut.Mock.Setup.TryParse(It.IsAnyRefStruct<Packet>()).Returns(42);
 
-// Indexers — Returns for get, OnSet for set, Throws for both.
+// Ref-struct-keyed indexer: Returns for get, OnSet for observed writes.
 sut.Mock.Setup[It.IsAnyRefStruct<Packet>()]
     .Returns("got")
-    .OnSet(value => { /* captured write */ });
+    .OnSet(value => { /* observed write */ });
 
-// Projection-based write-then-read correlation on an arity-1 indexer. The setter writes
-// under the projected key; the getter reads back the stored value for any key with the
-// same projection. Without the projection, this correlation is unavailable — returning the
-// configured default is intentionally preferred over returning a stale/unprojected value.
+// Correlate writes and reads by projecting the key to an equatable value.
 sut.Mock.Setup[It.IsRefStructBy<Packet, int>(p => p.Id)].Returns("fallback");
 sut[new Packet(1, [])] = "written";
-string a = sut[new Packet(1, [])];  // "written"
-string b = sut[new Packet(2, [])];  // "fallback"
+string a = sut[new Packet(1, [])];  // "written" matched by Id
+string b = sut[new Packet(2, [])];  // "fallback" no write under Id=2
 ```
 
-**Supported:** `void`, non-ref-struct-return, and indexer get/set accessors whose parameters
-contain at least one custom ref struct. Arity up to 4 is supplied as hand-written types; arities
-5+ are emitted by the generator on demand. Setup surface is narrow: `Returns(value)`,
-`Returns(factory)`, `Throws*`, `OnSet(Action<TValue>)` (indexer setters), `SkippingBaseClass`.
-Projection-based write-then-read storage via `It.IsRefStructBy<T, TProjected>(...)` is
-available for arity-1 indexers.
+**Remarks**
 
-**Not supported (compile-time diagnostic `Mockolate0004`):**
+The ref-struct pipeline uses a narrower API than the rest of Mockolate. A handful of fluent
+features are unavailable because the C# language does not let `ref struct` values flow through
+generic delegates:
 
-- Compilation target older than .NET 9 — the `allows ref struct` anti-constraint is a .NET 9 / C# 13 feature.
-- `out` / `ref` / `ref readonly` parameters with a ref-struct type.
-- Methods that return a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct (e.g. `Utf8JsonReader GetReader()`).
-- The fluent chain that non-ref-struct setups support: `.Do(Action<T>)`, the `Callbacks<T>`
-  builder (`InParallel`, `When`, `For`, `Only`, `TransitionTo`) is unavailable for ref-struct
-  parameters because every link of that chain requires `T` to flow through a delegate type parameter,
-  which is illegal for a ref struct.
-- Post-hoc value-matching in `Verify`: the recorded interaction (`RefStructMethodInvocation`) stores
-  only the method name and parameter names, never the parameter value. Use a setup-time matcher to
-  filter at call time, then count interactions via
-  `((IMock)sut).MockRegistry.Interactions.OfType<RefStructMethodInvocation>().Count(...)`.
-- Projection-based write-then-read storage on indexers of arity > 1 — setter writes do not feed
-  back into getter reads. Workaround: use an arity-1 indexer where possible or capture the
-  value externally via `OnSet`.
+- **Setup surface.** Only `Returns(value)`, `Returns(factory)`, `Throws*`, `OnSet(Action<TValue>)`
+  (indexer setters), and `SkippingBaseClass` are available. The `.Do(...)` callback and the
+  `Callbacks<T>` builder (`InParallel`, `When`, `For`, `Only`, `TransitionTo`) are not offered
+  for ref-struct parameters.
+- **Verify.** `Verify` counts calls to the method but cannot match on the parameter value after
+  the fact — the ref-struct value isn't retained past the call. Use a setup-time matcher to
+  filter at call time.
+- **Indexer storage.** By default, values written through a ref-struct-keyed indexer setter are
+  not read back by the getter. Use `It.IsRefStructBy<T, TKey>(projection)` on an indexer keyed by
+  a single ref struct to enable write-then-read correlation keyed by the projection.
+
+The following cases are rejected at compile time with diagnostic `Mockolate0004`:
+
+- Targeting older than .NET 9 (the feature relies on `allows ref struct`, a .NET 9 / C# 13
+  feature).
+- `out` / `ref` / `ref readonly` parameters of a ref-struct type.
+- Methods that return a custom ref struct. (`Span<T>` / `ReadOnlySpan<T>` returns are supported.)
 
 
 ## Parameter Predicates

@@ -92,7 +92,6 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// Concrete class.
-		string concrete = $"global::Mockolate.Setup.RefStructVoidMethodSetup<{typeParams}>";
 		sb.Append("\t/// <summary>").AppendLine();
 		sb.Append("\t///     Concrete ref-struct-compatible void setup for arity ").Append(numberOfParameters)
 			.Append(". See <see cref=\"global::Mockolate.Setup.RefStructVoidMethodSetup{T}\" />.").AppendLine();

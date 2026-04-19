@@ -10,6 +10,6 @@ namespace Mockolate;
 ///     ref struct such as <see cref="System.ReadOnlySpan{T}" /> or
 ///     <see cref="System.Text.Json.Utf8JsonReader" />.
 /// </remarks>
-public delegate bool RefStructPredicate<T>(T value)
+public delegate bool RefStructPredicate<in T>(T value)
 	where T : allows ref struct;
 #endif

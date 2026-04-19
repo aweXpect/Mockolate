@@ -155,7 +155,7 @@
     <value>Wrap arguments must be wrappable</value>
   </data>
 	<data name="Mockolate0004Description" xml:space="preserve">
-		<value>Methods with ref-struct parameters, out/ref ref-struct parameters, more than four ref-struct parameters, or non-span ref-struct return types cannot be mocked on this compilation. Ref-struct parameter mocking requires .NET 9 or later.</value>
+		<value>Methods with out/ref ref-struct parameters or non-span ref-struct return types cannot be mocked. Ref-struct parameter mocking (including ref-struct-keyed indexers) additionally requires .NET 9 or later.</value>
 	</data>
 	<data name="Mockolate0004MessageFormat" xml:space="preserve">
 		<value>Type '{0}' has a method '{1}' that cannot be mocked: {2}</value>

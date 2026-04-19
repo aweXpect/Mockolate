@@ -18,7 +18,7 @@ namespace Mockolate.Parameters;
 ///         <see cref="IRefStructProjectionMatch{T, TProjected}" />.
 ///     </para>
 /// </remarks>
-public interface IRefStructProjectionMatch<T> : IParameterMatch<T>
+public interface IRefStructProjectionMatch<in T> : IParameterMatch<T>
 	where T : allows ref struct
 {
 	/// <summary>
@@ -34,7 +34,7 @@ public interface IRefStructProjectionMatch<T> : IParameterMatch<T>
 ///     projected key in its native type. <typeparamref name="TProjected" /> must be
 ///     <c>notnull</c> so it is a valid dictionary key.
 /// </summary>
-public interface IRefStructProjectionMatch<T, TProjected> : IRefStructProjectionMatch<T>
+public interface IRefStructProjectionMatch<in T, TProjected> : IRefStructProjectionMatch<T>
 	where T : allows ref struct
 	where TProjected : notnull
 {

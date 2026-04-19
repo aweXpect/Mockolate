@@ -19,6 +19,6 @@ namespace Mockolate;
 ///         can itself be a ref struct.
 ///     </para>
 /// </remarks>
-public delegate TProjected RefStructProjection<T, TProjected>(T value)
+public delegate TProjected RefStructProjection<in T, out TProjected>(T value)
 	where T : allows ref struct;
 #endif

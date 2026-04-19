@@ -119,7 +119,7 @@ public sealed class GeneratedPacketSinkTests
 				.Throws<InvalidOperationException>();
 
 			byte[] hit = [0xFF, 0x01];
-			byte[] miss = [0x00, 0x01];
+			byte[] miss = [0x00, 0xFF];
 
 			void ActHit() => sut.Consume(new Packet(1, hit));
 			void ActMiss() => sut.Consume(new Packet(2, miss));

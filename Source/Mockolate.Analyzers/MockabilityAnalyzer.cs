@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
@@ -149,32 +150,99 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	/// <summary>
-	///     Yields the members of <paramref name="type" />: for interfaces every inherited interface
-	///     member is visited; for classes every virtual/abstract member that the mock overrides.
+	///     Yields the members of <paramref name="type" /> that the generator will actually emit a mock
+	///     override for. Mirrors <c>Source/Mockolate.SourceGenerators/Entities/Class.cs</c>: every
+	///     non-sealed member on an interface; every non-sealed <c>virtual</c>/<c>abstract</c> member on
+	///     a class (including its base hierarchy). Members are de-duplicated by signature so an
+	///     override and its virtual base don't produce two diagnostics for the same logical method.
 	/// </summary>
 	private static IEnumerable<ISymbol> EnumerateAllMembers(ITypeSymbol type)
 	{
+		bool isInterface = type.TypeKind == TypeKind.Interface;
+		HashSet<string> seen = new(StringComparer.Ordinal);
+
+		foreach ((ISymbol member, _) in GetCandidateMembers(type, isInterface)
+			         .Where(c => IsOverriddenByGenerator(c.member, c.isInterface) &&
+			                     seen.Add(GetSignatureKey(c.member))))
+		{
+			yield return member;
+		}
+	}
+
+	private static IEnumerable<(ISymbol member, bool isInterface)> GetCandidateMembers(ITypeSymbol type,
+		bool isInterface)
+	{
 		foreach (ISymbol m in type.GetMembers())
 		{
-			yield return m;
+			yield return (m, isInterface);
 		}
 
 		foreach (INamedTypeSymbol iface in type.AllInterfaces)
 		{
 			foreach (ISymbol m in iface.GetMembers())
 			{
-				yield return m;
+				yield return (m, true);
 			}
 		}
 
-		for (ITypeSymbol? t = type.BaseType; t is not null; t = t.BaseType)
+		if (isInterface)
+		{
+			yield break;
+		}
+
+		for (ITypeSymbol? t = type.BaseType;
+		     t is not null && t.SpecialType != SpecialType.System_Object;
+		     t = t.BaseType)
 		{
 			foreach (ISymbol m in t.GetMembers())
 			{
-				yield return m;
+				yield return (m, false);
 			}
 		}
 	}
+
+	/// <summary>
+	///     Matches the member filter in <c>Class.cs</c>: <c>!IsSealed</c> for all kinds, and for class
+	///     mocks the member must be abstract or virtual (since the generator can only override
+	///     abstract/virtual members).
+	/// </summary>
+	private static bool IsOverriddenByGenerator(ISymbol member, bool isInterface)
+	{
+		if (member.IsSealed)
+		{
+			return false;
+		}
+
+		return isInterface || member.IsAbstract || member.IsVirtual;
+	}
+
+	/// <summary>
+	///     Produces a containing-type-independent signature key so members are de-duplicated across
+	///     the type hierarchy. Covers methods (name + generic arity + parameter RefKind/type) and
+	///     indexers (parameter RefKind/type). RefKind is part of C#'s overload signature
+	///     (<c>M(int)</c> vs <c>M(ref int)</c> vs <c>M(in int)</c> vs <c>M(out int)</c> are
+	///     distinct), so collapsing on type alone would hide ref-struct diagnostics on one of the
+	///     overloads.
+	/// </summary>
+	private static string GetSignatureKey(ISymbol member)
+	{
+		switch (member)
+		{
+			case IMethodSymbol method:
+				return "M:" + method.Name + "`" + method.Arity + "(" +
+				       string.Join(",", method.Parameters.Select(FormatParameter)) + ")";
+			case IPropertySymbol { IsIndexer: true, } indexer:
+				return "I:(" +
+				       string.Join(",", indexer.Parameters.Select(FormatParameter)) + ")";
+			default:
+				return member.Kind + ":" + member.Name;
+		}
+	}
+
+	private static string FormatParameter(IParameterSymbol parameter)
+		=> parameter.RefKind == RefKind.None
+			? parameter.Type.ToDisplayString()
+			: parameter.RefKind.ToString().ToLowerInvariant() + " " + parameter.Type.ToDisplayString();
 
 	/// <summary>
 	///     Mirrors <c>Helpers.NeedsRefStructPipeline</c> from the source generator: a type is
@@ -246,17 +314,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static bool TryGetRefStructIssueForIndexer(IPropertySymbol indexer, bool supportsRefStructPipeline,
 		[NotNullWhen(true)] out string? issue)
 	{
-		bool hasRefStructKey = false;
-		foreach (IParameterSymbol p in indexer.Parameters)
-		{
-			if (NeedsRefStructPipeline(p.Type))
-			{
-				hasRefStructKey = true;
-				break;
-			}
-		}
-
-		if (!hasRefStructKey)
+		if (!indexer.Parameters.Any(p => NeedsRefStructPipeline(p.Type)))
 		{
 			issue = null;
 			return false;

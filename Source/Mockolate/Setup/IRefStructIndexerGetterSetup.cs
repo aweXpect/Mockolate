@@ -15,10 +15,14 @@ namespace Mockolate.Setup;
 ///         (<c>SkippingBaseClass</c> / <c>Returns</c> / <c>Throws</c>) carries over directly.
 ///     </para>
 ///     <para>
-///         <strong>Setter side is deferred.</strong> A separate <c>IRefStructIndexerSetterSetup</c>
-///         would be needed to register setter actions; for now, generated mock code can simply
-///         forward setter calls to the base class or no-op when the key matches a ref-struct
-///         getter setup.
+///         The setter side is covered by <see cref="IRefStructIndexerSetterSetup{TValue, T}" />,
+///         and <see cref="IRefStructIndexerSetup{TValue, T}" /> composes both halves for a
+///         combined getter+setter setup. When the underlying setup is constructed with a
+///         projection matcher (<see cref="Mockolate.Parameters.IRefStructProjectionMatch{T}" />,
+///         produced by
+///         <see cref="It.IsRefStructBy{T, TProjected}(RefStructProjection{T, TProjected})" />),
+///         the combined setup stores setter writes under the projected key and returns them on
+///         subsequent getter reads of any key that projects to the same value.
 ///     </para>
 ///     <para>
 ///         <typeparamref name="TValue" /> is not anti-constrained for the same reason as
@@ -124,6 +128,7 @@ public interface IRefStructIndexerGetterSetup<TValue, T1, T2, T3> : IMethodSetup
 /// <summary>
 ///     Ref-struct-safe indexer getter setup for arity 4. See <see cref="IRefStructIndexerGetterSetup{TValue, T}" />.
 /// </summary>
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 public interface IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : IMethodSetup
 	where T1 : allows ref struct
 	where T2 : allows ref struct
@@ -149,4 +154,5 @@ public interface IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> : IMethodS
 	/// <inheritdoc cref="IRefStructIndexerGetterSetup{TValue, T}.Throws(Func{Exception})" />
 	IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4> Throws(Func<Exception> exceptionFactory);
 }
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 #endif
