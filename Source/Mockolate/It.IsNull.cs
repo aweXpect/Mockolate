@@ -10,6 +10,18 @@ public partial class It
 	/// <summary>
 	///     Matches any parameter that is <see langword="null" />.
 	/// </summary>
+	/// <remarks>
+	///     Useful to assert explicit-null arguments in setups or verifications; for non-null values use
+	///     <see cref="IsNotNull{T}(string)" />.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter. Must be a reference type or a <see cref="System.Nullable{T}" />.</typeparam>
+	/// <param name="toString">Optional override for the matcher's <see cref="object.ToString" /> rendering, used in failure messages.</param>
+	/// <returns>A parameter matcher that only accepts <see langword="null" />.</returns>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Lookup(It.IsNull&lt;string&gt;()).Throws&lt;ArgumentNullException&gt;();
+	///     </code>
+	/// </example>
 	public static IParameterWithCallback<T> IsNull<T>(string? toString = null)
 		=> new NullParameterMatch<T>(toString);
 

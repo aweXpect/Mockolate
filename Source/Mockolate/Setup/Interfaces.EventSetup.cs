@@ -4,69 +4,88 @@ using System.Reflection;
 namespace Mockolate.Setup;
 
 /// <summary>
-///     Interface for setting up an event with fluent syntax.
+///     Fluent surface for observing subscription lifecycle of a mocked event.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.EventName</c>. Use <see cref="OnSubscribed" /> to attach callbacks that fire
+///     when a handler is added via <c>+=</c>, and <see cref="OnUnsubscribed" /> for handlers removed via <c>-=</c>.
+///     To actually trigger the event on subscribers, use <c>sut.Mock.Raise.EventName(...)</c> instead.
+/// </remarks>
 public interface IEventSetup
 {
 	/// <summary>
-	///     Sets up callbacks on the event subscription (add accessor).
+	///     Attaches callbacks that fire whenever a handler is subscribed to the event (the <c>add</c> accessor).
 	/// </summary>
 	IEventSubscriptionSetup OnSubscribed { get; }
 
 	/// <summary>
-	///     Sets up callbacks on the event unsubscription (remove accessor).
+	///     Attaches callbacks that fire whenever a handler is unsubscribed from the event (the <c>remove</c>
+	///     accessor).
 	/// </summary>
 	IEventUnsubscriptionSetup OnUnsubscribed { get; }
 }
 
 /// <summary>
-///     Interface for setting up an event subscription with fluent syntax.
+///     Fluent surface for attaching side-effects to an event's <c>add</c> accessor.
 /// </summary>
+/// <remarks>
+///     Each <c>Do</c> registers a callback that fires on every handler subscription. Chain multiple <c>Do</c> calls
+///     to form a sequence; chain <c>.InParallel()</c>, <c>.When(predicate)</c>, <c>.For(n)</c>, <c>.Only(n)</c>,
+///     <c>.OnlyOnce()</c>, <c>.Forever()</c> on the returned builders to control repetition and gating.
+/// </remarks>
 public interface IEventSubscriptionSetup
 {
 	/// <summary>
-	///     Registers a callback to be invoked whenever a handler is subscribed to the event.
+	///     Fires <paramref name="callback" /> whenever a handler subscribes to the event.
 	/// </summary>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.UsersChanged.OnSubscribed.Do(() =&gt; Console.WriteLine("subscribed!"));
+	///     </code>
+	/// </example>
 	IEventSubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever a handler is subscribed to the event.
+	///     Fires <paramref name="callback" /> whenever a handler subscribes, passing the subscriber's target object
+	///     (<see langword="null" /> for static methods) and <see cref="MethodInfo" />.
 	/// </summary>
 	/// <remarks>
-	///     The callback receives the target object and method of the subscribed handler.
+	///     Useful for diagnostics or for asserting which specific method on which target was wired up.
 	/// </remarks>
 	IEventSubscriptionSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever a handler is subscribed to the event.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever a handler subscribes.
 	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
+	/// <param name="scenario">The name of the scenario to transition to.</param>
 	IEventSubscriptionSetupParallelCallbackBuilder TransitionTo(string scenario);
 }
 
 /// <summary>
-///     Interface for setting up an event unsubscription with fluent syntax.
+///     Fluent surface for attaching side-effects to an event's <c>remove</c> accessor.
 /// </summary>
+/// <remarks>
+///     Mirror of <see cref="IEventSubscriptionSetup" /> for unsubscriptions: each <c>Do</c> registers a callback that
+///     fires when a handler is removed via <c>-=</c>; the same builder operators (<c>.InParallel()</c>,
+///     <c>.When(predicate)</c>, <c>.For(n)</c>, <c>.Only(n)</c>, <c>.OnlyOnce()</c>, <c>.Forever()</c>) apply.
+/// </remarks>
 public interface IEventUnsubscriptionSetup
 {
 	/// <summary>
-	///     Registers a callback to be invoked whenever a handler is unsubscribed from the event.
+	///     Fires <paramref name="callback" /> whenever a handler unsubscribes from the event.
 	/// </summary>
 	IEventUnsubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever a handler is unsubscribed from the event.
+	///     Fires <paramref name="callback" /> whenever a handler unsubscribes, passing the handler's target object
+	///     (<see langword="null" /> for static methods) and <see cref="MethodInfo" />.
 	/// </summary>
-	/// <remarks>
-	///     The callback receives the target object and method of the unsubscribed handler.
-	/// </remarks>
 	IEventUnsubscriptionSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever a handler is unsubscribed from the
-	///     event.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever a handler unsubscribes.
 	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
+	/// <param name="scenario">The name of the scenario to transition to.</param>
 	IEventUnsubscriptionSetupParallelCallbackBuilder TransitionTo(string scenario);
 }
 

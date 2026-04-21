@@ -353,6 +353,13 @@ internal static partial class Sources
 	{
 		private string EscapeForXmlDoc()
 			=> value.Replace('<', '{').Replace('>', '}');
+
+		/// <summary>
+		///     Escapes <c>&lt;</c>, <c>&gt;</c> and <c>&amp;</c> for use inside an XML-doc text or <c>&lt;code&gt;</c> block,
+		///     so that types like <c>List&lt;T&gt;</c> don't break the surrounding XML.
+		/// </summary>
+		private string EscapeForXmlText()
+			=> value.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
 	}
 
 	extension(StringBuilder sb)
@@ -375,6 +382,34 @@ internal static partial class Sources
 			sb.Append(indent).Append("/// <remarks>").AppendLine();
 			sb.Append(indent).Append("///     ").Append(remarksText).AppendLine();
 			sb.Append(indent).Append("/// </remarks>").AppendLine();
+		}
+
+		/// <summary>
+		///     Appends an XML documentation <c>&lt;remarks&gt;</c> block consisting of several pre-formatted lines.
+		/// </summary>
+		private void AppendXmlRemarks(string[] lines, string indent = "\t\t")
+		{
+			sb.Append(indent).Append("/// <remarks>").AppendLine();
+			foreach (string line in lines)
+			{
+				sb.Append(indent).Append("///     ").Append(line).AppendLine();
+			}
+			sb.Append(indent).Append("/// </remarks>").AppendLine();
+		}
+
+		/// <summary>
+		///     Appends an XML documentation <c>&lt;example&gt;</c> block containing a <c>&lt;code&gt;</c> snippet.
+		/// </summary>
+		private void AppendXmlExample(string[] codeLines, string indent = "\t\t")
+		{
+			sb.Append(indent).Append("/// <example>").AppendLine();
+			sb.Append(indent).Append("///     <code>").AppendLine();
+			foreach (string line in codeLines)
+			{
+				sb.Append(indent).Append("///     ").Append(line).AppendLine();
+			}
+			sb.Append(indent).Append("///     </code>").AppendLine();
+			sb.Append(indent).Append("/// </example>").AppendLine();
 		}
 
 		/// <summary>

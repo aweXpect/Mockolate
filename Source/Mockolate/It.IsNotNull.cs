@@ -8,8 +8,20 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any parameter that is not <see langword="null" />.
+	///     Matches any parameter whose value is not <see langword="null" />.
 	/// </summary>
+	/// <remarks>
+	///     The inverse of <see cref="IsNull{T}(string)" />. Arguments of a different runtime type than
+	///     <typeparamref name="T" /> also match - their very presence proves they aren't <see langword="null" />.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="toString">Optional override for the matcher's <see cref="object.ToString" /> rendering, used in failure messages.</param>
+	/// <returns>A parameter matcher that accepts every non-<see langword="null" /> argument.</returns>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Verify.Process(It.IsNotNull&lt;byte[]&gt;()).AtLeastOnce();
+	///     </code>
+	/// </example>
 	public static IParameterWithCallback<T> IsNotNull<T>(string? toString = null)
 		=> new NotNullParameterMatch<T>(toString);
 

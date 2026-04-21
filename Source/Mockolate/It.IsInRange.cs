@@ -9,8 +9,29 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any parameter that is within the specified range.
+	///     Matches any parameter whose value lies between <paramref name="minimum" /> and <paramref name="maximum" />
+	///     according to <see cref="IComparable{T}.CompareTo" />.
 	/// </summary>
+	/// <remarks>
+	///     Bounds are inclusive by default (<see cref="IInRangeParameter{T}.Inclusive" />); chain
+	///     <see cref="IInRangeParameter{T}.Exclusive" /> to exclude them.
+	///     Works on any type that implements <see cref="IComparable{T}" /> - numerics,
+	///     <see cref="System.DateTime" />, <see cref="TimeSpan" />, etc.
+	///     Throws <see cref="ArgumentOutOfRangeException" /> if <paramref name="maximum" /> is less than
+	///     <paramref name="minimum" />.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="minimum">Lower bound of the accepted range.</param>
+	/// <param name="maximum">Upper bound of the accepted range.</param>
+	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>A parameter matcher that accepts values in the specified range.</returns>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Dispense(It.IsAny&lt;string&gt;(), It.IsInRange(1, 10)).Returns(true);
+	///     sut.Mock.Setup.Dispense(It.IsAny&lt;string&gt;(), It.IsInRange(1, 10).Exclusive()).Returns(false);
+	///     </code>
+	/// </example>
 	public static IInRangeParameter<T> IsInRange<T>(T minimum, T maximum,
 		[CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
@@ -18,20 +39,21 @@ public partial class It
 		=> new InRangeMatch<T>(minimum, maximum, doNotPopulateThisValue1, doNotPopulateThisValue2);
 
 	/// <summary>
-	///     Matches a method parameter of type <typeparamref name="T" /> to be in a given range.
+	///     A parameter matcher for an in-range constraint on values of type <typeparamref name="T" />.
 	/// </summary>
 	public interface IInRangeParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
-		///     Exclude the minimum and maximum of the range.
+		///     Switches to exclusive bounds: values equal to the minimum or maximum are rejected.
 		/// </summary>
 		IParameterWithCallback<T> Exclusive();
 
 		/// <summary>
-		///     Include the minimum and maximum of the range.
+		///     Switches to inclusive bounds: values equal to the minimum or maximum are accepted.
 		/// </summary>
 		/// <remarks>
-		///     This is the default behavior.
+		///     This is the default behavior; calling <see cref="Inclusive" /> explicitly is only needed to revert a
+		///     previous <see cref="Exclusive" /> call.
 		/// </remarks>
 		IParameterWithCallback<T> Inclusive();
 	}

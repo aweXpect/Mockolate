@@ -11,28 +11,44 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a <see langword="string" /> parameter against the given wildcard <paramref name="pattern" />.
+	///     Matches a <see langword="string" /> parameter against the given wildcard <paramref name="pattern" />
+	///     (<c>*</c> for any sequence, <c>?</c> for a single character).
 	/// </summary>
 	/// <remarks>
-	///     Default comparison is case-insensitive.
-	///     Use <see cref="IParameterMatches.CaseSensitive(bool)" /> to change this behavior.
+	///     Default comparison is case-insensitive; use <see cref="IParameterMatches.CaseSensitive(bool)" /> to change
+	///     that, or <see cref="IParameterMatches.AsRegex" /> to treat <paramref name="pattern" /> as a
+	///     <see cref="Regex" /> instead of a wildcard expression.
 	/// </remarks>
+	/// <param name="pattern">The wildcard (or, with <c>.AsRegex()</c>, regular-expression) pattern to match against.</param>
+	/// <returns>A string parameter matcher, fluently configurable with <c>.CaseSensitive()</c> / <c>.AsRegex()</c>.</returns>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Post(It.Matches("*example.com*"), It.IsAny&lt;HttpContent&gt;())
+	///         .Returns(new HttpResponseMessage(HttpStatusCode.OK));
+	///     sut.Mock.Setup.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
+	///         .Returns(true);
+	///     </code>
+	/// </example>
 	public static IParameterMatches Matches(string pattern)
 		=> new MatchesAsWildcardMatch(pattern);
 
 	/// <summary>
-	///     A string parameter that matches against a pattern.
+	///     A <see langword="string" /> parameter matcher driven by a wildcard or regular-expression pattern.
 	/// </summary>
 	public interface IParameterMatches : IParameterWithCallback<string>
 	{
 		/// <summary>
-		///     Enables case-sensitive matching of the pattern when specified.
+		///     Switches the pattern comparison to be case-sensitive (default: case-insensitive).
 		/// </summary>
 		IParameterMatches CaseSensitive(bool caseSensitive = true);
 
 		/// <summary>
-		///     Matches the pattern directly as a regular expression.
+		///     Interprets the pattern as a <see cref="Regex" /> rather than a wildcard expression.
 		/// </summary>
+		/// <param name="options">Regex options forwarded to <see cref="Regex" />.</param>
+		/// <param name="timeout">Optional match timeout; defaults to <see cref="Regex.InfiniteMatchTimeout" />.</param>
+		/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+		/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
 		IParameterMatches AsRegex(
 			RegexOptions options = RegexOptions.None,
 			TimeSpan? timeout = null,

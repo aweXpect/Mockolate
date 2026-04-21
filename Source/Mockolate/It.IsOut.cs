@@ -11,22 +11,54 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
+	///     Placeholder matcher for an <see langword="out" /> parameter of type <typeparamref name="T" />, intended
+	///     for use in <c>Verify</c>.
 	/// </summary>
+	/// <remarks>
+	///     Use this overload when you only want to assert that a method was invoked (with any out-argument).
+	///     For <c>Setup</c>, use <see cref="IsOut{T}(Func{T}, string)" /> to actually produce an out-value, or
+	///     <see cref="IsAnyOut{T}" /> to assign <see langword="default" /> to the caller's variable.
+	/// </remarks>
+	/// <typeparam name="T">The out-parameter's type.</typeparam>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Verify.TryDelete(It.Is(id), It.IsOut&lt;User?&gt;()).Once();
+	///     </code>
+	/// </example>
 	public static IVerifyOutParameter<T> IsOut<T>()
 		=> new InvokedOutParameterMatch<T>();
 
 	/// <summary>
-	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
-	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> in a <c>Setup</c> and uses
+	///     <paramref name="setter" /> to produce the value assigned to the caller's variable when the method is
+	///     invoked.
 	/// </summary>
+	/// <remarks>
+	///     <paramref name="setter" /> runs on every matching invocation, so you can return a fresh value per call
+	///     (e.g. a new <see cref="System.Guid" /> or an incrementing counter). Pair with
+	///     <see cref="IOutParameter{T}.Do" /> to observe each produced value.
+	/// </remarks>
+	/// <typeparam name="T">The out-parameter's type.</typeparam>
+	/// <param name="setter">Factory that produces the value to assign to the caller's out-variable.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.TryDelete(It.Is(id), It.IsOut(() =&gt; new User(id, "Alice"))).Returns(true);
+	///     </code>
+	/// </example>
 	public static IOutParameter<T> IsOut<T>(Func<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new OutParameterMatch<T>(setter, doNotPopulateThisValue);
 
 	/// <summary>
-	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> in a <c>Setup</c> and assigns
+	///     <see langword="default" /> to the caller's variable.
 	/// </summary>
+	/// <remarks>
+	///     Shorthand for <c>It.IsOut(() =&gt; default)</c>. Use this when the caller's out value is irrelevant to the
+	///     test and you just need the method call to return.
+	/// </remarks>
+	/// <typeparam name="T">The out-parameter's type.</typeparam>
 	public static IOutParameter<T> IsAnyOut<T>()
 		=> new AnyOutParameterMatch<T>();
 

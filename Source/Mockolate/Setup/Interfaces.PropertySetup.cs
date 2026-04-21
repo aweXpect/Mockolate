@@ -47,145 +47,215 @@ public interface IInteractivePropertySetup : ISetup
 }
 
 /// <summary>
-///     Interface for setting up a property getter with fluent syntax.
+///     Fluent surface for attaching side-effects to a property's getter.
 /// </summary>
+/// <remarks>
+///     Each <c>Do</c> registers a callback that fires on every matching read. Chain multiple <c>Do</c> calls to form
+///     a sequence (cycling by default); chain <see cref="IPropertyGetterSetupCallbackBuilder{T}.InParallel" />,
+///     <see cref="IPropertyGetterSetupParallelCallbackBuilder{T}.When" />,
+///     <see cref="IPropertyGetterSetupCallbackWhenBuilder{T}.For" /> or
+///     <see cref="IPropertyGetterSetupCallbackWhenBuilder{T}.Only" /> to control repetition and gating.
+/// </remarks>
 public interface IPropertyGetterSetup<T>
 {
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	///     Fires <paramref name="callback" /> whenever the property's getter is read.
 	/// </summary>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.TotalDispensed.OnGet.Do(() =&gt; Console.WriteLine("Read!"));
+	///     </code>
+	/// </example>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	///     Fires <paramref name="callback" /> whenever the property's getter is read, passing the property's current
+	///     value.
 	/// </summary>
-	/// <remarks>
-	///     The callback receives the value of the property as single parameter.
-	/// </remarks>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action<T> callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's getter is accessed.
+	///     Fires <paramref name="callback" /> whenever the property's getter is read, passing a zero-based read counter
+	///     and the property's current value.
 	/// </summary>
-	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter and the value of the property as second
-	///     parameter.
-	/// </remarks>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the property is read.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the property is read - useful
+	///     to trigger state changes driven by observed reads.
 	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
+	/// <param name="scenario">The name of the scenario to transition to.</param>
 	IPropertyGetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
 }
 
 /// <summary>
-///     Interface for setting up a property setter with fluent syntax.
+///     Fluent surface for attaching side-effects to a property's setter.
 /// </summary>
+/// <remarks>
+///     Each <c>Do</c> registers a callback that fires on every matching write. Chain multiple <c>Do</c> calls to form
+///     a sequence (cycling by default); chain <see cref="IPropertySetterSetupCallbackBuilder{T}.InParallel" />,
+///     <see cref="IPropertySetterSetupParallelCallbackBuilder{T}.When" />,
+///     <see cref="IPropertySetterSetupCallbackWhenBuilder{T}.For" /> or
+///     <see cref="IPropertySetterSetupCallbackWhenBuilder{T}.Only" /> to control repetition and gating.
+/// </remarks>
 public interface IPropertySetterSetup<T>
 {
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
+	///     Fires <paramref name="callback" /> whenever the property's setter runs.
 	/// </summary>
 	IPropertySetterSetupCallbackBuilder<T> Do(Action callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
+	///     Fires <paramref name="callback" /> whenever the property's setter runs, passing the new value.
 	/// </summary>
-	/// <remarks>
-	///     The callback receives the value the property is set to as single parameter.
-	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.TotalDispensed.OnSet.Do(v =&gt; Console.WriteLine($"Set to {v}"));
+	///     </code>
+	/// </example>
 	IPropertySetterSetupCallbackBuilder<T> Do(Action<T> callback);
 
 	/// <summary>
-	///     Registers a callback to be invoked whenever the property's value is set.
+	///     Fires <paramref name="callback" /> whenever the property's setter runs, passing a zero-based write counter
+	///     and the new value.
 	/// </summary>
-	/// <remarks>
-	///     The callback receives an incrementing access counter as first parameter and the value the property is set to as
-	///     second parameter.
-	/// </remarks>
 	IPropertySetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> whenever the property is written to.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the property is written -
+	///     useful to trigger state changes driven by observed writes.
 	/// </summary>
-	/// <param name="scenario">The name of the new scenario.</param>
+	/// <param name="scenario">The name of the scenario to transition to.</param>
 	IPropertySetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
 }
 
 /// <summary>
-///     Interface for setting up a property with fluent syntax.
+///     Fluent surface for configuring a mocked property of type <typeparamref name="T" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.PropertyName</c>. Chain <see cref="InitializeWith" /> to back the property with a
+///     mutable slot, <see cref="Returns(T)" /> / <see cref="Throws{TException}" /> to define a sequence of read
+///     responses, and <see cref="OnGet" /> / <see cref="OnSet" /> to attach getter/setter callbacks. Consecutive
+///     <c>Returns</c>/<c>Throws</c> calls form a sequence that cycles once exhausted - terminate with
+///     <see cref="SetupExtensions.Forever{T}(IPropertySetupReturnWhenBuilder{T})" /> to freeze on the last entry, or
+///     <see cref="IPropertySetupReturnWhenBuilder{T}.For(int)" /> / <see cref="IPropertySetupReturnWhenBuilder{T}.Only(int)" />
+///     to control repetition.
+/// </remarks>
 public interface IPropertySetup<T>
 {
 	/// <summary>
-	///     Sets up callbacks on the getter.
+	///     Attaches callbacks that fire whenever the property's getter is accessed.
 	/// </summary>
+	/// <remarks>
+	///     See <see cref="IPropertyGetterSetup{T}" /> for the available <c>Do</c> overloads (parameterless, current
+	///     value, counter + current value) and <c>.TransitionTo(scenario)</c>.
+	/// </remarks>
 	IPropertyGetterSetup<T> OnGet { get; }
 
 	/// <summary>
-	///     Sets up callbacks on the setter.
+	///     Attaches callbacks that fire whenever the property's setter is invoked.
 	/// </summary>
+	/// <remarks>
+	///     See <see cref="IPropertySetterSetup{T}" /> for the available <c>Do</c> overloads (parameterless, new value,
+	///     counter + new value) and <c>.TransitionTo(scenario)</c>.
+	/// </remarks>
 	IPropertySetterSetup<T> OnSet { get; }
 
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this property only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="false" /> (the default on mocks) the base-class
+	///     getter/setter runs, and its return value is used as the default value for un-configured reads; when
+	///     <see langword="true" /> the base-class members are skipped entirely and only the configured behavior
+	///     (including <c>Returns</c>/<c>OnGet</c>/<c>OnSet</c>) is applied.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IPropertySetup<T> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Register the property to have a setup without a specific value.
+	///     Registers the property with the mock without supplying a value.
 	/// </summary>
 	/// <remarks>
-	///     This is necessary when the mock uses <see cref="MockBehavior.ThrowWhenNotSetup" />.
+	///     Primarily useful under <see cref="MockBehavior.ThrowWhenNotSetup" />: it marks the property as &quot;known&quot;
+	///     so a read returns the type's default value instead of throwing. Does not affect mocks with the default
+	///     behavior, where un-configured reads already return defaults.
 	/// </remarks>
 	IPropertySetup<T> Register();
 
 	/// <summary>
-	///     Initializes the property with the given <paramref name="value" />.
+	///     Gives the property a mutable backing slot initialized to <paramref name="value" /> - subsequent setter
+	///     invocations update the slot, and reads return the current slot value.
 	/// </summary>
+	/// <remarks>
+	///     After <see cref="InitializeWith" /> the property behaves like a normal auto-property. Additional
+	///     <c>Returns</c>/<c>Throws</c> or <c>OnSet</c>/<c>OnGet</c> calls layer extra behavior on top.
+	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.TotalDispensed.InitializeWith(42);
+	///     </code>
+	/// </example>
 	IPropertySetup<T> InitializeWith(T value);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this property.
+	///     Appends <paramref name="returnValue" /> to the property's read-sequence - the next read returns this value
+	///     (if no earlier sequence entry is still active).
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last entry is followed by
+	///     <see cref="SetupExtensions.Forever{T}(IPropertySetupReturnWhenBuilder{T})" />.
+	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.TotalDispensed
+	///         .Returns(1)
+	///         .Returns(2)
+	///         .Throws(new Exception("boom"))
+	///         .Returns(4);
+	///     </code>
+	/// </example>
 	IPropertySetupReturnBuilder<T> Returns(T returnValue);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	///     Appends a lazy return to the property's read-sequence; <paramref name="callback" /> is invoked on each
+	///     matching read and its result is returned.
 	/// </summary>
 	IPropertySetupReturnBuilder<T> Returns(Func<T> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this property.
+	///     Appends a lazy return that receives the property's current value and returns the new one - useful for
+	///     incrementing or transforming the last-read value.
 	/// </summary>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.TotalDispensed.Returns(current =&gt; current + 10);
+	///     </code>
+	/// </example>
 	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
 
 	/// <summary>
-	///     Registers a <typeparamref name="TException" /> to throw when the property is read.
+	///     Appends an entry to the read-sequence that throws a freshly-constructed
+	///     <typeparamref name="TException" /> on the next matching read.
 	/// </summary>
 	IPropertySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the property is read.
+	///     Appends an entry to the read-sequence that throws <paramref name="exception" /> on the next matching read.
 	/// </summary>
 	IPropertySetupReturnBuilder<T> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching read - useful when the exception needs to reference the invocation state.
 	/// </summary>
 	IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the property is read.
+	///     Appends an entry that invokes <paramref name="callback" /> with the property's current value to build the
+	///     exception thrown on the next matching read.
 	/// </summary>
 	IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback);
 }

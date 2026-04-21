@@ -10,14 +10,26 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a collection parameter that contains <paramref name="item" />.
+	///     Matches a collection parameter that contains <paramref name="item" /> (according to
+	///     <see cref="EqualityComparer{T}.Default" /> or a custom comparer via
+	///     <see cref="IContainsParameter{T}.Using" />).
 	/// </summary>
 	/// <remarks>
 	///     Supports method parameters declared as <see cref="IEnumerable{T}" />, <see cref="ICollection{T}" />,
 	///     <see cref="IList{T}" />, <see cref="IReadOnlyCollection{T}" />, <see cref="IReadOnlyList{T}" />,
 	///     <see cref="ISet{T}" />, <typeparamref name="T" /> arrays, <see cref="List{T}" />,
-	///     <see cref="HashSet{T}" />, <see cref="Queue{T}" /> or <see cref="Stack{T}" />.
+	///     <see cref="HashSet{T}" />, <see cref="Queue{T}" /> or <see cref="Stack{T}" />. Use
+	///     <see cref="SequenceEquals{T}(IEnumerable{T})" /> when order and length must match.
 	/// </remarks>
+	/// <typeparam name="T">The collection element type.</typeparam>
+	/// <param name="item">The item that must appear in the collection.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Process(It.Contains(5)).Returns(true);
+	///     sut.Mock.Verify.Process(It.Contains("HELLO").Using(StringComparer.OrdinalIgnoreCase)).Once();
+	///     </code>
+	/// </example>
 	public static IContainsParameter<T> Contains<T>(T item,
 		[CallerArgumentExpression(nameof(item))]
 		string doNotPopulateThisValue = "")

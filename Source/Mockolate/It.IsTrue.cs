@@ -7,8 +7,17 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any boolean parameter that is <see langword="true" />.
+	///     Matches any <see langword="bool" /> parameter whose value is <see langword="true" />.
 	/// </summary>
+	/// <remarks>
+	///     Shorthand for <c>It.Is(true)</c> with a nicer failure-message rendering. Use
+	///     <see cref="IsFalse" /> for the opposite.
+	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Verify.Toggle(It.IsTrue()).Once();
+	///     </code>
+	/// </example>
 	public static IParameterWithCallback<bool> IsTrue()
 		=> new TrueParameterMatch();
 

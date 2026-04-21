@@ -56,7 +56,29 @@ internal static partial class Sources
 
 		string mockPropertyName = CreateUniquePropertyName(@class, "Mock");
 
-		sb.AppendXmlSummary($"Get access to the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.AppendXmlSummary($"Gets the mock accessor for <see cref=\"{escapedClassName}\" /> - the entry point for configuring setups, verifying interactions and raising events.");
+		sb.AppendXmlRemarks([
+			$"The accessor is the bridge between the strongly-typed instance of <see cref=\"{escapedClassName}\" /> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.",
+			"Through it you can:",
+			"<list type=\"bullet\">",
+			"  <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item>",
+			"  <item><description><c>Verify</c> - assert how often (and in which order) members were invoked.</description></item>",
+			"  <item><description><c>Raise</c> - trigger events declared on the mocked type (only available if the type has events).</description></item>",
+			"  <item><description><c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c> - target <see langword=\"protected\" /> members on class mocks.</description></item>",
+			"  <item><description><c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c> - target <see langword=\"static\" /> members on interface mocks.</description></item>",
+			"  <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item>",
+			"  <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item>",
+			"  <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item>",
+			"</list>",
+			$"Throws a <see cref=\"global::Mockolate.Exceptions.MockException\" /> if the instance is not a Mockolate-generated mock of <see cref=\"{escapedClassName}\" />.",
+		]);
+		string displayForCode = @class.DisplayString.EscapeForXmlText();
+		sb.AppendXmlExample([
+			$"{displayForCode} sut = {displayForCode}.CreateMock();",
+			"sut.Mock.Setup.MemberName(It.IsAny&lt;int&gt;()).Returns(42);",
+			"// ... exercise the subject ...",
+			"sut.Mock.Verify.MemberName(It.IsAny&lt;int&gt;()).Once();",
+		]);
 		sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(name).Append(' ').Append(mockPropertyName)
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -81,8 +103,24 @@ internal static partial class Sources
 			$"A new mock instance of <see cref=\"{escapedClassName}\" />.";
 
 		sb.AppendXmlSummary(
-			$"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
+			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
+		sb.AppendXmlRemarks([
+			$"The returned instance is a strongly-typed mock generated at compile time - it implements <see cref=\"{escapedClassName}\" /> and exposes the Mockolate surface through <c>.Mock</c>:",
+			"<list type=\"bullet\">",
+			"  <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item>",
+			"  <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item>",
+			"  <item><description><c>.Mock.Raise</c> triggers events declared on the mocked type.</description></item>",
+			"</list>",
+			"With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword=\"null\" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref=\"global::Mockolate.MockBehavior\" /> to customize this (for example to make un-configured calls throw or to skip the base class).",
+			"Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.",
+		]);
 		sb.AppendXmlReturns(createMockReturns);
+		sb.AppendXmlExample([
+			$"{displayForCode} sut = {displayForCode}.CreateMock();",
+			"sut.Mock.Setup.MemberName(It.IsAny&lt;int&gt;()).Returns(42);",
+			"// ... exercise the subject ...",
+			"sut.Mock.Verify.MemberName(It.IsAny&lt;int&gt;()).Once();",
+		]);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, (object?[]?)null);").AppendLine();
 		sb.AppendLine();
@@ -818,92 +856,204 @@ internal static partial class Sources
 
 		#region IMockForXXX
 
-		sb.AppendXmlSummary($"Accesses the mock of <see cref=\"{escapedClassName}\" />.", "\t");
+		sb.AppendXmlSummary($"The Mockolate accessor for a mock of <see cref=\"{escapedClassName}\" />, reached through <c>.Mock</c> on the mocked instance.", "\t");
+		sb.AppendXmlRemarks([
+			"Groups every operation that acts on the mock rather than on the mocked subject: setups, verifications, event raising, scenarios and monitoring.",
+		], "\t");
 		sb.Append("\tinternal interface IMockFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.AppendXmlSummary($"Set up the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.AppendXmlSummary($"Configures how members of the mock of <see cref=\"{escapedClassName}\" /> respond when invoked.");
+		sb.AppendXmlRemarks([
+			"Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.",
+			"When two setups overlap, the most recently defined one wins.",
+		]);
+		sb.AppendXmlExample([
+			"sut.Mock.Setup.MyMethod(It.IsAny&lt;int&gt;()).Returns(42);",
+			"sut.Mock.Setup.MyProperty.InitializeWith(10);",
+			"sut.Mock.Setup.MyMethod(It.IsAny&lt;int&gt;())",
+			"    .Returns(1).For(2)     // first two calls return 1",
+			"    .Throws&lt;InvalidOperationException&gt;() // third call throws",
+			"    .Returns(0).Forever(); // remaining calls return 0",
+		]);
 		sb.Append("\t\tIMockSetupFor").Append(name).Append(" Setup { get; }").AppendLine();
 		sb.AppendLine();
 		if (hasProtectedMembers)
 		{
-			sb.AppendXmlSummary($"Set up protected members on the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Configures how <see langword=\"protected\" /> virtual members of the mock of <see cref=\"{escapedClassName}\" /> respond when invoked.");
+			sb.AppendXmlRemarks([
+				"Only members declared as <see langword=\"protected\" /> (or <see langword=\"protected\" /> <see langword=\"internal\" />) on the mocked class appear here. All setup chain operators (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, sequences, <c>.For</c>/<c>.Only</c>/<c>.Forever</c>, ...) work identically to <see cref=\"Setup\" />.",
+			]);
+			sb.AppendXmlExample([
+				"sut.Mock.SetupProtected.DispenseInternal(It.Is(\"Dark\"), It.IsAny&lt;int&gt;())",
+				"    .Returns(true);",
+			]);
 			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" SetupProtected { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
 		if (hasStaticMembers)
 		{
-			sb.AppendXmlSummary($"Set up static members on the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Configures how <see langword=\"static\" /> members declared on <see cref=\"{escapedClassName}\" /> respond when invoked.");
+			sb.AppendXmlRemarks([
+				"Static members are scoped per async/execution flow while the mock is alive; invocations from other flows are not intercepted.",
+			]);
 			sb.Append("\t\tIMockStaticSetupFor").Append(name).Append(" SetupStatic { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary($"Enter a scenario scope on the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.AppendXmlSummary($"Opens a named scenario scope on the mock of <see cref=\"{escapedClassName}\" /> so that additional setups can be registered for that scenario.");
+		sb.AppendXmlRemarks([
+			"Scenarios let you define per-state behavior. Setups registered inside the returned <c>IMockInScenarioFor...</c> scope only apply while the mock's current scenario matches <paramref name=\"scenario\" />; switch scenarios with <see cref=\"TransitionTo\" />.",
+		]);
+		sb.AppendXmlParam("scenario", "Name of the scenario to enter. Any non-null string acts as a key; the mock starts in an unnamed default scenario.");
+		sb.AppendXmlReturns("A scoped accessor whose <c>Setup</c> (and <c>SetupProtected</c>, where applicable) register scenario-specific setups.");
 		sb.Append("\t\tIMockInScenarioFor").Append(name).Append(" InScenario(string scenario);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Enter a scenario scope on the mock of <see cref=\"{escapedClassName}\" /> and invoke the <paramref name=\"setup\" />.");
+		sb.AppendXmlSummary($"Opens a named scenario scope on the mock of <see cref=\"{escapedClassName}\" /> and immediately invokes <paramref name=\"setup\" /> to register scenario-specific setups.");
+		sb.AppendXmlRemarks([
+			"Equivalent to <c>InScenario(scenario)</c> followed by the setup callback, but returns the original <c>IMockFor...</c> accessor so it chains nicely at mock-creation time.",
+		]);
+		sb.AppendXmlParam("scenario", "Name of the scenario to enter.");
+		sb.AppendXmlParam("setup", "Callback that receives the scenario-scoped setup surface and registers scenario-specific setups.");
+		sb.AppendXmlReturns("This accessor, to allow chaining.");
 		sb.Append("\t\tIMockFor").Append(name).Append(" InScenario(string scenario, global::System.Action<IMockInScenarioFor")
 			.Append(name).Append("> setup);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Transitions the mock of <see cref=\"{escapedClassName}\" /> to the given <paramref name=\"scenario\" />.");
+		sb.AppendXmlSummary($"Switches the active scenario of the mock of <see cref=\"{escapedClassName}\" /> to <paramref name=\"scenario\" />.");
+		sb.AppendXmlRemarks([
+			"After the transition, setups registered via <see cref=\"InScenario(string)\" /> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.",
+		]);
+		sb.AppendXmlParam("scenario", "Name of the scenario to transition to.");
+		sb.AppendXmlReturns("This accessor, to allow chaining further operations.");
 		sb.Append("\t\tIMockFor").Append(name).Append(" TransitionTo(string scenario);").AppendLine();
 		sb.AppendLine();
 
 		if (hasEvents)
 		{
-			sb.AppendXmlSummary($"Raise events on the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Triggers events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
+			sb.AppendXmlRemarks([
+				"One entry per event is generated; the signature matches the event's delegate. Only handlers that are subscribed at the moment of the <c>Raise</c> call are invoked - handlers subscribed later (or already removed) are skipped.",
+			]);
+			sb.AppendXmlExample([
+				"sut.MyEvent += (sender, args) => { /* ... */ };",
+				"sut.Mock.Raise.MyEvent(sut, EventArgs.Empty);",
+			]);
 			sb.Append("\t\tIMockRaiseOn").Append(name).Append(" Raise { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
 		if (hasProtectedEvents)
 		{
-			sb.AppendXmlSummary($"Raise protected events on the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Triggers <see langword=\"protected\" /> events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
+			sb.AppendXmlRemarks([
+				"Same semantics as <see cref=\"Raise\" /> but for events whose accessibility prevents external subscription from outside the class. Useful when testing code that subclasses the mocked type.",
+			]);
 			sb.Append("\t\tIMockProtectedRaiseOn").Append(name).Append(" RaiseProtected { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
 		if (hasStaticEvents)
 		{
-			sb.AppendXmlSummary($"Raise static events on the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Triggers <see langword=\"static\" /> events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
+			sb.AppendXmlRemarks([
+				"Static events are scoped per async/execution flow while the mock is alive.",
+			]);
 			sb.Append("\t\tIMockStaticRaiseOn").Append(name).Append(" RaiseStatic { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary($"Verify interactions with the mock of <see cref=\"{escapedClassName}\" />.");
+		sb.AppendXmlSummary($"Asserts how often, and in which order, members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
+		sb.AppendXmlRemarks([
+			"Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never</c>, <c>Once</c>, <c>Twice</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce</c>/<c>AtLeastTwice</c>, <c>AtMost(n)</c>/<c>AtMostOnce</c>/<c>AtMostTwice</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.",
+			"Use <c>Within(TimeSpan)</c> / <c>WithCancellation(CancellationToken)</c> before the terminator to wait for expected interactions that happen on background threads.",
+			"Chain <c>Then(...)</c> to assert an ordered sequence of calls. A failing assertion throws a <see cref=\"global::Mockolate.Exceptions.MockVerificationException\" />.",
+		]);
+		sb.AppendXmlExample([
+			"sut.Mock.Verify.MyMethod(It.IsAny&lt;int&gt;()).Once();",
+			"sut.Mock.Verify.MyProperty.Got().AtLeastOnce();",
+			"sut.Mock.Verify.MyProperty.Set(It.Is(42)).Never();",
+			"sut.Mock.Verify.MyMethod(It.Is(1)).Then(",
+			"    m =&gt; m.MyMethod(It.Is(2)));",
+		]);
 		sb.Append("\t\tIMockVerifyFor").Append(name).Append(" Verify { get; }").AppendLine();
 		sb.AppendLine();
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
-			sb.AppendXmlSummary($"Verify protected interactions with the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Asserts how often, and in which order, <see langword=\"protected\" /> members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
+			sb.AppendXmlRemarks([
+				"Same terminators and modifiers as <see cref=\"Verify\" /> (<c>Once</c>, <c>Exactly</c>, <c>Within</c>, <c>Then</c>, ...); applies to <see langword=\"protected\" /> members and events instead of public ones.",
+			]);
 			sb.Append("\t\tIMockProtectedVerifyFor").Append(name).Append(" VerifyProtected { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
 		if (hasStaticMembers || hasStaticEvents)
 		{
-			sb.AppendXmlSummary($"Verify static interactions with the mock of <see cref=\"{escapedClassName}\" />.");
+			sb.AppendXmlSummary($"Asserts how often, and in which order, <see langword=\"static\" /> members declared on <see cref=\"{escapedClassName}\" /> were invoked.");
+			sb.AppendXmlRemarks([
+				"Same terminators and modifiers as <see cref=\"Verify\" />; scoped per async/execution flow in the same way as <see cref=\"SetupStatic\" />.",
+			]);
 			sb.Append("\t\tIMockStaticVerifyFor").Append(name).Append(" VerifyStatic { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary("Verifies the method invocations for the <paramref name=\"setup\" /> on the mock.");
+		sb.AppendXmlSummary("Verifies how often a specific method setup was matched by actual invocations.");
+		sb.AppendXmlRemarks([
+			"Useful when you want to verify &quot;this <em>particular</em> setup was hit N times&quot; without re-stating the matchers. Chain the usual count terminators (<c>Once</c>, <c>AtLeastOnce</c>, <c>Exactly</c>, ...) on the returned result.",
+		]);
+		sb.AppendXmlParam("setup", "The setup previously registered through <see cref=\"Setup\" /> (typically returned from a <c>Returns(...)</c>/<c>Throws(...)</c> call).");
+		sb.AppendXmlReturns("A <c>VerificationResult</c> that counts invocations matching the given setup.");
+		sb.AppendXmlExample([
+			"IMockSetup setup = sut.Mock.Setup.MyMethod(It.Is(1)).Returns(true);",
+			"// ... exercise the subject ...",
+			"sut.Mock.VerifySetup(setup).AtLeastOnce();",
+		]);
 		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name)
 			.Append("> VerifySetup(global::Mockolate.Setup.IMethodSetup setup);").AppendLine();
 		sb.AppendLine();
-		sb.AppendXmlSummary("Gets a value indicating whether all expected interactions have been verified.");
+		sb.AppendXmlSummary("Checks whether every recorded interaction on this mock has been observed by at least one <c>Verify</c> call.");
+		sb.AppendXmlRemarks([
+			"Useful in test teardown to catch unexpected interactions (&quot;strict verification&quot;): if any recorded call has never been matched by a verification, the method returns <see langword=\"false\" />.",
+		]);
+		sb.AppendXmlReturns("<see langword=\"true\" /> if every recorded interaction was verified at least once; otherwise <see langword=\"false\" />.");
 		sb.Append("\t\tbool VerifyThatAllInteractionsAreVerified();").AppendLine();
 		sb.AppendLine();
-		sb.AppendXmlSummary("Gets a value indicating whether all registered setups were used.");
+		sb.AppendXmlSummary("Checks whether every registered setup on this mock was matched by at least one actual invocation.");
+		sb.AppendXmlRemarks([
+			"Useful to catch unused setups that silently rot as the test subject evolves.",
+		]);
+		sb.AppendXmlReturns("<see langword=\"true\" /> if every registered setup was used at least once; otherwise <see langword=\"false\" />.");
 		sb.Append("\t\tbool VerifyThatAllSetupsAreUsed();").AppendLine();
 		sb.AppendLine();
-		sb.AppendXmlSummary("Clears all interactions recorded by the mock object.");
+		sb.AppendXmlSummary("Removes every recorded interaction from this mock while keeping all registered setups intact.");
+		sb.AppendXmlRemarks([
+			"Handy when a single test exercises multiple logical phases and you only want to verify the interactions of the latest phase.",
+		]);
+		sb.AppendXmlExample([
+			"sut.DoSomething();",
+			"sut.Mock.ClearAllInteractions();",
+			"sut.DoSomethingElse();",
+			"sut.Mock.Verify.DoSomethingElse(Match.AnyParameters()).Once();",
+		]);
 		sb.Append("\t\tvoid ClearAllInteractions();").AppendLine();
 		sb.AppendLine();
 		sb.AppendXmlSummary(
-			"Provides monitoring capabilities for a mocked instance of the specified type, allowing inspection of accessed properties, invoked methods, and event subscriptions.");
+			"Creates a scoped monitor that records interactions only while its <see cref=\"global::System.IDisposable\" /> scope is active.");
+		sb.AppendXmlRemarks([
+			"Interactions recorded on the mock outside <c>monitor.Run()</c> are not visible through the monitor. Useful to verify only the interactions produced by a specific block of test code without resetting the mock.",
+		]);
+		sb.AppendXmlReturns("A <see cref=\"global::Mockolate.Monitor.MockMonitor{T}\" /> that exposes <c>Verify</c> over the monitored interactions and a <c>Run()</c> method that opens the recording scope.");
+		sb.AppendXmlExample([
+			"var monitor = sut.Mock.Monitor();",
+			"using (monitor.Run())",
+			"{",
+			"    sut.DoSomething(); // recorded",
+			"}",
+			"sut.DoSomething();     // not recorded",
+			"monitor.Verify.DoSomething(Match.AnyParameters()).Once();",
+		]);
 		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> Monitor();")
 			.AppendLine();
 		sb.Append("\t}").AppendLine();

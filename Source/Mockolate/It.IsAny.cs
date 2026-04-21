@@ -8,9 +8,25 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any parameter of type <typeparamref name="T" />.
+	///     Matches any value passed for a parameter of type <typeparamref name="T" /> (including <see langword="null" />).
 	/// </summary>
-	/// <remarks>Also matches, if the method parameter is <see langword="null" />.</remarks>
+	/// <remarks>
+	///     The workhorse matcher when a setup or verification shouldn't care about the exact argument value. For
+	///     reference-typed and nullable parameters <see langword="null" /> also matches. For <see langword="ref" />,
+	///     <see langword="out" />, span or ref-struct parameters, use the dedicated <c>It.IsAnyRef</c>,
+	///     <c>It.IsAnyOut</c>, <c>It.IsAnySpan</c>, <c>It.IsAnyRefStruct</c> counterparts instead.
+	///     <para />
+	///     Chain <c>.Monitor(out var monitor)</c> (see <see cref="ParameterExtensions" />) to observe the actual values that
+	///     flow through the matcher at runtime.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <returns>A parameter matcher that accepts every value of type <typeparamref name="T" />.</returns>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Dispense(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;()).Returns(true);
+	///     sut.Mock.Verify.Dispense(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;()).AtLeastOnce();
+	///     </code>
+	/// </example>
 	public static IParameterWithCallback<T> IsAny<T>()
 		=> new AnyParameterMatch<T>();
 

@@ -9,21 +9,47 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a parameter that is equal to <paramref name="value" />.
+	///     Matches a parameter that equals <paramref name="value" /> according to <see cref="EqualityComparer{T}.Default" />
+	///     (overridable via <see cref="IIsParameter{T}.Using" />).
 	/// </summary>
+	/// <remarks>
+	///     For methods and indexers with up to four parameters you can also pass the raw value directly - Mockolate
+	///     treats it as if it were wrapped in <c>It.Is(value)</c>. Prefer an explicit <c>It.Is(...)</c> when the call
+	///     site would otherwise be ambiguous (e.g. when mixing matchers and raw values), or when you need
+	///     <see cref="IIsParameter{T}.Using"/> for a custom comparer.
+	///     <para />
+	///     The expression passed as <paramref name="value" /> is captured by the compiler (via
+	///     <see cref="CallerArgumentExpressionAttribute" />) and appears verbatim in failure messages, so keep
+	///     expressions short to get readable diagnostics.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="value">The expected value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>A parameter matcher that only accepts arguments equal to <paramref name="value" />.</returns>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Dispense(It.Is("Dark"), It.Is(5)).Returns(true);
+	///     sut.Mock.Verify.Lookup(It.Is("hello").Using(StringComparer.OrdinalIgnoreCase)).Once();
+	///     </code>
+	/// </example>
 	public static IIsParameter<T> Is<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
 		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue);
 
 	/// <summary>
-	///     An <see cref="IParameter{T}" /> used for equality comparison.
+	///     An <see cref="IParameter{T}" /> used for equality comparison, with an opt-in custom comparer.
 	/// </summary>
 	public interface IIsParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
-		///     Use the specified comparer to determine equality.
+		///     Switches equality comparison to use <paramref name="comparer" /> instead of
+		///     <see cref="EqualityComparer{T}.Default" />.
 		/// </summary>
+		/// <remarks>
+		///     Useful for case-insensitive string comparison or structural comparisons on types that don't override
+		///     <see cref="object.Equals(object)" />.
+		/// </remarks>
 		IIsParameter<T> Using(IEqualityComparer<T> comparer,
 			[CallerArgumentExpression(nameof(comparer))]
 			string doNotPopulateThisValue = "");
