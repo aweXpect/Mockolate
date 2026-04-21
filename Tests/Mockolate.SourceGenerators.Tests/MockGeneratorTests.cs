@@ -987,6 +987,94 @@ public class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenConstructorHasDecimalDefault_ShouldAppendMSuffixInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(decimal price = 19.95m) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(decimal price = 19.95m)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasFloatDefault_ShouldAppendFSuffixInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(float factor = 3.14f) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(float factor = 3.14f)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasNullableDecimalDefault_ShouldAppendMSuffixInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     #nullable enable
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(decimal? price = 19.95m) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(decimal? price = 19.95m)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
 	public async Task WhenConstructorHasLongAndDoubleDefaults_ShouldPreserveLiteralsInTypedOverload()
 	{
 		GeneratorResult result = Generator

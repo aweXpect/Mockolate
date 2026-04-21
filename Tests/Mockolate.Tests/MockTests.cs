@@ -430,6 +430,16 @@ public sealed partial class MockTests
 		public virtual string VirtualMethod() => Text;
 	}
 
+	public class MyBaseClassWithDecimalDefault
+	{
+		public MyBaseClassWithDecimalDefault(decimal price = 19.95m)
+		{
+			Price = price;
+		}
+
+		public decimal Price { get; }
+	}
+
 	public interface IMyServiceWithGenericMethodsWithWhereClause
 	{
 		int MyMethod<T>(bool flag) where T : IChocolateDispenser;

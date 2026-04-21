@@ -129,6 +129,17 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task TypedOverload_ConstructorWithDecimalDefault_ShouldForwardExplicitValue()
+		{
+			// This test exercises the generator's default-value emission end-to-end: if the
+			// generator dropped the 'm' suffix ("decimal price = 19.95"), the generated source
+			// would fail to compile, taking the whole test project down with it.
+			MyBaseClassWithDecimalDefault sut = MyBaseClassWithDecimalDefault.CreateMock(42.50m);
+
+			await That(sut.Price).IsEqualTo(42.50m);
+		}
+
+		[Fact]
 		public async Task WithAdditionalInterfacesFromDifferentNamespaces_ShouldHaveUniqueName()
 		{
 			int invocationCount1 = 0;
