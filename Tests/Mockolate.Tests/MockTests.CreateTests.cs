@@ -21,8 +21,8 @@ public sealed partial class MockTests
 		public async Task With2Arguments_WithConstructorParametersAndSetups_ShouldApplySetups()
 		{
 			MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
-				["foo",],
-				setup => setup.VirtualMethod().Returns("bar")).Implementing<IMyService>();
+				setup => setup.VirtualMethod().Returns("bar"),
+				["foo",]).Implementing<IMyService>();
 
 			string result = mock.VirtualMethod();
 
@@ -33,9 +33,9 @@ public sealed partial class MockTests
 		public async Task With2Arguments_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
 		{
 			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
-					["foo",],
 					MockBehavior.Default,
-					setup => setup.VirtualMethod().Returns("bar"))
+					setup => setup.VirtualMethod().Returns("bar"),
+					["foo",])
 				.Implementing<IMyService>();
 
 			string result = sut.VirtualMethod();
@@ -60,6 +60,72 @@ public sealed partial class MockTests
 			await That(result1).IsEqualTo(2);
 			await That(result2).IsEqualTo(4);
 			await That(result3).IsEqualTo(8);
+		}
+
+		[Fact]
+		public async Task TypedOverload_SingleConstructor_ShouldForwardToBaseClass()
+		{
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock("foo");
+
+			await That(sut.Text).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task TypedOverload_WithSetup_ShouldApplySetup()
+		{
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
+				setup => setup.VirtualMethod().Returns("bar"),
+				"foo");
+
+			await That(sut.VirtualMethod()).IsEqualTo("bar");
+		}
+
+		[Fact]
+		public async Task TypedOverload_WithMockBehavior_ShouldUseBehavior()
+		{
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
+
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(behavior, "foo");
+
+			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
+			await That(sut.Text).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task TypedOverload_WithMockBehaviorAndSetup_ShouldApplyBoth()
+		{
+			MockBehavior behavior = MockBehavior.Default;
+
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
+				behavior,
+				setup => setup.VirtualMethod().Returns("bar"),
+				"foo");
+
+			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
+			await That(sut.VirtualMethod()).IsEqualTo("bar");
+		}
+
+		[Fact]
+		public async Task TypedOverload_MultipleConstructors_ShouldDispatchToMatchingConstructor()
+		{
+			MyBaseClassWithMultipleConstructors sutFromString =
+				MyBaseClassWithMultipleConstructors.CreateMock("foo");
+			MyBaseClassWithMultipleConstructors sutFromIntAndString =
+				MyBaseClassWithMultipleConstructors.CreateMock(42, "bar");
+
+			await That(sutFromString.Text).IsEqualTo("foo");
+			await That(sutFromString.Number).IsEqualTo(0);
+			await That(sutFromIntAndString.Text).IsEqualTo("bar");
+			await That(sutFromIntAndString.Number).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task TypedOverload_ConstructorWithDefaultValue_ShouldApplyDefault()
+		{
+			MyBaseClassWithMultipleConstructors sut = MyBaseClassWithMultipleConstructors.CreateMock(42);
+
+			await That(sut.Text).IsEqualTo("default");
+			await That(sut.Number).IsEqualTo(42);
 		}
 
 		[Fact]

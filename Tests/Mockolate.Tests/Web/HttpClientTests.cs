@@ -35,7 +35,7 @@ public class HttpClientTests
 
 		void Act()
 		{
-			_ = HttpClient.CreateMock([handler,], behavior2);
+			_ = HttpClient.CreateMock(behavior2, [handler,]);
 		}
 
 		await That(Act).Throws<MockException>().WithMessage(
@@ -65,7 +65,7 @@ public class HttpClientTests
 
 		void Act()
 		{
-			_ = HttpClient.CreateMock([handler,], behavior2);
+			_ = HttpClient.CreateMock(behavior2, [handler,]);
 		}
 
 		await That(Act).DoesNotThrow();

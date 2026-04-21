@@ -71,8 +71,8 @@ internal static partial class Sources
 		              		///     <typeparamref name="T" /> is not mockable. Calling it always throws a <see cref="global::Mockolate.Exceptions.MockException" />.
 		              		/// </summary>
 		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
-		              		/// <param name="constructorParameters">Ignored; reserved for the generator-emitted overload.</param>
 		              		/// <param name="mockBehavior">Ignored; reserved for the generator-emitted overload.</param>
+		              		/// <param name="constructorParameters">Ignored; reserved for the generator-emitted overload.</param>
 		              		/// <returns>This method never returns - it always throws.</returns>
 		              		/// <remarks>
 		              		///     The source generator emits a concrete <c>CreateMock</c> overload per mockable type with the same shape.
@@ -80,7 +80,25 @@ internal static partial class Sources
 		              		///     run a clean build (for example <c>dotnet clean &amp;&amp; dotnet build</c>) and verify that the type is mockable.
 		              		/// </remarks>
 		              		/// <exception cref="global::Mockolate.Exceptions.MockException">Always thrown: the source generator did not run or <typeparamref name="T" /> is not mockable.</exception>
-		              		public static global::Mockolate.Mock.IMockGenerationDidNotRun CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior = null)
+		              		public static global::Mockolate.Mock.IMockGenerationDidNotRun CreateMock(global::Mockolate.MockBehavior? mockBehavior, object?[]? constructorParameters)
+		              		{
+		              			throw new global::Mockolate.Exceptions.MockException($"This method should not be called directly. Either '{typeof(T)}' is not mockable or the source generator did not run correctly.");
+		              		}
+
+		              		/// <summary>
+		              		///     Fallback <c>CreateMock</c> that is only resolved when the Mockolate source generator did not run or when
+		              		///     <typeparamref name="T" /> is not mockable. Calling it always throws a <see cref="global::Mockolate.Exceptions.MockException" />.
+		              		/// </summary>
+		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
+		              		/// <param name="constructorParameters">Ignored; reserved for the generator-emitted overload.</param>
+		              		/// <returns>This method never returns - it always throws.</returns>
+		              		/// <remarks>
+		              		///     The source generator emits a concrete <c>CreateMock</c> overload per mockable type with the same shape.
+		              		///     If you see this fallback resolved in your IDE, the generator did not run for <typeparamref name="T" />;
+		              		///     run a clean build (for example <c>dotnet clean &amp;&amp; dotnet build</c>) and verify that the type is mockable.
+		              		/// </remarks>
+		              		/// <exception cref="global::Mockolate.Exceptions.MockException">Always thrown: the source generator did not run or <typeparamref name="T" /> is not mockable.</exception>
+		              		public static global::Mockolate.Mock.IMockGenerationDidNotRun CreateMock(object?[]? constructorParameters)
 		              		{
 		              			throw new global::Mockolate.Exceptions.MockException($"This method should not be called directly. Either '{typeof(T)}' is not mockable or the source generator did not run correctly.");
 		              		}

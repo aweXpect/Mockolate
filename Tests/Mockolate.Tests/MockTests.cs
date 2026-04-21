@@ -101,8 +101,8 @@ public sealed partial class MockTests
 	public async Task Create_WithConstructorParametersAndSetups_ShouldApplySetups()
 	{
 		MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
-			["foo",],
-			setup => setup.VirtualMethod().Returns("bar"));
+			setup => setup.VirtualMethod().Returns("bar"),
+			["foo",]);
 
 		string result = mock.VirtualMethod();
 
@@ -113,8 +113,9 @@ public sealed partial class MockTests
 	public async Task Create_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
 	{
 		MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
-			["foo",], MockBehavior.Default,
-			setup => setup.VirtualMethod().Returns("bar"));
+			MockBehavior.Default,
+			setup => setup.VirtualMethod().Returns("bar"),
+			["foo",]);
 
 		string result = mock.VirtualMethod();
 
@@ -409,6 +410,24 @@ public sealed partial class MockTests
 
 		// ReSharper disable once UnassignedGetOnlyAutoProperty
 		public int Number { get; }
+	}
+
+	public class MyBaseClassWithMultipleConstructors
+	{
+		public MyBaseClassWithMultipleConstructors(string text)
+		{
+			Text = text;
+		}
+
+		public MyBaseClassWithMultipleConstructors(int number, string text = "default")
+		{
+			Number = number;
+			Text = text;
+		}
+
+		public int Number { get; }
+		public string Text { get; }
+		public virtual string VirtualMethod() => Text;
 	}
 
 	public interface IMyServiceWithGenericMethodsWithWhereClause
