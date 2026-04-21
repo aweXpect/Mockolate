@@ -1230,6 +1230,9 @@ internal static partial class Sources
 			return;
 		}
 
+		// Seeded signatures track the hand-written CreateMock overloads so typed overloads that
+		// would collide with them are skipped. The key order mirrors the emitted C# signature:
+		// "mockBehavior? | setup? | ctor-param-types...".
 		HashSet<string> emittedSignatures = new(StringComparer.Ordinal)
 		{
 			string.Empty,
@@ -1237,9 +1240,9 @@ internal static partial class Sources
 			$"global::System.Action<{setupType}>",
 			$"global::Mockolate.MockBehavior|global::System.Action<{setupType}>",
 			"object?[]",
-			"object?[]|global::Mockolate.MockBehavior",
-			$"object?[]|global::System.Action<{setupType}>",
-			$"object?[]|global::Mockolate.MockBehavior|global::System.Action<{setupType}>",
+			"global::Mockolate.MockBehavior|object?[]",
+			$"global::System.Action<{setupType}>|object?[]",
+			$"global::Mockolate.MockBehavior|global::System.Action<{setupType}>|object?[]",
 		};
 
 		foreach (Method constructor in constructors.Value)
@@ -1280,15 +1283,18 @@ internal static partial class Sources
 		bool includeMockBehavior, bool includeSetup, string mockBehaviorName, string setupName, string baseSig,
 		HashSet<string> emittedSignatures)
 	{
+		// Build the signature key in the same order as the emitted method signature
+		// (mockBehavior, setup, then ctor parameters) so it correctly detects collisions against
+		// other typed overloads and against the hand-written seeded overloads.
 		string sig = baseSig;
-		if (includeMockBehavior)
-		{
-			sig += "|global::Mockolate.MockBehavior";
-		}
-
 		if (includeSetup)
 		{
-			sig += $"|global::System.Action<{setupType}>";
+			sig = $"global::System.Action<{setupType}>|{sig}";
+		}
+
+		if (includeMockBehavior)
+		{
+			sig = $"global::Mockolate.MockBehavior|{sig}";
 		}
 
 		if (!emittedSignatures.Add(sig))

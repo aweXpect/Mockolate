@@ -8,6 +8,9 @@ public partial class MockGeneratorTests
 	[GeneratedRegex(@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+\)")]
 	private static partial Regex CreateMockBehaviorSignatureRegex();
 
+	[GeneratedRegex(@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+,\s+int\s+\w+\)")]
+	private static partial Regex CreateMockBehaviorIntSignatureRegex();
+
 
 	[Fact]
 	public async Task SameMethodDifferingOnlyByNullability_ShouldUseExplicitImplementationForConflictingInterface()
@@ -824,6 +827,41 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle().And
 			.Contains("public static global::MyCode.MyService CreateMock(int? value)")
 			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenOneCtorStartsWithMockBehaviorAndAnotherOmitsIt_ShouldNotEmitDuplicateTypedOverloads()
+	{
+		// Two constructors that could produce the same C# signature after the generator's
+		// mockBehavior-prefixed overload expansion:
+		//   - ctor A: (MockBehavior, int)      → typed overload: CreateMock(MockBehavior, int)
+		//   - ctor B: (int) + mockBehavior    → typed overload: CreateMock(MockBehavior, int)
+		// The dedup key is built in emitted-signature order (prefix first, then ctor params), so
+		// the second emission must be skipped to avoid a duplicate method definition.
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(MockBehavior.Default, 42);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(Mockolate.MockBehavior behavior, int value) { }
+			         public MyService(int value) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		int matches = CreateMockBehaviorIntSignatureRegex().Count(result.Sources["Mock.MyService.g.cs"]);
+		await That(matches).IsEqualTo(1);
 	}
 
 	[Fact]
