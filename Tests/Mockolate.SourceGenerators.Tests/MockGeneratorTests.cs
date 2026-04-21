@@ -1,9 +1,14 @@
 ﻿using System.Net.Http;
+using System.Text.RegularExpressions;
 
 namespace Mockolate.SourceGenerators.Tests;
 
-public class MockGeneratorTests
+public partial class MockGeneratorTests
 {
+	[GeneratedRegex(@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+\)")]
+	private static partial Regex CreateMockBehaviorSignatureRegex();
+
+
 	[Fact]
 	public async Task SameMethodDifferingOnlyByNullability_ShouldUseExplicitImplementationForConflictingInterface()
 	{
@@ -848,10 +853,7 @@ public class MockGeneratorTests
 		// The hand-written CreateMock(MockBehavior) overload already covers this signature.
 		// A typed single-parameter overload with the same signature would produce a duplicate
 		// definition, so the generator must skip it.
-		int matches = System.Text.RegularExpressions.Regex.Matches(
-				result.Sources["Mock.MyService.g.cs"],
-				@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+\)")
-			.Count;
+		int matches = CreateMockBehaviorSignatureRegex().Count(result.Sources["Mock.MyService.g.cs"]);
 		await That(matches).IsEqualTo(1);
 	}
 
