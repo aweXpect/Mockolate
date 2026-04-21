@@ -37,7 +37,7 @@ public class ExampleTests
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()
 	{
-		MyClass sut = MyClass.CreateMock([3,]);
+		MyClass sut = MyClass.CreateMock(3);
 
 		sut.Mock.Setup.MyMethod(It.IsAny<int>()).Returns(5);
 

@@ -84,7 +84,7 @@ internal static partial class Sources
 			$"Create a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
-		sb.Append("\t\t\t=> CreateMock(null, null, null);").AppendLine();
+		sb.Append("\t\t\t=> CreateMock(null, null, (object?[]?)null);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary(
@@ -94,7 +94,7 @@ internal static partial class Sources
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::System.Action<")
 			.Append(setupType).Append("> setup)").AppendLine();
-		sb.Append("\t\t\t=> CreateMock(null, null, setup);").AppendLine();
+		sb.Append("\t\t\t=> CreateMock(null, setup, (object?[]?)null);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary(
@@ -103,7 +103,7 @@ internal static partial class Sources
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 			.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior)").AppendLine();
-		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, null);").AppendLine();
+		sb.Append("\t\t\t=> CreateMock(mockBehavior, null, (object?[]?)null);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary(
@@ -115,7 +115,7 @@ internal static partial class Sources
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 			.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<").Append(setupType)
 			.Append("> setup)").AppendLine();
-		sb.Append("\t\t\t=> CreateMock(null, mockBehavior, setup);").AppendLine();
+		sb.Append("\t\t\t=> CreateMock(mockBehavior, setup, (object?[]?)null);").AppendLine();
 		sb.AppendLine();
 
 		if (!@class.IsInterface)
@@ -126,45 +126,46 @@ internal static partial class Sources
 			sb.AppendXmlReturns(createMockReturns);
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 				.Append(" CreateMock(object?[] constructorParameters)").AppendLine();
-			sb.Append("\t\t\t=> CreateMock(constructorParameters, null, null);").AppendLine();
+			sb.Append("\t\t\t=> CreateMock(null, null, constructorParameters);").AppendLine();
 			sb.AppendLine();
 
 			sb.AppendXmlSummary(
-				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"constructorParameters\" /> and <paramref name=\"mockBehavior\" />.");
-			sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
+				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"mockBehavior\" /> and <paramref name=\"constructorParameters\" />.");
 			sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
+			sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
 			sb.AppendXmlReturns(createMockReturns);
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
-				.Append(" CreateMock(object?[] constructorParameters, global::Mockolate.MockBehavior mockBehavior)")
+				.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)")
 				.AppendLine();
-			sb.Append("\t\t\t=> CreateMock(constructorParameters, mockBehavior, null);").AppendLine();
+			sb.Append("\t\t\t=> CreateMock(mockBehavior, null, constructorParameters);").AppendLine();
 			sb.AppendLine();
 
 			sb.AppendXmlSummary(
-				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"constructorParameters\" />, applying the given <paramref name=\"setup\" /> immediately.");
+				$"Create a new mock of <see cref=\"{escapedClassName}\" /> applying the given <paramref name=\"setup\" /> immediately, using the given <paramref name=\"constructorParameters\" />.");
 			sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
-			sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
 			sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
+			sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
 			sb.AppendXmlReturns(createMockReturns);
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
-				.Append(" CreateMock(object?[] constructorParameters, global::System.Action<").Append(setupType)
-				.Append("> setup)").AppendLine();
-			sb.Append("\t\t\t=> CreateMock(constructorParameters, null, setup);").AppendLine();
+				.Append(" CreateMock(global::System.Action<").Append(setupType)
+				.Append("> setup, object?[] constructorParameters)").AppendLine();
+			sb.Append("\t\t\t=> CreateMock(null, setup, constructorParameters);").AppendLine();
 			sb.AppendLine();
+
+			AppendTypedCreateMockOverloads(sb, @class, constructors, setupType, escapedClassName, createMockReturns);
 		}
 
 		sb.AppendXmlSummary(
-			$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"constructorParameters\" /> and <paramref name=\"mockBehavior\" />, applying the given <paramref name=\"setup\" /> immediately.");
+			$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"mockBehavior\" />, applying the given <paramref name=\"setup\" /> immediately, using the given <paramref name=\"constructorParameters\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
-		sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor, or <see langword=\"null\" /> to use the parameterless constructor.");
 		sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup, or <see langword=\"null\" /> for <see cref=\"global::Mockolate.MockBehavior.Default\" />.");
 		sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword=\"null\" /> to skip.");
+		sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor, or <see langword=\"null\" /> to use the parameterless constructor.");
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ")
 			.Append(@class.ClassFullName)
-			.Append(
-				" CreateMock(object?[]? constructorParameters, global::Mockolate.MockBehavior? mockBehavior, global::System.Action<")
-			.Append(setupType).Append(">? setup)").AppendLine();
+			.Append(" CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<")
+			.Append(setupType).Append(">? setup, object?[]? constructorParameters)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (mockBehavior is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
@@ -1217,6 +1218,170 @@ internal static partial class Sources
 			.Append(mockRegistryName).Append(".Interactions, interactions => new VerifyMonitor").Append(name)
 			.Append("(new global::Mockolate.MockRegistry(this.").Append(mockRegistryName).Append(", interactions)));")
 			.AppendLine();
+		sb.AppendLine();
+	}
+#pragma warning restore S107 // Methods should not have too many parameters
+
+	private static void AppendTypedCreateMockOverloads(StringBuilder sb, Class @class,
+		EquatableArray<Method>? constructors, string setupType, string escapedClassName, string createMockReturns)
+	{
+		if (constructors is null)
+		{
+			return;
+		}
+
+		// Seeded signatures track the hand-written CreateMock overloads so typed overloads that
+		// would collide with them are skipped. The key order mirrors the emitted C# signature:
+		// "mockBehavior? | setup? | ctor-param-types...".
+		HashSet<string> emittedSignatures = new(StringComparer.Ordinal)
+		{
+			string.Empty,
+			"global::Mockolate.MockBehavior",
+			$"global::System.Action<{setupType}>",
+			$"global::Mockolate.MockBehavior|global::System.Action<{setupType}>",
+			"object?[]",
+			"global::Mockolate.MockBehavior|object?[]",
+			$"global::System.Action<{setupType}>|object?[]",
+			$"global::Mockolate.MockBehavior|global::System.Action<{setupType}>|object?[]",
+		};
+
+		foreach (Method constructor in constructors.Value)
+		{
+			if (constructor.Parameters.Count == 0)
+			{
+				continue;
+			}
+
+			if (constructor.Parameters.Any(p => p.RefKind != RefKind.None || p.IsParams))
+			{
+				continue;
+			}
+
+			string mockBehaviorName = CreateUniqueParameterName(constructor.Parameters, "mockBehavior");
+			string setupName = CreateUniqueParameterName(constructor.Parameters, "setup");
+			string baseSig = string.Join("|",
+				constructor.Parameters.Select(p => p.Type.Fullname));
+
+			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
+				includeMockBehavior: false, includeSetup: false, mockBehaviorName, setupName, baseSig,
+				emittedSignatures);
+			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
+				includeMockBehavior: true, includeSetup: false, mockBehaviorName, setupName, baseSig,
+				emittedSignatures);
+			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
+				includeMockBehavior: false, includeSetup: true, mockBehaviorName, setupName, baseSig,
+				emittedSignatures);
+			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
+				includeMockBehavior: true, includeSetup: true, mockBehaviorName, setupName, baseSig,
+				emittedSignatures);
+		}
+	}
+
+#pragma warning disable S107 // Methods should not have too many parameters
+	private static void TryEmitTypedCreateMockOverload(StringBuilder sb, Class @class, Method constructor,
+		string setupType, string escapedClassName, string createMockReturns,
+		bool includeMockBehavior, bool includeSetup, string mockBehaviorName, string setupName, string baseSig,
+		HashSet<string> emittedSignatures)
+	{
+		// Build the signature key in the same order as the emitted method signature
+		// (mockBehavior, setup, then ctor parameters) so it correctly detects collisions against
+		// other typed overloads and against the hand-written seeded overloads.
+		string sig = baseSig;
+		if (includeSetup)
+		{
+			sig = $"global::System.Action<{setupType}>|{sig}";
+		}
+
+		if (includeMockBehavior)
+		{
+			sig = $"global::Mockolate.MockBehavior|{sig}";
+		}
+
+		if (!emittedSignatures.Add(sig))
+		{
+			return;
+		}
+
+		if (includeSetup)
+		{
+			sb.AppendXmlSummary(
+				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given constructor parameters, applying the given <paramref name=\"{setupName}\" /> immediately.");
+			sb.AppendXmlRemarks(
+				$"The provided <paramref name=\"{setupName}\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
+		}
+		else
+		{
+			sb.AppendXmlSummary(
+				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given constructor parameters to invoke the base-class constructor.");
+		}
+
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			sb.AppendXmlParam(parameter.Name, "Value forwarded to the base-class constructor.");
+		}
+
+		if (includeMockBehavior)
+		{
+			sb.AppendXmlParam(mockBehaviorName,
+				"Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
+		}
+
+		if (includeSetup)
+		{
+			sb.AppendXmlParam(setupName,
+				"Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
+		}
+
+		sb.AppendXmlReturns(createMockReturns);
+		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(");
+		bool needsLeadingComma = false;
+		if (includeMockBehavior)
+		{
+			sb.Append("global::Mockolate.MockBehavior ").Append(mockBehaviorName);
+			needsLeadingComma = true;
+		}
+
+		if (includeSetup)
+		{
+			if (needsLeadingComma)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append("global::System.Action<").Append(setupType).Append("> ").Append(setupName);
+			needsLeadingComma = true;
+		}
+
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			if (needsLeadingComma)
+			{
+				sb.Append(", ");
+			}
+
+			needsLeadingComma = true;
+			sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
+			if (parameter.HasExplicitDefaultValue)
+			{
+				sb.Append(" = ").Append(parameter.ExplicitDefaultValue);
+			}
+		}
+
+		sb.Append(")").AppendLine();
+		sb.Append("\t\t\t=> CreateMock(").Append(includeMockBehavior ? mockBehaviorName : "null").Append(", ")
+			.Append(includeSetup ? setupName : "null").Append(", new object?[] { ");
+		int argIndex = 0;
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			if (argIndex++ > 0)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append(parameter.Name);
+		}
+
+		sb.Append(" });").AppendLine();
 		sb.AppendLine();
 	}
 #pragma warning restore S107 // Methods should not have too many parameters

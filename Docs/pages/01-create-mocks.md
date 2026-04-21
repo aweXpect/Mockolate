@@ -11,7 +11,7 @@ IChocolateDispenser sut = IChocolateDispenser.CreateMock();
 MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock();
 
 // For classes without a default constructor:
-MyChocolateDispenserWithCtor classWithArgsMock = MyChocolateDispenserWithCtor.CreateMock(["Dark", 42]);
+MyChocolateDispenserWithCtor classWithArgsMock = MyChocolateDispenserWithCtor.CreateMock("Dark", 42);
 ```
 
 ## Customizing mock behavior
@@ -23,7 +23,7 @@ IChocolateDispenser strictMock = IChocolateDispenser.CreateMock(MockBehavior.Def
 
 // For classes with constructor parameters and custom behavior:
 MockBehavior behavior = new MockBehavior { ThrowWhenNotSetup = true };
-MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(["Dark", 42], behavior);
+MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(behavior, "Dark", 42);
 ```
 
 **`MockBehavior` options**

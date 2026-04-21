@@ -31,9 +31,31 @@ internal readonly record struct MethodParameter
 			}
 			else
 			{
-				ExplicitDefaultValue = explicitDefaultValue;
+				ExplicitDefaultValue = AppendLiteralSuffix(explicitDefaultValue, parameterSymbol.Type);
 			}
 		}
+	}
+
+	// SymbolDisplay.FormatPrimitive strips the 'm'/'f' type suffix from the literal, which would
+	// produce invalid C# (e.g. "decimal x = 19.95" is a narrowing conversion from double). Re-add
+	// the suffix based on the effective parameter type so the generated code compiles.
+	private static string? AppendLiteralSuffix(string? value, ITypeSymbol type)
+	{
+		if (value is null or "null")
+		{
+			return value;
+		}
+
+		ITypeSymbol effectiveType = type is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T, } named
+			? named.TypeArguments[0]
+			: type;
+
+		return effectiveType.SpecialType switch
+		{
+			SpecialType.System_Decimal => value + "m",
+			SpecialType.System_Single => value + "f",
+			_ => value,
+		};
 	}
 
 	public string? ExplicitDefaultValue { get; }
