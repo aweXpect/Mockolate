@@ -1,5 +1,7 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis;
 
 namespace Mockolate.SourceGenerators.Tests;
 
@@ -1140,6 +1142,76 @@ public partial class MockGeneratorTests
 		await That(result.Diagnostics).IsEmpty();
 		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
 			.Contains("CreateMock(long big = 9999999999, double pi = 3.14)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenTypedCreateMockOverloadIsEmitted_ConstructorCrefShouldResolve()
+	{
+		const string expectedCref = "global::MyCode.MyService.MyService(int, string)";
+
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(42, "x");
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(int value, string text) { }
+			     }
+			     """, DocumentationMode.Diagnose);
+
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains($"to invoke the <see cref=\"{expectedCref}\" /> constructor.")
+			.IgnoringNewlineStyle();
+
+		// CS1574/CS1584/CS1658 messages embed the offending cref text; if the constructor cref
+		// resolved cleanly under DocumentationMode.Diagnose, no diagnostic mentions it.
+		string[] crefFailures = result.Diagnostics
+			.Where(d => d.Contains(expectedCref))
+			.ToArray();
+		await That(crefFailures).IsEmpty();
+	}
+
+	[Fact]
+	public async Task WhenTypedCreateMockOverloadIsEmittedForGenericClass_ShouldNotEmitConstructorCref()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService<int>.CreateMock(42);
+			         }
+			     }
+
+			     public class MyService<T>
+			     {
+			         public MyService(T value) { }
+			     }
+			     """, DocumentationMode.Diagnose);
+
+		// Closed-generic constructor crefs (e.g. MyService{int}.MyService(int)) aren't valid C#
+		// cref syntax, so the generator falls back to the unlinked phrasing for generic classes
+		// rather than emit something that would surface CS1584 on the consumer side.
+		await That(result.Sources).ContainsKey("Mock.MyService_int.g.cs").WhoseValue
+			.Contains("to invoke the base-class constructor.")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("MyService.MyService(")
 			.IgnoringNewlineStyle();
 	}
 

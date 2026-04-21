@@ -16,28 +16,39 @@ public static partial class HttpClientExtensions
 	extension(IMockSetup<HttpClient> setup)
 	{
 		/// <summary>
-		///     Setup for the method
-		///     <see cref="System.Net.Http.HttpClient.DeleteAsync(string?)" />
-		///     with the given <paramref name="requestUri" />.
+		///     Sets up <see cref="System.Net.Http.HttpClient.DeleteAsync(string?)" /> on the mocked
+		///     <see cref="HttpClient" /> for requests whose URI matches <paramref name="requestUri" />.
 		/// </summary>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw string.</param>
+		/// <returns>A setup handle - chain <c>.ReturnsAsync(...)</c>, <c>.Throws&lt;T&gt;()</c> or the other fluent terminators.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
+		/// <remarks>
+		///     Mockolate intercepts the underlying <c>SendAsync</c> call on the injected handler, so this setup also
+		///     covers code paths that call <c>HttpClient.DeleteAsync</c> with an explicit <see cref="CancellationToken" />.
+		/// </remarks>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
 			IParameter<string?> requestUri)
 			=> setup.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
-		///     Setup for the method
-		///     <see cref="System.Net.Http.HttpClient.DeleteAsync(Uri?)" />
-		///     with the given <paramref name="requestUri" />.
+		///     Sets up <see cref="System.Net.Http.HttpClient.DeleteAsync(Uri?)" /> on the mocked <see cref="HttpClient" />
+		///     for requests whose URI matches <paramref name="requestUri" />.
 		/// </summary>
+		/// <param name="requestUri">A <see cref="Uri" /> matcher.</param>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
 			IParameter<Uri?> requestUri)
 			=> setup.DeleteAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
-		///     Setup for the method
-		///     <see cref="System.Net.Http.HttpClient.DeleteAsync(string?, System.Threading.CancellationToken)" />
-		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
+		///     Sets up <see cref="System.Net.Http.HttpClient.DeleteAsync(string?, System.Threading.CancellationToken)" />
+		///     for requests matching <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher.</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken" /> matcher - pass <c>It.IsAny&lt;CancellationToken&gt;()</c> to accept any token.</param>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
 			IParameter<string?> requestUri,
 			IParameter<CancellationToken> cancellationToken)
@@ -60,10 +71,13 @@ public static partial class HttpClientExtensions
 		}
 
 		/// <summary>
-		///     Setup for the method
-		///     <see cref="System.Net.Http.HttpClient.DeleteAsync(Uri?, System.Threading.CancellationToken)" />
-		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
+		///     Sets up <see cref="System.Net.Http.HttpClient.DeleteAsync(Uri?, System.Threading.CancellationToken)" />
+		///     for requests matching <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
+		/// <param name="requestUri">A <see cref="Uri" /> matcher.</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken" /> matcher - pass <c>It.IsAny&lt;CancellationToken&gt;()</c> to accept any token.</param>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> DeleteAsync(
 			IParameter<Uri?> requestUri,
 			IParameter<CancellationToken> cancellationToken)

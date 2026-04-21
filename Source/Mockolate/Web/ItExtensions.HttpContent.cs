@@ -16,14 +16,39 @@ public static partial class ItExtensions
 	extension(It _)
 	{
 		/// <summary>
-		///     Expects the parameter to be an <see cref="HttpContent" />.
+		///     Matches any non-<see langword="null" /> <see cref="HttpContent" /> on a mocked
+		///     <see cref="System.Net.Http.HttpClient" /> setup or verification.
 		/// </summary>
+		/// <remarks>
+		///     Narrow the match by chaining builders on the returned <see cref="IHttpContentParameter" />:
+		///     <list type="bullet">
+		///       <item><description><c>.WithString(predicate)</c> - match the request body as a string (UTF-8 unless the <c>Content-Type</c> header specifies a charset).</description></item>
+		///       <item><description><c>.WithBytes(predicate)</c> - match the raw byte payload.</description></item>
+		///       <item><description><c>.WithMediaType(mediaType)</c> - constrain the <c>Content-Type</c> media type.</description></item>
+		///       <item><description><c>.WithHeaders(...)</c> - require specific content headers; chain <c>.IncludingRequestHeaders()</c> to also consider <see cref="HttpRequestMessage.Headers" />.</description></item>
+		///     </list>
+		///     A <see langword="null" /> body never matches.
+		/// </remarks>
+		/// <returns>A fluent matcher; pass it to <c>Setup.PostAsync</c>/<c>PutAsync</c>/<c>PatchAsync</c> or <c>Verify</c>.</returns>
+		/// <example>
+		///     <code>
+		///     httpClient.Mock.Setup.PostAsync(It.IsUri("*/orders"), It.IsHttpContent("application/json").WithString(b =&gt; b.Contains("\"sku\"")))
+		///         .ReturnsAsync(HttpStatusCode.Created);
+		///     </code>
+		/// </example>
 		public static IHttpContentParameter IsHttpContent()
 			=> new HttpContentParameter();
 
 		/// <summary>
-		///     Expects the parameter to be an <see cref="HttpContent" /> with the given <paramref name="mediaType" />.
+		///     Matches any non-<see langword="null" /> <see cref="HttpContent" /> whose <c>Content-Type</c> media type
+		///     equals <paramref name="mediaType" /> (case-insensitive).
 		/// </summary>
+		/// <param name="mediaType">The expected media type, e.g. <c>"application/json"</c> or <c>"text/plain"</c>.</param>
+		/// <remarks>
+		///     Shorthand for <c>It.IsHttpContent().WithMediaType(mediaType)</c>. Chain additional builders
+		///     (<c>.WithString(...)</c>, <c>.WithBytes(...)</c>, <c>.WithHeaders(...)</c>) to further narrow the match.
+		/// </remarks>
+		/// <returns>A fluent matcher pre-configured to require the given media type.</returns>
 		public static IHttpContentParameter IsHttpContent(string mediaType)
 			=> new HttpContentParameter().WithMediaType(mediaType);
 	}

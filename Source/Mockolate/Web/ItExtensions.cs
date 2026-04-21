@@ -9,8 +9,20 @@ using Mockolate.Internals.Polyfills;
 namespace Mockolate.Web;
 
 /// <summary>
-///     Extensions for parameter matchers for HTTP-related types.
+///     HTTP-aware parameter matchers for <see cref="It" /> - match against <see cref="Uri" />,
+///     <see cref="System.Net.Http.HttpRequestMessage" /> and <see cref="System.Net.Http.HttpContent" /> values
+///     when setting up or verifying a mocked <see cref="System.Net.Http.HttpClient" />.
 /// </summary>
+/// <remarks>
+///     Used alongside <see cref="HttpClientExtensions" />. Entry-point matchers:
+///     <list type="bullet">
+///       <item><description><c>It.IsUri(...)</c> - match the request URI by exact string, glob pattern or predicate, optionally asserting required query parameters.</description></item>
+///       <item><description><c>It.IsHttpRequestMessage(...)</c> - match the raw <see cref="System.Net.Http.HttpRequestMessage" />; chain <c>.WithHeaders(...)</c> to constrain headers.</description></item>
+///       <item><description><c>It.IsHttpContent(...)</c> - match the request body; chain <c>.WithString(...)</c>, <c>.WithBytes(...)</c>, <c>.WithFormData(...)</c> or <c>.WithHeaders(...)</c> to constrain by payload shape.</description></item>
+///     </list>
+///     Query-parameter matching is URL-decoded, and a trailing <c>/</c> on the request URI is tolerated when
+///     comparing against a matcher without it.
+/// </remarks>
 public static partial class ItExtensions
 {
 	private sealed class HttpQueryMatcher

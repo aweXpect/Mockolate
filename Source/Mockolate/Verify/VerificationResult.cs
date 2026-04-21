@@ -8,8 +8,21 @@ using Mockolate.Interactions;
 namespace Mockolate.Verify;
 
 /// <summary>
-///     The result of a verification containing the matching interactions.
+///     The intermediate result of a <c>sut.Mock.Verify.MemberName(...)</c> call - carries the recorded interactions
+///     that match the verification predicate, waiting for a terminating count assertion.
 /// </summary>
+/// <remarks>
+///     Obtained from <c>sut.Mock.Verify</c>, <c>sut.Mock.VerifyProtected</c>, <c>sut.Mock.VerifyStatic</c> or
+///     <c>sut.Mock.InScenario(...).Verify</c>. Nothing is asserted until a terminator runs - until then the object
+///     can still be composed:
+///     <list type="bullet">
+///       <item><description>Terminate with a count assertion from <see cref="VerificationResultExtensions" /> - <c>Once()</c>, <c>Never()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>, <c>AtMost(n)</c>, <c>Between(min, max)</c>, <c>Times(n)</c> - to turn the result into a pass/fail check that throws <see cref="MockVerificationException" /> on mismatch.</description></item>
+///       <item><description>Chain <c>.Then(next)</c> to assert an ordering between two verifications.</description></item>
+///       <item><description>Call <see cref="Within(TimeSpan)" /> and/or <see cref="WithCancellation(CancellationToken)" /> before the terminator to wait for interactions produced on a background thread (synchronous wait; use the <c>aweXpect.Mockolate</c> package for the asynchronous variant).</description></item>
+///       <item><description>When the verification matcher uses <c>It.*</c> parameter matchers, the nested <see cref="IgnoreParameters" /> subtype also exposes <c>AnyParameters()</c> to widen the match to any argument list.</description></item>
+///     </list>
+/// </remarks>
+/// <typeparam name="TVerify">The mock's <c>IMockVerifyFor...</c> facade, used to continue verification chains (<c>Then</c>, <c>AnyParameters</c>).</typeparam>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif

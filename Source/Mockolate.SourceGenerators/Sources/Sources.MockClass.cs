@@ -885,14 +885,6 @@ internal static partial class Sources
 			"Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.",
 			"When two setups overlap, the most recently defined one wins.",
 		]);
-		sb.AppendXmlExample([
-			"sut.Mock.Setup.MyMethod(It.IsAny&lt;int&gt;()).Returns(42);",
-			"sut.Mock.Setup.MyProperty.InitializeWith(10);",
-			"sut.Mock.Setup.MyMethod(It.IsAny&lt;int&gt;())",
-			"    .Returns(1).For(2)     // first two calls return 1",
-			"    .Throws&lt;InvalidOperationException&gt;() // third call throws",
-			"    .Returns(0).Forever(); // remaining calls return 0",
-		]);
 		sb.Append("\t\tIMockSetupFor").Append(name).Append(" Setup { get; }").AppendLine();
 		sb.AppendLine();
 		if (hasProtectedMembers)
@@ -900,10 +892,6 @@ internal static partial class Sources
 			sb.AppendXmlSummary($"Configures how <see langword=\"protected\" /> virtual members of the mock of <see cref=\"{escapedClassName}\" /> respond when invoked.");
 			sb.AppendXmlRemarks([
 				"Only members declared as <see langword=\"protected\" /> (or <see langword=\"protected\" /> <see langword=\"internal\" />) on the mocked class appear here. All setup chain operators (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, sequences, <c>.For</c>/<c>.Only</c>/<c>.Forever</c>, ...) work identically to <see cref=\"Setup\" />.",
-			]);
-			sb.AppendXmlExample([
-				"sut.Mock.SetupProtected.DispenseInternal(It.Is(\"Dark\"), It.IsAny&lt;int&gt;())",
-				"    .Returns(true);",
 			]);
 			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" SetupProtected { get; }").AppendLine();
 			sb.AppendLine();
@@ -954,10 +942,6 @@ internal static partial class Sources
 			sb.AppendXmlRemarks([
 				"One entry per event is generated; the signature matches the event's delegate. Only handlers that are subscribed at the moment of the <c>Raise</c> call are invoked - handlers subscribed later (or already removed) are skipped.",
 			]);
-			sb.AppendXmlExample([
-				"sut.MyEvent += (sender, args) => { /* ... */ };",
-				"sut.Mock.Raise.MyEvent(sut, EventArgs.Empty);",
-			]);
 			sb.Append("\t\tIMockRaiseOn").Append(name).Append(" Raise { get; }").AppendLine();
 			sb.AppendLine();
 		}
@@ -988,13 +972,6 @@ internal static partial class Sources
 			"Use <c>Within(TimeSpan)</c> / <c>WithCancellation(CancellationToken)</c> before the terminator to wait for expected interactions that happen on background threads.",
 			"Chain <c>Then(...)</c> to assert an ordered sequence of calls. A failing assertion throws a <see cref=\"global::Mockolate.Exceptions.MockVerificationException\" />.",
 		]);
-		sb.AppendXmlExample([
-			"sut.Mock.Verify.MyMethod(It.IsAny&lt;int&gt;()).Once();",
-			"sut.Mock.Verify.MyProperty.Got().AtLeastOnce();",
-			"sut.Mock.Verify.MyProperty.Set(It.Is(42)).Never();",
-			"sut.Mock.Verify.MyMethod(It.Is(1)).Then(",
-			"    m =&gt; m.MyMethod(It.Is(2)));",
-		]);
 		sb.Append("\t\tIMockVerifyFor").Append(name).Append(" Verify { get; }").AppendLine();
 		sb.AppendLine();
 		if (hasProtectedMembers || hasProtectedEvents)
@@ -1023,11 +1000,6 @@ internal static partial class Sources
 		]);
 		sb.AppendXmlParam("setup", "The setup previously registered through <see cref=\"Setup\" /> (typically returned from a <c>Returns(...)</c>/<c>Throws(...)</c> call).");
 		sb.AppendXmlReturns("A <c>VerificationResult</c> that counts invocations matching the given setup.");
-		sb.AppendXmlExample([
-			"IMockSetup setup = sut.Mock.Setup.MyMethod(It.Is(1)).Returns(true);",
-			"// ... exercise the subject ...",
-			"sut.Mock.VerifySetup(setup).AtLeastOnce();",
-		]);
 		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name)
 			.Append("> VerifySetup(global::Mockolate.Setup.IMethodSetup setup);").AppendLine();
 		sb.AppendLine();
@@ -1048,12 +1020,6 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Removes every recorded interaction from this mock while keeping all registered setups intact.");
 		sb.AppendXmlRemarks([
 			"Handy when a single test exercises multiple logical phases and you only want to verify the interactions of the latest phase.",
-		]);
-		sb.AppendXmlExample([
-			"sut.DoSomething();",
-			"sut.Mock.ClearAllInteractions();",
-			"sut.DoSomethingElse();",
-			"sut.Mock.Verify.DoSomethingElse(Match.AnyParameters()).Once();",
 		]);
 		sb.Append("\t\tvoid ClearAllInteractions();").AppendLine();
 		sb.AppendLine();
@@ -1445,6 +1411,46 @@ internal static partial class Sources
 		}
 	}
 
+	/// <summary>
+	///     Builds an XML-doc cref string for the given <paramref name="constructor" /> on
+	///     <paramref name="class" />, in the form <c>{class-cref}.{simple-name}({param-types})</c>,
+	///     or returns <see langword="null" /> when no valid cref can be produced.
+	/// </summary>
+	/// <remarks>
+	///     Generic classes are skipped because the cref type-parameter-list syntax (e.g. <c>{T}</c>)
+	///     expects identifier tokens, not the concrete type arguments that closed generics carry —
+	///     emitting <c>MyClass{int}.MyClass(int)</c> would surface CS1584/CS1658 on the consumer side.
+	/// </remarks>
+	private static string? BuildConstructorCref(Class @class, Method constructor)
+	{
+		string fullName = @class.ClassFullName;
+
+		if (fullName.IndexOf('<') >= 0)
+		{
+			return null;
+		}
+
+		int lastDot = fullName.LastIndexOf('.');
+		string simpleName = lastDot >= 0 ? fullName.Substring(lastDot + 1) : fullName;
+
+		StringBuilder cref = new();
+		cref.Append(fullName).Append('.').Append(simpleName).Append('(');
+		bool first = true;
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			if (!first)
+			{
+				cref.Append(", ");
+			}
+
+			first = false;
+			cref.Append(parameter.Type.Fullname.EscapeForXmlDoc());
+		}
+
+		cref.Append(')');
+		return cref.ToString();
+	}
+
 #pragma warning disable S107 // Methods should not have too many parameters
 	private static void TryEmitTypedCreateMockOverload(StringBuilder sb, Class @class, Method constructor,
 		string setupType, string escapedClassName, string createMockReturns,
@@ -1470,22 +1476,34 @@ internal static partial class Sources
 			return;
 		}
 
-		if (includeSetup)
+		string? constructorCref = BuildConstructorCref(@class, constructor);
+		string ctorPhrase = constructorCref is null
+			? "the base-class constructor"
+			: $"the <see cref=\"{constructorCref}\" /> constructor";
+
+		if (includeMockBehavior && includeSetup)
 		{
 			sb.AppendXmlSummary(
-				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given constructor parameters, applying the given <paramref name=\"{setupName}\" /> immediately.");
+				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"{mockBehaviorName}\" />, applying the given <paramref name=\"{setupName}\" /> immediately, using the given constructor parameters to invoke {ctorPhrase}.");
+			sb.AppendXmlRemarks(
+				$"The provided <paramref name=\"{setupName}\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
+		}
+		else if (includeMockBehavior)
+		{
+			sb.AppendXmlSummary(
+				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"{mockBehaviorName}\" /> and the given constructor parameters to invoke {ctorPhrase}.");
+		}
+		else if (includeSetup)
+		{
+			sb.AppendXmlSummary(
+				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> applying the given <paramref name=\"{setupName}\" /> immediately, using the given constructor parameters to invoke {ctorPhrase}.");
 			sb.AppendXmlRemarks(
 				$"The provided <paramref name=\"{setupName}\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
 		}
 		else
 		{
 			sb.AppendXmlSummary(
-				$"Create a new mock of <see cref=\"{escapedClassName}\" /> using the given constructor parameters to invoke the base-class constructor.");
-		}
-
-		foreach (MethodParameter parameter in constructor.Parameters)
-		{
-			sb.AppendXmlParam(parameter.Name, "Value forwarded to the base-class constructor.");
+				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given constructor parameters to invoke {ctorPhrase}.");
 		}
 
 		if (includeMockBehavior)
@@ -1498,6 +1516,11 @@ internal static partial class Sources
 		{
 			sb.AppendXmlParam(setupName,
 				"Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
+		}
+
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			sb.AppendXmlParam(parameter.Name, "Value forwarded to the base-class constructor.");
 		}
 
 		sb.AppendXmlReturns(createMockReturns);

@@ -16,28 +16,41 @@ public static partial class HttpClientExtensions
 	extension(IMockVerify<HttpClient> verify)
 	{
 		/// <summary>
-		///     Validates the invocations for the method
-		///     <see cref="System.Net.Http.HttpClient.GetAsync(string?)" />
-		///     with the given <paramref name="requestUri" />.
+		///     Verifies invocations of <see cref="System.Net.Http.HttpClient.GetAsync(string?)" /> on the mocked
+		///     <see cref="HttpClient" /> matching <paramref name="requestUri" />.
 		/// </summary>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw string.</param>
+		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with <c>.Once()</c>, <c>.AtLeast(n)</c>, etc.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
+		/// <remarks>
+		///     Matches on the underlying <c>SendAsync</c> invocation, so the verification succeeds for any
+		///     <c>GetAsync</c> overload (with <see cref="CancellationToken" /> or <see cref="HttpCompletionOption" />)
+		///     that produced a request satisfying the supplied matchers.
+		/// </remarks>
 		public VerificationResult<HttpClient> GetAsync(
 			IParameter<string?> requestUri)
 			=> verify.GetAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
-		///     Validates the invocations for the method
-		///     <see cref="System.Net.Http.HttpClient.GetAsync(string?)" />
-		///     with the given <paramref name="requestUri" />.
+		///     Verifies invocations of <see cref="System.Net.Http.HttpClient.GetAsync(Uri?)" /> on the mocked
+		///     <see cref="HttpClient" /> matching <paramref name="requestUri" />.
 		/// </summary>
+		/// <param name="requestUri">A <see cref="Uri" /> matcher.</param>
+		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with a count assertion.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public VerificationResult<HttpClient> GetAsync(
 			IParameter<Uri?> requestUri)
 			=> verify.GetAsync(requestUri, It.IsAny<CancellationToken>());
 
 		/// <summary>
-		///     Validates the invocations for the method
-		///     <see cref="System.Net.Http.HttpClient.GetAsync(string?)" />
-		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
+		///     Verifies invocations of
+		///     <see cref="System.Net.Http.HttpClient.GetAsync(string?, System.Threading.CancellationToken)" />
+		///     matching <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher.</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken" /> matcher - pass <c>It.IsAny&lt;CancellationToken&gt;()</c> to accept any token.</param>
+		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with a count assertion.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public VerificationResult<HttpClient> GetAsync(
 			IParameter<string?> requestUri,
 			IParameter<CancellationToken> cancellationToken)
@@ -59,10 +72,14 @@ public static partial class HttpClientExtensions
 		}
 
 		/// <summary>
-		///     Validates the invocations for the method
-		///     <see cref="System.Net.Http.HttpClient.GetAsync(string?)" />
-		///     with the given <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
+		///     Verifies invocations of
+		///     <see cref="System.Net.Http.HttpClient.GetAsync(Uri?, System.Threading.CancellationToken)" />
+		///     matching <paramref name="requestUri" /> and <paramref name="cancellationToken" />.
 		/// </summary>
+		/// <param name="requestUri">A <see cref="Uri" /> matcher.</param>
+		/// <param name="cancellationToken">A <see cref="CancellationToken" /> matcher - pass <c>It.IsAny&lt;CancellationToken&gt;()</c> to accept any token.</param>
+		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with a count assertion.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public VerificationResult<HttpClient> GetAsync(
 			IParameter<Uri?> requestUri,
 			IParameter<CancellationToken> cancellationToken)

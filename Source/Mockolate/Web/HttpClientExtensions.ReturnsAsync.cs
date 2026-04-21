@@ -15,20 +15,30 @@ public static partial class HttpClientExtensions
 	extension(IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> setup)
 	{
 		/// <summary>
-		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />.
+		///     Completes the mocked request with an empty <see cref="HttpResponseMessage" /> carrying the given
+		///     <paramref name="statusCode" />.
 		/// </summary>
+		/// <param name="statusCode">The <see cref="HttpStatusCode" /> to return.</param>
+		/// <returns>The setup's return-builder - chain <c>.For(n)</c>, <c>.Forever()</c> or additional <c>Returns*</c>/<c>Throws</c> entries to build a sequence.</returns>
+		/// <example>
+		///     <code>
+		///     httpClient.Mock.Setup.GetAsync(It.IsUri("*/health")).ReturnsAsync(HttpStatusCode.OK);
+		///     </code>
+		/// </example>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode)
 			=> setup.ReturnsAsync(new HttpResponseMessage(statusCode));
 
 		/// <summary>
-		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />
-		///     and <see langword="string" /> <paramref name="content" />.
+		///     Completes the mocked request with an <see cref="HttpResponseMessage" /> whose status is
+		///     <paramref name="statusCode" /> and whose body is the given <see langword="string" /> <paramref name="content" />.
 		/// </summary>
+		/// <param name="statusCode">The <see cref="HttpStatusCode" /> to return.</param>
+		/// <param name="content">The response body, encoded as UTF-8 with a default <c>text/plain</c> media type.</param>
+		/// <returns>The setup's return-builder.</returns>
 		/// <remarks>
-		///     Uses default encoding (UTF-8) and default media type ("text/plain") for the content.<br />
-		///     If you need a different encoding, use the overload that takes an <see cref="HttpContent" />.<br />
-		///     If you need a different media type, use the overload that takes an explicit media type.
+		///     For a different character encoding use the <see cref="HttpContent" /> overload; for a different media
+		///     type use the <c>(statusCode, content, mediaType)</c> overload.
 		/// </remarks>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, string content)
@@ -38,12 +48,16 @@ public static partial class HttpClientExtensions
 			});
 
 		/// <summary>
-		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />,
-		///     <see langword="string" /> <paramref name="content" /> and <paramref name="mediaType" />.
+		///     Completes the mocked request with an <see cref="HttpResponseMessage" /> whose status is
+		///     <paramref name="statusCode" />, body is the given <see langword="string" /> <paramref name="content" />
+		///     and <c>Content-Type</c> is <paramref name="mediaType" />.
 		/// </summary>
+		/// <param name="statusCode">The <see cref="HttpStatusCode" /> to return.</param>
+		/// <param name="content">The response body, encoded as UTF-8.</param>
+		/// <param name="mediaType">The response media type, e.g. <c>"application/json"</c>.</param>
+		/// <returns>The setup's return-builder.</returns>
 		/// <remarks>
-		///     Uses default encoding (UTF-8) for the content.<br />
-		///     If you need a different encoding, use the overload that takes an <see cref="HttpContent" />.
+		///     For a non-UTF-8 encoding use the <see cref="HttpContent" /> overload.
 		/// </remarks>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, string content, string mediaType)
@@ -53,9 +67,12 @@ public static partial class HttpClientExtensions
 			});
 
 		/// <summary>
-		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />
-		///     and <paramref name="bytes" />.
+		///     Completes the mocked request with an <see cref="HttpResponseMessage" /> whose status is
+		///     <paramref name="statusCode" /> and whose body is the given raw <paramref name="bytes" />.
 		/// </summary>
+		/// <param name="statusCode">The <see cref="HttpStatusCode" /> to return.</param>
+		/// <param name="bytes">The response body as a raw byte array (wrapped in a <see cref="ByteArrayContent" />).</param>
+		/// <returns>The setup's return-builder.</returns>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, byte[] bytes)
 			=> setup.ReturnsAsync(new HttpResponseMessage(statusCode)
@@ -64,9 +81,14 @@ public static partial class HttpClientExtensions
 			});
 
 		/// <summary>
-		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />,
-		///     <paramref name="bytes" /> and <paramref name="mediaType" />.
+		///     Completes the mocked request with an <see cref="HttpResponseMessage" /> whose status is
+		///     <paramref name="statusCode" />, body is the given raw <paramref name="bytes" /> and <c>Content-Type</c>
+		///     is <paramref name="mediaType" />.
 		/// </summary>
+		/// <param name="statusCode">The <see cref="HttpStatusCode" /> to return.</param>
+		/// <param name="bytes">The response body as a raw byte array.</param>
+		/// <param name="mediaType">The response media type applied as a <see cref="MediaTypeHeaderValue" />.</param>
+		/// <returns>The setup's return-builder.</returns>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, byte[] bytes, string mediaType)
 		{
@@ -79,9 +101,12 @@ public static partial class HttpClientExtensions
 		}
 
 		/// <summary>
-		///     Asynchronously returns a <see cref="HttpResponseMessage" /> with the given <paramref name="statusCode" />
-		///     and <paramref name="content" />.
+		///     Completes the mocked request with an <see cref="HttpResponseMessage" /> whose status is
+		///     <paramref name="statusCode" /> and whose body is the supplied <see cref="HttpContent" />.
 		/// </summary>
+		/// <param name="statusCode">The <see cref="HttpStatusCode" /> to return.</param>
+		/// <param name="content">The response body - use this overload for custom encodings, streams or structured content (e.g. <see cref="System.Net.Http.MultipartContent" />).</param>
+		/// <returns>The setup's return-builder.</returns>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode, HttpContent content)
 			=> setup.ReturnsAsync(new HttpResponseMessage(statusCode)

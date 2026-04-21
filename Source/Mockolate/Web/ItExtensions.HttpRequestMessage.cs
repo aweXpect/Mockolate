@@ -13,8 +13,22 @@ public static partial class ItExtensions
 	extension(It _)
 	{
 		/// <summary>
-		///     Expects the parameter to be a <see cref="HttpRequestMessage" />.
+		///     Matches any <see cref="HttpRequestMessage" />, optionally restricted to a specific HTTP
+		///     <paramref name="method" /> (<c>GET</c>, <c>POST</c>, ...).
 		/// </summary>
+		/// <param name="method">When non-<see langword="null" />, only requests with this <see cref="HttpMethod" /> match.</param>
+		/// <remarks>
+		///     Use this when you need to match on the whole request rather than individual parts. Chain builders on the
+		///     returned <see cref="IHttpRequestMessageParameter" /> to add constraints:
+		///     <list type="bullet">
+		///       <item><description><c>.WhoseUriIs(uri)</c> / <c>.WhoseUriIs(configure)</c> - constrain the request URI (same surface as <c>It.IsUri(...)</c>).</description></item>
+		///       <item><description><c>.WhoseContentIs(configure)</c> / <c>.WhoseContentIs(mediaType, configure)</c> - constrain the request body (same surface as <c>It.IsHttpContent(...)</c>).</description></item>
+		///       <item><description><c>.WithHeaders(...)</c> - require specific request headers.</description></item>
+		///     </list>
+		///     For the common verbs prefer <c>Setup.GetAsync</c>/<c>PostAsync</c>/... which internally use this matcher;
+		///     reach for <c>It.IsHttpRequestMessage(...)</c> when composing a <c>SendAsync</c>-level setup.
+		/// </remarks>
+		/// <returns>A fluent matcher for <see cref="HttpRequestMessage" /> parameters.</returns>
 		public static IHttpRequestMessageParameter IsHttpRequestMessage(HttpMethod? method = null)
 			=> new HttpRequestMessageParameter(method);
 	}

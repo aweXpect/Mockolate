@@ -6,6 +6,10 @@ internal static partial class Sources
 {
 	public static string ReturnsThrowsAsyncExtensions(int[] numberOfParameters)
 	{
+		const string SequenceRemark =
+			"\t///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles\n" +
+			"\t///     back to the first entry unless the last one is followed by <c>.Forever()</c>.";
+
 		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("""
@@ -30,9 +34,15 @@ internal static partial class Sources
 			string variables = string.Join(", ", Enumerable.Range(1, number).Select(i => $"v{i}"));
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers the <see langword=\"async\" /> <paramref name=\"returnValue\" /> for this method.")
+					"\t///     Appends <paramref name=\"returnValue\" /> to the sequence - the next matching invocation returns a completed")
+				.AppendLine();
+			sb.Append(
+					"\t///     <see cref=\"global::System.Threading.Tasks.Task{TReturn}\" /> carrying this value.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
 				.Append(types).Append("> setup, TReturn returnValue)").AppendLine();
@@ -41,9 +51,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
+					"\t///     Appends a lazy async return to the sequence; <paramref name=\"callback\" /> is invoked on each matching")
+				.AppendLine();
+			sb.Append(
+					"\t///     invocation and its result is wrapped in a completed <see cref=\"global::System.Threading.Tasks.Task{TReturn}\" />.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
 				.Append(types).Append("> setup, global::System.Func<TReturn> callback)").AppendLine();
@@ -52,9 +68,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
+					"\t///     Appends a lazy async return that receives the method's arguments and produces the value wrapped in a")
+				.AppendLine();
+			sb.Append(
+					"\t///     completed <see cref=\"global::System.Threading.Tasks.Task{TReturn}\" />.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<TReturn>, ")
 				.Append(types).Append("> setup, global::System.Func<").Append(types).Append(", TReturn> callback)").AppendLine();
@@ -64,9 +86,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers an <paramref name=\"exception\" /> to throw when the <see langword=\"async\" /> method is awaited.")
+					"\t///     Appends an entry that faults the returned <see cref=\"global::System.Threading.Tasks.Task{TReturn}\" /> with")
+				.AppendLine();
+			sb.Append(
+					"\t///     <paramref name=\"exception\" /> so awaiting it throws.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
 				.Append(types).Append("> setup, global::System.Exception exception)").AppendLine();
@@ -75,9 +103,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")
+					"\t///     Appends an entry that invokes <paramref name=\"callback\" /> to build the exception the returned")
+				.AppendLine();
+			sb.Append(
+					"\t///     <see cref=\"global::System.Threading.Tasks.Task{TReturn}\" /> is faulted with.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
 				.Append(types).Append("> setup, global::System.Func<global::System.Exception> callback)").AppendLine();
@@ -86,9 +120,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")
+					"\t///     Appends an entry that invokes <paramref name=\"callback\" /> with the method's arguments to build the")
+				.AppendLine();
+			sb.Append(
+					"\t///     exception the returned <see cref=\"global::System.Threading.Tasks.Task{TReturn}\" /> is faulted with.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<TReturn>, ")
 				.Append(types).Append("> setup, global::System.Func<").Append(types).Append(", global::System.Exception> callback)").AppendLine();
@@ -105,9 +145,15 @@ internal static partial class Sources
 			string variables = string.Join(", ", Enumerable.Range(1, number).Select(i => $"v{i}"));
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers the <see langword=\"async\" /> <paramref name=\"returnValue\" /> for this method.")
+					"\t///     Appends <paramref name=\"returnValue\" /> to the sequence - the next matching invocation returns a completed")
+				.AppendLine();
+			sb.Append(
+					"\t///     <see cref=\"global::System.Threading.Tasks.ValueTask{TReturn}\" /> carrying this value.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
 				.Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
@@ -117,9 +163,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
+					"\t///     Appends a lazy async return to the sequence; <paramref name=\"callback\" /> is invoked on each matching")
+				.AppendLine();
+			sb.Append(
+					"\t///     invocation and its result is wrapped in a completed <see cref=\"global::System.Threading.Tasks.ValueTask{TReturn}\" />.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
 				.Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
@@ -129,9 +181,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers an <see langword=\"async\" /> <paramref name=\"callback\" /> to setup the return value for this method.")
+					"\t///     Appends a lazy async return that receives the method's arguments and produces the value wrapped in a")
+				.AppendLine();
+			sb.Append(
+					"\t///     completed <see cref=\"global::System.Threading.Tasks.ValueTask{TReturn}\" />.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
 				.Append(">(this global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types).Append("> setup, global::System.Func<")
@@ -142,9 +200,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers an <paramref name=\"exception\" /> to throw when the <see langword=\"async\" /> method is awaited.")
+					"\t///     Appends an entry that faults the returned <see cref=\"global::System.Threading.Tasks.ValueTask{TReturn}\" /> with")
+				.AppendLine();
+			sb.Append(
+					"\t///     <paramref name=\"exception\" /> so awaiting it throws.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types)
 				.Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
@@ -154,9 +218,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")
+					"\t///     Appends an entry that invokes <paramref name=\"callback\" /> to build the exception the returned")
+				.AppendLine();
+			sb.Append(
+					"\t///     <see cref=\"global::System.Threading.Tasks.ValueTask{TReturn}\" /> is faulted with.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types)
 				.Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
@@ -166,9 +236,15 @@ internal static partial class Sources
 
 			sb.Append("\t/// <summary>").AppendLine();
 			sb.Append(
-					"\t///     Registers a <paramref name=\"callback\" /> that calculates the exception to throw when the <see langword=\"async\" /> method is awaited.")
+					"\t///     Appends an entry that invokes <paramref name=\"callback\" /> with the method's arguments to build the")
+				.AppendLine();
+			sb.Append(
+					"\t///     exception the returned <see cref=\"global::System.Threading.Tasks.ValueTask{TReturn}\" /> is faulted with.")
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
+			sb.Append("\t/// <remarks>").AppendLine();
+			sb.Append(SequenceRemark).AppendLine();
+			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types)
 				.Append(">(this global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types).Append("> setup, global::System.Func<")

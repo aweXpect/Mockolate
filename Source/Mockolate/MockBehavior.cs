@@ -7,8 +7,21 @@ using System.Linq;
 namespace Mockolate;
 
 /// <summary>
-///     The behavior of the mock.
+///     Controls how a Mockolate mock responds when a member is invoked without a matching setup.
 /// </summary>
+/// <remarks>
+///     An instance is an immutable <see langword="record" /> - every configuration method returns a modified copy,
+///     leaving the original untouched so behaviors can be shared safely across tests. Pass a <see cref="MockBehavior" />
+///     to <c>CreateMock(...)</c> to customize how un-configured members are handled:
+///     <list type="bullet">
+///       <item><description><see cref="ThrowWhenNotSetup" /> (see <see cref="MockBehaviorExtensions.ThrowingWhenNotSetup" />) - throw <see cref="Mockolate.Exceptions.MockNotSetupException" /> instead of returning a default value.</description></item>
+///       <item><description><see cref="SkipBaseClass" /> (see <see cref="MockBehaviorExtensions.SkippingBaseClass" />) - for class mocks, bypass the base-class implementation entirely.</description></item>
+///       <item><description><see cref="SkipInteractionRecording" /> (see <see cref="MockBehaviorExtensions.SkippingInteractionRecording" />) - trade verifiability for performance by not recording invocations.</description></item>
+///       <item><description><see cref="DefaultValue" /> (tune via <see cref="WithDefaultValueFor(DefaultValueFactory[])" /> or <c>MockBehaviorExtensions.WithDefaultValueFor&lt;T&gt;(factory)</c>) - supplies the default return values for un-configured members.</description></item>
+///       <item><description><c>UseConstructorParametersFor&lt;T&gt;(...)</c> - pre-register constructor parameters applied whenever a mock of <c>T</c> is created without explicit ones.</description></item>
+///     </list>
+///     Start from <c>MockBehavior.Default</c> (generator-emitted) and chain the fluent extension methods.
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif

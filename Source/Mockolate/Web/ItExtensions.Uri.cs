@@ -17,8 +17,29 @@ public static partial class ItExtensions
 	extension(It _)
 	{
 		/// <summary>
-		///     Expects the <see cref="Uri" /> parameter to match the given <paramref name="pattern" />.
+		///     Matches a <see cref="Uri" /> (or <see langword="string" /> URI) against an optional glob
+		///     <paramref name="pattern" /> - pass <see langword="null" /> to accept any URI and narrow it further
+		///     with fluent builders on the returned <see cref="IUriParameter" />.
 		/// </summary>
+		/// <param name="pattern">
+		///     Glob pattern matched against <see cref="Uri.ToString" /> (<c>*</c> matches any sequence, <c>?</c>
+		///     matches one character). A trailing <c>/</c> on the request URI is tolerated when the pattern omits
+		///     it. Pass <see langword="null" /> to skip the pattern check and only rely on the fluent constraints.
+		/// </param>
+		/// <remarks>
+		///     Chain additional constraints on the returned matcher:
+		///     <list type="bullet">
+		///       <item><description><c>.ForHttp()</c> / <c>.ForHttps()</c> - require the scheme.</description></item>
+		///       <item><description><c>.WithHost(hostPattern)</c> / <c>.WithPort(port)</c> / <c>.WithPath(pathPattern)</c> - constrain individual URI components (host and path accept wildcards; path is URL-decoded before matching).</description></item>
+		///       <item><description><c>.WithQuery(key, value)</c> / <c>.WithQuery(queryString)</c> / <c>.WithQuery(parameters)</c> - require query parameters to be present; the order is ignored, values are URL-decoded.</description></item>
+		///     </list>
+		/// </remarks>
+		/// <returns>A fluent <see cref="Uri" /> matcher; pass it to <c>Setup.GetAsync</c>/<c>PostAsync</c>/... or <c>Verify</c>.</returns>
+		/// <example>
+		///     <code>
+		///     httpClient.Mock.Verify.GetAsync(It.IsUri("https://api.example.com/*").WithQuery("page", "1")).AtLeastOnce();
+		///     </code>
+		/// </example>
 		public static IUriParameter IsUri(string? pattern = null)
 			=> new UriParameter(pattern);
 	}

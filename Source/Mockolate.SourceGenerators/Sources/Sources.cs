@@ -389,10 +389,21 @@ internal static partial class Sources
 		/// </summary>
 		private void AppendXmlRemarks(string[] lines, string indent = "\t\t")
 		{
+			if (lines.Length == 0)
+			{
+				return;
+			}
+
 			sb.Append(indent).Append("/// <remarks>").AppendLine();
+			int i = 0;
 			foreach (string line in lines)
 			{
-				sb.Append(indent).Append("///     ").Append(line).AppendLine();
+				sb.Append(indent).Append("///     ").Append(line);
+				if (i++ < lines.Length)
+				{
+					sb.Append("<br />");
+				}
+				sb.AppendLine();
 			}
 			sb.Append(indent).Append("/// </remarks>").AppendLine();
 		}
