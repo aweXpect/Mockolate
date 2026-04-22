@@ -7,6 +7,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="Testably.Abstractions"/>
+		<PackageReference Include="Azure.Data.Tables"/>
+		<PackageReference Include="Azure.Storage.Blobs"/>
 		<PackageReference Include="IsExternalInit">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -2251,9 +2251,13 @@ internal static partial class Sources
 		sb.Append(')');
 		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 		{
+			bool isOverride = !isClassInterface && method.UseOverride;
+			bool isExplicitImplementation = explicitInterfaceImplementation || method.ExplicitImplementation is not null;
+			bool inheritsConstraints = isExplicitImplementation || isOverride || method.IsEquals() ||
+			                           method.IsGetHashCode() || method.IsToString();
 			foreach (GenericParameter gp in method.GenericParameters.Value)
 			{
-				gp.AppendWhereConstraint(sb, "\t\t\t", explicitInterfaceImplementation);
+				gp.AppendWhereConstraint(sb, "\t\t\t", inheritsConstraints, isExplicitImplementation);
 			}
 		}
 
@@ -3507,7 +3511,7 @@ internal static partial class Sources
 		{
 			foreach (GenericParameter gp in method.GenericParameters.Value)
 			{
-				gp.AppendWhereConstraint(sb, "\t\t\t", true);
+				gp.AppendWhereConstraint(sb, "\t\t\t", true, true);
 			}
 		}
 
@@ -4893,7 +4897,7 @@ internal static partial class Sources
 		{
 			foreach (GenericParameter gp in method.GenericParameters.Value)
 			{
-				gp.AppendWhereConstraint(sb, "\t\t\t", true);
+				gp.AppendWhereConstraint(sb, "\t\t\t", true, true);
 			}
 		}
 

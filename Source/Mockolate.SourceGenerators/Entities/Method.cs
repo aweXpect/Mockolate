@@ -7,7 +7,7 @@ namespace Mockolate.SourceGenerators.Entities;
 [DebuggerDisplay("{ContainingType}.{Name}({Parameters})")]
 internal record Method
 {
-	public Method(IMethodSymbol methodSymbol, List<Method>? alreadyDefinedMethods)
+	public Method(IMethodSymbol methodSymbol, List<Method>? alreadyDefinedMethods, IAssemblySymbol? sourceAssembly = null)
 	{
 		Accessibility = methodSymbol.DeclaredAccessibility;
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
@@ -26,7 +26,7 @@ internal record Method
 			Name += $"<{string.Join(", ", GenericParameters.Value.Select(x => x.Name))}>";
 		}
 
-		Attributes = methodSymbol.GetAttributes().ToAttributeArray();
+		Attributes = methodSymbol.GetAttributes().ToAttributeArray(sourceAssembly);
 
 		if (alreadyDefinedMethods is not null)
 		{

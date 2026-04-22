@@ -43,6 +43,46 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
+			[Fact]
+			public async Task VirtualMethodOverride_WithConstrainedGeneric_ShouldNotRepeatConstraints()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System;
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = MyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyInterface
+					     {
+					     }
+
+					     public class MyService
+					     {
+					         public virtual bool MyMethod<T>(T entity)
+					             where T : IMyInterface
+					         {
+					             return true;
+					         }
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+					.Contains("""
+					          		/// <inheritdoc cref="global::MyCode.MyService.MyMethod{T}(T)" />
+					          		public override bool MyMethod<T>(T entity)
+					          		{
+					          """).IgnoringNewlineStyle().And
+					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :").IgnoringNewlineStyle().Because("CS0460: constraints on override methods are inherited from the base method");
+			}
+
 			[Theory]
 			[InlineData("class, T")]
 			[InlineData("struct")]

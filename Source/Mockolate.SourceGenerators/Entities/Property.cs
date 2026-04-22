@@ -7,7 +7,7 @@ namespace Mockolate.SourceGenerators.Entities;
 [DebuggerDisplay("{ContainingType}.{Name}")]
 internal record Property
 {
-	public Property(IPropertySymbol propertySymbol, List<Property>? alreadyDefinedProperties)
+	public Property(IPropertySymbol propertySymbol, List<Property>? alreadyDefinedProperties, IAssemblySymbol? sourceAssembly = null)
 	{
 		Accessibility = propertySymbol.DeclaredAccessibility;
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
@@ -23,7 +23,7 @@ internal record Property
 				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
 		}
 
-		Attributes = propertySymbol.GetAttributes().ToAttributeArray();
+		Attributes = propertySymbol.GetAttributes().ToAttributeArray(sourceAssembly);
 
 		if (alreadyDefinedProperties is not null)
 		{
@@ -35,8 +35,10 @@ internal record Property
 			alreadyDefinedProperties.Add(this);
 		}
 
-		Getter = propertySymbol.GetMethod is null ? null : new Method(propertySymbol.GetMethod, null);
-		Setter = propertySymbol.SetMethod is null ? null : new Method(propertySymbol.SetMethod, null);
+		Getter = propertySymbol.GetMethod is { } getter && Helpers.IsOverridableFrom(getter, sourceAssembly)
+			? new Method(getter, null, sourceAssembly) : null;
+		Setter = propertySymbol.SetMethod is { } setter && Helpers.IsOverridableFrom(setter, sourceAssembly)
+			? new Method(setter, null, sourceAssembly) : null;
 	}
 
 	public static IEqualityComparer<Property> EqualityComparer { get; } = new PropertyEqualityComparer();
