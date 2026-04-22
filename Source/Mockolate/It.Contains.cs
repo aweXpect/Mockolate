@@ -13,11 +13,18 @@ public partial class It
 	///     Matches a collection parameter that contains <paramref name="item" />.
 	/// </summary>
 	/// <remarks>
-	///     Supports method parameters declared as <see cref="IEnumerable{T}" />, <see cref="ICollection{T}" />,
-	///     <see cref="IList{T}" />, <see cref="IReadOnlyCollection{T}" />, <see cref="IReadOnlyList{T}" />,
-	///     <see cref="ISet{T}" />, <typeparamref name="T" /> arrays, <see cref="List{T}" />,
-	///     <see cref="HashSet{T}" />, <see cref="Queue{T}" /> or <see cref="Stack{T}" />.
+	///     Equality uses <see cref="EqualityComparer{T}.Default" /> unless
+	///     <see cref="IContainsParameter{T}.Using" /> supplies a custom comparer. Supports method parameters declared
+	///     as <see cref="IEnumerable{T}" />, <see cref="ICollection{T}" />, <see cref="IList{T}" />,
+	///     <see cref="IReadOnlyCollection{T}" />, <see cref="IReadOnlyList{T}" />, <see cref="ISet{T}" />,
+	///     <typeparamref name="T" /> arrays, <see cref="List{T}" />, <see cref="HashSet{T}" />,
+	///     <see cref="Queue{T}" /> or <see cref="Stack{T}" />. Use
+	///     <see cref="SequenceEquals{T}(IEnumerable{T})" /> when order and length must match.
 	/// </remarks>
+	/// <typeparam name="T">The collection element type.</typeparam>
+	/// <param name="item">The item that must appear in the collection.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>A parameter matcher that accepts any supported collection containing <paramref name="item" />.</returns>
 	public static IContainsParameter<T> Contains<T>(T item,
 		[CallerArgumentExpression(nameof(item))]
 		string doNotPopulateThisValue = "")

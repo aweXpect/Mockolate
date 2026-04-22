@@ -16,8 +16,15 @@ public static partial class ItExtensions
 	extension(IHttpContentParameter parameter)
 	{
 		/// <summary>
-		///     Expects the content to have a string body that contains the <paramref name="expected" /> value.
+		///     Expects the string body to contain <paramref name="expected" />.
 		/// </summary>
+		/// <param name="expected">The substring that must appear in the decoded body.</param>
+		/// <returns>A <see cref="IStringContentBodyParameter" /> for tightening to an exact match or ignoring case.</returns>
+		/// <remarks>
+		///     Matching is ordinal by default &#8212; chain <see cref="IStringContentBodyParameter.IgnoringCase" /> to
+		///     compare case-insensitively, or <see cref="IStringContentBodyParameter.Exactly" /> to require the whole
+		///     body to equal <paramref name="expected" /> rather than merely contain it.
+		/// </remarks>
 		public IStringContentBodyParameter WithString(string expected)
 		{
 			StringMatcher data = new(expected, true);
@@ -26,8 +33,15 @@ public static partial class ItExtensions
 		}
 
 		/// <summary>
-		///     Expects the content to have a string body that matches the given wildcard <paramref name="pattern" />.
+		///     Expects the string body to match the wildcard <paramref name="pattern" /> (<c>*</c> = any sequence,
+		///     <c>?</c> = any single character).
 		/// </summary>
+		/// <param name="pattern">The wildcard pattern to match against the decoded body.</param>
+		/// <returns>
+		///     A <see cref="IStringContentBodyMatchingParameter" /> that additionally supports
+		///     <see cref="IStringContentBodyMatchingParameter.AsRegex" /> to switch the pattern semantics to
+		///     <see cref="Regex" />.
+		/// </returns>
 		public IStringContentBodyMatchingParameter WithStringMatching(string pattern)
 		{
 			StringMatcher data = new(pattern, false);
@@ -37,31 +51,36 @@ public static partial class ItExtensions
 	}
 
 	/// <summary>
-	///     Further expectations on the matching of a body of the <see cref="StringContent" />.
+	///     Further expectations on a wildcard/regex body match.
 	/// </summary>
 	public interface IStringContentBodyMatchingParameter : IStringContentBodyParameter
 	{
 		/// <summary>
-		///     Expects the body match pattern to be a <see cref="Regex" />.
+		///     Interprets the previously supplied pattern as a <see cref="Regex" /> rather than a wildcard.
 		/// </summary>
+		/// <param name="options">Regex options to apply.</param>
+		/// <param name="timeout">Optional match timeout; <see langword="null" /> disables the timeout.</param>
+		/// <returns>The same parameter, for chaining additional body constraints.</returns>
 		IStringContentBodyParameter AsRegex(
 			RegexOptions options = RegexOptions.None,
 			TimeSpan? timeout = null);
 	}
 
 	/// <summary>
-	///     Further expectations on the body of the <see cref="StringContent" />.
+	///     Further expectations on a string body match.
 	/// </summary>
 	public interface IStringContentBodyParameter : IHttpContentParameter
 	{
 		/// <summary>
-		///     Ignores case when matching the body.
+		///     Performs the match case-insensitively.
 		/// </summary>
+		/// <returns>The same parameter, for chaining.</returns>
 		IStringContentBodyParameter IgnoringCase();
 
 		/// <summary>
-		///     Requires the body to completely match the given string.
+		///     Requires the decoded body to equal the previously supplied string exactly, not just contain it.
 		/// </summary>
+		/// <returns>The same parameter, for chaining.</returns>
 		IStringContentBodyParameter Exactly();
 	}
 

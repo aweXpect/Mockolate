@@ -42,35 +42,56 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	/// <summary>
 	///     Transitions the associated mock registry to the given <paramref name="scenario" />.
 	/// </summary>
+	/// <param name="scenario">The scenario name to switch to.</param>
 	protected void TransitionScenario(string scenario)
 		=> _mockRegistry.TransitionTo(scenario);
 
 	/// <summary>
-	///     Checks if the <paramref name="access" /> matches the setup.
+	///     Returns whether this setup applies to the given <paramref name="access" />.
 	/// </summary>
+	/// <param name="access">The recorded access being matched.</param>
+	/// <returns><see langword="true" /> when this setup should handle the access.</returns>
 	protected abstract bool MatchesAccess(IndexerAccess access);
 
 	/// <summary>
-	///     Invokes the getter flow for the given <paramref name="access" /> using <paramref name="baseValue" /> as the seed.
+	///     Runs the getter flow for <paramref name="access" /> using <paramref name="baseValue" /> as the seed.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The recorded access whose arguments identify the slot.</param>
+	/// <param name="behavior">The mock's active behavior.</param>
+	/// <param name="baseValue">The value produced by the base-class indexer (or a caller-supplied default).</param>
+	/// <returns>The resolved getter value.</returns>
 	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult baseValue);
 
 	/// <summary>
-	///     Invokes the getter flow for the given <paramref name="access" />, materializing the default value from the
+	///     Runs the getter flow for <paramref name="access" />, materializing the default value from
 	///     <paramref name="behavior" /> inline when no stored value or initialization is present.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The recorded access whose arguments identify the slot.</param>
+	/// <param name="behavior">The mock's active behavior (also provides the default value factory).</param>
+	/// <returns>The resolved getter value.</returns>
 	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior);
 
 	/// <summary>
-	///     Invokes the getter flow for the given <paramref name="access" /> using the <paramref name="defaultValueGenerator" />
-	///     when no value has been stored or initialized.
+	///     Runs the getter flow for <paramref name="access" /> using <paramref name="defaultValueGenerator" /> as the
+	///     fallback when no value has been stored or initialized.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The recorded access whose arguments identify the slot.</param>
+	/// <param name="behavior">The mock's active behavior.</param>
+	/// <param name="defaultValueGenerator">Lazy producer of the default value; only invoked when a default is actually needed.</param>
+	/// <returns>The resolved getter value.</returns>
 	public abstract TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
 		Func<TResult> defaultValueGenerator);
 
 	/// <summary>
-	///     Invokes the setter flow for the given <paramref name="access" /> with the given <paramref name="value" />.
+	///     Runs the setter flow for <paramref name="access" /> with the given <paramref name="value" />.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The recorded access whose arguments identify the slot.</param>
+	/// <param name="behavior">The mock's active behavior.</param>
+	/// <param name="value">The value being assigned.</param>
 	public abstract void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult value);
 
 	/// <summary>

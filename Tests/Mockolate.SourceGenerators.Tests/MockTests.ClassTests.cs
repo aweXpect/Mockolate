@@ -78,5 +78,66 @@ public sealed partial class MockTests
 				.Contains("Raise the <see cref=\"global::MyCode.IMyBaseService.BaseEvent\"/> event.").And
 				.Contains("Verify subscriptions on the BaseEvent event of <see cref=\"global::MyCode.IMyBaseService.BaseEvent\" />.");
 		}
+
+		[Fact]
+		public async Task PlainInterface_ShouldOmitConditionalRemarkBullets()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = IPlain.CreateMock();
+				         }
+				     }
+
+				     public interface IPlain
+				     {
+				         int GetValue();
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.IPlain.g.cs").WhoseValue
+				.DoesNotContain("<c>Raise</c> - trigger events declared on the mocked type.").And
+				.DoesNotContain("<c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c>").And
+				.DoesNotContain("<c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c>").And
+				.DoesNotContain("<c>.Mock.Raise</c> triggers events declared on the mocked type.");
+		}
+
+		[Fact]
+		public async Task InterfaceWithEvents_ShouldIncludeRaiseRemarkBullet()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = IHasEvent.CreateMock();
+				         }
+				     }
+
+				     public interface IHasEvent
+				     {
+				         event EventHandler Changed;
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.IHasEvent.g.cs").WhoseValue
+				.Contains("<c>Raise</c> - trigger events declared on the mocked type.").And
+				.Contains("<c>.Mock.Raise</c> triggers events declared on the mocked type.").And
+				.DoesNotContain("<c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c>").And
+				.DoesNotContain("<c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c>");
+		}
 	}
 }

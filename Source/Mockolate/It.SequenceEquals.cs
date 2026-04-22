@@ -10,7 +10,8 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a collection parameter whose elements equal <paramref name="values" /> in order.
+	///     Matches a collection parameter whose elements equal <paramref name="values" /> in the same order (and
+	///     have the same length).
 	/// </summary>
 	/// <remarks>
 	///     Supports method parameters declared as <see cref="IEnumerable{T}" />, <see cref="ICollection{T}" />,
@@ -18,8 +19,12 @@ public partial class It
 	///     <typeparamref name="T" /> arrays, <see cref="List{T}" />, <see cref="Queue{T}" /> or
 	///     <see cref="Stack{T}" />. Unordered shapes such as <see cref="ISet{T}" /> and
 	///     <see cref="HashSet{T}" /> are intentionally not supported, as their enumeration order
-	///     is not guaranteed.
+	///     is not guaranteed. Use <see cref="Contains{T}(T, string)" /> when you only care about containment rather
+	///     than order.
 	/// </remarks>
+	/// <typeparam name="T">The collection element type.</typeparam>
+	/// <param name="values">The expected sequence, in order.</param>
+	/// <returns>A parameter matcher that accepts any supported ordered collection whose elements equal <paramref name="values" /> in order.</returns>
 	public static ISequenceEqualsParameter<T> SequenceEquals<T>(params IEnumerable<T> values)
 		=> new ParameterSequenceEqualsMatch<T>(values.ToArray());
 

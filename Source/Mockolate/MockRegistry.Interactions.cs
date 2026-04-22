@@ -40,10 +40,14 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Get the latest method setup matching the given <paramref name="methodName" /> and <paramref name="predicate" />,
-	///     or returns <see langword="null" /> if no matching setup is found. Scenario setups take precedence over
-	///     default-scope setups.
+	///     Returns the latest registered method setup of type <typeparamref name="T" /> whose name equals
+	///     <paramref name="methodName" /> and that satisfies <paramref name="predicate" />, or <see langword="null" />
+	///     when no setup matches. Scenario-scoped setups take precedence over default-scope setups.
 	/// </summary>
+	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
+	/// <param name="methodName">The simple method name.</param>
+	/// <param name="predicate">Argument matcher applied to each candidate setup.</param>
+	/// <returns>The matching setup, or <see langword="null" /> when none was found.</returns>
 	public T? GetMethodSetup<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
 	{
 		if (!string.IsNullOrEmpty(Scenario) &&
@@ -76,6 +80,9 @@ public partial class MockRegistry
 	///         <see cref="GetMethodSetup{T}(string, Func{T, bool})" />'s precedence.
 	///     </para>
 	/// </remarks>
+	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
+	/// <param name="methodName">The simple method name.</param>
+	/// <returns>A lazy stream of matching setups, scenario-scoped first.</returns>
 	public IEnumerable<T> GetMethodSetups<T>(string methodName) where T : MethodSetup
 	{
 		if (!string.IsNullOrEmpty(Scenario) &&
@@ -94,10 +101,13 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Get the latest indexer setup matching the given <paramref name="predicate" />,
-	///     or returns <see langword="null" /> if no matching setup is found. Scenario setups take precedence over
-	///     default-scope setups.
+	///     Returns the latest registered indexer setup of type <typeparamref name="T" /> that satisfies
+	///     <paramref name="predicate" />, or <see langword="null" /> when no setup matches. Scenario-scoped setups
+	///     take precedence over default-scope setups.
 	/// </summary>
+	/// <typeparam name="T">The concrete <see cref="IndexerSetup" /> subtype to return.</typeparam>
+	/// <param name="predicate">Argument matcher applied to each candidate setup.</param>
+	/// <returns>The matching setup, or <see langword="null" /> when none was found.</returns>
 	public T? GetIndexerSetup<T>(Func<T, bool> predicate) where T : IndexerSetup
 	{
 		if (!string.IsNullOrEmpty(Scenario) &&
@@ -114,10 +124,13 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Get the latest indexer setup matching the given <paramref name="access" />,
-	///     or returns <see langword="null" /> if no matching setup is found. Scenario setups take precedence over
-	///     default-scope setups.
+	///     Returns the latest registered indexer setup of type <typeparamref name="T" /> that matches the
+	///     <paramref name="access" />, or <see langword="null" /> when no setup matches. Scenario-scoped setups take
+	///     precedence over default-scope setups.
 	/// </summary>
+	/// <typeparam name="T">The concrete <see cref="IndexerSetup" /> subtype to return.</typeparam>
+	/// <param name="access">The indexer access whose argument values must be matched.</param>
+	/// <returns>The matching setup, or <see langword="null" /> when none was found.</returns>
 	public T? GetIndexerSetup<T>(IndexerAccess access) where T : IndexerSetup
 	{
 		if (!string.IsNullOrEmpty(Scenario) &&
@@ -134,8 +147,12 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Stores the given <paramref name="value" /> for the given indexer <paramref name="access" />.
+	///     Stores <paramref name="value" /> in the indexer value slot identified by <paramref name="access" />.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The indexer access whose arguments identify the slot.</param>
+	/// <param name="value">The value to store.</param>
+	/// <param name="signatureIndex">Index into the mock's indexer-signature table (emitted by the source generator).</param>
 	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value, int signatureIndex)
 	{
 		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
@@ -147,6 +164,11 @@ public partial class MockRegistry
 	///     when <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />, or otherwise stores and
 	///     returns the <see cref="MockBehavior.DefaultValue" />.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The indexer access whose arguments identify the slot.</param>
+	/// <param name="signatureIndex">Index into the mock's indexer-signature table (emitted by the source generator).</param>
+	/// <returns>The stored value, or the freshly generated default.</returns>
+	/// <exception cref="MockNotSetupException"><see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" /> and no value was previously stored for this access.</exception>
 	public TResult GetIndexerFallback<TResult>(IndexerAccess access, int signatureIndex)
 	{
 		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
@@ -169,6 +191,11 @@ public partial class MockRegistry
 	///     Invokes the getter flow of the given <paramref name="setup" /> for the given <paramref name="access" />,
 	///     ensuring the indexer value storage is wired up before dispatching.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The indexer access whose arguments identify the slot.</param>
+	/// <param name="setup">The previously matched indexer setup.</param>
+	/// <param name="signatureIndex">Index into the mock's indexer-signature table (emitted by the source generator).</param>
+	/// <returns>The value produced by the setup.</returns>
 	public TResult ApplyIndexerSetup<TResult>(IndexerAccess access, IndexerSetup setup, int signatureIndex)
 	{
 		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
@@ -183,6 +210,12 @@ public partial class MockRegistry
 	///     When <paramref name="setup" /> is <see langword="null" />, returns any previously stored value or the
 	///     <paramref name="baseValue" /> (which is then stored).
 	/// </remarks>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The indexer access whose arguments identify the slot.</param>
+	/// <param name="setup">The matching indexer setup, or <see langword="null" /> to fall through to stored/base value.</param>
+	/// <param name="baseValue">Value returned by the base-class indexer (or a caller-supplied default).</param>
+	/// <param name="signatureIndex">Index into the mock's indexer-signature table (emitted by the source generator).</param>
+	/// <returns>The final getter result.</returns>
 	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult baseValue,
 		int signatureIndex)
 	{
@@ -211,6 +244,13 @@ public partial class MockRegistry
 	///     <see cref="MockNotSetupException" />, otherwise stores and returns the <paramref name="defaultValueGenerator" />'s
 	///     value.
 	/// </remarks>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The indexer access whose arguments identify the slot.</param>
+	/// <param name="setup">The matching indexer setup, or <see langword="null" /> to fall through to stored/default value.</param>
+	/// <param name="defaultValueGenerator">Lazy producer of the default value &#8212; only invoked when a default is actually needed.</param>
+	/// <param name="signatureIndex">Index into the mock's indexer-signature table (emitted by the source generator).</param>
+	/// <returns>The final getter result.</returns>
+	/// <exception cref="MockNotSetupException"><paramref name="setup" /> is <see langword="null" />, <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />, and no value was previously stored.</exception>
 	public TResult ApplyIndexerGetter<TResult>(IndexerAccess access, IndexerSetup? setup,
 		Func<TResult> defaultValueGenerator, int signatureIndex)
 	{
@@ -236,9 +276,15 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Applies an indexer setter for the given <paramref name="access" /> with the given <paramref name="value" /> and
-	///     optional matching <paramref name="setup" />. Returns whether the base class implementation should be skipped.
+	///     Applies an indexer setter for the given <paramref name="access" /> with the given <paramref name="value" />
+	///     and optional matching <paramref name="setup" />.
 	/// </summary>
+	/// <typeparam name="TResult">The indexer's value type.</typeparam>
+	/// <param name="access">The indexer access whose arguments identify the slot.</param>
+	/// <param name="setup">The matching indexer setup, or <see langword="null" /> to simply store the value.</param>
+	/// <param name="value">The value being assigned.</param>
+	/// <param name="signatureIndex">Index into the mock's indexer-signature table (emitted by the source generator).</param>
+	/// <returns><see langword="true" /> when the base-class setter should be skipped.</returns>
 	public bool ApplyIndexerSetter<TResult>(IndexerAccess access, IndexerSetup? setup, TResult value,
 		int signatureIndex)
 	{
@@ -254,11 +300,12 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Register an <paramref name="interaction" /> with the mock.
+	///     Appends <paramref name="interaction" /> to the mock's recorded interactions.
 	/// </summary>
 	/// <remarks>
 	///     Has no effect when <see cref="MockBehavior.SkipInteractionRecording" /> is <see langword="true" />.
 	/// </remarks>
+	/// <param name="interaction">The recorded interaction to append.</param>
 	public void RegisterInteraction(IInteraction interaction)
 	{
 		if (!Behavior.SkipInteractionRecording)
@@ -292,8 +339,15 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Accesses the getter of the property with <paramref name="propertyName" />.
+	///     Executes the getter flow for the property named <paramref name="propertyName" />, honoring configured
+	///     setups and the active <see cref="MockBehavior" />.
 	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="defaultValueGenerator">Producer of the default value when no setup supplies one.</param>
+	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered.</param>
+	/// <returns>The resolved getter value.</returns>
+	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
 	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator,
 		Func<TResult>? baseValueAccessor)
 	{
@@ -337,12 +391,16 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Accesses the setter of the property with <paramref name="propertyName" /> and the matching
-	///     <paramref name="value" />.
+	///     Executes the setter flow for the property named <paramref name="propertyName" />, honoring configured
+	///     setups and the active <see cref="MockBehavior" />.
 	/// </summary>
 	/// <remarks>
-	///     Returns a flag, indicating whether the base class implementation should be skipped.
+	///     Returns a flag indicating whether the base-class setter should be skipped.
 	/// </remarks>
+	/// <typeparam name="T">The property's value type.</typeparam>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="value">The value being assigned.</param>
+	/// <returns><see langword="true" /> when the base-class setter should be skipped.</returns>
 	public bool SetProperty<T>(string propertyName, T value)
 	{
 		IInteraction? interaction = null;
@@ -422,9 +480,13 @@ public partial class MockRegistry
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	/// <summary>
-	///     Associates the specified event <paramref name="method" /> on the <paramref name="target" /> with the event
-	///     identified by the given <paramref name="name" />.
+	///     Records a subscription to the event named <paramref name="name" /> and fires registered
+	///     <c>OnSubscribed</c> callbacks.
 	/// </summary>
+	/// <param name="name">The simple event name.</param>
+	/// <param name="target">The subscribing handler's target (<see langword="null" /> for static methods).</param>
+	/// <param name="method">The subscribing handler's method.</param>
+	/// <exception cref="MockException"><paramref name="method" /> is <see langword="null" />.</exception>
 	public void AddEvent(string name, object? target, MethodInfo? method)
 	{
 		if (method is null)
@@ -444,9 +506,13 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Removes the specified event <paramref name="method" /> on the <paramref name="target" /> from the event identified
-	///     by the given <paramref name="name" />.
+	///     Records an unsubscription from the event named <paramref name="name" /> and fires registered
+	///     <c>OnUnsubscribed</c> callbacks.
 	/// </summary>
+	/// <param name="name">The simple event name.</param>
+	/// <param name="target">The unsubscribing handler's target (<see langword="null" /> for static methods).</param>
+	/// <param name="method">The unsubscribing handler's method.</param>
+	/// <exception cref="MockException"><paramref name="method" /> is <see langword="null" />.</exception>
 	public void RemoveEvent(string name, object? target, MethodInfo? method)
 	{
 		if (method is null)

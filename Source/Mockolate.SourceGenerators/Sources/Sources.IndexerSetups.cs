@@ -313,7 +313,7 @@ internal static partial class Sources
 			.Append("> OnSet { get; }").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlSummary("Overrides <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" /> for this indexer only.");
 		sb.AppendXmlRemarks("If not specified, use <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IIndexerSetup<TValue, ").Append(typeParams)
 			.Append("> SkippingBaseClass(bool skipBaseClass = true);").AppendLine();

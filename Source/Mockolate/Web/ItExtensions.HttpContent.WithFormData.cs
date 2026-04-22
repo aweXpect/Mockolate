@@ -17,14 +17,27 @@ public static partial class ItExtensions
 	extension(IHttpContentParameter parameter)
 	{
 		/// <summary>
-		///     Expects the form data content to contain the given <paramref name="key" />-<paramref name="value" /> pair.
+		///     Expects the form-data body to contain the pair <paramref name="key" />=<paramref name="value" />.
 		/// </summary>
+		/// <param name="key">The form-data key that must be present.</param>
+		/// <param name="value">The expected value for <paramref name="key" />. Implicitly converts from <see langword="string" />.</param>
+		/// <returns>A <see cref="IFormDataContentParameter" /> that can be narrowed further or tightened with <see cref="IFormDataContentParameter.Exactly" />.</returns>
+		/// <remarks>
+		///     By default only the listed pairs must appear; the body may contain extras. Chain
+		///     <see cref="IFormDataContentParameter.Exactly" /> to reject any additional pair.
+		/// </remarks>
 		public IFormDataContentParameter WithFormData(string key, HttpFormDataValue value)
 			=> parameter.WithFormData((key, value)!);
 
 		/// <summary>
-		///     Expects the form data content to contain the given <paramref name="values" />.
+		///     Expects the form-data body to contain all given <paramref name="values" /> (additional pairs are allowed).
 		/// </summary>
+		/// <param name="values">The expected key/value pairs; each <see cref="HttpFormDataValue" /> can be a literal, a pattern or a predicate.</param>
+		/// <returns>A <see cref="IFormDataContentParameter" /> that can be narrowed further or tightened with <see cref="IFormDataContentParameter.Exactly" />.</returns>
+		/// <remarks>
+		///     Chain <see cref="IFormDataContentParameter.Exactly" /> to require that no other keys are present. Useful
+		///     for matching <c>application/x-www-form-urlencoded</c> and <c>multipart/form-data</c> request bodies.
+		/// </remarks>
 		public IFormDataContentParameter WithFormData(params IEnumerable<(string Key, HttpFormDataValue Value)> values)
 		{
 			FormDataMatcher data = new(values);
@@ -33,21 +46,26 @@ public static partial class ItExtensions
 		}
 
 		/// <summary>
-		///     Expects the form data content to contain the given <paramref name="values" />.
+		///     Expects the form-data body to contain all pairs parsed from the URL-encoded <paramref name="values" />
+		///     string (e.g. <c>"a=1&amp;b=2"</c>).
 		/// </summary>
+		/// <param name="values">A URL-encoded key/value string; a leading <c>?</c> is stripped. Keys and values are URL-decoded.</param>
+		/// <returns>A <see cref="IFormDataContentParameter" /> that can be narrowed further or tightened with <see cref="IFormDataContentParameter.Exactly" />.</returns>
 		public IFormDataContentParameter WithFormData(string values)
 			=> parameter.WithFormData(FormDataMatcher.ParseFormDataParameters(values)
 				.Select(pair => (pair.Key, new HttpFormDataValue(pair.Value))));
 	}
 
 	/// <summary>
-	///     Further expectations on the form-data <see cref="HttpContent" />.
+	///     Further expectations on a form-data <see cref="HttpContent" /> body.
 	/// </summary>
 	public interface IFormDataContentParameter : IHttpContentParameter
 	{
 		/// <summary>
-		///     Expects the form data content to not contain any additional key-value pairs other than the ones already specified.
+		///     Requires the body to contain <em>exactly</em> the previously specified pairs &#8212; any additional
+		///     key/value pair causes the match to fail.
 		/// </summary>
+		/// <returns>The same <see cref="IFormDataContentParameter" />, for chaining.</returns>
 		IFormDataContentParameter Exactly();
 	}
 

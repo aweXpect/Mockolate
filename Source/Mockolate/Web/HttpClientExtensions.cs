@@ -15,19 +15,45 @@ using Mockolate.Internals.Polyfills;
 namespace Mockolate;
 
 /// <summary>
-///     Extensions for mocking <see cref="HttpClient" />.
+///     Fluent <c>Setup</c> / <c>Verify</c> surface for a mocked <see cref="HttpClient" /> - turns HTTP method
+///     calls (<c>GetAsync</c>, <c>PostAsync</c>, <c>PutAsync</c>, <c>PatchAsync</c>, <c>DeleteAsync</c> and the
+///     underlying <see cref="HttpClient.SendAsync(HttpRequestMessage, CancellationToken)" />) into expectations.
 /// </summary>
+/// <remarks>
+///     How it works: calling <c>HttpClient.CreateMock()</c> returns a mock whose constructor injects a mocked
+///     <see cref="HttpMessageHandler" />. These extensions route setup/verify calls through that handler, so any
+///     <c>HttpClient</c> method that ultimately goes through <c>SendAsync</c> can be intercepted by verb.
+///     <para />
+///     Typical flow:
+///     <list type="bullet">
+///       <item><description>Setup: <c>httpClient.Mock.Setup.PostAsync(uriMatcher, contentMatcher).ReturnsAsync(response)</c> -  see <c>HttpClientExtensions.Setup.*</c>.</description></item>
+///       <item><description>Verify: <c>httpClient.Mock.Verify.GetAsync(uriMatcher).Once()</c> - see <c>HttpClientExtensions.Verify.*</c>.</description></item>
+///       <item><description>Match request pieces with <see cref="ItExtensions" />: <c>It.IsUri(...)</c>, <c>It.IsHttpContent(...)</c>, <c>It.IsHttpRequestMessage(...)</c> and their fluent <c>.WithString</c> / <c>.WithBytes</c> / <c>.WithFormData</c> / <c>.WithHeaders</c> builders.</description></item>
+///     </list>
+///     <para />
+///     Throws <see cref="MockException" /> if the mock was constructed without a mockable
+///     <see cref="HttpMessageHandler" /> (e.g. <c>new HttpClient()</c> passed by hand) - the message handler
+///     injection is what makes the interception possible.
+/// </remarks>
 public static partial class HttpClientExtensions
 {
 	/// <inheritdoc cref="HttpClientExtensions" />
 	extension(IMockSetup<HttpClient> setup)
 	{
 		/// <summary>
-		///     Setup for the method
-		///     <see
-		///         cref="System.Net.Http.HttpClient.SendAsync(System.Net.Http.HttpRequestMessage, System.Threading.CancellationToken)" />
-		///     with the given <paramref name="request" />.
+		///     Sets up <see cref="HttpClient.SendAsync(HttpRequestMessage, CancellationToken)" /> directly on the
+		///     mocked <see cref="HttpClient" /> - the catch-all entry point that every verb-specific overload
+		///     (<c>GetAsync</c>, <c>PostAsync</c>, ...) routes through.
 		/// </summary>
+		/// <remarks>
+		///     Prefer <c>Setup.GetAsync</c>/<c>PostAsync</c>/<c>PutAsync</c>/<c>PatchAsync</c>/<c>DeleteAsync</c> when
+		///     you only need to match by verb and URI; reach for <c>SendAsync</c> when you need the full
+		///     <see cref="HttpRequestMessage" /> (e.g. to inspect headers or non-standard verbs like <c>HEAD</c> or
+		///     <c>OPTIONS</c>).
+		/// </remarks>
+		/// <param name="request">A matcher for the <see cref="HttpRequestMessage" /> - usually <c>It.IsHttpRequestMessage(...)</c>.</param>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> SendAsync(
 			IParameter<HttpRequestMessage> request)
 		{

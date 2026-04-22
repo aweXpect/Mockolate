@@ -10,8 +10,18 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a parameter of type <typeparamref name="T" /> that satisfies the <paramref name="predicate" />.
+	///     Matches a parameter of type <typeparamref name="T" /> whose value makes <paramref name="predicate" /> return
+	///     <see langword="true" />.
 	/// </summary>
+	/// <remarks>
+	///     Use this when the built-in matchers aren't expressive enough (e.g. &quot;a <see cref="System.DateTime" /> in
+	///     the past&quot; or &quot;a string that contains a substring&quot;). The predicate source expression is captured
+	///     by the compiler and shown in failure messages, so keep lambdas short for readable diagnostics.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="predicate">The predicate that decides whether an argument matches.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>A parameter matcher that delegates to <paramref name="predicate" />.</returns>
 	public static IParameterWithCallback<T> Satisfies<T>(Func<T, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")

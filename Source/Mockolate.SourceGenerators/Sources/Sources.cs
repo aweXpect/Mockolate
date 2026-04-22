@@ -378,6 +378,29 @@ internal static partial class Sources
 		}
 
 		/// <summary>
+		///     Appends an XML documentation <c>&lt;remarks&gt;</c> block consisting of several pre-formatted lines.
+		/// </summary>
+		private void AppendXmlRemarks(string[] lines, string indent = "\t\t")
+		{
+			if (lines.Length == 0)
+			{
+				return;
+			}
+
+			sb.Append(indent).Append("/// <remarks>").AppendLine();
+			for (int i = 0; i < lines.Length; i++)
+			{
+				sb.Append(indent).Append("///     ").Append(lines[i]);
+				if (i < lines.Length - 1)
+				{
+					sb.Append("<br />");
+				}
+				sb.AppendLine();
+			}
+			sb.Append(indent).Append("/// </remarks>").AppendLine();
+		}
+
+		/// <summary>
 		///     Appends an XML documentation <c>&lt;param&gt;</c> tag with the given name and description.
 		/// </summary>
 		private void AppendXmlParam(string name, string description, string indent = "\t\t")
@@ -396,6 +419,13 @@ internal static partial class Sources
 		/// </summary>
 		private void AppendXmlReturns(string returnsText, string indent = "\t\t")
 			=> sb.Append(indent).Append("/// <returns>").Append(returnsText).Append("</returns>").AppendLine();
+
+		/// <summary>
+		///     Appends an XML documentation <c>&lt;exception&gt;</c> tag with the given <paramref name="cref" /> and text.
+		/// </summary>
+		private void AppendXmlException(string cref, string text, string indent = "\t\t")
+			=> sb.Append(indent).Append("/// <exception cref=\"").Append(cref).Append("\">")
+				.Append(text).Append("</exception>").AppendLine();
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

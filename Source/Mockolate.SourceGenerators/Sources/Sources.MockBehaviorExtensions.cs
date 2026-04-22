@@ -32,8 +32,18 @@ internal static partial class Sources
 		          	extension(global::Mockolate.MockBehavior)
 		          	{
 		          		/// <summary>
-		          		///     The default mock behavior settings.
+		          		///     The default <see cref="global::Mockolate.MockBehavior" /> - the starting point for configuring a mock.
 		          		/// </summary>
+		          		/// <remarks>
+		          		///     Un-configured members return the generator-provided default value (empty strings/collections, completed
+		          		///     <see cref="global::System.Threading.Tasks.Task" />s, <see langword="null" /> otherwise), base-class
+		          		///     implementations run for class mocks, and every invocation is recorded for later verification.
+		          		///     <para />
+		          		///     Chain <c>SkippingBaseClass()</c>, <c>ThrowingWhenNotSetup()</c>, <c>SkippingInteractionRecording()</c>,
+		          		///     <c>WithDefaultValueFor&lt;T&gt;(...)</c> or <c>UseConstructorParametersFor&lt;T&gt;(...)</c> to derive
+		          		///     a customized <see cref="global::Mockolate.MockBehavior" />; because it is a <see langword="record" />,
+		          		///     each call returns a new instance and this shared default stays unchanged.
+		          		/// </remarks>
 		          		public static global::Mockolate.MockBehavior Default => _default;
 		          	}
 		          	

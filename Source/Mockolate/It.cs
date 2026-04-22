@@ -8,8 +8,24 @@ namespace Mockolate;
 #pragma warning disable S3453 // This class can't be instantiated; make its constructor 'public'.
 #pragma warning disable S3218 // Inner class members should not shadow outer class "static" or type members
 /// <summary>
-///     Specify a matching condition for a parameter.
+///     Specifies a matching condition for a single method or indexer parameter. Complement to
+///     <see cref="Match" />, which targets the full parameter list at once.
 /// </summary>
+/// <remarks>
+///     Use <see cref="It" /> matchers to describe expectations parameter-by-parameter inside a <c>Setup</c> or
+///     <c>Verify</c> call. Commonly used matchers:
+///     <list type="bullet">
+///       <item><description><c>It.IsAny&lt;T&gt;()</c> / <c>It.Is(value)</c> - accept any value / accept a specific value (equality check, overridable comparer via <c>.Using(...)</c>).</description></item>
+///       <item><description><c>It.IsNot(value)</c> / <c>It.IsNull&lt;T&gt;()</c> / <c>It.IsNotNull&lt;T&gt;()</c> / <c>It.IsTrue()</c> / <c>It.IsFalse()</c> - negative, null and boolean matchers.</description></item>
+///       <item><description><c>It.IsOneOf(values)</c> / <c>It.IsNotOneOf(values)</c> / <c>It.IsInRange(min, max)</c> - set and range matchers.</description></item>
+///       <item><description><c>It.Satisfies&lt;T&gt;(predicate)</c> / <c>It.Matches(pattern)</c> / <c>It.Contains(item)</c> / <c>It.SequenceEquals(values)</c> - predicate, wildcard and collection matchers.</description></item>
+///       <item><description><c>It.IsOut&lt;T&gt;(...)</c> / <c>It.IsRef&lt;T&gt;(...)</c> / <c>It.IsSpan&lt;T&gt;(...)</c> / <c>It.IsReadOnlySpan&lt;T&gt;(...)</c> / <c>It.IsRefStruct&lt;T&gt;(...)</c> - <see langword="out" /> / <see langword="ref" /> / span / <see langword="ref struct" /> parameters.</description></item>
+///     </list>
+///     <para />
+///     For methods and indexers with up to four parameters, a raw value can be passed directly in place of
+///     <c>It.Is(value)</c>. Reach for <see cref="Match" /> when you want to match the full argument tuple with a
+///     single predicate or to express "any arguments" via <c>Match.AnyParameters()</c>.
+/// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif

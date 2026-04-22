@@ -50,28 +50,41 @@ public abstract class PropertySetup : IInteractivePropertySetup
 		=> InitializeValue(value);
 
 	/// <summary>
-	///     Initializes the property with the <paramref name="value" />.
+	///     Seeds the property's backing storage with <paramref name="value" />. Called once per property at
+	///     initialization or after a scenario reset.
 	/// </summary>
+	/// <param name="value">The initial value; boxed to <see cref="object" /> because the property type is hidden behind the abstract.</param>
 	protected abstract void InitializeValue(object? value);
 
 	/// <summary>
-	///     Gets the flag indicating if the base class implementation should be skipped.
+	///     Returns the per-setup override of <see cref="MockBehavior.SkipBaseClass" />, or <see langword="null" />
+	///     when the mock-wide behavior should apply.
 	/// </summary>
+	/// <returns><see langword="true" /> to always skip, <see langword="false" /> to always call, <see langword="null" /> to defer to <see cref="MockBehavior.SkipBaseClass" />.</returns>
 	protected abstract bool? GetSkipBaseClass();
 
 	/// <summary>
-	///     Checks if the <paramref name="propertyAccess" /> matches the setup.
+	///     Returns whether this setup applies to the given <paramref name="propertyAccess" />.
 	/// </summary>
+	/// <param name="propertyAccess">The recorded access being matched.</param>
+	/// <returns><see langword="true" /> when this setup should handle the access.</returns>
 	protected abstract bool Matches(PropertyAccess propertyAccess);
 
 	/// <summary>
-	///     Invokes the setter logic with the given <paramref name="value" />.
+	///     Runs the setter flow for <paramref name="value" />.
 	/// </summary>
+	/// <typeparam name="TValue">The property's value type.</typeparam>
+	/// <param name="value">The value being assigned.</param>
+	/// <param name="behavior">The mock's active behavior.</param>
 	protected abstract void InvokeSetter<TValue>(TValue value, MockBehavior behavior);
 
 	/// <summary>
-	///     Invokes the getter logic and returns the value of type <typeparamref name="TResult" />.
+	///     Runs the getter flow and returns the property value.
 	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="behavior">The mock's active behavior.</param>
+	/// <param name="defaultValueGenerator">Fallback producer used when the setup cannot supply a value.</param>
+	/// <returns>The resolved getter value.</returns>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
 #if !DEBUG

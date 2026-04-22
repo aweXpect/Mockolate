@@ -10,18 +10,27 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a parameter that is equal to one of the <paramref name="values" />.
+	///     Matches a parameter that equals any one of the supplied <paramref name="values" />.
 	/// </summary>
+	/// <remarks>
+	///     Equality uses <see cref="EqualityComparer{T}.Default" /> unless <see cref="IIsOneOfParameter{T}.Using" /> is
+	///     called. Pass the allowed values either as a comma-separated list or as any <see cref="IEnumerable{T}" />.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="values">The accepted values.</param>
+	/// <returns>A parameter matcher that accepts any value equal to one of <paramref name="values" />.</returns>
 	public static IIsOneOfParameter<T> IsOneOf<T>(params IEnumerable<T> values)
 		=> new ParameterIsOneOfMatch<T>(values.ToArray());
 
 	/// <summary>
-	///     An <see cref="IParameter{T}" /> used for equality comparison of a collection of alternatives.
+	///     An <see cref="IParameter{T}" /> used for equality comparison against a set of alternatives, with an opt-in
+	///     custom comparer.
 	/// </summary>
 	public interface IIsOneOfParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
-		///     Use the specified comparer to determine equality.
+		///     Switches equality comparison to use <paramref name="comparer" /> instead of
+		///     <see cref="EqualityComparer{T}.Default" />.
 		/// </summary>
 		IIsOneOfParameter<T> Using(IEqualityComparer<T> comparer,
 			[CallerArgumentExpression(nameof(comparer))]

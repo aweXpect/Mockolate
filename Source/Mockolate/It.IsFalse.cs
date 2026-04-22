@@ -7,8 +7,12 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any boolean parameter that is <see langword="false" />.
+	///     Matches any <see langword="bool" /> parameter whose value is <see langword="false" />.
 	/// </summary>
+	/// <remarks>
+	///     Shorthand for <c>It.Is(false)</c> with a nicer failure-message rendering. Use <see cref="IsTrue" /> for the
+	///     opposite.
+	/// </remarks>
 	public static IParameterWithCallback<bool> IsFalse()
 		=> new FalseParameterMatch();
 

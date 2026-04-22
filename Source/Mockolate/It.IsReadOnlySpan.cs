@@ -13,15 +13,24 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" />.
+	///     Matches any parameter of type <see cref="ReadOnlySpan{T}" /> of <typeparamref name="T" />.
 	/// </summary>
+	/// <remarks>
+	///     Because <see cref="ReadOnlySpan{T}" /> is a ref struct and cannot be stored, Mockolate copies its contents
+	///     into a <typeparamref name="T" />-array before dispatch. The predicate-based overload
+	///     <see cref="IsReadOnlySpan{T}(Func{T[], bool}, string)" /> receives this array.
+	/// </remarks>
 	public static IVerifyReadOnlySpanParameter<T> IsAnyReadOnlySpan<T>()
 		=> new ReadOnlySpanParameterMatch<T>(null);
 
 	/// <summary>
-	///     Matches any parameter of type <see cref="System.ReadOnlySpan{T}" /> of <typeparamref name="T" /> that matches the
-	///     <paramref name="predicate" />.
+	///     Matches a <see cref="ReadOnlySpan{T}" /> of <typeparamref name="T" /> parameter whose contents (copied to a
+	///     <typeparamref name="T" />-array) satisfy <paramref name="predicate" />.
 	/// </summary>
+	/// <remarks>
+	///     The span is copied to an array before <paramref name="predicate" /> is invoked, because ref structs cannot
+	///     be stored. If you only need to match any span, use <see cref="IsAnyReadOnlySpan{T}" />.
+	/// </remarks>
 	public static IVerifyReadOnlySpanParameter<T> IsReadOnlySpan<T>(Func<T[], bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")

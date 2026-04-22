@@ -9,20 +9,30 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a parameter that is not equal to <paramref name="value" />.
+	///     Matches a parameter whose value is <em>not</em> equal to <paramref name="value" />.
 	/// </summary>
+	/// <remarks>
+	///     The inverse of <see cref="Is{T}(T, string)" />. Unlike <c>Is</c>, this matcher also accepts arguments
+	///     whose runtime type is not <typeparamref name="T" />, since such values cannot equal a
+	///     <typeparamref name="T" />-typed expectation.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="value">The value to reject.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>A parameter matcher that accepts any value not equal to <paramref name="value" />.</returns>
 	public static IIsNotParameter<T> IsNot<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
 		=> new ParameterEqualsNotMatch<T>(value, doNotPopulateThisValue);
 
 	/// <summary>
-	///     An <see cref="IParameter{T}" /> used for equality comparison.
+	///     An <see cref="IParameter{T}" /> used for inequality comparison, with an opt-in custom comparer.
 	/// </summary>
 	public interface IIsNotParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
-		///     Use the specified comparer to determine equality.
+		///     Switches equality comparison to use <paramref name="comparer" /> instead of
+		///     <see cref="EqualityComparer{T}.Default" />.
 		/// </summary>
 		IIsNotParameter<T> Using(IEqualityComparer<T> comparer,
 			[CallerArgumentExpression(nameof(comparer))]

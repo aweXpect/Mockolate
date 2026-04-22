@@ -6,8 +6,13 @@ namespace Mockolate;
 public partial class Match
 {
 	/// <summary>
-	///     Use default event parameters when raising events.
+	///     Signals the <c>Raise</c> surface to synthesize default values for every parameter of the event's delegate,
+	///     instead of requiring them to be passed explicitly.
 	/// </summary>
+	/// <remarks>
+	///     Useful when subscribers don't care about the event payload and you just need the signal to fire. The
+	///     generated values follow the mock's <see cref="MockBehavior.DefaultValue" />.
+	/// </remarks>
 	public static IDefaultEventParameters WithDefaultParameters()
 		=> new DefaultEventParameters();
 

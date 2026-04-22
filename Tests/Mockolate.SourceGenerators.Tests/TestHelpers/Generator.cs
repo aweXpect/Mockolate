@@ -46,9 +46,13 @@ public static class Generator
 	];
 
 	public static GeneratorResult Run([StringSyntax("c#-test")] string source, params Type[] assemblyTypes)
+		=> Run(source, DocumentationMode.Parse, assemblyTypes);
+
+	public static GeneratorResult Run([StringSyntax("c#-test")] string source,
+		DocumentationMode documentationMode, params Type[] assemblyTypes)
 	{
 		MockGenerator generator = new();
-		CSharpParseOptions parseOptions = new(LanguageVersion.Latest);
+		CSharpParseOptions parseOptions = new(LanguageVersion.Latest, documentationMode);
 		SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, parseOptions);
 
 		CSharpCompilation compilation = CSharpCompilation.Create(
@@ -57,7 +61,11 @@ public static class Generator
 			GetReferences(assemblyTypes),
 			new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
-		GeneratorDriver driver = CSharpGeneratorDriver.Create(generator);
+		GeneratorDriver driver = CSharpGeneratorDriver.Create(
+			generators: [generator.AsSourceGenerator(),],
+			additionalTexts: [],
+			parseOptions: parseOptions,
+			optionsProvider: null);
 		driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out Compilation outputCompilation,
 			out ImmutableArray<Diagnostic> diagnostics);
 

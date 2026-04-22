@@ -10,18 +10,28 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a parameter that is not equal to one of the <paramref name="values" />.
+	///     Matches a parameter whose value is <em>not</em> equal to any of the supplied <paramref name="values" />.
 	/// </summary>
+	/// <remarks>
+	///     The inverse of <see cref="IsOneOf{T}(IEnumerable{T})" />. Values whose runtime type is incompatible with
+	///     <typeparamref name="T" /> also match, since they cannot equal any <typeparamref name="T" />-typed
+	///     alternative.
+	/// </remarks>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="values">The values to reject.</param>
+	/// <returns>A parameter matcher that rejects every value equal to one of <paramref name="values" />.</returns>
 	public static IIsNotOneOfParameter<T> IsNotOneOf<T>(params IEnumerable<T> values)
 		=> new ParameterIsNotOneOfMatch<T>(values.ToArray());
 
 	/// <summary>
-	///     An <see cref="IParameter{T}" /> used for equality comparison of a collection of alternatives.
+	///     An <see cref="IParameter{T}" /> used to reject values matching any of a set of alternatives, with an opt-in
+	///     custom comparer.
 	/// </summary>
 	public interface IIsNotOneOfParameter<out T> : IParameterWithCallback<T>
 	{
 		/// <summary>
-		///     Use the specified comparer to determine equality.
+		///     Switches equality comparison to use <paramref name="comparer" /> instead of
+		///     <see cref="EqualityComparer{T}.Default" />.
 		/// </summary>
 		IIsNotOneOfParameter<T> Using(IEqualityComparer<T> comparer,
 			[CallerArgumentExpression(nameof(comparer))]

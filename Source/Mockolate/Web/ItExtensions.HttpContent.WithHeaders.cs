@@ -19,15 +19,21 @@ public static partial class ItExtensions
 	extension<TParameter>(IHttpHeaderParameter<TParameter> parameter)
 	{
 		/// <summary>
-		///     Expects the <see cref="HttpContent" /> to contain a header matching the <paramref name="name" /> and
-		///     <paramref name="value" />.
+		///     Expects the <see cref="HttpContent" /> to carry a header <paramref name="name" />: <paramref name="value" />.
 		/// </summary>
+		/// <param name="name">The header name to require (case-insensitive per RFC 7230).</param>
+		/// <param name="value">The expected value. Implicitly converts from <see langword="string" /> or can be a subclass of <see cref="HttpHeaderValue" /> for pattern matching.</param>
+		/// <returns>The outer parameter for chaining additional <c>.With*</c> constraints.</returns>
 		public TParameter WithHeaders(string name, HttpHeaderValue value)
 			=> parameter.WithHeaders((name, value));
 
 		/// <summary>
-		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.
+		///     Expects the <see cref="HttpContent" /> to carry every header parsed from <paramref name="headers" />
+		///     &#8212; one per line in <c>"Name: Value"</c> form.
 		/// </summary>
+		/// <param name="headers">Raw header block; blank lines terminate parsing.</param>
+		/// <returns>The outer parameter for chaining additional <c>.With*</c> constraints.</returns>
+		/// <exception cref="ArgumentException">A non-empty line does not contain a <c>:</c> separator.</exception>
 		public TParameter WithHeaders(string headers)
 		{
 			List<(string, HttpHeaderValue)> headerList = new();
@@ -52,13 +58,16 @@ public static partial class ItExtensions
 	}
 
 	/// <summary>
-	///     Further expectations on the headers of the <see cref="HttpContent" />.
+	///     Fluent entry point for asserting HTTP headers on a request or response.
 	/// </summary>
+	/// <typeparam name="TParameter">The concrete parameter type returned for further chaining.</typeparam>
 	public interface IHttpHeaderParameter<out TParameter>
 	{
 		/// <summary>
-		///     Expects the <see cref="HttpContent" /> to contain the given <paramref name="headers" />.
+		///     Expects the <see cref="HttpContent" /> to carry every header in <paramref name="headers" />.
 		/// </summary>
+		/// <param name="headers">Pairs of header name and expected value. Additional headers on the request are allowed.</param>
+		/// <returns>The outer parameter for chaining additional <c>.With*</c> constraints.</returns>
 		TParameter WithHeaders(params IEnumerable<(string Name, HttpHeaderValue Value)> headers);
 	}
 

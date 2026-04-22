@@ -9,8 +9,14 @@ public static partial class ItExtensions
 	extension(IHttpContentParameter parameter)
 	{
 		/// <summary>
-		///     Expects the binary content to be equal to the given <paramref name="bytes" />.
+		///     Expects the binary content to be byte-for-byte equal to <paramref name="bytes" />.
 		/// </summary>
+		/// <param name="bytes">The expected byte payload.</param>
+		/// <returns>The same <see cref="IHttpContentParameter" /> for chaining additional <c>.With*</c> constraints.</returns>
+		/// <remarks>
+		///     Shorthand for <c>.WithBytes(actual =&gt; bytes.SequenceEqual(actual))</c>. For a custom predicate &#8212;
+		///     e.g. size or header checks &#8212; use the predicate overload.
+		/// </remarks>
 		public IHttpContentParameter WithBytes(byte[] bytes)
 			=> parameter.WithBytes(bytes.SequenceEqual);
 	}

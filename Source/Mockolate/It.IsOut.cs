@@ -11,22 +11,49 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
+	///     Placeholder matcher for an <see langword="out" /> parameter of type <typeparamref name="T" />, intended
+	///     for use in <c>Verify</c>.
 	/// </summary>
+	/// <remarks>
+	///     Use this overload when you only want to assert that a method was invoked (with any out-argument).
+	///     For <c>Setup</c>, use <see cref="IsOut{T}(Func{T}, string)" /> to actually produce an out-value, or
+	///     <see cref="IsAnyOut{T}" /> to assign <see langword="default" /> to the caller's variable.
+	/// </remarks>
+	/// <typeparam name="T">The out-parameter's type.</typeparam>
+	/// <returns>An <see cref="IVerifyOutParameter{T}" /> that matches any out-argument.</returns>
 	public static IVerifyOutParameter<T> IsOut<T>()
 		=> new InvokedOutParameterMatch<T>();
 
 	/// <summary>
-	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> and
-	///     uses the <paramref name="setter" /> to set the value when the method is invoked.
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> in a <c>Setup</c> and uses
+	///     <paramref name="setter" /> to produce the value assigned to the caller's variable when the method is
+	///     invoked.
 	/// </summary>
+	/// <remarks>
+	///     <paramref name="setter" /> runs on every matching invocation, so you can return a fresh value per call
+	///     (e.g. a new <see cref="System.Guid" /> or an incrementing counter). Pair with
+	///     <see cref="IOutParameter{T}.Do" /> to observe each produced value.
+	/// </remarks>
+	/// <typeparam name="T">The out-parameter's type.</typeparam>
+	/// <param name="setter">Factory that produces the value to assign to the caller's out-variable.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IOutParameter{T}" /> that produces a value via <paramref name="setter" />.</returns>
 	public static IOutParameter<T> IsOut<T>(Func<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new OutParameterMatch<T>(setter, doNotPopulateThisValue);
 
 	/// <summary>
-	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" />.
+	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> in a <c>Setup</c> and assigns
+	///     the value produced by the mock's <see cref="MockBehavior.DefaultValue" /> generator to the caller's variable.
 	/// </summary>
+	/// <remarks>
+	///     Use this when the caller's out value is irrelevant to the test and you just need the method call to return.
+	///     The produced value equals <see langword="default" /><c>(T)</c> unless a custom
+	///     <see cref="MockBehaviorExtensions.WithDefaultValueFor" /> factory is registered; in that case the factory's
+	///     value is used.
+	/// </remarks>
+	/// <typeparam name="T">The out-parameter's type.</typeparam>
+	/// <returns>An <see cref="IOutParameter{T}" /> that produces a default value for the caller's out-variable.</returns>
 	public static IOutParameter<T> IsAnyOut<T>()
 		=> new AnyOutParameterMatch<T>();
 
