@@ -1171,7 +1171,7 @@ public partial class MockGeneratorTests
 			     """, DocumentationMode.Diagnose);
 
 		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains($"to invoke the <see cref=\"{expectedCref}\" /> constructor.")
+			.Contains($"to invoke the <see cref=\"{expectedCref}\">MyService(int, string)</see> constructor.")
 			.IgnoringNewlineStyle();
 
 		// CS1574/CS1584/CS1658 messages embed the offending cref text; if the constructor cref

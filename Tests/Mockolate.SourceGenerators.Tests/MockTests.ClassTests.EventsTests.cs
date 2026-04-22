@@ -71,7 +71,7 @@ public sealed partial class MockTests
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
 					.Contains("""
 					          		/// <summary>
-					          		///     Setup for the event <see cref="global::MyCode.IMyService.SomeEvent" />.
+					          		///     Setup for the event <see cref="global::MyCode.IMyService.SomeEvent">SomeEvent</see>.
 					          		/// </summary>
 					          		global::Mockolate.Setup.EventSetup SomeEvent { get; }
 					          """).IgnoringNewlineStyle().And
