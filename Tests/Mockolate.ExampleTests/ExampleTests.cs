@@ -1,11 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.IO.Abstractions;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
+using Azure;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;
 using System.Net.Http;
+using Azure.Data.Tables;
 using Mockolate.Web;
 #endif
 
@@ -33,6 +39,28 @@ public class ExampleTests
 		sut.Mock.As<IExampleRepository>().Verify.AddUser(It.Is("Bob")).Once();
 		sut.Mock.As<IOrderRepository>().Verify.AddOrder(It.Is("Bar")).Once();
 	}
+
+#if NET8_0_OR_GREATER
+	[Fact]
+	public async Task Azure_ShouldBeMockable()
+	{
+		Response response = Response.CreateMock();
+		Page<TableEntity> settingsPage = Page<TableEntity>.FromValues(
+		[
+			new TableEntity("demo", "foo"),
+		], null, response);
+		Pageable<TableEntity> pageable = Pageable<TableEntity>.FromPages([settingsPage,]);
+
+		TableClient tableClient = TableClient.CreateMock(MockBehavior.Default.SkippingBaseClass());
+		tableClient.Mock.Setup
+			.Query(It.IsAny<Expression<Func<TableEntity, bool>>>(), It.IsAny<int?>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>())
+			.Returns(pageable);
+		Pageable<TableEntity>? result = tableClient.Query<TableEntity>(x => x.RowKey == "foo", 10, [], CancellationToken.None);
+
+		await That(tableClient.GetType()).IsEqualTo(typeof(Mock.TableClient));
+		await That(result.AsPages().First().GetRawResponse()).IsSameAs(response);
+	}
+#endif
 
 	[Fact]
 	public async Task BaseClassWithConstructorParameters()

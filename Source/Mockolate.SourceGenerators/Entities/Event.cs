@@ -7,7 +7,7 @@ namespace Mockolate.SourceGenerators.Entities;
 [DebuggerDisplay("{ContainingType}.{Name}")]
 internal record Event
 {
-	public Event(IEventSymbol eventSymbol, IMethodSymbol delegateInvokeMethod, List<Event>? alreadyDefinedEvents)
+	public Event(IEventSymbol eventSymbol, IMethodSymbol delegateInvokeMethod, List<Event>? alreadyDefinedEvents, IAssemblySymbol? sourceAssembly = null)
 	{
 		Accessibility = eventSymbol.DeclaredAccessibility;
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
@@ -15,8 +15,8 @@ internal record Event
 		Name = eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name;
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
-		Delegate = new Method(delegateInvokeMethod, null);
-		Attributes = eventSymbol.GetAttributes().ToAttributeArray();
+		Delegate = new Method(delegateInvokeMethod, null, sourceAssembly);
+		Attributes = eventSymbol.GetAttributes().ToAttributeArray(sourceAssembly);
 		IsStatic = eventSymbol.IsStatic;
 
 		if (alreadyDefinedEvents is not null)
