@@ -5,13 +5,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure;
 using Mockolate.ExampleTests.TestData;
 using Mockolate.Verify;
 #if NET8_0_OR_GREATER
 using System.Net;
 using System.Net.Http;
+using Azure;
 using Azure.Data.Tables;
+using Azure.Storage.Blobs;
 using Mockolate.Web;
 #endif
 
@@ -52,6 +53,7 @@ public class ExampleTests
 		Pageable<TableEntity> pageable = Pageable<TableEntity>.FromPages([settingsPage,]);
 
 		TableClient tableClient = TableClient.CreateMock(MockBehavior.Default.SkippingBaseClass());
+		var blobClient = BlobClient.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 		tableClient.Mock.Setup
 			.Query(It.IsAny<Expression<Func<TableEntity, bool>>>(), It.IsAny<int?>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>())
 			.Returns(pageable);
