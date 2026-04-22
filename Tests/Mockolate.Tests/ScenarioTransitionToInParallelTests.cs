@@ -194,7 +194,7 @@ public sealed class ScenarioTransitionToInParallelTests
 
 		sut.Mock.InScenario("a").Setup.Property.OnSet
 			.Do(() => { })
-			.TransitionTo("b");
+			.OnSet.TransitionTo("b");
 		sut.Mock.TransitionTo("a");
 
 		sut.Property = 42;
