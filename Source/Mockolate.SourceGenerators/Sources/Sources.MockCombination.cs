@@ -221,12 +221,12 @@ internal static partial class Sources
 			sb.Append("\textension(global::Mockolate.Mock.IMockFor").Append(source.Name).Append(" mock)").AppendLine();
 			sb.Append("\t{").AppendLine();
 			sb.AppendXmlSummary($"Reinterprets this mock as a mock of <typeparamref name=\"T\" /> (here constrained to <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />) to reach its Setup/Verify/Raise surface.");
-			sb.AppendXmlRemarks([
-				"The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.",
-				$"Throws a <see cref=\"global::Mockolate.Exceptions.MockException\" /> if the subject does not implement <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.",
-			]);
+			sb.AppendXmlRemarks(
+				"The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.");
 			sb.AppendXmlTypeParam("T", $"The additional interface to reinterpret the mock as. Must derive from <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.AppendXmlReturns($"An <c>IMockFor...</c> accessor targeting <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
+			sb.AppendXmlException("global::Mockolate.Exceptions.MockException",
+				$"The subject does not implement <see cref=\"{lastInterface.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(lastInterface.Name).Append(" As<T>() where T : ").Append(lastInterface.Class.ClassFullName).AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tif (mock is global::Mockolate.Mock.IMockFor").Append(lastInterface.Name).Append(" typed)").AppendLine();
@@ -243,12 +243,12 @@ internal static partial class Sources
 			sb.Append("\textension(global::Mockolate.Mock.IMockFor").Append(lastInterface.Name).Append(" mock)").AppendLine();
 			sb.Append("\t{").AppendLine();
 			sb.AppendXmlSummary($"Reinterprets this mock as a mock of <typeparamref name=\"T\" /> (here constrained to <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />) to reach its Setup/Verify/Raise surface.");
-			sb.AppendXmlRemarks([
-				"The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.",
-				$"Throws a <see cref=\"global::Mockolate.Exceptions.MockException\" /> if the subject does not implement <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.",
-			]);
+			sb.AppendXmlRemarks(
+				"The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.");
 			sb.AppendXmlTypeParam("T", $"The additional interface to reinterpret the mock as. Must derive from <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.AppendXmlReturns($"An <c>IMockFor...</c> accessor targeting <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
+			sb.AppendXmlException("global::Mockolate.Exceptions.MockException",
+				$"The subject does not implement <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(source.Name).Append(" As<T>() where T : ").Append(source.Class.ClassFullName).AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tif (mock is global::Mockolate.Mock.IMockFor").Append(source.Name).Append(" typed)").AppendLine();

@@ -77,6 +77,10 @@ public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 	///     Appends a lazy return to the sequence; <paramref name="callback" /> is invoked on each matching invocation
 	///     and its result is returned.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn> Returns(Func<TReturn> callback);
 
 	/// <summary>
@@ -99,18 +103,30 @@ public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
 	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn> Throws(Exception exception);
 
 	/// <summary>
 	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
 	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn> Throws(Func<Exception> callback);
 }
 
@@ -215,81 +231,133 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn>
 }
 
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" />.
+///     Fluent surface for configuring a mocked method with one parameter that returns <typeparamref name="TReturn" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Returns(TReturn)" /> /
+///     <see cref="Throws{TException}" /> to define a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive <c>Returns</c>/<c>Throws</c>/<c>Do</c> calls build a sequence that cycles once
+///     exhausted - terminate with <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c>
+///     / <c>.When(predicate)</c> on the builders to control repetition and gating.
+///     <para />
+///     For async methods, use the generator-emitted <c>.ReturnsAsync(...)</c> / <c>.ThrowsAsync(...)</c> overloads
+///     instead of wrapping a <see cref="System.Threading.Tasks.Task" /> in <c>.Returns(...)</c>.
+/// </remarks>
 public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="false" /> (the default on mocks) the base-class
+	///     implementation runs and its return value is used as the default value for un-configured invocations; when
+	///     <see langword="true" /> the base-class implementation is skipped entirely.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IReturnMethodSetup<TReturn, T1> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return to the sequence; <paramref name="callback" /> is invoked on each matching invocation
+	///     and its result is returned.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<TReturn> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
+	///     Appends <paramref name="returnValue" /> to the sequence - the next matching invocation returns this value.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.CanHandle(It.IsAny&lt;string&gt;())
+	///         .Returns(true).For(2)   // first two calls return true
+	///         .Returns(false).Forever(); // remaining calls return false
+	///     </code>
+	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(TReturn returnValue);
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameter.
+///     Parameter-aware overloads for <see cref="IReturnMethodSetup{TReturn, T1}" /> - <c>Do</c>, <c>Returns</c>
+///     and <c>Throws</c> variants whose callbacks receive the method's argument.
 /// </summary>
 public interface IReturnMethodSetupWithCallback<in TReturn, out T1> : IReturnMethodSetup<TReturn, T1>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's argument whenever the method is invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<T1> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's argument.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1> Do(Action<int, T1> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return that receives the method's argument and produces the value to return.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(Func<T1, TReturn> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's argument to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Throws(Func<T1, Exception> callback);
 }
 
@@ -406,81 +474,133 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1>
 }
 
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" />.
+///     Fluent surface for configuring a mocked method with two parameters that returns <typeparamref name="TReturn" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Returns(TReturn)" /> /
+///     <see cref="Throws{TException}" /> to define a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive <c>Returns</c>/<c>Throws</c>/<c>Do</c> calls build a sequence that cycles once
+///     exhausted - terminate with <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c>
+///     / <c>.When(predicate)</c> on the builders to control repetition and gating.
+///     <para />
+///     For async methods, use the generator-emitted <c>.ReturnsAsync(...)</c> / <c>.ThrowsAsync(...)</c> overloads
+///     instead of wrapping a <see cref="System.Threading.Tasks.Task" /> in <c>.Returns(...)</c>.
+/// </remarks>
 public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="false" /> (the default on mocks) the base-class
+	///     implementation runs and its return value is used as the default value for un-configured invocations; when
+	///     <see langword="true" /> the base-class implementation is skipped entirely.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IReturnMethodSetup<TReturn, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return to the sequence; <paramref name="callback" /> is invoked on each matching invocation
+	///     and its result is returned.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<TReturn> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
+	///     Appends <paramref name="returnValue" /> to the sequence - the next matching invocation returns this value.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.IsMatch(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;())
+	///         .Returns(true).For(2)   // first two calls return true
+	///         .Returns(false).Forever(); // remaining calls return false
+	///     </code>
+	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(TReturn returnValue);
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameters.
+///     Parameter-aware overloads for <see cref="IReturnMethodSetup{TReturn, T1, T2}" /> - <c>Do</c>, <c>Returns</c>
+///     and <c>Throws</c> variants whose callbacks receive the method's arguments.
 /// </summary>
 public interface IReturnMethodSetupWithCallback<in TReturn, out T1, out T2> : IReturnMethodSetup<TReturn, T1, T2>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's arguments whenever the method is invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<T1, T2> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's arguments.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return that receives the method's arguments and produces the value to return.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(Func<T1, T2, TReturn> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's arguments to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Throws(Func<T1, T2, Exception> callback);
 }
 
@@ -597,81 +717,134 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2>
 }
 
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" />.
+///     Fluent surface for configuring a mocked method with three parameters that returns
+///     <typeparamref name="TReturn" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Returns(TReturn)" /> /
+///     <see cref="Throws{TException}" /> to define a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive <c>Returns</c>/<c>Throws</c>/<c>Do</c> calls build a sequence that cycles once
+///     exhausted - terminate with <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c>
+///     / <c>.When(predicate)</c> on the builders to control repetition and gating.
+///     <para />
+///     For async methods, use the generator-emitted <c>.ReturnsAsync(...)</c> / <c>.ThrowsAsync(...)</c> overloads
+///     instead of wrapping a <see cref="System.Threading.Tasks.Task" /> in <c>.Returns(...)</c>.
+/// </remarks>
 public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="false" /> (the default on mocks) the base-class
+	///     implementation runs and its return value is used as the default value for un-configured invocations; when
+	///     <see langword="true" /> the base-class implementation is skipped entirely.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IReturnMethodSetup<TReturn, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return to the sequence; <paramref name="callback" /> is invoked on each matching invocation
+	///     and its result is returned.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<TReturn> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
+	///     Appends <paramref name="returnValue" /> to the sequence - the next matching invocation returns this value.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Accepts(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;(), It.IsAny&lt;bool&gt;())
+	///         .Returns(true).For(2)   // first two calls return true
+	///         .Returns(false).Forever(); // remaining calls return false
+	///     </code>
+	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(TReturn returnValue);
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameters.
+///     Parameter-aware overloads for <see cref="IReturnMethodSetup{TReturn, T1, T2, T3}" /> - <c>Do</c>,
+///     <c>Returns</c> and <c>Throws</c> variants whose callbacks receive the method's arguments.
 /// </summary>
 public interface IReturnMethodSetupWithCallback<in TReturn, out T1, out T2, out T3> : IReturnMethodSetup<TReturn, T1, T2, T3>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's arguments whenever the method is invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<T1, T2, T3> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's arguments.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return that receives the method's arguments and produces the value to return.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(Func<T1, T2, T3, TReturn> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's arguments to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
 }
 
@@ -789,81 +962,134 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, 
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" />.
+///     Fluent surface for configuring a mocked method with four parameters that returns
+///     <typeparamref name="TReturn" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Returns(TReturn)" /> /
+///     <see cref="Throws{TException}" /> to define a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive <c>Returns</c>/<c>Throws</c>/<c>Do</c> calls build a sequence that cycles once
+///     exhausted - terminate with <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c>
+///     / <c>.When(predicate)</c> on the builders to control repetition and gating.
+///     <para />
+///     For async methods, use the generator-emitted <c>.ReturnsAsync(...)</c> / <c>.ThrowsAsync(...)</c> overloads
+///     instead of wrapping a <see cref="System.Threading.Tasks.Task" /> in <c>.Returns(...)</c>.
+/// </remarks>
 public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="false" /> (the default on mocks) the base-class
+	///     implementation runs and its return value is used as the default value for un-configured invocations; when
+	///     <see langword="true" /> the base-class implementation is skipped entirely.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IReturnMethodSetup<TReturn, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return to the sequence; <paramref name="callback" /> is invoked on each matching invocation
+	///     and its result is returned.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<TReturn> callback);
 
 	/// <summary>
-	///     Registers the <paramref name="returnValue" /> for this method.
+	///     Appends <paramref name="returnValue" /> to the sequence - the next matching invocation returns this value.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
+	/// <example>
+	///     <code>
+	///     sut.Mock.Setup.Validate(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;(), It.IsAny&lt;bool&gt;(), It.IsAny&lt;double&gt;())
+	///         .Returns(true).For(2)   // first two calls return true
+	///         .Returns(false).Forever(); // remaining calls return false
+	///     </code>
+	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue);
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <typeparamref name="TReturn" /> with callback support for the parameters.
+///     Parameter-aware overloads for <see cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}" /> - <c>Do</c>,
+///     <c>Returns</c> and <c>Throws</c> variants whose callbacks receive the method's arguments.
 /// </summary>
 public interface IReturnMethodSetupWithCallback<in TReturn, out T1, out T2, out T3, out T4> : IReturnMethodSetup<TReturn, T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's arguments whenever the method is invoked.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's arguments.
 	/// </summary>
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to setup the return value for this method.
+	///     Appends a lazy return that receives the method's arguments and produces the value to return.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(Func<T1, T2, T3, T4, TReturn> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's arguments to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Returns</c>/<c>Throws</c> multiple times to build a sequence; once exhausted it cycles back to the
+	///     first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
 }
 
@@ -984,11 +1210,11 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, 
 ///     Fluent surface for configuring a parameterless mocked method that returns <see langword="void" />.
 /// </summary>
 /// <remarks>
-///     Same pattern as <see cref="IReturnMethodSetup{TReturn}" /> minus the return-value overloads:
-///     chain <see cref="Do(Action)" /> for side-effects and <see cref="Throws{TException}" /> /
-///     <see cref="DoesNotThrow" /> to build a throw sequence. Consecutive entries form a sequence that cycles once
-///     exhausted - use <c>.Forever()</c>, <c>.For(n)</c>, <c>.Only(n)</c>, <c>.When(predicate)</c> on the returned
-///     builders to control repetition.
+///     Reached via <c>sut.Mock.Setup.MethodName()</c>. Chain <see cref="Throws{TException}" /> /
+///     <see cref="DoesNotThrow" /> to build a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive entries form a sequence that cycles once exhausted - terminate with
+///     <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c> /
+///     <c>.When(predicate)</c> on the builders to control repetition and gating.
 /// </remarks>
 public interface IVoidMethodSetup : IMethodSetup
 {
@@ -999,10 +1225,12 @@ public interface IVoidMethodSetup : IMethodSetup
 	///     Only meaningful for class mocks. When <see langword="true" /> the base-class implementation is skipped
 	///     entirely; when <see langword="false" /> (the default on mocks) it runs as part of the invocation.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IVoidMethodSetup SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Appends a side-effect callback; <paramref name="callback" /> runs whenever the method is invoked.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder Do(Action callback);
 
@@ -1012,7 +1240,8 @@ public interface IVoidMethodSetup : IMethodSetup
 	IVoidMethodSetupCallbackBuilder Do(Action<int> callback);
 
 	/// <summary>
-	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder TransitionTo(string scenario);
 
@@ -1020,6 +1249,10 @@ public interface IVoidMethodSetup : IMethodSetup
 	///     Appends a &quot;does-nothing&quot; entry to the sequence - useful between <see cref="Throws{TException}" />
 	///     entries to model &quot;throw, succeed, throw&quot; patterns.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	/// <example>
 	///     <code>
 	///     sut.Mock.Setup.DoWork()
@@ -1034,18 +1267,30 @@ public interface IVoidMethodSetup : IMethodSetup
 	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
 	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder Throws(Exception exception);
 
 	/// <summary>
 	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
 	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder Throws(Func<Exception> callback);
 }
 
@@ -1141,71 +1386,104 @@ public interface IVoidMethodSetupReturnWhenBuilder : IVoidMethodSetup
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" />.
+///     Fluent surface for configuring a mocked method with one parameter that returns <see langword="void" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /
+///     <see cref="DoesNotThrow" /> to build a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive entries form a sequence that cycles once exhausted - terminate with
+///     <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c> /
+///     <c>.When(predicate)</c> on the builders to control repetition and gating.
+/// </remarks>
 public interface IVoidMethodSetup<out T1> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="true" /> the base-class implementation is skipped
+	///     entirely; when <see langword="false" /> (the default on mocks) it runs as part of the invocation.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IVoidMethodSetup<T1> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	///     Appends a &quot;does-nothing&quot; entry to the sequence - useful between <see cref="Throws{TException}" />
+	///     entries to model &quot;throw, succeed, throw&quot; patterns.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetup<T1> DoesNotThrow();
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" /> with callback support for the parameter.
+///     Parameter-aware overloads for <see cref="IVoidMethodSetup{T1}" /> - <c>Do</c> and <c>Throws</c> variants
+///     whose callbacks receive the method's argument.
 /// </summary>
 public interface IVoidMethodSetupWithCallback<out T1> : IVoidMethodSetup<T1>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's argument whenever the method is invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1> Do(Action<T1> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's argument.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1> Do(Action<int, T1> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's argument to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1> Throws(Func<T1, Exception> callback);
 }
 
@@ -1318,71 +1596,104 @@ public interface IVoidMethodSetupParameterIgnorer<out T1>
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" />.
+///     Fluent surface for configuring a mocked method with two parameters that returns <see langword="void" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /
+///     <see cref="DoesNotThrow" /> to build a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive entries form a sequence that cycles once exhausted - terminate with
+///     <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c> /
+///     <c>.When(predicate)</c> on the builders to control repetition and gating.
+/// </remarks>
 public interface IVoidMethodSetup<out T1, out T2> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="true" /> the base-class implementation is skipped
+	///     entirely; when <see langword="false" /> (the default on mocks) it runs as part of the invocation.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IVoidMethodSetup<T1, T2> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1, T2> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	///     Appends a &quot;does-nothing&quot; entry to the sequence - useful between <see cref="Throws{TException}" />
+	///     entries to model &quot;throw, succeed, throw&quot; patterns.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetup<T1, T2> DoesNotThrow();
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" /> with callback support for the parameters.
+///     Parameter-aware overloads for <see cref="IVoidMethodSetup{T1, T2}" /> - <c>Do</c> and <c>Throws</c> variants
+///     whose callbacks receive the method's arguments.
 /// </summary>
 public interface IVoidMethodSetupWithCallback<out T1, out T2> : IVoidMethodSetup<T1, T2>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's arguments whenever the method is invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<T1, T2> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's arguments.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2> Do(Action<int, T1, T2> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's arguments to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2> Throws(Func<T1, T2, Exception> callback);
 }
 
@@ -1495,71 +1806,104 @@ public interface IVoidMethodSetupParameterIgnorer<out T1, out T2>
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" />.
+///     Fluent surface for configuring a mocked method with three parameters that returns <see langword="void" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /
+///     <see cref="DoesNotThrow" /> to build a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive entries form a sequence that cycles once exhausted - terminate with
+///     <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c> /
+///     <c>.When(predicate)</c> on the builders to control repetition and gating.
+/// </remarks>
 public interface IVoidMethodSetup<out T1, out T2, out T3> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="true" /> the base-class implementation is skipped
+	///     entirely; when <see langword="false" /> (the default on mocks) it runs as part of the invocation.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IVoidMethodSetup<T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	///     Appends a &quot;does-nothing&quot; entry to the sequence - useful between <see cref="Throws{TException}" />
+	///     entries to model &quot;throw, succeed, throw&quot; patterns.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetup<T1, T2, T3> DoesNotThrow();
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" /> with callback support for the parameters.
+///     Parameter-aware overloads for <see cref="IVoidMethodSetup{T1, T2, T3}" /> - <c>Do</c> and <c>Throws</c>
+///     variants whose callbacks receive the method's arguments.
 /// </summary>
 public interface IVoidMethodSetupWithCallback<out T1, out T2, out T3> : IVoidMethodSetup<T1, T2, T3>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's arguments whenever the method is invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<T1, T2, T3> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's arguments.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3> Do(Action<int, T1, T2, T3> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's arguments to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3> Throws(Func<T1, T2, T3, Exception> callback);
 }
 
@@ -1672,71 +2016,104 @@ public interface IVoidMethodSetupParameterIgnorer<out T1, out T2, out T3>
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" />.
+///     Fluent surface for configuring a mocked method with four parameters that returns <see langword="void" />.
 /// </summary>
+/// <remarks>
+///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /
+///     <see cref="DoesNotThrow" /> to build a sequence of responses, and <see cref="Do(Action)" /> to attach
+///     side-effects. Consecutive entries form a sequence that cycles once exhausted - terminate with
+///     <c>.Forever()</c> to freeze on the last entry, or use <c>.For(n)</c> / <c>.Only(n)</c> /
+///     <c>.When(predicate)</c> on the builders to control repetition and gating.
+/// </remarks>
 public interface IVoidMethodSetup<out T1, out T2, out T3, out T4> : IMethodSetup
 {
 	/// <summary>
-	///     Specifies if calling the base class implementation should be skipped.
+	///     Overrides <see cref="MockBehavior.SkipBaseClass" /> for this method only.
 	/// </summary>
 	/// <remarks>
-	///     If set to <see langword="false" /> (default value), the base class implementation gets called and
-	///     its return values are used as default values.
-	///     <para />
-	///     If not specified, use <see cref="MockBehavior.SkipBaseClass" />.
+	///     Only meaningful for class mocks. When <see langword="true" /> the base-class implementation is skipped
+	///     entirely; when <see langword="false" /> (the default on mocks) it runs as part of the invocation.
 	/// </remarks>
+	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
 	IVoidMethodSetup<T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback to the sequence; <paramref name="callback" /> runs whenever the method is
+	///     invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action callback);
 
 	/// <summary>
-	///     Transitions the scenario to the given <paramref name="scenario" /> when the method is called.
+	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever the method is invoked - useful
+	///     to model state transitions.
 	/// </summary>
 	IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4> TransitionTo(string scenario);
 
 	/// <summary>
-	///     Registers an iteration in the sequence of method invocations, that does not throw.
+	///     Appends a &quot;does-nothing&quot; entry to the sequence - useful between <see cref="Throws{TException}" />
+	///     entries to model &quot;throw, succeed, throw&quot; patterns.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetup<T1, T2, T3, T4> DoesNotThrow();
 
 	/// <summary>
-	///     Registers an <typeparamref name="TException" /> to throw when the method is invoked.
+	///     Appends an entry that throws a freshly-constructed <typeparamref name="TException" /> on the next matching
+	///     invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
-	///     Registers an <paramref name="exception" /> to throw when the method is invoked.
+	///     Appends an entry that throws <paramref name="exception" /> on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Exception exception);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
+	///     matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<Exception> callback);
 }
 
 /// <summary>
-///     Sets up a method returning <see langword="void" /> with callback support for the parameters.
+///     Parameter-aware overloads for <see cref="IVoidMethodSetup{T1, T2, T3, T4}" /> - <c>Do</c> and <c>Throws</c>
+///     variants whose callbacks receive the method's arguments.
 /// </summary>
 public interface IVoidMethodSetupWithCallback<out T1, out T2, out T3, out T4> : IVoidMethodSetup<T1, T2, T3, T4>
 {
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives the method's arguments whenever the method is invoked.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<T1, T2, T3, T4> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> to execute when the method is called.
+	///     Appends a side-effect callback that receives a zero-based invocation counter and the method's arguments.
 	/// </summary>
 	IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4> Do(Action<int, T1, T2, T3, T4> callback);
 
 	/// <summary>
-	///     Registers a <paramref name="callback" /> that will calculate the exception to throw when the method is invoked.
+	///     Appends an entry that invokes <paramref name="callback" /> with the method's arguments to build the
+	///     exception thrown on the next matching invocation.
 	/// </summary>
+	/// <remarks>
+	///     Call <c>Throws</c>/<c>DoesNotThrow</c> multiple times to build a sequence; once exhausted it cycles back
+	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
+	/// </remarks>
 	IVoidMethodSetupReturnBuilder<T1, T2, T3, T4> Throws(Func<T1, T2, T3, T4, Exception> callback);
 }
 

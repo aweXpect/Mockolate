@@ -431,6 +431,13 @@ internal static partial class Sources
 		/// </summary>
 		private void AppendXmlReturns(string returnsText, string indent = "\t\t")
 			=> sb.Append(indent).Append("/// <returns>").Append(returnsText).Append("</returns>").AppendLine();
+
+		/// <summary>
+		///     Appends an XML documentation <c>&lt;exception&gt;</c> tag with the given <paramref name="cref" /> and text.
+		/// </summary>
+		private void AppendXmlException(string cref, string text, string indent = "\t\t")
+			=> sb.Append(indent).Append("/// <exception cref=\"").Append(cref).Append("\">")
+				.Append(text).Append("</exception>").AppendLine();
 	}
 }
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
