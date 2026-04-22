@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Mockolate.Setup;
 
 /// <summary>
-///     Fluent surface for observing subscription lifecycle of a mocked event.
+///     Setup for observing subscription lifecycle of a mocked event.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.EventName</c>. Use <see cref="OnSubscribed" /> to attach callbacks that fire
@@ -27,7 +27,7 @@ public interface IEventSetup
 }
 
 /// <summary>
-///     Fluent surface for attaching side-effects to an event's <c>add</c> accessor.
+///     Setup for attaching side-effects to an event's <c>add</c> accessor.
 /// </summary>
 /// <remarks>
 ///     Each <c>Do</c> registers a callback that fires on every handler subscription. Chain multiple <c>Do</c> calls
@@ -40,7 +40,7 @@ public interface IEventSubscriptionSetup
 	///     Fires <paramref name="callback" /> whenever a handler subscribes to the event.
 	/// </summary>
 	/// <param name="callback">The action to invoke on every matching subscription.</param>
-	/// <returns>A builder for chaining repetition/gating operators such as <c>.For(n)</c> or <c>.When(...)</c>.</returns>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IEventSubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
@@ -63,7 +63,7 @@ public interface IEventSubscriptionSetup
 }
 
 /// <summary>
-///     Fluent surface for attaching side-effects to an event's <c>remove</c> accessor.
+///     Setup for attaching side-effects to an event's <c>remove</c> accessor.
 /// </summary>
 /// <remarks>
 ///     Mirror of <see cref="IEventSubscriptionSetup" /> for unsubscriptions: each <c>Do</c> registers a callback that
@@ -80,10 +80,10 @@ public interface IEventUnsubscriptionSetup
 	IEventUnsubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
-	///     Fires <paramref name="callback" /> whenever a handler unsubscribes, passing the handler's target object
+	///     Fires <paramref name="callback" /> whenever a handler unsubscribes, passing the subscriber's target object
 	///     (<see langword="null" /> for static methods) and <see cref="MethodInfo" />.
 	/// </summary>
-	/// <param name="callback">The action to invoke on every matching unsubscription, receiving the handler's target and <see cref="MethodInfo" />.</param>
+	/// <param name="callback">The action to invoke on every matching unsubscription, receiving the subscriber's target and <see cref="MethodInfo" />.</param>
 	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	/// <remarks>
 	///     Useful for diagnostics or for asserting which specific method on which target was unwired.

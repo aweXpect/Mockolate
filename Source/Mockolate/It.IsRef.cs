@@ -64,12 +64,12 @@ public partial class It
 		=> new RefParameterMatch<T>(predicate, null, doNotPopulateThisValue, null);
 
 	/// <summary>
-	///     Placeholder matcher for a <see langword="ref" /> parameter of type <typeparamref name="T" />, intended
-	///     for use in <c>Verify</c>.
+	///     Matches any <see langword="ref" /> argument of type <typeparamref name="T" /> &#8212; for <c>Verify</c> only;
+	///     use <see cref="IsAnyRef{T}" /> in <c>Setup</c>.
 	/// </summary>
 	/// <remarks>
 	///     Accepts any ref-argument without constraint. For <c>Setup</c>, use one of the overloads that accept a
-	///     <c>setter</c> to mutate the caller's value.
+	///     <c>setter</c> to mutate the caller's value, or <see cref="IsAnyRef{T}" /> when you don't care about the value.
 	/// </remarks>
 	/// <typeparam name="T">The ref-parameter's type.</typeparam>
 	/// <returns>An <see cref="IVerifyRefParameter{T}" /> that matches any ref-argument.</returns>

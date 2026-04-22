@@ -45,15 +45,15 @@ public static partial class HttpClientExtensions
 		///     mocked <see cref="HttpClient" /> - the catch-all entry point that every verb-specific overload
 		///     (<c>GetAsync</c>, <c>PostAsync</c>, ...) routes through.
 		/// </summary>
-		/// <param name="request">A matcher for the <see cref="HttpRequestMessage" /> - usually <c>It.IsHttpRequestMessage(...)</c>.</param>
-		/// <returns>A setup handle - chain <c>.ReturnsAsync(...)</c>, <c>.Throws&lt;T&gt;()</c> or the other fluent terminators.</returns>
-		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		/// <remarks>
 		///     Prefer <c>Setup.GetAsync</c>/<c>PostAsync</c>/<c>PutAsync</c>/<c>PatchAsync</c>/<c>DeleteAsync</c> when
 		///     you only need to match by verb and URI; reach for <c>SendAsync</c> when you need the full
 		///     <see cref="HttpRequestMessage" /> (e.g. to inspect headers or non-standard verbs like <c>HEAD</c> or
 		///     <c>OPTIONS</c>).
 		/// </remarks>
+		/// <param name="request">A matcher for the <see cref="HttpRequestMessage" /> - usually <c>It.IsHttpRequestMessage(...)</c>.</param>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> SendAsync(
 			IParameter<HttpRequestMessage> request)
 		{

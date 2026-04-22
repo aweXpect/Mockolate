@@ -60,7 +60,7 @@ public interface IInteractivePropertySetup : ISetup
 }
 
 /// <summary>
-///     Fluent surface for attaching side-effects to a property's getter.
+///     Setup for attaching side-effects to a property's getter.
 /// </summary>
 /// <remarks>
 ///     Each <c>Do</c> registers a callback that fires on every matching read. Chain multiple <c>Do</c> calls to form
@@ -104,7 +104,7 @@ public interface IPropertyGetterSetup<T>
 }
 
 /// <summary>
-///     Fluent surface for attaching side-effects to a property's setter.
+///     Setup for attaching side-effects to a property's setter.
 /// </summary>
 /// <remarks>
 ///     Each <c>Do</c> registers a callback that fires on every matching write. Chain multiple <c>Do</c> calls to form
@@ -147,16 +147,14 @@ public interface IPropertySetterSetup<T>
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked property of type <typeparamref name="T" />.
+///     Setup for configuring a mocked property of type <typeparamref name="T" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.PropertyName</c>. Chain <see cref="InitializeWith" /> to back the property with a
 ///     mutable slot, <see cref="Returns(T)" /> / <see cref="Throws{TException}" /> to define a sequence of read
 ///     responses, and <see cref="OnGet" /> / <see cref="OnSet" /> to attach getter/setter callbacks. Consecutive
-///     <c>Returns</c>/<c>Throws</c> calls form a sequence that cycles once exhausted - terminate with
-///     <see cref="SetupExtensions.Forever{T}(IPropertySetupReturnWhenBuilder{T})" /> to freeze on the last entry, or
-///     <see cref="IPropertySetupReturnWhenBuilder{T}.For(int)" /> / <see cref="IPropertySetupReturnWhenBuilder{T}.Only(int)" />
-///     to control repetition.
+///     <c>Returns</c>/<c>Throws</c> calls form a sequence that cycles once exhausted &#8212; terminate with
+///     <c>.Forever()</c> to freeze on the last entry, or <c>.For(n)</c> / <c>.Only(n)</c> to control repetition.
 /// </remarks>
 public interface IPropertySetup<T>
 {

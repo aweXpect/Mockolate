@@ -9,13 +9,13 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches any parameter whose value lies between <paramref name="minimum" /> and <paramref name="maximum" />
-	///     according to <see cref="IComparable{T}.CompareTo" />.
+	///     Matches any parameter whose value is inclusively between <paramref name="minimum" /> and
+	///     <paramref name="maximum" />.
 	/// </summary>
 	/// <remarks>
-	///     Bounds are inclusive by default (<see cref="IInRangeParameter{T}.Inclusive" />); chain
-	///     <see cref="IInRangeParameter{T}.Exclusive" /> to exclude them.
-	///     Works on any type that implements <see cref="IComparable{T}" /> - numerics,
+	///     Comparison is performed via <see cref="IComparable{T}.CompareTo" />. Bounds are inclusive by default
+	///     (<see cref="IInRangeParameter{T}.Inclusive" />); chain <see cref="IInRangeParameter{T}.Exclusive" /> to
+	///     exclude them. Works on any type that implements <see cref="IComparable{T}" /> &#8212; numerics,
 	///     <see cref="System.DateTime" />, <see cref="TimeSpan" />, etc.
 	/// </remarks>
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>

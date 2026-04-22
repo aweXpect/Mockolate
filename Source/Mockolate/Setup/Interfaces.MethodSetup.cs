@@ -26,7 +26,7 @@ public interface IVerifiableMethodSetup
 }
 
 /// <summary>
-///     Fluent surface for configuring a parameterless mocked method that returns <typeparamref name="TReturn" />.
+///     Setup for a parameterless mocked method that returns <typeparamref name="TReturn" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName()</c>. Chain <see cref="Returns(TReturn)" /> /
@@ -249,7 +249,7 @@ public interface IReturnMethodSetupReturnWhenBuilder<in TReturn>
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked method with one parameter that returns <typeparamref name="TReturn" />.
+///     Setup for a mocked method with one parameter that returns <typeparamref name="TReturn" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Returns(TReturn)" /> /
@@ -522,7 +522,7 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1>
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked method with two parameters that returns <typeparamref name="TReturn" />.
+///     Setup for a mocked method with two parameters that returns <typeparamref name="TReturn" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Returns(TReturn)" /> /
@@ -795,7 +795,7 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2>
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked method with three parameters that returns
+///     Setup for a mocked method with three parameters that returns
 ///     <typeparamref name="TReturn" />.
 /// </summary>
 /// <remarks>
@@ -1070,7 +1070,7 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, 
 
 #pragma warning disable S2436 // Types and methods should not have too many generic parameters
 /// <summary>
-///     Fluent surface for configuring a mocked method with four parameters that returns
+///     Setup for a mocked method with four parameters that returns
 ///     <typeparamref name="TReturn" />.
 /// </summary>
 /// <remarks>
@@ -1345,7 +1345,7 @@ public interface IReturnMethodSetupParameterIgnorer<in TReturn, out T1, out T2, 
 #pragma warning restore S2436 // Types and methods should not have too many generic parameters
 
 /// <summary>
-///     Fluent surface for configuring a parameterless mocked method that returns <see langword="void" />.
+///     Setup for a parameterless mocked method that returns <see langword="void" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName()</c>. Chain <see cref="Throws{TException}" /> /
@@ -1543,7 +1543,7 @@ public interface IVoidMethodSetupReturnWhenBuilder : IVoidMethodSetup
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked method with one parameter that returns <see langword="void" />.
+///     Setup for a mocked method with one parameter that returns <see langword="void" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /
@@ -1785,7 +1785,7 @@ public interface IVoidMethodSetupParameterIgnorer<out T1>
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked method with two parameters that returns <see langword="void" />.
+///     Setup for a mocked method with two parameters that returns <see langword="void" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /
@@ -2027,7 +2027,7 @@ public interface IVoidMethodSetupParameterIgnorer<out T1, out T2>
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked method with three parameters that returns <see langword="void" />.
+///     Setup for a mocked method with three parameters that returns <see langword="void" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /
@@ -2269,7 +2269,7 @@ public interface IVoidMethodSetupParameterIgnorer<out T1, out T2, out T3>
 }
 
 /// <summary>
-///     Fluent surface for configuring a mocked method with four parameters that returns <see langword="void" />.
+///     Setup for a mocked method with four parameters that returns <see langword="void" />.
 /// </summary>
 /// <remarks>
 ///     Reached via <c>sut.Mock.Setup.MethodName(...)</c>. Chain <see cref="Throws{TException}" /> /

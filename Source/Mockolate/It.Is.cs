@@ -9,14 +9,14 @@ namespace Mockolate;
 public partial class It
 {
 	/// <summary>
-	///     Matches a parameter that equals <paramref name="value" /> according to <see cref="EqualityComparer{T}.Default" />
-	///     (overridable via <see cref="IIsParameter{T}.Using" />).
+	///     Matches a parameter that equals <paramref name="value" />.
 	/// </summary>
 	/// <remarks>
-	///     For methods and indexers with up to four parameters you can also pass the raw value directly - Mockolate
-	///     treats it as if it were wrapped in <c>It.Is(value)</c>. Prefer an explicit <c>It.Is(...)</c> when the call
-	///     site would otherwise be ambiguous (e.g. when mixing matchers and raw values), or when you need
-	///     <see cref="IIsParameter{T}.Using"/> for a custom comparer.
+	///     Equality uses <see cref="EqualityComparer{T}.Default" /> unless overridden via
+	///     <see cref="IIsParameter{T}.Using" />. For methods and indexers with up to four parameters you can also pass
+	///     the raw value directly &#8212; Mockolate treats it as if it were wrapped in <c>It.Is(value)</c>. Prefer an
+	///     explicit <c>It.Is(...)</c> when the call site would otherwise be ambiguous (e.g. when mixing matchers and
+	///     raw values), or when you need <see cref="IIsParameter{T}.Using"/> for a custom comparer.
 	///     <para />
 	///     The expression passed as <paramref name="value" /> is captured by the compiler (via
 	///     <see cref="CallerArgumentExpressionAttribute" />) and appears verbatim in failure messages, so keep

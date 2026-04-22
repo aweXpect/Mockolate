@@ -956,7 +956,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Asserts how often, and in which order, members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
 		sb.AppendXmlRemarks([
-			"Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never</c>, <c>Once</c>, <c>Twice</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce</c>/<c>AtLeastTwice</c>, <c>AtMost(n)</c>/<c>AtMostOnce</c>/<c>AtMostTwice</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.",
+			"Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never()</c>, <c>Once()</c>, <c>Twice()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce()</c>/<c>AtLeastTwice()</c>, <c>AtMost(n)</c>/<c>AtMostOnce()</c>/<c>AtMostTwice()</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.",
 			"Use <c>Within(TimeSpan)</c> / <c>WithCancellation(CancellationToken)</c> before the terminator to wait for expected interactions that happen on background threads.",
 			"Chain <c>Then(...)</c> to assert an ordered sequence of calls. A failing assertion throws a <see cref=\"global::Mockolate.Exceptions.MockVerificationException\" />.",
 		]);
@@ -966,7 +966,7 @@ internal static partial class Sources
 		{
 			sb.AppendXmlSummary($"Asserts how often, and in which order, <see langword=\"protected\" /> members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
 			sb.AppendXmlRemarks([
-				"Same terminators and modifiers as <see cref=\"Verify\" /> (<c>Once</c>, <c>Exactly</c>, <c>Within</c>, <c>Then</c>, ...); applies to <see langword=\"protected\" /> members and events instead of public ones.",
+				"Same terminators and modifiers as <see cref=\"Verify\" /> (<c>Once()</c>, <c>Exactly(n)</c>, <c>Within(...)</c>, <c>Then(...)</c>, ...); applies to <see langword=\"protected\" /> members and events instead of public ones.",
 			]);
 			sb.Append("\t\tIMockProtectedVerifyFor").Append(name).Append(" VerifyProtected { get; }").AppendLine();
 			sb.AppendLine();
@@ -984,7 +984,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary("Verifies how often a specific method setup was matched by actual invocations.");
 		sb.AppendXmlRemarks([
-			"Useful when you want to verify &quot;this <em>particular</em> setup was hit N times&quot; without re-stating the matchers. Chain the usual count terminators (<c>Once</c>, <c>AtLeastOnce</c>, <c>Exactly</c>, ...) on the returned result.",
+			"Useful when you want to verify &quot;this <em>particular</em> setup was hit N times&quot; without re-stating the matchers. Chain the usual count terminators (<c>Once()</c>, <c>AtLeastOnce()</c>, <c>Exactly(n)</c>, ...) on the returned result.",
 		]);
 		sb.AppendXmlParam("setup", "The setup previously registered through <see cref=\"Setup\" /> (typically returned from a <c>Returns(...)</c>/<c>Throws(...)</c> call).");
 		sb.AppendXmlReturns("A <c>VerificationResult</c> that counts invocations matching the given setup.");

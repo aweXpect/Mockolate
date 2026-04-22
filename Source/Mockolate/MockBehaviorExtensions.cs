@@ -62,8 +62,12 @@ public static class MockBehaviorExtensions
 			};
 
 		/// <summary>
-		///     Uses the given <paramref name="factory" /> to create default values for <typeparamref name="T" />.
+		///     Returns a <see cref="MockBehavior" /> that uses <paramref name="factory" /> to produce the default value
+		///     whenever a mocked member of type <typeparamref name="T" /> falls back to a default.
 		/// </summary>
+		/// <typeparam name="T">The target type the factory supplies defaults for. Matched by exact type equality &#8212; subtypes are not covered.</typeparam>
+		/// <param name="factory">Lazy producer of the default value; invoked once per fallback.</param>
+		/// <returns>A new <see cref="MockBehavior" /> with the factory registered; the original behavior is unchanged.</returns>
 		public MockBehavior WithDefaultValueFor<T>(Func<T> factory)
 			=> mockBehavior.WithDefaultValueFor(new DefaultValueFactory(
 				t => t == typeof(T),

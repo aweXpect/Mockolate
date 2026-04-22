@@ -19,15 +19,15 @@ public static partial class HttpClientExtensions
 		///     Verifies invocations of <see cref="System.Net.Http.HttpClient.PostAsync(string?, HttpContent?)" /> on the
 		///     mocked <see cref="HttpClient" /> matching <paramref name="requestUri" /> and <paramref name="content" />.
 		/// </summary>
-		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.Is(uri)</c> or a raw string.</param>
-		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
-		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with a count assertion.</returns>
-		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		/// <remarks>
 		///     Matches on the underlying <c>SendAsync</c> invocation, so the verification succeeds for any
 		///     <c>PostAsync</c> overload (with or without <see cref="CancellationToken" />) that produced a request
 		///     satisfying the supplied matchers.
 		/// </remarks>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.Is(uri)</c> or a raw string.</param>
+		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
+		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with a count assertion.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public VerificationResult<HttpClient> PostAsync(
 			IParameter<string?> requestUri,
 			IParameter<HttpContent?>? content = null)

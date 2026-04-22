@@ -239,10 +239,9 @@ internal static partial class Sources
 			sb.Append("{").AppendLine();
 			sb.Append("\textension(global::Mockolate.Mock.IMockFor").Append(lastInterface.Name).Append(" mock)").AppendLine();
 			sb.Append("\t{").AppendLine();
-			sb.AppendXmlSummary($"Reinterprets this mock as a mock of <typeparamref name=\"T\" /> (here constrained to <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />) to reach its Setup/Verify/Raise surface.");
+			sb.AppendXmlSummary($"Reinterprets this mock as a mock of <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" /> to reach its Setup/Verify/Raise surface.");
 			sb.AppendXmlRemarks(
 				"The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.");
-			sb.AppendXmlTypeParam("T", $"The additional interface to reinterpret the mock as. Must derive from <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.AppendXmlReturns($"An <c>IMockFor...</c> accessor targeting <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");
 			sb.AppendXmlException("global::Mockolate.Exceptions.MockException",
 				$"The subject does not implement <see cref=\"{source.Class.ClassFullName.EscapeForXmlDoc()}\" />.");

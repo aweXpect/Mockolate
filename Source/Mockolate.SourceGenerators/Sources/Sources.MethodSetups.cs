@@ -161,7 +161,7 @@ internal static partial class Sources
 			"\t");
 		sb.Append("\tinternal interface IVoidMethodSetup<").Append(typeParams).Append("> : IMethodSetup").AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlSummary("Overrides <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" /> for this method only.");
 		sb.AppendXmlRemarks("If not specified, use <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams).Append("> SkippingBaseClass(bool skipBaseClass = true);")
 			.AppendLine();
@@ -353,7 +353,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// SkippingBaseClass
-		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlSummary("Overrides <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" /> for this method only.");
 		sb.AppendXmlRemarks("If not specified, use <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams)
 			.Append("> global::Mockolate.Setup.IVoidMethodSetup<").Append(typeParams)
@@ -789,7 +789,7 @@ internal static partial class Sources
 		sb.Append("\tinternal interface IReturnMethodSetup<TReturn, ").Append(typeParams).Append("> : global::Mockolate.Setup.IMethodSetup")
 			.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.AppendXmlSummary("Specifies if calling the base class implementation should be skipped.");
+		sb.AppendXmlSummary("Overrides <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" /> for this method only.");
 		sb.AppendXmlRemarks("If not specified, use <see cref=\"global::Mockolate.MockBehavior.SkipBaseClass\" />.");
 		sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetup<TReturn, ").Append(typeParams)
 			.Append("> SkippingBaseClass(bool skipBaseClass = true);").AppendLine();

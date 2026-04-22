@@ -12,9 +12,9 @@ public partial class It
 	///     Matches a parameter whose value is <em>not</em> equal to <paramref name="value" />.
 	/// </summary>
 	/// <remarks>
-	///     The inverse of <see cref="Is{T}(T, string)" />. Unlike <c>Is</c>, this matcher also accepts arguments of
-	///     runtime types that are incompatible with <typeparamref name="T" /> (reached via covariant widening), since
-	///     such values cannot equal a <typeparamref name="T" />-typed expectation.
+	///     The inverse of <see cref="Is{T}(T, string)" />. Unlike <c>Is</c>, this matcher also accepts arguments
+	///     whose runtime type is not <typeparamref name="T" />, since such values cannot equal a
+	///     <typeparamref name="T" />-typed expectation.
 	/// </remarks>
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>
 	/// <param name="value">The value to reject.</param>

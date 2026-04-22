@@ -21,14 +21,14 @@ public static partial class HttpClientExtensions
 		///     <see cref="HttpClient" /> for requests whose URI matches <paramref name="requestUri" /> and whose
 		///     body matches <paramref name="content" />.
 		/// </summary>
-		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.Is(uri)</c> or a raw string.</param>
-		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
-		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
-		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		/// <remarks>
 		///     Mockolate intercepts the underlying <c>SendAsync</c> call on the injected handler, so this setup also
 		///     covers code paths that call <c>HttpClient.PatchAsync</c> with an explicit <see cref="CancellationToken" />.
 		/// </remarks>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.Is(uri)</c> or a raw string.</param>
+		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
+		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PatchAsync(
 			IParameter<string?> requestUri,
 			IParameter<HttpContent?>? content = null)

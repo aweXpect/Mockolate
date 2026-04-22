@@ -40,54 +40,73 @@ public static partial class ItExtensions
 	}
 
 	/// <summary>
-	///     Allows adding additional constraints to a <see cref="Uri" /> parameter matcher.
+	///     Additional constraints chained off <see cref="IsUri(string?)" /> to narrow a <see cref="Uri" /> match.
 	/// </summary>
+	/// <remarks>
+	///     Every <c>.With*</c>/<c>.For*</c> returns the same instance so constraints can be combined; every one of
+	///     them must hold for the URI to match.
+	/// </remarks>
 	public interface IUriParameter : IParameterWithCallback<Uri?>
 	{
 		/// <summary>
-		///     Expects the <see cref="Uri.Scheme" /> to be "http".
+		///     Requires <see cref="Uri.Scheme" /> to be <c>http</c> (case-insensitive).
 		/// </summary>
+		/// <returns>The same parameter, for chaining.</returns>
 		IUriParameter ForHttp();
 
 		/// <summary>
-		///     Expects the <see cref="Uri.Scheme" /> to be "https".
+		///     Requires <see cref="Uri.Scheme" /> to be <c>https</c> (case-insensitive).
 		/// </summary>
+		/// <returns>The same parameter, for chaining.</returns>
 		IUriParameter ForHttps();
 
 		/// <summary>
-		///     Expects the <see cref="Uri.Host" /> to match the given <paramref name="hostPattern" /> supporting wildcards.
+		///     Requires <see cref="Uri.Host" /> to match <paramref name="hostPattern" /> (<c>*</c> = any sequence,
+		///     <c>?</c> = one character; case-insensitive).
 		/// </summary>
+		/// <param name="hostPattern">Wildcard pattern for the host part.</param>
+		/// <returns>The same parameter, for chaining.</returns>
 		IUriParameter WithHost(string hostPattern);
 
 		/// <summary>
-		///     Expects the <see cref="Uri.Port" /> to be equal to the given <paramref name="port" />.
+		///     Requires <see cref="Uri.Port" /> to equal <paramref name="port" />.
 		/// </summary>
+		/// <param name="port">Expected port number (as exposed by <see cref="Uri.Port" />, so the default port for the scheme is <c>80</c>/<c>443</c>).</param>
+		/// <returns>The same parameter, for chaining.</returns>
 		IUriParameter WithPort(int port);
 
 		/// <summary>
-		///     Expects the <see cref="Uri.AbsolutePath" /> to match the given <paramref name="pathPattern" /> supporting
-		///     wildcards.
+		///     Requires <see cref="Uri.AbsolutePath" /> to match <paramref name="pathPattern" /> after URL-decoding
+		///     (<c>*</c> = any sequence, <c>?</c> = one character; case-insensitive).
 		/// </summary>
+		/// <param name="pathPattern">Wildcard pattern for the absolute path (e.g. <c>"/api/users/*"</c>).</param>
+		/// <returns>The same parameter, for chaining.</returns>
 		IUriParameter WithPath(string pathPattern);
 
 		/// <summary>
-		///     Expects the <see cref="Uri.Query" /> to contain the parameters in the <paramref name="queryString" />.
+		///     Requires <see cref="Uri.Query" /> to contain every parameter parsed from <paramref name="queryString" />.
 		/// </summary>
+		/// <param name="queryString">Raw query string &#8212; pairs separated by <c>&amp;</c>, keys and values by <c>=</c>. A leading <c>?</c> is tolerated.</param>
+		/// <returns>The same parameter, for chaining.</returns>
 		/// <remarks>
-		///     Expect parameters to be separated by '&amp;' and the key-value pairs of the parameters to be separated by '='.
-		///     The order of the parameters is ignored.
+		///     The order of parameters is ignored, values are URL-decoded, and additional parameters on the URI are allowed.
 		/// </remarks>
 		IUriParameter WithQuery(string queryString);
 
 		/// <summary>
-		///     Expects the <see cref="Uri.Query" /> to contain the given <paramref name="key" />-<paramref name="value" />
-		///     pair.
+		///     Requires <see cref="Uri.Query" /> to contain a parameter <paramref name="key" />=<paramref name="value" />.
 		/// </summary>
+		/// <param name="key">The query parameter name that must be present.</param>
+		/// <param name="value">The expected value. Implicitly converts from <see langword="string" />; use the <see cref="HttpQueryParameterValue" /> helpers for patterns or predicates.</param>
+		/// <returns>The same parameter, for chaining.</returns>
 		IUriParameter WithQuery(string key, HttpQueryParameterValue value);
 
 		/// <summary>
-		///     Expects the <see cref="Uri.Query" /> to contain the given query <paramref name="parameters" />.
+		///     Requires <see cref="Uri.Query" /> to contain every given <paramref name="parameters" /> pair
+		///     (additional query parameters on the URI are allowed).
 		/// </summary>
+		/// <param name="parameters">Expected key/value pairs; the order is ignored.</param>
+		/// <returns>The same parameter, for chaining.</returns>
 		IUriParameter WithQuery(params IEnumerable<(string Key, HttpQueryParameterValue Value)> parameters);
 	}
 
