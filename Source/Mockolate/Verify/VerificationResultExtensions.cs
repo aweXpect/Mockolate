@@ -471,6 +471,7 @@ public static class VerificationResultExtensions
 				IInteraction? firstInteraction = null;
 				foreach (IInteraction candidate in interactions)
 				{
+					// Stryker disable once Equality : positions are unique per interaction, so position <= bestPosition can only differ from position < bestPosition on exact equality, which never occurs.
 					if (positions.TryGetValue(candidate, out int position) &&
 					    position > after &&
 					    position < bestPosition)
@@ -481,6 +482,7 @@ public static class VerificationResultExtensions
 				}
 
 				bool hasInteractionAfter = firstInteraction is not null;
+				// Stryker disable once Conditional : when hasInteractionAfter is false, bestPosition is still the int.MaxValue seed, so the ternary branches produce identical values.
 				after = hasInteractionAfter ? bestPosition : int.MaxValue;
 				if (!hasInteractionAfter && error is null)
 				{

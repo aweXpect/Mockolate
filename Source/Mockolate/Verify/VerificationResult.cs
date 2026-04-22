@@ -160,6 +160,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 				return true;
 			}
 
+			// Stryker disable once Boolean : ConfigureAwait(true) vs (false) is only observable in a synchronization context; Mockolate's test targets never exercise one, so the flag is equivalent in practice.
 			return VerifyAsync(predicate).ConfigureAwait(false).GetAwaiter().GetResult();
 		}
 
