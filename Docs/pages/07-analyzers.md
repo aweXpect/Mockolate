@@ -34,25 +34,34 @@ Mocked types must be mockable. This rule will prevent you from using unsupported
 
 ## Mockolate0003
 
-`.Wrap()` arguments must be wrappable. The wrapped type must satisfy the same mockability rules as
-the primary mock target (interface, delegate, or non-sealed class).
+A mocked member's signature routes through the ref-struct pipeline in a way Mockolate can't
+emit setup surface for. The warning fires in two distinct situations.
 
-## Mockolate0004
+**1. Compilation prerequisites not met**
 
-Ref-struct parameter mocking is not supported on this compilation. This warning fires when the
-signature of a mocked member routes through the ref-struct pipeline but the current build
-environment can't emit the setup surface:
+The ref-struct setup pipeline requires both:
 
-- Compilation target is older than .NET 9 — the ref-struct pipeline requires the `allows ref struct`
-  anti-constraint introduced in C# 13 / .NET 9.
-- Parameter is `out`, `ref`, or `ref readonly` and its type is a non-`Span<T>` / non-`ReadOnlySpan<T>`
-  ref struct — the mock can't round-trip the value through `IOutParameter<T>` / `IRefParameter<T>`
-  when `T` is a ref struct.
-- Method returns a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct — currently unsupported.
+- A target framework of .NET 9 or later (Mockolate's ref-struct setup types are
+  `#if NET9_0_OR_GREATER`-gated).
+- An effective C# language version of 13 or later (uses the `allows ref struct` anti-constraint).
 
+When either prerequisite is missing, the warning fires for any member that passes a non-`Span<T>` /
+non-`ReadOnlySpan<T>` ref struct by value, or uses one as an indexer key. Upgrade the target
+framework and/or `<LangVersion>` to resolve it.
+
+**2. Signature shapes that are never supported**
+
+These fire on every compilation target, including .NET 9+ / C# 13+:
+
+- Parameters marked `out`, `ref`, or `ref readonly` whose type is a non-`Span<T>` /
+  non-`ReadOnlySpan<T>` ref struct — the mock can't round-trip the value through
+  `IOutParameter<T>` / `IRefParameter<T>` when `T` is a ref struct.
+- Methods returning a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct.
+
+**Note:**
 `Span<T>` and `ReadOnlySpan<T>` flow through the existing `SpanWrapper` / `ReadOnlySpanWrapper`
-fallback and are not flagged. Custom ref-struct parameters and indexer keys (both get and set) ARE
-supported on .NET 9+ compilation targets.
+fallback and are never flagged. On .NET 9+ with C# 13+, by-value custom ref-struct parameters and
+ref-struct-keyed indexers (getter-only, setter-only, and get+set) are fully supported.
 
-See the [Ref Struct Parameters](setup/04-parameter-matching#ref-struct-parameters-net-9) section
+See the [Ref Struct Parameters](setup/parameter-matching#ref-struct-parameters-net-9) section
 for the supported surface.

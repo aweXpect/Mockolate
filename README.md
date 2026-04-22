@@ -649,7 +649,7 @@ generic delegates:
   contribute their raw value as part of the composite dispatch key. If any ref-struct slot is
   matched without a projection, storage stays inactive for that setup.
 
-The following cases are rejected at compile time with diagnostic `Mockolate0004`:
+The following cases are rejected at compile time with diagnostic `Mockolate0003`:
 
 - Targeting older than .NET 9 (the feature relies on `allows ref struct`, a .NET 9 / C# 13
   feature).
@@ -1606,3 +1606,37 @@ Mocked types must be mockable. This rule will prevent you from using unsupported
   Type must be an interface, a delegate or a supported class (e.g. not sealed)
 - `Implementing<T>()`  
   Type must be an interface
+
+
+### Mockolate0003
+
+A mocked member's signature routes through the ref-struct pipeline in a way Mockolate can't
+emit setup surface for. The warning fires in two distinct situations.
+
+**1. Compilation prerequisites not met**
+
+The ref-struct setup pipeline requires both:
+
+- A target framework of .NET 9 or later (Mockolate's ref-struct setup types are
+  `#if NET9_0_OR_GREATER`-gated).
+- An effective C# language version of 13 or later (uses the `allows ref struct` anti-constraint).
+
+When either prerequisite is missing, the warning fires for any member that passes a non-`Span<T>` /
+non-`ReadOnlySpan<T>` ref struct by value, or uses one as an indexer key. Upgrade the target
+framework and/or `<LangVersion>` to resolve it.
+
+**2. Signature shapes that are never supported**
+
+These fire on every compilation target, including .NET 9+ / C# 13+:
+
+- Parameters marked `out`, `ref`, or `ref readonly` whose type is a non-`Span<T>` /
+  non-`ReadOnlySpan<T>` ref struct — the mock can't round-trip the value through
+  `IOutParameter<T>` / `IRefParameter<T>` when `T` is a ref struct.
+- Methods returning a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct.
+
+**Note:**
+`Span<T>` and `ReadOnlySpan<T>` flow through the existing `SpanWrapper` / `ReadOnlySpanWrapper`
+fallback and are never flagged. On .NET 9+ with C# 13+, by-value custom ref-struct parameters and
+ref-struct-keyed indexers (getter-only, setter-only, and get+set) are fully supported.
+
+See the Ref Struct Parameters section for the supported surface.

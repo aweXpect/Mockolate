@@ -17,15 +17,15 @@ namespace Mockolate.Analyzers;
 public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 {
 	private static readonly DiagnosticDescriptor s_refStructRule = new(
-		"Mockolate0004",
-		new LocalizableResourceString(nameof(Resources.Mockolate0004Title),
+		"Mockolate0003",
+		new LocalizableResourceString(nameof(Resources.Mockolate0003Title),
 			Resources.ResourceManager, typeof(Resources)),
-		new LocalizableResourceString(nameof(Resources.Mockolate0004MessageFormat),
+		new LocalizableResourceString(nameof(Resources.Mockolate0003MessageFormat),
 			Resources.ResourceManager, typeof(Resources)),
 		"Usage",
 		DiagnosticSeverity.Warning,
 		true,
-		new LocalizableResourceString(nameof(Resources.Mockolate0004Description),
+		new LocalizableResourceString(nameof(Resources.Mockolate0003Description),
 			Resources.ResourceManager, typeof(Resources)));
 
 	/// <inheritdoc cref="DiagnosticAnalyzer.SupportedDiagnostics" />
