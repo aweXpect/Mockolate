@@ -204,7 +204,7 @@ internal static partial class Sources
 		sb.AppendXmlSummary(
 			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"mockBehavior\" />, applying the given <paramref name=\"setup\" /> immediately, using the given <paramref name=\"constructorParameters\" />.");
 		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
-		sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup, or <see langword=\"null\" /> for <see cref=\"global::Mockolate.MockBehavior.Default\" />.");
+		sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup, or <see langword=\"null\" /> for <c>MockBehavior.Default</c>.");
 		sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword=\"null\" /> to skip.");
 		sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor, or <see langword=\"null\" /> to use the parameterless constructor.");
 		sb.AppendXmlReturns(createMockReturns);
@@ -1393,16 +1393,20 @@ internal static partial class Sources
 	}
 
 	/// <summary>
-	///     Builds an XML-doc cref string for the given <paramref name="constructor" /> on
-	///     <paramref name="class" />, in the form <c>{class-cref}.{simple-name}({param-types})</c>,
-	///     or returns <see langword="null" /> when no valid cref can be produced.
+	///     Builds an XML-doc cref string and a matching short display text for the given
+	///     <paramref name="constructor" /> on <paramref name="class" />. The cref has the form
+	///     <c>{class-cref}.{simple-name}({fully-qualified-param-types})</c>; the display has the
+	///     form <c>{simple-name}({short-param-types})</c>, intended as the inner text of
+	///     <c>&lt;see cref="..."&gt;...&lt;/see&gt;</c> so the rendered prose reads
+	///     <c>the MyClass(int) constructor</c> rather than <c>the MyClass.MyClass(int) constructor</c>.
+	///     Returns <see langword="null" /> when no valid cref can be produced.
 	/// </summary>
 	/// <remarks>
 	///     Generic classes are skipped because the cref type-parameter-list syntax (e.g. <c>{T}</c>)
 	///     expects identifier tokens, not the concrete type arguments that closed generics carry —
 	///     emitting <c>MyClass{int}.MyClass(int)</c> would surface CS1584/CS1658 on the consumer side.
 	/// </remarks>
-	private static string? BuildConstructorCref(Class @class, Method constructor)
+	private static (string Cref, string Display)? BuildConstructorCref(Class @class, Method constructor)
 	{
 		string fullName = @class.ClassFullName;
 
@@ -1415,21 +1419,28 @@ internal static partial class Sources
 		string simpleName = lastDot >= 0 ? fullName.Substring(lastDot + 1) : fullName;
 
 		StringBuilder cref = new();
+		StringBuilder display = new();
 		cref.Append(fullName).Append('.').Append(simpleName).Append('(');
+		display.Append(simpleName).Append('(');
 		bool first = true;
 		foreach (MethodParameter parameter in constructor.Parameters)
 		{
 			if (!first)
 			{
 				cref.Append(", ");
+				display.Append(", ");
 			}
 
 			first = false;
 			cref.Append(parameter.Type.Fullname.EscapeForXmlDoc());
+			// Inner text of <see> is XML content, so escape '<'/'>' as entities
+			// (unlike cref attributes, which use the '{...}' shorthand).
+			display.Append(parameter.Type.DisplayName.Replace("<", "&lt;").Replace(">", "&gt;"));
 		}
 
 		cref.Append(')');
-		return cref.ToString();
+		display.Append(')');
+		return (cref.ToString(), display.ToString());
 	}
 
 #pragma warning disable S107 // Methods should not have too many parameters
@@ -1457,10 +1468,10 @@ internal static partial class Sources
 			return;
 		}
 
-		string? constructorCref = BuildConstructorCref(@class, constructor);
+		(string Cref, string Display)? constructorCref = BuildConstructorCref(@class, constructor);
 		string ctorPhrase = constructorCref is null
 			? "the base-class constructor"
-			: $"the <see cref=\"{constructorCref}\" /> constructor";
+			: $"the <see cref=\"{constructorCref.Value.Cref}\">{constructorCref.Value.Display}</see> constructor";
 
 		if (includeMockBehavior && includeSetup)
 		{

@@ -355,6 +355,151 @@ internal static partial class Sources
 			=> value.Replace('<', '{').Replace('>', '}');
 	}
 
+	/// <summary>
+	///     Rewrites every self-closing <c>&lt;see cref="X" /&gt;</c> inside <paramref name="source" />
+	///     to <c>&lt;see cref="X"&gt;Display&lt;/see&gt;</c>, where <c>Display</c> is a simplified
+	///     version of the cref (outer namespace and enclosing types stripped, inner namespace
+	///     qualifiers inside generic arguments / parameter lists stripped to their rightmost
+	///     segment, and cref-style <c>{T}</c> generics rendered as <c>&amp;lt;T&amp;gt;</c>).
+	///     This keeps the IDE/docs link intact while making the rendered prose shorter and avoiding
+	///     the <c>Type.Type(...)</c> duplication that constructor crefs otherwise show.
+	/// </summary>
+	/// <remarks>
+	///     Tags that already carry inner text (<c>&lt;see cref="X"&gt;...&lt;/see&gt;</c>) are left
+	///     untouched so callers can override the default display when needed.
+	/// </remarks>
+	internal static string ExpandCrefs(string source)
+	{
+		const string OpenTag = "<see cref=\"";
+		int searchFrom = 0;
+		int copiedUpTo = 0;
+		StringBuilder? result = null;
+		while (true)
+		{
+			int start = source.IndexOf(OpenTag, searchFrom, StringComparison.Ordinal);
+			if (start < 0)
+			{
+				break;
+			}
+
+			int crefStart = start + OpenTag.Length;
+			int crefEnd = source.IndexOf('"', crefStart);
+			if (crefEnd < 0)
+			{
+				break;
+			}
+
+			int after = crefEnd + 1;
+			while (after < source.Length && source[after] == ' ')
+			{
+				after++;
+			}
+
+			if (after + 1 < source.Length && source[after] == '/' && source[after + 1] == '>')
+			{
+				string cref = source.Substring(crefStart, crefEnd - crefStart);
+				string display = SimplifyCrefForDisplay(cref);
+				result ??= new StringBuilder(source.Length + 64);
+				result.Append(source, copiedUpTo, start - copiedUpTo);
+				result.Append(OpenTag).Append(cref).Append("\">").Append(display).Append("</see>");
+				copiedUpTo = after + 2;
+				searchFrom = after + 2;
+			}
+			else
+			{
+				searchFrom = crefEnd + 1;
+			}
+		}
+
+		if (result is null)
+		{
+			return source;
+		}
+
+		result.Append(source, copiedUpTo, source.Length - copiedUpTo);
+		return result.ToString();
+	}
+
+	/// <summary>
+	///     Derives a short display form from a cref value.
+	///     <list type="number">
+	///         <item>Strips every <c>global::</c> prefix.</item>
+	///         <item>
+	///             Keeps everything from the last <c>.</c> that precedes the first <c>{</c> or
+	///             <c>(</c> — i.e. drops the outer namespace / enclosing-type qualifiers but
+	///             preserves a trailing <c>Type.Member</c> chain when no brackets are present.
+	///         </item>
+	///         <item>
+	///             Inside the first <c>{…}</c> / <c>(…)</c> and everything after it, reduces each
+	///             dotted identifier chain to its rightmost segment (so
+	///             <c>(System.Func{object?[], bool}, string)</c> becomes
+	///             <c>(Func{object?[], bool}, string)</c>).
+	///         </item>
+	///         <item>
+	///             Converts cref-style <c>{</c>/<c>}</c> generics to <c>&amp;lt;</c>/<c>&amp;gt;</c>
+	///             so the rendered text shows actual angle brackets.
+	///         </item>
+	///     </list>
+	/// </summary>
+	private static string SimplifyCrefForDisplay(string cref)
+	{
+		string stripped = cref.Replace("global::", string.Empty);
+		int firstBracket = stripped.IndexOfAny(['{', '(']);
+		int searchEnd = firstBracket < 0 ? stripped.Length : firstBracket;
+		int lastDot = searchEnd > 0 ? stripped.LastIndexOf('.', searchEnd - 1) : -1;
+		string simplified = lastDot >= 0 ? stripped.Substring(lastDot + 1) : stripped;
+		simplified = StripInnerNamespaces(simplified);
+		return simplified.Replace("{", "&lt;").Replace("}", "&gt;");
+	}
+
+	/// <summary>
+	///     Within the portion of <paramref name="value" /> that starts at the first <c>{</c> or
+	///     <c>(</c>, reduces every dotted identifier chain (e.g. <c>System.Collections.Generic.List</c>)
+	///     to its rightmost segment. The head preceding that first bracket is left untouched so
+	///     a legitimate <c>Type.Member</c> prefix is preserved.
+	/// </summary>
+	private static string StripInnerNamespaces(string value)
+	{
+		int firstBracket = value.IndexOfAny(['{', '(']);
+		if (firstBracket < 0)
+		{
+			return value;
+		}
+
+		StringBuilder sb = new(value.Length);
+		sb.Append(value, 0, firstBracket);
+		int i = firstBracket;
+		while (i < value.Length)
+		{
+			char c = value[i];
+			if (IsIdentifierStart(c))
+			{
+				int lastIdStart = i;
+				while (i < value.Length && (IsIdentifierPart(value[i]) || value[i] == '.'))
+				{
+					if (value[i] == '.')
+					{
+						lastIdStart = i + 1;
+					}
+
+					i++;
+				}
+
+				sb.Append(value, lastIdStart, i - lastIdStart);
+			}
+			else
+			{
+				sb.Append(c);
+				i++;
+			}
+		}
+
+		return sb.ToString();
+
+		static bool IsIdentifierStart(char c) => char.IsLetter(c) || c == '_';
+		static bool IsIdentifierPart(char c) => char.IsLetterOrDigit(c) || c == '_';
+	}
+
 	extension(StringBuilder sb)
 	{
 		/// <summary>
