@@ -974,7 +974,7 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t\tTValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;").AppendLine();
 		sb.Append("\t\t\tcurrentValue = ExecuteGetterCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
-		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue, out _);").AppendLine();
+		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
 		sb.Append("\t\t\taccess.StoreValue(currentValue);").AppendLine();
 		sb.Append("\t\t\treturn TryCast(currentValue, out TResult result, behavior) ? result : baseValue;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -1010,7 +1010,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tcurrentValue = ExecuteGetterCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
-		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue, out _);").AppendLine();
+		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
 		sb.Append("\t\t\taccess.StoreValue(currentValue);").AppendLine();
 		sb.Append("\t\t\treturn TryCast(currentValue, out TResult result, behavior) ? result : behavior.DefaultValue.Generate(default(TResult)!);").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -1046,7 +1046,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tcurrentValue = ExecuteGetterCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
-		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue, out _);").AppendLine();
+		sb.Append("\t\t\tcurrentValue = ExecuteReturnCallbacks(").Append(parameters).Append(", currentValue);").AppendLine();
 		sb.Append("\t\t\taccess.StoreValue(currentValue);").AppendLine();
 		sb.Append("\t\t\treturn TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -1117,9 +1117,8 @@ internal static partial class Sources
 
 		// ExecuteReturnCallbacks (private)
 		sb.Append("\t\tprivate TValue ExecuteReturnCallbacks(").Append(
-			string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} p{i}"))).Append(", TValue currentValue, out bool matched)").AppendLine();
+			string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} p{i}"))).Append(", TValue currentValue)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tmatched = false;").AppendLine();
 		sb.Append("\t\t\tif (_returnCallbacks is not null)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tforeach (Callback<global::System.Func<int, ").Append(typeParams).Append(", TValue, TValue>> _ in _returnCallbacks)").AppendLine();
@@ -1130,7 +1129,6 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\t\tstatic (count, @delegate, state) => @delegate(count, ").Append(stateParameters).Append(", state.currentValue),").AppendLine();
 		sb.Append("\t\t\t\t\t\tout TValue? newValue))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\t\tmatched = true;").AppendLine();
 		sb.Append("\t\t\t\t\t\treturn newValue!;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
