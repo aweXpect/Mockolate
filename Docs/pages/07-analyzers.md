@@ -54,5 +54,5 @@ environment can't emit the setup surface:
 fallback and are not flagged. Custom ref-struct parameters and indexer keys (both get and set) ARE
 supported on .NET 9+ compilation targets.
 
-See the [Ref Struct Parameters](setup/04-parameter-matching#ref-struct-parameters-net-9) section
+See the [Ref Struct Parameters](setup/parameter-matching#ref-struct-parameters-net-9) section
 for the supported surface.
