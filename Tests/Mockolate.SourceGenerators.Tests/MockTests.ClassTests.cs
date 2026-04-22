@@ -69,14 +69,14 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-				.Contains("Setup for the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\" />.").And
-				.Contains("Verify interactions with the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\" />.").And
-				.Contains("Setup for the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\" />").And
-				.Contains("Verify interactions with the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\" />.").And
-				.Contains("Setup for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\"/>.").And
-				.Contains("Verify invocations for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\"/>.").And
-				.Contains("Raise the <see cref=\"global::MyCode.IMyBaseService.BaseEvent\"/> event.").And
-				.Contains("Verify subscriptions on the BaseEvent event of <see cref=\"global::MyCode.IMyBaseService.BaseEvent\" />.");
+				.Contains("Setup for the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\">BaseProperty</see>.").And
+				.Contains("Verify interactions with the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\">BaseProperty</see>.").And
+				.Contains("Setup for the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\">this[string]</see>").And
+				.Contains("Verify interactions with the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\">this[string]</see>.").And
+				.Contains("Setup for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\">BaseMethod()</see>.").And
+				.Contains("Verify invocations for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\">BaseMethod()</see>.").And
+				.Contains("Raise the <see cref=\"global::MyCode.IMyBaseService.BaseEvent\">BaseEvent</see> event.").And
+				.Contains("Verify subscriptions on the BaseEvent event of <see cref=\"global::MyCode.IMyBaseService.BaseEvent\">BaseEvent</see>.");
 		}
 
 		[Fact]

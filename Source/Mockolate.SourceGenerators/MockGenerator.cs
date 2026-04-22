@@ -13,11 +13,14 @@ namespace Mockolate.SourceGenerators;
 [Generator]
 public class MockGenerator : IIncrementalGenerator
 {
+	private static SourceText ToSource(string source)
+		=> SourceText.From(Sources.Sources.ExpandCrefs(source), Encoding.UTF8);
+
 	void IIncrementalGenerator.Initialize(IncrementalGeneratorInitializationContext context)
 	{
 		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
 			"Mock.g.cs",
-			SourceText.From(Sources.Sources.MockClass(), Encoding.UTF8)));
+			ToSource(Sources.Sources.MockClass())));
 
 		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
 			.CreateSyntaxProvider(
@@ -53,17 +56,17 @@ public class MockGenerator : IIncrementalGenerator
 			if (mockToGenerate.Class is MockClass { Delegate: not null, } mockClass)
 			{
 				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
-					SourceText.From(Sources.Sources.MockDelegate(mockToGenerate.Name, mockClass, mockClass.Delegate), Encoding.UTF8));
+					ToSource(Sources.Sources.MockDelegate(mockToGenerate.Name, mockClass, mockClass.Delegate)));
 			}
 			else if (mockToGenerate.AdditionalClasses is null)
 			{
 				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
-					SourceText.From(Sources.Sources.MockClass(mockToGenerate.Name, mockToGenerate.Class, hasOverloadResolutionPriority), Encoding.UTF8));
+					ToSource(Sources.Sources.MockClass(mockToGenerate.Name, mockToGenerate.Class, hasOverloadResolutionPriority)));
 			}
 			else
 			{
 				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
-					SourceText.From(Sources.Sources.MockCombinationClass(mockToGenerate.FileName, mockToGenerate.Name, mockToGenerate.Class, mockToGenerate.AdditionalClasses, combinationSet), Encoding.UTF8));
+					ToSource(Sources.Sources.MockCombinationClass(mockToGenerate.FileName, mockToGenerate.Name, mockToGenerate.Class, mockToGenerate.AdditionalClasses, combinationSet)));
 			}
 		}
 
@@ -79,7 +82,7 @@ public class MockGenerator : IIncrementalGenerator
 		if (indexerSetups.Any())
 		{
 			context.AddSource("IndexerSetups.g.cs",
-				SourceText.From(Sources.Sources.IndexerSetups(indexerSetups), Encoding.UTF8));
+				ToSource(Sources.Sources.IndexerSetups(indexerSetups)));
 		}
 
 		HashSet<(int, bool)> methodSetups = new();
@@ -94,26 +97,25 @@ public class MockGenerator : IIncrementalGenerator
 		if (methodSetups.Any())
 		{
 			context.AddSource("MethodSetups.g.cs",
-				SourceText.From(Sources.Sources.MethodSetups(methodSetups), Encoding.UTF8));
+				ToSource(Sources.Sources.MethodSetups(methodSetups)));
 		}
 
 		const int dotNetFuncActionParameterLimit = 16;
 		if (methodSetups.Any(x => x.Item1 >= dotNetFuncActionParameterLimit))
 		{
 			context.AddSource("ActionFunc.g.cs",
-				SourceText.From(
-					Sources.Sources.ActionFunc(methodSetups
-						.Where(x => x.Item1 >= dotNetFuncActionParameterLimit)
-						.SelectMany<(int, bool), int>(x => [x.Item1, x.Item1 + 1,])
-						.Where(x => x > dotNetFuncActionParameterLimit)
-						.Distinct()), Encoding.UTF8));
+				ToSource(Sources.Sources.ActionFunc(methodSetups
+					.Where(x => x.Item1 >= dotNetFuncActionParameterLimit)
+					.SelectMany<(int, bool), int>(x => [x.Item1, x.Item1 + 1,])
+					.Where(x => x > dotNetFuncActionParameterLimit)
+					.Distinct())));
 		}
 
 		if (methodSetups.Any(x => !x.Item2))
 		{
 			context.AddSource("ReturnsThrowsAsyncExtensions.g.cs",
-				SourceText.From(Sources.Sources.ReturnsThrowsAsyncExtensions(methodSetups
-					.Where(x => !x.Item2).Select(x => x.Item1).ToArray()), Encoding.UTF8));
+				ToSource(Sources.Sources.ReturnsThrowsAsyncExtensions(methodSetups
+					.Where(x => !x.Item2).Select(x => x.Item1).ToArray())));
 		}
 
 		// Ref-struct method setups for arity > 4. The hand-written types in
@@ -156,12 +158,11 @@ public class MockGenerator : IIncrementalGenerator
 		if (refStructMethodSetups.Any() || refStructIndexerArities.Any())
 		{
 			context.AddSource("RefStructMethodSetups.g.cs",
-				SourceText.From(Sources.Sources.RefStructMethodSetups(refStructMethodSetups, refStructIndexerArities),
-					Encoding.UTF8));
+				ToSource(Sources.Sources.RefStructMethodSetups(refStructMethodSetups, refStructIndexerArities)));
 		}
 
 		context.AddSource("MockBehaviorExtensions.g.cs",
-			SourceText.From(Sources.Sources.MockBehaviorExtensions(mocksToGenerate), Encoding.UTF8));
+			ToSource(Sources.Sources.MockBehaviorExtensions(mocksToGenerate)));
 	}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 

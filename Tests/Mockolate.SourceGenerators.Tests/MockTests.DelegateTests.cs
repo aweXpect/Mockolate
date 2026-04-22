@@ -324,8 +324,8 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Program_DoSomething.g.cs").WhoseValue
-				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\"/> with the given <paramref name=\"x\"/>, <paramref name=\"y\"/>.").And
-				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\"/> with the given <paramref name=\"parameters\"/>.").And
+				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"x\"/>, <paramref name=\"y\"/>.").And
+				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"parameters\"/>.").And
 				.DoesNotContain("Verify invocations for the method <see cref=\"global::MyCode.Program.DoSomething.Verify(");
 		}
 	}
