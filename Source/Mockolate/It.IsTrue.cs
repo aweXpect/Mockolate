@@ -13,11 +13,6 @@ public partial class It
 	///     Shorthand for <c>It.Is(true)</c> with a nicer failure-message rendering. Use
 	///     <see cref="IsFalse" /> for the opposite.
 	/// </remarks>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Verify.Toggle(It.IsTrue()).Once();
-	///     </code>
-	/// </example>
 	public static IParameterWithCallback<bool> IsTrue()
 		=> new TrueParameterMatch();
 

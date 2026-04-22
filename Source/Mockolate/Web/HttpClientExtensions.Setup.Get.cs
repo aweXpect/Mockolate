@@ -20,7 +20,7 @@ public static partial class HttpClientExtensions
 		///     <see cref="HttpClient" /> for requests whose URI matches <paramref name="requestUri" />.
 		/// </summary>
 		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw string.</param>
-		/// <returns>A setup handle - chain <c>.ReturnsAsync(...)</c>, <c>.Throws&lt;T&gt;()</c> or the other fluent terminators.</returns>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
 		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		/// <remarks>
 		///     Mockolate intercepts the underlying <c>SendAsync</c> call on the injected handler, so this setup also
@@ -35,7 +35,7 @@ public static partial class HttpClientExtensions
 		///     Sets up <see cref="System.Net.Http.HttpClient.GetAsync(Uri?)" /> on the mocked <see cref="HttpClient" />
 		///     for requests whose URI matches <paramref name="requestUri" />.
 		/// </summary>
-		/// <param name="requestUri">A <see cref="Uri" /> matcher.</param>
+		/// <param name="requestUri">A <see cref="Uri" /> matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw <see cref="Uri" />.</param>
 		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
 		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> GetAsync(

@@ -21,7 +21,7 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw string.</param>
 		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
-		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with <c>.Once()</c>, <c>.AtLeast(n)</c>, etc.</returns>
+		/// <returns>An intermediate <see cref="VerificationResult{HttpClient}" /> - terminate with a count assertion.</returns>
 		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		/// <remarks>
 		///     Matches on the underlying <c>SendAsync</c> invocation, so the verification succeeds for any

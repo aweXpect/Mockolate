@@ -17,8 +17,6 @@ public partial class It
 	///     <see cref="IInRangeParameter{T}.Exclusive" /> to exclude them.
 	///     Works on any type that implements <see cref="IComparable{T}" /> - numerics,
 	///     <see cref="System.DateTime" />, <see cref="TimeSpan" />, etc.
-	///     Throws <see cref="ArgumentOutOfRangeException" /> if <paramref name="maximum" /> is less than
-	///     <paramref name="minimum" />.
 	/// </remarks>
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>
 	/// <param name="minimum">Lower bound of the accepted range.</param>
@@ -26,12 +24,7 @@ public partial class It
 	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
 	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
 	/// <returns>A parameter matcher that accepts values in the specified range.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Dispense(It.IsAny&lt;string&gt;(), It.IsInRange(1, 10)).Returns(true);
-	///     sut.Mock.Setup.Dispense(It.IsAny&lt;string&gt;(), It.IsInRange(1, 10).Exclusive()).Returns(false);
-	///     </code>
-	/// </example>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="maximum" /> is less than <paramref name="minimum" />.</exception>
 	public static IInRangeParameter<T> IsInRange<T>(T minimum, T maximum,
 		[CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")

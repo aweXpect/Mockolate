@@ -22,12 +22,6 @@ public partial class It
 	/// <param name="predicate">The predicate that decides whether an argument matches.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
 	/// <returns>A parameter matcher that delegates to <paramref name="predicate" />.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.AddUser(It.Satisfies&lt;string&gt;(name =&gt; name.StartsWith("A")))
-	///         .Returns(new User(id, "Alice"));
-	///     </code>
-	/// </example>
 	public static IParameterWithCallback<T> Satisfies<T>(Func<T, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")

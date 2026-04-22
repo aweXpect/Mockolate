@@ -20,11 +20,6 @@ public partial class It
 	/// <param name="value">The value to reject.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
 	/// <returns>A parameter matcher that accepts any value not equal to <paramref name="value" />.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Dispense(It.IsNot("White"), It.IsAny&lt;int&gt;()).Returns(true);
-	///     </code>
-	/// </example>
 	public static IIsNotParameter<T> IsNot<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")

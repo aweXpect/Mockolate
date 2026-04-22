@@ -22,11 +22,11 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw string.</param>
 		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
-		/// <returns>A setup handle - chain <c>.ReturnsAsync(...)</c>, <c>.Throws&lt;T&gt;()</c> or the other fluent terminators.</returns>
+		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
 		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		/// <remarks>
 		///     Mockolate intercepts the underlying <c>SendAsync</c> call on the injected handler, so this setup also
-		///     covers code paths that call <c>HttpClient.PutAsync</c> without an explicit <see cref="CancellationToken" />.
+		///     covers code paths that call <c>HttpClient.PutAsync</c> with an explicit <see cref="CancellationToken" />.
 		/// </remarks>
 		public IReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> PutAsync(
 			IParameter<string?> requestUri,
@@ -41,7 +41,7 @@ public static partial class HttpClientExtensions
 		///     <see cref="HttpClient" /> for requests whose URI matches <paramref name="requestUri" /> and whose
 		///     body matches <paramref name="content" />.
 		/// </summary>
-		/// <param name="requestUri">A <see cref="Uri" /> matcher.</param>
+		/// <param name="requestUri">A <see cref="Uri" /> matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw <see cref="Uri" />.</param>
 		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
 		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
 		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>

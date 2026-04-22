@@ -15,6 +15,10 @@ public interface IInteractivePropertySetup : ISetup
 	///     <paramref name="invocation" /> may be <see langword="null" /> when interaction recording is skipped
 	///     (see <see cref="MockBehavior.SkipInteractionRecording" />).
 	/// </remarks>
+	/// <typeparam name="T">The property type.</typeparam>
+	/// <param name="invocation">The recorded interaction for the setter access, or <see langword="null" /> when recording is skipped.</param>
+	/// <param name="value">The value being assigned to the property.</param>
+	/// <param name="behavior">The mock behavior in effect for this invocation.</param>
 	void InvokeSetter<T>(IInteraction? invocation, T value, MockBehavior behavior);
 
 	/// <summary>
@@ -25,11 +29,18 @@ public interface IInteractivePropertySetup : ISetup
 	///     <paramref name="invocation" /> may be <see langword="null" /> when interaction recording is skipped
 	///     (see <see cref="MockBehavior.SkipInteractionRecording" />).
 	/// </remarks>
+	/// <typeparam name="TResult">The property type returned by the getter.</typeparam>
+	/// <param name="invocation">The recorded interaction for the getter access, or <see langword="null" /> when recording is skipped.</param>
+	/// <param name="behavior">The mock behavior in effect for this invocation.</param>
+	/// <param name="defaultValueGenerator">Factory producing the default value when no configured response applies.</param>
+	/// <returns>The value produced by the configured setup or by <paramref name="defaultValueGenerator" />.</returns>
 	TResult InvokeGetter<TResult>(IInteraction? invocation, MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
 	/// <summary>
 	///     Checks if the <paramref name="propertyAccess" /> matches the setup.
 	/// </summary>
+	/// <param name="propertyAccess">The property access to test against this setup.</param>
+	/// <returns><see langword="true" /> when the setup matches the access; otherwise <see langword="false" />.</returns>
 	bool Matches(PropertyAccess propertyAccess);
 
 	/// <summary>
@@ -38,11 +49,13 @@ public interface IInteractivePropertySetup : ISetup
 	/// <remarks>
 	///     When not explicitly set on the <see cref="IPropertySetup{T}" />, returns <see langword="null" />.
 	/// </remarks>
+	/// <returns>The configured override, or <see langword="null" /> when not set.</returns>
 	bool? SkipBaseClass();
 
 	/// <summary>
 	///     Initialize the <see cref="IPropertySetup{T}" /> with the <paramref name="value" />.
 	/// </summary>
+	/// <param name="value">The initial value assigned to the property's backing field.</param>
 	void InitializeWith(object? value);
 }
 
@@ -61,6 +74,8 @@ public interface IPropertyGetterSetup<T>
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever the property's getter is read.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching invocation.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	/// <example>
 	///     <code>
 	///     sut.Mock.Setup.TotalDispensed.OnGet.Do(() =&gt; Console.WriteLine("Read!"));
@@ -72,12 +87,16 @@ public interface IPropertyGetterSetup<T>
 	///     Fires <paramref name="callback" /> whenever the property's getter is read, passing the property's current
 	///     value.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching invocation; receives the method arguments.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action<T> callback);
 
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever the property's getter is read, passing a zero-based read counter
 	///     and the property's current value.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching invocation; receives a zero-based invocation counter and the method arguments.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
@@ -85,6 +104,7 @@ public interface IPropertyGetterSetup<T>
 	///     to trigger state changes driven by observed reads.
 	/// </summary>
 	/// <param name="scenario">The name of the scenario to transition to.</param>
+	/// <returns>A builder for chaining <c>.When(...)</c>, <c>.For(n)</c>, or <c>.Only(n)</c>.</returns>
 	IPropertyGetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
 }
 
@@ -103,11 +123,15 @@ public interface IPropertySetterSetup<T>
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever the property's setter runs.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching invocation.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IPropertySetterSetupCallbackBuilder<T> Do(Action callback);
 
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever the property's setter runs, passing the new value.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching invocation; receives the method arguments.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	/// <example>
 	///     <code>
 	///     sut.Mock.Setup.TotalDispensed.OnSet.Do(v =&gt; Console.WriteLine($"Set to {v}"));
@@ -119,6 +143,8 @@ public interface IPropertySetterSetup<T>
 	///     Fires <paramref name="callback" /> whenever the property's setter runs, passing a zero-based write counter
 	///     and the new value.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching invocation; receives a zero-based invocation counter and the method arguments.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IPropertySetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
 	/// <summary>
@@ -126,6 +152,7 @@ public interface IPropertySetterSetup<T>
 	///     useful to trigger state changes driven by observed writes.
 	/// </summary>
 	/// <param name="scenario">The name of the scenario to transition to.</param>
+	/// <returns>A builder for chaining <c>.When(...)</c>, <c>.For(n)</c>, or <c>.Only(n)</c>.</returns>
 	IPropertySetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
 }
 
@@ -171,6 +198,7 @@ public interface IPropertySetup<T>
 	///     (including <c>Returns</c>/<c>OnGet</c>/<c>OnSet</c>) is applied.
 	/// </remarks>
 	/// <param name="skipBaseClass">Whether to skip the base-class implementation. Defaults to <see langword="true" />.</param>
+	/// <returns>The same setup instance, to allow chaining.</returns>
 	IPropertySetup<T> SkippingBaseClass(bool skipBaseClass = true);
 
 	/// <summary>
@@ -181,6 +209,7 @@ public interface IPropertySetup<T>
 	///     so a read returns the type's default value instead of throwing. Does not affect mocks with the default
 	///     behavior, where un-configured reads already return defaults.
 	/// </remarks>
+	/// <returns>The same setup instance, to allow chaining.</returns>
 	IPropertySetup<T> Register();
 
 	/// <summary>
@@ -191,6 +220,8 @@ public interface IPropertySetup<T>
 	///     After <see cref="InitializeWith" /> the property behaves like a normal auto-property. Additional
 	///     <c>Returns</c>/<c>Throws</c> or <c>OnSet</c>/<c>OnGet</c> calls layer extra behavior on top.
 	/// </remarks>
+	/// <param name="value">The initial value assigned to the property's backing field.</param>
+	/// <returns>The same setup instance, to allow chaining.</returns>
 	/// <example>
 	///     <code>
 	///     sut.Mock.Setup.TotalDispensed.InitializeWith(42);
@@ -207,6 +238,8 @@ public interface IPropertySetup<T>
 	///     first entry unless the last entry is followed by
 	///     <see cref="SetupExtensions.Forever{T}(IPropertySetupReturnWhenBuilder{T})" />.
 	/// </remarks>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	/// <example>
 	///     <code>
 	///     sut.Mock.Setup.TotalDispensed
@@ -222,12 +255,16 @@ public interface IPropertySetup<T>
 	///     Appends a lazy return to the property's read-sequence; <paramref name="callback" /> is invoked on each
 	///     matching read and its result is returned.
 	/// </summary>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	IPropertySetupReturnBuilder<T> Returns(Func<T> callback);
 
 	/// <summary>
 	///     Appends a lazy return that receives the property's current value and returns the new one - useful for
 	///     incrementing or transforming the last-read value.
 	/// </summary>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	/// <example>
 	///     <code>
 	///     sut.Mock.Setup.TotalDispensed.Returns(current =&gt; current + 10);
@@ -239,24 +276,32 @@ public interface IPropertySetup<T>
 	///     Appends an entry to the read-sequence that throws a freshly-constructed
 	///     <typeparamref name="TException" /> on the next matching read.
 	/// </summary>
+	/// <typeparam name="TException">The exception type; a new instance is created per invocation.</typeparam>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	IPropertySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <summary>
 	///     Appends an entry to the read-sequence that throws <paramref name="exception" /> on the next matching read.
 	/// </summary>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	IPropertySetupReturnBuilder<T> Throws(Exception exception);
 
 	/// <summary>
 	///     Appends an entry that invokes <paramref name="callback" /> to build the exception thrown on the next
 	///     matching read - useful when the exception needs to reference the invocation state.
 	/// </summary>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback);
 
 	/// <summary>
 	///     Appends an entry that invokes <paramref name="callback" /> with the property's current value to build the
 	///     exception thrown on the next matching read.
 	/// </summary>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback);
 }
 
@@ -271,6 +316,8 @@ public interface IPropertyGetterSetupParallelCallbackBuilder<T> : IPropertyGette
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
+	/// <param name="predicate">A predicate receiving a zero-based counter of how many times the method has been invoked so far.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IPropertyGetterSetupCallbackWhenBuilder<T> When(Func<int, bool> predicate);
 }
 
@@ -282,6 +329,7 @@ public interface IPropertyGetterSetupCallbackBuilder<T> : IPropertyGetterSetupPa
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
+	/// <returns>A builder for chaining <c>.When(...)</c>, <c>.For(n)</c>, or <c>.Only(n)</c>.</returns>
 	IPropertyGetterSetupParallelCallbackBuilder<T> InParallel();
 }
 
@@ -297,6 +345,8 @@ public interface IPropertyGetterSetupCallbackWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertyGetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
+	/// <param name="times">The number of executions before the callback cycles back to the first entry in the sequence.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IPropertyGetterSetupCallbackWhenBuilder<T> For(int times);
 
 	/// <summary>
@@ -306,6 +356,8 @@ public interface IPropertyGetterSetupCallbackWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertyGetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
+	/// <param name="times">The number of executions after which the callback stops firing.</param>
+	/// <returns>The outer setup for chaining additional returns/throws.</returns>
 	IPropertySetup<T> Only(int times);
 }
 
@@ -320,6 +372,8 @@ public interface IPropertySetterSetupParallelCallbackBuilder<T> : IPropertySette
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
+	/// <param name="predicate">A predicate receiving a zero-based counter of how many times the method has been invoked so far.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IPropertySetterSetupCallbackWhenBuilder<T> When(Func<int, bool> predicate);
 }
 
@@ -331,6 +385,7 @@ public interface IPropertySetterSetupCallbackBuilder<T> : IPropertySetterSetupPa
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
+	/// <returns>A builder for chaining <c>.When(...)</c>, <c>.For(n)</c>, or <c>.Only(n)</c>.</returns>
 	IPropertySetterSetupParallelCallbackBuilder<T> InParallel();
 }
 
@@ -346,6 +401,8 @@ public interface IPropertySetterSetupCallbackWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertySetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
+	/// <param name="times">The number of executions before the callback cycles back to the first entry in the sequence.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IPropertySetterSetupCallbackWhenBuilder<T> For(int times);
 
 	/// <summary>
@@ -355,6 +412,8 @@ public interface IPropertySetterSetupCallbackWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertySetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
+	/// <param name="times">The number of executions after which the callback stops firing.</param>
+	/// <returns>The outer setup for chaining additional returns/throws.</returns>
 	IPropertySetup<T> Only(int times);
 }
 
@@ -369,6 +428,8 @@ public interface IPropertySetupReturnBuilder<T> : IPropertySetupReturnWhenBuilde
 	/// <remarks>
 	///     Provides a zero-based counter indicating how many times the property has been accessed so far.
 	/// </remarks>
+	/// <param name="predicate">A predicate receiving a zero-based counter of how many times the method has been invoked so far.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IPropertySetupReturnWhenBuilder<T> When(Func<int, bool> predicate);
 }
 
@@ -384,6 +445,8 @@ public interface IPropertySetupReturnWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertySetupReturnBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
+	/// <param name="times">The number of executions before the callback cycles back to the first entry in the sequence.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IPropertySetupReturnWhenBuilder<T> For(int times);
 
 	/// <summary>
@@ -393,5 +456,7 @@ public interface IPropertySetupReturnWhenBuilder<T> : IPropertySetup<T>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IPropertySetupReturnBuilder{T}.When(Func{int, bool})" /> evaluates to <see langword="true" />).
 	/// </remarks>
+	/// <param name="times">The number of executions after which the callback stops firing.</param>
+	/// <returns>The outer setup for chaining additional returns/throws.</returns>
 	IPropertySetup<T> Only(int times);
 }

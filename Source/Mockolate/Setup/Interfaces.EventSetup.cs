@@ -14,13 +14,14 @@ namespace Mockolate.Setup;
 public interface IEventSetup
 {
 	/// <summary>
-	///     Attaches callbacks that fire whenever a handler is subscribed to the event (the <c>add</c> accessor).
+	///     Gets the fluent surface for attaching callbacks that fire whenever a handler is subscribed to the event
+	///     (the <c>add</c> accessor).
 	/// </summary>
 	IEventSubscriptionSetup OnSubscribed { get; }
 
 	/// <summary>
-	///     Attaches callbacks that fire whenever a handler is unsubscribed from the event (the <c>remove</c>
-	///     accessor).
+	///     Gets the fluent surface for attaching callbacks that fire whenever a handler is unsubscribed from the event
+	///     (the <c>remove</c> accessor).
 	/// </summary>
 	IEventUnsubscriptionSetup OnUnsubscribed { get; }
 }
@@ -38,6 +39,8 @@ public interface IEventSubscriptionSetup
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever a handler subscribes to the event.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching subscription.</param>
+	/// <returns>A builder for chaining repetition/gating operators such as <c>.For(n)</c> or <c>.When(...)</c>.</returns>
 	/// <example>
 	///     <code>
 	///     sut.Mock.Setup.UsersChanged.OnSubscribed.Do(() =&gt; Console.WriteLine("subscribed!"));
@@ -49,6 +52,8 @@ public interface IEventSubscriptionSetup
 	///     Fires <paramref name="callback" /> whenever a handler subscribes, passing the subscriber's target object
 	///     (<see langword="null" /> for static methods) and <see cref="MethodInfo" />.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching subscription, receiving the handler's target and <see cref="MethodInfo" />.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	/// <remarks>
 	///     Useful for diagnostics or for asserting which specific method on which target was wired up.
 	/// </remarks>
@@ -58,6 +63,7 @@ public interface IEventSubscriptionSetup
 	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever a handler subscribes.
 	/// </summary>
 	/// <param name="scenario">The name of the scenario to transition to.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IEventSubscriptionSetupParallelCallbackBuilder TransitionTo(string scenario);
 }
 
@@ -74,18 +80,26 @@ public interface IEventUnsubscriptionSetup
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever a handler unsubscribes from the event.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching unsubscription.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IEventUnsubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever a handler unsubscribes, passing the handler's target object
 	///     (<see langword="null" /> for static methods) and <see cref="MethodInfo" />.
 	/// </summary>
+	/// <param name="callback">The action to invoke on every matching unsubscription, receiving the handler's target and <see cref="MethodInfo" />.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
+	/// <remarks>
+	///     Useful for diagnostics or for asserting which specific method on which target was unwired.
+	/// </remarks>
 	IEventUnsubscriptionSetupCallbackBuilder Do(Action<object?, MethodInfo> callback);
 
 	/// <summary>
 	///     Switches the mock's current scenario to <paramref name="scenario" /> whenever a handler unsubscribes.
 	/// </summary>
 	/// <param name="scenario">The name of the scenario to transition to.</param>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IEventUnsubscriptionSetupParallelCallbackBuilder TransitionTo(string scenario);
 }
 
@@ -95,11 +109,10 @@ public interface IEventUnsubscriptionSetup
 public interface IEventSubscriptionSetupParallelCallbackBuilder : IEventSubscriptionSetupCallbackWhenBuilder
 {
 	/// <summary>
-	///     Limits the callback to only execute for event interactions where the predicate returns true.
+	///     Limits the callback to only execute for event interactions where <paramref name="predicate" /> returns <see langword="true" />.
 	/// </summary>
-	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the event has been interacted with so far.
-	/// </remarks>
+	/// <param name="predicate">A predicate receiving a zero-based counter of how many times the event has been interacted with so far.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IEventSubscriptionSetupCallbackWhenBuilder When(Func<int, bool> predicate);
 }
 
@@ -111,6 +124,7 @@ public interface IEventSubscriptionSetupCallbackBuilder : IEventSubscriptionSetu
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IEventSubscriptionSetupParallelCallbackBuilder InParallel();
 }
 
@@ -122,6 +136,8 @@ public interface IEventSubscriptionSetupCallbackWhenBuilder : IEventSetup
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
+	/// <param name="times">The number of executions before the callback cycles back to the first entry in the sequence.</param>
+	/// <returns>A builder for chaining further <c>.For(n)</c> / <c>.Only(n)</c> calls on additional callbacks.</returns>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IEventSubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
@@ -131,6 +147,8 @@ public interface IEventSubscriptionSetupCallbackWhenBuilder : IEventSetup
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
+	/// <param name="times">The number of executions after which the callback stops firing.</param>
+	/// <returns>The outer <see cref="IEventSetup" /> for chaining additional event setups.</returns>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IEventSubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
@@ -144,11 +162,10 @@ public interface IEventSubscriptionSetupCallbackWhenBuilder : IEventSetup
 public interface IEventUnsubscriptionSetupParallelCallbackBuilder : IEventUnsubscriptionSetupCallbackWhenBuilder
 {
 	/// <summary>
-	///     Limits the callback to only execute for event interactions where the predicate returns true.
+	///     Limits the callback to only execute for event interactions where <paramref name="predicate" /> returns <see langword="true" />.
 	/// </summary>
-	/// <remarks>
-	///     Provides a zero-based counter indicating how many times the event has been interacted with so far.
-	/// </remarks>
+	/// <param name="predicate">A predicate receiving a zero-based counter of how many times the event has been interacted with so far.</param>
+	/// <returns>A builder for chaining <c>.For(n)</c> or <c>.Only(n)</c>.</returns>
 	IEventUnsubscriptionSetupCallbackWhenBuilder When(Func<int, bool> predicate);
 }
 
@@ -160,6 +177,7 @@ public interface IEventUnsubscriptionSetupCallbackBuilder : IEventUnsubscription
 	/// <summary>
 	///     Runs the callback in parallel to the other callbacks.
 	/// </summary>
+	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IEventUnsubscriptionSetupParallelCallbackBuilder InParallel();
 }
 
@@ -171,6 +189,8 @@ public interface IEventUnsubscriptionSetupCallbackWhenBuilder : IEventSetup
 	/// <summary>
 	///     Repeats the callback for the given number of <paramref name="times" />.
 	/// </summary>
+	/// <param name="times">The number of executions before the callback cycles back to the first entry in the sequence.</param>
+	/// <returns>A builder for chaining further <c>.For(n)</c> / <c>.Only(n)</c> calls on additional callbacks.</returns>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IEventUnsubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).
@@ -180,6 +200,8 @@ public interface IEventUnsubscriptionSetupCallbackWhenBuilder : IEventSetup
 	/// <summary>
 	///     Deactivates the callback after the given number of <paramref name="times" />.
 	/// </summary>
+	/// <param name="times">The number of executions after which the callback stops firing.</param>
+	/// <returns>The outer <see cref="IEventSetup" /> for chaining additional event setups.</returns>
 	/// <remarks>
 	///     The number of times is only counted for actual executions (
 	///     <see cref="IEventUnsubscriptionSetupParallelCallbackBuilder.When(Func{int, bool})" /> evaluates to <see langword="true" />).

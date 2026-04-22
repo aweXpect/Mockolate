@@ -20,11 +20,6 @@ public partial class It
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>
 	/// <param name="values">The values to reject.</param>
 	/// <returns>A parameter matcher that rejects every value equal to one of <paramref name="values" />.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Dispense(It.IsNotOneOf("Green", "White"), It.IsAny&lt;int&gt;()).Returns(true);
-	///     </code>
-	/// </example>
 	public static IIsNotOneOfParameter<T> IsNotOneOf<T>(params IEnumerable<T> values)
 		=> new ParameterIsNotOneOfMatch<T>(values.ToArray());
 

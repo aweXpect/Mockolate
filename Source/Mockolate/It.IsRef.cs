@@ -19,13 +19,10 @@ public partial class It
 	///     Mockolate mocks a method that mutates a ref argument. Use <see cref="IsRef{T}(Func{T, bool}, string)" />
 	///     when you only want to match (without mutating), or <see cref="IsRef{T}()" /> for verification.
 	/// </remarks>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Increment(It.IsRef&lt;int&gt;(v =&gt; v + 1)).Returns(true);
-	///     int value = 5;
-	///     sut.Increment(ref value); // value == 6 after the call
-	///     </code>
-	/// </example>
+	/// <typeparam name="T">The ref-parameter's type.</typeparam>
+	/// <param name="setter">Factory that takes the caller's current value and returns the replacement value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> that mutates the caller's ref-variable via <paramref name="setter" />.</returns>
 	public static IRefParameter<T> IsRef<T>(Func<T, T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new RefParameterMatch<T>(_ => true, setter, null, doNotPopulateThisValue);
@@ -38,6 +35,12 @@ public partial class It
 	///     Combine a predicate gate with a value mutation. Both source expressions are captured by the compiler and
 	///     appear in failure messages.
 	/// </remarks>
+	/// <typeparam name="T">The ref-parameter's type.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's current value.</param>
+	/// <param name="setter">Factory that takes the caller's current value and returns the replacement value.</param>
+	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and mutates via <paramref name="setter" />.</returns>
 	public static IRefParameter<T> IsRef<T>(Func<T, bool> predicate, Func<T, T> setter,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue1 = "",
@@ -51,6 +54,10 @@ public partial class It
 	/// <remarks>
 	///     Useful when you want to assert on the in-value of a ref argument (via <c>Verify</c>) without mutating it.
 	/// </remarks>
+	/// <typeparam name="T">The ref-parameter's type.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's current value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and does not mutate the ref-variable.</returns>
 	public static IRefParameter<T> IsRef<T>(Func<T, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
@@ -64,6 +71,8 @@ public partial class It
 	///     Accepts any ref-argument without constraint. For <c>Setup</c>, use one of the overloads that accept a
 	///     <c>setter</c> to mutate the caller's value.
 	/// </remarks>
+	/// <typeparam name="T">The ref-parameter's type.</typeparam>
+	/// <returns>An <see cref="IVerifyRefParameter{T}" /> that matches any ref-argument.</returns>
 	public static IVerifyRefParameter<T> IsRef<T>()
 		=> new InvokedRefParameterMatch<T>();
 
@@ -75,6 +84,8 @@ public partial class It
 	///     <see cref="IRefParameter{T}" /> usable in <c>Setup</c>. Use it when the method has a <see langword="ref" />
 	///     argument you don't care to inspect or mutate.
 	/// </remarks>
+	/// <typeparam name="T">The ref-parameter's type.</typeparam>
+	/// <returns>An <see cref="IRefParameter{T}" /> that matches any ref-argument and leaves it unchanged.</returns>
 	public static IRefParameter<T> IsAnyRef<T>()
 		=> new AnyRefParameterMatch<T>();
 

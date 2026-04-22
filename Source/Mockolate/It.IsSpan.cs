@@ -31,11 +31,6 @@ public partial class It
 	///     The span is copied to an array before <paramref name="predicate" /> is invoked, because ref structs cannot
 	///     be stored. If you only need to match any span, use <see cref="IsAnySpan{T}" />.
 	/// </remarks>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Process(It.IsSpan&lt;byte&gt;(data =&gt; data.Length &gt; 0)).Returns(true);
-	///     </code>
-	/// </example>
 	public static IVerifySpanParameter<T> IsSpan<T>(Func<T[], bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")

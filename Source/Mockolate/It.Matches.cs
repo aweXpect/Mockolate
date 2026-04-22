@@ -21,14 +21,6 @@ public partial class It
 	/// </remarks>
 	/// <param name="pattern">The wildcard (or, with <c>.AsRegex()</c>, regular-expression) pattern to match against.</param>
 	/// <returns>A string parameter matcher, fluently configurable with <c>.CaseSensitive()</c> / <c>.AsRegex()</c>.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Post(It.Matches("*example.com*"), It.IsAny&lt;HttpContent&gt;())
-	///         .Returns(new HttpResponseMessage(HttpStatusCode.OK));
-	///     sut.Mock.Setup.ValidateEmail(It.Matches(@"^\w+@\w+\.\w+$").AsRegex())
-	///         .Returns(true);
-	///     </code>
-	/// </example>
 	public static IParameterMatches Matches(string pattern)
 		=> new MatchesAsWildcardMatch(pattern);
 

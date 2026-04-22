@@ -85,12 +85,6 @@ internal static partial class Sources
 		sb.AppendXmlRemarks(mockPropertyRemarks.ToArray());
 		sb.AppendXmlException("global::Mockolate.Exceptions.MockException",
 			$"The instance is not a Mockolate-generated mock of <see cref=\"{escapedClassName}\" />.");
-		string displayForCode = @class.DisplayString.EscapeForXmlText();
-		sb.AppendXmlExample([
-			"sut.Mock.Setup.MemberName(It.IsAny&lt;int&gt;()).Returns(42);",
-			"// ... exercise the subject ...",
-			"sut.Mock.Verify.MemberName(It.IsAny&lt;int&gt;()).Once();",
-		]);
 		sb.Append("\t\tpublic global::Mockolate.Mock.IMockFor").Append(name).Append(' ').Append(mockPropertyName)
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -133,12 +127,6 @@ internal static partial class Sources
 			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlRemarks(createMockRemarks.ToArray());
 		sb.AppendXmlReturns(createMockReturns);
-		sb.AppendXmlExample([
-			$"{displayForCode} sut = {displayForCode}.CreateMock();",
-			"sut.Mock.Setup.MemberName(It.IsAny&lt;int&gt;()).Returns(42);",
-			"// ... exercise the subject ...",
-			"sut.Mock.Verify.MemberName(It.IsAny&lt;int&gt;()).Once();",
-		]);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock()").AppendLine();
 		sb.Append("\t\t\t=> CreateMock(null, null, (object?[]?)null);").AppendLine();
 		sb.AppendLine();
@@ -932,7 +920,7 @@ internal static partial class Sources
 			"After the transition, setups registered via <see cref=\"InScenario(string)\" /> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.",
 		]);
 		sb.AppendXmlParam("scenario", "Name of the scenario to transition to.");
-		sb.AppendXmlReturns("This accessor, to allow chaining further operations.");
+		sb.AppendXmlReturns("This accessor, to allow chaining.");
 		sb.Append("\t\tIMockFor").Append(name).Append(" TransitionTo(string scenario);").AppendLine();
 		sb.AppendLine();
 
@@ -1024,20 +1012,11 @@ internal static partial class Sources
 		sb.Append("\t\tvoid ClearAllInteractions();").AppendLine();
 		sb.AppendLine();
 		sb.AppendXmlSummary(
-			"Creates a scoped monitor that records interactions only while its <see cref=\"global::System.IDisposable\" /> scope is active.");
+			"Creates a monitor whose <c>Verify</c> surface is scoped to interactions produced between <c>monitor.Run()</c> and the disposal of its <see cref=\"global::System.IDisposable\" /> scope.");
 		sb.AppendXmlRemarks([
-			"Interactions recorded on the mock outside <c>monitor.Run()</c> are not visible through the monitor. Useful to verify only the interactions produced by a specific block of test code without resetting the mock.",
+			"The underlying mock keeps recording all interactions as usual - only the monitor's <c>Verify</c> view is scoped. Useful to verify only the interactions produced by a specific block of test code without resetting the mock.",
 		]);
 		sb.AppendXmlReturns("A <see cref=\"global::Mockolate.Monitor.MockMonitor{T}\" /> that exposes <c>Verify</c> over the monitored interactions and a <c>Run()</c> method that opens the recording scope.");
-		sb.AppendXmlExample([
-			"var monitor = sut.Mock.Monitor();",
-			"using (monitor.Run())",
-			"{",
-			"    sut.DoSomething(); // recorded",
-			"}",
-			"sut.DoSomething();     // not recorded",
-			"monitor.Verify.DoSomething(Match.AnyParameters()).Once();",
-		]);
 		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> Monitor();")
 			.AppendLine();
 		sb.Append("\t}").AppendLine();

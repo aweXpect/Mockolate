@@ -20,11 +20,7 @@ public partial class It
 	///     <see cref="IsAnyOut{T}" /> to assign <see langword="default" /> to the caller's variable.
 	/// </remarks>
 	/// <typeparam name="T">The out-parameter's type.</typeparam>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Verify.TryDelete(It.Is(id), It.IsOut&lt;User?&gt;()).Once();
-	///     </code>
-	/// </example>
+	/// <returns>An <see cref="IVerifyOutParameter{T}" /> that matches any out-argument.</returns>
 	public static IVerifyOutParameter<T> IsOut<T>()
 		=> new InvokedOutParameterMatch<T>();
 
@@ -41,24 +37,23 @@ public partial class It
 	/// <typeparam name="T">The out-parameter's type.</typeparam>
 	/// <param name="setter">Factory that produces the value to assign to the caller's out-variable.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.TryDelete(It.Is(id), It.IsOut(() =&gt; new User(id, "Alice"))).Returns(true);
-	///     </code>
-	/// </example>
+	/// <returns>An <see cref="IOutParameter{T}" /> that produces a value via <paramref name="setter" />.</returns>
 	public static IOutParameter<T> IsOut<T>(Func<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		=> new OutParameterMatch<T>(setter, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of type <typeparamref name="T" /> in a <c>Setup</c> and assigns
-	///     <see langword="default" /> to the caller's variable.
+	///     the value produced by the mock's <see cref="MockBehavior.DefaultValue" /> generator to the caller's variable.
 	/// </summary>
 	/// <remarks>
-	///     Shorthand for <c>It.IsOut(() =&gt; default)</c>. Use this when the caller's out value is irrelevant to the
-	///     test and you just need the method call to return.
+	///     Use this when the caller's out value is irrelevant to the test and you just need the method call to return.
+	///     The produced value equals <see langword="default" /><c>(T)</c> unless a custom
+	///     <see cref="MockBehaviorExtensions.WithDefaultValueFor" /> factory is registered; in that case the factory's
+	///     value is used.
 	/// </remarks>
 	/// <typeparam name="T">The out-parameter's type.</typeparam>
+	/// <returns>An <see cref="IOutParameter{T}" /> that produces a default value for the caller's out-variable.</returns>
 	public static IOutParameter<T> IsAnyOut<T>()
 		=> new AnyOutParameterMatch<T>();
 

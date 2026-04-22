@@ -7,7 +7,9 @@ using System.Linq;
 namespace Mockolate;
 
 /// <summary>
-///     Controls how a Mockolate mock responds when a member is invoked without a matching setup.
+///     Configures the runtime behavior of a Mockolate mock: default return values for un-configured members,
+///     base-class delegation, interaction recording, pre-registered constructor parameters, and whether
+///     un-configured invocations throw.
 /// </summary>
 /// <remarks>
 ///     An instance is an immutable <see langword="record" /> - every configuration method returns a modified copy,
@@ -30,7 +32,11 @@ public record MockBehavior : IMockBehaviorAccess
 	private ConcurrentStack<IConstructorParameters>? _constructorParameters;
 	private ConcurrentStack<object?>? _values;
 
-	/// <inheritdoc cref="MockBehavior" />
+	/// <summary>
+	///     Initializes a new <see cref="MockBehavior" /> with the given <paramref name="defaultValue" /> generator and
+	///     all other flags at their defaults.
+	/// </summary>
+	/// <param name="defaultValue">The generator used to produce default return values for un-configured members.</param>
 	public MockBehavior(IDefaultValueGenerator defaultValue)
 	{
 		DefaultValue = defaultValue;
@@ -115,11 +121,14 @@ public record MockBehavior : IMockBehaviorAccess
 	}
 
 	/// <summary>
-	///     Initialize all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
+	///     Initializes all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
 	/// </summary>
 	/// <remarks>
 	///     These parameters are only used when no explicit constructor parameters are provided when creating the mock.
 	/// </remarks>
+	/// <typeparam name="T">The mocked type whose constructor parameters are being pre-registered.</typeparam>
+	/// <param name="parameters">A factory that produces a fresh parameter array on each mock creation.</param>
+	/// <returns>A new <see cref="MockBehavior" /> with the pre-registered parameters.</returns>
 	public MockBehavior UseConstructorParametersFor<T>(Func<object?[]> parameters)
 	{
 		MockBehavior behavior = this with
@@ -131,11 +140,14 @@ public record MockBehavior : IMockBehaviorAccess
 	}
 
 	/// <summary>
-	///     Initialize all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
+	///     Initializes all mocks of type <typeparamref name="T" /> to use the given constructor <paramref name="parameters" />.
 	/// </summary>
 	/// <remarks>
 	///     These parameters are only used when no explicit constructor parameters are provided when creating the mock.
 	/// </remarks>
+	/// <typeparam name="T">The mocked type whose constructor parameters are being pre-registered.</typeparam>
+	/// <param name="parameters">The parameter array shared across every mock creation.</param>
+	/// <returns>A new <see cref="MockBehavior" /> with the pre-registered parameters.</returns>
 	public MockBehavior UseConstructorParametersFor<T>(params object?[] parameters)
 	{
 		MockBehavior behavior = this with
@@ -149,6 +161,8 @@ public record MockBehavior : IMockBehaviorAccess
 	/// <summary>
 	///     Uses the given <paramref name="defaultValueFactories" /> to create default values for supported types.
 	/// </summary>
+	/// <param name="defaultValueFactories">Factories consulted in order; the first one whose <see cref="DefaultValueFactory.CanGenerateValue" /> returns <see langword="true" /> wins, otherwise the previously configured <see cref="DefaultValue" /> generator is used.</param>
+	/// <returns>A new <see cref="MockBehavior" /> that layers <paramref name="defaultValueFactories" /> on top of the existing default-value generator.</returns>
 	public MockBehavior WithDefaultValueFor(params DefaultValueFactory[] defaultValueFactories)
 	{
 		MockBehavior behavior = this with

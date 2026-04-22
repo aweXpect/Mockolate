@@ -17,11 +17,6 @@ public partial class It
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>
 	/// <param name="toString">Optional override for the matcher's <see cref="object.ToString" /> rendering, used in failure messages.</param>
 	/// <returns>A parameter matcher that accepts every non-<see langword="null" /> argument.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Verify.Process(It.IsNotNull&lt;byte[]&gt;()).AtLeastOnce();
-	///     </code>
-	/// </example>
 	public static IParameterWithCallback<T> IsNotNull<T>(string? toString = null)
 		=> new NotNullParameterMatch<T>(toString);
 

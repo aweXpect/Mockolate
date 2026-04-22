@@ -13,11 +13,6 @@ public partial class Match
 	///     Useful when subscribers don't care about the event payload and you just need the signal to fire. The
 	///     generated values follow the mock's <see cref="MockBehavior.DefaultValue" />.
 	/// </remarks>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Raise.UsersChanged(Match.WithDefaultParameters());
-	///     </code>
-	/// </example>
 	public static IDefaultEventParameters WithDefaultParameters()
 		=> new DefaultEventParameters();
 

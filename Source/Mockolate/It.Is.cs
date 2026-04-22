@@ -26,12 +26,6 @@ public partial class It
 	/// <param name="value">The expected value.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
 	/// <returns>A parameter matcher that only accepts arguments equal to <paramref name="value" />.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Dispense(It.Is("Dark"), It.Is(5)).Returns(true);
-	///     sut.Mock.Verify.Lookup(It.Is("hello").Using(StringComparer.OrdinalIgnoreCase)).Once();
-	///     </code>
-	/// </example>
 	public static IIsParameter<T> Is<T>(T value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")

@@ -13,11 +13,6 @@ public partial class It
 	///     Shorthand for <c>It.Is(false)</c> with a nicer failure-message rendering. Use <see cref="IsTrue" /> for the
 	///     opposite.
 	/// </remarks>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Verify.Toggle(It.IsFalse()).Never();
-	///     </code>
-	/// </example>
 	public static IParameterWithCallback<bool> IsFalse()
 		=> new FalseParameterMatch();
 

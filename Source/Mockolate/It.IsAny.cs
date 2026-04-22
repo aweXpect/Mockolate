@@ -21,12 +21,6 @@ public partial class It
 	/// </remarks>
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>
 	/// <returns>A parameter matcher that accepts every value of type <typeparamref name="T" />.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Dispense(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;()).Returns(true);
-	///     sut.Mock.Verify.Dispense(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;()).AtLeastOnce();
-	///     </code>
-	/// </example>
 	public static IParameterWithCallback<T> IsAny<T>()
 		=> new AnyParameterMatch<T>();
 

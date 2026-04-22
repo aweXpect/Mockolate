@@ -21,6 +21,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>> ReturnsAsync<TReturn>(
 		this IReturnMethodSetup<Task<TReturn>> setup,
 		TReturn returnValue)
@@ -34,6 +38,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>> ReturnsAsync<TReturn>(
 		this IReturnMethodSetup<Task<TReturn>> setup,
 		Func<TReturn> callback)
@@ -47,6 +55,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(
 		this IReturnMethodSetup<Task<TReturn>, T1> setup, TReturn returnValue)
 		=> setup.Returns(Task.FromResult(returnValue));
@@ -59,6 +72,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(
 		this IReturnMethodSetup<Task<TReturn>, T1> setup, Func<TReturn> callback)
 		=> setup.Returns(() => Task.FromResult(callback()));
@@ -71,6 +89,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ReturnsAsync<TReturn, T1>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1> setup, Func<T1, TReturn> callback)
 		=> setup.Returns(v1 => Task.FromResult(callback(v1)));
@@ -83,6 +106,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2> setup, TReturn returnValue)
 		=> setup.Returns(Task.FromResult(returnValue));
@@ -95,6 +124,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2> setup, Func<TReturn> callback)
 		=> setup.Returns(() => Task.FromResult(callback()));
@@ -107,6 +142,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2> setup, Func<T1, T2, TReturn> callback)
 		=> setup.Returns((v1, v2) => Task.FromResult(callback(v1, v2)));
@@ -119,6 +160,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3> setup, TReturn returnValue)
 		=> setup.Returns(Task.FromResult(returnValue));
@@ -131,6 +179,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3> setup, Func<TReturn> callback)
 		=> setup.Returns(() => Task.FromResult(callback()));
@@ -143,6 +198,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3> setup, Func<T1, T2, T3, TReturn> callback)
 		=> setup.Returns((v1, v2, v3) => Task.FromResult(callback(v1, v2, v3)));
@@ -155,6 +217,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4> setup, TReturn returnValue)
 		=> setup.Returns(Task.FromResult(returnValue));
@@ -167,6 +237,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4> setup, Func<TReturn> callback)
 		=> setup.Returns(() => Task.FromResult(callback()));
@@ -179,6 +257,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3, T4>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
 		=> setup.Returns((v1, v2, v3, v4) => Task.FromResult(callback(v1, v2, v3, v4)));
@@ -193,6 +279,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>> ReturnsAsync<TReturn>(
 		this IReturnMethodSetup<ValueTask<TReturn>> setup, TReturn returnValue)
 		=> setup.Returns(ValueTask.FromResult(returnValue));
@@ -205,6 +295,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>> ReturnsAsync<TReturn>(
 		this IReturnMethodSetup<ValueTask<TReturn>> setup, Func<TReturn> callback)
 		=> setup.Returns(() => ValueTask.FromResult(callback()));
@@ -217,6 +311,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ReturnsAsync<TReturn, T1>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1> setup, TReturn returnValue)
 		=> setup.Returns(ValueTask.FromResult(returnValue));
@@ -229,6 +328,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ReturnsAsync<TReturn, T1>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1> setup, Func<TReturn> callback)
 		=> setup.Returns(() => ValueTask.FromResult(callback()));
@@ -241,6 +345,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ReturnsAsync<TReturn, T1>(
 		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1> setup, Func<T1, TReturn> callback)
 		=> setup.Returns(v1 => ValueTask.FromResult(callback(v1)));
@@ -253,6 +362,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2> setup, TReturn returnValue)
 		=> setup.Returns(ValueTask.FromResult(returnValue));
@@ -265,6 +380,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2> setup, Func<TReturn> callback)
 		=> setup.Returns(() => ValueTask.FromResult(callback()));
@@ -277,6 +398,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ReturnsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2> setup, Func<T1, T2, TReturn> callback)
 		=> setup.Returns((v1, v2) => ValueTask.FromResult(callback(v1, v2)));
@@ -289,6 +416,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3> setup, TReturn returnValue)
 		=> setup.Returns(ValueTask.FromResult(returnValue));
@@ -301,6 +435,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3> setup, Func<TReturn> callback)
 		=> setup.Returns(() => ValueTask.FromResult(callback()));
@@ -313,6 +454,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ReturnsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3> setup, Func<T1, T2, T3, TReturn> callback)
 		=> setup.Returns((v1, v2, v3) => ValueTask.FromResult(callback(v1, v2, v3)));
@@ -325,6 +473,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="returnValue">The value returned on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3,
 		T4>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup, TReturn returnValue)
@@ -338,6 +494,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation to produce the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3,
 		T4>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup, Func<TReturn> callback)
@@ -351,6 +515,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4> ReturnsAsync<TReturn, T1, T2, T3,
 		T4>(
 		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3, T4> setup, Func<T1, T2, T3, T4, TReturn> callback)
@@ -366,6 +538,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>> ThrowsAsync<TReturn>(
 		this IReturnMethodSetup<Task<TReturn>> setup,
 		Exception exception)
@@ -379,6 +555,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>> ThrowsAsync<TReturn>(
 		this IReturnMethodSetup<Task<TReturn>> setup,
 		Func<Exception> callback)
@@ -392,6 +572,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ThrowsAsync<TReturn, T1>(
 		this IReturnMethodSetup<Task<TReturn>, T1> setup,
 		Exception exception)
@@ -405,6 +590,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ThrowsAsync<TReturn, T1>(
 		this IReturnMethodSetup<Task<TReturn>, T1> setup,
 		Func<Exception> callback)
@@ -418,6 +608,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1> ThrowsAsync<TReturn, T1>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1> setup,
 		Func<T1, Exception> callback)
@@ -431,6 +626,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2> setup,
 		Exception exception)
@@ -444,6 +645,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2> setup,
 		Func<Exception> callback)
@@ -457,6 +664,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2> setup,
 		Func<T1, T2, Exception> callback)
@@ -470,6 +683,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3> setup,
 		Exception exception)
@@ -483,6 +703,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3> setup,
 		Func<Exception> callback)
@@ -496,6 +723,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3> setup,
 		Func<T1, T2, T3, Exception> callback)
@@ -509,6 +743,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ThrowsAsync<TReturn, T1, T2, T3, T4>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4> setup,
 		Exception exception)
@@ -522,6 +764,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ThrowsAsync<TReturn, T1, T2, T3, T4>(
 		this IReturnMethodSetup<Task<TReturn>, T1, T2, T3, T4> setup,
 		Func<Exception> callback)
@@ -535,6 +785,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<Task<TReturn>, T1, T2, T3, T4> ThrowsAsync<TReturn, T1, T2, T3, T4>(
 		this IReturnMethodSetupWithCallback<Task<TReturn>, T1, T2, T3, T4> setup,
 		Func<T1, T2, T3, T4, Exception> callback)
@@ -550,6 +808,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>> ThrowsAsync<TReturn>(
 		this IReturnMethodSetup<ValueTask<TReturn>> setup,
 		Exception exception)
@@ -563,6 +825,10 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>> ThrowsAsync<TReturn>(
 		this IReturnMethodSetup<ValueTask<TReturn>> setup,
 		Func<Exception> callback)
@@ -576,6 +842,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ThrowsAsync<TReturn, T1>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1> setup,
 		Exception exception)
@@ -589,6 +860,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ThrowsAsync<TReturn, T1>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1> setup,
 		Func<Exception> callback)
@@ -602,6 +878,11 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1> ThrowsAsync<TReturn, T1>(
 		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1> setup,
 		Func<T1, Exception> callback)
@@ -615,6 +896,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2> setup,
 		Exception exception)
@@ -628,6 +915,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2> setup,
 		Func<Exception> callback)
@@ -641,6 +934,12 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2> ThrowsAsync<TReturn, T1, T2>(
 		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2> setup,
 		Func<T1, T2, Exception> callback)
@@ -654,6 +953,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3> setup,
 		Exception exception)
@@ -667,6 +973,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3> setup,
 		Func<Exception> callback)
@@ -680,6 +993,13 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3> ThrowsAsync<TReturn, T1, T2, T3>(
 		this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3> setup,
 		Func<T1, T2, T3, Exception> callback)
@@ -693,6 +1013,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="exception">The exception to throw on the next matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4>
 		ThrowsAsync<TReturn, T1, T2, T3, T4>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup,
 			Exception exception)
@@ -706,6 +1034,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4>
 		ThrowsAsync<TReturn, T1, T2, T3, T4>(this IReturnMethodSetup<ValueTask<TReturn>, T1, T2, T3, T4> setup,
 			Func<Exception> callback)
@@ -719,6 +1055,14 @@ public static class ReturnsThrowsAsyncExtensions
 	///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles
 	///     back to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
+	/// <typeparam name="TReturn">The value-task result type produced by the asynchronous method.</typeparam>
+	/// <typeparam name="T1">The type of the first method argument.</typeparam>
+	/// <typeparam name="T2">The type of the second method argument.</typeparam>
+	/// <typeparam name="T3">The type of the third method argument.</typeparam>
+	/// <typeparam name="T4">The type of the fourth method argument.</typeparam>
+	/// <param name="setup">The method setup to extend.</param>
+	/// <param name="callback">The factory that produces the exception thrown on every matching invocation.</param>
+	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
 	public static IReturnMethodSetupReturnBuilder<ValueTask<TReturn>, T1, T2, T3, T4>
 		ThrowsAsync<TReturn, T1, T2, T3, T4>(this IReturnMethodSetupWithCallback<ValueTask<TReturn>, T1, T2, T3, T4> setup,
 			Func<T1, T2, T3, T4, Exception> callback)

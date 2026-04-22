@@ -24,11 +24,7 @@ public partial class It
 	/// </remarks>
 	/// <typeparam name="T">The collection element type.</typeparam>
 	/// <param name="values">The expected sequence, in order.</param>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Process(It.SequenceEquals("a", "b", "c")).Returns(true);
-	///     </code>
-	/// </example>
+	/// <returns>A parameter matcher that accepts any supported ordered collection whose elements equal <paramref name="values" /> in order.</returns>
 	public static ISequenceEqualsParameter<T> SequenceEquals<T>(params IEnumerable<T> values)
 		=> new ParameterSequenceEqualsMatch<T>(values.ToArray());
 

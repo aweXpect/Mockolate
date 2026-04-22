@@ -24,12 +24,7 @@ public partial class It
 	/// <typeparam name="T">The collection element type.</typeparam>
 	/// <param name="item">The item that must appear in the collection.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Process(It.Contains(5)).Returns(true);
-	///     sut.Mock.Verify.Process(It.Contains("HELLO").Using(StringComparer.OrdinalIgnoreCase)).Once();
-	///     </code>
-	/// </example>
+	/// <returns>A parameter matcher that accepts any supported collection containing <paramref name="item" />.</returns>
 	public static IContainsParameter<T> Contains<T>(T item,
 		[CallerArgumentExpression(nameof(item))]
 		string doNotPopulateThisValue = "")

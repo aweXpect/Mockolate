@@ -19,11 +19,6 @@ public partial class It
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>
 	/// <param name="values">The accepted values.</param>
 	/// <returns>A parameter matcher that accepts any value equal to one of <paramref name="values" />.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Dispense(It.IsOneOf("Dark", "Milk"), It.IsAny&lt;int&gt;()).Returns(true);
-	///     </code>
-	/// </example>
 	public static IIsOneOfParameter<T> IsOneOf<T>(params IEnumerable<T> values)
 		=> new ParameterIsOneOfMatch<T>(values.ToArray());
 
