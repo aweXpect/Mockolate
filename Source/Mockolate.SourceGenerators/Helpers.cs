@@ -46,6 +46,27 @@ internal static class Helpers
 		return candidateName;
 	}
 
+	// A member (or accessor) declared in another assembly is overridable only if the overriding
+	// assembly can actually see it. `internal` and `private protected` are invisible across assembly
+	// boundaries unless the declaring assembly grants InternalsVisibleTo. `protected internal`
+	// (= protected OR internal) is always reachable via the protected half from a derived class.
+	public static bool IsOverridableFrom(ISymbol member, IAssemblySymbol? sourceAssembly)
+	{
+		if (sourceAssembly is null ||
+		    member.DeclaredAccessibility is not (Accessibility.Internal or Accessibility.ProtectedAndInternal))
+		{
+			return true;
+		}
+
+		IAssemblySymbol containingAssembly = member.ContainingAssembly;
+		if (SymbolEqualityComparer.Default.Equals(containingAssembly, sourceAssembly))
+		{
+			return true;
+		}
+
+		return containingAssembly.GivesAccessTo(sourceAssembly);
+	}
+
 	extension(ITypeSymbol typeSymbol)
 	{
 		public SpecialGenericType GetSpecialType()
@@ -119,10 +140,12 @@ internal static class Helpers
 
 	extension(ImmutableArray<AttributeData> attributes)
 	{
-		public EquatableArray<Attribute>? ToAttributeArray()
+		public EquatableArray<Attribute>? ToAttributeArray(IAssemblySymbol? sourceAssembly = null)
 		{
 			Attribute[] consideredAttributes = attributes
-				.Where(x => x.AttributeClass != null && !IsNullableAttribute(x.AttributeClass))
+				.Where(x => x.AttributeClass is not null
+				            && !IsCompilerEmittedAttribute(x.AttributeClass)
+				            && IsAccessibleFrom(x.AttributeClass, sourceAssembly))
 				.Select(attr => new Attribute(attr))
 				.ToArray();
 			if (consideredAttributes.Length > 0)
@@ -132,10 +155,38 @@ internal static class Helpers
 
 			return null;
 
-			static bool IsNullableAttribute(INamedTypeSymbol attribute)
+			// Compiler-emitted attributes describe the shape of the original method body (nullability,
+			// iterator/async state machine types) and MUST NOT be copied onto the generated override.
+			// The state-machine attributes reference private nested compiler-generated types that are
+			// invisible outside the declaring assembly (CS0103), and the override has its own,
+			// synchronous body that is not a state machine anyway.
+			static bool IsCompilerEmittedAttribute(INamedTypeSymbol attribute)
 			{
-				return attribute.Name is "NullableContextAttribute" or "NullableAttribute" &&
-				       attribute.ContainingNamespace is { ContainingNamespace: { ContainingNamespace.ContainingNamespace.IsGlobalNamespace: true, ContainingNamespace.Name: "System", Name: "Runtime", }, Name: "CompilerServices", };
+				if (attribute.ContainingNamespace is not { Name: "CompilerServices", ContainingNamespace: { Name: "Runtime", ContainingNamespace: { Name: "System", ContainingNamespace.IsGlobalNamespace: true, }, }, })
+				{
+					return false;
+				}
+
+				return attribute.Name is "NullableContextAttribute" or "NullableAttribute"
+					or "AsyncStateMachineAttribute" or "IteratorStateMachineAttribute"
+					or "AsyncIteratorStateMachineAttribute";
+			}
+
+			// The attribute name is emitted verbatim into the generated code (e.g.
+			// `[global::Azure.Core.CallerShouldAudit(...)]`). If the attribute class — or any of its
+			// containing types — is not visible to the generated mock assembly, referencing it causes
+			// CS0122. Drop the attribute instead of producing uncompilable output.
+			static bool IsAccessibleFrom(INamedTypeSymbol attribute, IAssemblySymbol? sourceAssembly)
+			{
+				for (INamedTypeSymbol? t = attribute; t is not null; t = t.ContainingType)
+				{
+					if (!IsOverridableFrom(t, sourceAssembly))
+					{
+						return false;
+					}
+				}
+
+				return true;
 			}
 		}
 	}

@@ -48,7 +48,7 @@ internal record Class
 			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 			.Where(ShouldIncludeMember)
-			.Select(x => new Method(x, alreadyDefinedMethods))
+			.Select(x => new Method(x, alreadyDefinedMethods, sourceAssembly))
 			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
 		Methods = new EquatableArray<Method>(methods.ToArray());
 
@@ -56,7 +56,7 @@ internal record Class
 			.Where(x => !x.IsSealed)
 			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
 			.Where(ShouldIncludeMember)
-			.Select(x => new Property(x, alreadyDefinedProperties))
+			.Select(x => new Property(x, alreadyDefinedProperties, sourceAssembly))
 			.Distinct(), exceptProperties, Property.ContainingTypeIndependentEqualityComparer);
 		Properties = new EquatableArray<Property>(properties.ToArray());
 
@@ -66,20 +66,20 @@ internal record Class
 			.Where(ShouldIncludeMember)
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
-			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, alreadyDefinedEvents))
+			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, alreadyDefinedEvents, sourceAssembly))
 			.Distinct(), exceptEvents, Event.ContainingTypeIndependentEqualityComparer);
 		Events = new EquatableArray<Event>(events.ToArray());
 
 		exceptProperties ??= new List<Property>();
 		exceptProperties.AddRange(members.OfType<IPropertySymbol>()
 			.Where(x => x.IsSealed)
-			.Select(x => new Property(x, null))
+			.Select(x => new Property(x, null, sourceAssembly))
 			.Distinct());
 
 		exceptMethods ??= new List<Method>();
 		exceptMethods.AddRange(members.OfType<IMethodSymbol>()
 			.Where(x => x.IsSealed)
-			.Select(x => new Method(x, null))
+			.Select(x => new Method(x, null, sourceAssembly))
 			.Distinct());
 
 		exceptEvents ??= new List<Event>();
@@ -87,7 +87,7 @@ internal record Class
 			.Where(x => x.IsSealed)
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
-			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, null))
+			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, null, sourceAssembly))
 			.Distinct());
 
 		InheritedTypes = new EquatableArray<Class>(
@@ -103,13 +103,7 @@ internal record Class
 				return true;
 			}
 
-			if (member.DeclaredAccessibility is Accessibility.Internal or Accessibility.ProtectedOrInternal &&
-			    !SymbolEqualityComparer.Default.Equals(member.ContainingAssembly, _sourceAssembly))
-			{
-				return false;
-			}
-
-			return true;
+			return Helpers.IsOverridableFrom(member, _sourceAssembly);
 		}
 	}
 
