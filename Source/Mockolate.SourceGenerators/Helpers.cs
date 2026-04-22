@@ -176,13 +176,33 @@ internal static class Helpers
 			// `[global::Azure.Core.CallerShouldAudit(...)]`). If the attribute class — or any of its
 			// containing types — is not visible to the generated mock assembly, referencing it causes
 			// CS0122. Drop the attribute instead of producing uncompilable output.
+			//
+			// Conservative rule: a type is accessible only if its whole containing chain is either
+			// Public, or Internal/ProtectedOrInternal with InternalsVisibleTo granted (or the
+			// same assembly). Private/Protected/ProtectedAndInternal nested types and
+			// ProtectedOrInternal across assemblies without IVT are treated as inaccessible — the
+			// `protected` half would require knowing the derivation relationship to the declaring
+			// type, which we don't verify here.
 			static bool IsAccessibleFrom(INamedTypeSymbol attribute, IAssemblySymbol? sourceAssembly)
 			{
 				for (INamedTypeSymbol? t = attribute; t is not null; t = t.ContainingType)
 				{
-					if (!IsOverridableFrom(t, sourceAssembly))
+					switch (t.DeclaredAccessibility)
 					{
-						return false;
+						case Accessibility.Public:
+							continue;
+						case Accessibility.Internal:
+						case Accessibility.ProtectedOrInternal:
+							if (sourceAssembly is null ||
+							    SymbolEqualityComparer.Default.Equals(t.ContainingAssembly, sourceAssembly) ||
+							    t.ContainingAssembly.GivesAccessTo(sourceAssembly))
+							{
+								continue;
+							}
+
+							return false;
+						default:
+							return false;
 					}
 				}
 
@@ -238,14 +258,6 @@ internal static class Helpers
 					sb.Append(", ").Append("() => ")
 						.AppendDefaultValueGeneratorFor(genericType, defaultValueName);
 				}
-
-				if (!string.IsNullOrWhiteSpace(suffix))
-				{
-					sb.Append(", ").Append(suffix);
-				}
-
-				sb.Append(")");
-				return sb;
 			}
 
 			if (!string.IsNullOrWhiteSpace(suffix))

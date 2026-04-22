@@ -33,15 +33,17 @@ internal readonly record struct GenericParameter
 	public bool IsClass { get; }
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-	public void AppendWhereConstraint(StringBuilder sb, string prefix, bool inheritsConstraints = false)
+	public void AppendWhereConstraint(StringBuilder sb, string prefix, bool inheritsConstraints = false, bool isExplicitInterfaceImpl = false)
 	{
 		bool isUnconstrained = !ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged &&
 		                       !HasConstructor && !AllowsRefStruct;
 
 		if (isUnconstrained)
 		{
-			if (inheritsConstraints)
+			if (isExplicitInterfaceImpl)
 			{
+				// Explicit interface implementations need `where T : default` to disambiguate
+				// nullability for unconstrained type parameters. Override methods don't.
 				sb.AppendLine().Append(prefix).Append("where ").Append(Name).Append(" : default");
 			}
 

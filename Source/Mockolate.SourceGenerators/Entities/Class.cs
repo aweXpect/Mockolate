@@ -72,19 +72,20 @@ internal record Class
 
 		exceptProperties ??= new List<Property>();
 		exceptProperties.AddRange(members.OfType<IPropertySymbol>()
-			.Where(x => x.IsSealed)
+			.Where(x => x.IsSealed || HidesBaseOverridable(x, type))
 			.Select(x => new Property(x, null, sourceAssembly))
 			.Distinct());
 
 		exceptMethods ??= new List<Method>();
 		exceptMethods.AddRange(members.OfType<IMethodSymbol>()
-			.Where(x => x.IsSealed)
+			.Where(x => x.MethodKind is MethodKind.Ordinary)
+			.Where(x => x.IsSealed || HidesBaseOverridable(x, type))
 			.Select(x => new Method(x, null, sourceAssembly))
 			.Distinct());
 
 		exceptEvents ??= new List<Event>();
 		exceptEvents.AddRange(members.OfType<IEventSymbol>()
-			.Where(x => x.IsSealed)
+			.Where(x => x.IsSealed || HidesBaseOverridable(x, type))
 			.Select(x => (x, x.Type as INamedTypeSymbol))
 			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
 			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, null, sourceAssembly))
@@ -203,6 +204,70 @@ internal record Class
 		}
 
 		return source.Except(except, comparer).ToList();
+	}
+
+	// True when `member` (declared on `thisType`) hides an overridable member of the same
+	// signature on a base class. The hidden base cannot be overridden from a class deriving from
+	// `thisType` — the compiler resolves the override target to the hiding member first and fails
+	// with CS0506. Overrides are not hiding: they continue the virtual slot.
+	private static bool HidesBaseOverridable(ISymbol member, ITypeSymbol thisType)
+	{
+		if (member is IMethodSymbol { IsOverride: true, } or IPropertySymbol { IsOverride: true, } or IEventSymbol { IsOverride: true, })
+		{
+			return false;
+		}
+
+		for (INamedTypeSymbol? b = thisType.BaseType; b is not null; b = b.BaseType)
+		{
+			foreach (ISymbol candidate in b.GetMembers(member.Name))
+			{
+				if (candidate.Kind != member.Kind || candidate.IsStatic != member.IsStatic)
+				{
+					continue;
+				}
+
+				if (!(candidate.IsVirtual || candidate.IsAbstract || candidate.IsOverride) || candidate.IsSealed)
+				{
+					continue;
+				}
+
+				if (SignatureMatches(member, candidate))
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private static bool SignatureMatches(ISymbol a, ISymbol b)
+		=> (a, b) switch
+		{
+			(IMethodSymbol ma, IMethodSymbol mb) => ParametersMatch(ma.Parameters, mb.Parameters) &&
+			                                        ma.TypeParameters.Length == mb.TypeParameters.Length,
+			(IPropertySymbol pa, IPropertySymbol pb) => ParametersMatch(pa.Parameters, pb.Parameters),
+			(IEventSymbol, IEventSymbol) => true,
+			_ => false,
+		};
+
+	private static bool ParametersMatch(ImmutableArray<IParameterSymbol> a, ImmutableArray<IParameterSymbol> b)
+	{
+		if (a.Length != b.Length)
+		{
+			return false;
+		}
+
+		for (int i = 0; i < a.Length; i++)
+		{
+			if (a[i].RefKind != b[i].RefKind ||
+			    !SymbolEqualityComparer.Default.Equals(a[i].Type, b[i].Type))
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public static IEnumerable<ITypeSymbol> GetInheritedTypes(ITypeSymbol type)
