@@ -242,6 +242,64 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task ForTypesWithOnlyParameterlessConstructor_ShouldOmitConstructorParametersOverloads()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyBaseClass.CreateMock();
+			         }
+			     }
+
+			     public class MyBaseClass
+			     {
+			         public MyBaseClass() { }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
+			.DoesNotContain("CreateMock(object?[] constructorParameters)").And
+			.DoesNotContain("CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)").And
+			.DoesNotContain("object?[] constructorParameters)").And
+			.Contains("private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
+	}
+
+	[Fact]
+	public async Task ForTypesWithoutExplicitConstructor_ShouldOmitConstructorParametersOverloads()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyBaseClass.CreateMock();
+			         }
+			     }
+
+			     public class MyBaseClass
+			     {
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
+			.DoesNotContain("CreateMock(object?[] constructorParameters)").And
+			.DoesNotContain("object?[] constructorParameters)").And
+			.Contains("private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
+	}
+
+	[Fact]
 	public async Task ForTypesWithoutPublicOrProtectedConstructor_ShouldOnlyGenerateMockThatThrowsException()
 	{
 		GeneratorResult result = Generator

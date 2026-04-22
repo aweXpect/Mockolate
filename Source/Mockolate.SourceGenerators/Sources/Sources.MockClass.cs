@@ -15,6 +15,8 @@ internal static partial class Sources
 	public static string MockClass(string name, Class @class, bool hasOverloadResolutionPriority = false)
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
+		bool hasParameterizedConstructor = !@class.IsInterface &&
+		                                   constructors?.Any(m => m.Parameters.Count > 0) == true;
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
 		bool hasEvents = @class.AllEvents().Any(x => !x.IsStatic);
 		bool hasStaticEvents = @class.IsInterface &&
@@ -162,7 +164,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> CreateMock(mockBehavior, setup, (object?[]?)null);").AppendLine();
 		sb.AppendLine();
 
-		if (!@class.IsInterface)
+		if (hasParameterizedConstructor)
 		{
 			sb.AppendXmlSummary(
 				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"constructorParameters\" /> to invoke the base-class constructor.");
@@ -206,7 +208,7 @@ internal static partial class Sources
 		sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword=\"null\" /> to skip.");
 		sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor, or <see langword=\"null\" /> to use the parameterless constructor.");
 		sb.AppendXmlReturns(createMockReturns);
-		sb.Append("\t\t").Append(@class.IsInterface ? "private" : "public").Append(" static ")
+		sb.Append("\t\t").Append(hasParameterizedConstructor ? "public" : "private").Append(" static ")
 			.Append(@class.ClassFullName)
 			.Append(" CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<")
 			.Append(setupType).Append(">? setup, object?[]? constructorParameters)").AppendLine();
