@@ -204,7 +204,7 @@ generic delegates:
   contribute their raw value as part of the composite dispatch key. If any ref-struct slot is
   matched without a projection, storage stays inactive for that setup.
 
-The following cases are rejected at compile time with diagnostic `Mockolate0004`:
+The following cases are rejected at compile time with diagnostic `Mockolate0003`:
 
 - Targeting older than .NET 9 (the feature relies on `allows ref struct`, a .NET 9 / C# 13
   feature).

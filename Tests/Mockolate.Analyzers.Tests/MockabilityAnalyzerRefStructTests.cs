@@ -7,7 +7,7 @@ using Verifier = Mockolate.Analyzers.Tests.Verifiers.CSharpAnalyzerVerifier<Mock
 namespace Mockolate.Analyzers.Tests;
 
 /// <summary>
-///     Coverage for the <c>Mockolate0004</c> ref-struct mockability diagnostic emitted by
+///     Coverage for the <c>Mockolate0003</c> ref-struct mockability diagnostic emitted by
 ///     <see cref="MockabilityAnalyzer" />.
 /// </summary>
 /// <remarks>
@@ -70,7 +70,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IPacketProducer", "Produce",
 					"out/ref ref-struct parameters are not supported")
@@ -100,7 +100,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IPacketMutator", "Mutate",
 					"out/ref ref-struct parameters are not supported")
@@ -132,7 +132,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IPacketInspector", "Inspect",
 					"out/ref ref-struct parameters are not supported")
@@ -162,7 +162,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IPacketFactory", "Produce",
 					"methods returning a non-span ref struct are not supported")
@@ -323,7 +323,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.PacketProducerDelegate", "Invoke",
 					"out/ref ref-struct parameters are not supported")
@@ -352,7 +352,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.PacketFactoryDelegate", "Invoke",
 					"methods returning a non-span ref struct are not supported")
@@ -389,7 +389,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IDerivedSink", "Produce",
 					"out/ref ref-struct parameters are not supported")
@@ -425,7 +425,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.DerivedProducer", "Produce",
 					"out/ref ref-struct parameters are not supported")
@@ -456,7 +456,7 @@ public class MockabilityAnalyzerRefStructTests
 			  }
 			  """,
 			LanguageVersion.CSharp12,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IPacketSink", "Consume",
 					"ref-struct parameter mocking requires C# 13 or later (uses the 'allows ref struct' anti-constraint; current LangVersion is 12.0)")
@@ -487,7 +487,7 @@ public class MockabilityAnalyzerRefStructTests
 			  }
 			  """,
 			LanguageVersion.CSharp12,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IRefStructLookup", "this[]",
 					"ref-struct-keyed indexers require C# 13 or later (uses the 'allows ref struct' anti-constraint; current LangVersion is 12.0)")
@@ -521,7 +521,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	}
 			  }
 			  """,
-			new DiagnosticResult("Mockolate0004", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
+			new DiagnosticResult("Mockolate0003", Microsoft.CodeAnalysis.DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.IOverloadedSink", "Consume",
 					"out/ref ref-struct parameters are not supported")

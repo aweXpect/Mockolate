@@ -34,11 +34,6 @@ Mocked types must be mockable. This rule will prevent you from using unsupported
 
 ## Mockolate0003
 
-`.Wrap()` arguments must be wrappable. The wrapped type must satisfy the same mockability rules as
-the primary mock target (interface, delegate, or non-sealed class).
-
-## Mockolate0004
-
 Ref-struct parameter mocking is not supported on this compilation. This warning fires when the
 signature of a mocked member routes through the ref-struct pipeline but the current build
 environment can't emit the setup surface:
