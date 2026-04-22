@@ -20,11 +20,6 @@ public static partial class HttpClientExtensions
 		/// </summary>
 		/// <param name="statusCode">The <see cref="HttpStatusCode" /> to return.</param>
 		/// <returns>The setup's return-builder - chain <c>.For(n)</c>, <c>.Forever()</c> or additional <c>Returns*</c>/<c>Throws</c> entries to build a sequence.</returns>
-		/// <example>
-		///     <code>
-		///     httpClient.Mock.Setup.GetAsync(It.IsUri("*/health")).ReturnsAsync(HttpStatusCode.OK);
-		///     </code>
-		/// </example>
 		public IReturnMethodSetupReturnBuilder<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>
 			ReturnsAsync(HttpStatusCode statusCode)
 			=> setup.ReturnsAsync(new HttpResponseMessage(statusCode));

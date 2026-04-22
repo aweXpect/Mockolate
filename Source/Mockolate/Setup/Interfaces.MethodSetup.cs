@@ -58,11 +58,6 @@ public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 	/// </summary>
 	/// <param name="callback">The action to invoke on every matching invocation.</param>
 	/// <returns>A builder for chaining repetition/gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Ping().Do(() =&gt; Console.WriteLine("ping!")).Returns(true);
-	///     </code>
-	/// </example>
 	IReturnMethodSetupCallbackBuilder<TReturn> Do(Action callback);
 
 	/// <summary>
@@ -101,13 +96,6 @@ public interface IReturnMethodSetup<in TReturn> : IMethodSetup
 	/// </remarks>
 	/// <param name="returnValue">The value returned on the next matching invocation.</param>
 	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Ping()
-	///         .Returns(true).For(2)   // first two calls return true
-	///         .Returns(false).Forever(); // remaining calls return false
-	///     </code>
-	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn> Returns(TReturn returnValue);
 
 	/// <summary>
@@ -324,13 +312,6 @@ public interface IReturnMethodSetup<in TReturn, out T1> : IMethodSetup
 	/// </remarks>
 	/// <param name="returnValue">The value returned on the next matching invocation.</param>
 	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.CanHandle(It.IsAny&lt;string&gt;())
-	///         .Returns(true).For(2)   // first two calls return true
-	///         .Returns(false).Forever(); // remaining calls return false
-	///     </code>
-	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1> Returns(TReturn returnValue);
 
 	/// <summary>
@@ -604,13 +585,6 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2> : IMethodSetup
 	/// </remarks>
 	/// <param name="returnValue">The value returned on the next matching invocation.</param>
 	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.IsMatch(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;())
-	///         .Returns(true).For(2)   // first two calls return true
-	///         .Returns(false).Forever(); // remaining calls return false
-	///     </code>
-	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2> Returns(TReturn returnValue);
 
 	/// <summary>
@@ -885,13 +859,6 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3> : IMetho
 	/// </remarks>
 	/// <param name="returnValue">The value returned on the next matching invocation.</param>
 	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Accepts(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;(), It.IsAny&lt;bool&gt;())
-	///         .Returns(true).For(2)   // first two calls return true
-	///         .Returns(false).Forever(); // remaining calls return false
-	///     </code>
-	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3> Returns(TReturn returnValue);
 
 	/// <summary>
@@ -1167,13 +1134,6 @@ public interface IReturnMethodSetup<in TReturn, out T1, out T2, out T3, out T4> 
 	/// </remarks>
 	/// <param name="returnValue">The value returned on the next matching invocation.</param>
 	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.Validate(It.IsAny&lt;string&gt;(), It.IsAny&lt;int&gt;(), It.IsAny&lt;bool&gt;(), It.IsAny&lt;double&gt;())
-	///         .Returns(true).For(2)   // first two calls return true
-	///         .Returns(false).Forever(); // remaining calls return false
-	///     </code>
-	/// </example>
 	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4> Returns(TReturn returnValue);
 
 	/// <summary>
@@ -1439,14 +1399,6 @@ public interface IVoidMethodSetup : IMethodSetup
 	///     to the first entry unless the last one is followed by <c>.Forever()</c>.
 	/// </remarks>
 	/// <returns>The same setup instance, to allow chaining.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.DoWork()
-	///         .Throws&lt;TimeoutException&gt;()
-	///         .DoesNotThrow()
-	///         .Throws(new InvalidOperationException());
-	///     </code>
-	/// </example>
 	IVoidMethodSetup DoesNotThrow();
 
 	/// <summary>

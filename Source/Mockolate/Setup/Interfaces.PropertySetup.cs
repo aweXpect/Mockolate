@@ -76,18 +76,13 @@ public interface IPropertyGetterSetup<T>
 	/// </summary>
 	/// <param name="callback">The action to invoke on every matching invocation.</param>
 	/// <returns>A builder for chaining repetition/gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.TotalDispensed.OnGet.Do(() =&gt; Console.WriteLine("Read!"));
-	///     </code>
-	/// </example>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action callback);
 
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever the property's getter is read, passing the property's current
 	///     value.
 	/// </summary>
-	/// <param name="callback">The action to invoke on every matching invocation; receives the method arguments.</param>
+	/// <param name="callback">The action to invoke on every matching read; receives the property's current value.</param>
 	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action<T> callback);
 
@@ -95,7 +90,7 @@ public interface IPropertyGetterSetup<T>
 	///     Fires <paramref name="callback" /> whenever the property's getter is read, passing a zero-based read counter
 	///     and the property's current value.
 	/// </summary>
-	/// <param name="callback">The action to invoke on every matching invocation; receives a zero-based invocation counter and the method arguments.</param>
+	/// <param name="callback">The action to invoke on every matching read; receives a zero-based read counter and the property's current value.</param>
 	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IPropertyGetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
@@ -130,20 +125,15 @@ public interface IPropertySetterSetup<T>
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever the property's setter runs, passing the new value.
 	/// </summary>
-	/// <param name="callback">The action to invoke on every matching invocation; receives the method arguments.</param>
+	/// <param name="callback">The action to invoke on every matching write; receives the new value being assigned.</param>
 	/// <returns>A builder for chaining repetition/gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.TotalDispensed.OnSet.Do(v =&gt; Console.WriteLine($"Set to {v}"));
-	///     </code>
-	/// </example>
 	IPropertySetterSetupCallbackBuilder<T> Do(Action<T> callback);
 
 	/// <summary>
 	///     Fires <paramref name="callback" /> whenever the property's setter runs, passing a zero-based write counter
 	///     and the new value.
 	/// </summary>
-	/// <param name="callback">The action to invoke on every matching invocation; receives a zero-based invocation counter and the method arguments.</param>
+	/// <param name="callback">The action to invoke on every matching write; receives a zero-based write counter and the new value being assigned.</param>
 	/// <returns>A builder for chaining repetition/gating operators.</returns>
 	IPropertySetterSetupCallbackBuilder<T> Do(Action<int, T> callback);
 
@@ -222,11 +212,6 @@ public interface IPropertySetup<T>
 	/// </remarks>
 	/// <param name="value">The initial value assigned to the property's backing field.</param>
 	/// <returns>The same setup instance, to allow chaining.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.TotalDispensed.InitializeWith(42);
-	///     </code>
-	/// </example>
 	IPropertySetup<T> InitializeWith(T value);
 
 	/// <summary>
@@ -240,15 +225,6 @@ public interface IPropertySetup<T>
 	/// </remarks>
 	/// <param name="returnValue">The value returned on the next matching invocation.</param>
 	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.TotalDispensed
-	///         .Returns(1)
-	///         .Returns(2)
-	///         .Throws(new Exception("boom"))
-	///         .Returns(4);
-	///     </code>
-	/// </example>
 	IPropertySetupReturnBuilder<T> Returns(T returnValue);
 
 	/// <summary>
@@ -263,13 +239,8 @@ public interface IPropertySetup<T>
 	///     Appends a lazy return that receives the property's current value and returns the new one - useful for
 	///     incrementing or transforming the last-read value.
 	/// </summary>
-	/// <param name="callback">The factory invoked on every matching invocation; receives the method arguments and produces the return value.</param>
+	/// <param name="callback">The factory invoked on every matching read; receives the property's current value and produces the next return value.</param>
 	/// <returns>A builder for chaining additional returns/throws or gating operators.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.TotalDispensed.Returns(current =&gt; current + 10);
-	///     </code>
-	/// </example>
 	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
 
 	/// <summary>

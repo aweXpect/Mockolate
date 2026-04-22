@@ -20,7 +20,7 @@ public static partial class HttpClientExtensions
 		///     <see cref="HttpClient" /> for requests whose URI matches <paramref name="requestUri" /> and whose
 		///     body matches <paramref name="content" />.
 		/// </summary>
-		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw string.</param>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.Is(uri)</c> or a raw string.</param>
 		/// <param name="content">An optional <see cref="HttpContent" /> matcher; <see langword="null" /> accepts any body.</param>
 		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
 		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>

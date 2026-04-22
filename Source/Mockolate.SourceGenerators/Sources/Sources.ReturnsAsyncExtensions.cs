@@ -6,9 +6,11 @@ internal static partial class Sources
 {
 	public static string ReturnsThrowsAsyncExtensions(int[] numberOfParameters)
 	{
-		const string SequenceRemark =
-			"\t///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles\n" +
-			"\t///     back to the first entry unless the last one is followed by <c>.Forever()</c>.";
+		static void AppendSequenceRemark(StringBuilder sb)
+		{
+			sb.Append("\t///     Call <c>ReturnsAsync</c>/<c>ThrowsAsync</c> multiple times to build a sequence; once exhausted it cycles").AppendLine();
+			sb.Append("\t///     back to the first entry unless the last one is followed by <c>.Forever()</c>.").AppendLine();
+		}
 
 		StringBuilder sb = InitializeBuilder();
 
@@ -41,7 +43,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
@@ -58,7 +60,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
@@ -75,7 +77,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<TReturn>, ")
@@ -93,7 +95,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
@@ -110,7 +112,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, ")
@@ -127,7 +129,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types).Append(">(this global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<TReturn>, ")
@@ -152,7 +154,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
@@ -170,7 +172,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
@@ -188,7 +190,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ReturnsAsync<TReturn, ").Append(types)
@@ -207,7 +209,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types)
@@ -225,7 +227,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types)
@@ -243,7 +245,7 @@ internal static partial class Sources
 				.AppendLine();
 			sb.Append("\t/// </summary>").AppendLine();
 			sb.Append("\t/// <remarks>").AppendLine();
-			sb.Append(SequenceRemark).AppendLine();
+			AppendSequenceRemark(sb);
 			sb.Append("\t/// </remarks>").AppendLine();
 			sb.Append("\tpublic static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.ValueTask<TReturn>, ").Append(types)
 				.Append("> ThrowsAsync<TReturn, ").Append(types)

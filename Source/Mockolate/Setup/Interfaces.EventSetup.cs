@@ -41,11 +41,6 @@ public interface IEventSubscriptionSetup
 	/// </summary>
 	/// <param name="callback">The action to invoke on every matching subscription.</param>
 	/// <returns>A builder for chaining repetition/gating operators such as <c>.For(n)</c> or <c>.When(...)</c>.</returns>
-	/// <example>
-	///     <code>
-	///     sut.Mock.Setup.UsersChanged.OnSubscribed.Do(() =&gt; Console.WriteLine("subscribed!"));
-	///     </code>
-	/// </example>
 	IEventSubscriptionSetupCallbackBuilder Do(Action callback);
 
 	/// <summary>

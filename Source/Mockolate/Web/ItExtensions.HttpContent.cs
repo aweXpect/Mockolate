@@ -30,12 +30,6 @@ public static partial class ItExtensions
 		///     A <see langword="null" /> body never matches.
 		/// </remarks>
 		/// <returns>A fluent matcher; pass it to <c>Setup.PostAsync</c>/<c>PutAsync</c>/<c>PatchAsync</c> or <c>Verify</c>.</returns>
-		/// <example>
-		///     <code>
-		///     httpClient.Mock.Setup.PostAsync(It.IsUri("*/orders"), It.IsHttpContent("application/json").WithString(b =&gt; b.Contains("\"sku\"")))
-		///         .ReturnsAsync(HttpStatusCode.Created);
-		///     </code>
-		/// </example>
 		public static IHttpContentParameter IsHttpContent()
 			=> new HttpContentParameter();
 

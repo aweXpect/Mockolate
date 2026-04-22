@@ -35,11 +35,6 @@ public static partial class ItExtensions
 		///     </list>
 		/// </remarks>
 		/// <returns>A fluent <see cref="Uri" /> matcher; pass it to <c>Setup.GetAsync</c>/<c>PostAsync</c>/... or <c>Verify</c>.</returns>
-		/// <example>
-		///     <code>
-		///     httpClient.Mock.Verify.GetAsync(It.IsUri("https://api.example.com/*").WithQuery("page", "1")).AtLeastOnce();
-		///     </code>
-		/// </example>
 		public static IUriParameter IsUri(string? pattern = null)
 			=> new UriParameter(pattern);
 	}

@@ -79,7 +79,8 @@ public record MockBehavior : IMockBehaviorAccess
 	///     The generator for default values when not specified by a setup.
 	/// </summary>
 	/// <remarks>
-	///     If <see cref="ThrowWhenNotSetup" /> is not set to <see langword="false" />, an exception is thrown in such cases.
+	///     When <see cref="ThrowWhenNotSetup" /> is <see langword="true" />, a
+	///     <see cref="Mockolate.Exceptions.MockNotSetupException" /> is thrown instead of consulting this generator.
 	/// </remarks>
 	public IDefaultValueGenerator DefaultValue { get; init; }
 

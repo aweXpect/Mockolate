@@ -19,7 +19,7 @@ public static partial class HttpClientExtensions
 		///     Sets up <see cref="System.Net.Http.HttpClient.GetAsync(string?)" /> on the mocked
 		///     <see cref="HttpClient" /> for requests whose URI matches <paramref name="requestUri" />.
 		/// </summary>
-		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.IsUri(...)</c>, <c>It.Is(uri)</c> or a raw string.</param>
+		/// <param name="requestUri">A <see langword="string" /> URI matcher - typically <c>It.Is(uri)</c> or a raw string.</param>
 		/// <returns>A setup handle - chain a terminator like <c>.ReturnsAsync(...)</c>.</returns>
 		/// <exception cref="MockException">The mock was not created with a mockable <see cref="System.Net.Http.HttpMessageHandler" /> constructor parameter.</exception>
 		/// <remarks>
