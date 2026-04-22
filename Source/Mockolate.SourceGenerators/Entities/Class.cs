@@ -270,6 +270,7 @@ internal record Class
 		return true;
 	}
 
+#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	public static IEnumerable<ITypeSymbol> GetInheritedTypes(ITypeSymbol type)
 	{
 		ITypeSymbol? current = type;
@@ -291,6 +292,7 @@ internal record Class
 			current = current.BaseType;
 		}
 	}
+#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	public IEnumerable<Property> AllProperties()
 	{

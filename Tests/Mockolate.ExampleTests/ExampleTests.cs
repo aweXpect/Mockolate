@@ -53,7 +53,7 @@ public class ExampleTests
 		Pageable<TableEntity> pageable = Pageable<TableEntity>.FromPages([settingsPage,]);
 
 		TableClient tableClient = TableClient.CreateMock(MockBehavior.Default.SkippingBaseClass());
-		var blobClient = BlobClient.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
+		_ = BlobClient.CreateMock(MockBehavior.Default.ThrowingWhenNotSetup());
 		tableClient.Mock.Setup
 			.Query(It.IsAny<Expression<Func<TableEntity, bool>>>(), It.IsAny<int?>(), It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>())
 			.Returns(pageable);
