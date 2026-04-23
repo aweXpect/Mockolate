@@ -19,7 +19,7 @@ public class CallbackTests
 			int index = 0;
 			for (int i = 0; i < 5; i++)
 			{
-				sut.Invoke(wasInvoked, ref index, (v, _) => values.Add(v));
+				sut.Invoke<object?>(wasInvoked, ref index, null, (v, _, _) => values.Add(v));
 			}
 
 			await That(values).IsEqualTo([2, 3,]);
@@ -40,7 +40,7 @@ public class CallbackTests
 			int index = 0;
 			for (int iteration = 1; iteration <= 10; iteration++)
 			{
-				sut.Invoke(wasInvoked, ref index, (_, _) => { });
+				sut.Invoke<object?>(wasInvoked, ref index, null, static (_, _, _) => { });
 				indexValues.Add(index);
 			}
 
@@ -62,7 +62,7 @@ public class CallbackTests
 			int index = 0;
 			for (int iteration = 1; iteration <= 10; iteration++)
 			{
-				sut.Invoke(wasInvoked, ref index, (_, _) => { });
+				sut.Invoke<object?>(wasInvoked, ref index, null, static (_, _, _) => { });
 				indexValues.Add(index);
 			}
 
@@ -81,7 +81,7 @@ public class CallbackTests
 			int index = 0;
 			for (int i = 0; i < 5; i++)
 			{
-				sut.Invoke(wasInvoked, ref index, (v, _) => values.Add(v));
+				sut.Invoke<object?>(wasInvoked, ref index, null, (v, _, _) => values.Add(v));
 			}
 
 			await That(values).IsEqualTo([0, 1,]);
@@ -106,7 +106,7 @@ public class CallbackTests
 			int index = 0;
 			for (int iteration = 1; iteration <= 10; iteration++)
 			{
-				sut.Invoke(wasInvoked, ref index, (_, c) => c());
+				sut.Invoke<object?>(wasInvoked, ref index, null, static (_, c, _) => c());
 			}
 
 			await That(invocationChecks).IsEqualTo(expectResult);
@@ -131,7 +131,7 @@ public class CallbackTests
 			bool result = false;
 			for (int iteration = 1; iteration <= iterations; iteration++)
 			{
-				result = sut.Invoke(wasInvoked, ref index, (_, _) => { });
+				result = sut.Invoke<object?>(wasInvoked, ref index, null, static (_, _, _) => { });
 			}
 
 			await That(result).IsEqualTo(expectResult);
@@ -212,7 +212,7 @@ public class CallbackTests
 			int index = 0;
 			for (int i = 0; i < 5; i++)
 			{
-				sut.Invoke(ref index, (v, _) => values.Add(v));
+				sut.Invoke<object?>(ref index, null, (v, _, _) => values.Add(v));
 			}
 
 			await That(values).IsEqualTo([2, 3,]);
@@ -236,7 +236,7 @@ public class CallbackTests
 			int index = 0;
 			for (int iteration = 1; iteration <= 10; iteration++)
 			{
-				sut.Invoke(ref index, (_, c) => c());
+				sut.Invoke<object?>(ref index, null, static (_, c, _) => c());
 			}
 
 			await That(invocationChecks).IsEqualTo(expectResult);
@@ -260,7 +260,7 @@ public class CallbackTests
 			bool result = false;
 			for (int iteration = 1; iteration <= iterations; iteration++)
 			{
-				result = sut.Invoke(ref index, (_, _) => { });
+				result = sut.Invoke<object?>(ref index, null, static (_, _, _) => { });
 			}
 
 			await That(result).IsEqualTo(expectResult);
@@ -280,7 +280,7 @@ public class CallbackTests
 			int index = 0;
 			for (int i = 0; i < 5; i++)
 			{
-				sut.Invoke<string>(ref index, (v, _) =>
+				sut.Invoke<object?, string>(ref index, null, (v, _, _) =>
 				{
 					values.Add(v);
 					return $"foo-{v}";
@@ -308,7 +308,7 @@ public class CallbackTests
 			int index = 0;
 			for (int iteration = 1; iteration <= 10; iteration++)
 			{
-				sut.Invoke(ref index, (_, c) =>
+				sut.Invoke<object?, string>(ref index, null, static (_, c, _) =>
 				{
 					c();
 					return "foo";
@@ -336,7 +336,7 @@ public class CallbackTests
 			bool result = false;
 			for (int iteration = 1; iteration <= iterations; iteration++)
 			{
-				result = sut.Invoke(ref index, (_, _) => "foo", out string? _);
+				result = sut.Invoke<object?, string>(ref index, null, static (_, _, _) => "foo", out string? _);
 			}
 
 			await That(result).IsEqualTo(expectResult);

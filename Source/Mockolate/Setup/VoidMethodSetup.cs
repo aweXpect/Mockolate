@@ -196,7 +196,8 @@ public abstract class VoidMethodSetup : MethodSetup,
 			{
 				Callback<Action<int>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke<object?>(wasInvoked, ref _callbacks.CurrentIndex, null,
+					    static (count, @delegate, _) => @delegate(count)))
 				{
 					wasInvoked = true;
 				}
@@ -209,17 +210,12 @@ public abstract class VoidMethodSetup : MethodSetup,
 			{
 				Callback<Action<int>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
+				if (returnCallback.Invoke<object?>(ref _returnCallbacks.CurrentIndex, null,
+					    static (count, @delegate, _) => @delegate(count)))
 				{
 					return;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int> @delegate)
-		{
-			@delegate(invocationCount);
 		}
 	}
 
@@ -474,7 +470,8 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 			{
 				Callback<Action<int, T1>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, parameter1,
+					    static (count, @delegate, state) => @delegate(count, state)))
 				{
 					wasInvoked = true;
 				}
@@ -487,17 +484,12 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 			{
 				Callback<Action<int, T1>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, parameter1,
+					    static (count, @delegate, state) => @delegate(count, state)))
 				{
 					return;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1> @delegate)
-		{
-			@delegate(invocationCount, parameter1);
 		}
 	}
 
@@ -805,7 +797,8 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, (parameter1, parameter2),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2)))
 				{
 					wasInvoked = true;
 				}
@@ -818,17 +811,12 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (parameter1, parameter2),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2)))
 				{
 					return;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1, T2> @delegate)
-		{
-			@delegate(invocationCount, parameter1, parameter2);
 		}
 	}
 
@@ -1149,7 +1137,8 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, (parameter1, parameter2, parameter3),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2, state.parameter3)))
 				{
 					wasInvoked = true;
 				}
@@ -1162,17 +1151,12 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (parameter1, parameter2, parameter3),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2, state.parameter3)))
 				{
 					return;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1, T2, T3> @delegate)
-		{
-			@delegate(invocationCount, parameter1, parameter2, parameter3);
 		}
 	}
 
@@ -1502,7 +1486,8 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 			for (int i = 0; i < _callbacks.Count; i++)
 			{
 				Callback<Action<int, T1, T2, T3, T4>> callback = _callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, (parameter1, parameter2, parameter3, parameter4),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2, state.parameter3, state.parameter4)))
 				{
 					wasInvoked = true;
 				}
@@ -1515,17 +1500,12 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3, T4>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (parameter1, parameter2, parameter3, parameter4),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2, state.parameter3, state.parameter4)))
 				{
 					return;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1, T2, T3, T4> @delegate)
-		{
-			@delegate(invocationCount, parameter1, parameter2, parameter3, parameter4);
 		}
 	}
 

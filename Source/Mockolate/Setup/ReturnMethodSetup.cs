@@ -211,7 +211,9 @@ public abstract class ReturnMethodSetup<TReturn>
 			{
 				Callback<Func<int, TReturn>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback, out TReturn? newValue))
+				if (returnCallback.Invoke<object?, TReturn>(ref _returnCallbacks.CurrentIndex, null,
+					    static (count, @delegate, _) => @delegate(count),
+					    out TReturn? newValue))
 				{
 					returnValue = newValue;
 					return true;
@@ -221,12 +223,6 @@ public abstract class ReturnMethodSetup<TReturn>
 
 		returnValue = default!;
 		return false;
-
-		[DebuggerNonUserCode]
-		TReturn Callback(int invocationCount, Func<int, TReturn> @delegate)
-		{
-			return @delegate(invocationCount);
-		}
 	}
 
 	/// <summary>
@@ -247,17 +243,12 @@ public abstract class ReturnMethodSetup<TReturn>
 			{
 				Callback<Action<int>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke<object?>(wasInvoked, ref _callbacks.CurrentIndex, null,
+					    static (count, @delegate, _) => @delegate(count)))
 				{
 					wasInvoked = true;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int> @delegate)
-		{
-			@delegate(invocationCount);
 		}
 	}
 
@@ -538,7 +529,9 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			{
 				Callback<Func<int, T1, TReturn>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback, out TReturn? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, p1,
+					    static (count, @delegate, state) => @delegate(count, state),
+					    out TReturn? newValue))
 				{
 					returnValue = newValue;
 					return true;
@@ -548,12 +541,6 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 
 		returnValue = default!;
 		return false;
-
-		[DebuggerNonUserCode]
-		TReturn Callback(int invocationCount, Func<int, T1, TReturn> @delegate)
-		{
-			return @delegate(invocationCount, p1);
-		}
 	}
 
 	/// <summary>
@@ -575,17 +562,12 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			{
 				Callback<Action<int, T1>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, parameter1,
+					    static (count, @delegate, state) => @delegate(count, state)))
 				{
 					wasInvoked = true;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1> @delegate)
-		{
-			@delegate(invocationCount, parameter1);
 		}
 	}
 
@@ -927,7 +909,9 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			{
 				Callback<Func<int, T1, T2, TReturn>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback, out TReturn? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (p1, p2),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2),
+					    out TReturn? newValue))
 				{
 					returnValue = newValue;
 					return true;
@@ -937,12 +921,6 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 
 		returnValue = default!;
 		return false;
-
-		[DebuggerNonUserCode]
-		TReturn Callback(int invocationCount, Func<int, T1, T2, TReturn> @delegate)
-		{
-			return @delegate(invocationCount, p1, p2);
-		}
 	}
 
 	/// <summary>
@@ -964,17 +942,12 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, (parameter1, parameter2),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2)))
 				{
 					wasInvoked = true;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1, T2> @delegate)
-		{
-			@delegate(invocationCount, parameter1, parameter2);
 		}
 	}
 
@@ -1332,7 +1305,9 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			{
 				Callback<Func<int, T1, T2, T3, TReturn>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback, out TReturn? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (p1, p2, p3),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3),
+					    out TReturn? newValue))
 				{
 					returnValue = newValue;
 					return true;
@@ -1342,12 +1317,6 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 
 		returnValue = default!;
 		return false;
-
-		[DebuggerNonUserCode]
-		TReturn Callback(int invocationCount, Func<int, T1, T2, T3, TReturn> @delegate)
-		{
-			return @delegate(invocationCount, p1, p2, p3);
-		}
 	}
 
 	/// <summary>
@@ -1369,17 +1338,12 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, (parameter1, parameter2, parameter3),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2, state.parameter3)))
 				{
 					wasInvoked = true;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1, T2, T3> @delegate)
-		{
-			@delegate(invocationCount, parameter1, parameter2, parameter3);
 		}
 	}
 
@@ -1757,7 +1721,9 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			{
 				Callback<Func<int, T1, T2, T3, T4, TReturn>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback, out TReturn? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, (p1, p2, p3, p4),
+					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.p4),
+					    out TReturn? newValue))
 				{
 					returnValue = newValue;
 					return true;
@@ -1767,12 +1733,6 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 
 		returnValue = default!;
 		return false;
-
-		[DebuggerNonUserCode]
-		TReturn Callback(int invocationCount, Func<int, T1, T2, T3, T4, TReturn> @delegate)
-		{
-			return @delegate(invocationCount, p1, p2, p3, p4);
-		}
 	}
 
 	/// <summary>
@@ -1795,17 +1755,12 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			{
 				Callback<Action<int, T1, T2, T3, T4>> callback =
 					_callbacks[(currentCallbacksIndex + i) % _callbacks.Count];
-				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))
+				if (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, (parameter1, parameter2, parameter3, parameter4),
+					    static (count, @delegate, state) => @delegate(count, state.parameter1, state.parameter2, state.parameter3, state.parameter4)))
 				{
 					wasInvoked = true;
 				}
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T1, T2, T3, T4> @delegate)
-		{
-			@delegate(invocationCount, parameter1, parameter2, parameter3, parameter4);
 		}
 	}
 

@@ -599,6 +599,9 @@ internal static partial class Sources
 		sb.Append(");").AppendLine();
 		sb.AppendLine();
 
+		string parameterTuple = "(" + string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"parameter{x}")) + ")";
+		string stateArgs = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"state.parameter{x}"));
+
 		sb.AppendXmlSummary("Triggers any configured parameter callbacks for the method setup with the specified parameters.");
 		sb.Append("\t\tpublic virtual void TriggerCallbacks(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} parameter{i}"))).Append(")").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -609,7 +612,8 @@ internal static partial class Sources
 		sb.Append("\t\t\t\tfor (int i = 0; i < _callbacks.Count; i++)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tvar callback = _callbacks[(currentCallbacksIndex + i) % _callbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\t\tif (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))").AppendLine();
+		sb.Append("\t\t\t\t\tif (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, ").Append(parameterTuple).Append(",").AppendLine();
+		sb.Append("\t\t\t\t\t\tstatic (invocationCount, @delegate, state) => @delegate(invocationCount, ").Append(stateArgs).Append(")))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
@@ -620,16 +624,12 @@ internal static partial class Sources
 		sb.Append("\t\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tvar returnCallback = _returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\t\tif (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, Callback))").AppendLine();
+		sb.Append("\t\t\t\t\tif (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, ").Append(parameterTuple).Append(",").AppendLine();
+		sb.Append("\t\t\t\t\t\tstatic (invocationCount, @delegate, state) => @delegate(invocationCount, ").Append(stateArgs).Append(")))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\treturn;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
-		sb.Append("\t\t\tvoid Callback(int invocationCount, global::System.Action<int, ").Append(typeParams).Append("> @delegate)").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t@delegate(invocationCount, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"parameter{x}"))).Append(");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
@@ -1232,6 +1232,11 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> _skipBaseClass ?? behavior.SkipBaseClass;").AppendLine();
 		sb.AppendLine();
 
+		string parameterTuple = "(" + string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}")) + ")";
+		string parameterStateArgs = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"state.p{x}"));
+		string triggerTuple = "(" + string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"parameter{x}")) + ")";
+		string triggerStateArgs = string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"state.parameter{x}"));
+
 		sb.AppendXmlSummary("Gets the registered return value.");
 		sb.Append("\t\tpublic bool TryGetReturnValue(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i} p{i}"))).Append(", out TReturn returnValue)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -1240,8 +1245,9 @@ internal static partial class Sources
 		sb.Append("\t\t\t\tforeach (var _ in _returnCallbacks)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tvar returnCallback = _returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\t\tif (returnCallback.Invoke<TReturn>(ref _returnCallbacks.CurrentIndex, (invocationCount, @delegate)").AppendLine();
-		sb.Append("\t\t\t\t\t\t=> @delegate(invocationCount, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"p{x}"))).Append("), out TReturn? newValue))").AppendLine();
+		sb.Append("\t\t\t\t\tif (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, ").Append(parameterTuple).Append(",").AppendLine();
+		sb.Append("\t\t\t\t\t\tstatic (invocationCount, @delegate, state) => @delegate(invocationCount, ").Append(parameterStateArgs).Append("),").AppendLine();
+		sb.Append("\t\t\t\t\t\tout TReturn? newValue))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\treturnValue = newValue;").AppendLine();
 		sb.Append("\t\t\t\t\t\treturn true;").AppendLine();
@@ -1278,16 +1284,12 @@ internal static partial class Sources
 		sb.Append("\t\t\t\tfor (int i = 0; i < _callbacks.Count; i++)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tvar callback = _callbacks[(currentCallbacksIndex + i) % _callbacks.Count];").AppendLine();
-		sb.Append("\t\t\t\t\tif (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, Callback))").AppendLine();
+		sb.Append("\t\t\t\t\tif (callback.Invoke(wasInvoked, ref _callbacks.CurrentIndex, ").Append(triggerTuple).Append(",").AppendLine();
+		sb.Append("\t\t\t\t\t\tstatic (invocationCount, @delegate, state) => @delegate(invocationCount, ").Append(triggerStateArgs).Append(")))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\twasInvoked = true;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
-		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
-		sb.Append("\t\t\tvoid Callback(int invocationCount, global::System.Action<int, ").Append(typeParams).Append("> @delegate)").AppendLine();
-		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t@delegate(invocationCount, ").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(x => $"parameter{x}"))).Append(");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();

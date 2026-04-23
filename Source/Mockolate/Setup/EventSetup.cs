@@ -176,16 +176,11 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		{
 			Callback<Action<int, object?, MethodInfo>> callback =
 				_subscribedCallbacks[(currentIndex + i) % _subscribedCallbacks.Count];
-			if (callback.Invoke(wasInvoked, ref _subscribedCallbacks.CurrentIndex, Dispatch))
+			if (callback.Invoke(wasInvoked, ref _subscribedCallbacks.CurrentIndex, (target, method),
+				    static (count, @delegate, state) => @delegate(count, state.target, state.method)))
 			{
 				wasInvoked = true;
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Dispatch(int invocationCount, Action<int, object?, MethodInfo> @delegate)
-		{
-			@delegate(invocationCount, target, method);
 		}
 	}
 
@@ -205,16 +200,11 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		{
 			Callback<Action<int, object?, MethodInfo>> callback =
 				_unsubscribedCallbacks[(currentIndex + i) % _unsubscribedCallbacks.Count];
-			if (callback.Invoke(wasInvoked, ref _unsubscribedCallbacks.CurrentIndex, Dispatch))
+			if (callback.Invoke(wasInvoked, ref _unsubscribedCallbacks.CurrentIndex, (target, method),
+				    static (count, @delegate, state) => @delegate(count, state.target, state.method)))
 			{
 				wasInvoked = true;
 			}
-		}
-
-		[DebuggerNonUserCode]
-		void Dispatch(int invocationCount, Action<int, object?, MethodInfo> @delegate)
-		{
-			@delegate(invocationCount, target, method);
 		}
 	}
 
