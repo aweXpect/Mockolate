@@ -1,6 +1,6 @@
 using Mockolate.Interactions;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Interactions;
 
 public class MockInteractionsTests
 {

@@ -1,6 +1,6 @@
 ﻿using Mockolate.Internals;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Internals;
 
 public sealed class StringExtensionsTests
 {

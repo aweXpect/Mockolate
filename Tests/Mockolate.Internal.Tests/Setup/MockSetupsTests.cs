@@ -2,7 +2,7 @@ using System.Reflection;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Setup;
 
 public partial class MockSetupsTests
 {
@@ -35,7 +35,8 @@ public partial class MockSetupsTests
 
 		for (int i = 0; i < methodCount; i++)
 		{
-			mock.MockRegistry.SetupMethod(new ReturnMethodSetup<int>.WithParameterCollection(MockBehavior.Default, $"my.method{i}"));
+			mock.MockRegistry.SetupMethod(
+				new ReturnMethodSetup<int>.WithParameterCollection(MockBehavior.Default, $"my.method{i}"));
 		}
 
 		for (int i = 0; i < propertyCount; i++)

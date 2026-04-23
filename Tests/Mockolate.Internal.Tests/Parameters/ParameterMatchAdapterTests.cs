@@ -1,6 +1,6 @@
 using Mockolate.Parameters;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Parameters;
 
 public class ParameterMatchAdapterTests
 {

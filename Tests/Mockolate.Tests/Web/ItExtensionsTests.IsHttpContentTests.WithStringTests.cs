@@ -95,7 +95,7 @@ public sealed partial class ItExtensionsTests
 				}
 
 				await That(Act).Throws<MockVerificationException>()
-					.WithMessage("s => s.StartsWith(\"abc\") and s => s.EndsWith(\"xyz\")");
+					.WithMessage("*s => s.StartsWith(\"abc\") and s => s.EndsWith(\"xyz\")*").AsWildcard();
 			}
 
 			[Theory]

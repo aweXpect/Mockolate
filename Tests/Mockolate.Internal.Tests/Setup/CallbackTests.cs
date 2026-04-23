@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Mockolate.Setup;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Setup;
 
 public class CallbackTests
 {
@@ -135,6 +135,67 @@ public class CallbackTests
 			}
 
 			await That(result).IsEqualTo(expectResult);
+		}
+	}
+
+	public sealed class InvokeWithStateForCallbacksTests
+	{
+		[Fact]
+		public async Task ShouldIncludeIndexWhenMatching()
+		{
+			bool wasInvoked = false;
+			List<int> values = [];
+			Callback<Action> sut = new(() => { });
+			sut.Only(2);
+			sut.When(v => v > 1);
+
+			int index = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				sut.Invoke(wasInvoked, ref index, values, static (v, _, list) => list.Add(v));
+			}
+
+			await That(values).IsEqualTo([2, 3,]);
+		}
+
+		[Theory]
+		[InlineData(2, 2, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2)]
+		[InlineData(2, 3, 0, 1, 1, 2, 2, 3, 3, 3, 3, 3)]
+		public async Task ShouldIncrementIndexWheneverForIsExhausted(
+			int @for, int only, params int[] expectResult)
+		{
+			bool wasInvoked = false;
+			List<int> indexValues = [];
+			Callback<Action> sut = new(() => { });
+			sut.For(@for);
+			sut.Only(only);
+
+			int index = 0;
+			for (int iteration = 1; iteration <= 10; iteration++)
+			{
+				sut.Invoke(wasInvoked, ref index, 0, static (_, _, _) => { });
+				indexValues.Add(index);
+			}
+
+			await That(indexValues).IsEqualTo(expectResult);
+		}
+
+		[Fact]
+		public async Task ShouldLimitExecutionWhenRunningInParallel()
+		{
+			bool wasInvoked = false;
+			List<int> values = [];
+			Callback<Action> sut = new(() => { });
+			sut.Only(2);
+			sut.InParallel();
+
+			int index = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				sut.Invoke(wasInvoked, ref index, values, static (v, _, list) => list.Add(v));
+			}
+
+			await That(values).IsEqualTo([0, 1,]);
 		}
 	}
 
@@ -279,6 +340,31 @@ public class CallbackTests
 			}
 
 			await That(result).IsEqualTo(expectResult);
+		}
+	}
+
+	public sealed class InvokeWithStateForReturnThrowsTests
+	{
+		[Fact]
+		public async Task ShouldIncludeIndexWhenMatching()
+		{
+			List<int> values = [];
+			Callback<Action> sut = new(() => { });
+			sut.Only(2);
+			sut.When(v => v > 1);
+
+			int index = 0;
+			for (int i = 0; i < 5; i++)
+			{
+				sut.Invoke<List<int>, string>(ref index, values,
+					static (v, _, list) =>
+					{
+						list.Add(v);
+						return "";
+					}, out _);
+			}
+
+			await That(values).IsEqualTo([2, 3,]);
 		}
 	}
 }
