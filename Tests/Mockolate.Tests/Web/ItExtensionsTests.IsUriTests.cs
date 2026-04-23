@@ -99,5 +99,16 @@ public sealed partial class ItExtensionsTests
 
 			await That(result).IsFalse();
 		}
+
+		[Fact]
+		public async Task WithTrailingSlashOnRequestAndNoSuffixWildcardInPattern_ShouldStillMatch()
+		{
+			HttpClient httpClient = HttpClient.CreateMock();
+
+			await httpClient.GetAsync("https://aweXpect.com/", CancellationToken.None);
+
+			await That(httpClient.Mock.Verify.GetAsync(It.IsUri("https://aweXpect.com")))
+				.Once();
+		}
 	}
 }

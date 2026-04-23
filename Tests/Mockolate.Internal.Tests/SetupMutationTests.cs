@@ -113,7 +113,7 @@ public class SetupMutationTests
 			interactive.InitializeWith(5);
 			interactive.InitializeWith(10);
 
-			int value = interactive.InvokeGetter<int>(null, MockBehavior.Default, () => -1);
+			int value = interactive.InvokeGetter(null, MockBehavior.Default, () => -1);
 			await That(value).IsEqualTo(5);
 		}
 
@@ -126,7 +126,7 @@ public class SetupMutationTests
 			userFacing.InitializeWith(5);
 			userFacing.InitializeWith(10);
 
-			int value = ((IInteractivePropertySetup)setup).InvokeGetter<int>(null, MockBehavior.Default, () => -1);
+			int value = ((IInteractivePropertySetup)setup).InvokeGetter(null, MockBehavior.Default, () => -1);
 			await That(value).IsEqualTo(5);
 		}
 
@@ -138,7 +138,7 @@ public class SetupMutationTests
 			PropertySetup.Default<int> setup = new("p", 0x40400000);
 			IInteractivePropertySetup interactive = setup;
 
-			float value = interactive.InvokeGetter<float>(null, MockBehavior.Default, () => 99f);
+			float value = interactive.InvokeGetter(null, MockBehavior.Default, () => 99f);
 
 			await That(value).IsEqualTo(99f);
 		}

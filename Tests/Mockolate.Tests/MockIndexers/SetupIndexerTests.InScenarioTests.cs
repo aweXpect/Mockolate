@@ -4,7 +4,7 @@ namespace Mockolate.Tests.MockIndexers;
 
 public sealed partial class SetupIndexerTests
 {
-	public sealed class TransitionToInParallelTests
+	public sealed class InScenarioTests
 	{
 		[Fact]
 		public async Task OnGet_Arity1_ShouldTransitionEvenAfterPrecedingCallbackRan()

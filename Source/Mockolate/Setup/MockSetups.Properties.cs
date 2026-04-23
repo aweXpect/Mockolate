@@ -32,8 +32,16 @@ internal partial class MockSetups
 			lock (_writeLock)
 			{
 				PropertySetup[] old = _storage ?? [];
-				int existingIndex = Array.FindIndex(old,
-					s => string.Equals(s.Name, setup.Name, StringComparison.Ordinal));
+				int existingIndex = -1;
+				string setupName = setup.Name;
+				for (int i = 0; i < old.Length; i++)
+				{
+					if (string.Equals(old[i].Name, setupName, StringComparison.Ordinal))
+					{
+						existingIndex = i;
+						break;
+					}
+				}
 
 				if (existingIndex >= 0)
 				{

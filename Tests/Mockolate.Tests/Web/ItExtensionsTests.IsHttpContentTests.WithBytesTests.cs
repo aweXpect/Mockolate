@@ -11,6 +11,28 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithBytesTests
 		{
+			[Fact]
+			public async Task CalledTwice_ShouldUseFirstPredicate()
+			{
+				HttpClient httpClient = HttpClient.CreateMock();
+				byte[] payload =
+				{
+					1, 2, 3,
+				};
+
+				await httpClient.PostAsync("https://aweXpect.com", new ByteArrayContent(payload), CancellationToken.None);
+
+				// The first WithBytes predicate matches (length == 3) while the second does not.
+				// Original (??=): first wins, verification succeeds.
+				// Mutant (=): second wins, verification fails.
+				await That(httpClient.Mock.Verify.PostAsync(
+						It.IsAny<string?>(),
+						It.IsHttpContent()
+							.WithBytes(b => b.Length == 3)
+							.WithBytes(b => b.Length == 99)))
+					.Once();
+			}
+
 			[Theory]
 			[InlineData(new byte[0], 0x1, false)]
 			[InlineData(new byte[]
@@ -37,7 +59,8 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.Mock.Setup
-					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(b => b.Length > 0 && b[0] == expectedFirstByte))
+					.PostAsync(It.IsAny<Uri>(),
+						It.IsHttpContent().WithBytes(b => b.Length > 0 && b[0] == expectedFirstByte))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
