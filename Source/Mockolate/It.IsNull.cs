@@ -1,3 +1,4 @@
+using System;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 
@@ -18,18 +19,29 @@ public partial class It
 	/// <param name="toString">Optional override for the matcher's <see cref="object.ToString" /> rendering, used in failure messages.</param>
 	/// <returns>A parameter matcher that only accepts <see langword="null" />.</returns>
 	public static IParameterWithCallback<T> IsNull<T>(string? toString = null)
-		=> new NullParameterMatch<T>(toString);
+		=> toString is null ? NullParameterMatch<T>.Shared : new NullParameterMatch<T>(toString);
 
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class NullParameterMatch<T>(string? toString) : TypedMatch<T>
+	private class NullParameterMatch<T>(string? toString) : TypedMatch<T>
 	{
+		internal static readonly NullParameterMatch<T> Shared = new SharedNullParameterMatch();
+
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(T value) => value is null;
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => toString ?? $"It.IsNull<{typeof(T).FormatType()}>()";
+
+#if !DEBUG
+		[System.Diagnostics.DebuggerNonUserCode]
+#endif
+		private sealed class SharedNullParameterMatch() : NullParameterMatch<T>(null)
+		{
+			protected override IParameterWithCallback<T> AddCallback(Action<T> callback)
+				=> ((IParameterWithCallback<T>)new NullParameterMatch<T>(null)).Do(callback);
+		}
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members

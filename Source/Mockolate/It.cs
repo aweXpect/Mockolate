@@ -52,6 +52,16 @@ public partial class It
 
 		/// <inheritdoc cref="IParameterWithCallback{T}.Do(Action{T})" />
 		IParameterWithCallback<T> IParameterWithCallback<T>.Do(Action<T> callback)
+			=> AddCallback(callback);
+
+		/// <summary>
+		///     Attaches a <paramref name="callback" /> to this matcher and returns the matcher to continue the fluent chain.
+		/// </summary>
+		/// <remarks>
+		///     Default: mutates this instance's callback list. Override in cached/shared matcher instances to allocate a fresh
+		///     mutable copy so the singleton never accumulates per-call callbacks.
+		/// </remarks>
+		protected virtual IParameterWithCallback<T> AddCallback(Action<T> callback)
 		{
 			_callbacks ??= [];
 			_callbacks.Add(callback);

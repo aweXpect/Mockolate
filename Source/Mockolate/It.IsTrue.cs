@@ -1,3 +1,4 @@
+using System;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -14,18 +15,29 @@ public partial class It
 	///     <see cref="IsFalse" /> for the opposite.
 	/// </remarks>
 	public static IParameterWithCallback<bool> IsTrue()
-		=> new TrueParameterMatch();
+		=> TrueParameterMatch.Shared;
 
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class TrueParameterMatch : TypedMatch<bool>
+	private class TrueParameterMatch : TypedMatch<bool>
 	{
+		internal static readonly TrueParameterMatch Shared = new SharedTrueParameterMatch();
+
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(bool value) => value;
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => "It.IsTrue()";
+
+#if !DEBUG
+		[System.Diagnostics.DebuggerNonUserCode]
+#endif
+		private sealed class SharedTrueParameterMatch : TrueParameterMatch
+		{
+			protected override IParameterWithCallback<bool> AddCallback(Action<bool> callback)
+				=> ((IParameterWithCallback<bool>)new TrueParameterMatch()).Do(callback);
+		}
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members
