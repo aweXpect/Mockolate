@@ -6,7 +6,7 @@ namespace Mockolate.Internal.Tests.Registry;
 
 public sealed class MockRegistryTests
 {
-	public sealed class GetIndexerSetupScenarioScoping
+	public sealed class GetIndexerSetupScenarioScopingTests
 	{
 		[Fact]
 		public async Task WithActiveScenario_ShouldReturnScopedSetupOverGlobalSetup()
@@ -38,7 +38,7 @@ public sealed class MockRegistryTests
 		}
 	}
 
-	public sealed class IndexerFallbackStoresValue
+	public sealed class IndexerFallbackStoresValueTests
 	{
 		[Fact]
 		public async Task ApplyIndexerGetter_WithNullSetup_ShouldStoreBaseValueForLaterLookup()
@@ -71,7 +71,7 @@ public sealed class MockRegistryTests
 		}
 	}
 
-	public sealed class InitializeStorage
+	public sealed class InitializeStorageTests
 	{
 		[Fact]
 		public async Task WithNegative_ShouldThrowWithDescriptiveMessage()
@@ -101,7 +101,7 @@ public sealed class MockRegistryTests
 		}
 	}
 
-	public sealed class WrapConstructor
+	public sealed class WrapConstructorTests
 	{
 		[Fact]
 		public async Task WhenBehaviorSkipsInteractionRecording_WrappedRegistryAlsoSkipsRecording()
