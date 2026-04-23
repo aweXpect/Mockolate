@@ -7,6 +7,16 @@ public sealed partial class ItTests
 {
 	public sealed class IsNotNullTests
 	{
+		[Fact]
+		public async Task CachedMatcher_CallbackFromPriorDo_ShouldNotLeakIntoSubsequentUsage()
+		{
+			_ = It.IsNotNull<string>().Do(_ => throw new InvalidOperationException("callback leaked from prior use"));
+
+			IParameter<string> subsequent = It.IsNotNull<string>();
+
+			await That(() => ((IParameterMatch<string>)subsequent).InvokeCallbacks("value")).DoesNotThrow();
+		}
+
 		[Theory]
 		[InlineData(null, 0)]
 		[InlineData(1, 1)]

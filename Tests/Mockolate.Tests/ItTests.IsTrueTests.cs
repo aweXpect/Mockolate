@@ -7,6 +7,16 @@ public sealed partial class ItTests
 	public sealed class IsTrueTests
 	{
 		[Fact]
+		public async Task CachedMatcher_CallbackFromPriorDo_ShouldNotLeakIntoSubsequentUsage()
+		{
+			_ = It.IsTrue().Do(_ => throw new InvalidOperationException("callback leaked from prior use"));
+
+			IParameter<bool> subsequent = It.IsTrue();
+
+			await That(() => ((IParameterMatch<bool>)subsequent).InvokeCallbacks(true)).DoesNotThrow();
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<bool> sut = It.IsTrue();
