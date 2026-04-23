@@ -1,3 +1,4 @@
+using System;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 
@@ -22,17 +23,28 @@ public partial class It
 	/// <typeparam name="T">The declared type of the parameter.</typeparam>
 	/// <returns>A parameter matcher that accepts every value of type <typeparamref name="T" />.</returns>
 	public static IParameterWithCallback<T> IsAny<T>()
-		=> new AnyParameterMatch<T>();
+		=> AnyParameterMatch<T>.Shared;
 
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class AnyParameterMatch<T> : TypedMatch<T>
+	private class AnyParameterMatch<T> : TypedMatch<T>
 	{
+		internal static readonly AnyParameterMatch<T> Shared = new SharedAnyParameterMatch();
+
 		protected override bool Matches(T value) => true;
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"It.IsAny<{typeof(T).FormatType()}>()";
+
+#if !DEBUG
+		[System.Diagnostics.DebuggerNonUserCode]
+#endif
+		private sealed class SharedAnyParameterMatch : AnyParameterMatch<T>
+		{
+			protected override IParameterWithCallback<T> AddCallback(Action<T> callback)
+				=> ((IParameterWithCallback<T>)new AnyParameterMatch<T>()).Do(callback);
+		}
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members

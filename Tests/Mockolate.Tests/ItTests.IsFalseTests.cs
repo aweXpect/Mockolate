@@ -6,6 +6,16 @@ public sealed partial class ItTests
 {
 	public sealed class IsFalseTests
 	{
+		[Fact]
+		public async Task CachedMatcher_CallbackFromPriorDo_ShouldNotLeakIntoSubsequentUsage()
+		{
+			_ = It.IsFalse().Do(_ => throw new InvalidOperationException("callback leaked from prior use"));
+
+			IParameter<bool> subsequent = It.IsFalse();
+
+			await That(() => ((IParameterMatch<bool>)subsequent).InvokeCallbacks(false)).DoesNotThrow();
+		}
+
 		[Theory]
 		[InlineData(false, 1)]
 		[InlineData(true, 0)]

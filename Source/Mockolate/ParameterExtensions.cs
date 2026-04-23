@@ -22,9 +22,8 @@ public static class ParameterExtensions
 		out IParameterMonitor<T> monitor)
 	{
 		ParameterMonitor<T> parameterMonitor = new();
-		parameter.Do(v => parameterMonitor.AddValue(v));
 		monitor = parameterMonitor;
-		return parameter;
+		return parameter.Do(v => parameterMonitor.AddValue(v));
 	}
 
 	/// <summary>
