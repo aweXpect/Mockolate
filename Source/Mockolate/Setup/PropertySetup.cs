@@ -1,12 +1,12 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-#if NET10_0_OR_GREATER
-using System.Threading;
-#endif
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
+#if NET10_0_OR_GREATER
+using System.Threading;
+#endif
 
 namespace Mockolate.Setup;
 
@@ -292,7 +292,8 @@ public class PropertySetup<T> : PropertySetup,
 			{
 				Callback<Action<int, T>> getterCallback =
 					_getterCallbacks[(currentGetterCallbacksIndex + i) % _getterCallbacks.Count];
-				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, Callback))
+				if (getterCallback.Invoke(wasInvoked, ref _getterCallbacks.CurrentIndex, this,
+					    static (count, @delegate, self) => @delegate(count, self._value)))
 				{
 					wasInvoked = true;
 				}
@@ -305,7 +306,9 @@ public class PropertySetup<T> : PropertySetup,
 			{
 				Callback<Func<int, T, T>> returnCallback =
 					_returnCallbacks[_returnCallbacks.CurrentIndex % _returnCallbacks.Count];
-				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, ReturnCallback, out T? newValue))
+				if (returnCallback.Invoke(ref _returnCallbacks.CurrentIndex, this,
+					    static (count, @delegate, self) => @delegate(count, self._value),
+					    out T? newValue))
 				{
 					_value = newValue;
 					_isInitialized = true;
@@ -326,18 +329,6 @@ public class PropertySetup<T> : PropertySetup,
 
 		throw new MockException(
 			$"The property only supports '{typeof(T).FormatType()}' and not '{typeof(TResult).FormatType()}'.");
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T> @delegate)
-		{
-			@delegate(invocationCount, _value);
-		}
-
-		[DebuggerNonUserCode]
-		T ReturnCallback(int invocationCount, Func<int, T, T> @delegate)
-		{
-			return @delegate(invocationCount, _value);
-		}
 	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter{TValue}(TValue, MockBehavior)" />
@@ -366,7 +357,8 @@ public class PropertySetup<T> : PropertySetup,
 			{
 				Callback<Action<int, T>> setterCallback =
 					_setterCallbacks[(currentSetterCallbacksIndex + i) % _setterCallbacks.Count];
-				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, Callback))
+				if (setterCallback.Invoke(wasInvoked, ref _setterCallbacks.CurrentIndex, newValue,
+					    static (count, @delegate, state) => @delegate(count, state)))
 				{
 					wasInvoked = true;
 				}
@@ -374,12 +366,6 @@ public class PropertySetup<T> : PropertySetup,
 		}
 
 		_value = newValue;
-
-		[DebuggerNonUserCode]
-		void Callback(int invocationCount, Action<int, T> @delegate)
-		{
-			@delegate(invocationCount, newValue);
-		}
 	}
 
 	/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />

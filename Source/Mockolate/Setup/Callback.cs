@@ -111,124 +111,7 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	/// <summary>
 	///     Invokes the wrapped delegate when all gating predicates (<c>.When</c>/<c>.For</c>/<c>.Only</c>) are
-	///     satisfied, feeding the zero-based invocation count to <paramref name="callback" />.
-	/// </summary>
-	/// <param name="wasInvoked">Whether an earlier callback in the same sequence has already run for this interaction (serial-mode gating).</param>
-	/// <param name="index">Shared sequence index; advanced by this call when the sequence moves on to the next entry.</param>
-	/// <param name="callback">Invoker that calls <typeparamref name="TDelegate" /> with the recorded invocation count.</param>
-	/// <returns><see langword="true" /> when the callback ran exclusively (serial mode) &#8212; signalling that no later serial callback should fire.</returns>
-	public bool Invoke(bool wasInvoked, ref int index, Action<int, TDelegate> callback)
-	{
-		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
-		{
-			_invocationCount++;
-			return false;
-		}
-
-		_invocationCount++;
-
-		if (RunInParallel)
-		{
-			if (!wasInvoked)
-			{
-				Interlocked.Increment(ref index);
-			}
-
-			_forIterationCount++;
-			_matchingCount++;
-			callback(_invocationCount - 1, @delegate);
-		}
-		else if (!wasInvoked)
-		{
-			if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
-			{
-				Interlocked.Increment(ref index);
-				_forIterationCount = 0;
-			}
-			else
-			{
-				_forIterationCount++;
-			}
-
-			_matchingCount++;
-			callback(_invocationCount - 1, @delegate);
-		}
-
-		return !RunInParallel;
-	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
-
-	/// <summary>
-	///     Invokes the wrapped delegate when all gating predicates are satisfied, always advancing the shared
-	///     sequence index.
-	/// </summary>
-	/// <param name="index">Shared sequence index; always advanced by this call.</param>
-	/// <param name="callback">Invoker that calls <typeparamref name="TDelegate" /> with the recorded invocation count.</param>
-	/// <returns><see langword="true" /> when the callback ran; <see langword="false" /> when gating skipped it.</returns>
-	public bool Invoke(ref int index, Action<int, TDelegate> callback)
-	{
-		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
-		{
-			_invocationCount++;
-			Interlocked.Increment(ref index);
-			return false;
-		}
-
-		if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
-		{
-			Interlocked.Increment(ref index);
-			_forIterationCount = 0;
-		}
-		else
-		{
-			_forIterationCount++;
-		}
-
-		_invocationCount++;
-		_matchingCount++;
-		callback(_invocationCount - 1, @delegate);
-		return true;
-	}
-
-	/// <summary>
-	///     Invokes the wrapped delegate when all gating predicates are satisfied and captures its return value.
-	/// </summary>
-	/// <typeparam name="TReturn">The wrapped delegate's return type.</typeparam>
-	/// <param name="index">Shared sequence index; always advanced by this call.</param>
-	/// <param name="callback">Invoker that calls <typeparamref name="TDelegate" /> with the recorded invocation count and produces the return value.</param>
-	/// <param name="returnValue">When this method returns <see langword="true" />, contains the value produced by <paramref name="callback" />; otherwise <see langword="default" />.</param>
-	/// <returns><see langword="true" /> when the callback ran; <see langword="false" /> when gating skipped it.</returns>
-	public bool Invoke<TReturn>(ref int index, Func<int, TDelegate, TReturn> callback,
-		[NotNullWhen(true)] out TReturn? returnValue)
-	{
-		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
-		{
-			_invocationCount++;
-			returnValue = default;
-			Interlocked.Increment(ref index);
-			return false;
-		}
-
-		if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
-		{
-			Interlocked.Increment(ref index);
-			_forIterationCount = 0;
-		}
-		else
-		{
-			_forIterationCount++;
-		}
-
-		_invocationCount++;
-		_matchingCount++;
-		returnValue = callback(_invocationCount - 1, @delegate)!;
-		return true;
-	}
-
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-	/// <summary>
-	///     State-passing variant of <see cref="Invoke(bool, ref int, Action{int, TDelegate})" /> &#8212; identical
-	///     semantics, but <paramref name="state" /> is forwarded verbatim so <paramref name="callback" /> does not need
+	///     satisfied, forwarding <paramref name="state" /> to <paramref name="callback" /> so it does not need
 	///     to capture it in a closure.
 	/// </summary>
 	/// <typeparam name="TState">The caller-supplied state type.</typeparam>
@@ -280,10 +163,45 @@ public class Callback<TDelegate>(TDelegate @delegate) : Callback where TDelegate
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	/// <summary>
-	///     State-passing variant of
-	///     <see cref="Invoke{TReturn}(ref int, Func{int, TDelegate, TReturn}, out TReturn)" /> &#8212; identical
-	///     semantics, but <paramref name="state" /> is forwarded verbatim so <paramref name="callback" /> does not need
-	///     to capture it in a closure.
+	///     Invokes the wrapped delegate when all gating predicates are satisfied, always advancing the shared
+	///     sequence index. <paramref name="state" /> is forwarded to <paramref name="callback" /> so it does not
+	///     need to capture it in a closure.
+	/// </summary>
+	/// <typeparam name="TState">The caller-supplied state type.</typeparam>
+	/// <param name="index">Shared sequence index; always advanced by this call.</param>
+	/// <param name="state">Arbitrary caller state forwarded to <paramref name="callback" />.</param>
+	/// <param name="callback">Invoker that calls <typeparamref name="TDelegate" /> with the recorded invocation count and <paramref name="state" />.</param>
+	/// <returns><see langword="true" /> when the callback ran; <see langword="false" /> when gating skipped it.</returns>
+	public bool Invoke<TState>(ref int index, TState state,
+		Action<int, TDelegate, TState> callback)
+	{
+		if (!IsActive(_matchingCount) || !CheckInvocations(_invocationCount) || !CheckMatching(_forIterationCount))
+		{
+			_invocationCount++;
+			Interlocked.Increment(ref index);
+			return false;
+		}
+
+		if (!HasForSpecified || !CheckMatching(_forIterationCount + 1))
+		{
+			Interlocked.Increment(ref index);
+			_forIterationCount = 0;
+		}
+		else
+		{
+			_forIterationCount++;
+		}
+
+		_invocationCount++;
+		_matchingCount++;
+		callback(_invocationCount - 1, @delegate, state);
+		return true;
+	}
+
+	/// <summary>
+	///     Invokes the wrapped delegate when all gating predicates are satisfied and captures its return value.
+	///     <paramref name="state" /> is forwarded to <paramref name="callback" /> so it does not need to capture
+	///     it in a closure.
 	/// </summary>
 	/// <typeparam name="TState">The caller-supplied state type.</typeparam>
 	/// <typeparam name="TReturn">The wrapped delegate's return type.</typeparam>

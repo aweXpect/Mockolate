@@ -863,9 +863,7 @@ namespace Mockolate.Setup
         where TDelegate : System.Delegate
     {
         public Callback(TDelegate @delegate) { }
-        public bool Invoke(ref int index, System.Action<int, TDelegate> callback) { }
-        public bool Invoke(bool wasInvoked, ref int index, System.Action<int, TDelegate> callback) { }
-        public bool Invoke<TReturn>(ref int index, System.Func<int, TDelegate, TReturn> callback, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TReturn? returnValue) { }
+        public bool Invoke<TState>(ref int index, TState state, System.Action<int, TDelegate, TState> callback) { }
         public bool Invoke<TState>(bool wasInvoked, ref int index, TState state, System.Action<int, TDelegate, TState> callback) { }
         public bool Invoke<TState, TReturn>(ref int index, TState state, System.Func<int, TDelegate, TState, TReturn> callback, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TReturn? returnValue) { }
     }
