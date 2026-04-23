@@ -9,5 +9,6 @@ internal sealed class FakeIndexerAccess : IndexerAccess
 
 	public override object? GetParameterValueAt(int index) => null;
 
-	protected override IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing) => Storage;
+	protected override IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing)
+		=> Storage;
 }

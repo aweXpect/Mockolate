@@ -96,6 +96,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 		public override string Name => name;
 
 		/// <inheritdoc cref="PropertySetup.IsValueInitialized" />
+		// Stryker disable once Boolean : Default.InitializeValue is a no-op, so flipping this to false only triggers a redundant re-init call with the same observable outcome.
 		internal override bool IsValueInitialized => true;
 
 		/// <inheritdoc cref="PropertySetup.InitializeValue(object?)" />
@@ -144,6 +145,7 @@ public abstract class PropertySetup : IInteractivePropertySetup
 		{
 			if (typeof(TResult) == typeof(T))
 			{
+				// Stryker disable once Block : dropping this body falls through to the pattern-match below which produces the same value (via boxing); the fast path exists purely to avoid that boxing.
 				return Unsafe.As<T, TResult>(ref _value);
 			}
 
@@ -436,6 +438,7 @@ public class PropertySetup<T> : PropertySetup,
 			}
 
 			_value = value;
+			// Stryker disable once Boolean : flipping this to false only leaves IsValueInitialized wrong for one redundant auto-init cycle that is no-op'd by the _isUserInitialized guard on the next line.
 			_isInitialized = true;
 			_isUserInitialized = true;
 		}

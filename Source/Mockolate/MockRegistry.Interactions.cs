@@ -110,6 +110,7 @@ public partial class MockRegistry
 	/// <returns>The matching setup, or <see langword="null" /> when none was found.</returns>
 	public T? GetIndexerSetup<T>(Func<T, bool> predicate) where T : IndexerSetup
 	{
+		// Stryker disable once String : TryGetScenario returns the root bucket when given a null or empty name, so replacing the IsNullOrEmpty guard with a null/empty comparison just re-searches the same global Indexers and produces the same result.
 		if (!string.IsNullOrEmpty(Scenario) &&
 		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
@@ -361,6 +362,7 @@ public partial class MockRegistry
 		PropertySetup matchingSetup;
 		if (baseValueAccessor is null)
 		{
+			// Stryker disable once Boolean : forceReinit only matters when a base class accessor exists; on this branch there is none, so flipping it to true triggers an extra InitializeWith call that is gated by _isUserInitialized || _isInitialized and becomes a no-op.
 			matchingSetup = ResolvePropertySetup(propertyName, defaultValueGenerator, null, false);
 
 			return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,

@@ -33,9 +33,10 @@ internal partial class MockSetups
 			{
 				PropertySetup[] old = _storage ?? [];
 				int existingIndex = -1;
+				string setupName = setup.Name;
 				for (int i = 0; i < old.Length; i++)
 				{
-					if (string.Equals(old[i].Name, setup.Name, StringComparison.Ordinal))
+					if (string.Equals(old[i].Name, setupName, StringComparison.Ordinal))
 					{
 						existingIndex = i;
 						break;

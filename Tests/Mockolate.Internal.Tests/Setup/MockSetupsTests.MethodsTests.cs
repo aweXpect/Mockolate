@@ -1,11 +1,11 @@
 using Mockolate.Internal.Tests.TestHelpers;
 using Mockolate.Setup;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Setup;
 
 public partial class MockSetupsTests
 {
-	public class MethodSetupsTests
+	public class MethodsTests
 	{
 		[Fact]
 		public async Task AddAndRetrieve_ShouldReturnCorrectCount()
@@ -32,6 +32,18 @@ public partial class MockSetupsTests
 			MethodSetup? result = setups.GetLatestOrDefault(_ => true);
 
 			await That(result).IsEqualTo(setup2);
+		}
+
+		[Fact]
+		public async Task GetLatestOrDefault_WithSingleMatchingSetup_ShouldReturnIt()
+		{
+			MockSetups.MethodSetups setups = new();
+			FakeMethodSetup setup = new();
+			setups.Add(setup);
+
+			MethodSetup? result = setups.GetLatestOrDefault(_ => true);
+
+			await That(result).IsSameAs(setup);
 		}
 
 		[Fact]

@@ -12,6 +12,9 @@ internal sealed class FakeIndexerSetup : IndexerSetup
 
 	internal bool ShouldMatch { get; }
 
+	public static bool InvokeTryCast<T>(object? value, out T result, MockBehavior behavior)
+		=> TryCast(value, out result, behavior);
+
 	protected override bool MatchesAccess(IndexerAccess access) => ShouldMatch;
 
 	public override bool? SkipBaseClass() => null;
@@ -22,7 +25,8 @@ internal sealed class FakeIndexerSetup : IndexerSetup
 	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior)
 		=> default!;
 
-	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior, Func<TResult> defaultValueGenerator)
+	public override TResult GetResult<TResult>(IndexerAccess access, MockBehavior behavior,
+		Func<TResult> defaultValueGenerator)
 		=> defaultValueGenerator();
 
 	public override void SetResult<TResult>(IndexerAccess access, MockBehavior behavior, TResult value)

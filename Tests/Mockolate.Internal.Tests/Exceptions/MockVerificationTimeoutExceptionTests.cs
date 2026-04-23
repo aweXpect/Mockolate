@@ -1,7 +1,7 @@
 using aweXpect.Chronology;
 using Mockolate.Exceptions;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Exceptions;
 
 public class MockVerificationTimeoutExceptionTests
 {

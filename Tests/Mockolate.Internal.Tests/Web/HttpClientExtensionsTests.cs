@@ -4,9 +4,9 @@ using System.Net.Http;
 using Mockolate.Parameters;
 using Mockolate.Web;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Web;
 
-public class WebTests
+public class HttpClientExtensionsTests
 {
 	[Fact]
 	public async Task WhenParameterImplementsIHttpRequestMessagePropertyParameter_ShouldUseThisMatch()

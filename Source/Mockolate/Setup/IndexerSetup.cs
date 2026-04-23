@@ -560,7 +560,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
@@ -589,7 +589,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
 			? result : behavior.DefaultValue.GenerateTyped<TResult>();
@@ -619,7 +619,7 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
@@ -677,9 +677,8 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		return currentValue;
 	}
 
-	private TValue ExecuteReturnCallbacks(T1 p1, TValue currentValue, out bool matched)
+	private TValue ExecuteReturnCallbacks(T1 p1, TValue currentValue)
 	{
-		matched = false;
 		if (_returnCallbacks is not null)
 		{
 			foreach (Callback<Func<int, T1, TValue, TValue>> _ in _returnCallbacks)
@@ -690,7 +689,6 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 					    static (count, @delegate, state) => @delegate(count, state.p1, state.currentValue),
 					    out TValue? newValue))
 				{
-					matched = true;
 					return newValue!;
 				}
 			}
@@ -1162,7 +1160,7 @@ public class IndexerSetup<TValue, T1, T2>(
 
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
@@ -1191,7 +1189,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
 			? result : behavior.DefaultValue.GenerateTyped<TResult>();
@@ -1221,7 +1219,7 @@ public class IndexerSetup<TValue, T1, T2>(
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
@@ -1279,9 +1277,8 @@ public class IndexerSetup<TValue, T1, T2>(
 		return currentValue;
 	}
 
-	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, TValue currentValue, out bool matched)
+	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, TValue currentValue)
 	{
-		matched = false;
 		if (_returnCallbacks is not null)
 		{
 			foreach (Callback<Func<int, T1, T2, TValue, TValue>> _ in _returnCallbacks)
@@ -1292,7 +1289,6 @@ public class IndexerSetup<TValue, T1, T2>(
 					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.currentValue),
 					    out TValue? newValue))
 				{
-					matched = true;
 					return newValue!;
 				}
 			}
@@ -1781,7 +1777,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
@@ -1810,7 +1806,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
 			? result : behavior.DefaultValue.GenerateTyped<TResult>();
@@ -1840,7 +1836,7 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
@@ -1898,9 +1894,8 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		return currentValue;
 	}
 
-	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, T3 p3, TValue currentValue, out bool matched)
+	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, T3 p3, TValue currentValue)
 	{
-		matched = false;
 		if (_returnCallbacks is not null)
 		{
 			foreach (Callback<Func<int, T1, T2, T3, TValue, TValue>> _ in _returnCallbacks)
@@ -1911,7 +1906,6 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.currentValue),
 					    out TValue? newValue))
 				{
-					matched = true;
 					return newValue!;
 				}
 			}
@@ -2409,7 +2403,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 
 		TValue currentValue = TryCast(baseValue, out TValue casted, behavior) ? casted : default!;
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : baseValue;
 	}
@@ -2438,7 +2432,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
 			? result : behavior.DefaultValue.GenerateTyped<TResult>();
@@ -2468,7 +2462,7 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
-		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue, out _);
+		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior) ? result : defaultValueGenerator();
 	}
@@ -2526,9 +2520,8 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		return currentValue;
 	}
 
-	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue, out bool matched)
+	private TValue ExecuteReturnCallbacks(T1 p1, T2 p2, T3 p3, T4 p4, TValue currentValue)
 	{
-		matched = false;
 		if (_returnCallbacks is not null)
 		{
 			foreach (Callback<Func<int, T1, T2, T3, T4, TValue, TValue>> _ in _returnCallbacks)
@@ -2539,7 +2532,6 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 					    static (count, @delegate, state) => @delegate(count, state.p1, state.p2, state.p3, state.p4, state.currentValue),
 					    out TValue? newValue))
 				{
-					matched = true;
 					return newValue!;
 				}
 			}

@@ -1,12 +1,29 @@
 using Mockolate.Internal.Tests.TestHelpers;
 using Mockolate.Setup;
 
-namespace Mockolate.Internal.Tests;
+namespace Mockolate.Internal.Tests.Setup;
 
 public partial class MockSetupsTests
 {
-	public class PropertySetupsTests
+	public class PropertiesTests
 	{
+		[Fact]
+		public async Task Add_ReplacingDefaultWithUserSetup_ShouldIncrementCountByOne()
+		{
+			MockSetups.PropertySetups setups = new();
+			PropertySetup defaultSetup = new PropertySetup.Default<int>("p", 0);
+			FakePropertySetup userSetup = new("p");
+
+			setups.Add(defaultSetup);
+			await That(setups.Count).IsEqualTo(0);
+
+			setups.Add(userSetup);
+
+			await That(setups.Count).IsEqualTo(1);
+			setups.TryGetValue("p", out PropertySetup? found);
+			await That(found).IsSameAs(userSetup);
+		}
+
 		[Fact]
 		public async Task AddDuplicate_ShouldReplaceAndAdjustCount()
 		{

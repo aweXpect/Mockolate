@@ -115,6 +115,7 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 	{
 		lock (_verifiedLock)
 		{
+			// Stryker disable once Collection : seeding _verified with { default } adds a null entry that HashSet.Contains never matches against a real interaction, leaving GetUnverifiedInteractions behavior identical.
 			_verified ??= [];
 			foreach (IInteraction interaction in interactions)
 			{
@@ -130,6 +131,7 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 			_interactions.Clear();
 		}
 
+		// Stryker disable once Block : keeping the stale _verified set after Clear never causes an unverified interaction to appear verified because Clear also empties _interactions and any later-added interaction is a fresh reference not present in the stale set.
 		lock (_verifiedLock)
 		{
 			_verified = null;

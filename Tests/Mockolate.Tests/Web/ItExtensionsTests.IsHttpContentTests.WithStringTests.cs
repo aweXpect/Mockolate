@@ -5,7 +5,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using Mockolate.Exceptions;
 using Mockolate.Parameters;
+using Mockolate.Verify;
 using Mockolate.Web;
 
 namespace Mockolate.Tests.Web;
@@ -75,6 +77,25 @@ public sealed partial class ItExtensionsTests
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Fact]
+			public async Task WithMultipleWithString_FailingVerification_ShouldJoinPredicatesWithAnd()
+			{
+				HttpClient httpClient = HttpClient.CreateMock();
+
+				void Act()
+				{
+					httpClient.Mock.Verify.PostAsync(
+							It.IsAny<string?>(),
+							It.IsHttpContent()
+								.WithString(s => s.StartsWith("abc"))
+								.WithString(s => s.EndsWith("xyz")))
+						.AtLeastOnce();
+				}
+
+				await That(Act).Throws<MockVerificationException>()
+					.WithMessage("*s => s.StartsWith(\"abc\") and s => s.EndsWith(\"xyz\")*").AsWildcard();
 			}
 
 			[Theory]
