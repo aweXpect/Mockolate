@@ -144,13 +144,18 @@ internal static partial class Sources
 		bool hasRefParams = delegateMethod.Parameters.Any(p => p.RefKind is RefKind.Ref);
 		string wpc = Helpers.GetUniqueLocalVariableName("wpc", delegateMethod.Parameters);
 
+		// sb2 feeds the closure-free GetMethodSetup<T, T1, ...>(memberId, arg1, ...) call when
+		// the arity has a handwritten setup class; sb2b feeds the legacy lambda-predicate form.
+		bool useMemberIdDispatch = delegateMethod.Parameters.Count <= MaxExplicitParameters;
 		StringBuilder sb2 = new();
+		StringBuilder sb2b = new();
 		int i = 0;
 		foreach (MethodParameter p in delegateMethod.Parameters)
 		{
 			if (i++ > 0)
 			{
 				sb2.Append(", ");
+				sb2b.Append(", ");
 			}
 
 			if (p.RefKind == RefKind.Ref)
@@ -158,7 +163,8 @@ internal static partial class Sources
 				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", delegateMethod.Parameters);
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
+				sb2b.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
 			}
 			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
 			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
@@ -167,24 +173,49 @@ internal static partial class Sources
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.ToNameOrWrapper()).Append(';')
 					.AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
+				sb2b.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
 			}
 			else
 			{
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(
-					p.RefKind switch
-					{
-						RefKind.Out => "default",
-						_ => p.ToNameOrWrapper(),
-					});
+				string valueExpr = p.RefKind switch
+				{
+					RefKind.Out => "default",
+					_ => p.ToNameOrWrapper(),
+				};
+				sb2.Append(valueExpr);
+				sb2b.Append("\"").Append(p.Name).Append("\", ").Append(valueExpr);
 			}
 		}
 
-		sb.Append("\t\t\tvar ").Append(methodSetup)
-			.Append(" = this.").Append(mockRegistryName).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
-			.Append(delegateMethod.GetUniqueNameString()).Append(", m => m.Matches(");
-		sb.Append(sb2);
-		sb.AppendLine("));");
+		if (useMemberIdDispatch)
+		{
+			int memberId = GetMemberId(@class, delegateMethod);
+			sb.Append("\t\t\tvar ").Append(methodSetup)
+				.Append(" = this.").Append(mockRegistryName).Append(".GetMethodSetup<").Append(methodSetupType);
+			if (delegateMethod.Parameters.Count > 0)
+			{
+				foreach (MethodParameter p in delegateMethod.Parameters)
+				{
+					sb.Append(", ").Append(p.ToTypeOrWrapper());
+				}
+			}
+
+			sb.Append(">(").Append(memberId).Append(", ").Append(delegateMethod.GetUniqueNameString());
+			if (delegateMethod.Parameters.Count > 0)
+			{
+				sb.Append(", ").Append(sb2);
+			}
+
+			sb.AppendLine(");");
+		}
+		else
+		{
+			sb.Append("\t\t\tvar ").Append(methodSetup)
+				.Append(" = this.").Append(mockRegistryName).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
+				.Append(delegateMethod.GetUniqueNameString()).Append(", m => m.Matches(")
+				.Append(sb2b).AppendLine("));");
+		}
 
 		if (hasOutParams)
 		{
@@ -279,17 +310,17 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock\";").AppendLine();
 		sb.AppendLine();
 
-		AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup");
+		AppendMethodSetupImplementation(sb, @class, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", true, "Setup");
+			AppendMethodSetupImplementation(sb, @class, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", true, "Setup");
 		}
 
 		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
 		{
 			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
 			{
-				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", valueFlags);
+				AppendMethodSetupImplementation(sb, @class, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", valueFlags);
 			}
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
@@ -297,7 +328,7 @@ internal static partial class Sources
 			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
-				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", allValueFlags);
+				AppendMethodSetupImplementation(sb, @class, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", allValueFlags);
 			}
 		}
 

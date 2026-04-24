@@ -12,6 +12,28 @@ internal static partial class Sources
 {
 	private const int MaxExplicitParameters = 4;
 
+	/// <summary>
+	///     Dense ordinal of <paramref name="method" /> within <paramref name="class" />'s methods. Used
+	///     as the generator-assigned member id for the closure-free O(1) setup dispatch.
+	///     Stable across emission passes because <see cref="Class.AllMethods" /> is deterministic.
+	///     Returns -1 for a method the class does not expose (ref-struct/legacy fallback path).
+	/// </summary>
+	private static int GetMemberId(Class @class, Method method)
+	{
+		int index = 0;
+		foreach (Method m in @class.AllMethods())
+		{
+			if (Method.EqualityComparer.Equals(m, method))
+			{
+				return index;
+			}
+
+			index++;
+		}
+
+		return -1;
+	}
+
 	public static string MockClass(string name, Class @class, bool hasOverloadResolutionPriority = false)
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
@@ -2290,13 +2312,26 @@ internal static partial class Sources
 		bool supportsWrapping = !explicitInterfaceImplementation && method is { IsStatic: false, IsProtected: false, };
 		bool isAbstractOrInterface = isClassInterface || method.IsAbstract;
 
+		// Build two argument lists in parallel:
+		//   sb2  — value-only, for the closure-free GetMethodSetup<T, T1, ...>(memberId, arg1, ...)
+		//           overload used when the arity has a handwritten setup class (<= MaxExplicitParameters).
+		//   sb2b — "name", value pairs, for the legacy GetMethodSetup<T>(name, m => m.Matches(...))
+		//           lambda predicate used for arities whose setup class is source-generated and does
+		//           not yet implement IMethodMatchByValue<...>.
+		// Generic methods fall back to the legacy path: memberId identifies a method definition, but
+		// Mockolate distinguishes instantiations (`Foo<int>` vs `Foo<long>`) via the runtime-expanded
+		// name string. Losing that distinction breaks generic-argument matching.
+		bool isGenericMethod = method.GenericParameters is not null && method.GenericParameters.Value.Count > 0;
+		bool useMemberIdDispatch = !isGenericMethod && method.Parameters.Count <= MaxExplicitParameters;
 		StringBuilder sb2 = new();
+		StringBuilder sb2b = new();
 		int i = 0;
 		foreach (MethodParameter p in method.Parameters)
 		{
 			if (i++ > 0)
 			{
 				sb2.Append(", ");
+				sb2b.Append(", ");
 			}
 
 			if (p.RefKind == RefKind.Ref || p.RefKind == RefKind.In || p.RefKind == RefKind.RefReadOnlyParameter)
@@ -2304,7 +2339,8 @@ internal static partial class Sources
 				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", method.Parameters);
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
+				sb2b.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
 			}
 			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
 			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
@@ -2313,24 +2349,49 @@ internal static partial class Sources
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.ToNameOrWrapper()).Append(';')
 					.AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
+				sb2b.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
 			}
 			else
 			{
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(
-					p.RefKind switch
-					{
-						RefKind.Out => "default",
-						_ => p.ToNameOrWrapper(),
-					});
+				string valueExpr = p.RefKind switch
+				{
+					RefKind.Out => "default",
+					_ => p.ToNameOrWrapper(),
+				};
+				sb2.Append(valueExpr);
+				sb2b.Append("\"").Append(p.Name).Append("\", ").Append(valueExpr);
 			}
 		}
 
-		sb.Append("\t\t\tvar ").Append(methodSetup)
-			.Append(" = ").Append(mockRegistry).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
-			.Append(method.GetUniqueNameString()).Append(", m => m.Matches(");
-		sb.Append(sb2);
-		sb.AppendLine("));");
+		if (useMemberIdDispatch)
+		{
+			int memberId = GetMemberId(@class, method);
+			sb.Append("\t\t\tvar ").Append(methodSetup)
+				.Append(" = ").Append(mockRegistry).Append(".GetMethodSetup<").Append(methodSetupType);
+			if (method.Parameters.Count > 0)
+			{
+				foreach (MethodParameter p in method.Parameters)
+				{
+					sb.Append(", ").Append(p.ToTypeOrWrapper());
+				}
+			}
+
+			sb.Append(">(").Append(memberId).Append(", ").Append(method.GetUniqueNameString());
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append(", ").Append(sb2);
+			}
+
+			sb.AppendLine(");");
+		}
+		else
+		{
+			sb.Append("\t\t\tvar ").Append(methodSetup)
+				.Append(" = ").Append(mockRegistry).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
+				.Append(method.GetUniqueNameString()).Append(", m => m.Matches(")
+				.Append(sb2b).AppendLine("));");
+		}
 		sb.Append("\t\t\tbool ").Append(hasWrappedResult).Append(" = false;").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
@@ -3352,7 +3413,7 @@ internal static partial class Sources
 				Method? method = methodGroup.Single();
 				if (method.Parameters.Count > 0)
 				{
-					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, true,
+					AppendMethodSetupImplementation(sb, @class, method, mockRegistryName, setupName, true,
 						scopeExpression: scopeExpression);
 				}
 			}
@@ -3361,18 +3422,18 @@ internal static partial class Sources
 			{
 				if (method.Parameters.Count == 0)
 				{
-					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
+					AppendMethodSetupImplementation(sb, @class, method, mockRegistryName, setupName, false,
 						scopeExpression: scopeExpression);
 				}
 				else
 				{
-					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
+					AppendMethodSetupImplementation(sb, @class, method, mockRegistryName, setupName, false,
 						scopeExpression: scopeExpression);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
-							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
+							AppendMethodSetupImplementation(sb, @class, method, mockRegistryName, setupName, false,
 								valueFlags: valueFlags, scopeExpression: scopeExpression);
 						}
 					}
@@ -3382,7 +3443,7 @@ internal static partial class Sources
 							.ToArray();
 						if (allValueFlags.Any(f => f))
 						{
-							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
+							AppendMethodSetupImplementation(sb, @class, method, mockRegistryName, setupName, false,
 								valueFlags: allValueFlags, scopeExpression: scopeExpression);
 						}
 					}
@@ -3393,7 +3454,8 @@ internal static partial class Sources
 		#endregion
 	}
 #pragma warning disable S107 // Methods should not have too many parameters
-	private static void AppendMethodSetupImplementation(StringBuilder sb, Method method, string mockRegistryName,
+	private static void AppendMethodSetupImplementation(StringBuilder sb, Class @class, Method method,
+		string mockRegistryName,
 		string setupName,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
 		string? scopeExpression = null)
@@ -3551,18 +3613,51 @@ internal static partial class Sources
 			}
 		}
 
+		// The new memberId-aware ctors exist on hand-written setup classes for arity 0..4. Beyond that
+		// the setup class is source-generated (Sources.MethodSetups.cs) and still ships only the
+		// legacy `(mockRegistry, name, ...)` ctor. Generic methods also use the legacy path so that
+		// `Foo<int>` vs `Foo<long>` can be distinguished by the runtime-expanded name string.
+		bool isGenericSetupMethod = method.GenericParameters is not null && method.GenericParameters.Value.Count > 0;
+		bool useMemberIdCtor = !isGenericSetupMethod && method.Parameters.Count <= MaxExplicitParameters;
 		if (useParameters)
 		{
-			sb.Append(".WithParameters(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString())
-				.Append(", parameters);")
-				.AppendLine();
+			if (useMemberIdCtor)
+			{
+				int setupMemberId = GetMemberId(@class, method);
+				sb.Append(".WithParameters(").Append(mockRegistryName).Append(", ").Append(setupMemberId).Append(", ")
+					.Append(method.GetUniqueNameString())
+					.Append(", parameters");
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					sb.Append(", \"").Append(parameter.Name).Append("\"");
+				}
+
+				sb.Append(");").AppendLine();
+			}
+			else
+			{
+				sb.Append(".WithParameters(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString())
+					.Append(", parameters);")
+					.AppendLine();
+			}
+
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix).Append("methodSetup);").AppendLine();
 			sb.Append("\t\t\treturn methodSetup;").AppendLine();
 		}
 		else
 		{
-			sb.Append(".WithParameterCollection(").Append(mockRegistryName).Append(", ")
-				.Append(method.GetUniqueNameString());
+			if (useMemberIdCtor)
+			{
+				int setupMemberId = GetMemberId(@class, method);
+				sb.Append(".WithParameterCollection(").Append(mockRegistryName).Append(", ").Append(setupMemberId)
+					.Append(", ").Append(method.GetUniqueNameString());
+			}
+			else
+			{
+				sb.Append(".WithParameterCollection(").Append(mockRegistryName).Append(", ")
+					.Append(method.GetUniqueNameString());
+			}
+
 			int j = 0;
 			foreach (MethodParameter parameter in method.Parameters)
 			{

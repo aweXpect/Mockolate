@@ -13,7 +13,8 @@ namespace Mockolate.Setup;
 [DebuggerNonUserCode]
 #endif
 public abstract class ReturnMethodSetup<TReturn>
-	: MethodSetup, IReturnMethodSetupCallbackBuilder<TReturn>, IReturnMethodSetupReturnBuilder<TReturn>
+	: MethodSetup, IReturnMethodSetupCallbackBuilder<TReturn>, IReturnMethodSetupReturnBuilder<TReturn>,
+	  IMethodMatchByValue
 {
 	private readonly MockRegistry _mockRegistry;
 	private Callbacks<Action<int>>? _callbacks = [];
@@ -22,6 +23,12 @@ public abstract class ReturnMethodSetup<TReturn>
 
 	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
 	protected ReturnMethodSetup(MockRegistry mockRegistry, string name) : base(name)
+	{
+		_mockRegistry = mockRegistry;
+	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
+	protected ReturnMethodSetup(MockRegistry mockRegistry, int memberId, string name) : base(memberId, name)
 	{
 		_mockRegistry = mockRegistry;
 	}
@@ -263,6 +270,12 @@ public abstract class ReturnMethodSetup<TReturn>
 		{
 		}
 
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn}" />
+		public WithParameterCollection(MockRegistry mockRegistry, int memberId, string name)
+			: base(mockRegistry, memberId, name)
+		{
+		}
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn}.Matches()" />
 		public override bool Matches()
 			=> true;
@@ -281,7 +294,8 @@ public abstract class ReturnMethodSetup<TReturn>
 #endif
 public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	IReturnMethodSetupWithCallback<TReturn, T1>,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1>, IReturnMethodSetupReturnBuilder<TReturn, T1>,
+	IMethodMatchByValue<T1>
 {
 	private readonly MockRegistry _mockRegistry;
 	private Callbacks<Action<int, T1>>? _callbacks = [];
@@ -293,6 +307,18 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	{
 		_mockRegistry = mockRegistry;
 	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
+	protected ReturnMethodSetup(MockRegistry mockRegistry, int memberId, string name) : base(memberId, name)
+	{
+		_mockRegistry = mockRegistry;
+	}
+
+	/// <summary>
+	///     Closure-free match entry point used by the member-id indexed dispatch.
+	///     Equivalent to <see cref="Matches(string, T1)" /> but does not require the parameter name.
+	/// </summary>
+	public abstract bool Matches(T1 p1);
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1}.SkippingBaseClass(bool)" />
 	IReturnMethodSetup<TReturn, T1> IReturnMethodSetup<TReturn, T1>.SkippingBaseClass(bool skipBaseClass)
@@ -576,11 +602,22 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1>
 	{
+		private readonly string? _parameterName1;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
 		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
+		public WithParameters(MockRegistry mockRegistry, int memberId, string name, IParameters parameters,
+			string parameterName1)
+			: base(mockRegistry, memberId, name)
+		{
+			Parameters = parameters;
+			_parameterName1 = parameterName1;
 		}
 
 		/// <summary>
@@ -594,6 +631,15 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			{
 				IParametersMatch m => m.Matches([p1Value,]),
 				INamedParametersMatch m => m.Matches([(p1Name, p1Value),]),
+				_ => true,
+			};
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(T1)" />
+		public override bool Matches(T1 p1)
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1,]),
+				INamedParametersMatch m => m.Matches([(_parameterName1 ?? string.Empty, p1),]),
 				_ => true,
 			};
 
@@ -617,6 +663,14 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			Parameter1 = parameter1;
 		}
 
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
+		public WithParameterCollection(MockRegistry mockRegistry, int memberId, string name,
+			IParameterMatch<T1> parameter1)
+			: base(mockRegistry, memberId, name)
+		{
+			Parameter1 = parameter1;
+		}
+
 		/// <summary>
 		///     The single parameter of the method.
 		/// </summary>
@@ -632,6 +686,10 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(string, T1)" />
 		public override bool Matches(string p1Name, T1 p1Value)
 			=> _matchAnyParameters || Parameter1.Matches(p1Value);
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(T1)" />
+		public override bool Matches(T1 p1)
+			=> _matchAnyParameters || Parameter1.Matches(p1);
 
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.TriggerCallbacks(T1)" />
 		public override void TriggerCallbacks(T1 parameter1)
@@ -655,7 +713,8 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 #endif
 public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	IReturnMethodSetupWithCallback<TReturn, T1, T2>,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2>,
+	IMethodMatchByValue<T1, T2>
 {
 	private readonly MockRegistry _mockRegistry;
 	private Callbacks<Action<int, T1, T2>>? _callbacks = [];
@@ -667,6 +726,18 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	{
 		_mockRegistry = mockRegistry;
 	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
+	protected ReturnMethodSetup(MockRegistry mockRegistry, int memberId, string name) : base(memberId, name)
+	{
+		_mockRegistry = mockRegistry;
+	}
+
+	/// <summary>
+	///     Closure-free match entry point used by the member-id indexed dispatch.
+	///     Equivalent to <see cref="Matches(string, T1, string, T2)" /> but does not require the parameter names.
+	/// </summary>
+	public abstract bool Matches(T1 p1, T2 p2);
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2}.SkippingBaseClass(bool)" />
 	IReturnMethodSetup<TReturn, T1, T2> IReturnMethodSetup<TReturn, T1, T2>.SkippingBaseClass(bool skipBaseClass)
@@ -956,11 +1027,24 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1, T2>
 	{
+		private readonly string? _parameterName1;
+		private readonly string? _parameterName2;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
 		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
+		public WithParameters(MockRegistry mockRegistry, int memberId, string name, IParameters parameters,
+			string parameterName1, string parameterName2)
+			: base(mockRegistry, memberId, name)
+		{
+			Parameters = parameters;
+			_parameterName1 = parameterName1;
+			_parameterName2 = parameterName2;
 		}
 
 		/// <summary>
@@ -974,6 +1058,15 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			{
 				IParametersMatch m => m.Matches([p1Value, p2Value,]),
 				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value),]),
+				_ => true,
+			};
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(T1, T2)" />
+		public override bool Matches(T1 p1, T2 p2)
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1, p2,]),
+				INamedParametersMatch m => m.Matches([(_parameterName1 ?? string.Empty, p1), (_parameterName2 ?? string.Empty, p2),]),
 				_ => true,
 			};
 
@@ -994,6 +1087,15 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		public WithParameterCollection(MockRegistry mockRegistry, string name, IParameterMatch<T1> parameter1,
 			IParameterMatch<T2> parameter2)
 			: base(mockRegistry, name)
+		{
+			Parameter1 = parameter1;
+			Parameter2 = parameter2;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
+		public WithParameterCollection(MockRegistry mockRegistry, int memberId, string name,
+			IParameterMatch<T1> parameter1, IParameterMatch<T2> parameter2)
+			: base(mockRegistry, memberId, name)
 		{
 			Parameter1 = parameter1;
 			Parameter2 = parameter2;
@@ -1022,6 +1124,12 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			   (Parameter1.Matches(p1Value) &&
 			    Parameter2.Matches(p2Value));
 
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(T1, T2)" />
+		public override bool Matches(T1 p1, T2 p2)
+			=> _matchAnyParameters ||
+			   (Parameter1.Matches(p1) &&
+			    Parameter2.Matches(p2));
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.TriggerCallbacks(T1, T2)" />
 		public override void TriggerCallbacks(T1 parameter1, T2 parameter2)
 		{
@@ -1045,7 +1153,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 #endif
 public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>,
-	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>
+	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>,
+	IMethodMatchByValue<T1, T2, T3>
 {
 	private readonly MockRegistry _mockRegistry;
 	private Callbacks<Action<int, T1, T2, T3>>? _callbacks = [];
@@ -1057,6 +1166,18 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	{
 		_mockRegistry = mockRegistry;
 	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
+	protected ReturnMethodSetup(MockRegistry mockRegistry, int memberId, string name) : base(memberId, name)
+	{
+		_mockRegistry = mockRegistry;
+	}
+
+	/// <summary>
+	///     Closure-free match entry point used by the member-id indexed dispatch.
+	///     Equivalent to <see cref="Matches(string, T1, string, T2, string, T3)" /> but does not require the parameter names.
+	/// </summary>
+	public abstract bool Matches(T1 p1, T2 p2, T3 p3);
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3}.SkippingBaseClass(bool)" />
 	IReturnMethodSetup<TReturn, T1, T2, T3> IReturnMethodSetup<TReturn, T1, T2, T3>.SkippingBaseClass(
@@ -1352,11 +1473,26 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1, T2, T3>
 	{
+		private readonly string? _parameterName1;
+		private readonly string? _parameterName2;
+		private readonly string? _parameterName3;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
 		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
+		public WithParameters(MockRegistry mockRegistry, int memberId, string name, IParameters parameters,
+			string parameterName1, string parameterName2, string parameterName3)
+			: base(mockRegistry, memberId, name)
+		{
+			Parameters = parameters;
+			_parameterName1 = parameterName1;
+			_parameterName2 = parameterName2;
+			_parameterName3 = parameterName3;
 		}
 
 		/// <summary>
@@ -1370,6 +1506,15 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			{
 				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value,]),
 				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value),]),
+				_ => true,
+			};
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.Matches(T1, T2, T3)" />
+		public override bool Matches(T1 p1, T2 p2, T3 p3)
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1, p2, p3,]),
+				INamedParametersMatch m => m.Matches([(_parameterName1 ?? string.Empty, p1), (_parameterName2 ?? string.Empty, p2), (_parameterName3 ?? string.Empty, p3),]),
 				_ => true,
 			};
 
@@ -1394,6 +1539,21 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			IParameterMatch<T2> parameter2,
 			IParameterMatch<T3> parameter3)
 			: base(mockRegistry, name)
+		{
+			Parameter1 = parameter1;
+			Parameter2 = parameter2;
+			Parameter3 = parameter3;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
+		public WithParameterCollection(
+			MockRegistry mockRegistry,
+			int memberId,
+			string name,
+			IParameterMatch<T1> parameter1,
+			IParameterMatch<T2> parameter2,
+			IParameterMatch<T3> parameter3)
+			: base(mockRegistry, memberId, name)
 		{
 			Parameter1 = parameter1;
 			Parameter2 = parameter2;
@@ -1429,6 +1589,13 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			    Parameter2.Matches(p2Value) &&
 			    Parameter3.Matches(p3Value));
 
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.Matches(T1, T2, T3)" />
+		public override bool Matches(T1 p1, T2 p2, T3 p3)
+			=> _matchAnyParameters ||
+			   (Parameter1.Matches(p1) &&
+			    Parameter2.Matches(p2) &&
+			    Parameter3.Matches(p3));
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.TriggerCallbacks(T1, T2, T3)" />
 		public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3)
 		{
@@ -1455,7 +1622,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>,
 	IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>,
-	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>
+	IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>,
+	IMethodMatchByValue<T1, T2, T3, T4>
 {
 	private readonly MockRegistry _mockRegistry;
 	private Callbacks<Action<int, T1, T2, T3, T4>>? _callbacks = [];
@@ -1467,6 +1635,18 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	{
 		_mockRegistry = mockRegistry;
 	}
+
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
+	protected ReturnMethodSetup(MockRegistry mockRegistry, int memberId, string name) : base(memberId, name)
+	{
+		_mockRegistry = mockRegistry;
+	}
+
+	/// <summary>
+	///     Closure-free match entry point used by the member-id indexed dispatch.
+	///     Equivalent to <see cref="Matches(string, T1, string, T2, string, T3, string, T4)" /> but does not require the parameter names.
+	/// </summary>
+	public abstract bool Matches(T1 p1, T2 p2, T3 p3, T4 p4);
 
 	/// <inheritdoc cref="IReturnMethodSetup{TReturn, T1, T2, T3, T4}.SkippingBaseClass(bool)" />
 	IReturnMethodSetup<TReturn, T1, T2, T3, T4> IReturnMethodSetup<TReturn, T1, T2, T3, T4>.SkippingBaseClass(
@@ -1769,11 +1949,28 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1, T2, T3, T4>
 	{
+		private readonly string? _parameterName1;
+		private readonly string? _parameterName2;
+		private readonly string? _parameterName3;
+		private readonly string? _parameterName4;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
 		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
+		public WithParameters(MockRegistry mockRegistry, int memberId, string name, IParameters parameters,
+			string parameterName1, string parameterName2, string parameterName3, string parameterName4)
+			: base(mockRegistry, memberId, name)
+		{
+			Parameters = parameters;
+			_parameterName1 = parameterName1;
+			_parameterName2 = parameterName2;
+			_parameterName3 = parameterName3;
+			_parameterName4 = parameterName4;
 		}
 
 		/// <summary>
@@ -1788,6 +1985,15 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			{
 				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value, p4Value,]),
 				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value), (p4Name, p4Value),]),
+				_ => true,
+			};
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}.Matches(T1, T2, T3, T4)" />
+		public override bool Matches(T1 p1, T2 p2, T3 p3, T4 p4)
+			=> Parameters switch
+			{
+				IParametersMatch m => m.Matches([p1, p2, p3, p4,]),
+				INamedParametersMatch m => m.Matches([(_parameterName1 ?? string.Empty, p1), (_parameterName2 ?? string.Empty, p2), (_parameterName3 ?? string.Empty, p3), (_parameterName4 ?? string.Empty, p4),]),
 				_ => true,
 			};
 
@@ -1813,6 +2019,23 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			IParameterMatch<T3> parameter3,
 			IParameterMatch<T4> parameter4)
 			: base(mockRegistry, name)
+		{
+			Parameter1 = parameter1;
+			Parameter2 = parameter2;
+			Parameter3 = parameter3;
+			Parameter4 = parameter4;
+		}
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
+		public WithParameterCollection(
+			MockRegistry mockRegistry,
+			int memberId,
+			string name,
+			IParameterMatch<T1> parameter1,
+			IParameterMatch<T2> parameter2,
+			IParameterMatch<T3> parameter3,
+			IParameterMatch<T4> parameter4)
+			: base(mockRegistry, memberId, name)
 		{
 			Parameter1 = parameter1;
 			Parameter2 = parameter2;
@@ -1856,6 +2079,14 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			    Parameter2.Matches(p2Value) &&
 			    Parameter3.Matches(p3Value) &&
 			    Parameter4.Matches(p4Value));
+
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}.Matches(T1, T2, T3, T4)" />
+		public override bool Matches(T1 p1, T2 p2, T3 p3, T4 p4)
+			=> _matchAnyParameters ||
+			   (Parameter1.Matches(p1) &&
+			    Parameter2.Matches(p2) &&
+			    Parameter3.Matches(p3) &&
+			    Parameter4.Matches(p4));
 
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}.TriggerCallbacks(T1, T2, T3, T4)" />
 		public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)

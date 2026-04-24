@@ -40,6 +40,104 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     O(1) closure-free lookup by generator-assigned member id for parameterless methods.
+	///     Scenario-scoped setups take precedence over the default scope.
+	/// </summary>
+	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
+	/// <param name="memberId">Dense integer id emitted by the Mockolate source generator.</param>
+	/// <param name="methodName">The qualified method name, used only for the legacy-setup fallback scan.</param>
+	/// <returns>The matching setup, or <see langword="null" /> when none was found.</returns>
+	public T? GetMethodSetup<T>(int memberId, string methodName) where T : MethodSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Methods.GetByMemberId<T>(memberId, methodName);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Methods.GetByMemberId<T>(memberId, methodName);
+	}
+
+	/// <summary>
+	///     O(1) closure-free lookup by member id for single-argument methods. Scenario-scoped setups
+	///     take precedence over the default scope.
+	/// </summary>
+	public T? GetMethodSetup<T, T1>(int memberId, string methodName, T1 arg1) where T : MethodSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Methods.GetByMemberId<T, T1>(memberId, methodName, arg1);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Methods.GetByMemberId<T, T1>(memberId, methodName, arg1);
+	}
+
+	/// <summary>
+	///     O(1) closure-free lookup by member id for two-argument methods.
+	/// </summary>
+	public T? GetMethodSetup<T, T1, T2>(int memberId, string methodName, T1 arg1, T2 arg2) where T : MethodSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Methods.GetByMemberId<T, T1, T2>(memberId, methodName, arg1, arg2);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Methods.GetByMemberId<T, T1, T2>(memberId, methodName, arg1, arg2);
+	}
+
+	/// <summary>
+	///     O(1) closure-free lookup by member id for three-argument methods.
+	/// </summary>
+	public T? GetMethodSetup<T, T1, T2, T3>(int memberId, string methodName, T1 arg1, T2 arg2, T3 arg3)
+		where T : MethodSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Methods.GetByMemberId<T, T1, T2, T3>(memberId, methodName, arg1, arg2, arg3);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Methods.GetByMemberId<T, T1, T2, T3>(memberId, methodName, arg1, arg2, arg3);
+	}
+
+	/// <summary>
+	///     O(1) closure-free lookup by member id for four-argument methods.
+	/// </summary>
+	public T? GetMethodSetup<T, T1, T2, T3, T4>(int memberId, string methodName, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		where T : MethodSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Methods.GetByMemberId<T, T1, T2, T3, T4>(memberId, methodName, arg1, arg2, arg3, arg4);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Methods.GetByMemberId<T, T1, T2, T3, T4>(memberId, methodName, arg1, arg2, arg3, arg4);
+	}
+
+	/// <summary>
 	///     Returns the latest registered method setup of type <typeparamref name="T" /> whose name equals
 	///     <paramref name="methodName" /> and that satisfies <paramref name="predicate" />, or <see langword="null" />
 	///     when no setup matches. Scenario-scoped setups take precedence over default-scope setups.
