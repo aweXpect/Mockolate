@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -73,7 +74,7 @@ public partial class MockRegistry
 	/// </summary>
 	/// <param name="registry">The source registry whose behavior, setups, constructor parameters, scenario state, and wrapped instance are reused.</param>
 	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
-	public MockRegistry(MockRegistry registry, MockInteractions interactions)
+	public MockRegistry(MockRegistry registry, IMockInteractions interactions)
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
@@ -81,6 +82,13 @@ public partial class MockRegistry
 		Setup = registry.Setup;
 		_scenarioState = registry._scenarioState;
 		Wraps = registry.Wraps;
+	}
+
+	/// <inheritdoc cref="MockRegistry(MockRegistry, IMockInteractions)" />
+	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
+	public MockRegistry(MockRegistry registry, MockInteractions interactions)
+		: this(registry, (IMockInteractions)interactions)
+	{
 	}
 
 	/// <summary>

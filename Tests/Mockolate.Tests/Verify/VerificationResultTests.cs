@@ -9,12 +9,59 @@ public sealed partial class VerificationResultTests
 	[Fact]
 	public async Task CustomVerificationResult_ShouldKeepExpectation()
 	{
-		VerificationResult<int> sut = new(1, new MockInteractions(), _ => false, "foo");
+		IMockInteractions interactions = new MockInteractions();
+		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
 
 		string result = ((IVerificationResult)sut).Expectation;
 
 		await That(result).IsEqualTo("foo");
 	}
+
+	[Fact]
+	public async Task CustomVerificationResult_WithFuncExpectation_ShouldKeepExpectation()
+	{
+		IMockInteractions interactions = new MockInteractions();
+		VerificationResult<int> sut = new(1, interactions, _ => false, () => "foo");
+
+		string result = ((IVerificationResult)sut).Expectation;
+
+		await That(result).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task CustomVerificationResult_WithIMockInteractions_ShouldExposeInteractions()
+	{
+		IMockInteractions interactions = new MockInteractions();
+		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
+
+		IMockInteractions exposed = ((IVerificationResult)sut).Interactions;
+
+		await That(exposed).IsSameAs(interactions);
+	}
+
+#pragma warning disable CS0618 // forwarding-shim coverage
+	[Fact]
+	public async Task CustomVerificationResult_WithMockInteractionsObsoleteOverload_ShouldForward()
+	{
+		MockInteractions interactions = new();
+		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
+
+		string result = ((IVerificationResult)sut).Expectation;
+
+		await That(result).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task CustomVerificationResult_WithMockInteractionsObsoleteFuncOverload_ShouldForward()
+	{
+		MockInteractions interactions = new();
+		VerificationResult<int> sut = new(1, interactions, _ => false, () => "foo");
+
+		string result = ((IVerificationResult)sut).Expectation;
+
+		await That(result).IsEqualTo("foo");
+	}
+#pragma warning restore CS0618
 
 	[Fact]
 	public async Task VerificationResult_Got_ShouldHaveExpectedValue()
@@ -87,8 +134,27 @@ public sealed partial class VerificationResultTests
 		VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result
 			= sut.Mock.Verify.TotalDispensed.Got();
 
+		await That(((IVerificationResult)result).Interactions.Count).IsEqualTo(5);
+	}
+
+#pragma warning disable CS0618 // obsolete IVerificationResult.MockInteractions forwarding-shim coverage
+	[Fact]
+	public async Task VerificationResult_MockInteractionsObsolete_HasAllInteractions()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+		sut.Dispense("Dark", 2);
+		_ = sut.TotalDispensed;
+		sut["Dark"] = 5;
+		sut.TotalDispensed = 10;
+		_ = sut["Milk"];
+
+		VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result
+			= sut.Mock.Verify.TotalDispensed.Got();
+
 		await That(((IVerificationResult)result).MockInteractions.Count).IsEqualTo(5);
 	}
+#pragma warning restore CS0618
 
 	[Fact]
 	public async Task VerificationResult_Set_ShouldHaveExpectedValue()

@@ -97,7 +97,7 @@ internal partial class MockSetups
 			return false;
 		}
 
-		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
+		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(IMockInteractions interactions)
 		{
 			PropertySetup[]? storage = Volatile.Read(ref _storage);
 			if (storage is null || storage.Length == 0)

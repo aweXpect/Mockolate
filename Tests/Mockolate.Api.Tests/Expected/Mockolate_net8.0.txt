@@ -186,12 +186,15 @@ namespace Mockolate
     public class MockRegistry
     {
         public MockRegistry(Mockolate.MockBehavior behavior, object?[]? constructorParameters = null) { }
+        public MockRegistry(Mockolate.MockRegistry registry, Mockolate.Interactions.IMockInteractions interactions) { }
+        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
+            "ture release.")]
         public MockRegistry(Mockolate.MockRegistry registry, Mockolate.Interactions.MockInteractions interactions) { }
         public MockRegistry(Mockolate.MockRegistry registry, object wraps) { }
         public MockRegistry(Mockolate.MockRegistry registry, object?[] constructorParameters) { }
         public Mockolate.MockBehavior Behavior { get; }
         public object?[]? ConstructorParameters { get; }
-        public Mockolate.Interactions.MockInteractions Interactions { get; }
+        public Mockolate.Interactions.IMockInteractions Interactions { get; }
         public string Scenario { get; }
         public object? Wraps { get; }
         public void AddEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
@@ -210,7 +213,7 @@ namespace Mockolate
         public System.Collections.Generic.IEnumerable<T> GetMethodSetups<T>(string methodName)
             where T : Mockolate.Setup.MethodSetup { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
-        public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
+        public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.IMockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSet<T, TValue>(T subject, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TValue>, bool> setPredicate, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
         public void InitializeStorage(int indexerCount) { }
@@ -809,6 +812,9 @@ namespace Mockolate.Monitor
 {
     public abstract class MockMonitor
     {
+        protected MockMonitor(Mockolate.Interactions.IMockInteractions mockInteractions) { }
+        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
+            "ture release.")]
         protected MockMonitor(Mockolate.Interactions.MockInteractions mockInteractions) { }
         protected Mockolate.Interactions.MockInteractions Interactions { get; }
         public System.IDisposable Run() { }
@@ -816,6 +822,9 @@ namespace Mockolate.Monitor
     }
     public sealed class MockMonitor<T> : Mockolate.Monitor.MockMonitor
     {
+        public MockMonitor(Mockolate.Interactions.IMockInteractions interactions, System.Func<Mockolate.Interactions.IMockInteractions, T> verify) { }
+        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
+            "ture release.")]
         public MockMonitor(Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.MockInteractions, T> verify) { }
         public T Verify { get; }
     }
@@ -2203,6 +2212,8 @@ namespace Mockolate.Verify
     public interface IVerificationResult
     {
         string Expectation { get; }
+        Mockolate.Interactions.IMockInteractions Interactions { get; }
+        [System.Obsolete("Use Interactions instead. This property will be removed in a future release.")]
         Mockolate.Interactions.MockInteractions MockInteractions { get; }
         bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate);
     }
@@ -2252,7 +2263,13 @@ namespace Mockolate.Verify
     }
     public class VerificationResult<TVerify> : Mockolate.Verify.IVerificationResult, Mockolate.Verify.IVerificationResult<TVerify>
     {
+        public VerificationResult(TVerify verify, Mockolate.Interactions.IMockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, System.Func<string> expectation) { }
+        public VerificationResult(TVerify verify, Mockolate.Interactions.IMockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, string expectation) { }
+        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
+            "ture release.")]
         public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, System.Func<string> expectation) { }
+        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
+            "ture release.")]
         public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, string expectation) { }
         public virtual Mockolate.Verify.VerificationResult<TVerify> WithCancellation(System.Threading.CancellationToken cancellationToken) { }
         public virtual Mockolate.Verify.VerificationResult<TVerify> Within(System.TimeSpan timeout) { }
