@@ -66,7 +66,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new("index", index);
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new(index);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -83,7 +83,7 @@ public sealed partial class MockTests
 					          			}
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new("index", index, value);
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new(index, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -103,7 +103,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool?> access = new("index", index, "isReadOnly", isReadOnly);
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool?> access = new(index, isReadOnly);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -126,7 +126,7 @@ public sealed partial class MockTests
 					          		{
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new("index", index, "isWriteOnly", isWriteOnly, value);
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new(index, isWriteOnly, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -186,7 +186,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new("index", index);
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new(index);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -203,7 +203,7 @@ public sealed partial class MockTests
 					          			}
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new("index", index, value);
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new(index, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -229,7 +229,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool> access = new("index", index, "isReadOnly", isReadOnly);
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool> access = new(index, isReadOnly);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -252,7 +252,7 @@ public sealed partial class MockTests
 					          		{
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new("index", index, "isWriteOnly", isWriteOnly, value);
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new(index, isWriteOnly, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -272,7 +272,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<string> access = new("someAdditionalIndex", someAdditionalIndex);
+					          				global::Mockolate.Interactions.IndexerGetterAccess<string> access = new(someAdditionalIndex);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -284,7 +284,7 @@ public sealed partial class MockTests
 					          			}
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<string, int> access = new("someAdditionalIndex", someAdditionalIndex, value);
+					          				global::Mockolate.Interactions.IndexerSetterAccess<string, int> access = new(someAdditionalIndex, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -327,7 +327,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<global::Mockolate.Setup.SpanWrapper<char>> access = new("buffer", new global::Mockolate.Setup.SpanWrapper<char>(buffer));
+					          				global::Mockolate.Interactions.IndexerGetterAccess<global::Mockolate.Setup.SpanWrapper<char>> access = new(new global::Mockolate.Setup.SpanWrapper<char>(buffer));
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -344,7 +344,7 @@ public sealed partial class MockTests
 					          			}
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<global::Mockolate.Setup.SpanWrapper<char>, int> access = new("buffer", new global::Mockolate.Setup.SpanWrapper<char>(buffer), value);
+					          				global::Mockolate.Interactions.IndexerSetterAccess<global::Mockolate.Setup.SpanWrapper<char>, int> access = new(new global::Mockolate.Setup.SpanWrapper<char>(buffer), value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -364,7 +364,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> access = new("values", new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values));
+					          				global::Mockolate.Interactions.IndexerGetterAccess<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> access = new(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values));
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);
@@ -381,7 +381,7 @@ public sealed partial class MockTests
 					          			}
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<global::Mockolate.Setup.ReadOnlySpanWrapper<int>, int> access = new("values", new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values), value);
+					          				global::Mockolate.Interactions.IndexerSetterAccess<global::Mockolate.Setup.ReadOnlySpanWrapper<int>, int> access = new(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values), value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockRegistry.RegisterInteraction(access);

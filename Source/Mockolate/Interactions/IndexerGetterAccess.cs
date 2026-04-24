@@ -10,13 +10,8 @@ namespace Mockolate.Interactions;
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerGetterAccess<T1>(string parameterName1, T1 parameter1) : IndexerAccess
+public class IndexerGetterAccess<T1>(T1 parameter1) : IndexerAccess
 {
-	/// <summary>
-	///     The single parameter name of the indexer.
-	/// </summary>
-	public string ParameterName1 { get; } = parameterName1;
-
 	/// <summary>
 	///     The single parameter value of the indexer.
 	/// </summary>
@@ -57,26 +52,12 @@ public class IndexerGetterAccess<T1>(string parameterName1, T1 parameter1) : Ind
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerGetterAccess<T1, T2>(
-	string parameterName1,
-	T1 parameter1,
-	string parameterName2,
-	T2 parameter2) : IndexerAccess
+public class IndexerGetterAccess<T1, T2>(T1 parameter1, T2 parameter2) : IndexerAccess
 {
-	/// <summary>
-	///     The first parameter name of the indexer.
-	/// </summary>
-	public string ParameterName1 { get; } = parameterName1;
-
 	/// <summary>
 	///     The first parameter value of the indexer.
 	/// </summary>
 	public T1 Parameter1 { get; } = parameter1;
-
-	/// <summary>
-	///     The second parameter name of the indexer.
-	/// </summary>
-	public string ParameterName2 { get; } = parameterName2;
 
 	/// <summary>
 	///     The second parameter value of the indexer.
@@ -125,38 +106,17 @@ public class IndexerGetterAccess<T1, T2>(
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerGetterAccess<T1, T2, T3>(
-	string parameterName1,
-	T1 parameter1,
-	string parameterName2,
-	T2 parameter2,
-	string parameterName3,
-	T3 parameter3) : IndexerAccess
+public class IndexerGetterAccess<T1, T2, T3>(T1 parameter1, T2 parameter2, T3 parameter3) : IndexerAccess
 {
-	/// <summary>
-	///     The first parameter name of the indexer.
-	/// </summary>
-	public string ParameterName1 { get; } = parameterName1;
-
 	/// <summary>
 	///     The first parameter value of the indexer.
 	/// </summary>
 	public T1 Parameter1 { get; } = parameter1;
 
 	/// <summary>
-	///     The second parameter name of the indexer.
-	/// </summary>
-	public string ParameterName2 { get; } = parameterName2;
-
-	/// <summary>
 	///     The second parameter value of the indexer.
 	/// </summary>
 	public T2 Parameter2 { get; } = parameter2;
-
-	/// <summary>
-	///     The third parameter name of the indexer.
-	/// </summary>
-	public string ParameterName3 { get; } = parameterName3;
 
 	/// <summary>
 	///     The third parameter value of the indexer.
@@ -212,30 +172,12 @@ public class IndexerGetterAccess<T1, T2, T3>(
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerGetterAccess<T1, T2, T3, T4>(
-	string parameterName1,
-	T1 parameter1,
-	string parameterName2,
-	T2 parameter2,
-	string parameterName3,
-	T3 parameter3,
-	string parameterName4,
-	T4 parameter4) : IndexerAccess
+public class IndexerGetterAccess<T1, T2, T3, T4>(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) : IndexerAccess
 {
-	/// <summary>
-	///     The first parameter name of the indexer.
-	/// </summary>
-	public string ParameterName1 { get; } = parameterName1;
-
 	/// <summary>
 	///     The first parameter value of the indexer.
 	/// </summary>
 	public T1 Parameter1 { get; } = parameter1;
-
-	/// <summary>
-	///     The second parameter name of the indexer.
-	/// </summary>
-	public string ParameterName2 { get; } = parameterName2;
 
 	/// <summary>
 	///     The second parameter value of the indexer.
@@ -243,19 +185,9 @@ public class IndexerGetterAccess<T1, T2, T3, T4>(
 	public T2 Parameter2 { get; } = parameter2;
 
 	/// <summary>
-	///     The third parameter name of the indexer.
-	/// </summary>
-	public string ParameterName3 { get; } = parameterName3;
-
-	/// <summary>
 	///     The third parameter value of the indexer.
 	/// </summary>
 	public T3 Parameter3 { get; } = parameter3;
-
-	/// <summary>
-	///     The fourth parameter name of the indexer.
-	/// </summary>
-	public string ParameterName4 { get; } = parameterName4;
 
 	/// <summary>
 	///     The fourth parameter value of the indexer.

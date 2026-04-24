@@ -639,10 +639,9 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerGetterAccess(string parameterName1, T1 parameter1) { }
+        public IndexerGetterAccess(T1 parameter1) { }
         public T1 Parameter1 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
         protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
@@ -650,12 +649,10 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerGetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2) { }
+        public IndexerGetterAccess(T1 parameter1, T2 parameter2) { }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
         protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
@@ -663,14 +660,11 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2, T3> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerGetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3) { }
+        public IndexerGetterAccess(T1 parameter1, T2 parameter2, T3 parameter3) { }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
-        public string ParameterName3 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
         protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
@@ -678,16 +672,12 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerGetterAccess<T1, T2, T3, T4> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerGetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3, string parameterName4, T4 parameter4) { }
+        public IndexerGetterAccess(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
         public T4 Parameter4 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
-        public string ParameterName3 { get; }
-        public string ParameterName4 { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
         protected override Mockolate.Setup.IndexerValueStorage? TraverseStorage(Mockolate.Setup.IndexerValueStorage? storage, bool createMissing) { }
@@ -695,10 +685,9 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, TValue> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerSetterAccess(string parameterName1, T1 parameter1, TValue value) { }
+        public IndexerSetterAccess(T1 parameter1, TValue value) { }
         public T1 Parameter1 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
@@ -707,12 +696,10 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, TValue> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerSetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, TValue value) { }
+        public IndexerSetterAccess(T1 parameter1, T2 parameter2, TValue value) { }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
@@ -721,14 +708,11 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, T3, TValue> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerSetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3, TValue value) { }
+        public IndexerSetterAccess(T1 parameter1, T2 parameter2, T3 parameter3, TValue value) { }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
-        public string ParameterName3 { get; }
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
@@ -737,16 +721,12 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class IndexerSetterAccess<T1, T2, T3, T4, TValue> : Mockolate.Interactions.IndexerAccess
     {
-        public IndexerSetterAccess(string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3, string parameterName4, T4 parameter4, TValue value) { }
+        public IndexerSetterAccess(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, TValue value) { }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
         public T4 Parameter4 { get; }
         public override int ParameterCount { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
-        public string ParameterName3 { get; }
-        public string ParameterName4 { get; }
         public TValue TypedValue { get; }
         public override object? GetParameterValueAt(int index) { }
         public override string ToString() { }
@@ -762,49 +742,39 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation<T1> : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
     {
-        public MethodInvocation(string name, string parameterName1, T1 parameter1) { }
+        public MethodInvocation(string name, T1 parameter1) { }
         public string Name { get; }
         public T1 Parameter1 { get; }
-        public string ParameterName1 { get; }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation<T1, T2> : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
     {
-        public MethodInvocation(string name, string parameterName1, T1 parameter1, string parameterName2, T2 parameter2) { }
+        public MethodInvocation(string name, T1 parameter1, T2 parameter2) { }
         public string Name { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation<T1, T2, T3> : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
     {
-        public MethodInvocation(string name, string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3) { }
+        public MethodInvocation(string name, T1 parameter1, T2 parameter2, T3 parameter3) { }
         public string Name { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
-        public string ParameterName3 { get; }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public class MethodInvocation<T1, T2, T3, T4> : Mockolate.Interactions.IInteraction, Mockolate.Interactions.IMethodInteraction
     {
-        public MethodInvocation(string name, string parameterName1, T1 parameter1, string parameterName2, T2 parameter2, string parameterName3, T3 parameter3, string parameterName4, T4 parameter4) { }
+        public MethodInvocation(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
         public string Name { get; }
         public T1 Parameter1 { get; }
         public T2 Parameter2 { get; }
         public T3 Parameter3 { get; }
         public T4 Parameter4 { get; }
-        public string ParameterName1 { get; }
-        public string ParameterName2 { get; }
-        public string ParameterName3 { get; }
-        public string ParameterName4 { get; }
         public override string ToString() { }
     }
     [System.Diagnostics.DebuggerDisplay("{_interactions.Count} interactions")]

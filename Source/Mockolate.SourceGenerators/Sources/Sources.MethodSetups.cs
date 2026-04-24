@@ -110,7 +110,7 @@ internal static partial class Sources
 #endif
 			sb.Append("\tinternal class MethodInvocation<")
 				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x}"))).Append(">(string name, ")
-				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
+				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x} parameter{x}")))
 				.Append(") : IMethodInteraction").AppendLine();
 			sb.Append("\t{").AppendLine();
 			sb.AppendXmlSummary("The name of the method.");
@@ -124,8 +124,6 @@ internal static partial class Sources
 					3 => "third",
 					_ => $"{i}th",
 				};
-				sb.AppendXmlSummary($"The {comment} parameter name of the method.");
-				sb.Append("\t\tpublic string ParameterName").Append(i).Append(" { get; } = parameterName").Append(i).Append(";").AppendLine();
 				sb.AppendXmlSummary($"The {comment} parameter value of the method.");
 				sb.Append("\t\tpublic T").Append(i).Append(" Parameter").Append(i).Append(" { get; } = parameter").Append(i).Append(";").AppendLine();
 			}

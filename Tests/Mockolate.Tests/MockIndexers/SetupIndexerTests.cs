@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -212,8 +212,8 @@ public sealed partial class SetupIndexerTests
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
 		IndexerSetup? stringSetup = registry.GetIndexerSetup<IndexerSetup>(s => true);
-		IndexerGetterAccess<int> access1 = new("index", 1);
-		IndexerGetterAccess<int> access2 = new("index", 1);
+		IndexerGetterAccess<int> access1 = new(1);
+		IndexerGetterAccess<int> access2 = new(1);
 		string result1 = registry.ApplyIndexerGetter<string>(access1, stringSetup, () => "", 0);
 		// Use a different signature index for the int-typed access: each per-signature storage slot
 		// is bound to a single TValue on first access (it is an IndexerValueStorage<TValue>), so
@@ -457,7 +457,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
 				=> registry.SetIndexerValue(access, "foo", -1);
@@ -471,7 +471,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
 				=> registry.GetIndexerFallback<string>(access, -1);
@@ -487,7 +487,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 			IndexerSetup setup = registry.GetIndexerSetup<IndexerSetup>(s => true)!;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
 				=> registry.ApplyIndexerSetup<string>(access, setup, -1);
@@ -501,7 +501,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
 				=> registry.ApplyIndexerGetter<string>(access, null, "base", -1);
@@ -515,7 +515,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
 				=> registry.ApplyIndexerGetter<string>(access, null, () => "base", -1);
@@ -529,7 +529,7 @@ public sealed partial class SetupIndexerTests
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerSetterAccess<int, string> access = new("index", 1, "foo");
+			IndexerSetterAccess<int, string> access = new(1, "foo");
 
 			void Act()
 				=> registry.ApplyIndexerSetter<string>(access, null, "foo", -1);

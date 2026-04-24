@@ -2359,7 +2359,7 @@ internal static partial class Sources
 		sb.Append("(").Append(method.GetUniqueNameString());
 		if (method.Parameters.Count > 0)
 		{
-			sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => $"\"{p.Name}\", {p.ToNameOrWrapper()}")));
+			sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper())));
 		}
 
 		sb.Append("));").AppendLine();

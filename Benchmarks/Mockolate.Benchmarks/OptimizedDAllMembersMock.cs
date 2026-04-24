@@ -516,7 +516,7 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 		{
 			ref SlimCall2<T1, T2> r = ref snap[i];
 			IInteraction boxed = _isIndexerSet
-				? (IInteraction)new IndexerSetterAccess<T1, T2>("key", r.P1, r.P2)  // param name only used for display
+				? (IInteraction)new IndexerSetterAccess<T1, T2>(r.P1, r.P2)
 				: new SlimMethodInvocation<T1, T2>(r.MethodName, r.P1, r.P2);
 			dest.Add((r.Seq, boxed));
 		}
@@ -737,7 +737,7 @@ public sealed class FastIndexerGetBuffer<T1> : IFastMemberBuffer, IFastCountable
 		for (int i = 0; i < n; i++)
 		{
 			(long seq, string name, T1 key) r = snap[i];
-			dest.Add((r.seq, new IndexerGetterAccess<T1>("key", r.key)));
+			dest.Add((r.seq, new IndexerGetterAccess<T1>(r.key)));
 		}
 	}
 }

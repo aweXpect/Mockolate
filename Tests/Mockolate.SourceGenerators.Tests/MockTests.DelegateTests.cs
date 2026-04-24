@@ -83,7 +83,7 @@ public sealed partial class MockTests
 				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int>>("global::MyCode.Program.DoSomething1.Invoke", m => m.Matches(x));
 				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
 				          			{
-				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething1.Invoke", "x", x));
+				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething1.Invoke", x));
 				          			}
 				          			if (methodSetup is null && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 				          			{
@@ -102,7 +102,7 @@ public sealed partial class MockTests
 				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int>>("global::MyCode.Program.DoSomething2.Invoke", m => m.Matches(x));
 				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
 				          			{
-				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething2.Invoke", "x", x));
+				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething2.Invoke", x));
 				          			}
 				          			if (methodSetup is null && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 				          			{
