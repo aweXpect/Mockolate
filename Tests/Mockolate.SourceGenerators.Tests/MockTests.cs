@@ -494,7 +494,7 @@ public sealed partial class MockTests
 			.Contains("""
 			          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
 			          		{
-			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.DoSomething", CovariantParameterAdapter<int>.Wrap(@event ?? global::Mockolate.It.IsNull<int>("null")));
+			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, 0, "global::MyCode.IMyService.DoSomething", CovariantParameterAdapter<int>.Wrap(@event ?? global::Mockolate.It.IsNull<int>("null")));
 			          			this.MockRegistry.SetupMethod(methodSetup);
 			          			return methodSetup;
 			          		}
@@ -504,7 +504,7 @@ public sealed partial class MockTests
 			          		{
 			          			get
 			          			{
-			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")));
+			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(0, MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")));
 			          				this.MockRegistry.SetupIndexer(indexerSetup);
 			          				return indexerSetup;
 			          			}

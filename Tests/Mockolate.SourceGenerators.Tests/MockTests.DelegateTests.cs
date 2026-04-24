@@ -30,7 +30,7 @@ public sealed partial class MockTests
 				.Contains("""
 				          		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, int, bool> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IParameter<int>? y, global::Mockolate.Parameters.IOutParameter<bool> success)
 				          		{
-				          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, int, bool>.WithParameterCollection(MockRegistry, "global::MyCode.Program.DoSomething.Invoke", CovariantParameterAdapter<int>.Wrap(x ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<int>.Wrap(y ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<bool>)(success));
+				          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, int, bool>.WithParameterCollection(MockRegistry, -1, "global::MyCode.Program.DoSomething.Invoke", CovariantParameterAdapter<int>.Wrap(x ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<int>.Wrap(y ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<bool>)(success));
 				          			this.MockRegistry.SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
@@ -38,7 +38,7 @@ public sealed partial class MockTests
 				.Contains("""
 				          		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, int, bool> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameters parameters)
 				          		{
-				          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, int, bool>.WithParameters(MockRegistry, "global::MyCode.Program.DoSomething.Invoke", parameters);
+				          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, int, bool>.WithParameters(MockRegistry, -1, "global::MyCode.Program.DoSomething.Invoke", parameters, "x", "y", "success");
 				          			this.MockRegistry.SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
@@ -80,7 +80,7 @@ public sealed partial class MockTests
 				          		public global::MyCode.Program.DoSomething1 Object => new(Invoke);
 				          		private global::System.Span<char> Invoke(int x)
 				          		{
-				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int>>("global::MyCode.Program.DoSomething1.Invoke", m => m.Matches("x", x));
+				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int>, int>(-1, "global::MyCode.Program.DoSomething1.Invoke", x);
 				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
 				          			{
 				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething1.Invoke", "x", x));
@@ -99,7 +99,7 @@ public sealed partial class MockTests
 				          		public global::MyCode.Program.DoSomething2 Object => new(Invoke);
 				          		private global::System.ReadOnlySpan<char> Invoke(int x)
 				          		{
-				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int>>("global::MyCode.Program.DoSomething2.Invoke", m => m.Matches("x", x));
+				          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int>, int>(-1, "global::MyCode.Program.DoSomething2.Invoke", x);
 				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
 				          			{
 				          				MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.Program.DoSomething2.Invoke", "x", x));
@@ -140,7 +140,7 @@ public sealed partial class MockTests
 				.Contains("""
 				          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, int> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IRefParameter<int> y, global::Mockolate.Parameters.IOutParameter<int> z)
 				          		{
-				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, int>.WithParameterCollection(MockRegistry, "global::MyCode.Program.DoSomething.Invoke", CovariantParameterAdapter<int>.Wrap(x ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<int>)(y), (global::Mockolate.Parameters.IParameterMatch<int>)(z));
+				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, int>.WithParameterCollection(MockRegistry, -1, "global::MyCode.Program.DoSomething.Invoke", CovariantParameterAdapter<int>.Wrap(x ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<int>)(y), (global::Mockolate.Parameters.IParameterMatch<int>)(z));
 				          			this.MockRegistry.SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
@@ -148,7 +148,7 @@ public sealed partial class MockTests
 				.Contains("""
 				          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, int> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameters parameters)
 				          		{
-				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, int>.WithParameters(MockRegistry, "global::MyCode.Program.DoSomething.Invoke", parameters);
+				          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, int>.WithParameters(MockRegistry, -1, "global::MyCode.Program.DoSomething.Invoke", parameters, "x", "y", "z");
 				          			this.MockRegistry.SetupMethod(methodSetup);
 				          			return methodSetup;
 				          		}
@@ -181,7 +181,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Func_int_bool.g.cs").WhoseValue
-				.Contains("this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>(\"global::System.Func<int, bool>.Invoke\", m => m.Matches(\"arg\", arg));")
+				.Contains("this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int>, int>(-1, \"global::System.Func<int, bool>.Invoke\", arg);")
 				.IgnoringNewlineStyle().And
 				.Contains("global::System.Func<int, bool> Object").IgnoringNewlineStyle();
 		}
@@ -266,7 +266,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs").WhoseValue
-				.Contains("var methodSetup1 = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(")
+				.Contains("var methodSetup1 = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>, int>(-1, \"global::MyCode.Program.ProcessResult.Invoke\", methodSetup);")
 				.IgnoringNewlineStyle().And
 				.Contains("methodSetup1?.TriggerCallbacks(methodSetup);")
 				.IgnoringNewlineStyle().And
@@ -296,7 +296,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs").WhoseValue
-				.Contains("var methodSetup1 = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<string, int>>(")
+				.Contains("var methodSetup1 = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<string, int>, string, int>(-1, \"global::MyCode.Program.ProcessResult.Invoke\", methodSetup, default);")
 				.IgnoringNewlineStyle().And
 				.Contains("methodSetup1?.TriggerCallbacks(methodSetup, value);")
 				.IgnoringNewlineStyle();
