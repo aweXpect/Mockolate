@@ -158,7 +158,7 @@ internal static partial class Sources
 				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", delegateMethod.Parameters);
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
 			}
 			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
 			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
@@ -167,11 +167,11 @@ internal static partial class Sources
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.ToNameOrWrapper()).Append(';')
 					.AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
 			}
 			else
 			{
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(
+				sb2.Append(
 					p.RefKind switch
 					{
 						RefKind.Out => "default",

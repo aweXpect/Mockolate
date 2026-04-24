@@ -2304,7 +2304,7 @@ internal static partial class Sources
 				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", method.Parameters);
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
 			}
 			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
 			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
@@ -2313,11 +2313,11 @@ internal static partial class Sources
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.ToNameOrWrapper()).Append(';')
 					.AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
 			}
 			else
 			{
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(
+				sb2.Append(
 					p.RefKind switch
 					{
 						RefKind.Out => "default",
@@ -3554,8 +3554,13 @@ internal static partial class Sources
 		if (useParameters)
 		{
 			sb.Append(".WithParameters(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString())
-				.Append(", parameters);")
-				.AppendLine();
+				.Append(", parameters");
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", \"").Append(parameter.Name).Append('"');
+			}
+
+			sb.Append(");").AppendLine();
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix).Append("methodSetup);").AppendLine();
 			sb.Append("\t\t\treturn methodSetup;").AppendLine();
 		}

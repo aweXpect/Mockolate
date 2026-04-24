@@ -601,7 +601,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1");
 
 			string result = setup.ToString();
 
@@ -697,7 +697,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2");
 
 			string result = setup.ToString();
 
@@ -828,7 +828,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3");
 
 			string result = setup.ToString();
 
@@ -1028,7 +1028,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
 
 			string result = setup.ToString();
 
@@ -1375,7 +1375,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			ReturnMethodSetup<int, string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
 
 			string result = setup.ToString();
 
@@ -1513,7 +1513,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			VoidMethodSetup<string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1");
 
 			string result = setup.ToString();
 
@@ -1579,7 +1579,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2");
 
 			string result = setup.ToString();
 
@@ -1646,7 +1646,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3");
 
 			string result = setup.ToString();
 
@@ -1714,7 +1714,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
 
 			string result = setup.ToString();
 
@@ -1785,7 +1785,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters());
+			VoidMethodSetup<string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
 
 			string result = setup.ToString();
 

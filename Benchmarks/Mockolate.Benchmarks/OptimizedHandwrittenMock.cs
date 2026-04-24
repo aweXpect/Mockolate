@@ -264,8 +264,8 @@ public sealed class FastReturnMethodSetup<TReturn, T1, T2>
 	public bool MatchesFast(T1 p1, T2 p2)
 		=> Parameter1.Matches(p1) && Parameter2.Matches(p2);
 
-	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(string, T1, string, T2)" />
-	public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value)
+	/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(T1, T2)" />
+	public override bool Matches(T1 p1Value, T2 p2Value)
 		=> Parameter1.Matches(p1Value) && Parameter2.Matches(p2Value);
 
 	/// <inheritdoc />

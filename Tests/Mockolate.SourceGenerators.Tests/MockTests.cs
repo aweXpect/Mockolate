@@ -668,7 +668,7 @@ public sealed partial class MockTests
 			.Contains("""
 			          		public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
 			          		{
-			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>("global::MyCode.IMyService.MyMethod", m => m.Matches("v1", v1, "v2", v2, "v3", v3, "v4", v4, "v5", v5, "v6", v6, "v7", v7, "v8", v8, "v9", v9, "v10", v10, "v11", v11, "v12", v12, "v13", v13, "v14", v14, "v15", v15));
+			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>("global::MyCode.IMyService.MyMethod", m => m.Matches(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15));
 			          			bool hasWrappedResult = false;
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
