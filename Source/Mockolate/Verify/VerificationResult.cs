@@ -153,7 +153,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		{
 			ThrowIfRecordingDisabled(_interactions);
 			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
-			_interactions.Verified(matchingInteractions);
+			((IMockInteractions)_interactions).Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
 			{
@@ -168,7 +168,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		{
 			ThrowIfRecordingDisabled(_interactions);
 			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
-			_interactions.Verified(matchingInteractions);
+			((IMockInteractions)_interactions).Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
 			{
@@ -205,7 +205,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					do
 					{
 						matchingInteractions = _interactions.Where(_predicate).ToArray();
-						_interactions.Verified(matchingInteractions);
+						((IMockInteractions)_interactions).Verified(matchingInteractions);
 						if (predicate(matchingInteractions))
 						{
 							return true;
@@ -276,7 +276,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	{
 		ThrowIfRecordingDisabled(_interactions);
 		IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
-		_interactions.Verified(matchingInteractions);
+		((IMockInteractions)_interactions).Verified(matchingInteractions);
 		return predicate(matchingInteractions);
 	}
 
