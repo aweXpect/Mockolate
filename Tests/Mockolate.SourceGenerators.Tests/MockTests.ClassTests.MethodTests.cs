@@ -384,7 +384,7 @@ public sealed partial class MockTests
 					          			bool wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyMethod1", "index", index));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyMethod1", index));
 					          			}
 					          			try
 					          			{
@@ -417,7 +417,7 @@ public sealed partial class MockTests
 					          			bool hasWrappedResult = false;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool>("global::MyCode.IMyService.MyMethod2", "index", index, "isReadOnly", isReadOnly));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool>("global::MyCode.IMyService.MyMethod2", index, isReadOnly));
 					          			}
 					          			try
 					          			{
@@ -487,7 +487,7 @@ public sealed partial class MockTests
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyDirectMethod", "value", value));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyDirectMethod", value));
 					          			}
 					          			try
 					          			{
@@ -521,7 +521,7 @@ public sealed partial class MockTests
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase1.MyBaseMethod1", "value", value));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase1.MyBaseMethod1", value));
 					          			}
 					          			try
 					          			{
@@ -555,7 +555,7 @@ public sealed partial class MockTests
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase2.MyBaseMethod2", "value", value));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase2.MyBaseMethod2", value));
 					          			}
 					          			try
 					          			{
@@ -589,7 +589,7 @@ public sealed partial class MockTests
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase3.MyBaseMethod3", "value", value));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyServiceBase3.MyBaseMethod3", value));
 					          			}
 					          			try
 					          			{
@@ -672,7 +672,7 @@ public sealed partial class MockTests
 					          			flag = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, int, bool>("global::MyCode.MyService.MyMethod1", "index", index, "value1", value1, "flag", flag));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, int, bool>("global::MyCode.MyService.MyMethod1", index, value1, flag));
 					          			}
 					          			try
 					          			{
@@ -726,7 +726,7 @@ public sealed partial class MockTests
 					          			flag = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool, int, bool>("global::MyCode.MyService.MyMethod2", "index", index, "isReadOnly", isReadOnly, "value1", value1, "flag", flag));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool, int, bool>("global::MyCode.MyService.MyMethod2", index, isReadOnly, value1, flag));
 					          			}
 					          			try
 					          			{
@@ -918,7 +918,7 @@ public sealed partial class MockTests
 					          			bool hasWrappedResult = false;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyMethod1", "index", index));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>("global::MyCode.IMyService.MyMethod1", index));
 					          			}
 					          			try
 					          			{
@@ -961,7 +961,7 @@ public sealed partial class MockTests
 					          			isReadOnly = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool>("global::MyCode.IMyService.MyMethod2", "index", index, "isReadOnly", isReadOnly));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int, bool>("global::MyCode.IMyService.MyMethod2", index, isReadOnly));
 					          			}
 					          			try
 					          			{
@@ -1009,7 +1009,7 @@ public sealed partial class MockTests
 					          			bool hasWrappedResult = false;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::MyCode.MyReadonlyStruct>("global::MyCode.IMyService.MyMethod3", "p1", p1));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::MyCode.MyReadonlyStruct>("global::MyCode.IMyService.MyMethod3", p1));
 					          			}
 					          			try
 					          			{
@@ -1038,7 +1038,7 @@ public sealed partial class MockTests
 					          			bool hasWrappedResult = false;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
-					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::MyCode.MyReadonlyStruct>("global::MyCode.IMyService.MyMethod4", "p1", p1));
+					          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<global::MyCode.MyReadonlyStruct>("global::MyCode.IMyService.MyMethod4", p1));
 					          			}
 					          			try
 					          			{

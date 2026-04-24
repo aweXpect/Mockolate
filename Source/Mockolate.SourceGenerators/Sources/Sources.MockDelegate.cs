@@ -244,7 +244,7 @@ internal static partial class Sources
 		sb.Append("(").Append(delegateMethod.GetUniqueNameString());
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			sb.Append(", ").Append(string.Join(", ", delegateMethod.Parameters.Select(p => $"\"{p.Name}\", {p.ToNameOrWrapper()}")));
+			sb.Append(", ").Append(string.Join(", ", delegateMethod.Parameters.Select(p => p.ToNameOrWrapper())));
 		}
 
 		sb.Append("));").AppendLine();
