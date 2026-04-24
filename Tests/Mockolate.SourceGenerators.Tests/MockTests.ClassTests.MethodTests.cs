@@ -379,7 +379,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod1(int)" />
 					          		public bool MyMethod1(int index)
 					          		{
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>("global::MyCode.IMyService.MyMethod1", m => m.Matches("index", index));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int>, int>(0, "global::MyCode.IMyService.MyMethod1", index);
 					          			bool hasWrappedResult = false;
 					          			bool wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -413,7 +413,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod2(int, bool)" />
 					          		public void MyMethod2(int index, bool isReadOnly)
 					          		{
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<int, bool>>("global::MyCode.IMyService.MyMethod2", m => m.Matches("index", index, "isReadOnly", isReadOnly));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<int, bool>, int, bool>(1, "global::MyCode.IMyService.MyMethod2", index, isReadOnly);
 					          			bool hasWrappedResult = false;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          			{
@@ -482,7 +482,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyDirectMethod(int)" />
 					          		public int MyDirectMethod(int value)
 					          		{
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyService.MyDirectMethod", m => m.Matches("value", value));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>, int>(0, "global::MyCode.IMyService.MyDirectMethod", value);
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -516,7 +516,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyServiceBase1.MyBaseMethod1(int)" />
 					          		public int MyBaseMethod1(int value)
 					          		{
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyServiceBase1.MyBaseMethod1", m => m.Matches("value", value));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>, int>(1, "global::MyCode.IMyServiceBase1.MyBaseMethod1", value);
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -550,7 +550,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyServiceBase2.MyBaseMethod2(int)" />
 					          		public int MyBaseMethod2(int value)
 					          		{
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyServiceBase2.MyBaseMethod2", m => m.Matches("value", value));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>, int>(2, "global::MyCode.IMyServiceBase2.MyBaseMethod2", value);
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -584,7 +584,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyServiceBase3.MyBaseMethod3(int)" />
 					          		public int MyBaseMethod3(int value)
 					          		{
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>("global::MyCode.IMyServiceBase3.MyBaseMethod3", m => m.Matches("value", value));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>, int>(3, "global::MyCode.IMyServiceBase3.MyBaseMethod3", value);
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -667,7 +667,7 @@ public sealed partial class MockTests
 					          		public override void MyMethod1(int index, ref int value1, out bool flag)
 					          		{
 					          			var ref_value1 = value1;
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<int, int, bool>>("global::MyCode.MyService.MyMethod1", m => m.Matches("index", index, "value1", ref_value1, "flag", default));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<int, int, bool>, int, int, bool>(0, "global::MyCode.MyService.MyMethod1", index, ref_value1, default);
 					          			bool hasWrappedResult = false;
 					          			flag = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -720,7 +720,7 @@ public sealed partial class MockTests
 					          		protected override bool MyMethod2(int index, bool isReadOnly, ref int value1, out bool flag)
 					          		{
 					          			var ref_value1 = value1;
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>>("global::MyCode.MyService.MyMethod2", m => m.Matches("index", index, "isReadOnly", isReadOnly, "value1", ref_value1, "flag", default));
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>, int, bool, int, bool>(1, "global::MyCode.MyService.MyMethod2", index, isReadOnly, ref_value1, default);
 					          			bool hasWrappedResult = false;
 					          			bool wrappedResult = default!;
 					          			flag = default!;
@@ -774,7 +774,7 @@ public sealed partial class MockTests
 					          		/// <inheritdoc cref="global::MyCode.IMyOtherService.SomeOtherMethod()" />
 					          		int global::MyCode.IMyOtherService.SomeOtherMethod()
 					          		{
-					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::MyCode.IMyOtherService.SomeOtherMethod", m => m.Matches());
+					          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int>>(0, "global::MyCode.IMyOtherService.SomeOtherMethod");
 					          			bool hasWrappedResult = false;
 					          			int wrappedResult = default!;
 					          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -826,7 +826,7 @@ public sealed partial class MockTests
 					.Contains("""
 					          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, bool?, string> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<bool?>? c, global::Mockolate.Parameters.IParameter<string>? d)
 					          		{
-					          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, bool?, string>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.MyMethod1", CovariantParameterAdapter<int>.Wrap(a ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<int>.Wrap(b ?? global::Mockolate.It.Is<int>(1)), CovariantParameterAdapter<bool?>.Wrap(c ?? global::Mockolate.It.Is<bool?>(null)), CovariantParameterAdapter<string>.Wrap(d ?? global::Mockolate.It.Is<string>("default")));
+					          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, bool?, string>.WithParameterCollection(MockRegistry, 0, "global::MyCode.IMyService.MyMethod1", CovariantParameterAdapter<int>.Wrap(a ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<int>.Wrap(b ?? global::Mockolate.It.Is<int>(1)), CovariantParameterAdapter<bool?>.Wrap(c ?? global::Mockolate.It.Is<bool?>(null)), CovariantParameterAdapter<string>.Wrap(d ?? global::Mockolate.It.Is<string>("default")));
 					          			this.MockRegistry.SetupMethod(methodSetup);
 					          			return methodSetup;
 					          		}

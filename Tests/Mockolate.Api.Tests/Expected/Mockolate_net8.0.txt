@@ -201,15 +201,42 @@ namespace Mockolate
         public TResult ApplyIndexerSetup<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup setup, int signatureIndex) { }
         public void ClearAllInteractions() { }
         public TResult GetIndexerFallback<TResult>(Mockolate.Interactions.IndexerAccess access, int signatureIndex) { }
+        public T? GetIndexerGetterSetup<T, T1>(int memberId, T1 arg1)
+            where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetIndexerGetterSetup<T, T1, T2>(int memberId, T1 arg1, T2 arg2)
+            where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetIndexerGetterSetup<T, T1, T2, T3>(int memberId, T1 arg1, T2 arg2, T3 arg3)
+            where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetIndexerGetterSetup<T, T1, T2, T3, T4>(int memberId, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+            where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetIndexerSetterSetup<T, T1, TValue>(int memberId, T1 arg1, TValue value)
+            where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetIndexerSetterSetup<T, T1, T2, TValue>(int memberId, T1 arg1, T2 arg2, TValue value)
+            where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetIndexerSetterSetup<T, T1, T2, T3, TValue>(int memberId, T1 arg1, T2 arg2, T3 arg3, TValue value)
+            where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetIndexerSetterSetup<T, T1, T2, T3, T4, TValue>(int memberId, T1 arg1, T2 arg2, T3 arg3, T4 arg4, TValue value)
+            where T : Mockolate.Setup.IndexerSetup { }
         public T? GetIndexerSetup<T>(Mockolate.Interactions.IndexerAccess access)
             where T : Mockolate.Setup.IndexerSetup { }
         public T? GetIndexerSetup<T>(System.Func<T, bool> predicate)
             where T : Mockolate.Setup.IndexerSetup { }
+        public T? GetMethodSetup<T>(int memberId, string methodName)
+            where T : Mockolate.Setup.MethodSetup { }
         public T? GetMethodSetup<T>(string methodName, System.Func<T, bool> predicate)
+            where T : Mockolate.Setup.MethodSetup { }
+        public T? GetMethodSetup<T, T1>(int memberId, string methodName, T1 arg1)
+            where T : Mockolate.Setup.MethodSetup { }
+        public T? GetMethodSetup<T, T1, T2>(int memberId, string methodName, T1 arg1, T2 arg2)
+            where T : Mockolate.Setup.MethodSetup { }
+        public T? GetMethodSetup<T, T1, T2, T3>(int memberId, string methodName, T1 arg1, T2 arg2, T3 arg3)
+            where T : Mockolate.Setup.MethodSetup { }
+        public T? GetMethodSetup<T, T1, T2, T3, T4>(int memberId, string methodName, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
             where T : Mockolate.Setup.MethodSetup { }
         public System.Collections.Generic.IEnumerable<T> GetMethodSetups<T>(string methodName)
             where T : Mockolate.Setup.MethodSetup { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
+        public TResult GetProperty<TResult>(int memberId, string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.MockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSet<T, TValue>(T subject, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TValue>, bool> setPredicate, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
@@ -219,6 +246,7 @@ namespace Mockolate
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public void SetIndexerValue<TResult>(Mockolate.Interactions.IndexerAccess access, TResult value, int signatureIndex) { }
         public bool SetProperty<T>(string propertyName, T value) { }
+        public bool SetProperty<T>(int memberId, string propertyName, T value) { }
         public void SetupEvent(Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupEvent(string scenario, Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
@@ -976,6 +1004,22 @@ namespace Mockolate.Setup
     {
         Mockolate.Setup.IEventUnsubscriptionSetupCallbackWhenBuilder When(System.Func<int, bool> predicate);
     }
+    public interface IIndexerGetterMatchByValue<in T1>
+    {
+        bool Matches(T1 p1);
+    }
+    public interface IIndexerGetterMatchByValue<in T1, in T2>
+    {
+        bool Matches(T1 p1, T2 p2);
+    }
+    public interface IIndexerGetterMatchByValue<in T1, in T2, in T3>
+    {
+        bool Matches(T1 p1, T2 p2, T3 p3);
+    }
+    public interface IIndexerGetterMatchByValue<in T1, in T2, in T3, in T4>
+    {
+        bool Matches(T1 p1, T2 p2, T3 p3, T4 p4);
+    }
     public interface IIndexerGetterSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
         Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> InParallel();
@@ -1071,6 +1115,22 @@ namespace Mockolate.Setup
     {
         Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action callback);
         Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+    }
+    public interface IIndexerSetterMatchByValue<in T1, in TValue>
+    {
+        bool Matches(T1 p1, TValue value);
+    }
+    public interface IIndexerSetterMatchByValue<in T1, in T2, in TValue>
+    {
+        bool Matches(T1 p1, T2 p2, TValue value);
+    }
+    public interface IIndexerSetterMatchByValue<in T1, in T2, in T3, in TValue>
+    {
+        bool Matches(T1 p1, T2 p2, T3 p3, TValue value);
+    }
+    public interface IIndexerSetterMatchByValue<in T1, in T2, in T3, in T4, in TValue>
+    {
+        bool Matches(T1 p1, T2 p2, T3 p3, T4 p4, TValue value);
     }
     public interface IIndexerSetterSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
@@ -1304,6 +1364,26 @@ namespace Mockolate.Setup
     public interface IMethodMatch
     {
         bool Matches(Mockolate.Interactions.MethodInvocation methodInvocation);
+    }
+    public interface IMethodMatchByValue
+    {
+        bool Matches();
+    }
+    public interface IMethodMatchByValue<in T1>
+    {
+        bool Matches(T1 p1);
+    }
+    public interface IMethodMatchByValue<in T1, in T2>
+    {
+        bool Matches(T1 p1, T2 p2);
+    }
+    public interface IMethodMatchByValue<in T1, in T2, in T3>
+    {
+        bool Matches(T1 p1, T2 p2, T3 p3);
+    }
+    public interface IMethodMatchByValue<in T1, in T2, in T3, in T4>
+    {
+        bool Matches(T1 p1, T2 p2, T3 p3, T4 p4);
     }
     public interface IMethodSetup : Mockolate.Setup.ISetup
     {
@@ -1804,6 +1884,8 @@ namespace Mockolate.Setup
     public abstract class IndexerSetup : Mockolate.Setup.IInteractiveIndexerSetup, Mockolate.Setup.ISetup
     {
         protected IndexerSetup(Mockolate.MockRegistry mockRegistry) { }
+        protected IndexerSetup(int memberId, Mockolate.MockRegistry mockRegistry) { }
+        public int MemberId { get; }
         public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior);
         public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, System.Func<TResult> defaultValueGenerator);
         public abstract TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior, TResult baseValue);
@@ -1814,9 +1896,10 @@ namespace Mockolate.Setup
         protected static string FormatType(System.Type type) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
-    public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
+    public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterMatchByValue<T1>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterMatchByValue<T1, TValue>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
+        public IndexerSetup(int memberId, Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
@@ -1842,9 +1925,10 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
+    public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterMatchByValue<T1, T2>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterMatchByValue<T1, T2, TValue>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
+        public IndexerSetup(int memberId, Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
@@ -1870,9 +1954,10 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
+    public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterMatchByValue<T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterMatchByValue<T1, T2, T3, TValue>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
+        public IndexerSetup(int memberId, Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
@@ -1898,9 +1983,10 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
+    public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterMatchByValue<T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterMatchByValue<T1, T2, T3, T4, TValue>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
+        public IndexerSetup(int memberId, Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4> OnGet { get; }
         public Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4> OnSet { get; }
         public override TResult GetResult<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.MockBehavior behavior) { }
@@ -1935,6 +2021,8 @@ namespace Mockolate.Setup
     public abstract class MethodSetup : Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVerifiableMethodSetup
     {
         protected MethodSetup(string name) { }
+        protected MethodSetup(int memberId, string name) { }
+        public int MemberId { get; }
         public string Name { get; }
         protected abstract bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction);
         protected static string FormatType(System.Type type) { }
@@ -1942,6 +2030,8 @@ namespace Mockolate.Setup
     public abstract class PropertySetup : Mockolate.Setup.IInteractivePropertySetup, Mockolate.Setup.ISetup
     {
         protected PropertySetup() { }
+        protected PropertySetup(int memberId) { }
+        public int MemberId { get; }
         public abstract string Name { get; }
         protected abstract bool? GetSkipBaseClass();
         protected abstract void InitializeValue(object? value);
@@ -1952,6 +2042,7 @@ namespace Mockolate.Setup
     public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         public PropertySetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        public PropertySetup(int memberId, Mockolate.MockRegistry mockRegistry, string name) { }
         public override string Name { get; }
         public Mockolate.Setup.IPropertyGetterSetup<T> OnGet { get; }
         public Mockolate.Setup.IPropertySetterSetup<T> OnSet { get; }
@@ -1980,9 +2071,10 @@ namespace Mockolate.Setup
         public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.ReadOnlySpanWrapper<T> op_Implicit(System.ReadOnlySpan<T> span) { }
     }
-    public abstract class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn>, Mockolate.Setup.IReturnMethodSetup<TReturn>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
         public bool HasReturnCallbacks { get; }
         public abstract bool Matches();
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
@@ -1992,14 +2084,17 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.ReturnMethodSetup<TReturn>
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
             public override bool Matches() { }
             public override string ToString() { }
         }
     }
-    public abstract class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn, T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
         public bool HasReturnCallbacks { get; }
+        public abstract bool Matches(T1 p1);
         public abstract bool Matches(string p1Name, T1 p1Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2008,7 +2103,9 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.ReturnMethodSetup<TReturn, T1>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1>, Mockolate.Setup.ISetup
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
+            public override bool Matches(T1 p1) { }
             public override bool Matches(string p1Name, T1 p1Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1) { }
@@ -2016,14 +2113,18 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.ReturnMethodSetup<TReturn, T1>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1) { }
+            public override bool Matches(T1 p1) { }
             public override bool Matches(string p1Name, T1 p1Value) { }
             public override string ToString() { }
         }
     }
-    public abstract class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn, T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1, T2>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
         public bool HasReturnCallbacks { get; }
+        public abstract bool Matches(T1 p1, T2 p2);
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2032,8 +2133,10 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2>, Mockolate.Setup.ISetup
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
             public Mockolate.Parameters.IParameterMatch<T2> Parameter2 { get; }
+            public override bool Matches(T1 p1, T2 p2) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1, T2 parameter2) { }
@@ -2041,14 +2144,18 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1, string parameterName2) { }
+            public override bool Matches(T1 p1, T2 p2) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value) { }
             public override string ToString() { }
         }
     }
-    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1, T2, T3>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
         public bool HasReturnCallbacks { get; }
+        public abstract bool Matches(T1 p1, T2 p2, T3 p3);
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2057,9 +2164,11 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3>, Mockolate.Setup.ISetup
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
             public Mockolate.Parameters.IParameterMatch<T2> Parameter2 { get; }
             public Mockolate.Parameters.IParameterMatch<T3> Parameter3 { get; }
+            public override bool Matches(T1 p1, T2 p2, T3 p3) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3) { }
@@ -2067,14 +2176,18 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1, string parameterName2, string parameterName3) { }
+            public override bool Matches(T1 p1, T2 p2, T3 p3) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value) { }
             public override string ToString() { }
         }
     }
-    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
+    public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1, T2, T3, T4>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupCallbackWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupParallelCallbackBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
     {
         protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected ReturnMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
         public bool HasReturnCallbacks { get; }
+        public abstract bool Matches(T1 p1, T2 p2, T3 p3, T4 p4);
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2083,10 +2196,12 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IReturnMethodSetupParameterIgnorer<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4>, Mockolate.Setup.IReturnMethodSetup<TReturn, T1, T2, T3, T4>, Mockolate.Setup.ISetup
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
             public Mockolate.Parameters.IParameterMatch<T2> Parameter2 { get; }
             public Mockolate.Parameters.IParameterMatch<T3> Parameter3 { get; }
             public Mockolate.Parameters.IParameterMatch<T4> Parameter4 { get; }
+            public override bool Matches(T1 p1, T2 p2, T3 p3, T4 p4) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
@@ -2094,6 +2209,8 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.ReturnMethodSetup<TReturn, T1, T2, T3, T4>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1, string parameterName2, string parameterName3, string parameterName4) { }
+            public override bool Matches(T1 p1, T2 p2, T3 p3, T4 p4) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value) { }
             public override string ToString() { }
         }
@@ -2105,9 +2222,10 @@ namespace Mockolate.Setup
         public static System.Span<T> op_Implicit(Mockolate.Setup.SpanWrapper<T> wrapper) { }
         public static Mockolate.Setup.SpanWrapper<T> op_Implicit(System.Span<T> span) { }
     }
-    public abstract class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder, Mockolate.Setup.IVoidMethodSetupReturnBuilder, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder
+    public abstract class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder, Mockolate.Setup.IVoidMethodSetupReturnBuilder, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder
     {
         protected VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected VoidMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
         public abstract bool Matches();
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2115,13 +2233,16 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.VoidMethodSetup
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
             public override bool Matches() { }
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
+    public abstract class VoidMethodSetup<T1> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected VoidMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
+        public abstract bool Matches(T1 p1);
         public abstract bool Matches(string p1Name, T1 p1Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2129,7 +2250,9 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.VoidMethodSetup<T1>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1>, Mockolate.Setup.IVoidMethodSetup<T1>
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
+            public override bool Matches(T1 p1) { }
             public override bool Matches(string p1Name, T1 p1Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1) { }
@@ -2137,13 +2260,17 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.VoidMethodSetup<T1>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1) { }
+            public override bool Matches(T1 p1) { }
             public override bool Matches(string p1Name, T1 p1Value) { }
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
+    public abstract class VoidMethodSetup<T1, T2> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1, T2>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected VoidMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
+        public abstract bool Matches(T1 p1, T2 p2);
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2151,8 +2278,10 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.VoidMethodSetup<T1, T2>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1, T2>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2>, Mockolate.Setup.IVoidMethodSetup<T1, T2>
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
             public Mockolate.Parameters.IParameterMatch<T2> Parameter2 { get; }
+            public override bool Matches(T1 p1, T2 p2) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1, T2 parameter2) { }
@@ -2160,13 +2289,17 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.VoidMethodSetup<T1, T2>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1, string parameterName2) { }
+            public override bool Matches(T1 p1, T2 p2) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value) { }
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
+    public abstract class VoidMethodSetup<T1, T2, T3> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1, T2, T3>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected VoidMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
+        public abstract bool Matches(T1 p1, T2 p2, T3 p3);
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2174,9 +2307,11 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.VoidMethodSetup<T1, T2, T3>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3>
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
             public Mockolate.Parameters.IParameterMatch<T2> Parameter2 { get; }
             public Mockolate.Parameters.IParameterMatch<T3> Parameter3 { get; }
+            public override bool Matches(T1 p1, T2 p2, T3 p3) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3) { }
@@ -2184,13 +2319,17 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.VoidMethodSetup<T1, T2, T3>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1, string parameterName2, string parameterName3) { }
+            public override bool Matches(T1 p1, T2 p2, T3 p3) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value) { }
             public override string ToString() { }
         }
     }
-    public abstract class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
+    public abstract class VoidMethodSetup<T1, T2, T3, T4> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodMatchByValue<T1, T2, T3, T4>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
     {
         public VoidMethodSetup(Mockolate.MockRegistry mockRegistry, string name) { }
+        protected VoidMethodSetup(Mockolate.MockRegistry mockRegistry, int memberId, string name) { }
+        public abstract bool Matches(T1 p1, T2 p2, T3 p3, T4 p4);
         public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value);
         protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) { }
         public bool SkipBaseClass(Mockolate.MockBehavior behavior) { }
@@ -2198,10 +2337,12 @@ namespace Mockolate.Setup
         public class WithParameterCollection : Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4>, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3, T4>, Mockolate.Setup.IVoidMethodSetup<T1, T2, T3, T4>
         {
             public WithParameterCollection(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
+            public WithParameterCollection(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
             public Mockolate.Parameters.IParameterMatch<T1> Parameter1 { get; }
             public Mockolate.Parameters.IParameterMatch<T2> Parameter2 { get; }
             public Mockolate.Parameters.IParameterMatch<T3> Parameter3 { get; }
             public Mockolate.Parameters.IParameterMatch<T4> Parameter4 { get; }
+            public override bool Matches(T1 p1, T2 p2, T3 p3, T4 p4) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value) { }
             public override string ToString() { }
             public override void TriggerCallbacks(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
@@ -2209,6 +2350,8 @@ namespace Mockolate.Setup
         public class WithParameters : Mockolate.Setup.VoidMethodSetup<T1, T2, T3, T4>
         {
             public WithParameters(Mockolate.MockRegistry mockRegistry, string name, Mockolate.Parameters.IParameters parameters) { }
+            public WithParameters(Mockolate.MockRegistry mockRegistry, int memberId, string name, Mockolate.Parameters.IParameters parameters, string parameterName1, string parameterName2, string parameterName3, string parameterName4) { }
+            public override bool Matches(T1 p1, T2 p2, T3 p3, T4 p4) { }
             public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value, string p4Name, T4 p4Value) { }
             public override string ToString() { }
         }

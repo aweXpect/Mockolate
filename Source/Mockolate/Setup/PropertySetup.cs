@@ -19,6 +19,29 @@ namespace Mockolate.Setup;
 public abstract class PropertySetup : IInteractivePropertySetup
 {
 	/// <summary>
+	///     Base class for property setups.
+	/// </summary>
+	protected PropertySetup() : this(-1)
+	{
+	}
+
+	/// <summary>
+	///     Base class for property setups, carrying the generator-assigned <paramref name="memberId" />
+	///     used for the fast O(1) setup lookup on the invocation hot path.
+	/// </summary>
+	protected PropertySetup(int memberId)
+	{
+		MemberId = memberId;
+	}
+
+	/// <summary>
+	///     Generator-assigned dense integer id for the property this setup targets, or <c>-1</c>
+	///     when the setup was created through a legacy path. Used by the member-id-indexed setup
+	///     store for direct-array dispatch.
+	/// </summary>
+	public int MemberId { get; }
+
+	/// <summary>
 	///     The property name.
 	/// </summary>
 	public abstract string Name { get; }
@@ -90,8 +113,13 @@ public abstract class PropertySetup : IInteractivePropertySetup
 #if !DEBUG
 	[DebuggerNonUserCode]
 #endif
-	internal abstract class Default(string name) : PropertySetup
+	internal abstract class Default(int memberId, string name) : PropertySetup(memberId)
 	{
+		/// <inheritdoc cref="Default" />
+		protected Default(string name) : this(-1, name)
+		{
+		}
+
 		/// <inheritdoc cref="PropertySetup.Name" />
 		public override string Name => name;
 
@@ -117,9 +145,13 @@ public abstract class PropertySetup : IInteractivePropertySetup
 #if !DEBUG
 	[DebuggerNonUserCode]
 #endif
-	internal sealed class Default<T>(string name, T initialValue)
-		: Default(name)
+	internal sealed class Default<T>(int memberId, string name, T initialValue)
+		: Default(memberId, name)
 	{
+		public Default(string name, T initialValue) : this(-1, name, initialValue)
+		{
+		}
+
 		private T _value = initialValue;
 
 		/// <inheritdoc cref="PropertySetup.InvokeSetter{TValue}(TValue, MockBehavior)" />
@@ -188,7 +220,15 @@ public class PropertySetup<T> : PropertySetup,
 	/// <summary>
 	///     Sets up a property.
 	/// </summary>
-	public PropertySetup(MockRegistry mockRegistry, string name)
+	public PropertySetup(MockRegistry mockRegistry, string name) : this(-1, mockRegistry, name)
+	{
+	}
+
+	/// <summary>
+	///     Sets up a property with the generator-assigned <paramref name="memberId" /> used for the
+	///     fast O(1) setup lookup on the invocation hot path.
+	/// </summary>
+	public PropertySetup(int memberId, MockRegistry mockRegistry, string name) : base(memberId)
 	{
 		_mockRegistry = mockRegistry;
 		_name = name;

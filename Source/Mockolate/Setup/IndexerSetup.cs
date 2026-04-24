@@ -27,10 +27,27 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 	///     Initializes a new instance of the <see cref="IndexerSetup" /> class bound to the given
 	///     <paramref name="mockRegistry" />.
 	/// </summary>
-	protected IndexerSetup(MockRegistry mockRegistry)
+	protected IndexerSetup(MockRegistry mockRegistry) : this(-1, mockRegistry)
 	{
+	}
+
+	/// <summary>
+	///     Initializes a new instance of the <see cref="IndexerSetup" /> class, carrying the
+	///     generator-assigned <paramref name="memberId" /> used for the fast O(1) setup lookup on
+	///     the invocation hot path.
+	/// </summary>
+	protected IndexerSetup(int memberId, MockRegistry mockRegistry)
+	{
+		MemberId = memberId;
 		_mockRegistry = mockRegistry;
 	}
+
+	/// <summary>
+	///     Generator-assigned dense integer id for the indexer this setup targets, or <c>-1</c>
+	///     when the setup was created through a legacy path. Used by the member-id-indexed setup
+	///     store for closure-free dispatch.
+	/// </summary>
+	public int MemberId { get; }
 
 	/// <inheritdoc cref="IInteractiveIndexerSetup.Matches(IndexerAccess)" />
 	bool IInteractiveIndexerSetup.Matches(IndexerAccess indexerAccess)
@@ -128,13 +145,21 @@ public abstract class IndexerSetup : IInteractiveIndexerSetup
 #if !DEBUG
 [DebuggerNonUserCode]
 #endif
-public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch<T1> parameter1)
-	: IndexerSetup(mockRegistry),
+public class IndexerSetup<TValue, T1>(int memberId, MockRegistry mockRegistry, IParameterMatch<T1> parameter1)
+	: IndexerSetup(memberId, mockRegistry),
 		IIndexerSetupWithCallback<TValue, T1>,
 		IIndexerGetterSetupCallbackBuilder<TValue, T1>, IIndexerSetterSetupCallbackBuilder<TValue, T1>,
 		IIndexerSetupReturnBuilder<TValue, T1>,
-		IIndexerGetterSetupWithCallback<TValue, T1>, IIndexerSetterSetupWithCallback<TValue, T1>
+		IIndexerGetterSetupWithCallback<TValue, T1>, IIndexerSetterSetupWithCallback<TValue, T1>,
+		IIndexerGetterMatchByValue<T1>,
+		IIndexerSetterMatchByValue<T1, TValue>
 {
+	/// <inheritdoc cref="IndexerSetup{TValue, T1}" />
+	public IndexerSetup(MockRegistry mockRegistry, IParameterMatch<T1> parameter1)
+		: this(-1, mockRegistry, parameter1)
+	{
+	}
+
 	private Callbacks<Action<int, T1, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, TValue, TValue>>? _returnCallbacks;
 	private Callbacks<Action<int, T1, TValue>>? _setterCallbacks;
@@ -723,14 +748,23 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetup<TValue, T1, T2>(
+	int memberId,
 	MockRegistry mockRegistry,
 	IParameterMatch<T1> parameter1,
-	IParameterMatch<T2> parameter2) : IndexerSetup(mockRegistry),
+	IParameterMatch<T2> parameter2) : IndexerSetup(memberId, mockRegistry),
 	IIndexerSetupWithCallback<TValue, T1, T2>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2>,
-	IIndexerGetterSetupWithCallback<TValue, T1, T2>, IIndexerSetterSetupWithCallback<TValue, T1, T2>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2>, IIndexerSetterSetupWithCallback<TValue, T1, T2>,
+	IIndexerGetterMatchByValue<T1, T2>,
+	IIndexerSetterMatchByValue<T1, T2, TValue>
 {
+	/// <inheritdoc cref="IndexerSetup{TValue, T1, T2}" />
+	public IndexerSetup(MockRegistry mockRegistry, IParameterMatch<T1> parameter1, IParameterMatch<T2> parameter2)
+		: this(-1, mockRegistry, parameter1, parameter2)
+	{
+	}
+
 	private Callbacks<Action<int, T1, T2, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, TValue, TValue>>? _returnCallbacks;
 	private Callbacks<Action<int, T1, T2, TValue>>? _setterCallbacks;
@@ -1327,15 +1361,25 @@ public class IndexerSetup<TValue, T1, T2>(
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetup<TValue, T1, T2, T3>(
+	int memberId,
 	MockRegistry mockRegistry,
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2,
-	IParameterMatch<T3> parameter3) : IndexerSetup(mockRegistry),
+	IParameterMatch<T3> parameter3) : IndexerSetup(memberId, mockRegistry),
 	IIndexerSetupWithCallback<TValue, T1, T2, T3>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
-	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>,
+	IIndexerGetterMatchByValue<T1, T2, T3>,
+	IIndexerSetterMatchByValue<T1, T2, T3, TValue>
 {
+	/// <inheritdoc cref="IndexerSetup{TValue, T1, T2, T3}" />
+	public IndexerSetup(MockRegistry mockRegistry, IParameterMatch<T1> parameter1,
+		IParameterMatch<T2> parameter2, IParameterMatch<T3> parameter3)
+		: this(-1, mockRegistry, parameter1, parameter2, parameter3)
+	{
+	}
+
 	private Callbacks<Action<int, T1, T2, T3, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, T3, TValue, TValue>>? _returnCallbacks;
 	private Callbacks<Action<int, T1, T2, T3, TValue>>? _setterCallbacks;
@@ -1947,16 +1991,26 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 [DebuggerNonUserCode]
 #endif
 public class IndexerSetup<TValue, T1, T2, T3, T4>(
+	int memberId,
 	MockRegistry mockRegistry,
 	IParameterMatch<T1> parameter1,
 	IParameterMatch<T2> parameter2,
 	IParameterMatch<T3> parameter3,
-	IParameterMatch<T4> parameter4) : IndexerSetup(mockRegistry),
+	IParameterMatch<T4> parameter4) : IndexerSetup(memberId, mockRegistry),
 	IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
-	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>,
+	IIndexerGetterMatchByValue<T1, T2, T3, T4>,
+	IIndexerSetterMatchByValue<T1, T2, T3, T4, TValue>
 {
+	/// <inheritdoc cref="IndexerSetup{TValue, T1, T2, T3, T4}" />
+	public IndexerSetup(MockRegistry mockRegistry, IParameterMatch<T1> parameter1,
+		IParameterMatch<T2> parameter2, IParameterMatch<T3> parameter3, IParameterMatch<T4> parameter4)
+		: this(-1, mockRegistry, parameter1, parameter2, parameter3, parameter4)
+	{
+	}
+
 	private Callbacks<Action<int, T1, T2, T3, T4, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, T3, T4, TValue, TValue>>? _returnCallbacks;
 	private Callbacks<Action<int, T1, T2, T3, T4, TValue>>? _setterCallbacks;

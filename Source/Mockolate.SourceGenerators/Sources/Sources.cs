@@ -114,14 +114,14 @@ internal static partial class Sources
 	}
 
 	/// <summary>
-	///     Emits variable declarations for the indexer getter access and matching setup:
-	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;("p", p, ...);
-	///     mockRegistry.RegisterInteraction(access);
-	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(access);</code>
+	///     Emits variable declarations for the indexer getter access and matching setup.
+	///     When <paramref name="memberId" /> is non-negative, emits the O(1) member-id lookup
+	///     (<c>GetIndexerGetterSetup&lt;...&gt;(memberId, p...)</c>); otherwise falls back to
+	///     the legacy <c>GetIndexerSetup&lt;T&gt;(access)</c> scan.
 	/// </summary>
 	private static void EmitIndexerGetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
-		Type propertyType, EquatableArray<MethodParameter> parameters)
+		Type propertyType, EquatableArray<MethodParameter> parameters, int memberId = -1)
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerGetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);
@@ -141,22 +141,52 @@ internal static partial class Sources
 			sb.Append(", ").AppendTypeOrWrapper(p.Type);
 		}
 
-		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry)
-			.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
-		foreach (MethodParameter p in parameters)
-		{
-			sb.Append(", ").AppendTypeOrWrapper(p.Type);
-		}
+		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry);
 
-		sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
+		if (memberId >= 0)
+		{
+			sb.Append(".GetIndexerGetterSetup<global::Mockolate.Setup.IndexerSetup<")
+				.AppendTypeOrWrapper(propertyType);
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			}
+
+			sb.Append(">");
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			}
+
+			sb.Append(">(").Append(memberId);
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").Append(p.ToNameOrWrapper());
+			}
+
+			sb.Append(");").AppendLine();
+		}
+		else
+		{
+			sb.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			}
+
+			sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
+		}
 	}
 
 	/// <summary>
 	///     Emits variable declarations for the indexer setter access and matching setup.
+	///     When <paramref name="memberId" /> is non-negative, emits the O(1) member-id lookup
+	///     (<c>GetIndexerSetterSetup&lt;...&gt;(memberId, p..., value)</c>); otherwise falls back
+	///     to the legacy <c>GetIndexerSetup&lt;T&gt;(access)</c> scan.
 	/// </summary>
 	private static void EmitIndexerSetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
-		Type propertyType, EquatableArray<MethodParameter> parameters)
+		Type propertyType, EquatableArray<MethodParameter> parameters, int memberId = -1)
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerSetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);
@@ -176,14 +206,42 @@ internal static partial class Sources
 			sb.Append(", ").AppendTypeOrWrapper(p.Type);
 		}
 
-		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry)
-			.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
-		foreach (MethodParameter p in parameters)
-		{
-			sb.Append(", ").AppendTypeOrWrapper(p.Type);
-		}
+		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry);
 
-		sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
+		if (memberId >= 0)
+		{
+			sb.Append(".GetIndexerSetterSetup<global::Mockolate.Setup.IndexerSetup<")
+				.AppendTypeOrWrapper(propertyType);
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			}
+
+			sb.Append(">");
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			}
+
+			sb.Append(", ").AppendTypeOrWrapper(propertyType);
+			sb.Append(">(").Append(memberId);
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").Append(p.ToNameOrWrapper());
+			}
+
+			sb.Append(", value);").AppendLine();
+		}
+		else
+		{
+			sb.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
+			foreach (MethodParameter p in parameters)
+			{
+				sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			}
+
+			sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
+		}
 	}
 
 	/// <summary>

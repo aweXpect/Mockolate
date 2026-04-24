@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Mockolate.Exceptions;
@@ -246,6 +247,162 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     O(1) closure-free getter-setup lookup by generator-assigned member id for
+	///     single-argument indexers. Scenario-scoped setups take precedence over the default scope.
+	/// </summary>
+	public T? GetIndexerGetterSetup<T, T1>(int memberId, T1 arg1) where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers.GetGetterByMemberId<T, T1>(memberId, arg1);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetGetterByMemberId<T, T1>(memberId, arg1);
+	}
+
+	/// <summary>
+	///     O(1) closure-free getter-setup lookup by member id for two-argument indexers.
+	/// </summary>
+	public T? GetIndexerGetterSetup<T, T1, T2>(int memberId, T1 arg1, T2 arg2) where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers.GetGetterByMemberId<T, T1, T2>(memberId, arg1, arg2);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetGetterByMemberId<T, T1, T2>(memberId, arg1, arg2);
+	}
+
+	/// <summary>
+	///     O(1) closure-free getter-setup lookup by member id for three-argument indexers.
+	/// </summary>
+	public T? GetIndexerGetterSetup<T, T1, T2, T3>(int memberId, T1 arg1, T2 arg2, T3 arg3)
+		where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers.GetGetterByMemberId<T, T1, T2, T3>(memberId, arg1, arg2, arg3);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetGetterByMemberId<T, T1, T2, T3>(memberId, arg1, arg2, arg3);
+	}
+
+	/// <summary>
+	///     O(1) closure-free getter-setup lookup by member id for four-argument indexers.
+	/// </summary>
+	public T? GetIndexerGetterSetup<T, T1, T2, T3, T4>(int memberId, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
+		where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers
+				.GetGetterByMemberId<T, T1, T2, T3, T4>(memberId, arg1, arg2, arg3, arg4);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetGetterByMemberId<T, T1, T2, T3, T4>(memberId, arg1, arg2, arg3, arg4);
+	}
+
+	/// <summary>
+	///     O(1) closure-free setter-setup lookup by generator-assigned member id for
+	///     single-argument indexers. Scenario-scoped setups take precedence over the default scope.
+	/// </summary>
+	public T? GetIndexerSetterSetup<T, T1, TValue>(int memberId, T1 arg1, TValue value) where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers.GetSetterByMemberId<T, T1, TValue>(memberId, arg1, value);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetSetterByMemberId<T, T1, TValue>(memberId, arg1, value);
+	}
+
+	/// <summary>
+	///     O(1) closure-free setter-setup lookup by member id for two-argument indexers.
+	/// </summary>
+	public T? GetIndexerSetterSetup<T, T1, T2, TValue>(int memberId, T1 arg1, T2 arg2, TValue value)
+		where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers
+				.GetSetterByMemberId<T, T1, T2, TValue>(memberId, arg1, arg2, value);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetSetterByMemberId<T, T1, T2, TValue>(memberId, arg1, arg2, value);
+	}
+
+	/// <summary>
+	///     O(1) closure-free setter-setup lookup by member id for three-argument indexers.
+	/// </summary>
+	public T? GetIndexerSetterSetup<T, T1, T2, T3, TValue>(int memberId, T1 arg1, T2 arg2, T3 arg3, TValue value)
+		where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers
+				.GetSetterByMemberId<T, T1, T2, T3, TValue>(memberId, arg1, arg2, arg3, value);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers.GetSetterByMemberId<T, T1, T2, T3, TValue>(memberId, arg1, arg2, arg3, value);
+	}
+
+	/// <summary>
+	///     O(1) closure-free setter-setup lookup by member id for four-argument indexers.
+	/// </summary>
+	public T? GetIndexerSetterSetup<T, T1, T2, T3, T4, TValue>(int memberId, T1 arg1, T2 arg2, T3 arg3, T4 arg4,
+		TValue value) where T : IndexerSetup
+	{
+		if (!string.IsNullOrEmpty(Scenario) &&
+		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		{
+			T? scoped = scopedBucket.Indexers
+				.GetSetterByMemberId<T, T1, T2, T3, T4, TValue>(memberId, arg1, arg2, arg3, arg4, value);
+			if (scoped is not null)
+			{
+				return scoped;
+			}
+		}
+
+		return Setup.Indexers
+			.GetSetterByMemberId<T, T1, T2, T3, T4, TValue>(memberId, arg1, arg2, arg3, arg4, value);
+	}
+
+	/// <summary>
 	///     Stores <paramref name="value" /> in the indexer value slot identified by <paramref name="access" />.
 	/// </summary>
 	/// <typeparam name="TResult">The indexer's value type.</typeparam>
@@ -438,6 +595,16 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     O(1) getter-flow dispatch by generator-assigned <paramref name="memberId" />. Otherwise
+	///     identical to <see cref="GetProperty{TResult}(string, Func{TResult}, Func{TResult}?)" />;
+	///     the string name is only used to seed the recorded interaction and to construct the
+	///     <see cref="MockNotSetupException" /> / <see cref="PropertySetup.Default{T}" /> fallback.
+	/// </summary>
+	public TResult GetProperty<TResult>(int memberId, string propertyName, Func<TResult> defaultValueGenerator,
+		Func<TResult>? baseValueAccessor)
+		=> GetPropertyCore(memberId, propertyName, defaultValueGenerator, baseValueAccessor);
+
+	/// <summary>
 	///     Executes the getter flow for the property named <paramref name="propertyName" />, honoring configured
 	///     setups and the active <see cref="MockBehavior" />.
 	/// </summary>
@@ -449,6 +616,10 @@ public partial class MockRegistry
 	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
 	public TResult GetProperty<TResult>(string propertyName, Func<TResult> defaultValueGenerator,
 		Func<TResult>? baseValueAccessor)
+		=> GetPropertyCore(-1, propertyName, defaultValueGenerator, baseValueAccessor);
+
+	private TResult GetPropertyCore<TResult>(int memberId, string propertyName,
+		Func<TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor)
 	{
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
@@ -461,7 +632,7 @@ public partial class MockRegistry
 		if (baseValueAccessor is null)
 		{
 			// Stryker disable once Boolean : forceReinit only matters when a base class accessor exists; on this branch there is none, so flipping it to true triggers an extra InitializeWith call that is gated by _isUserInitialized || _isInitialized and becomes a no-op.
-			matchingSetup = ResolvePropertySetup(propertyName, defaultValueGenerator, null, false);
+			matchingSetup = ResolvePropertySetup(memberId, propertyName, defaultValueGenerator, null, false);
 
 			return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
 				defaultValueGenerator);
@@ -481,7 +652,7 @@ public partial class MockRegistry
 			};
 
 		matchingSetup = ResolvePropertySetup(
-			propertyName, defaultValueGenerator, safeBaseValueAccessor, true);
+			memberId, propertyName, defaultValueGenerator, safeBaseValueAccessor, true);
 
 		TResult result = ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
 			defaultValueGenerator);
@@ -489,6 +660,15 @@ public partial class MockRegistry
 		capturedBaseException?.Throw();
 		return result;
 	}
+
+	/// <summary>
+	///     O(1) setter-flow dispatch by generator-assigned <paramref name="memberId" />. Otherwise
+	///     identical to <see cref="SetProperty{T}(string, T)" />; the string name is only used to
+	///     seed the recorded interaction and to construct the
+	///     <see cref="PropertySetup.Default{T}" /> fallback.
+	/// </summary>
+	public bool SetProperty<T>(int memberId, string propertyName, T value)
+		=> SetPropertyCore(memberId, propertyName, value);
 
 	/// <summary>
 	///     Executes the setter flow for the property named <paramref name="propertyName" />, honoring configured
@@ -502,6 +682,9 @@ public partial class MockRegistry
 	/// <param name="value">The value being assigned.</param>
 	/// <returns><see langword="true" /> when the base-class setter should be skipped.</returns>
 	public bool SetProperty<T>(string propertyName, T value)
+		=> SetPropertyCore(-1, propertyName, value);
+
+	private bool SetPropertyCore<T>(int memberId, string propertyName, T value)
 	{
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
@@ -510,7 +693,7 @@ public partial class MockRegistry
 				new PropertySetterAccess<T>(propertyName, value));
 		}
 
-		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
+		PropertySetup matchingSetup = ResolvePropertySetup<T>(memberId, propertyName, null, null, false);
 
 		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction, value, Behavior);
 		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
@@ -518,6 +701,7 @@ public partial class MockRegistry
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private PropertySetup ResolvePropertySetup<TResult>(
+		int memberId,
 		string propertyName,
 		Func<TResult>? defaultValueGenerator,
 		Func<TResult>? baseValueAccessor,
@@ -526,12 +710,13 @@ public partial class MockRegistry
 		PropertySetup? existingSetup = null;
 		if (!string.IsNullOrEmpty(Scenario) &&
 		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket) &&
-		    scopedBucket.Properties.TryGetValue(propertyName, out PropertySetup? scopedSetup))
+		    TryGetPropertySetup(scopedBucket.Properties, memberId, propertyName, out PropertySetup? scopedSetup))
 		{
 			existingSetup = scopedSetup;
 		}
 
-		if (existingSetup is null && !Setup.Properties.TryGetValue(propertyName, out existingSetup))
+		if (existingSetup is null &&
+		    !TryGetPropertySetup(Setup.Properties, memberId, propertyName, out existingSetup))
 		{
 			if (Behavior.ThrowWhenNotSetup)
 			{
@@ -540,7 +725,7 @@ public partial class MockRegistry
 			}
 
 			TResult initialValue = GetInitialValue();
-			PropertySetup setup = new PropertySetup.Default<TResult>(propertyName, initialValue);
+			PropertySetup setup = new PropertySetup.Default<TResult>(memberId, propertyName, initialValue);
 			Setup.Properties.Add(setup);
 			return setup;
 		}
@@ -578,6 +763,21 @@ public partial class MockRegistry
 		}
 	}
 #pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
+
+	// Prefers the O(1) by-member-id lookup when the caller knows the id. Falls back to the
+	// name-based scan for legacy call sites (memberId < 0) and to cover setups registered via the
+	// legacy ctor: those live in `_storage` but not in `_byMemberId`, so the by-id fetch would miss
+	// them.
+	private static bool TryGetPropertySetup(MockSetups.PropertySetups bucket, int memberId, string propertyName,
+		[NotNullWhen(true)] out PropertySetup? setup)
+	{
+		if (memberId >= 0 && bucket.TryGetByMemberId(memberId, out setup))
+		{
+			return true;
+		}
+
+		return bucket.TryGetValue(propertyName, out setup);
+	}
 
 	/// <summary>
 	///     Records a subscription to the event named <paramref name="name" /> and fires registered

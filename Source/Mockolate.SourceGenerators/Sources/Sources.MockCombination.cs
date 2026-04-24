@@ -408,7 +408,8 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockSetupFor").Append(item.Name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, item.Class, mockRegistryName, $"IMockSetupFor{item.Name}", MemberType.Public);
+			ImplementSetupInterface(sb, item.Class, mockRegistryName, $"IMockSetupFor{item.Name}", MemberType.Public,
+				rootClass: @class);
 			sb.Append("\t\t#endregion IMockSetupFor").Append(item.Name).AppendLine();
 		}
 

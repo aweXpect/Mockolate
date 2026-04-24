@@ -34,6 +34,96 @@ internal static partial class Sources
 		return -1;
 	}
 
+	/// <summary>
+	///     Dense ordinal of <paramref name="property" /> within the full mock surface's non-indexer
+	///     properties. Used as the generator-assigned member id for the O(1) property setup
+	///     dispatch. Indexers and non-indexer properties use separate ordinal sequences because
+	///     they live in different buckets on the runtime-side MockSetups.
+	/// </summary>
+	private static int GetPropertyMemberId(Class @class, Property property)
+	{
+		int index = 0;
+		foreach (Property p in EnumerateMockSurfaceProperties(@class))
+		{
+			if (p.IsIndexer)
+			{
+				continue;
+			}
+
+			if (Property.EqualityComparer.Equals(p, property))
+			{
+				return index;
+			}
+
+			index++;
+		}
+
+		return -1;
+	}
+
+	/// <summary>
+	///     Dense ordinal of <paramref name="indexer" /> within the full mock surface's indexer
+	///     properties. Used as the generator-assigned member id for the closure-free O(1) indexer
+	///     setup dispatch. When <paramref name="class" /> is a
+	///     <see cref="Mockolate.SourceGenerators.Entities.MockClass" /> with additional
+	///     implementations, the additional interfaces' indexers are enumerated after the mock's
+	///     own, so the id is stable across both the primary emission pass and the
+	///     per-additional-interface explicit-impl pass. Separate ordinal sequence from
+	///     <see cref="GetMemberId(Class, Method)" /> because indexer setups live in their own bucket.
+	/// </summary>
+	private static int GetIndexerMemberId(Class @class, Property indexer)
+	{
+		int index = 0;
+		foreach (Property p in EnumerateMockSurfaceProperties(@class))
+		{
+			if (!p.IsIndexer)
+			{
+				continue;
+			}
+
+			if (Property.EqualityComparer.Equals(p, indexer))
+			{
+				return index;
+			}
+
+			index++;
+		}
+
+		return -1;
+	}
+
+	/// <summary>
+	///     Enumerates the mock's full property surface: the primary class's own properties plus
+	///     the properties contributed by each <see cref="MockClass.AdditionalImplementations" />
+	///     (when present). Uses <see cref="Property.EqualityComparer" /> to drop duplicates so the
+	///     enumeration order matches <see cref="Class.AllProperties" /> for plain classes.
+	/// </summary>
+	private static IEnumerable<Property> EnumerateMockSurfaceProperties(Class @class)
+	{
+		HashSet<Property> seen = new(Property.EqualityComparer);
+		foreach (Property p in @class.AllProperties())
+		{
+			if (seen.Add(p))
+			{
+				yield return p;
+			}
+		}
+
+		if (@class is MockClass mockClass)
+		{
+			foreach (Class additional in mockClass.AdditionalImplementations)
+			{
+				foreach (Property p in additional.AllProperties())
+				{
+					if (seen.Add(p))
+					{
+						yield return p;
+					}
+				}
+			}
+		}
+	}
+
 	public static string MockClass(string name, Class @class, bool hasOverloadResolutionPriority = false)
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
@@ -1677,9 +1767,13 @@ internal static partial class Sources
 					}
 				}
 
+				// For member-id computation, use the root mock class (when emitting an additional
+				// interface's explicit implementation, `mockClass` is the outer MockClass — its
+				// full surface is what the user-side `Setup.this[...]` path registers against, so
+				// the ids must agree).
 				AppendMockSubject_ImplementClass_AddProperty(sb, property, mockRegistryName, className,
 					mockClass is not null,
-					@class.IsInterface, signatureIndex);
+					@class.IsInterface, signatureIndex, (Class?)mockClass ?? @class);
 				sb.AppendLine();
 			}
 		}
@@ -1821,9 +1915,18 @@ internal static partial class Sources
 
 	private static void AppendMockSubject_ImplementClass_AddProperty(StringBuilder sb, Property property,
 		string mockRegistryName,
-		string className, bool explicitInterfaceImplementation, bool isClassInterface, int signatureIndex)
+		string className, bool explicitInterfaceImplementation, bool isClassInterface, int signatureIndex,
+		Class @class)
 	{
 		string mockRegistry = property.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
+		int indexerMemberId = property is { IsIndexer: true, IndexerParameters: not null, } &&
+		                      property.IndexerParameters.Value.Count <= MaxExplicitParameters &&
+		                      !property.IndexerParameters.Value.Any(p => p.NeedsRefStructPipeline())
+			? GetIndexerMemberId(@class, property)
+			: -1;
+		int propertyMemberId = property is { IsIndexer: false, }
+			? GetPropertyMemberId(@class, property)
+			: -1;
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(property.ContainingType.EscapeForXmlDoc()).Append('.').Append(
 				property.IndexerParameters is not null
 					? property.Name.Replace("[]",
@@ -1911,7 +2014,7 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
 
 					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
-						property.Type, property.IndexerParameters.Value);
+						property.Type, property.IndexerParameters.Value, indexerMemberId);
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className)
 						.Append(" wraps)").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
@@ -1936,8 +2039,13 @@ internal static partial class Sources
 				else
 				{
 					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(property.GetUniqueNameString()).Append(", () => ")
+						.AppendTypeOrWrapper(property.Type).Append(">(");
+					if (propertyMemberId >= 0)
+					{
+						sb.Append(propertyMemberId).Append(", ");
+					}
+
+					sb.Append(property.GetUniqueNameString()).Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 					if (!property.IsStatic)
 					{
@@ -1964,7 +2072,7 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
 
 					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
-						property.Type, property.IndexerParameters.Value);
+						property.Type, property.IndexerParameters.Value, indexerMemberId);
 					sb.Append("\t\t\t\tif (!(").Append(setupVarName).Append("?.SkipBaseClass() ?? ")
 						.Append(mockRegistry).Append(".Behavior.SkipBaseClass))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
@@ -2003,8 +2111,13 @@ internal static partial class Sources
 				else
 				{
 					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(property.GetUniqueNameString()).Append(", () => ")
+						.AppendTypeOrWrapper(property.Type).Append(">(");
+					if (propertyMemberId >= 0)
+					{
+						sb.Append(propertyMemberId).Append(", ");
+					}
+
+					sb.Append(property.GetUniqueNameString()).Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 					if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
 					{
@@ -2028,7 +2141,7 @@ internal static partial class Sources
 					Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
 
 				EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
-					property.Type, property.IndexerParameters.Value);
+					property.Type, property.IndexerParameters.Value, indexerMemberId);
 				sb.Append("\t\t\t\treturn ").Append(setupVarName).Append(" is null").AppendLine();
 				sb.Append("\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
 					.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
@@ -2041,7 +2154,13 @@ internal static partial class Sources
 			else
 			{
 				sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
-					.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
+					.AppendTypeOrWrapper(property.Type).Append(">(");
+				if (propertyMemberId >= 0)
+				{
+					sb.Append(propertyMemberId).Append(", ");
+				}
+
+				sb.Append(property.GetUniqueNameString())
 					.Append(", () => ")
 					.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue")
 					.Append(", null);").AppendLine();
@@ -2077,7 +2196,7 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
 
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
-						property.Type, property.IndexerParameters.Value);
+						property.Type, property.IndexerParameters.Value, indexerMemberId);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append(");")
@@ -2094,7 +2213,13 @@ internal static partial class Sources
 				else
 				{
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
+						.AppendTypeOrWrapper(property.Type).Append(">(");
+					if (propertyMemberId >= 0)
+					{
+						sb.Append(propertyMemberId).Append(", ");
+					}
+
+					sb.Append(property.GetUniqueNameString())
 						.Append(", value);").AppendLine();
 					if (!property.IsStatic)
 					{
@@ -2116,7 +2241,7 @@ internal static partial class Sources
 				if (!isClassInterface && !property.IsAbstract)
 				{
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
-						property.Type, property.IndexerParameters.Value);
+						property.Type, property.IndexerParameters.Value, indexerMemberId);
 					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append("))").AppendLine();
@@ -2149,7 +2274,7 @@ internal static partial class Sources
 				else
 				{
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
-						property.Type, property.IndexerParameters.Value);
+						property.Type, property.IndexerParameters.Value, indexerMemberId);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append(");").AppendLine();
@@ -2160,7 +2285,13 @@ internal static partial class Sources
 				if (!isClassInterface && !property.IsAbstract)
 				{
 					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
+						.AppendTypeOrWrapper(property.Type).Append(">(");
+					if (propertyMemberId >= 0)
+					{
+						sb.Append(propertyMemberId).Append(", ");
+					}
+
+					sb.Append(property.GetUniqueNameString())
 						.Append(", value))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property is { IsStatic: false, } && property.Setter?.IsProtected != true)
@@ -2185,7 +2316,13 @@ internal static partial class Sources
 				else
 				{
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(").Append(property.GetUniqueNameString())
+						.AppendTypeOrWrapper(property.Type).Append(">(");
+					if (propertyMemberId >= 0)
+					{
+						sb.Append(propertyMemberId).Append(", ");
+					}
+
+					sb.Append(property.GetUniqueNameString())
 						.AppendLine(", value);");
 				}
 			}
@@ -3310,9 +3447,14 @@ internal static partial class Sources
 	}
 
 	private static void ImplementSetupInterface(StringBuilder sb, Class @class, string mockRegistryName,
-		string setupName, MemberType memberType, string? scopeExpression = null)
+		string setupName, MemberType memberType, string? scopeExpression = null, Class? rootClass = null)
 	{
 		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
+		// Member-ids are assigned against the full mock surface (the root class plus any additional
+		// interfaces), so the setup-side ctor call and the invocation-side lookup agree. When
+		// ImplementSetupInterface is called for an additional interface in MockCombination, the
+		// caller passes the outer mock class as rootClass.
+		Class memberIdSource = rootClass ?? @class;
 
 		#region Properties
 
@@ -3321,6 +3463,7 @@ internal static partial class Sources
 			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
+			int propertyMemberId = GetPropertyMemberId(memberIdSource, property);
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append(
 					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
@@ -3331,7 +3474,13 @@ internal static partial class Sources
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tvar propertySetup = new global::Mockolate.Setup.PropertySetup<")
-				.Append(property.Type.Fullname).Append(">(").Append(mockRegistryName).Append(", ")
+				.Append(property.Type.Fullname).Append(">(");
+			if (propertyMemberId >= 0)
+			{
+				sb.Append(propertyMemberId).Append(", ");
+			}
+
+			sb.Append(mockRegistryName).Append(", ")
 				.Append(property.GetUniqueNameString()).Append(");")
 				.AppendLine();
 			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupProperty(").Append(scopePrefix).Append("propertySetup);").AppendLine();
@@ -3376,12 +3525,13 @@ internal static partial class Sources
 			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, scopeExpression: scopeExpression);
+			AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, @class: memberIdSource,
+				scopeExpression: scopeExpression);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, valueFlags, scopeExpression);
+					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, valueFlags, scopeExpression, memberIdSource);
 				}
 			}
 			else
@@ -3390,7 +3540,7 @@ internal static partial class Sources
 					.ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, allValueFlags, scopeExpression);
+					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, allValueFlags, scopeExpression, memberIdSource);
 				}
 			}
 		}
@@ -3884,8 +4034,13 @@ internal static partial class Sources
 	}
 
 	private static void AppendIndexerSetupImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
-		string setupName, bool[]? valueFlags = null, string? scopeExpression = null)
+		string setupName, bool[]? valueFlags = null, string? scopeExpression = null, Class? @class = null)
 	{
+		int indexerMemberId = @class is not null &&
+		                      indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters &&
+		                      !indexer.IndexerParameters.Value.Any(p => p.NeedsRefStructPipeline())
+			? GetIndexerMemberId(@class, indexer)
+			: -1;
 		// Mirror AppendIndexerSetupDefinition: dispatch to the appropriate ref-struct facade
 		// implementation depending on whether the indexer has a getter, a setter, or both.
 		if (indexer.IndexerParameters!.Value.Any(p => p.NeedsRefStructPipeline()))
@@ -3963,7 +4118,13 @@ internal static partial class Sources
 			sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
 		}
 
-		sb.Append(">(").Append(mockRegistryName);
+		sb.Append(">(");
+		if (indexerMemberId >= 0)
+		{
+			sb.Append(indexerMemberId).Append(", ");
+		}
+
+		sb.Append(mockRegistryName);
 		int j = 0;
 		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
 		{
