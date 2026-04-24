@@ -18,14 +18,21 @@ namespace Mockolate.Monitor;
 #endif
 public abstract class MockMonitor
 {
-	private readonly MockInteractions _monitoredInteractions;
+	private readonly IMockInteractions _monitoredInteractions;
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor" />
-	protected MockMonitor(MockInteractions mockInteractions)
+	protected MockMonitor(IMockInteractions mockInteractions)
 	{
 		_monitoredInteractions = mockInteractions;
 		Interactions = new MockInteractions { SkipInteractionRecording = mockInteractions.SkipInteractionRecording };
+	}
+
+	/// <inheritdoc cref="MockMonitor" />
+	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
+	protected MockMonitor(MockInteractions mockInteractions)
+		: this((IMockInteractions)mockInteractions)
+	{
 	}
 
 	/// <summary>
@@ -115,9 +122,16 @@ public abstract class MockMonitor
 public sealed class MockMonitor<T> : MockMonitor
 {
 	/// <inheritdoc cref="MockMonitor{T}" />
-	public MockMonitor(MockInteractions interactions, Func<MockInteractions, T> verify) : base(interactions)
+	public MockMonitor(IMockInteractions interactions, Func<IMockInteractions, T> verify) : base(interactions)
 	{
 		Verify = verify(Interactions);
+	}
+
+	/// <inheritdoc cref="MockMonitor{T}" />
+	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
+	public MockMonitor(MockInteractions interactions, Func<MockInteractions, T> verify)
+		: this((IMockInteractions)interactions, x => verify((MockInteractions)x))
+	{
 	}
 
 	/// <summary>

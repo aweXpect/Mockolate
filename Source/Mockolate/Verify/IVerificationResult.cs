@@ -16,7 +16,13 @@ public interface IVerificationResult
 	/// <summary>
 	///     Gets the complete collection of mock interactions recorded during test execution.
 	/// </summary>
+	[Obsolete("Use Interactions instead. This property will be removed in a future release.")]
 	MockInteractions MockInteractions { get; }
+
+	/// <summary>
+	///     Gets the complete collection of mock interactions recorded during test execution.
+	/// </summary>
+	IMockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Verifies that the specified <paramref name="predicate" /> holds true for the current set of interactions.

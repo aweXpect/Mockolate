@@ -72,7 +72,7 @@ public sealed partial class MockBehaviorTests
 			sut.SomeFlag = false;
 			_ = sut.IsValid(1);
 
-			MockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
+			IMockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 			await That(interactions.Count).IsEqualTo(0);
 		}
 

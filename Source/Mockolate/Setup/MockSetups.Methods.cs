@@ -141,7 +141,7 @@ internal partial class MockSetups
 			}
 		}
 
-		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
+		internal IEnumerable<MethodSetup> EnumerateUnusedSetupsBy(IMockInteractions interactions)
 		{
 			List<MethodSetup>? storage = _storage;
 			if (storage is null)

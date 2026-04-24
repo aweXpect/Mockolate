@@ -13,7 +13,7 @@ public partial class MockRegistry
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	public MockInteractions Interactions { get; }
+	public IMockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -311,7 +311,7 @@ public partial class MockRegistry
 	{
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(interaction);
+			Interactions.RegisterInteraction(interaction);
 		}
 	}
 
@@ -355,7 +355,7 @@ public partial class MockRegistry
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
 		{
-			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+			interaction = Interactions.RegisterInteraction(
 				new PropertyGetterAccess(propertyName));
 		}
 
@@ -408,7 +408,7 @@ public partial class MockRegistry
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
 		{
-			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+			interaction = Interactions.RegisterInteraction(
 				new PropertySetterAccess<T>(propertyName, value));
 		}
 
@@ -498,7 +498,7 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
+			Interactions.RegisterInteraction(new EventSubscription(name, target, method));
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))
@@ -524,7 +524,7 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
+			Interactions.RegisterInteraction(new EventUnsubscription(name, target, method));
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))

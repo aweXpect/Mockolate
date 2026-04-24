@@ -29,13 +29,13 @@ namespace Mockolate.Verify;
 public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
 {
 	private readonly Func<string> _expectationFactory;
-	private readonly MockInteractions _interactions;
+	private readonly IMockInteractions _interactions;
 	private Func<IInteraction, bool> _predicate;
 	private readonly TVerify _verify;
 
 	/// <inheritdoc cref="VerificationResult{TVerify}" />
 	public VerificationResult(TVerify verify,
-		MockInteractions interactions,
+		IMockInteractions interactions,
 		Func<IInteraction, bool> predicate,
 		string expectation)
 	{
@@ -47,7 +47,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	/// <inheritdoc cref="VerificationResult{TVerify}" />
 	public VerificationResult(TVerify verify,
-		MockInteractions interactions,
+		IMockInteractions interactions,
 		Func<IInteraction, bool> predicate,
 		Func<string> expectation)
 	{
@@ -55,6 +55,26 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		_interactions = interactions;
 		_predicate = predicate;
 		_expectationFactory = expectation;
+	}
+
+	/// <inheritdoc cref="VerificationResult{TVerify}" />
+	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
+	public VerificationResult(TVerify verify,
+		MockInteractions interactions,
+		Func<IInteraction, bool> predicate,
+		string expectation)
+		: this(verify, (IMockInteractions)interactions, predicate, expectation)
+	{
+	}
+
+	/// <inheritdoc cref="VerificationResult{TVerify}" />
+	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
+	public VerificationResult(TVerify verify,
+		MockInteractions interactions,
+		Func<IInteraction, bool> predicate,
+		Func<string> expectation)
+		: this(verify, (IMockInteractions)interactions, predicate, expectation)
+	{
 	}
 
 	#region IVerificationResult<TVerify>
@@ -71,7 +91,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	private void ReplacePredicate(Func<IInteraction, bool> predicate)
 		=> _predicate = predicate;
 
-	private static void ThrowIfRecordingDisabled(MockInteractions interactions)
+	private static void ThrowIfRecordingDisabled(IMockInteractions interactions)
 	{
 		if (interactions.SkipInteractionRecording)
 		{
@@ -153,7 +173,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		{
 			ThrowIfRecordingDisabled(_interactions);
 			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
-			((IMockInteractions)_interactions).Verified(matchingInteractions);
+			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
 			{
@@ -168,7 +188,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		{
 			ThrowIfRecordingDisabled(_interactions);
 			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
-			((IMockInteractions)_interactions).Verified(matchingInteractions);
+			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
 			{
@@ -205,7 +225,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					do
 					{
 						matchingInteractions = _interactions.Where(_predicate).ToArray();
-						((IMockInteractions)_interactions).Verified(matchingInteractions);
+						_interactions.Verified(matchingInteractions);
 						if (predicate(matchingInteractions))
 						{
 							return true;
@@ -269,6 +289,10 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	/// <inheritdoc cref="IVerificationResult.MockInteractions" />
 	MockInteractions IVerificationResult.MockInteractions
+		=> (MockInteractions)_interactions;
+
+	/// <inheritdoc cref="IVerificationResult.Interactions" />
+	IMockInteractions IVerificationResult.Interactions
 		=> _interactions;
 
 	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
@@ -276,7 +300,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	{
 		ThrowIfRecordingDisabled(_interactions);
 		IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
-		((IMockInteractions)_interactions).Verified(matchingInteractions);
+		_interactions.Verified(matchingInteractions);
 		return predicate(matchingInteractions);
 	}
 
@@ -294,7 +318,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 		internal IgnoreParameters(
 			TVerify verify,
-			MockInteractions interactions,
+			IMockInteractions interactions,
 			string methodName,
 			Func<IInteraction, bool> predicate,
 			Func<string> expectation)
