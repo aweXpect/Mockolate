@@ -572,8 +572,13 @@ namespace Mockolate.Interactions
     {
         string Name { get; }
     }
-    public interface IMockInteractions
+    public interface IMockInteractions : System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction>, System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction>, System.Collections.IEnumerable
     {
+        bool SkipInteractionRecording { get; }
+        event System.EventHandler? InteractionAdded;
+        event System.EventHandler? OnClearing;
+        void Clear();
+        System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions();
         TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
             where TInteraction : Mockolate.Interactions.IInteraction;
     }
@@ -732,6 +737,10 @@ namespace Mockolate.Interactions
     {
         public MockInteractions() { }
         public int Count { get; }
+        public bool SkipInteractionRecording { get; init; }
+        public event System.EventHandler? InteractionAdded;
+        public event System.EventHandler? OnClearing;
+        public void Clear() { }
         public System.Collections.Generic.IEnumerator<Mockolate.Interactions.IInteraction> GetEnumerator() { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
     }
