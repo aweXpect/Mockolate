@@ -57,10 +57,9 @@ migration guide.
   `ReadOnlySpan<(string, object?)>` (was `(string, object?)[]`). Removes the
   per-call array allocation on the `WithParameters` matching path.
 - Generator-emitted proxy method bodies now dispatch through
-  `GetMethodSetupSnapshot(memberId)` for default-scope calls; the legacy
-  closure-based `GetMethodSetup<T>(string, Func<T, bool>)` is reserved for
-  scenario-scoped lookups and string-keyed registrations
-  (e.g. `HttpClientExtensions.SetupMethod`).
+  `GetMethodSetupSnapshot(memberId)` for default-scope calls and fall back to
+  the closure-less `GetMethodSetups<T>(string)` enumeration for scenario-scoped
+  lookups and string-keyed registrations (e.g. `HttpClientExtensions.SetupMethod`).
 - Generator-emitted recording calls dispatch directly to typed buffer `Append`
   methods instead of allocating a new `MethodInvocation` / `Access` per call.
 - `Verify` walks now scan only the target member's buffer (not the global
@@ -74,6 +73,9 @@ migration guide.
 - The hand-written D-preview benchmark classes
   (`OptimizedDMock`, `OptimizedDAllMembersMock`, `OptimizedHandwrittenMock`)
   superseded by the real runtime implementation.
+- **Breaking:** `MockRegistry.GetMethodSetup<T>(string, Func<T, bool>)` removed.
+  The generator now uses `GetMethodSetupSnapshot(memberId)` on the hot path
+  and falls back to the closure-less `GetMethodSetups<T>(string)` enumeration.
 
 ### Deprecated
 

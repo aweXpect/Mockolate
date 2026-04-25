@@ -23,6 +23,7 @@ See [`Docs/pages/performance.md`](./performance.md) for the measured speedups.
 | `MethodInvocation<T...>` ctor / properties | `parameterName*` ctor parameters and `ParameterName*` properties removed |
 | `IndexerGetterAccess<T...>` / `IndexerSetterAccess<T...>` ctor / properties | Same as `MethodInvocation` |
 | `IParametersMatch.Matches` / `INamedParametersMatch.Matches` | Now take `ReadOnlySpan<...>` instead of `T[]` |
+| `MockRegistry.GetMethodSetup<T>(string, Func<T, bool>)` | Removed — use `GetMethodSetupSnapshot(memberId)` (hot path) or `GetMethodSetups<T>(string)` (scenario / legacy) |
 
 The library and the source generator move together; rebuilding a consuming project
 against Mockolate v3.0 regenerates every `Mock.{TypeName}.g.cs` against the new shapes.
@@ -174,6 +175,33 @@ If a custom matcher needs an array (e.g. to keep a snapshot for later), call
 `values.ToArray()` inside `Matches` — the cost is now paid only on that branch
 rather than on every match attempt.
 
+## `MockRegistry.GetMethodSetup<T>(string, Func<T, bool>)` removed
+
+The closure-taking lookup is gone. Generated mock proxies now fall back to
+the lock-free `GetMethodSetups<T>(string)` enumeration when the member-id
+snapshot misses, and the loop applies the matcher inline (no closure
+allocation, no string-name compare under a lock):
+
+```csharp
+// v2 — closure path
+TSetup? setup = mockRegistry.GetMethodSetup<TSetup>("name", m => m.Matches(arg1, arg2));
+
+// v3 — enumerate and stack-evaluate the matcher
+TSetup? setup = null;
+foreach (TSetup s in mockRegistry.GetMethodSetups<TSetup>("name"))
+{
+    if (s.Matches(arg1, arg2))
+    {
+        setup = s;
+        break;
+    }
+}
+```
+
+Custom code that called the removed overload should switch to the
+enumeration form above. `GetMethodSetupSnapshot(int memberId)` remains the
+default-scope fast path for code that has a member id available.
+
 ## What is *not* breaking
 
 - `T.CreateMock()`, `sut.Mock.Setup.X(...)`, `sut.Mock.Verify.X(...)`,
@@ -181,7 +209,5 @@ rather than on every match attempt.
   `It.*` matchers, `Match.*`, `MockBehavior` — unchanged.
 - `MockInteractions` itself remains a public type and continues to be accepted
   anywhere `IMockInteractions` is now required.
-- `MockRegistry.GetMethodSetup<T>(string, Func<T, bool>)` is still public — it is
-  now the cold-path fallback for scenario-scoped lookups and string-keyed
-  registrations (e.g. `HttpClientExtensions.SetupMethod`). On the default-scope
-  hot path the generator emits `GetMethodSetupSnapshot(memberId)` walks instead.
+- `MockRegistry.GetMethodSetupSnapshot(int memberId)` is the default-scope hot
+  path; the generator emits this for every member-id-keyed call site.

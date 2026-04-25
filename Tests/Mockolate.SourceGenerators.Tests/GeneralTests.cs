@@ -796,7 +796,7 @@ public class GeneralTests
 			          		{
 			          			global::Mockolate.Setup.ReturnMethodSetup<string, string>? methodSetup = null;
 			          """).IgnoringNewlineStyle().And
-			.Contains("methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, string>>(\"global::MyCode.IMyService.MyMethod\", __m => __m.Matches(message));")
+			.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<string, string> __s in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<string, string>>(\"global::MyCode.IMyService.MyMethod\"))")
 			.IgnoringNewlineStyle().And
 			.Contains("""
 			          			bool hasWrappedResult = false;

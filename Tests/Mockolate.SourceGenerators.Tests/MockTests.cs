@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Mockolate.SourceGenerators.Tests;
@@ -709,7 +709,7 @@ public sealed partial class MockTests
 			          		{
 			          """)
 			.IgnoringNewlineStyle().And
-			.Contains("methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>(\"global::MyCode.IMyService.MyMethod\", __m => __m.Matches(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15));")
+			.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal> __s in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>(\"global::MyCode.IMyService.MyMethod\"))")
 			.IgnoringNewlineStyle().And
 			.Contains("""
 			          			bool hasWrappedResult = false;

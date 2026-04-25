@@ -245,9 +245,16 @@ internal static partial class Sources
 		sb.Append(indent).Append('}').AppendLine();
 		sb.Append(indent).Append("if (").Append(methodSetup).Append(" is null)").AppendLine();
 		sb.Append(indent).Append('{').AppendLine();
-		sb.Append(indent).Append('\t').Append(methodSetup).Append(" = ").Append(mockRegistry)
-			.Append(".GetMethodSetup<").Append(methodSetupType).Append(">(").Append(uniqueNameString)
-			.Append(", __m => __m.Matches(").Append(matchArgs).Append("));").AppendLine();
+		sb.Append(indent).Append("\tforeach (").Append(methodSetupType).Append(" __s in ").Append(mockRegistry)
+			.Append(".GetMethodSetups<").Append(methodSetupType).Append(">(").Append(uniqueNameString).Append("))")
+			.AppendLine();
+		sb.Append(indent).Append("\t{").AppendLine();
+		sb.Append(indent).Append("\t\tif (__s.Matches(").Append(matchArgs).Append("))").AppendLine();
+		sb.Append(indent).Append("\t\t{").AppendLine();
+		sb.Append(indent).Append("\t\t\t").Append(methodSetup).Append(" = __s;").AppendLine();
+		sb.Append(indent).Append("\t\t\tbreak;").AppendLine();
+		sb.Append(indent).Append("\t\t}").AppendLine();
+		sb.Append(indent).Append("\t}").AppendLine();
 		sb.Append(indent).Append('}').AppendLine();
 	}
 
