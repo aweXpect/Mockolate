@@ -496,18 +496,18 @@ Standard release flow — tag, NuGet push, blog post.
 
 ## Summary
 
-| Phase | Commits | Effort | Breaking? | Risk |
-|---|---|---|---|---|
-| 0. Baseline + benchmarks | 1 | 1 day | no | low |
-| 1. Signature cleanup (B + E-revised) | 3 | 1.5 days | yes (public) | medium — big sweep |
-| 2. Widen `IMockInteractions` | 1 | 2 hrs | no | low |
-| 3. Plumb `IMockInteractions` through consumers | 2 | 3 hrs | mild | low |
+| Phase                                           | Commits | Effort | Breaking? | Risk |
+|-------------------------------------------------|---|---|---|---|
+| 0. Baseline + benchmarks                        | 1 | 1 day | no | low |
+| 1. Signature cleanup (B + E-revised)            | 3 | 1.5 days | yes (public) | medium — big sweep |
+| 2. Widen `IMockInteractions`                    | 1 | 2 hrs | no | low |
+| 3. Plumb `IMockInteractions` through consumers  | 2 | 3 hrs | mild | low |
 | 4. Member ids + fast setup dispatch (A + B + C) | 2 | 3 days | no | medium |
-| 5. Fast per-member storage (D) | 3 | 7 days | no | **high** — largest change |
-| 6. Fast Verify walks | 1 | 1.5 days | no | medium |
-| 7. Cleanup | 3 | 1 day | yes | low |
-| 8. Release prep | 1 | 1 day | no | low |
-| **Total** | **17** | **~18 days** | | |
+| 5. Fast per-member storage (D)                  | 3 | 7 days | no | **high** — largest change |
+| 6. 3686                                            | 1 | 1.5 days | no | medium |
+| 7. Cleanup                                      | 3 | 1 day | yes | low |
+| 8. Release prep                                 | 1 | 1 day | no | low |
+| **Total**                                       | **17** | **~18 days** | | |
 
 ## Risk controls baked in
 
