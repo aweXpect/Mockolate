@@ -317,27 +317,6 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	string IVerificationResult.Expectation
 		=> _expectationFactory();
 
-	/// <inheritdoc cref="IVerificationResult.MockInteractions" />
-	MockInteractions IVerificationResult.MockInteractions
-	{
-		get
-		{
-			if (_interactions is MockInteractions concrete)
-			{
-				return concrete;
-			}
-
-			MockInteractions snapshot = new() { SkipInteractionRecording = _interactions.SkipInteractionRecording, };
-			IMockInteractions snapshotView = snapshot;
-			foreach (IInteraction interaction in _interactions)
-			{
-				snapshotView.RegisterInteraction(interaction);
-			}
-
-			return snapshot;
-		}
-	}
-
 	/// <inheritdoc cref="IVerificationResult.Interactions" />
 	IMockInteractions IVerificationResult.Interactions
 		=> _interactions;
