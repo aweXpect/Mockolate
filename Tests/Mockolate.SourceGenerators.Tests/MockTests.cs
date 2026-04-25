@@ -86,11 +86,11 @@ public sealed partial class MockTests
 			.DoesNotContain("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.DirectValue").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.ParentValue").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.NestedValue").And
-			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.OuterMethod()").And
-			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.BaseClassMethod()").And
-			.DoesNotContain("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.DirectMethod()").And
-			.DoesNotContain("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.ParentMethod()").And
-			.DoesNotContain("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.NestedMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass>.IgnoreParameters IMockVerifyForOuterClass.OuterMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass>.IgnoreParameters IMockVerifyForOuterClass.BaseClassMethod()").And
+			.DoesNotContain("IMockVerifyForOuterClass.DirectMethod()").And
+			.DoesNotContain("IMockVerifyForOuterClass.ParentMethod()").And
+			.DoesNotContain("IMockVerifyForOuterClass.NestedMethod()").And
 			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.OuterEvent").And
 			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.BaseClassEvent").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.DirectEvent").And

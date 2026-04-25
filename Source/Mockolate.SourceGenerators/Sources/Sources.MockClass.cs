@@ -4906,7 +4906,7 @@ internal static partial class Sources
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
 		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters, valueFlags, isVerify: true);
-		if (valueFlags?.All(x => x) == true)
+		if (valueFlags?.All(x => x) == true || (method.Parameters.Count == 0 && !useParameters))
 		{
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName)
 				.Append(">.IgnoreParameters ").Append(methodName).Append("(");
@@ -5156,7 +5156,7 @@ internal static partial class Sources
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<");
 		sb.Append(verifyName).Append('>');
-		if (valueFlags?.All(x => x) == true)
+		if (valueFlags?.All(x => x) == true || (method.Parameters.Count == 0 && !useParameters))
 		{
 			sb.Append(".IgnoreParameters");
 		}
