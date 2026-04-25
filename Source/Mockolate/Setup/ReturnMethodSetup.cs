@@ -501,7 +501,7 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	{
 		if (interaction is MethodInvocation<T1> invocation)
 		{
-			return Matches(invocation.ParameterName1, invocation.Parameter1);
+			return Matches(invocation.Parameter1);
 		}
 
 		return false;
@@ -544,10 +544,9 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	}
 
 	/// <summary>
-	///     Check if the setup matches the specified parameter value <paramref name="p1Value" /> for the parameter with the
-	///     specified name <paramref name="p1Name" />.
+	///     Check if the setup matches the specified parameter value <paramref name="p1Value" />.
 	/// </summary>
-	public abstract bool Matches(string p1Name, T1 p1Value);
+	public abstract bool Matches(T1 p1Value);
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified <paramref name="parameter1" />.
@@ -576,11 +575,14 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1>
 	{
+		private readonly string _parameterName1;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}" />
-		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters, string parameterName1)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+			_parameterName1 = parameterName1;
 		}
 
 		/// <summary>
@@ -588,12 +590,12 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 		/// </summary>
 		private IParameters Parameters { get; }
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(string, T1)" />
-		public override bool Matches(string p1Name, T1 p1Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(T1)" />
+		public override bool Matches(T1 p1Value)
 			=> Parameters switch
 			{
 				IParametersMatch m => m.Matches([p1Value,]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value),]),
+				INamedParametersMatch m => m.Matches([(_parameterName1, p1Value),]),
 				_ => true,
 			};
 
@@ -629,8 +631,8 @@ public abstract class ReturnMethodSetup<TReturn, T1> : MethodSetup,
 			return this;
 		}
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(string, T1)" />
-		public override bool Matches(string p1Name, T1 p1Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.Matches(T1)" />
+		public override bool Matches(T1 p1Value)
 			=> _matchAnyParameters || Parameter1.Matches(p1Value);
 
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1}.TriggerCallbacks(T1)" />
@@ -881,7 +883,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	{
 		if (interaction is MethodInvocation<T1, T2> invocation)
 		{
-			return Matches(invocation.ParameterName1, invocation.Parameter1, invocation.ParameterName2, invocation.Parameter2);
+			return Matches(invocation.Parameter1, invocation.Parameter2);
 		}
 
 		return false;
@@ -927,7 +929,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	///     Check if the setup matches the specified parameter values <paramref name="p1Value" /> and
 	///     <paramref name="p2Value" />.
 	/// </summary>
-	public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value);
+	public abstract bool Matches(T1 p1Value, T2 p2Value);
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified parameters.
@@ -956,11 +958,17 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1, T2>
 	{
+		private readonly string _parameterName1;
+		private readonly string _parameterName2;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}" />
-		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters,
+			string parameterName1, string parameterName2)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+			_parameterName1 = parameterName1;
+			_parameterName2 = parameterName2;
 		}
 
 		/// <summary>
@@ -968,12 +976,12 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 		/// </summary>
 		private IParameters Parameters { get; }
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(string, T1, string, T2)" />
-		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(T1, T2)" />
+		public override bool Matches(T1 p1Value, T2 p2Value)
 			=> Parameters switch
 			{
 				IParametersMatch m => m.Matches([p1Value, p2Value,]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value),]),
+				INamedParametersMatch m => m.Matches([(_parameterName1, p1Value), (_parameterName2, p2Value),]),
 				_ => true,
 			};
 
@@ -1016,8 +1024,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2> : MethodSetup,
 			return this;
 		}
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(string, T1, string, T2)" />
-		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2}.Matches(T1, T2)" />
+		public override bool Matches(T1 p1Value, T2 p2Value)
 			=> _matchAnyParameters ||
 			   (Parameter1.Matches(p1Value) &&
 			    Parameter2.Matches(p2Value));
@@ -1277,7 +1285,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	{
 		if (interaction is MethodInvocation<T1, T2, T3> invocation)
 		{
-			return Matches(invocation.ParameterName1, invocation.Parameter1, invocation.ParameterName2, invocation.Parameter2, invocation.ParameterName3, invocation.Parameter3);
+			return Matches(invocation.Parameter1, invocation.Parameter2, invocation.Parameter3);
 		}
 
 		return false;
@@ -1323,7 +1331,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	///     Check if the setup matches the specified parameter values <paramref name="p1Value" />,
 	///     <paramref name="p2Value" /> and <paramref name="p3Value" />.
 	/// </summary>
-	public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value);
+	public abstract bool Matches(T1 p1Value, T2 p2Value, T3 p3Value);
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified parameters.
@@ -1352,11 +1360,19 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1, T2, T3>
 	{
+		private readonly string _parameterName1;
+		private readonly string _parameterName2;
+		private readonly string _parameterName3;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}" />
-		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters,
+			string parameterName1, string parameterName2, string parameterName3)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+			_parameterName1 = parameterName1;
+			_parameterName2 = parameterName2;
+			_parameterName3 = parameterName3;
 		}
 
 		/// <summary>
@@ -1364,12 +1380,12 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 		/// </summary>
 		private IParameters Parameters { get; }
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.Matches(string, T1, string, T2, string, T3)" />
-		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.Matches(T1, T2, T3)" />
+		public override bool Matches(T1 p1Value, T2 p2Value, T3 p3Value)
 			=> Parameters switch
 			{
 				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value,]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value),]),
+				INamedParametersMatch m => m.Matches([(_parameterName1, p1Value), (_parameterName2, p2Value), (_parameterName3, p3Value),]),
 				_ => true,
 			};
 
@@ -1422,8 +1438,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetup,
 			return this;
 		}
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.Matches(string, T1, string, T2, string, T3)" />
-		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3}.Matches(T1, T2, T3)" />
+		public override bool Matches(T1 p1Value, T2 p2Value, T3 p3Value)
 			=> _matchAnyParameters ||
 			   (Parameter1.Matches(p1Value) &&
 			    Parameter2.Matches(p2Value) &&
@@ -1693,7 +1709,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	{
 		if (interaction is MethodInvocation<T1, T2, T3, T4> invocation)
 		{
-			return Matches(invocation.ParameterName1, invocation.Parameter1, invocation.ParameterName2, invocation.Parameter2, invocation.ParameterName3, invocation.Parameter3, invocation.ParameterName4, invocation.Parameter4);
+			return Matches(invocation.Parameter1, invocation.Parameter2, invocation.Parameter3, invocation.Parameter4);
 		}
 
 		return false;
@@ -1739,8 +1755,7 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	///     Check if the setup matches the specified parameter values <paramref name="p1Value" />,
 	///     <paramref name="p2Value" />, <paramref name="p3Value" /> and <paramref name="p4Value" />.
 	/// </summary>
-	public abstract bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value,
-		string p4Name, T4 p4Value);
+	public abstract bool Matches(T1 p1Value, T2 p2Value, T3 p3Value, T4 p4Value);
 
 	/// <summary>
 	///     Triggers any configured parameter callbacks for the method setup with the specified parameters.
@@ -1769,11 +1784,21 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 	/// </summary>
 	public class WithParameters : ReturnMethodSetup<TReturn, T1, T2, T3, T4>
 	{
+		private readonly string _parameterName1;
+		private readonly string _parameterName2;
+		private readonly string _parameterName3;
+		private readonly string _parameterName4;
+
 		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}" />
-		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters)
+		public WithParameters(MockRegistry mockRegistry, string name, IParameters parameters,
+			string parameterName1, string parameterName2, string parameterName3, string parameterName4)
 			: base(mockRegistry, name)
 		{
 			Parameters = parameters;
+			_parameterName1 = parameterName1;
+			_parameterName2 = parameterName2;
+			_parameterName3 = parameterName3;
+			_parameterName4 = parameterName4;
 		}
 
 		/// <summary>
@@ -1781,13 +1806,12 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 		/// </summary>
 		private IParameters Parameters { get; }
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}.Matches(string, T1, string, T2, string, T3, string, T4)" />
-		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value,
-			string p4Name, T4 p4Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}.Matches(T1, T2, T3, T4)" />
+		public override bool Matches(T1 p1Value, T2 p2Value, T3 p3Value, T4 p4Value)
 			=> Parameters switch
 			{
 				IParametersMatch m => m.Matches([p1Value, p2Value, p3Value, p4Value,]),
-				INamedParametersMatch m => m.Matches([(p1Name, p1Value), (p2Name, p2Value), (p3Name, p3Value), (p4Name, p4Value),]),
+				INamedParametersMatch m => m.Matches([(_parameterName1, p1Value), (_parameterName2, p2Value), (_parameterName3, p3Value), (_parameterName4, p4Value),]),
 				_ => true,
 			};
 
@@ -1848,9 +1872,8 @@ public abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4> : MethodSetup,
 			return this;
 		}
 
-		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}.Matches(string, T1, string, T2, string, T3, string, T4)" />
-		public override bool Matches(string p1Name, T1 p1Value, string p2Name, T2 p2Value, string p3Name, T3 p3Value,
-			string p4Name, T4 p4Value)
+		/// <inheritdoc cref="ReturnMethodSetup{TReturn, T1, T2, T3, T4}.Matches(T1, T2, T3, T4)" />
+		public override bool Matches(T1 p1Value, T2 p2Value, T3 p3Value, T4 p4Value)
 			=> _matchAnyParameters ||
 			   (Parameter1.Matches(p1Value) &&
 			    Parameter2.Matches(p2Value) &&

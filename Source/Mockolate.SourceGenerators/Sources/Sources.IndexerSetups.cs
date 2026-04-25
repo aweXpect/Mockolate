@@ -115,15 +115,12 @@ internal static partial class Sources
 #endif
 		sb.Append("\tinternal class IndexerGetterAccess<").Append(typeParams).Append(">(")
 			.Append(string.Join(", ",
-				Enumerable.Range(1, numberOfParameters).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
+				Enumerable.Range(1, numberOfParameters).Select(x => $"T{x} parameter{x}")))
 			.Append(")").AppendLine();
 		sb.Append("\t\t: global::Mockolate.Interactions.IndexerAccess").AppendLine();
 		sb.Append("\t{").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.AppendXmlSummary($"The name of parameter {i}.");
-			sb.Append("\t\tpublic string ParameterName").Append(i).Append(" { get; } = parameterName").Append(i)
-				.Append(";").AppendLine();
 			sb.AppendXmlSummary($"The value of parameter {i}.");
 			sb.Append("\t\tpublic T").Append(i).Append(" Parameter").Append(i).Append(" { get; } = parameter")
 				.Append(i).Append(";").AppendLine();
@@ -149,15 +146,12 @@ internal static partial class Sources
 #endif
 		sb.Append("\tinternal class IndexerSetterAccess<").Append(typeParams).Append(", TValue>(")
 			.Append(string.Join(", ",
-				Enumerable.Range(1, numberOfParameters).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
+				Enumerable.Range(1, numberOfParameters).Select(x => $"T{x} parameter{x}")))
 			.Append(", TValue value)").AppendLine();
 		sb.Append("\t\t: global::Mockolate.Interactions.IndexerAccess").AppendLine();
 		sb.Append("\t{").AppendLine();
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
-			sb.AppendXmlSummary($"The name of parameter {i}.");
-			sb.Append("\t\tpublic string ParameterName").Append(i).Append(" { get; } = parameterName").Append(i)
-				.Append(";").AppendLine();
 			sb.AppendXmlSummary($"The value of parameter {i}.");
 			sb.Append("\t\tpublic T").Append(i).Append(" Parameter").Append(i).Append(" { get; } = parameter")
 				.Append(i).Append(";").AppendLine();

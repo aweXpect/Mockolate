@@ -495,7 +495,7 @@ public sealed partial class MockTests
 			          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
 			          		{
 			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.DoSomething", CovariantParameterAdapter<int>.Wrap(@event ?? global::Mockolate.It.IsNull<int>("null")));
-			          			this.MockRegistry.SetupMethod(methodSetup);
+			          			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IMyService.MemberId_DoSomething, methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
@@ -668,11 +668,15 @@ public sealed partial class MockTests
 			.Contains("""
 			          		public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
 			          		{
-			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>("global::MyCode.IMyService.MyMethod", m => m.Matches("v1", v1, "v2", v2, "v3", v3, "v4", v4, "v5", v5, "v6", v6, "v7", v7, "v8", v8, "v9", v9, "v10", v10, "v11", v11, "v12", v12, "v13", v13, "v14", v14, "v15", v15));
+			          """)
+			.IgnoringNewlineStyle().And
+			.Contains("methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>(\"global::MyCode.IMyService.MyMethod\", __m => __m.Matches(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15));")
+			.IgnoringNewlineStyle().And
+			.Contains("""
 			          			bool hasWrappedResult = false;
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
-			          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>("global::MyCode.IMyService.MyMethod", "v1", v1, "v2", v2, "v3", v3, "v4", v4, "v5", v5, "v6", v6, "v7", v7, "v8", v8, "v9", v9, "v10", v10, "v11", v11, "v12", v12, "v13", v13, "v14", v14, "v15", v15));
+			          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>("global::MyCode.IMyService.MyMethod", v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15));
 			          			}
 			          			try
 			          			{

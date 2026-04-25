@@ -108,14 +108,14 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
+			sb.Append(p.ToNameOrWrapper());
 			first = false;
 		}
 	}
 
 	/// <summary>
 	///     Emits variable declarations for the indexer getter access and matching setup:
-	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;("p", p, ...);
+	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;(p, ...);
 	///     mockRegistry.RegisterInteraction(access);
 	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(access);</code>
 	/// </summary>

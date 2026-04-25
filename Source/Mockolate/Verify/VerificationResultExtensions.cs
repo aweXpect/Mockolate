@@ -440,7 +440,7 @@ public static class VerificationResultExtensions
 			List<string> expectations = [];
 			IVerificationResult result = verificationResult;
 			TMock mockVerify = ((IVerificationResult<TMock>)verificationResult).Object;
-			IInteraction[] snapshot = result.MockInteractions.ToArray();
+			IInteraction[] snapshot = result.Interactions.ToArray();
 			Dictionary<IInteraction, int> positions = new(snapshot.Length);
 			for (int i = 0; i < snapshot.Length; i++)
 			{

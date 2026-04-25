@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -13,7 +14,7 @@ public partial class MockRegistry
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	public MockInteractions Interactions { get; }
+	public IMockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -61,6 +62,29 @@ public partial class MockRegistry
 		}
 
 		return Setup.Methods.GetMatching(methodName, predicate);
+	}
+
+	/// <summary>
+	///     Returns the current snapshot of default-scope method setups registered under the generator-emitted
+	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
+	/// </summary>
+	/// <remarks>
+	///     The returned array is immutable — callers may iterate it without a lock. Setups are appended in
+	///     registration order, so callers interested in latest-registered-first should walk the array in reverse.
+	///     This accessor only sees setups registered via the <c>SetupMethod(int, ...)</c> overloads; scenario-scoped
+	///     and legacy string-keyed registrations are retrieved via <see cref="GetMethodSetup{T}(string, Func{T, bool})" />.
+	/// </remarks>
+	/// <param name="memberId">The generator-emitted member id.</param>
+	/// <returns>The setups array for the member, or <see langword="null" /> when none are registered.</returns>
+	public MethodSetup[]? GetMethodSetupSnapshot(int memberId)
+	{
+		MethodSetup[]?[]? table = Volatile.Read(ref _setupsByMemberId);
+		if (table is null || (uint)memberId >= (uint)table.Length)
+		{
+			return null;
+		}
+
+		return table[memberId];
 	}
 
 	/// <summary>
@@ -311,7 +335,7 @@ public partial class MockRegistry
 	{
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(interaction);
+			Interactions.RegisterInteraction(interaction);
 		}
 	}
 
@@ -355,7 +379,7 @@ public partial class MockRegistry
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
 		{
-			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+			interaction = Interactions.RegisterInteraction(
 				new PropertyGetterAccess(propertyName));
 		}
 
@@ -408,7 +432,7 @@ public partial class MockRegistry
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
 		{
-			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+			interaction = Interactions.RegisterInteraction(
 				new PropertySetterAccess<T>(propertyName, value));
 		}
 
@@ -498,7 +522,7 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
+			Interactions.RegisterInteraction(new EventSubscription(name, target, method));
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))
@@ -524,7 +548,7 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
+			Interactions.RegisterInteraction(new EventUnsubscription(name, target, method));
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))

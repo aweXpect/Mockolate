@@ -9,7 +9,7 @@ public sealed class MethodInvocationTests
 		[Fact]
 		public async Task Should_Include_ThirdParameterValue()
 		{
-			MethodInvocation<int, int, int> sut = new("MyType.MyMethod", "a", 1, "b", 2, "c", 3);
+			MethodInvocation<int, int, int> sut = new("MyType.MyMethod", 1, 2, 3);
 
 			string result = sut.ToString();
 
@@ -20,7 +20,7 @@ public sealed class MethodInvocationTests
 		public async Task WithNullThirdParameter_Should_FormatAsNullLiteral()
 		{
 			MethodInvocation<string?, string?, string?> sut =
-				new("MyType.MyMethod", "a", null, "b", null, "c", null);
+				new("MyType.MyMethod", null, null, null);
 
 			string result = sut.ToString();
 

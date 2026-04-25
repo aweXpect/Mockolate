@@ -1,4 +1,4 @@
-﻿namespace Mockolate.SourceGenerators.Tests;
+namespace Mockolate.SourceGenerators.Tests;
 
 public sealed partial class MockTests
 {
@@ -28,7 +28,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-				.Contains("var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\", m => m.Matches(\"baseResult\", baseResult));")
+				.Contains("methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\", __m => __m.Matches(baseResult));")
 				.IgnoringNewlineStyle().And
 				.Contains("wrappedResult = base.ProcessData(baseResult);")
 				.IgnoringNewlineStyle().And

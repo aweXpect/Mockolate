@@ -13,7 +13,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnGet.Do(() => { callCount++; });
-		IndexerGetterAccess<string> access = new("p1", "mismatch");
+		IndexerGetterAccess<string> access = new("mismatch");
 
 		long result = indexerSetup.DoGetResult(access, 2L);
 
@@ -27,7 +27,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnGet.Do(() => { callCount++; });
-		IndexerGetterAccess<int, int> access = new("p1", 1, "p2", 1);
+		IndexerGetterAccess<int, int> access = new(1, 1);
 
 		string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -41,7 +41,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnGet.Do(() => { callCount++; });
-		IndexerGetterAccess<string> access = new("p1", "expect-int");
+		IndexerGetterAccess<string> access = new("expect-int");
 
 		string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -55,7 +55,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnGet.Do(() => { callCount++; });
-		IndexerGetterAccess<int> access = new("p1", 1);
+		IndexerGetterAccess<int> access = new(1);
 
 		string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -68,7 +68,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnSet.Do(() => { callCount++; });
-		IndexerSetterAccess<string, string> access = new("p1", "mismatch", "bar");
+		IndexerSetterAccess<string, string> access = new("mismatch", "bar");
 
 		indexerSetup.DoSetResult(access, 2L);
 
@@ -81,7 +81,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnSet.Do(() => { callCount++; });
-		IndexerSetterAccess<int, int, string> access = new("p1", 1, "p2", 1, "bar");
+		IndexerSetterAccess<int, int, string> access = new(1, 1, "bar");
 
 		indexerSetup.DoSetResult(access, "foo");
 
@@ -94,7 +94,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnSet.Do(() => { callCount++; });
-		IndexerSetterAccess<string, string> access = new("p1", "expect-int", "bar");
+		IndexerSetterAccess<string, string> access = new("expect-int", "bar");
 
 		indexerSetup.DoSetResult(access, "foo");
 
@@ -107,7 +107,7 @@ public sealed class IndexerSetupTests
 		int callCount = 0;
 		MyIndexerSetup<int> indexerSetup = new();
 		indexerSetup.OnSet.Do(() => { callCount++; });
-		IndexerSetterAccess<int, string> access = new("p1", 1, "bar");
+		IndexerSetterAccess<int, string> access = new(1, "bar");
 
 		indexerSetup.DoSetResult(access, "foo");
 
@@ -121,14 +121,14 @@ public sealed class IndexerSetupTests
 			new MockRegistry(MockBehavior.Default),
 			(IParameterMatch<int>)It.IsAny<int>());
 		IndexerValueStorage<string> storage = new();
-		IndexerGetterAccess<int> access1 = new("p", 42)
+		IndexerGetterAccess<int> access1 = new(42)
 		{
 			Storage = storage,
 		};
 
 		string result = setup.GetResult(access1, MockBehavior.Default, "base");
 
-		IndexerGetterAccess<int> access2 = new("p", 42)
+		IndexerGetterAccess<int> access2 = new(42)
 		{
 			Storage = storage,
 		};
@@ -146,14 +146,14 @@ public sealed class IndexerSetupTests
 			new MockRegistry(MockBehavior.Default),
 			(IParameterMatch<int>)It.IsAny<int>());
 		IndexerValueStorage<string> storage = new();
-		IndexerGetterAccess<int> access1 = new("p", 42)
+		IndexerGetterAccess<int> access1 = new(42)
 		{
 			Storage = storage,
 		};
 
 		string result = setup.GetResult<string>(access1, MockBehavior.Default, () => "generated");
 
-		IndexerGetterAccess<int> access2 = new("p", 42)
+		IndexerGetterAccess<int> access2 = new(42)
 		{
 			Storage = storage,
 		};
@@ -189,7 +189,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<string, string> access = new("p1", "a", "p2", "b");
+			IndexerGetterAccess<string, string> access = new("a", "b");
 
 			long result = indexerSetup.DoGetResult(access, 2L);
 
@@ -203,7 +203,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<int, int, int> access = new("p1", 1, "p2", 2, "p3", 3);
+			IndexerGetterAccess<int, int, int> access = new(1, 2, 3);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -217,7 +217,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<int, string> access = new("p1", 1, "p2", "expect-int");
+			IndexerGetterAccess<int, string> access = new(1, "expect-int");
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -231,7 +231,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<int, int> access = new("p1", 1, "p2", 2);
+			IndexerGetterAccess<int, int> access = new(1, 2);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -244,7 +244,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, int, int> access = new("p1", 1, "p2", 2, 99);
+			IndexerSetterAccess<int, int, int> access = new(1, 2, 99);
 
 			indexerSetup.DoSetResult(access, 2L);
 
@@ -257,7 +257,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, int, int, string> access = new("p1", 1, "p2", 2, "p3", 3, "bar");
+			IndexerSetterAccess<int, int, int, string> access = new(1, 2, 3, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -270,7 +270,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, string, string> access = new("p1", 1, "p2", "expect-int", "bar");
+			IndexerSetterAccess<int, string, string> access = new(1, "expect-int", "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -283,7 +283,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, int, string> access = new("p1", 1, "p2", 2, "bar");
+			IndexerSetterAccess<int, int, string> access = new(1, 2, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -298,14 +298,14 @@ public sealed class IndexerSetupTests
 				(IParameterMatch<int>)It.IsAny<int>(),
 				(IParameterMatch<int>)It.IsAny<int>());
 			IndexerValueStorage<string> storage = new();
-			IndexerGetterAccess<int, int> access1 = new("p1", 1, "p2", 2)
+			IndexerGetterAccess<int, int> access1 = new(1, 2)
 			{
 				Storage = storage,
 			};
 
 			string result = setup.GetResult(access1, MockBehavior.Default, "base");
 
-			IndexerGetterAccess<int, int> access2 = new("p1", 1, "p2", 2)
+			IndexerGetterAccess<int, int> access2 = new(1, 2)
 			{
 				Storage = storage,
 			};
@@ -348,7 +348,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<string, string, string> access = new("p1", "a", "p2", "b", "p3", "c");
+			IndexerGetterAccess<string, string, string> access = new("a", "b", "c");
 
 			long result = indexerSetup.DoGetResult(access, 2L);
 
@@ -362,7 +362,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<int, int, int, int> access = new("p1", 1, "p2", 2, "p3", 3, "p4", 4);
+			IndexerGetterAccess<int, int, int, int> access = new(1, 2, 3, 4);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -376,7 +376,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<int, int, string> access = new("p1", 1, "p2", 2, "p3", "expect-int");
+			IndexerGetterAccess<int, int, string> access = new(1, 2, "expect-int");
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -390,7 +390,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<int, int, int> access = new("p1", 1, "p2", 2, "p3", 3);
+			IndexerGetterAccess<int, int, int> access = new(1, 2, 3);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -403,7 +403,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, int, int, int> access = new("p1", 1, "p2", 2, "p3", 3, 99);
+			IndexerSetterAccess<int, int, int, int> access = new(1, 2, 3, 99);
 
 			indexerSetup.DoSetResult(access, 2L);
 
@@ -416,7 +416,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, int, int, int, string> access = new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "bar");
+			IndexerSetterAccess<int, int, int, int, string> access = new(1, 2, 3, 4, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -429,7 +429,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, int, string, string> access = new("p1", 1, "p2", 2, "p3", "expect-int", "bar");
+			IndexerSetterAccess<int, int, string, string> access = new(1, 2, "expect-int", "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -442,7 +442,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
-			IndexerSetterAccess<int, int, int, string> access = new("p1", 1, "p2", 2, "p3", 3, "bar");
+			IndexerSetterAccess<int, int, int, string> access = new(1, 2, 3, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -459,7 +459,7 @@ public sealed class IndexerSetupTests
 				(IParameterMatch<int>)It.IsAny<int>());
 			IndexerValueStorage<string> storage = new();
 			IndexerGetterAccess<int, int, int> access1 =
-				new("p1", 1, "p2", 2, "p3", 3)
+				new(1, 2, 3)
 				{
 					Storage = storage,
 				};
@@ -467,7 +467,7 @@ public sealed class IndexerSetupTests
 			string result = setup.GetResult(access1, MockBehavior.Default, "base");
 
 			IndexerGetterAccess<int, int, int> access2 =
-				new("p1", 1, "p2", 2, "p3", 3)
+				new(1, 2, 3)
 				{
 					Storage = storage,
 				};
@@ -512,7 +512,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<string, string, string, string> access =
-				new("p1", "a", "p2", "b", "p3", "c", "p4", "d");
+				new("a", "b", "c", "d");
 
 			long result = indexerSetup.DoGetResult(access, 2L);
 
@@ -526,7 +526,7 @@ public sealed class IndexerSetupTests
 			int callCount = 0;
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
-			IndexerGetterAccess<int, int, int> access = new("p1", 1, "p2", 2, "p3", 3);
+			IndexerGetterAccess<int, int, int> access = new(1, 2, 3);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -541,7 +541,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<int, int, int, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", "expect-int");
+				new(1, 2, 3, "expect-int");
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -556,7 +556,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<int, int, int, int> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4);
+				new(1, 2, 3, 4);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -570,7 +570,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, int, int> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, 99);
+				new(1, 2, 3, 4, 99);
 
 			indexerSetup.DoSetResult(access, 2L);
 
@@ -584,7 +584,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "bar");
+				new(1, 2, 3, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -598,7 +598,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, string, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", "expect-int", "bar");
+				new(1, 2, 3, "expect-int", "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -612,7 +612,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, int, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "bar");
+				new(1, 2, 3, 4, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -630,7 +630,7 @@ public sealed class IndexerSetupTests
 				(IParameterMatch<int>)It.IsAny<int>());
 			IndexerValueStorage<string> storage = new();
 			IndexerGetterAccess<int, int, int, int> access1 =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4)
+				new(1, 2, 3, 4)
 				{
 					Storage = storage,
 				};
@@ -638,7 +638,7 @@ public sealed class IndexerSetupTests
 			string result = setup.GetResult(access1, MockBehavior.Default, "base");
 
 			IndexerGetterAccess<int, int, int, int> access2 =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4)
+				new(1, 2, 3, 4)
 				{
 					Storage = storage,
 				};
@@ -684,7 +684,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<string, string, string, string, string> access =
-				new("p1", "a", "p2", "b", "p3", "c", "p4", "d", "p5", "e");
+				new("a", "b", "c", "d", "e");
 
 			long result = indexerSetup.DoGetResult(access, 2L);
 
@@ -699,7 +699,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<int, int, int, int> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4);
+				new(1, 2, 3, 4);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -714,7 +714,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<int, int, int, int, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "p5", "expect-int");
+				new(1, 2, 3, 4, "expect-int");
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -729,7 +729,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<int, int, int, int, int> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "p5", 5);
+				new(1, 2, 3, 4, 5);
 
 			string result = indexerSetup.DoGetResult(access, "foo");
 
@@ -743,7 +743,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, int, int, int> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "p5", 5, 99);
+				new(1, 2, 3, 4, 5, 99);
 
 			indexerSetup.DoSetResult(access, 2L);
 
@@ -757,7 +757,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, int, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "bar");
+				new(1, 2, 3, 4, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -771,7 +771,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, int, string, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "p5", "expect-int", "bar");
+				new(1, 2, 3, 4, "expect-int", "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 
@@ -785,7 +785,7 @@ public sealed class IndexerSetupTests
 			MyIndexerSetup<int, int, int, int, int> indexerSetup = new();
 			indexerSetup.OnSet.Do(() => { callCount++; });
 			IndexerSetterAccess<int, int, int, int, int, string> access =
-				new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "p5", 5, "bar");
+				new(1, 2, 3, 4, 5, "bar");
 
 			indexerSetup.DoSetResult(access, "foo");
 

@@ -110,7 +110,7 @@ internal static partial class Sources
 #endif
 			sb.Append("\tinternal class MethodInvocation<")
 				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x}"))).Append(">(string name, ")
-				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
+				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x} parameter{x}")))
 				.Append(") : IMethodInteraction").AppendLine();
 			sb.Append("\t{").AppendLine();
 			sb.AppendXmlSummary("The name of the method.");
@@ -124,8 +124,6 @@ internal static partial class Sources
 					3 => "third",
 					_ => $"{i}th",
 				};
-				sb.AppendXmlSummary($"The {comment} parameter name of the method.");
-				sb.Append("\t\tpublic string ParameterName").Append(i).Append(" { get; } = parameterName").Append(i).Append(";").AppendLine();
 				sb.AppendXmlSummary($"The {comment} parameter value of the method.");
 				sb.Append("\t\tpublic T").Append(i).Append(" Parameter").Append(i).Append(" { get; } = parameter").Append(i).Append(";").AppendLine();
 			}
@@ -573,7 +571,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (interaction is global::Mockolate.Interactions.MethodInvocation<").Append(typeParams).Append("> invocation)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.ParameterName{i}, invocation.Parameter{i}"))).Append(");").AppendLine();
+		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.Parameter{i}"))).Append(");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t\treturn false;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -593,7 +591,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(");").AppendLine();
@@ -638,16 +636,33 @@ internal static partial class Sources
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against <see cref=\"global::Mockolate.Parameters.IParameters\" />.</summary>").AppendLine();
 		sb.Append("\t\tinternal class WithParameters : VoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\tprivate readonly string _parameterName").Append(i).Append(";").AppendLine();
+		}
+
+		sb.AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}\" />").AppendLine();
-		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters)").AppendLine();
+		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(", string parameterName").Append(i);
+		}
+
+		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t: base(mockRegistry, name)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tParameters = parameters;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\t\t_parameterName").Append(i).Append(" = parameterName").Append(i).Append(";").AppendLine();
+		}
+
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tprivate global::Mockolate.Parameters.IParameters Parameters { get; }").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"string, T{i}"))).Append(")\" />").AppendLine();
+		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append(")\" />").AppendLine();
 		sb.Append("\t\t\tpublic override bool Matches(");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
@@ -656,14 +671,14 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t=> Parameters switch").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}Value"))).Append("]),").AppendLine();
-		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(p{i}Name, p{i}Value)"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(_parameterName{i}, p{i}Value)"))).Append("]),").AppendLine();
 		sb.Append("\t\t\t\t\t\t_ => true,").AppendLine();
 		sb.Append("\t\t\t\t\t};").AppendLine();
 		sb.AppendLine();
@@ -732,7 +747,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();
@@ -1216,7 +1231,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (interaction is global::Mockolate.Interactions.MethodInvocation<").Append(typeParams).Append("> invocation)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.ParameterName{i}, invocation.Parameter{i}"))).Append(");").AppendLine();
+		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.Parameter{i}"))).Append(");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t\treturn false;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -1268,7 +1283,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(");").AppendLine();
@@ -1298,16 +1313,33 @@ internal static partial class Sources
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against <see cref=\"global::Mockolate.Parameters.IParameters\" />.</summary>").AppendLine();
 		sb.Append("\t\tinternal class WithParameters : ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\tprivate readonly string _parameterName").Append(i).Append(";").AppendLine();
+		}
+
+		sb.AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}\" />").AppendLine();
-		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters)").AppendLine();
+		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(", string parameterName").Append(i);
+		}
+
+		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t: base(mockRegistry, name)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tParameters = parameters;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\t\t_parameterName").Append(i).Append(" = parameterName").Append(i).Append(";").AppendLine();
+		}
+
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tprivate global::Mockolate.Parameters.IParameters Parameters { get; }").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"string, T{i}"))).Append(")\" />").AppendLine();
+		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append(")\" />").AppendLine();
 		sb.Append("\t\t\tpublic override bool Matches(");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
@@ -1316,14 +1348,14 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t=> Parameters switch").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}Value"))).Append("]),").AppendLine();
-		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(p{i}Name, p{i}Value)"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(_parameterName{i}, p{i}Value)"))).Append("]),").AppendLine();
 		sb.Append("\t\t\t\t\t\t_ => true,").AppendLine();
 		sb.Append("\t\t\t\t\t};").AppendLine();
 		sb.AppendLine();
@@ -1392,7 +1424,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();

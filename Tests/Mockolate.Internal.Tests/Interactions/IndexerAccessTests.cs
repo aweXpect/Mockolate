@@ -10,7 +10,7 @@ public sealed class IndexerAccessTests
 	public async Task StoreValue_OnIndexerGetterAccess1_UsesGetOrAddChildDispatch()
 	{
 		RecordingStorage storage = new();
-		IndexerGetterAccess<int> access = new("p1", 42)
+		IndexerGetterAccess<int> access = new(42)
 		{
 			Storage = storage,
 		};
@@ -24,7 +24,7 @@ public sealed class IndexerAccessTests
 	public async Task StoreValue_OnIndexerGetterAccess2_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
-		IndexerGetterAccess<int, int> access = new("p1", 1, "p2", 2)
+		IndexerGetterAccess<int, int> access = new(1, 2)
 		{
 			Storage = storage,
 		};
@@ -38,7 +38,7 @@ public sealed class IndexerAccessTests
 	public async Task StoreValue_OnIndexerGetterAccess3_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
-		IndexerGetterAccess<int, int, int> access = new("p1", 1, "p2", 2, "p3", 3)
+		IndexerGetterAccess<int, int, int> access = new(1, 2, 3)
 		{
 			Storage = storage,
 		};
@@ -53,7 +53,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerGetterAccess<int, int, int, int> access =
-			new("p1", 1, "p2", 2, "p3", 3, "p4", 4)
+			new(1, 2, 3, 4)
 			{
 				Storage = storage,
 			};
@@ -67,7 +67,7 @@ public sealed class IndexerAccessTests
 	public async Task StoreValue_OnIndexerSetterAccess1_UsesGetOrAddChildDispatch()
 	{
 		RecordingStorage storage = new();
-		IndexerSetterAccess<int, string> access = new("p1", 42, "v")
+		IndexerSetterAccess<int, string> access = new(42, "v")
 		{
 			Storage = storage,
 		};
@@ -82,7 +82,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerSetterAccess<int, int, string> access =
-			new("p1", 1, "p2", 2, "v")
+			new(1, 2, "v")
 			{
 				Storage = storage,
 			};
@@ -97,7 +97,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerSetterAccess<int, int, int, string> access =
-			new("p1", 1, "p2", 2, "p3", 3, "v")
+			new(1, 2, 3, "v")
 			{
 				Storage = storage,
 			};
@@ -112,7 +112,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerSetterAccess<int, int, int, int, string> access =
-			new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "v")
+			new(1, 2, 3, 4, "v")
 			{
 				Storage = storage,
 			};
@@ -126,7 +126,7 @@ public sealed class IndexerAccessTests
 	public async Task ToString_OnIndexerGetterAccess4_FormatsEachNullParameterAsNullLiteral()
 	{
 		IndexerGetterAccess<string?, string?, string?, string?> access =
-			new("p1", null, "p2", null, "p3", null, "p4", null);
+			new(null, null, null, null);
 
 		await That(access.ToString()).IsEqualTo("get indexer [null, null, null, null]");
 	}
@@ -135,7 +135,7 @@ public sealed class IndexerAccessTests
 	public async Task ToString_OnIndexerSetterAccess4_FormatsEachNullParameterAsNullLiteral()
 	{
 		IndexerSetterAccess<string?, string?, string?, string?, string?> access =
-			new("p1", null, "p2", null, "p3", null, "p4", null, null);
+			new(null, null, null, null, null);
 
 		await That(access.ToString()).IsEqualTo("set indexer [null, null, null, null] to null");
 	}
@@ -144,7 +144,7 @@ public sealed class IndexerAccessTests
 	public async Task TryFindStoredValue_OnIndexerGetterAccess1_UsesGetChildDispatch()
 	{
 		RecordingStorage storage = new();
-		IndexerGetterAccess<int> access = new("p1", 42)
+		IndexerGetterAccess<int> access = new(42)
 		{
 			Storage = storage,
 		};
@@ -158,7 +158,7 @@ public sealed class IndexerAccessTests
 	public async Task TryFindStoredValue_OnIndexerGetterAccess2_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
-		IndexerGetterAccess<int, int> access = new("p1", 1, "p2", 2)
+		IndexerGetterAccess<int, int> access = new(1, 2)
 		{
 			Storage = storage,
 		};
@@ -172,7 +172,7 @@ public sealed class IndexerAccessTests
 	public async Task TryFindStoredValue_OnIndexerGetterAccess3_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
-		IndexerGetterAccess<int, int, int> access = new("p1", 1, "p2", 2, "p3", 3)
+		IndexerGetterAccess<int, int, int> access = new(1, 2, 3)
 		{
 			Storage = storage,
 		};
@@ -187,7 +187,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerGetterAccess<int, int, int, int> access =
-			new("p1", 1, "p2", 2, "p3", 3, "p4", 4)
+			new(1, 2, 3, 4)
 			{
 				Storage = storage,
 			};
@@ -201,7 +201,7 @@ public sealed class IndexerAccessTests
 	public async Task TryFindStoredValue_OnIndexerSetterAccess1_UsesGetChildDispatch()
 	{
 		RecordingStorage storage = new();
-		IndexerSetterAccess<int, string> access = new("p1", 42, "v")
+		IndexerSetterAccess<int, string> access = new(42, "v")
 		{
 			Storage = storage,
 		};
@@ -216,7 +216,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerSetterAccess<int, int, string> access =
-			new("p1", 1, "p2", 2, "v")
+			new(1, 2, "v")
 			{
 				Storage = storage,
 			};
@@ -231,7 +231,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerSetterAccess<int, int, int, string> access =
-			new("p1", 1, "p2", 2, "p3", 3, "v")
+			new(1, 2, 3, "v")
 			{
 				Storage = storage,
 			};
@@ -246,7 +246,7 @@ public sealed class IndexerAccessTests
 	{
 		RecordingStorage storage = new();
 		IndexerSetterAccess<int, int, int, int, string> access =
-			new("p1", 1, "p2", 2, "p3", 3, "p4", 4, "v")
+			new(1, 2, 3, 4, "v")
 			{
 				Storage = storage,
 			};

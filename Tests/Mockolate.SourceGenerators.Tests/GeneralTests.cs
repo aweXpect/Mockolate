@@ -794,12 +794,16 @@ public class GeneralTests
 			          		[global::System.ComponentModel.Localizable(false)]
 			          		public string MyMethod(string message)
 			          		{
-			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, string>>("global::MyCode.IMyService.MyMethod", m => m.Matches("message", message));
+			          			global::Mockolate.Setup.ReturnMethodSetup<string, string>? methodSetup = null;
+			          """).IgnoringNewlineStyle().And
+			.Contains("methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, string>>(\"global::MyCode.IMyService.MyMethod\", __m => __m.Matches(message));")
+			.IgnoringNewlineStyle().And
+			.Contains("""
 			          			bool hasWrappedResult = false;
 			          			string wrappedResult = default!;
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
-			          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<string>("global::MyCode.IMyService.MyMethod", "message", message));
+			          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<string>("global::MyCode.IMyService.MyMethod", message));
 			          			}
 			          			try
 			          			{

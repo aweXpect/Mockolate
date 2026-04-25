@@ -211,7 +211,7 @@ public partial class MockRegistry
 	/// </summary>
 	/// <param name="interactions">The interactions to check against.</param>
 	/// <returns>The unused setups; empty when every setup was exercised.</returns>
-	public IReadOnlyCollection<ISetup> GetUnusedSetups(MockInteractions interactions)
+	public IReadOnlyCollection<ISetup> GetUnusedSetups(IMockInteractions interactions)
 	{
 		List<ISetup> unusedSetups =
 		[
