@@ -22,6 +22,7 @@ See [`Docs/pages/performance.md`](./performance.md) for the measured speedups.
 | `WithParameters` nested ctor | Now takes the parameter-name strings up front |
 | `MethodInvocation<T...>` ctor / properties | `parameterName*` ctor parameters and `ParameterName*` properties removed |
 | `IndexerGetterAccess<T...>` / `IndexerSetterAccess<T...>` ctor / properties | Same as `MethodInvocation` |
+| `IParametersMatch.Matches` / `INamedParametersMatch.Matches` | Now take `ReadOnlySpan<...>` instead of `T[]` |
 
 The library and the source generator move together; rebuilding a consuming project
 against Mockolate v3.0 regenerates every `Mock.{TypeName}.g.cs` against the new shapes.
@@ -138,6 +139,40 @@ new IndexerGetterAccess<string>("Dark");
 
 Recorded interactions continue to expose the values via `Parameter1..N` and
 `GetParameterValueAt(int)` — only the parameter-name surface was removed.
+
+## `IParametersMatch.Matches` and `INamedParametersMatch.Matches` take spans
+
+Both interfaces now receive their values as a `ReadOnlySpan<...>` rather than a
+heap-allocated array. The runtime no longer allocates the array on the hot path
+when a `WithParameters`-style setup is matched.
+
+```csharp
+// v2
+public sealed class MyMatch : IParametersMatch
+{
+    public bool Matches(object?[] values) => values.Length == 2 && /*...*/;
+}
+
+public sealed class MyNamedMatch : INamedParametersMatch
+{
+    public bool Matches((string, object?)[] values) => /*...*/;
+}
+
+// v3
+public sealed class MyMatch : IParametersMatch
+{
+    public bool Matches(ReadOnlySpan<object?> values) => values.Length == 2 && /*...*/;
+}
+
+public sealed class MyNamedMatch : INamedParametersMatch
+{
+    public bool Matches(ReadOnlySpan<(string, object?)> values) => /*...*/;
+}
+```
+
+If a custom matcher needs an array (e.g. to keep a snapshot for later), call
+`values.ToArray()` inside `Matches` — the cost is now paid only on that branch
+rather than on every match attempt.
 
 ## What is *not* breaking
 
