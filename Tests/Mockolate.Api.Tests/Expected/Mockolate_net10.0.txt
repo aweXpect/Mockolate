@@ -1024,9 +1024,6 @@ namespace Mockolate.Monitor
     public abstract class MockMonitor
     {
         protected MockMonitor(Mockolate.Interactions.IMockInteractions mockInteractions) { }
-        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
-            "ture release.")]
-        protected MockMonitor(Mockolate.Interactions.MockInteractions mockInteractions) { }
         protected Mockolate.Interactions.MockInteractions Interactions { get; }
         public System.IDisposable Run() { }
         protected void UpdateInteractions() { }
@@ -1034,9 +1031,6 @@ namespace Mockolate.Monitor
     public sealed class MockMonitor<T> : Mockolate.Monitor.MockMonitor
     {
         public MockMonitor(Mockolate.Interactions.IMockInteractions interactions, System.Func<Mockolate.Interactions.IMockInteractions, T> verify) { }
-        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
-            "ture release.")]
-        public MockMonitor(Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.MockInteractions, T> verify) { }
         public T Verify { get; }
     }
 }
@@ -2872,12 +2866,6 @@ namespace Mockolate.Verify
     {
         public VerificationResult(TVerify verify, Mockolate.Interactions.IMockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, System.Func<string> expectation) { }
         public VerificationResult(TVerify verify, Mockolate.Interactions.IMockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, string expectation) { }
-        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
-            "ture release.")]
-        public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, System.Func<string> expectation) { }
-        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
-            "ture release.")]
-        public VerificationResult(TVerify verify, Mockolate.Interactions.MockInteractions interactions, System.Func<Mockolate.Interactions.IInteraction, bool> predicate, string expectation) { }
         public virtual Mockolate.Verify.VerificationResult<TVerify> WithCancellation(System.Threading.CancellationToken cancellationToken) { }
         public virtual Mockolate.Verify.VerificationResult<TVerify> Within(System.TimeSpan timeout) { }
         public class IgnoreParameters : Mockolate.Verify.VerificationResult<TVerify>

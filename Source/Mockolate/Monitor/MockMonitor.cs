@@ -28,13 +28,6 @@ public abstract class MockMonitor
 		Interactions = new MockInteractions { SkipInteractionRecording = mockInteractions.SkipInteractionRecording };
 	}
 
-	/// <inheritdoc cref="MockMonitor" />
-	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
-	protected MockMonitor(MockInteractions mockInteractions)
-		: this((IMockInteractions)mockInteractions)
-	{
-	}
-
 	/// <summary>
 	///     The interactions that were recorded during the monitoring session.
 	/// </summary>
@@ -125,13 +118,6 @@ public sealed class MockMonitor<T> : MockMonitor
 	public MockMonitor(IMockInteractions interactions, Func<IMockInteractions, T> verify) : base(interactions)
 	{
 		Verify = verify(Interactions);
-	}
-
-	/// <inheritdoc cref="MockMonitor{T}" />
-	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
-	public MockMonitor(MockInteractions interactions, Func<MockInteractions, T> verify)
-		: this((IMockInteractions)interactions, x => verify((MockInteractions)x))
-	{
 	}
 
 	/// <summary>
