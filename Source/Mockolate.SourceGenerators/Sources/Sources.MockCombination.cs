@@ -383,12 +383,13 @@ internal static partial class Sources
 
 		Dictionary<string, int> signatureIndices = new();
 		int[] nextSignatureIndex = [0];
-		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, signatureIndices, nextSignatureIndex);
+		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, memberIds, memberIdPrefix,
+			signatureIndices, nextSignatureIndex);
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
 			AppendMockSubject_ImplementClass(sb, item.Class, mockRegistryName, @class as MockClass,
-				signatureIndices, nextSignatureIndex);
+				memberIds, memberIdPrefix, signatureIndices, nextSignatureIndex);
 		}
 
 		sb.AppendLine();

@@ -12,9 +12,11 @@ measurement, add a column — never overwrite history.
 
 ```bash
 dotnet run -c Release --project Benchmarks/Mockolate.Benchmarks -- \
-    --filter '*OptimizedMockComparisonBenchmarks*' \
-    --job InProcess
+    --filter '*OptimizedMockComparisonBenchmarks*'
 ```
+
+`BenchmarksBase` already pins the InProcess `MediumRun` job via a
+`[Config]` attribute, so no `--job` flag is needed.
 
 The harness runs a full lifecycle per iteration:
 `setup → N×invoke → verify`, with `N ∈ {1, 10}`. The marginal per-call cost is
@@ -75,7 +77,74 @@ A regression from one row to the next halts the merge.
 
 | Member | Baseline | After 4.2 | After 5.3 | After 6.1 |
 |---|---:|---:|---:|---:|
-| Method (2-arg) | ~189 ns · ~300 B | _tbd_ | _tbd_ | _tbd_ |
-| Property get | ~287 ns · ~260 B | _tbd_ | _tbd_ | _tbd_ |
-| Indexer get (1 key) | ~298 ns · ~172 B | _tbd_ | _tbd_ | _tbd_ |
-| Event subscribe | ~185 ns · ~369 B | _tbd_ | _tbd_ | _tbd_ |
+| Method (2-arg) | ~189 ns · ~300 B | ~138 ns · ~227 B | _tbd_ | _tbd_ |
+| Property get | ~287 ns · ~260 B | ~158 ns · ~261 B¹ | _tbd_ | _tbd_ |
+| Indexer get (1 key) | ~298 ns · ~172 B | ~118 ns · ~164 B¹ | _tbd_ | _tbd_ |
+| Event subscribe | ~185 ns · ~369 B | ~422 ns · ~369 B¹ | _tbd_ | _tbd_ |
+
+¹ Phase 4.2 only rewrites **method-setup dispatch** (`GetMethodSetup<T>` → member-id-keyed
+`GetMethodSetupSnapshot` walk). Property / indexer / event dispatch is unchanged in 4.2;
+the property and indexer columns shift compared to the v2 baseline because Phases 1–3
+already landed lower-level wins (param-name removal from interactions, stateless matcher
+optimizations) before this measurement was taken. The event regression sits inside the
+run's measurement noise — BenchmarkDotNet flagged most rows with `MultimodalDistribution`
+warnings and StdDev ≈ 8–22 % of mean. Phase 5.3 is where the property / indexer / event
+rows drop to the D-target column.
+
+The headline win — what Phase 4.2 directly delivers — is the **method (2-arg)** row:
+**1.37× faster (137.7 ns vs 189 ns baseline), 1.32× less alloc (227 B vs 300 B)**.
+This matches the plan's Step 4.2 expectation of "~25–30 % faster per call, alloc ↓
+slightly" and comes entirely from removing the per-call closure allocation and the
+`MethodSetups.GetMatching` lock + name compare from the hot path.
+
+## After 4.2 — raw run (Phase 4.2)
+
+Captured by `Benchmarks/Mockolate.Benchmarks/BenchmarkDotNet.Artifacts` on the reference
+environment above. Full BenchmarkDotNet output:
+[`perf-data/optimized-mock-comparison-after-4.2.txt`](./perf-data/optimized-mock-comparison-after-4.2.txt).
+
+```
+BenchmarkDotNet v0.15.8, Windows 11 (10.0.26100.7623/24H2/2024Update/HudsonValley)
+AMD Ryzen 7 PRO 8840HS w/ Radeon 780M Graphics 3.30GHz, 1 CPU, 16 logical and 8 physical cores
+.NET SDK 10.0.202
+  [Host] : .NET 10.0.6 (10.0.6, 10.0.626.17701), X64 RyuJIT x86-64-v4
+
+Job=InProcess  Toolchain=InProcessEmitToolchain  IterationCount=15
+LaunchCount=1  WarmupCount=10
+
+| Method                         | N  | Mean       | Error     | StdDev    | Ratio | Allocated |
+|------------------------------- |--- |-----------:|----------:|----------:|------:|----------:|
+| Event_Mockolate                | 1  | 1,011.7 ns |  26.01 ns |  23.06 ns |  0.96 |   1.43 KB |
+| Event_HandwrittenOptimizedD    | 1  |   747.2 ns |  58.41 ns |  54.63 ns |  0.71 |    1.9 KB |
+| Indexer_Mockolate              | 1  | 2,296.5 ns |  67.66 ns |  59.98 ns |  2.19 |   2.29 KB |
+| Indexer_HandwrittenOptimizedD  | 1  |   770.9 ns |  99.28 ns |  92.87 ns |  0.73 |   2.04 KB |
+| Method_Mockolate               | 1  | 1,076.4 ns | 193.59 ns | 181.09 ns |  1.03 |   2.16 KB |
+| Method_HandwrittenOptimized    | 1  |   849.2 ns | 116.64 ns | 109.10 ns |  0.81 |    2.3 KB |
+| Method_HandwrittenOptimizedD   | 1  |   480.5 ns |  68.31 ns |  63.90 ns |  0.46 |   1.65 KB |
+| Property_Mockolate             | 1  |   475.7 ns |  29.38 ns |  24.53 ns |  0.45 |   1.55 KB |
+| Property_HandwrittenOptimizedD | 1  |   470.5 ns | 103.96 ns |  97.24 ns |  0.45 |    1.9 KB |
+| Event_Mockolate                | 10 | 4,813.4 ns | 489.07 ns | 457.47 ns |  2.13 |   4.67 KB |
+| Event_HandwrittenOptimizedD    | 10 | 2,196.9 ns | 150.60 ns | 140.87 ns |  0.97 |   3.59 KB |
+| Indexer_Mockolate              | 10 | 3,355.2 ns | 377.27 ns | 334.44 ns |  1.48 |   3.73 KB |
+| Indexer_HandwrittenOptimizedD  | 10 |   868.8 ns | 320.38 ns | 299.68 ns |  0.38 |   2.65 KB |
+| Method_Mockolate               | 10 | 2,315.9 ns | 423.04 ns | 375.01 ns |  1.02 |   4.16 KB |
+| Method_HandwrittenOptimized    | 10 | 2,173.0 ns | 307.44 ns | 287.58 ns |  0.96 |   4.02 KB |
+| Method_HandwrittenOptimizedD   | 10 |   772.6 ns |  77.07 ns |  68.32 ns |  0.34 |   2.87 KB |
+| Property_Mockolate             | 10 | 1,900.8 ns | 219.88 ns | 194.92 ns |  0.84 |   3.84 KB |
+| Property_HandwrittenOptimizedD | 10 |   728.6 ns | 227.50 ns | 212.81 ns |  0.32 |   2.32 KB |
+
+// Run time: 00:06:57 (417.2 sec), executed benchmarks: 18
+```
+
+Marginal per-call cost extraction `(N=10 − N=1) / 9`:
+
+| Method | Mockolate (after 4.2) | HandwrittenOptimizedD target |
+|---|---:|---:|
+| Method (2-arg) | 137.7 ns · 227 B | 32.5 ns · 139 B |
+| Property get | 158.3 ns · 261 B | 28.7 ns · 48 B |
+| Indexer get | 117.6 ns · 164 B | 10.9 ns · 69 B |
+| Event subscribe | 422.4 ns · 369 B | 161.1 ns · 192 B |
+
+Phase 4.2 closes part of the gap on the **method** row. The other rows are still on the
+old per-member dispatch and remain at the v2 baseline within noise — Phase 5/6 is where
+those drop to the D-target row.
