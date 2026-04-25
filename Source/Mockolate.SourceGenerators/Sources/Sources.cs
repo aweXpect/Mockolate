@@ -108,20 +108,21 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
+			sb.Append(p.ToNameOrWrapper());
 			first = false;
 		}
 	}
 
 	/// <summary>
 	///     Emits variable declarations for the indexer getter access and matching setup:
-	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;("p", p, ...);
+	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;(p, ...);
 	///     mockRegistry.RegisterInteraction(access);
 	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(access);</code>
 	/// </summary>
 	private static void EmitIndexerGetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
-		Type propertyType, EquatableArray<MethodParameter> parameters)
+		Type propertyType, EquatableArray<MethodParameter> parameters,
+		bool useFastBuffers = false, string? memberIdRef = null)
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerGetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);
@@ -131,8 +132,19 @@ internal static partial class Sources
 
 		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
 		sb.Append(indent).Append("{").AppendLine();
-		sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
-			.AppendLine();
+		if (useFastBuffers && memberIdRef is not null)
+		{
+			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastIndexerGetterBuffer<");
+			AppendIndexerParameterTypes(sb, parameters);
+			sb.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
+				.Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
+				.Append(accessVarName).Append(");").AppendLine();
+		}
+		else
+		{
+			sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+				.AppendLine();
+		}
 		sb.Append(indent).Append("}").AppendLine();
 
 		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
@@ -156,7 +168,8 @@ internal static partial class Sources
 	/// </summary>
 	private static void EmitIndexerSetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
-		Type propertyType, EquatableArray<MethodParameter> parameters)
+		Type propertyType, EquatableArray<MethodParameter> parameters,
+		bool useFastBuffers = false, string? memberIdRef = null)
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerSetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);
@@ -166,8 +179,20 @@ internal static partial class Sources
 
 		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
 		sb.Append(indent).Append("{").AppendLine();
-		sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
-			.AppendLine();
+		if (useFastBuffers && memberIdRef is not null)
+		{
+			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastIndexerSetterBuffer<");
+			AppendIndexerParameterTypes(sb, parameters);
+			sb.Append(", ").AppendTypeOrWrapper(propertyType)
+				.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
+				.Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
+				.Append(accessVarName).Append(");").AppendLine();
+		}
+		else
+		{
+			sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+				.AppendLine();
+		}
 		sb.Append(indent).Append("}").AppendLine();
 
 		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);

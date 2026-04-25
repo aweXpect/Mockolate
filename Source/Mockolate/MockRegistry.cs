@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -26,10 +27,30 @@ public partial class MockRegistry
 	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
 	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
 	public MockRegistry(MockBehavior behavior, object?[]? constructorParameters = null)
+		: this(behavior,
+			new MockInteractions { SkipInteractionRecording = behavior.SkipInteractionRecording, },
+			constructorParameters)
+	{
+	}
+
+	/// <summary>
+	///     Creates a new <see cref="MockRegistry" /> with the given <paramref name="behavior" />, a caller-provided
+	///     <paramref name="interactions" /> store, and optional <paramref name="constructorParameters" />.
+	/// </summary>
+	/// <remarks>
+	///     The generator-emitted <c>CreateMock</c> paths use this overload to install a
+	///     <see cref="FastMockInteractions" /> tailored to the mocked type. Pass a plain
+	///     <see cref="MockInteractions" /> when constructing a registry by hand.
+	/// </remarks>
+	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
+	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
+	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
+	public MockRegistry(MockBehavior behavior, IMockInteractions interactions,
+		object?[]? constructorParameters = null)
 	{
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
-		Interactions = new MockInteractions { SkipInteractionRecording = behavior.SkipInteractionRecording };
+		Interactions = interactions;
 		Setup = new MockSetups();
 		_scenarioState = new ScenarioState();
 		Wraps = null;
@@ -73,7 +94,7 @@ public partial class MockRegistry
 	/// </summary>
 	/// <param name="registry">The source registry whose behavior, setups, constructor parameters, scenario state, and wrapped instance are reused.</param>
 	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
-	public MockRegistry(MockRegistry registry, MockInteractions interactions)
+	public MockRegistry(MockRegistry registry, IMockInteractions interactions)
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
@@ -81,6 +102,13 @@ public partial class MockRegistry
 		Setup = registry.Setup;
 		_scenarioState = registry._scenarioState;
 		Wraps = registry.Wraps;
+	}
+
+	/// <inheritdoc cref="MockRegistry(MockRegistry, IMockInteractions)" />
+	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
+	public MockRegistry(MockRegistry registry, MockInteractions interactions)
+		: this(registry, (IMockInteractions)interactions)
+	{
 	}
 
 	/// <summary>

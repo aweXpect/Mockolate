@@ -32,16 +32,8 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 
 	private HashSet<IInteraction>? _verified;
 
-	/// <summary>
-	///     Whether interactions are being recorded. When <see langword="false" />,
-	///     <see cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" /> is a no-op and
-	///     attempts to verify throw a <see cref="Mockolate.Exceptions.MockException" />.
-	/// </summary>
-	/// <remarks>
-	///     Mirrors <see cref="MockBehavior.SkipInteractionRecording" /> at construction time; kept internal
-	///     because the public knob for this is on <see cref="MockBehavior" />.
-	/// </remarks>
-	internal bool SkipInteractionRecording { get; init; } = false;
+	/// <inheritdoc cref="IMockInteractions.SkipInteractionRecording" />
+	public bool SkipInteractionRecording { get; init; } = false;
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
@@ -108,10 +100,13 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 		}
 	}
 
-	internal event EventHandler? InteractionAdded;
-	internal event EventHandler? OnClearing;
+	/// <inheritdoc cref="IMockInteractions.InteractionAdded" />
+	public event EventHandler? InteractionAdded;
 
-	internal void Verified(IEnumerable<IInteraction> interactions)
+	/// <inheritdoc cref="IMockInteractions.OnClearing" />
+	public event EventHandler? OnClearing;
+
+	void IMockInteractions.Verified(IEnumerable<IInteraction> interactions)
 	{
 		lock (_verifiedLock)
 		{
@@ -124,7 +119,8 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 		}
 	}
 
-	internal void Clear()
+	/// <inheritdoc cref="IMockInteractions.Clear" />
+	public void Clear()
 	{
 		lock (_listLock)
 		{

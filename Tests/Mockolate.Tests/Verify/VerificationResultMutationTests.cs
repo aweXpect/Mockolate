@@ -30,7 +30,7 @@ public sealed class VerificationResultMutationTests
 
 		sut.Mock.Verify.SomeFlag.Got().Within(10.Milliseconds()).Exactly(1);
 
-		MockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
+		IMockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 		await That(interactions.GetUnverifiedInteractions()).IsEmpty();
 	}
 }

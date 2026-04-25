@@ -199,7 +199,7 @@ internal partial class MockSetups
 			}
 		}
 
-		internal IEnumerable<IndexerSetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
+		internal IEnumerable<IndexerSetup> EnumerateUnusedSetupsBy(IMockInteractions interactions)
 		{
 			List<IndexerSetup>? storage = _storage;
 			if (storage is null)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -13,7 +14,7 @@ public partial class MockRegistry
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	public MockInteractions Interactions { get; }
+	public IMockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -44,6 +45,14 @@ public partial class MockRegistry
 	///     <paramref name="methodName" /> and that satisfies <paramref name="predicate" />, or <see langword="null" />
 	///     when no setup matches. Scenario-scoped setups take precedence over default-scope setups.
 	/// </summary>
+	/// <remarks>
+	///     Cold-path fallback for the generator-emitted dispatch — proxy method bodies first walk the
+	///     lock-free <see cref="GetMethodSetupSnapshot(int)" /> array with a stack-evaluated matcher, and
+	///     only call this overload when an active scenario is set or when a setup was registered through a
+	///     non-member-id-keyed path (such as the <c>HttpClientExtensions.SetupMethod</c> pipeline). This
+	///     overload allocates a closure per invocation, takes the storage lock, and runs a string-name
+	///     comparison; prefer <see cref="GetMethodSetupSnapshot(int)" /> on hot paths.
+	/// </remarks>
 	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
 	/// <param name="methodName">The simple method name.</param>
 	/// <param name="predicate">Argument matcher applied to each candidate setup.</param>
@@ -61,6 +70,29 @@ public partial class MockRegistry
 		}
 
 		return Setup.Methods.GetMatching(methodName, predicate);
+	}
+
+	/// <summary>
+	///     Returns the current snapshot of default-scope method setups registered under the generator-emitted
+	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
+	/// </summary>
+	/// <remarks>
+	///     The returned array is immutable — callers may iterate it without a lock. Setups are appended in
+	///     registration order, so callers interested in latest-registered-first should walk the array in reverse.
+	///     This accessor only sees setups registered via the <c>SetupMethod(int, ...)</c> overloads; scenario-scoped
+	///     and legacy string-keyed registrations are retrieved via <see cref="GetMethodSetup{T}(string, Func{T, bool})" />.
+	/// </remarks>
+	/// <param name="memberId">The generator-emitted member id.</param>
+	/// <returns>The setups array for the member, or <see langword="null" /> when none are registered.</returns>
+	public MethodSetup[]? GetMethodSetupSnapshot(int memberId)
+	{
+		MethodSetup[]?[]? table = Volatile.Read(ref _setupsByMemberId);
+		if (table is null || (uint)memberId >= (uint)table.Length)
+		{
+			return null;
+		}
+
+		return table[memberId];
 	}
 
 	/// <summary>
@@ -311,7 +343,7 @@ public partial class MockRegistry
 	{
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(interaction);
+			Interactions.RegisterInteraction(interaction);
 		}
 	}
 
@@ -355,10 +387,55 @@ public partial class MockRegistry
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
 		{
-			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+			interaction = Interactions.RegisterInteraction(
 				new PropertyGetterAccess(propertyName));
 		}
 
+		return ResolveGetterInternal(propertyName, defaultValueGenerator, baseValueAccessor, interaction);
+	}
+
+	/// <summary>
+	///     Member-id-keyed overload of <see cref="GetProperty{TResult}(string, Func{TResult}, Func{TResult}?)" /> that
+	///     records via the typed <see cref="FastPropertyGetterBuffer" /> when the mock is wired to a
+	///     <see cref="FastMockInteractions" />, falling back to the legacy list otherwise.
+	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="defaultValueGenerator">Producer of the default value when no setup supplies one.</param>
+	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered.</param>
+	/// <returns>The resolved getter value.</returns>
+	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
+	public TResult GetProperty<TResult>(int memberId, string propertyName, Func<TResult> defaultValueGenerator,
+		Func<TResult>? baseValueAccessor)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertyGetter(memberId, propertyName);
+		}
+
+		return ResolveGetterInternal(propertyName, defaultValueGenerator, baseValueAccessor, null);
+	}
+
+	private void RecordPropertyGetter(int memberId, string propertyName)
+	{
+		if (Interactions is FastMockInteractions __fast)
+		{
+			IFastMemberBuffer?[] __buffers = __fast.Buffers;
+			if ((uint)memberId < (uint)__buffers.Length &&
+			    __buffers[memberId] is FastPropertyGetterBuffer __buffer)
+			{
+				__buffer.Append(propertyName);
+				return;
+			}
+		}
+
+		Interactions.RegisterInteraction(new PropertyGetterAccess(propertyName));
+	}
+
+	private TResult ResolveGetterInternal<TResult>(string propertyName, Func<TResult> defaultValueGenerator,
+		Func<TResult>? baseValueAccessor, IInteraction? interaction)
+	{
 		PropertySetup matchingSetup;
 		if (baseValueAccessor is null)
 		{
@@ -408,7 +485,7 @@ public partial class MockRegistry
 		IInteraction? interaction = null;
 		if (!Behavior.SkipInteractionRecording)
 		{
-			interaction = ((IMockInteractions)Interactions).RegisterInteraction(
+			interaction = Interactions.RegisterInteraction(
 				new PropertySetterAccess<T>(propertyName, value));
 		}
 
@@ -416,6 +493,45 @@ public partial class MockRegistry
 
 		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction, value, Behavior);
 		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	/// <summary>
+	///     Member-id-keyed overload of <see cref="SetProperty{T}(string, T)" /> that records via the typed
+	///     <see cref="FastPropertySetterBuffer{T}" /> when the mock is wired to a
+	///     <see cref="FastMockInteractions" />, falling back to the legacy list otherwise.
+	/// </summary>
+	/// <typeparam name="T">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property setter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="value">The value being assigned.</param>
+	/// <returns><see langword="true" /> when the base-class setter should be skipped.</returns>
+	public bool SetProperty<T>(int memberId, string propertyName, T value)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertySetter(memberId, propertyName, value);
+		}
+
+		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
+
+		((IInteractivePropertySetup)matchingSetup).InvokeSetter(null, value, Behavior);
+		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	private void RecordPropertySetter<T>(int memberId, string propertyName, T value)
+	{
+		if (Interactions is FastMockInteractions __fast)
+		{
+			IFastMemberBuffer?[] __buffers = __fast.Buffers;
+			if ((uint)memberId < (uint)__buffers.Length &&
+			    __buffers[memberId] is FastPropertySetterBuffer<T> __buffer)
+			{
+				__buffer.Append(propertyName, value);
+				return;
+			}
+		}
+
+		Interactions.RegisterInteraction(new PropertySetterAccess<T>(propertyName, value));
 	}
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
@@ -498,7 +614,35 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(new EventSubscription(name, target, method));
+			Interactions.RegisterInteraction(new EventSubscription(name, target, method));
+		}
+
+		foreach (EventSetup setup in GetEventSetupsByName(name))
+		{
+			setup.InvokeSubscribed(target, method);
+		}
+	}
+
+	/// <summary>
+	///     Member-id-keyed overload of <see cref="AddEvent(string, object?, MethodInfo?)" /> that records via the
+	///     typed <see cref="FastEventBuffer" /> when the mock is wired to a <see cref="FastMockInteractions" />,
+	///     falling back to the legacy list otherwise.
+	/// </summary>
+	/// <param name="memberId">The generator-emitted member id for the event subscribe.</param>
+	/// <param name="name">The simple event name.</param>
+	/// <param name="target">The subscribing handler's target (<see langword="null" /> for static methods).</param>
+	/// <param name="method">The subscribing handler's method.</param>
+	/// <exception cref="MockException"><paramref name="method" /> is <see langword="null" />.</exception>
+	public void AddEvent(int memberId, string name, object? target, MethodInfo? method)
+	{
+		if (method is null)
+		{
+			throw new MockException("The method of an event subscription may not be null.");
+		}
+
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordEvent(memberId, name, target, method, isSubscribe: true);
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))
@@ -524,12 +668,58 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			((IMockInteractions)Interactions).RegisterInteraction(new EventUnsubscription(name, target, method));
+			Interactions.RegisterInteraction(new EventUnsubscription(name, target, method));
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))
 		{
 			setup.InvokeUnsubscribed(target, method);
 		}
+	}
+
+	/// <summary>
+	///     Member-id-keyed overload of <see cref="RemoveEvent(string, object?, MethodInfo?)" /> that records via
+	///     the typed <see cref="FastEventBuffer" /> when the mock is wired to a <see cref="FastMockInteractions" />,
+	///     falling back to the legacy list otherwise.
+	/// </summary>
+	/// <param name="memberId">The generator-emitted member id for the event unsubscribe.</param>
+	/// <param name="name">The simple event name.</param>
+	/// <param name="target">The unsubscribing handler's target (<see langword="null" /> for static methods).</param>
+	/// <param name="method">The unsubscribing handler's method.</param>
+	/// <exception cref="MockException"><paramref name="method" /> is <see langword="null" />.</exception>
+	public void RemoveEvent(int memberId, string name, object? target, MethodInfo? method)
+	{
+		if (method is null)
+		{
+			throw new MockException("The method of an event unsubscription may not be null.");
+		}
+
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordEvent(memberId, name, target, method, isSubscribe: false);
+		}
+
+		foreach (EventSetup setup in GetEventSetupsByName(name))
+		{
+			setup.InvokeUnsubscribed(target, method);
+		}
+	}
+
+	private void RecordEvent(int memberId, string name, object? target, MethodInfo method, bool isSubscribe)
+	{
+		if (Interactions is FastMockInteractions __fast)
+		{
+			IFastMemberBuffer?[] __buffers = __fast.Buffers;
+			if ((uint)memberId < (uint)__buffers.Length &&
+			    __buffers[memberId] is FastEventBuffer __buffer)
+			{
+				__buffer.Append(name, target, method);
+				return;
+			}
+		}
+
+		Interactions.RegisterInteraction(isSubscribe
+			? new EventSubscription(name, target, method)
+			: (IInteraction)new EventUnsubscription(name, target, method));
 	}
 }

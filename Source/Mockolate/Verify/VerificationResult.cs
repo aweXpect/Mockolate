@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,13 +30,14 @@ namespace Mockolate.Verify;
 public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
 {
 	private readonly Func<string> _expectationFactory;
-	private readonly MockInteractions _interactions;
+	private readonly IMockInteractions _interactions;
+	private readonly IFastMemberBuffer? _buffer;
 	private Func<IInteraction, bool> _predicate;
 	private readonly TVerify _verify;
 
 	/// <inheritdoc cref="VerificationResult{TVerify}" />
 	public VerificationResult(TVerify verify,
-		MockInteractions interactions,
+		IMockInteractions interactions,
 		Func<IInteraction, bool> predicate,
 		string expectation)
 	{
@@ -47,12 +49,25 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	/// <inheritdoc cref="VerificationResult{TVerify}" />
 	public VerificationResult(TVerify verify,
-		MockInteractions interactions,
+		IMockInteractions interactions,
 		Func<IInteraction, bool> predicate,
 		Func<string> expectation)
 	{
 		_verify = verify;
 		_interactions = interactions;
+		_predicate = predicate;
+		_expectationFactory = expectation;
+	}
+
+	internal VerificationResult(TVerify verify,
+		IMockInteractions interactions,
+		IFastMemberBuffer? buffer,
+		Func<IInteraction, bool> predicate,
+		Func<string> expectation)
+	{
+		_verify = verify;
+		_interactions = interactions;
+		_buffer = buffer;
 		_predicate = predicate;
 		_expectationFactory = expectation;
 	}
@@ -66,12 +81,47 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	#endregion
 
 	internal VerificationResult<T> Map<T>(T mock)
-		=> new(mock, _interactions, _predicate, _expectationFactory);
+		=> _buffer is null
+			? new(mock, _interactions, _predicate, _expectationFactory)
+			: new(mock, _interactions, _buffer, _predicate, _expectationFactory);
+
+	private protected bool HasBuffer => _buffer is not null;
 
 	private void ReplacePredicate(Func<IInteraction, bool> predicate)
 		=> _predicate = predicate;
 
-	private static void ThrowIfRecordingDisabled(MockInteractions interactions)
+	private IInteraction[] CollectMatching()
+	{
+		if (_buffer is null)
+		{
+			return _interactions.Where(_predicate).ToArray();
+		}
+
+		List<(long Seq, IInteraction Interaction)> records = new();
+		_buffer.AppendBoxed(records);
+		if (records.Count == 0)
+		{
+			return [];
+		}
+
+		if (records.Count > 1)
+		{
+			records.Sort(static (left, right) => left.Seq.CompareTo(right.Seq));
+		}
+
+		List<IInteraction>? matching = null;
+		foreach ((long _, IInteraction interaction) in records)
+		{
+			if (_predicate(interaction))
+			{
+				(matching ??= new List<IInteraction>(records.Count)).Add(interaction);
+			}
+		}
+
+		return matching is null ? [] : matching.ToArray();
+	}
+
+	private static void ThrowIfRecordingDisabled(IMockInteractions interactions)
 	{
 		if (interactions.SkipInteractionRecording)
 		{
@@ -131,8 +181,8 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		///     An awaitable <see cref="VerificationResult{TVerify}" /> that uses the <paramref name="timeout" /> to wait for the
 		///     expected interactions to occur.
 		/// </summary>
-		public Awaitable(VerificationResult<TVerify> inner, TimeSpan timeout) : base(inner._verify, inner._interactions,
-			inner._predicate, inner._expectationFactory)
+		public Awaitable(VerificationResult<TVerify> inner, TimeSpan timeout)
+			: base(inner._verify, inner._interactions, inner._buffer, inner._predicate, inner._expectationFactory)
 		{
 			_timeout = timeout;
 		}
@@ -142,8 +192,8 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		///     for the
 		///     expected interactions to occur.
 		/// </summary>
-		public Awaitable(VerificationResult<TVerify> inner, CancellationToken cancellationToken) : base(inner._verify,
-			inner._interactions, inner._predicate, inner._expectationFactory)
+		public Awaitable(VerificationResult<TVerify> inner, CancellationToken cancellationToken)
+			: base(inner._verify, inner._interactions, inner._buffer, inner._predicate, inner._expectationFactory)
 		{
 			_cancellationToken = cancellationToken;
 		}
@@ -152,7 +202,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)
 		{
 			ThrowIfRecordingDisabled(_interactions);
-			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
+			IInteraction[] matchingInteractions = CollectMatching();
 			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
@@ -167,7 +217,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		public async Task<bool> VerifyAsync(Func<IInteraction[], bool> predicate)
 		{
 			ThrowIfRecordingDisabled(_interactions);
-			IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
+			IInteraction[] matchingInteractions = CollectMatching();
 			_interactions.Verified(matchingInteractions);
 			bool result = predicate(matchingInteractions);
 			if (result)
@@ -204,7 +254,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					_interactions.InteractionAdded += OnInteractionAdded;
 					do
 					{
-						matchingInteractions = _interactions.Where(_predicate).ToArray();
+						matchingInteractions = CollectMatching();
 						_interactions.Verified(matchingInteractions);
 						if (predicate(matchingInteractions))
 						{
@@ -269,13 +319,34 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 	/// <inheritdoc cref="IVerificationResult.MockInteractions" />
 	MockInteractions IVerificationResult.MockInteractions
+	{
+		get
+		{
+			if (_interactions is MockInteractions concrete)
+			{
+				return concrete;
+			}
+
+			MockInteractions snapshot = new() { SkipInteractionRecording = _interactions.SkipInteractionRecording, };
+			IMockInteractions snapshotView = snapshot;
+			foreach (IInteraction interaction in _interactions)
+			{
+				snapshotView.RegisterInteraction(interaction);
+			}
+
+			return snapshot;
+		}
+	}
+
+	/// <inheritdoc cref="IVerificationResult.Interactions" />
+	IMockInteractions IVerificationResult.Interactions
 		=> _interactions;
 
 	/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
 	bool IVerificationResult.Verify(Func<IInteraction[], bool> predicate)
 	{
 		ThrowIfRecordingDisabled(_interactions);
-		IInteraction[] matchingInteractions = _interactions.Where(_predicate).ToArray();
+		IInteraction[] matchingInteractions = CollectMatching();
 		_interactions.Verified(matchingInteractions);
 		return predicate(matchingInteractions);
 	}
@@ -294,7 +365,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 
 		internal IgnoreParameters(
 			TVerify verify,
-			MockInteractions interactions,
+			IMockInteractions interactions,
 			string methodName,
 			Func<IInteraction, bool> predicate,
 			Func<string> expectation)
@@ -305,13 +376,33 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			_methodName = methodName;
 		}
 
+		internal IgnoreParameters(
+			TVerify verify,
+			IMockInteractions interactions,
+			IFastMemberBuffer buffer,
+			string methodName,
+			Func<IInteraction, bool> predicate,
+			Func<string> expectation)
+			: base(verify, interactions, buffer, predicate, expectation)
+		{
+			_methodName = methodName;
+		}
+
 		/// <summary>
 		///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
 		/// </summary>
 		public VerificationResult<TVerify> AnyParameters()
 		{
-			string methodName = _methodName;
-			ReplacePredicate(interaction => MatchesMethodName(interaction, methodName));
+			if (HasBuffer)
+			{
+				ReplacePredicate(static _ => true);
+			}
+			else
+			{
+				string methodName = _methodName;
+				ReplacePredicate(interaction => MatchesMethodName(interaction, methodName));
+			}
+
 			return this;
 		}
 

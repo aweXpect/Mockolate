@@ -10,7 +10,7 @@ public sealed class MockSetupsTests
 	public async Task ClearAllInteractions_ShouldRemovePreviousInteractions()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		MockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
+		IMockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 
 		sut.Dispense("Dark", 1);
 		sut.Dispense("Light", 2);

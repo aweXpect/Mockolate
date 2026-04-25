@@ -40,6 +40,43 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Member-id-keyed fast-path overload of
+	///     <see cref="VerifyMethod{T, TMethod}(T, string, Func{TMethod, bool}, Func{string})" />. When the mock is
+	///     wired to a <see cref="FastMockInteractions" /> with a typed buffer at <paramref name="memberId" />, the
+	///     resulting <see cref="VerificationResult{T}.IgnoreParameters" /> walks only that buffer instead of the
+	///     full shared interaction list. Falls back to the legacy full-list scan otherwise.
+	/// </summary>
+	/// <typeparam name="T">The verification facade type; returned to the caller so chaining can continue.</typeparam>
+	/// <typeparam name="TMethod">The concrete <see cref="IMethodInteraction" /> subtype to filter on.</typeparam>
+	/// <param name="subject">The verification facade the result is bound to.</param>
+	/// <param name="memberId">The generator-emitted member id for the method.</param>
+	/// <param name="methodName">The simple method name (e.g. <c>"Greet"</c>).</param>
+	/// <param name="predicate">Argument predicate applied to each matching interaction.</param>
+	/// <param name="expectation">Factory producing the expectation description used in failure messages.</param>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, TMethod>(T subject, int memberId, string methodName, Func<TMethod, bool> predicate, Func<string> expectation) where TMethod : IMethodInteraction
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is null)
+		{
+			return VerifyMethod<T, TMethod>(subject, methodName, predicate, expectation);
+		}
+
+		return new VerificationResult<T>.IgnoreParameters(
+			subject,
+			Interactions,
+			buffer,
+			methodName,
+			Predicate,
+			() => $"invoked method {expectation()}");
+
+		[DebuggerNonUserCode]
+		bool Predicate(IInteraction interaction)
+		{
+			return interaction is TMethod method && predicate(method);
+		}
+	}
+
+	/// <summary>
 	///     Counts getter accesses of the property named <paramref name="propertyName" /> on <paramref name="subject" />.
 	/// </summary>
 	/// <typeparam name="T">The verification facade type.</typeparam>
@@ -59,6 +96,29 @@ public partial class MockRegistry
 			return interaction is PropertyGetterAccess property &&
 			       property.Name.Equals(propertyName);
 		}
+	}
+
+	/// <summary>
+	///     Member-id-keyed fast-path overload of <see cref="VerifyProperty{T}(T, string)" />. Walks only the typed
+	///     getter buffer when the mock is wired to a <see cref="FastMockInteractions" />.
+	/// </summary>
+	/// <typeparam name="T">The verification facade type.</typeparam>
+	/// <param name="subject">The verification facade the result is bound to.</param>
+	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	public VerificationResult<T> VerifyProperty<T>(T subject, int memberId, string propertyName)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is null)
+		{
+			return VerifyProperty(subject, propertyName);
+		}
+
+		return new VerificationResult<T>(subject,
+			Interactions,
+			buffer,
+			static _ => true,
+			() => $"got property {propertyName.SubstringAfterLast('.')}");
 	}
 
 	/// <summary>
@@ -84,6 +144,40 @@ public partial class MockRegistry
 		{
 			return interaction is PropertySetterAccess<TValue> property &&
 			       property.Name.Equals(propertyName) &&
+			       value.Matches(property.Value);
+		}
+	}
+
+	/// <summary>
+	///     Member-id-keyed fast-path overload of
+	///     <see cref="VerifyProperty{TSubject, TValue}(TSubject, string, IParameterMatch{TValue})" />. Walks only the
+	///     typed setter buffer when the mock is wired to a <see cref="FastMockInteractions" />.
+	/// </summary>
+	/// <typeparam name="TSubject">The verification facade type.</typeparam>
+	/// <typeparam name="TValue">The property's type.</typeparam>
+	/// <param name="subject">The verification facade the result is bound to.</param>
+	/// <param name="memberId">The generator-emitted member id for the property setter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="value">Parameter matcher evaluated against the assigned value.</param>
+	public VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, int memberId,
+		string propertyName, IParameterMatch<TValue> value)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is null)
+		{
+			return VerifyProperty(subject, propertyName, value);
+		}
+
+		return new VerificationResult<TSubject>(subject,
+			Interactions,
+			buffer,
+			Predicate,
+			() => $"set property {propertyName.SubstringAfterLast('.')} to {value}");
+
+		[DebuggerNonUserCode]
+		bool Predicate(IInteraction interaction)
+		{
+			return interaction is PropertySetterAccess<TValue> property &&
 			       value.Matches(property.Value);
 		}
 	}
@@ -136,6 +230,33 @@ public partial class MockRegistry
 			() => $"got indexer {parametersDescription()}");
 
 	/// <summary>
+	///     Member-id-keyed fast-path overload of
+	///     <see cref="IndexerGot{T}(T, Func{IInteraction, bool}, Func{string})" />. Walks only the typed indexer
+	///     getter buffer when the mock is wired to a <see cref="FastMockInteractions" />.
+	/// </summary>
+	/// <typeparam name="T">The verification facade type.</typeparam>
+	/// <param name="subject">The verification facade the result is bound to.</param>
+	/// <param name="memberId">The generator-emitted member id for the indexer getter.</param>
+	/// <param name="gotPredicate">Predicate evaluated against each recorded interaction.</param>
+	/// <param name="parametersDescription">Factory producing the indexer-argument description used in failure messages.</param>
+	public VerificationResult<T> IndexerGot<T>(T subject, int memberId,
+		Func<IInteraction, bool> gotPredicate,
+		Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is null)
+		{
+			return IndexerGot(subject, gotPredicate, parametersDescription);
+		}
+
+		return new VerificationResult<T>(subject,
+			Interactions,
+			buffer,
+			gotPredicate,
+			() => $"got indexer {parametersDescription()}");
+	}
+
+	/// <summary>
 	///     Counts indexer setter accesses on <paramref name="subject" /> where the recorded interaction matches
 	///     <paramref name="setPredicate" /> and the assigned value matches <paramref name="value" />.
 	/// </summary>
@@ -153,6 +274,42 @@ public partial class MockRegistry
 	{
 		return new VerificationResult<T>(subject,
 			Interactions,
+			Predicate,
+			() => $"set indexer {parametersDescription()} to {value}");
+
+		[DebuggerNonUserCode]
+		bool Predicate(IInteraction interaction)
+		{
+			return setPredicate(interaction, value);
+		}
+	}
+
+	/// <summary>
+	///     Member-id-keyed fast-path overload of
+	///     <see cref="IndexerSet{T, TValue}(T, Func{IInteraction, IParameterMatch{TValue}, bool}, IParameterMatch{TValue}, Func{string})" />.
+	///     Walks only the typed indexer setter buffer when the mock is wired to a <see cref="FastMockInteractions" />.
+	/// </summary>
+	/// <typeparam name="T">The verification facade type.</typeparam>
+	/// <typeparam name="TValue">The indexer's value type.</typeparam>
+	/// <param name="subject">The verification facade the result is bound to.</param>
+	/// <param name="memberId">The generator-emitted member id for the indexer setter.</param>
+	/// <param name="setPredicate">Predicate evaluated against each recorded interaction and the expected value matcher.</param>
+	/// <param name="value">Parameter matcher evaluated against the assigned value.</param>
+	/// <param name="parametersDescription">Factory producing the indexer-argument description used in failure messages.</param>
+	public VerificationResult<T> IndexerSet<T, TValue>(T subject, int memberId,
+		Func<IInteraction, IParameterMatch<TValue>, bool> setPredicate,
+		IParameterMatch<TValue> value,
+		Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is null)
+		{
+			return IndexerSet(subject, setPredicate, value, parametersDescription);
+		}
+
+		return new VerificationResult<T>(subject,
+			Interactions,
+			buffer,
 			Predicate,
 			() => $"set indexer {parametersDescription()} to {value}");
 
@@ -185,6 +342,28 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Member-id-keyed fast-path overload of <see cref="SubscribedTo{T}(T, string)" />. Walks only the typed
+	///     event-subscribe buffer when the mock is wired to a <see cref="FastMockInteractions" />.
+	/// </summary>
+	/// <typeparam name="T">The verification facade type.</typeparam>
+	/// <param name="subject">The verification facade the result is bound to.</param>
+	/// <param name="memberId">The generator-emitted member id for the event subscribe.</param>
+	/// <param name="eventName">The simple event name.</param>
+	public VerificationResult<T> SubscribedTo<T>(T subject, int memberId, string eventName)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is null)
+		{
+			return SubscribedTo(subject, eventName);
+		}
+
+		return new VerificationResult<T>(subject, Interactions,
+			buffer,
+			static _ => true,
+			() => $"subscribed to event {eventName.SubstringAfterLast('.')}");
+	}
+
+	/// <summary>
 	///     Counts unsubscriptions (<c>-=</c>) from the event named <paramref name="eventName" /> on <paramref name="subject" />.
 	/// </summary>
 	/// <typeparam name="T">The verification facade type.</typeparam>
@@ -206,12 +385,48 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Member-id-keyed fast-path overload of <see cref="UnsubscribedFrom{T}(T, string)" />. Walks only the typed
+	///     event-unsubscribe buffer when the mock is wired to a <see cref="FastMockInteractions" />.
+	/// </summary>
+	/// <typeparam name="T">The verification facade type.</typeparam>
+	/// <param name="subject">The verification facade the result is bound to.</param>
+	/// <param name="memberId">The generator-emitted member id for the event unsubscribe.</param>
+	/// <param name="eventName">The simple event name.</param>
+	public VerificationResult<T> UnsubscribedFrom<T>(T subject, int memberId, string eventName)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is null)
+		{
+			return UnsubscribedFrom(subject, eventName);
+		}
+
+		return new VerificationResult<T>(subject, Interactions,
+			buffer,
+			static _ => true,
+			() => $"unsubscribed from event {eventName.SubstringAfterLast('.')}");
+	}
+
+	private IFastMemberBuffer? TryGetBuffer(int memberId)
+	{
+		if (Interactions is FastMockInteractions fast)
+		{
+			IFastMemberBuffer?[] buffers = fast.Buffers;
+			if ((uint)memberId < (uint)buffers.Length)
+			{
+				return buffers[memberId];
+			}
+		}
+
+		return null;
+	}
+
+	/// <summary>
 	///     Returns every registered setup (indexer, property, method) that was not hit by any of the given
 	///     <paramref name="interactions" />.
 	/// </summary>
 	/// <param name="interactions">The interactions to check against.</param>
 	/// <returns>The unused setups; empty when every setup was exercised.</returns>
-	public IReadOnlyCollection<ISetup> GetUnusedSetups(MockInteractions interactions)
+	public IReadOnlyCollection<ISetup> GetUnusedSetups(IMockInteractions interactions)
 	{
 		List<ISetup> unusedSetups =
 		[

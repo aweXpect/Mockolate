@@ -44,8 +44,8 @@ public sealed class MockRegistryTests
 		public async Task ApplyIndexerGetter_WithNullSetup_ShouldStoreBaseValueForLaterLookup()
 		{
 			MockRegistry registry = new(MockBehavior.Default);
-			IndexerGetterAccess<int> access1 = new("p", 1);
-			IndexerGetterAccess<int> access2 = new("p", 1);
+			IndexerGetterAccess<int> access1 = new(1);
+			IndexerGetterAccess<int> access2 = new(1);
 
 			int first = registry.ApplyIndexerGetter(access1, null, 42, 0);
 			int second = registry.ApplyIndexerGetter(access2, null, 99, 0);
@@ -60,8 +60,8 @@ public sealed class MockRegistryTests
 			int counter = 0;
 			MockBehavior behavior = MockBehavior.Default.WithDefaultValueFor(() => ++counter);
 			MockRegistry registry = new(behavior);
-			IndexerGetterAccess<int> access1 = new("p", 1);
-			IndexerGetterAccess<int> access2 = new("p", 1);
+			IndexerGetterAccess<int> access1 = new(1);
+			IndexerGetterAccess<int> access2 = new(1);
 
 			int first = registry.GetIndexerFallback<int>(access1, 0);
 			int second = registry.GetIndexerFallback<int>(access2, 0);
