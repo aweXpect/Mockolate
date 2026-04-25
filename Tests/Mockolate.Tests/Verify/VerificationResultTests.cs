@@ -224,8 +224,43 @@ public sealed partial class VerificationResultTests
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event ChocolateDispensed");
 	}
 
+	[Fact]
+	public async Task AnyParameters_OnOverloadedMethod_FastPath_ShouldOnlyCountTheTargetedOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.DoSomething(1);
+		sut.DoSomething(2);
+		sut.DoSomething(3, true);
+
+		await That(sut.Mock.Verify.DoSomething(0).AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.DoSomething(0, false).AnyParameters()).Once();
+	}
+
+	[Fact]
+	public async Task AnyParameters_OnOverloadedGenericMethod_LegacyPath_ShouldOnlyCountTheTargetedOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.GetInstance<int>();
+		sut.GetInstance<int>();
+		sut.GetInstance<int>("key");
+
+		await That(sut.Mock.Verify.GetInstance<int>().AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.GetInstance<int>("ignored").AnyParameters()).Once();
+	}
+
 	internal interface IIndexerVerificationService
 	{
 		int? this[string p1, int? p2] { get; set; }
+	}
+
+	internal interface IOverloadedMethodService
+	{
+		void DoSomething(int value);
+		void DoSomething(int value, bool flag);
+
+		TService GetInstance<TService>();
+		TService GetInstance<TService>(string key);
 	}
 }

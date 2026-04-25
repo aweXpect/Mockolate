@@ -30,6 +30,7 @@ public partial class MockRegistry
 			Interactions,
 			methodName,
 			Predicate,
+			OverloadFilter,
 			() => $"invoked method {expectation()}");
 
 		[DebuggerNonUserCode]
@@ -37,6 +38,10 @@ public partial class MockRegistry
 		{
 			return interaction is TMethod method && predicate(method);
 		}
+
+		[DebuggerNonUserCode]
+		static bool OverloadFilter(IInteraction interaction)
+			=> interaction is TMethod;
 	}
 
 	/// <summary>

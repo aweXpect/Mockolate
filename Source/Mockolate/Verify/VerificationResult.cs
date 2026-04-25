@@ -362,6 +362,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	public class IgnoreParameters : VerificationResult<TVerify>
 	{
 		private readonly string _methodName;
+		private readonly Func<IInteraction, bool>? _overloadFilter;
 
 		internal IgnoreParameters(
 			TVerify verify,
@@ -369,11 +370,23 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			string methodName,
 			Func<IInteraction, bool> predicate,
 			Func<string> expectation)
+			: this(verify, interactions, methodName, predicate, null, expectation)
+		{
+		}
+
+		internal IgnoreParameters(
+			TVerify verify,
+			IMockInteractions interactions,
+			string methodName,
+			Func<IInteraction, bool> predicate,
+			Func<IInteraction, bool>? overloadFilter,
+			Func<string> expectation)
 			: base(verify, interactions,
 				interaction => MatchesMethodName(interaction, methodName) && predicate(interaction),
 				expectation)
 		{
 			_methodName = methodName;
+			_overloadFilter = overloadFilter;
 		}
 
 		internal IgnoreParameters(
@@ -400,7 +413,10 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			else
 			{
 				string methodName = _methodName;
-				ReplacePredicate(interaction => MatchesMethodName(interaction, methodName));
+				Func<IInteraction, bool>? overloadFilter = _overloadFilter;
+				ReplacePredicate(overloadFilter is null
+					? interaction => MatchesMethodName(interaction, methodName)
+					: interaction => MatchesMethodName(interaction, methodName) && overloadFilter(interaction));
 			}
 
 			return this;
