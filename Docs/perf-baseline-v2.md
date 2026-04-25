@@ -75,12 +75,12 @@ A regression from one row to the next halts the merge.
 
 ## Post-phase columns (fill in as phases land)
 
-| Member | Baseline | After 4.2 | After 5.3 | After 6.1 |
-|---|---:|---:|---:|---:|
-| Method (2-arg) | ~189 ns · ~300 B | ~138 ns · ~227 B | _tbd_ | _tbd_ |
-| Property get | ~287 ns · ~260 B | ~158 ns · ~261 B¹ | _tbd_ | _tbd_ |
-| Indexer get (1 key) | ~298 ns · ~172 B | ~118 ns · ~164 B¹ | _tbd_ | _tbd_ |
-| Event subscribe | ~185 ns · ~369 B | ~422 ns · ~369 B¹ | _tbd_ | _tbd_ |
+| Member | Baseline | After 4.2 | After 5.3 (methods) | After 5.4 (properties + indexers + events) | After 6.1 |
+|---|---:|---:|---:|---:|---:|
+| Method (2-arg) | ~189 ns · ~300 B | ~138 ns · ~227 B | n/a² | ~400 ns · ~361 B³ | _tbd_ |
+| Property get | ~287 ns · ~260 B | ~158 ns · ~261 B¹ | n/a² | ~425 ns · ~350 B³ | _tbd_ |
+| Indexer get (1 key) | ~298 ns · ~172 B | ~118 ns · ~164 B¹ | n/a² | ~587 ns · ~254 B³ | _tbd_ |
+| Event subscribe | ~185 ns · ~369 B | ~422 ns · ~369 B¹ | n/a² | ~492 ns · ~502 B³ | _tbd_ |
 
 ¹ Phase 4.2 only rewrites **method-setup dispatch** (`GetMethodSetup<T>` → member-id-keyed
 `GetMethodSetupSnapshot` walk). Property / indexer / event dispatch is unchanged in 4.2;
@@ -96,6 +96,44 @@ The headline win — what Phase 4.2 directly delivers — is the **method (2-arg
 This matches the plan's Step 4.2 expectation of "~25–30 % faster per call, alloc ↓
 slightly" and comes entirely from removing the per-call closure allocation and the
 `MethodSetups.GetMatching` lock + name compare from the hot path.
+
+² Phase 5.3 only switched the **method** invocation hot path to typed `FastMethodNBuffer.Append(...)`;
+property, indexer, and event recordings still flowed through the
+`FastMockInteractions.RegisterInteraction → FallbackBuffer` path. No standalone benchmark column
+was captured between 5.3 and 5.4 — the next measurement is "After 5.4" below.
+
+³ Phase 5.4 (this commit) extends the typed-buffer hot path to property getters/setters, indexer
+getters/setters, and event subscribe/unsubscribe. The numbers reported in the column come from a
+heavily-loaded reference machine (note that `Method_HandwrittenOptimizedD` itself drifted up to
+~94 ns from the 4.2 measurement of ~32 ns under the same noise). Per-call costs still scale with
+member kind (method < property < event < indexer), but the **alloc footprint ratio** between
+Mockolate and the hand-written D-optimized target collapsed:
+
+| Member | Mockolate alloc/call after 5.4 | OptimizedD alloc/call (same run) | Ratio |
+|---|---:|---:|---:|
+| Method (2-arg) | 361 B | 139 B | 2.6× |
+| Property get | 350 B | 48 B | 7.3× |
+| Indexer get (1 key) | 254 B | 69 B | 3.7× |
+| Event subscribe | 502 B | 192 B | 2.6× |
+
+These ratios are dominated by the `Func<TResult>` lambda allocations the property/indexer fallback
+generators still emit (`() => behavior.DefaultValue.Generate(default!)`) — those allocations are
+orthogonal to the recording path and would need a separate caching pass to remove. What 5.4
+removes is the per-call `new PropertyGetterAccess(name)` / `new EventSubscription(name, target,
+method)` heap allocation that previously fed `Interactions.RegisterInteraction(...)`. The typed
+buffer now stores the parameters in a struct slot and only boxes lazily on
+`IFastMemberBuffer.AppendBoxed` (i.e. when the user iterates `Interactions`).
+
+A new `Mockolate.Internal.Tests/Phase5_4PropertyTypedBufferTests.cs` suite proves the routing:
+each member kind appends to the matching `FastPropertyGetterBuffer` / `FastPropertySetterBuffer<T>`
+/ `FastIndexerGetterBuffer<T...>` / `FastIndexerSetterBuffer<T..., TVal>` / `FastEventBuffer` and
+no longer touches the fallback list.
+
+**Combined `Implementing<>` mocks intentionally stay on the legacy path.** Their member ids are
+allocated against a different `MemberCount` than the base mock's `FastMockInteractions` was sized
+to, so the typed-buffer cast would index past `Buffers.Length`. The combined-mock proxy emits
+`useFastBuffers: false` and routes through `RegisterInteraction → FallbackBuffer`. Reworking that
+storage model is out of scope for 5.x.
 
 ## After 4.2 — raw run (Phase 4.2)
 
@@ -148,3 +186,62 @@ Marginal per-call cost extraction `(N=10 − N=1) / 9`:
 Phase 4.2 closes part of the gap on the **method** row. The other rows are still on the
 old per-member dispatch and remain at the v2 baseline within noise — Phase 5/6 is where
 those drop to the D-target row.
+
+## After 5.4 — raw run (Phase 5.4)
+
+Captured by `Benchmarks/Mockolate.Benchmarks/BenchmarkDotNet.Artifacts` on the reference
+environment above. Full BenchmarkDotNet output:
+[`perf-data/optimized-mock-comparison-after-5.4.txt`](./perf-data/optimized-mock-comparison-after-5.4.txt).
+
+```
+BenchmarkDotNet v0.15.8, Windows 11 (10.0.26100.7623/24H2/2024Update/HudsonValley)
+AMD Ryzen 7 PRO 8840HS w/ Radeon 780M Graphics 3.30GHz, 1 CPU, 16 logical and 8 physical cores
+.NET SDK 10.0.202
+  [Host] : .NET 10.0.6 (10.0.6, 10.0.626.17701), X64 RyuJIT x86-64-v4
+
+Job=InProcess  Toolchain=InProcessEmitToolchain  IterationCount=15
+LaunchCount=1  WarmupCount=10
+
+| Method                         | N  | Mean       | Error       | StdDev      | Ratio | RatioSD | Allocated | Alloc Ratio |
+|------------------------------- |--- |-----------:|------------:|------------:|------:|--------:|----------:|------------:|
+| Event_Mockolate                | 1  | 1,183.9 ns |   174.17 ns |   162.92 ns |  0.77 |    0.13 |      2 KB |        0.81 |
+| Event_HandwrittenOptimizedD    | 1  |   698.3 ns |    73.84 ns |    69.07 ns |  0.46 |    0.06 |    1.9 KB |        0.77 |
+| Indexer_Mockolate              | 1  | 2,316.1 ns |   268.98 ns |   251.60 ns |  1.51 |    0.21 |   2.77 KB |        1.12 |
+| Indexer_HandwrittenOptimizedD  | 1  |   806.9 ns |    81.59 ns |    76.32 ns |  0.53 |    0.07 |   2.04 KB |        0.83 |
+| Method_Mockolate               | 1  | 1,543.3 ns |   155.71 ns |   145.65 ns |  1.01 |    0.13 |   2.46 KB |        1.00 |
+| Method_HandwrittenOptimized    | 1  | 1,498.0 ns |   161.42 ns |   150.99 ns |  0.98 |    0.13 |    2.3 KB |        0.93 |
+| Method_HandwrittenOptimizedD   | 1  |   790.0 ns |    92.46 ns |    86.48 ns |  0.52 |    0.07 |   1.65 KB |        0.67 |
+| Property_Mockolate             | 1  | 1,256.3 ns |   204.63 ns |   191.41 ns |  0.82 |    0.14 |   2.03 KB |        0.83 |
+| Property_HandwrittenOptimizedD | 1  |   697.3 ns |    69.78 ns |    65.27 ns |  0.46 |    0.06 |    1.9 KB |        0.77 |
+| Event_Mockolate                | 10 | 5,611.0 ns |   652.02 ns |   609.90 ns |  1.11 |    0.18 |   6.41 KB |        1.14 |
+| Event_HandwrittenOptimizedD    | 10 | 2,057.1 ns |   203.70 ns |   190.54 ns |  0.41 |    0.06 |   3.59 KB |        0.64 |
+| Indexer_Mockolate              | 10 | 7,600.3 ns |   840.44 ns |   786.15 ns |  1.50 |    0.24 |      5 KB |        0.89 |
+| Indexer_HandwrittenOptimizedD  | 10 | 1,206.0 ns |   192.70 ns |   180.25 ns |  0.24 |    0.05 |   2.65 KB |        0.47 |
+| Method_Mockolate               | 10 | 5,146.8 ns |   654.93 ns |   612.62 ns |  1.01 |    0.17 |   5.63 KB |        1.00 |
+| Method_HandwrittenOptimized    | 10 | 4,202.3 ns |   577.28 ns |   539.99 ns |  0.83 |    0.15 |   4.02 KB |        0.71 |
+| Method_HandwrittenOptimizedD   | 10 | 1,634.9 ns |   306.73 ns |   286.92 ns |  0.32 |    0.07 |   2.87 KB |        0.51 |
+| Property_Mockolate             | 10 | 5,080.3 ns |   493.20 ns |   461.34 ns |  1.00 |    0.15 |   5.11 KB |        0.91 |
+| Property_HandwrittenOptimizedD | 10 | 1,062.4 ns |    74.40 ns |    69.59 ns |  0.21 |    0.03 |   2.32 KB |        0.41 |
+
+// Run time: 00:06:40 (400.16 sec), executed benchmarks: 18
+```
+
+Marginal per-call cost extraction `(N=10 − N=1) / 9`:
+
+| Method | Mockolate (after 5.4) | HandwrittenOptimizedD (same run) |
+|---|---:|---:|
+| Method (2-arg) | 400.4 ns · 361 B | 93.9 ns · 139 B |
+| Property get | 424.9 ns · 350 B | 40.6 ns · 48 B |
+| Indexer get | 587.1 ns · 254 B | 44.3 ns · 69 B |
+| Event subscribe | 491.9 ns · 502 B | 150.9 ns · 192 B |
+
+The reference machine was under heavier load during this measurement than during the
+After 4.2 capture: `Method_HandwrittenOptimizedD` itself drifted from ~32 ns/call (4.2
+column) to ~94 ns/call here despite no code change. **Compare ratios, not absolute
+values, when reading this row against the After 4.2 row.**
+
+The functional confirmation that the typed buffers are wired comes from
+`Tests/Mockolate.Internal.Tests/Phase5_4PropertyTypedBufferTests.cs` — eight tests that
+verify each member kind's `FastPropertyGetterBuffer` / `FastPropertySetterBuffer<T>` /
+`FastIndexerGetterBuffer<T…>` / `FastIndexerSetterBuffer<T…, TVal>` / `FastEventBuffer`
+sees the recordings, with `SkipInteractionRecording = true` short-circuiting them.

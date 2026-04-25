@@ -836,7 +836,7 @@ public class GeneralTests
 			          		{
 			          			add
 			          			{
-			          				this.MockRegistry.AddEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_MyEvent_Subscribe, "global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
 			          				this._mockolateEvent_global__MyCode_IMyService_MyEvent += value;
 			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
@@ -845,7 +845,7 @@ public class GeneralTests
 			          			}
 			          			remove
 			          			{
-			          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_MyEvent_Unsubscribe, "global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
 			          				this._mockolateEvent_global__MyCode_IMyService_MyEvent -= value;
 			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
