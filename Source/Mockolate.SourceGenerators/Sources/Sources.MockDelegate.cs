@@ -310,17 +310,21 @@ internal static partial class Sources
 			}
 		}
 
-		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify");
+		// Delegate mocks use a plain MockRegistry (no FastMockInteractions), so emit the slow Verify path.
+		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+			memberIds, memberIdPrefix, useFastBuffers: false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true,
+				memberIds, memberIdPrefix, useFastBuffers: false, "Verify");
 		}
 
 		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
 		{
 			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, useFastBuffers: false, "Verify", valueFlags);
 			}
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
@@ -328,7 +332,8 @@ internal static partial class Sources
 			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, useFastBuffers: false, "Verify", allValueFlags);
 			}
 		}
 
@@ -368,17 +373,21 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify");
+		// Delegate mocks use a plain MockRegistry (no FastMockInteractions), so emit the slow Verify path.
+		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+			memberIds, memberIdPrefix, useFastBuffers: false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true,
+				memberIds, memberIdPrefix, useFastBuffers: false, "Verify");
 		}
 
 		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
 		{
 			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, useFastBuffers: false, "Verify", valueFlags);
 			}
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
@@ -386,7 +395,8 @@ internal static partial class Sources
 			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, useFastBuffers: false, "Verify", allValueFlags);
 			}
 		}
 
