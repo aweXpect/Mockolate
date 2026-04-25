@@ -186,11 +186,10 @@ internal static partial class Sources
 			}
 		}
 
-		sb.Append("\t\t\tvar ").Append(methodSetup)
-			.Append(" = this.").Append(mockRegistryName).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
-			.Append(delegateMethod.GetUniqueNameString()).Append(", m => m.Matches(");
-		sb.Append(sb2);
-		sb.AppendLine("));");
+		string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(delegateMethod);
+		bool isGeneric = delegateMethod.GenericParameters is not null && delegateMethod.GenericParameters.Value.Count > 0;
+		EmitFastMethodSetupLookup(sb, "\t\t\t", $"this.{mockRegistryName}", methodSetup, methodSetupType,
+			memberIdRef, delegateMethod.GetUniqueNameString(), sb2.ToString(), isGeneric);
 
 		if (hasOutParams)
 		{

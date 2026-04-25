@@ -183,13 +183,80 @@ internal static partial class Sources
 		}
 	}
 
+	/// <summary>
+	///     Emits a member-id-keyed lookup of the latest matching <paramref name="methodSetupType" /> setup,
+	///     with a slow-path fallback for cases the fast path cannot cover.
+	/// </summary>
+	/// <remarks>
+	///     <para>
+	///         Fast path (default scope only): walks the lock-free <c>GetMethodSetupSnapshot</c> array in
+	///         reverse and runs <c>Matches({matchArgs})</c> directly. Eliminates the per-call closure
+	///         allocation, the string-name comparison, and the lock taken by the legacy
+	///         <c>MethodSetups.GetMatching</c> walk.
+	///     </para>
+	///     <para>
+	///         Slow-path fallback: invoked when an active scenario is set or when the fast path finds no
+	///         match. The member-id array is only populated by the <c>SetupMethod(int, ...)</c> overloads
+	///         emitted by the generator; setups registered through the hand-written
+	///         <c>SetupMethod(MethodSetup)</c> overload (e.g. the <c>HttpClientExtensions.SetupMethod</c>
+	///         pipeline) live only in the string-keyed list, so the fallback also covers them.
+	///     </para>
+	/// </remarks>
+	internal static void EmitFastMethodSetupLookup(StringBuilder sb, string indent, string mockRegistry,
+		string methodSetup, string methodSetupType, string memberIdRef, string uniqueNameString, string matchArgs,
+		bool isGeneric)
+	{
+		sb.Append(indent).Append(methodSetupType).Append("? ").Append(methodSetup).Append(" = null;").AppendLine();
+		sb.Append(indent).Append("if (string.IsNullOrEmpty(").Append(mockRegistry).Append(".Scenario))").AppendLine();
+		sb.Append(indent).Append('{').AppendLine();
+		sb.Append(indent).Append("\tglobal::Mockolate.Setup.MethodSetup[]? __snapshot_").Append(methodSetup)
+			.Append(" = ").Append(mockRegistry).Append(".GetMethodSetupSnapshot(").Append(memberIdRef).Append(");")
+			.AppendLine();
+		if (isGeneric)
+		{
+			// A single member id covers every instantiation of a generic method, so the snapshot
+			// can hold setups whose closed-generic Name differs from this call site's instantiation.
+			// Pre-compute the runtime name and filter the bucket by setup.Name to keep lookups
+			// instantiation-scoped.
+			sb.Append(indent).Append("\tstring __name_").Append(methodSetup).Append(" = ")
+				.Append(uniqueNameString).Append(';').AppendLine();
+		}
+		sb.Append(indent).Append("\tif (__snapshot_").Append(methodSetup).Append(" is not null)").AppendLine();
+		sb.Append(indent).Append("\t{").AppendLine();
+		sb.Append(indent).Append("\t\tfor (int __i_").Append(methodSetup).Append(" = __snapshot_")
+			.Append(methodSetup).Append(".Length - 1; __i_").Append(methodSetup).Append(" >= 0; __i_")
+			.Append(methodSetup).Append("--)").AppendLine();
+		sb.Append(indent).Append("\t\t{").AppendLine();
+		sb.Append(indent).Append("\t\t\tif (__snapshot_").Append(methodSetup).Append("[__i_")
+			.Append(methodSetup).Append("] is ").Append(methodSetupType).Append(" __s_").Append(methodSetup);
+		if (isGeneric)
+		{
+			sb.Append(" && __s_").Append(methodSetup).Append(".Name == __name_").Append(methodSetup);
+		}
+		sb.Append(" && __s_").Append(methodSetup).Append(".Matches(").Append(matchArgs).Append("))")
+			.AppendLine();
+		sb.Append(indent).Append("\t\t\t{").AppendLine();
+		sb.Append(indent).Append("\t\t\t\t").Append(methodSetup).Append(" = __s_").Append(methodSetup)
+			.Append(';').AppendLine();
+		sb.Append(indent).Append("\t\t\t\tbreak;").AppendLine();
+		sb.Append(indent).Append("\t\t\t}").AppendLine();
+		sb.Append(indent).Append("\t\t}").AppendLine();
+		sb.Append(indent).Append("\t}").AppendLine();
+		sb.Append(indent).Append('}').AppendLine();
+		sb.Append(indent).Append("if (").Append(methodSetup).Append(" is null)").AppendLine();
+		sb.Append(indent).Append('{').AppendLine();
+		sb.Append(indent).Append('\t').Append(methodSetup).Append(" = ").Append(mockRegistry)
+			.Append(".GetMethodSetup<").Append(methodSetupType).Append(">(").Append(uniqueNameString)
+			.Append(", __m => __m.Matches(").Append(matchArgs).Append("));").AppendLine();
+		sb.Append(indent).Append('}').AppendLine();
+	}
+
 	internal static MemberIdTable ComputeMemberIds(params Class[] classes)
 	{
 		MemberIdTable table = new();
 		foreach (Class @class in classes)
 		{
-			foreach (Property property in @class.AllProperties()
-				         .Where(p => p.ExplicitImplementation is null && !p.IsIndexer))
+			foreach (Property property in @class.AllProperties().Where(p => !p.IsIndexer))
 			{
 				if (!table.PropertyGetIds.ContainsKey(property))
 				{
@@ -197,7 +264,7 @@ internal static partial class Sources
 				}
 			}
 
-			foreach (Event @event in @class.AllEvents().Where(e => e.ExplicitImplementation is null))
+			foreach (Event @event in @class.AllEvents())
 			{
 				if (!table.EventSubscribeIds.ContainsKey(@event))
 				{
@@ -205,8 +272,7 @@ internal static partial class Sources
 				}
 			}
 
-			foreach (Property indexer in @class.AllProperties()
-				         .Where(p => p.ExplicitImplementation is null && p.IsIndexer))
+			foreach (Property indexer in @class.AllProperties().Where(p => p.IsIndexer))
 			{
 				if (!table.IndexerGetIds.ContainsKey(indexer))
 				{
@@ -214,7 +280,7 @@ internal static partial class Sources
 				}
 			}
 
-			foreach (Method method in @class.AllMethods().Where(m => m.ExplicitImplementation is null))
+			foreach (Method method in @class.AllMethods())
 			{
 				if (!table.MethodIds.ContainsKey(method))
 				{

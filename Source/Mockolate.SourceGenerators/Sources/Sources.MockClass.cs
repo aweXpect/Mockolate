@@ -692,7 +692,7 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null);
+		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, memberIds, memberIdPrefix);
 		sb.AppendLine();
 
 		#region IMockSetupForXXX
@@ -1630,7 +1630,8 @@ internal static partial class Sources
 	}
 
 	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockRegistryName,
-		MockClass? mockClass, Dictionary<string, int>? signatureIndicesOverride = null,
+		MockClass? mockClass, MemberIdTable memberIds, string memberIdPrefix,
+		Dictionary<string, int>? signatureIndicesOverride = null,
 		int[]? nextSignatureIndexRef = null)
 	{
 		string className = @class.ClassFullName;
@@ -1685,7 +1686,7 @@ internal static partial class Sources
 			{
 				AppendMockSubject_ImplementClass_AddMethod(sb, method, mockRegistryName, className,
 					mockClass is not null,
-					@class.IsInterface, @class);
+					@class.IsInterface, @class, memberIds, memberIdPrefix);
 				sb.AppendLine();
 			}
 		}
@@ -2192,7 +2193,8 @@ internal static partial class Sources
 
 	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method,
 		string mockRegistryName, string className,
-		bool explicitInterfaceImplementation, bool isClassInterface, Class @class)
+		bool explicitInterfaceImplementation, bool isClassInterface, Class @class,
+		MemberIdTable memberIds, string memberIdPrefix)
 	{
 		string mockRegistry = method.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.')
@@ -2342,11 +2344,10 @@ internal static partial class Sources
 			}
 		}
 
-		sb.Append("\t\t\tvar ").Append(methodSetup)
-			.Append(" = ").Append(mockRegistry).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
-			.Append(method.GetUniqueNameString()).Append(", m => m.Matches(");
-		sb.Append(sb2);
-		sb.AppendLine("));");
+		string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(method);
+		bool isGeneric = method.GenericParameters is not null && method.GenericParameters.Value.Count > 0;
+		EmitFastMethodSetupLookup(sb, "\t\t\t", mockRegistry, methodSetup, methodSetupType, memberIdRef,
+			method.GetUniqueNameString(), sb2.ToString(), isGeneric);
 		sb.Append("\t\t\tbool ").Append(hasWrappedResult).Append(" = false;").AppendLine();
 		if (method.ReturnType != Type.Void)
 		{
