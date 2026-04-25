@@ -827,7 +827,7 @@ public sealed partial class MockTests
 					          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, bool?, string> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<bool?>? c, global::Mockolate.Parameters.IParameter<string>? d)
 					          		{
 					          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int, bool?, string>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.MyMethod1", CovariantParameterAdapter<int>.Wrap(a ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<int>.Wrap(b ?? global::Mockolate.It.Is<int>(1)), CovariantParameterAdapter<bool?>.Wrap(c ?? global::Mockolate.It.Is<bool?>(null)), CovariantParameterAdapter<string>.Wrap(d ?? global::Mockolate.It.Is<string>("default")));
-					          			this.MockRegistry.SetupMethod(methodSetup);
+					          			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IMyService.MemberId_MyMethod1, methodSetup);
 					          			return methodSetup;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -868,7 +868,7 @@ public sealed partial class MockTests
 					          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int[]> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int[]>? b)
 					          		{
 					          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, int[]>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.MyMethod1", CovariantParameterAdapter<int>.Wrap(a ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<int[]>.Wrap(b ?? global::Mockolate.It.IsNull<int[]>("null")));
-					          			this.MockRegistry.SetupMethod(methodSetup);
+					          			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IMyService.MemberId_MyMethod1, methodSetup);
 					          			return methodSetup;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -1089,7 +1089,7 @@ public sealed partial class MockTests
 					          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<char>> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.ISpanParameter<char> buffer)
 					          		{
 					          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<char>>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.MyMethod1", CovariantParameterAdapter<global::Mockolate.Setup.SpanWrapper<char>>.Wrap(buffer));
-					          			this.MockRegistry.SetupMethod(methodSetup);
+					          			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IMyService.MemberId_MyMethod1, methodSetup);
 					          			return methodSetup;
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -1097,7 +1097,7 @@ public sealed partial class MockTests
 					          		global::Mockolate.Setup.IReturnMethodSetupWithCallback<bool, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod2(global::Mockolate.Parameters.IReadOnlySpanParameter<int> values)
 					          		{
 					          			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.MyMethod2", CovariantParameterAdapter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.Wrap(values));
-					          			this.MockRegistry.SetupMethod(methodSetup);
+					          			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IMyService.MemberId_MyMethod2, methodSetup);
 					          			return methodSetup;
 					          		}
 					          """).IgnoringNewlineStyle().And

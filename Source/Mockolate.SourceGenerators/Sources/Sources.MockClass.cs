@@ -32,6 +32,8 @@ internal static partial class Sources
 			? $"IMockSetupInitializationFor{name}"
 			: $"global::Mockolate.Mock.IMockSetupFor{name}";
 		string mockRegistryName = @class.GetUniqueName("MockRegistry", "MockolateMockRegistry");
+		MemberIdTable memberIds = ComputeMemberIds(@class);
+		string memberIdPrefix = $"global::Mockolate.Mock.{name}.";
 		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("#nullable enable annotations").AppendLine();
@@ -527,7 +529,8 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockSetupFor{name}", MemberType.Public);
+			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockSetupFor{name}", MemberType.Public,
+				memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockSetupFor").Append(name).AppendLine();
 			if (hasProtectedMembers)
 			{
@@ -535,7 +538,7 @@ internal static partial class Sources
 				sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
 				sb.AppendLine();
 				ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}",
-					MemberType.Protected);
+					MemberType.Protected, memberIds, memberIdPrefix);
 				sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 			}
 
@@ -609,6 +612,9 @@ internal static partial class Sources
 
 		sb.Append("\t\tglobal::Mockolate.IMock").AppendLine();
 		sb.Append("\t{").AppendLine();
+
+		memberIds.Emit(sb, "\t\t");
+		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append(
@@ -693,7 +699,8 @@ internal static partial class Sources
 
 		sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockSetupFor{name}", MemberType.Public);
+		ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockSetupFor{name}", MemberType.Public,
+			memberIds, memberIdPrefix);
 		sb.Append("\t\t#endregion IMockSetupFor").Append(name).AppendLine();
 
 		if (hasProtectedMembers)
@@ -702,7 +709,7 @@ internal static partial class Sources
 			sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
 			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}",
-				MemberType.Protected);
+				MemberType.Protected, memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 		}
 
@@ -711,7 +718,8 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockStaticSetupFor{name}", MemberType.Static);
+			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockStaticSetupFor{name}", MemberType.Static,
+				memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockStaticSetupFor").Append(name).AppendLine();
 		}
 
@@ -846,14 +854,16 @@ internal static partial class Sources
 
 		sb.Append("\t\t#region IMockSetupFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockSetupFor{name}", MemberType.Public, "_scenarioName");
+		ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockSetupFor{name}", MemberType.Public,
+			memberIds, memberIdPrefix, "_scenarioName");
 		sb.Append("\t\t#endregion IMockSetupFor").Append(name).AppendLine();
 		if (hasProtectedMembers)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockProtectedSetupFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}", MemberType.Protected, "_scenarioName");
+			ImplementSetupInterface(sb, @class, mockRegistryName, $"IMockProtectedSetupFor{name}", MemberType.Protected,
+				memberIds, memberIdPrefix, "_scenarioName");
 			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 		}
 
@@ -3255,7 +3265,8 @@ internal static partial class Sources
 	}
 
 	private static void ImplementSetupInterface(StringBuilder sb, Class @class, string mockRegistryName,
-		string setupName, MemberType memberType, string? scopeExpression = null)
+		string setupName, MemberType memberType, MemberIdTable memberIds, string memberIdPrefix,
+		string? scopeExpression = null)
 	{
 		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
 
@@ -3321,12 +3332,14 @@ internal static partial class Sources
 			           indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, scopeExpression: scopeExpression);
+			AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, memberIds, memberIdPrefix,
+				scopeExpression: scopeExpression);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, valueFlags, scopeExpression);
+					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, memberIds,
+						memberIdPrefix, valueFlags, scopeExpression);
 				}
 			}
 			else
@@ -3335,7 +3348,8 @@ internal static partial class Sources
 					.ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, allValueFlags, scopeExpression);
+					AppendIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, memberIds,
+						memberIdPrefix, allValueFlags, scopeExpression);
 				}
 			}
 		}
@@ -3359,7 +3373,7 @@ internal static partial class Sources
 				if (method.Parameters.Count > 0)
 				{
 					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, true,
-						scopeExpression: scopeExpression);
+						memberIds, memberIdPrefix, scopeExpression: scopeExpression);
 				}
 			}
 
@@ -3368,18 +3382,18 @@ internal static partial class Sources
 				if (method.Parameters.Count == 0)
 				{
 					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
-						scopeExpression: scopeExpression);
+						memberIds, memberIdPrefix, scopeExpression: scopeExpression);
 				}
 				else
 				{
 					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
-						scopeExpression: scopeExpression);
+						memberIds, memberIdPrefix, scopeExpression: scopeExpression);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
 							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
-								valueFlags: valueFlags, scopeExpression: scopeExpression);
+								memberIds, memberIdPrefix, valueFlags: valueFlags, scopeExpression: scopeExpression);
 						}
 					}
 					else
@@ -3389,7 +3403,7 @@ internal static partial class Sources
 						if (allValueFlags.Any(f => f))
 						{
 							AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
-								valueFlags: allValueFlags, scopeExpression: scopeExpression);
+								memberIds, memberIdPrefix, valueFlags: allValueFlags, scopeExpression: scopeExpression);
 						}
 					}
 				}
@@ -3401,7 +3415,8 @@ internal static partial class Sources
 #pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendMethodSetupImplementation(StringBuilder sb, Method method, string mockRegistryName,
 		string setupName,
-		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
+		bool useParameters, MemberIdTable memberIds, string memberIdPrefix,
+		string? methodNameOverride = null, bool[]? valueFlags = null,
 		string? scopeExpression = null)
 	{
 		if (method.Parameters.Any(p => p.NeedsRefStructPipeline()))
@@ -3414,8 +3429,8 @@ internal static partial class Sources
 				return;
 			}
 
-			AppendRefStructMethodSetupImplementation(sb, method, mockRegistryName, setupName, methodNameOverride,
-				scopeExpression);
+			AppendRefStructMethodSetupImplementation(sb, method, mockRegistryName, setupName, memberIds,
+				memberIdPrefix, methodNameOverride, scopeExpression);
 			return;
 		}
 
@@ -3557,6 +3572,9 @@ internal static partial class Sources
 			}
 		}
 
+		// Look up the method's memberId from the table; all other fluent overloads for the same
+		// method share the same id since they register setups for the same target method overload.
+		string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(method);
 		if (useParameters)
 		{
 			sb.Append(".WithParameters(").Append(mockRegistryName).Append(", ").Append(method.GetUniqueNameString())
@@ -3567,7 +3585,8 @@ internal static partial class Sources
 			}
 
 			sb.Append(");").AppendLine();
-			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix).Append("methodSetup);").AppendLine();
+			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
+				.Append(memberIdRef).Append(", ").Append(scopePrefix).Append("methodSetup);").AppendLine();
 			sb.Append("\t\t\treturn methodSetup;").AppendLine();
 		}
 		else
@@ -3591,7 +3610,8 @@ internal static partial class Sources
 			}
 
 			sb.Append(");").AppendLine();
-			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix).Append("methodSetup);").AppendLine();
+			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
+				.Append(memberIdRef).Append(", ").Append(scopePrefix).Append("methodSetup);").AppendLine();
 			sb.Append("\t\t\treturn methodSetup;").AppendLine();
 		}
 
@@ -3657,7 +3677,8 @@ internal static partial class Sources
 	///     <c>SetupMethod</c>, and returns it as its narrow interface.
 	/// </summary>
 	private static void AppendRefStructMethodSetupImplementation(StringBuilder sb, Method method,
-		string mockRegistryName, string setupName, string? methodNameOverride, string? scopeExpression)
+		string mockRegistryName, string setupName, MemberIdTable memberIds, string memberIdPrefix,
+		string? methodNameOverride, string? scopeExpression)
 	{
 		bool unsupported = method.Parameters.Any(p =>
 			                   p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
@@ -3709,8 +3730,9 @@ internal static partial class Sources
 		}
 
 		sb.Append(");").AppendLine();
-		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix)
-			.Append("methodSetup);").AppendLine();
+		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
+			.Append(memberIdPrefix).Append(memberIds.GetMethodIdentifier(method)).Append(", ")
+			.Append(scopePrefix).Append("methodSetup);").AppendLine();
 		sb.Append("\t\t\treturn methodSetup;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.Append("#endif").AppendLine();
@@ -3800,7 +3822,8 @@ internal static partial class Sources
 	}
 
 	private static void AppendIndexerSetupImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
-		string setupName, bool[]? valueFlags = null, string? scopeExpression = null)
+		string setupName, MemberIdTable memberIds, string memberIdPrefix,
+		bool[]? valueFlags = null, string? scopeExpression = null)
 	{
 		// Mirror AppendIndexerSetupDefinition: dispatch to the appropriate ref-struct facade
 		// implementation depending on whether the indexer has a getter, a setter, or both.
@@ -3814,16 +3837,17 @@ internal static partial class Sources
 			if (indexer.Getter is not null && indexer.Setter is null)
 			{
 				AppendRefStructIndexerGetterSetupImplementation(sb, indexer, mockRegistryName, setupName,
-					scopeExpression);
+					memberIds, memberIdPrefix, scopeExpression);
 			}
 			else if (indexer.Setter is not null && indexer.Getter is null)
 			{
 				AppendRefStructIndexerSetterSetupImplementation(sb, indexer, mockRegistryName, setupName,
-					scopeExpression);
+					memberIds, memberIdPrefix, scopeExpression);
 			}
 			else if (indexer.Getter is not null && indexer.Setter is not null)
 			{
-				AppendRefStructIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName, scopeExpression);
+				AppendRefStructIndexerSetupImplementation(sb, indexer, mockRegistryName, setupName,
+					memberIds, memberIdPrefix, scopeExpression);
 			}
 
 			return;
@@ -3957,7 +3981,8 @@ internal static partial class Sources
 	///     registers it via <c>SetupMethod</c>, and returns it as its narrow interface.
 	/// </summary>
 	private static void AppendRefStructIndexerGetterSetupImplementation(StringBuilder sb, Property indexer,
-		string mockRegistryName, string setupName, string? scopeExpression)
+		string mockRegistryName, string setupName, MemberIdTable memberIds, string memberIdPrefix,
+		string? scopeExpression)
 	{
 		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
 		string typeParams = string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.Type.Fullname));
@@ -3998,8 +4023,9 @@ internal static partial class Sources
 		sb.Append(");").AppendLine();
 		// Re-use the generic SetupMethod slot. The setup's MatchesInteraction filter on its name
 		// ensures it only participates in get_Item lookups.
-		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix)
-			.Append("indexerSetup);").AppendLine();
+		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
+			.Append(memberIdPrefix).Append(memberIds.GetIndexerGetIdentifier(indexer)).Append(", ")
+			.Append(scopePrefix).Append("indexerSetup);").AppendLine();
 		sb.Append("\t\t\t\treturn indexerSetup;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -4043,7 +4069,8 @@ internal static partial class Sources
 	}
 
 	private static void AppendRefStructIndexerSetterSetupImplementation(StringBuilder sb, Property indexer,
-		string mockRegistryName, string setupName, string? scopeExpression)
+		string mockRegistryName, string setupName, MemberIdTable memberIds, string memberIdPrefix,
+		string? scopeExpression)
 	{
 		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
 		string typeParams = string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.Type.Fullname));
@@ -4082,8 +4109,9 @@ internal static partial class Sources
 		}
 
 		sb.Append(");").AppendLine();
-		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix)
-			.Append("indexerSetup);").AppendLine();
+		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
+			.Append(memberIdPrefix).Append(memberIds.GetIndexerSetIdentifier(indexer)).Append(", ")
+			.Append(scopePrefix).Append("indexerSetup);").AppendLine();
 		sb.Append("\t\t\t\treturn indexerSetup;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -4127,7 +4155,8 @@ internal static partial class Sources
 	}
 
 	private static void AppendRefStructIndexerSetupImplementation(StringBuilder sb, Property indexer,
-		string mockRegistryName, string setupName, string? scopeExpression)
+		string mockRegistryName, string setupName, MemberIdTable memberIds, string memberIdPrefix,
+		string? scopeExpression)
 	{
 		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
 		string typeParams = string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.Type.Fullname));
@@ -4170,10 +4199,12 @@ internal static partial class Sources
 		sb.Append(");").AppendLine();
 		// Register both the inner getter and setter. Each has its own MatchesInteraction name
 		// filter so they participate only in their own accessor's dispatch loop.
-		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix)
-			.Append("indexerSetup.Getter);").AppendLine();
-		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(").Append(scopePrefix)
-			.Append("indexerSetup.Setter);").AppendLine();
+		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
+			.Append(memberIdPrefix).Append(memberIds.GetIndexerGetIdentifier(indexer)).Append(", ")
+			.Append(scopePrefix).Append("indexerSetup.Getter);").AppendLine();
+		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
+			.Append(memberIdPrefix).Append(memberIds.GetIndexerSetIdentifier(indexer)).Append(", ")
+			.Append(scopePrefix).Append("indexerSetup.Setter);").AppendLine();
 		sb.Append("\t\t\t\treturn indexerSetup;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();

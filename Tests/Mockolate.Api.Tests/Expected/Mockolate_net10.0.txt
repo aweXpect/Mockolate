@@ -217,6 +217,7 @@ namespace Mockolate
             where T : Mockolate.Setup.IndexerSetup { }
         public T? GetMethodSetup<T>(string methodName, System.Func<T, bool> predicate)
             where T : Mockolate.Setup.MethodSetup { }
+        public Mockolate.Setup.MethodSetup[]? GetMethodSetupSnapshot(int memberId) { }
         public System.Collections.Generic.IEnumerable<T> GetMethodSetups<T>(string methodName)
             where T : Mockolate.Setup.MethodSetup { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
@@ -234,7 +235,9 @@ namespace Mockolate
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupIndexer(string scenario, Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
+        public void SetupMethod(int memberId, Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupMethod(string scenario, Mockolate.Setup.MethodSetup methodSetup) { }
+        public void SetupMethod(int memberId, string scenario, Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
         public void SetupProperty(string scenario, Mockolate.Setup.PropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
