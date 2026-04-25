@@ -28,7 +28,7 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-				.Contains("methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\", __m => __m.Matches(baseResult));")
+				.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> __s in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\"))")
 				.IgnoringNewlineStyle().And
 				.Contains("wrappedResult = base.ProcessData(baseResult);")
 				.IgnoringNewlineStyle().And

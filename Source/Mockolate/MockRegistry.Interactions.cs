@@ -41,38 +41,6 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Returns the latest registered method setup of type <typeparamref name="T" /> whose name equals
-	///     <paramref name="methodName" /> and that satisfies <paramref name="predicate" />, or <see langword="null" />
-	///     when no setup matches. Scenario-scoped setups take precedence over default-scope setups.
-	/// </summary>
-	/// <remarks>
-	///     Cold-path fallback for the generator-emitted dispatch — proxy method bodies first walk the
-	///     lock-free <see cref="GetMethodSetupSnapshot(int)" /> array with a stack-evaluated matcher, and
-	///     only call this overload when an active scenario is set or when a setup was registered through a
-	///     non-member-id-keyed path (such as the <c>HttpClientExtensions.SetupMethod</c> pipeline). This
-	///     overload allocates a closure per invocation, takes the storage lock, and runs a string-name
-	///     comparison; prefer <see cref="GetMethodSetupSnapshot(int)" /> on hot paths.
-	/// </remarks>
-	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
-	/// <param name="methodName">The simple method name.</param>
-	/// <param name="predicate">Argument matcher applied to each candidate setup.</param>
-	/// <returns>The matching setup, or <see langword="null" /> when none was found.</returns>
-	public T? GetMethodSetup<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
-	{
-		if (!string.IsNullOrEmpty(Scenario) &&
-		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
-		{
-			T? scoped = scopedBucket.Methods.GetMatching(methodName, predicate);
-			if (scoped is not null)
-			{
-				return scoped;
-			}
-		}
-
-		return Setup.Methods.GetMatching(methodName, predicate);
-	}
-
-	/// <summary>
 	///     Returns the current snapshot of default-scope method setups registered under the generator-emitted
 	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
 	/// </summary>
@@ -80,7 +48,7 @@ public partial class MockRegistry
 	///     The returned array is immutable — callers may iterate it without a lock. Setups are appended in
 	///     registration order, so callers interested in latest-registered-first should walk the array in reverse.
 	///     This accessor only sees setups registered via the <c>SetupMethod(int, ...)</c> overloads; scenario-scoped
-	///     and legacy string-keyed registrations are retrieved via <see cref="GetMethodSetup{T}(string, Func{T, bool})" />.
+	///     and legacy string-keyed registrations are retrieved via <see cref="GetMethodSetups{T}(string)" />.
 	/// </remarks>
 	/// <param name="memberId">The generator-emitted member id.</param>
 	/// <returns>The setups array for the member, or <see langword="null" /> when none are registered.</returns>
@@ -100,17 +68,10 @@ public partial class MockRegistry
 	///     in latest-registered-first order, scenario-scoped setups before default-scope setups.
 	/// </summary>
 	/// <remarks>
-	///     <para>
-	///         This exists as a ref-struct-safe alternative to
-	///         <see cref="GetMethodSetup{T}(string, Func{T, bool})" />: the caller iterates and evaluates the
-	///         matcher on the stack (passing a ref-struct value), so the predicate does not need to
-	///         capture it in a closure.
-	///     </para>
-	///     <para>
-	///         Scenario-scoped results come first; the caller is expected to stop on the first match so
-	///         scenarios override the default scope, matching
-	///         <see cref="GetMethodSetup{T}(string, Func{T, bool})" />'s precedence.
-	///     </para>
+	///     The caller iterates and evaluates each setup's matcher on the stack (passing ref-struct
+	///     values where applicable), so no predicate closure is captured.
+	///     Scenario-scoped results come first; the caller is expected to stop on the first match so
+	///     scenarios override the default scope.
 	/// </remarks>
 	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
 	/// <param name="methodName">The simple method name.</param>

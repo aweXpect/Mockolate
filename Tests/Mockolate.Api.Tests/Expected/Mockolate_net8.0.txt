@@ -210,8 +210,6 @@ namespace Mockolate
             where T : Mockolate.Setup.IndexerSetup { }
         public T? GetIndexerSetup<T>(System.Func<T, bool> predicate)
             where T : Mockolate.Setup.IndexerSetup { }
-        public T? GetMethodSetup<T>(string methodName, System.Func<T, bool> predicate)
-            where T : Mockolate.Setup.MethodSetup { }
         public Mockolate.Setup.MethodSetup[]? GetMethodSetupSnapshot(int memberId) { }
         public System.Collections.Generic.IEnumerable<T> GetMethodSetups<T>(string methodName)
             where T : Mockolate.Setup.MethodSetup { }

@@ -77,30 +77,6 @@ internal partial class MockSetups
 			return null;
 		}
 
-		public T? GetMatching<T>(string methodName, Func<T, bool> predicate) where T : MethodSetup
-		{
-			List<MethodSetup>? storage = _storage;
-			if (storage is null)
-			{
-				return null;
-			}
-
-			lock (storage)
-			{
-				for (int i = storage.Count - 1; i >= 0; i--)
-				{
-					if (storage[i].Name.Equals(methodName) &&
-					    storage[i] is T methodSetup &&
-					    predicate(methodSetup))
-					{
-						return methodSetup;
-					}
-				}
-			}
-
-			return null;
-		}
-
 		/// <summary>
 		///     Enumerates all method setups of type <typeparamref name="T" /> matching <paramref name="methodName" />
 		///     in latest-registered-first order.
