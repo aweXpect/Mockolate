@@ -199,6 +199,7 @@ namespace Mockolate
         public MockRegistry(Mockolate.MockRegistry registry, Mockolate.Interactions.MockInteractions interactions) { }
         public MockRegistry(Mockolate.MockRegistry registry, object wraps) { }
         public MockRegistry(Mockolate.MockRegistry registry, object?[] constructorParameters) { }
+        public MockRegistry(Mockolate.MockBehavior behavior, Mockolate.Interactions.IMockInteractions interactions, object?[]? constructorParameters = null) { }
         public Mockolate.MockBehavior Behavior { get; }
         public object?[]? ConstructorParameters { get; }
         public Mockolate.Interactions.IMockInteractions Interactions { get; }
@@ -763,6 +764,8 @@ namespace Mockolate.Interactions
         public System.Collections.Generic.IEnumerator<Mockolate.Interactions.IInteraction> GetEnumerator() { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
         public void InstallBuffer(int memberId, Mockolate.Interactions.IFastMemberBuffer buffer) { }
+        public long NextSequence() { }
+        public void RaiseAdded() { }
     }
     public static class FastPropertyBufferFactory
     {
