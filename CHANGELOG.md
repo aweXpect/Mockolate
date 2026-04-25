@@ -76,10 +76,9 @@ migration guide.
 - **Breaking:** `MockRegistry.GetMethodSetup<T>(string, Func<T, bool>)` removed.
   The generator now uses `GetMethodSetupSnapshot(memberId)` on the hot path
   and falls back to the closure-less `GetMethodSetups<T>(string)` enumeration.
-
-### Deprecated
-
-- `IVerificationResult.MockInteractions` — use `IVerificationResult.Interactions`
+- **Breaking:** `IVerificationResult.MockInteractions` getter (the `[Obsolete]`
+  forwarding shim that materialised a snapshot copy on every read for non-
+  `MockInteractions` backings) removed. Read `IVerificationResult.Interactions`
   instead.
 
 ### Performance

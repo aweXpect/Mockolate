@@ -15,7 +15,7 @@ See [`Docs/pages/performance.md`](./performance.md) for the measured speedups.
 | `MockRegistry.Interactions` | Now returns `IMockInteractions` (was `MockInteractions`) |
 | `MockRegistry.GetUnusedSetups(...)` | Parameter type widened to `IMockInteractions` |
 | `IMockInteractions` interface | Widened to expose count, enumeration, events, `Clear`, `GetUnverifiedInteractions`, `SkipInteractionRecording` |
-| `IVerificationResult.MockInteractions` | `[Obsolete]` — use `IVerificationResult.Interactions` |
+| `IVerificationResult.MockInteractions` | Removed — use `IVerificationResult.Interactions` |
 | `MockMonitor` / `MockMonitor<T>` ctors | `MockInteractions` overloads removed; only the `IMockInteractions` overloads remain |
 | `VerificationResult<TVerify>` ctors | `MockInteractions` overloads removed; only the `IMockInteractions` overloads remain |
 | `ReturnMethodSetup<T...>.Matches` / `VoidMethodSetup<T...>.Matches` | Abstract signature no longer takes parameter-name strings |
@@ -42,16 +42,12 @@ IMockInteractions interactions = sut.Mock.Interactions;
 ```
 
 `MockInteractions` still implements `IMockInteractions`, so values flowing back
-into APIs that take the interface continue to work. If a downstream API still
-requires the concrete type, capture the snapshot:
+into APIs that take the interface continue to work.
 
-```csharp
-// v3 — only when an API still demands the concrete MockInteractions
-MockInteractions snapshot = ((IVerificationResult)result).MockInteractions;
-```
-
-`IVerificationResult.MockInteractions` is itself `[Obsolete]` and forwards to
-`IVerificationResult.Interactions`; prefer the latter.
+The previously `[Obsolete]` `IVerificationResult.MockInteractions` getter has
+been removed entirely. Read `IVerificationResult.Interactions` instead — it
+returns the live `IMockInteractions` view without materialising a snapshot
+copy.
 
 ## `IMockInteractions` interface widened
 

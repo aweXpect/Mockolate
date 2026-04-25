@@ -16,12 +16,6 @@ public interface IVerificationResult
 	/// <summary>
 	///     Gets the complete collection of mock interactions recorded during test execution.
 	/// </summary>
-	[Obsolete("Use Interactions instead. This property will be removed in a future release.")]
-	MockInteractions MockInteractions { get; }
-
-	/// <summary>
-	///     Gets the complete collection of mock interactions recorded during test execution.
-	/// </summary>
 	IMockInteractions Interactions { get; }
 
 	/// <summary>

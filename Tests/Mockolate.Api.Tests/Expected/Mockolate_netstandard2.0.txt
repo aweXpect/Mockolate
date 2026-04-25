@@ -2340,8 +2340,6 @@ namespace Mockolate.Verify
     {
         string Expectation { get; }
         Mockolate.Interactions.IMockInteractions Interactions { get; }
-        [System.Obsolete("Use Interactions instead. This property will be removed in a future release.")]
-        Mockolate.Interactions.MockInteractions MockInteractions { get; }
         bool Verify(System.Func<Mockolate.Interactions.IInteraction[], bool> predicate);
     }
     public interface IVerificationResult<out TVerify>
