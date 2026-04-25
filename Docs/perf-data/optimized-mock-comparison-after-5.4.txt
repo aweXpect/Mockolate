@@ -1,0 +1,32 @@
+```
+
+BenchmarkDotNet v0.15.8, Windows 11 (10.0.26100.7623/24H2/2024Update/HudsonValley)
+AMD Ryzen 7 PRO 8840HS w/ Radeon 780M Graphics 3.30GHz, 1 CPU, 16 logical and 8 physical cores
+.NET SDK 10.0.202
+  [Host] : .NET 10.0.6 (10.0.6, 10.0.626.17701), X64 RyuJIT x86-64-v4
+
+Job=InProcess  Toolchain=InProcessEmitToolchain  IterationCount=15  
+LaunchCount=1  WarmupCount=10  
+
+```
+| Method                         | N  | Mean       | Error     | StdDev    | Ratio | RatioSD | Gen0   | Gen1   | Allocated | Alloc Ratio |
+|------------------------------- |--- |-----------:|----------:|----------:|------:|--------:|-------:|-------:|----------:|------------:|
+| **Event_Mockolate**                | **1**  | **1,183.9 ns** | **174.17 ns** | **162.92 ns** |  **0.77** |    **0.13** | **0.2441** |      **-** |      **2 KB** |        **0.81** |
+| Event_HandwrittenOptimizedD    | 1  |   698.3 ns |  73.84 ns |  69.07 ns |  0.46 |    0.06 | 0.2317 | 0.0010 |    1.9 KB |        0.77 |
+| Indexer_Mockolate              | 1  | 2,316.1 ns | 268.98 ns | 251.60 ns |  1.51 |    0.21 | 0.3357 |      - |   2.77 KB |        1.12 |
+| Indexer_HandwrittenOptimizedD  | 1  |   806.9 ns |  81.59 ns |  76.32 ns |  0.53 |    0.07 | 0.2489 | 0.0010 |   2.04 KB |        0.83 |
+| Method_Mockolate               | 1  | 1,543.3 ns | 155.71 ns | 145.65 ns |  1.01 |    0.13 | 0.2995 |      - |   2.46 KB |        1.00 |
+| Method_HandwrittenOptimized    | 1  | 1,498.0 ns | 161.42 ns | 150.99 ns |  0.98 |    0.13 | 0.2804 |      - |    2.3 KB |        0.93 |
+| Method_HandwrittenOptimizedD   | 1  |   790.0 ns |  92.46 ns |  86.48 ns |  0.52 |    0.07 | 0.2012 | 0.0010 |   1.65 KB |        0.67 |
+| Property_Mockolate             | 1  | 1,256.3 ns | 204.63 ns | 191.41 ns |  0.82 |    0.14 | 0.2480 |      - |   2.03 KB |        0.83 |
+| Property_HandwrittenOptimizedD | 1  |   697.3 ns |  69.78 ns |  65.27 ns |  0.46 |    0.06 | 0.2317 | 0.0010 |    1.9 KB |        0.77 |
+|                                |    |            |           |           |       |         |        |        |           |             |
+| **Event_Mockolate**                | **10** | **5,611.0 ns** | **652.02 ns** | **609.90 ns** |  **1.11** |    **0.18** | **0.7782** |      **-** |   **6.41 KB** |        **1.14** |
+| Event_HandwrittenOptimizedD    | 10 | 2,057.1 ns | 203.70 ns | 190.54 ns |  0.41 |    0.06 | 0.4387 | 0.0038 |   3.59 KB |        0.64 |
+| Indexer_Mockolate              | 10 | 7,600.3 ns | 840.44 ns | 786.15 ns |  1.50 |    0.24 | 0.6104 |      - |      5 KB |        0.89 |
+| Indexer_HandwrittenOptimizedD  | 10 | 1,206.0 ns | 192.70 ns | 180.25 ns |  0.24 |    0.05 | 0.3223 | 0.0019 |   2.65 KB |        0.47 |
+| Method_Mockolate               | 10 | 5,146.8 ns | 654.93 ns | 612.62 ns |  1.01 |    0.17 | 0.6866 | 0.0076 |   5.63 KB |        1.00 |
+| Method_HandwrittenOptimized    | 10 | 4,202.3 ns | 577.28 ns | 539.99 ns |  0.83 |    0.15 | 0.4883 |      - |   4.02 KB |        0.71 |
+| Method_HandwrittenOptimizedD   | 10 | 1,634.9 ns | 306.73 ns | 286.92 ns |  0.32 |    0.07 | 0.3510 |      - |   2.87 KB |        0.51 |
+| Property_Mockolate             | 10 | 5,080.3 ns | 493.20 ns | 461.34 ns |  1.00 |    0.15 | 0.6180 |      - |   5.11 KB |        0.91 |
+| Property_HandwrittenOptimizedD | 10 | 1,062.4 ns |  74.40 ns |  69.59 ns |  0.21 |    0.03 | 0.2832 | 0.0019 |   2.32 KB |        0.41 |

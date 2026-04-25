@@ -383,6 +383,51 @@ public partial class MockRegistry
 				new PropertyGetterAccess(propertyName));
 		}
 
+		return ResolveGetterInternal(propertyName, defaultValueGenerator, baseValueAccessor, interaction);
+	}
+
+	/// <summary>
+	///     Member-id-keyed overload of <see cref="GetProperty{TResult}(string, Func{TResult}, Func{TResult}?)" /> that
+	///     records via the typed <see cref="FastPropertyGetterBuffer" /> when the mock is wired to a
+	///     <see cref="FastMockInteractions" />, falling back to the legacy list otherwise.
+	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="defaultValueGenerator">Producer of the default value when no setup supplies one.</param>
+	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered.</param>
+	/// <returns>The resolved getter value.</returns>
+	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
+	public TResult GetProperty<TResult>(int memberId, string propertyName, Func<TResult> defaultValueGenerator,
+		Func<TResult>? baseValueAccessor)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertyGetter(memberId, propertyName);
+		}
+
+		return ResolveGetterInternal(propertyName, defaultValueGenerator, baseValueAccessor, null);
+	}
+
+	private void RecordPropertyGetter(int memberId, string propertyName)
+	{
+		if (Interactions is FastMockInteractions __fast)
+		{
+			IFastMemberBuffer?[] __buffers = __fast.Buffers;
+			if ((uint)memberId < (uint)__buffers.Length &&
+			    __buffers[memberId] is FastPropertyGetterBuffer __buffer)
+			{
+				__buffer.Append(propertyName);
+				return;
+			}
+		}
+
+		Interactions.RegisterInteraction(new PropertyGetterAccess(propertyName));
+	}
+
+	private TResult ResolveGetterInternal<TResult>(string propertyName, Func<TResult> defaultValueGenerator,
+		Func<TResult>? baseValueAccessor, IInteraction? interaction)
+	{
 		PropertySetup matchingSetup;
 		if (baseValueAccessor is null)
 		{
@@ -440,6 +485,45 @@ public partial class MockRegistry
 
 		((IInteractivePropertySetup)matchingSetup).InvokeSetter(interaction, value, Behavior);
 		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	/// <summary>
+	///     Member-id-keyed overload of <see cref="SetProperty{T}(string, T)" /> that records via the typed
+	///     <see cref="FastPropertySetterBuffer{T}" /> when the mock is wired to a
+	///     <see cref="FastMockInteractions" />, falling back to the legacy list otherwise.
+	/// </summary>
+	/// <typeparam name="T">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property setter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="value">The value being assigned.</param>
+	/// <returns><see langword="true" /> when the base-class setter should be skipped.</returns>
+	public bool SetProperty<T>(int memberId, string propertyName, T value)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertySetter(memberId, propertyName, value);
+		}
+
+		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
+
+		((IInteractivePropertySetup)matchingSetup).InvokeSetter(null, value, Behavior);
+		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	private void RecordPropertySetter<T>(int memberId, string propertyName, T value)
+	{
+		if (Interactions is FastMockInteractions __fast)
+		{
+			IFastMemberBuffer?[] __buffers = __fast.Buffers;
+			if ((uint)memberId < (uint)__buffers.Length &&
+			    __buffers[memberId] is FastPropertySetterBuffer<T> __buffer)
+			{
+				__buffer.Append(propertyName, value);
+				return;
+			}
+		}
+
+		Interactions.RegisterInteraction(new PropertySetterAccess<T>(propertyName, value));
 	}
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
@@ -532,6 +616,34 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Member-id-keyed overload of <see cref="AddEvent(string, object?, MethodInfo?)" /> that records via the
+	///     typed <see cref="FastEventBuffer" /> when the mock is wired to a <see cref="FastMockInteractions" />,
+	///     falling back to the legacy list otherwise.
+	/// </summary>
+	/// <param name="memberId">The generator-emitted member id for the event subscribe.</param>
+	/// <param name="name">The simple event name.</param>
+	/// <param name="target">The subscribing handler's target (<see langword="null" /> for static methods).</param>
+	/// <param name="method">The subscribing handler's method.</param>
+	/// <exception cref="MockException"><paramref name="method" /> is <see langword="null" />.</exception>
+	public void AddEvent(int memberId, string name, object? target, MethodInfo? method)
+	{
+		if (method is null)
+		{
+			throw new MockException("The method of an event subscription may not be null.");
+		}
+
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordEvent(memberId, name, target, method, isSubscribe: true);
+		}
+
+		foreach (EventSetup setup in GetEventSetupsByName(name))
+		{
+			setup.InvokeSubscribed(target, method);
+		}
+	}
+
+	/// <summary>
 	///     Records an unsubscription from the event named <paramref name="name" /> and fires registered
 	///     <c>OnUnsubscribed</c> callbacks.
 	/// </summary>
@@ -555,5 +667,51 @@ public partial class MockRegistry
 		{
 			setup.InvokeUnsubscribed(target, method);
 		}
+	}
+
+	/// <summary>
+	///     Member-id-keyed overload of <see cref="RemoveEvent(string, object?, MethodInfo?)" /> that records via
+	///     the typed <see cref="FastEventBuffer" /> when the mock is wired to a <see cref="FastMockInteractions" />,
+	///     falling back to the legacy list otherwise.
+	/// </summary>
+	/// <param name="memberId">The generator-emitted member id for the event unsubscribe.</param>
+	/// <param name="name">The simple event name.</param>
+	/// <param name="target">The unsubscribing handler's target (<see langword="null" /> for static methods).</param>
+	/// <param name="method">The unsubscribing handler's method.</param>
+	/// <exception cref="MockException"><paramref name="method" /> is <see langword="null" />.</exception>
+	public void RemoveEvent(int memberId, string name, object? target, MethodInfo? method)
+	{
+		if (method is null)
+		{
+			throw new MockException("The method of an event unsubscription may not be null.");
+		}
+
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordEvent(memberId, name, target, method, isSubscribe: false);
+		}
+
+		foreach (EventSetup setup in GetEventSetupsByName(name))
+		{
+			setup.InvokeUnsubscribed(target, method);
+		}
+	}
+
+	private void RecordEvent(int memberId, string name, object? target, MethodInfo method, bool isSubscribe)
+	{
+		if (Interactions is FastMockInteractions __fast)
+		{
+			IFastMemberBuffer?[] __buffers = __fast.Buffers;
+			if ((uint)memberId < (uint)__buffers.Length &&
+			    __buffers[memberId] is FastEventBuffer __buffer)
+			{
+				__buffer.Append(name, target, method);
+				return;
+			}
+		}
+
+		Interactions.RegisterInteraction(isSubscribe
+			? new EventSubscription(name, target, method)
+			: (IInteraction)new EventUnsubscription(name, target, method));
 	}
 }

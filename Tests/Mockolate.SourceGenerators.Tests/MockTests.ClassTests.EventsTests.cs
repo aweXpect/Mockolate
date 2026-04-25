@@ -122,7 +122,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.MockRegistry.AddEvent("global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_SomeEvent_Subscribe, "global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyService_SomeEvent += value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -131,7 +131,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_SomeEvent_Unsubscribe, "global::MyCode.IMyService.SomeEvent", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyService_SomeEvent -= value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -147,7 +147,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.MockRegistry.AddEvent("global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_SomeOtherEvent_Subscribe, "global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyService_SomeOtherEvent += value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -156,7 +156,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_SomeOtherEvent_Unsubscribe, "global::MyCode.IMyService.SomeOtherEvent", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyService_SomeOtherEvent -= value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -213,7 +213,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.MockRegistry.AddEvent("global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_MyDirectEvent_Subscribe, "global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyService_MyDirectEvent += value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -222,7 +222,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_MyDirectEvent_Unsubscribe, "global::MyCode.IMyService.MyDirectEvent", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyService_MyDirectEvent -= value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -238,7 +238,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.MockRegistry.AddEvent("global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_MyBaseEvent1_Subscribe, "global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyServiceBase1_MyBaseEvent1 += value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -247,7 +247,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_MyBaseEvent1_Unsubscribe, "global::MyCode.IMyServiceBase1.MyBaseEvent1", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyServiceBase1_MyBaseEvent1 -= value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -263,7 +263,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.MockRegistry.AddEvent("global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_MyBaseEvent2_Subscribe, "global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyServiceBase2_MyBaseEvent2 += value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -272,7 +272,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_MyBaseEvent2_Unsubscribe, "global::MyCode.IMyServiceBase2.MyBaseEvent2", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyServiceBase2_MyBaseEvent2 -= value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -288,7 +288,7 @@ public sealed partial class MockTests
 					          		{
 					          			add
 					          			{
-					          				this.MockRegistry.AddEvent("global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+					          				this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_MyBaseEvent3_Subscribe, "global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyServiceBase3_MyBaseEvent3 += value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{
@@ -297,7 +297,7 @@ public sealed partial class MockTests
 					          			}
 					          			remove
 					          			{
-					          				this.MockRegistry.RemoveEvent("global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
+					          				this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_MyBaseEvent3_Unsubscribe, "global::MyCode.IMyServiceBase3.MyBaseEvent3", value?.Target, value?.Method);
 					          				this._mockolateEvent_global__MyCode_IMyServiceBase3_MyBaseEvent3 -= value;
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 					          				{

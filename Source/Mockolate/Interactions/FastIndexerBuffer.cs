@@ -55,6 +55,33 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 		_owner.RaiseAdded();
 	}
 
+	/// <summary>
+	///     Records an indexer getter access using an already-allocated <see cref="IndexerGetterAccess{T1}" />.
+	/// </summary>
+	/// <remarks>
+	///     The generator allocates the access value to use as a setup-matching key; this overload reuses
+	///     it as the pre-boxed record so enumeration doesn't allocate a second one.
+	/// </remarks>
+	public void Append(IndexerGetterAccess<T1> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].Boxed = access;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
@@ -131,6 +158,30 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 			_records[n].P1 = parameter1;
 			_records[n].P2 = parameter2;
 			_records[n].Boxed = null;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
+	/// <summary>
+	///     Records an indexer getter access using an already-allocated <see cref="IndexerGetterAccess{T1, T2}" />.
+	/// </summary>
+	public void Append(IndexerGetterAccess<T1, T2> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].P2 = access.Parameter2;
+			_records[n].Boxed = access;
 			Volatile.Write(ref _count, n + 1);
 		}
 
@@ -215,6 +266,31 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 			_records[n].P2 = parameter2;
 			_records[n].P3 = parameter3;
 			_records[n].Boxed = null;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
+	/// <summary>
+	///     Records an indexer getter access using an already-allocated <see cref="IndexerGetterAccess{T1, T2, T3}" />.
+	/// </summary>
+	public void Append(IndexerGetterAccess<T1, T2, T3> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].P2 = access.Parameter2;
+			_records[n].P3 = access.Parameter3;
+			_records[n].Boxed = access;
 			Volatile.Write(ref _count, n + 1);
 		}
 
@@ -307,6 +383,32 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 		_owner.RaiseAdded();
 	}
 
+	/// <summary>
+	///     Records an indexer getter access using an already-allocated <see cref="IndexerGetterAccess{T1, T2, T3, T4}" />.
+	/// </summary>
+	public void Append(IndexerGetterAccess<T1, T2, T3, T4> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].P2 = access.Parameter2;
+			_records[n].P3 = access.Parameter3;
+			_records[n].P4 = access.Parameter4;
+			_records[n].Boxed = access;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
@@ -392,6 +494,30 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 		_owner.RaiseAdded();
 	}
 
+	/// <summary>
+	///     Records an indexer setter access using an already-allocated <see cref="IndexerSetterAccess{T1, TValue}" />.
+	/// </summary>
+	public void Append(IndexerSetterAccess<T1, TValue> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].Value = access.TypedValue;
+			_records[n].Boxed = access;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
@@ -470,6 +596,31 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 			_records[n].P2 = parameter2;
 			_records[n].Value = value;
 			_records[n].Boxed = null;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
+	/// <summary>
+	///     Records an indexer setter access using an already-allocated <see cref="IndexerSetterAccess{T1, T2, TValue}" />.
+	/// </summary>
+	public void Append(IndexerSetterAccess<T1, T2, TValue> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].P2 = access.Parameter2;
+			_records[n].Value = access.TypedValue;
+			_records[n].Boxed = access;
 			Volatile.Write(ref _count, n + 1);
 		}
 
@@ -562,6 +713,32 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 		_owner.RaiseAdded();
 	}
 
+	/// <summary>
+	///     Records an indexer setter access using an already-allocated <see cref="IndexerSetterAccess{T1, T2, T3, TValue}" />.
+	/// </summary>
+	public void Append(IndexerSetterAccess<T1, T2, T3, TValue> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].P2 = access.Parameter2;
+			_records[n].P3 = access.Parameter3;
+			_records[n].Value = access.TypedValue;
+			_records[n].Boxed = access;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
@@ -644,6 +821,33 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 			_records[n].P4 = parameter4;
 			_records[n].Value = value;
 			_records[n].Boxed = null;
+			Volatile.Write(ref _count, n + 1);
+		}
+
+		_owner.RaiseAdded();
+	}
+
+	/// <summary>
+	///     Records an indexer setter access using an already-allocated <see cref="IndexerSetterAccess{T1, T2, T3, T4, TValue}" />.
+	/// </summary>
+	public void Append(IndexerSetterAccess<T1, T2, T3, T4, TValue> access)
+	{
+		long seq = _owner.NextSequence();
+		lock (_lock)
+		{
+			int n = _count;
+			if (n == _records.Length)
+			{
+				Array.Resize(ref _records, n * 2);
+			}
+
+			_records[n].Seq = seq;
+			_records[n].P1 = access.Parameter1;
+			_records[n].P2 = access.Parameter2;
+			_records[n].P3 = access.Parameter3;
+			_records[n].P4 = access.Parameter4;
+			_records[n].Value = access.TypedValue;
+			_records[n].Boxed = access;
 			Volatile.Write(ref _count, n + 1);
 		}
 
