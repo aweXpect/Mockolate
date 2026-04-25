@@ -247,8 +247,11 @@ internal static partial class Sources
 
 		if (@class is { ClassFullName: "global::System.Net.Http.HttpClient", })
 		{
+			sb.Append("\t\t\tglobal::Mockolate.MockBehavior __effectiveBehavior = mockBehavior ?? global::Mockolate.MockBehavior.Default;")
+				.AppendLine();
 			sb.Append(
-					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior ?? global::Mockolate.MockBehavior.Default, constructorParameters);")
+					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(__effectiveBehavior, global::Mockolate.Mock.")
+				.Append(name).Append(".CreateFastInteractions(__effectiveBehavior), constructorParameters);")
 				.AppendLine();
 			sb.Append("\t\t\tif (constructorParameters is null)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -279,7 +282,8 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
 			sb.Append(
-					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, constructorParameters);")
+					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, global::Mockolate.Mock.")
+				.Append(name).Append(".CreateFastInteractions(mockBehavior), constructorParameters);")
 				.AppendLine();
 		}
 
@@ -445,7 +449,14 @@ internal static partial class Sources
 		sb.Append("\t\t\tif (mock is global::Mockolate.IMock mockInterface)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append(
-				"\t\t\t\treturn CreateMockInstance(new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance), mockInterface.MockRegistry.ConstructorParameters, null);")
+				"\t\t\t\tglobal::Mockolate.MockRegistry __wrappingRegistry = new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance);")
+			.AppendLine();
+		sb.Append(
+				"\t\t\t\t__wrappingRegistry = new global::Mockolate.MockRegistry(__wrappingRegistry, global::Mockolate.Mock.")
+			.Append(name).Append(".CreateFastInteractions(__wrappingRegistry.Behavior));")
+			.AppendLine();
+		sb.Append(
+				"\t\t\t\treturn CreateMockInstance(__wrappingRegistry, mockInterface.MockRegistry.ConstructorParameters, null);")
 			.AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");")
@@ -614,6 +625,9 @@ internal static partial class Sources
 		sb.Append("\t{").AppendLine();
 
 		memberIds.Emit(sb, "\t\t");
+		sb.AppendLine();
+
+		AppendCreateFastInteractions(sb, "\t\t", @class, memberIds, memberIdPrefix);
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
@@ -1188,6 +1202,73 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
+	private static void AppendCreateFastInteractions(StringBuilder sb, string indent, Class @class,
+		MemberIdTable memberIds, string memberIdPrefix)
+	{
+		sb.Append(indent).Append("/// <summary>").AppendLine();
+		sb.Append(indent).Append("///     Creates a <see cref=\"global::Mockolate.Interactions.FastMockInteractions\" /> sized to ")
+			.Append("<see cref=\"MemberCount\" /> for use as the mock's interaction store.").AppendLine();
+		sb.Append(indent).Append("/// </summary>").AppendLine();
+		sb.Append(indent)
+			.Append("internal static global::Mockolate.Interactions.FastMockInteractions CreateFastInteractions(global::Mockolate.MockBehavior behavior)")
+			.AppendLine();
+		sb.Append(indent).Append("{").AppendLine();
+		sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastMockInteractions __fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);")
+			.AppendLine();
+
+		foreach (Method method in @class.AllMethods())
+		{
+			if (!IsFastBufferEligibleMethod(method))
+			{
+				continue;
+			}
+
+			string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(method);
+			int arity = method.Parameters.Count;
+			string typeArgs = arity == 0
+				? string.Empty
+				: "<" + string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper())) + ">";
+
+			if (arity <= 4)
+			{
+				sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastMethodBufferFactory.InstallMethod")
+					.Append(typeArgs).Append("(__fast, ").Append(memberIdRef).Append(");").AppendLine();
+			}
+			else
+			{
+				sb.Append(indent)
+					.Append("\t__fast.InstallBuffer(").Append(memberIdRef)
+					.Append(", new global::Mockolate.Interactions.FastMethod").Append(arity)
+					.Append("Buffer").Append(typeArgs).Append("(__fast));").AppendLine();
+			}
+		}
+
+		sb.Append(indent).Append("\treturn __fast;").AppendLine();
+		sb.Append(indent).Append("}").AppendLine();
+	}
+
+	/// <summary>
+	///     Methods with non-generic, non-ref-struct signatures get a typed per-member buffer; everything
+	///     else (open generics, ref-struct params) records via the legacy <c>RegisterInteraction</c> fallback.
+	/// </summary>
+	private static bool IsFastBufferEligibleMethod(Method method)
+	{
+		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
+		{
+			return false;
+		}
+
+		foreach (MethodParameter parameter in method.Parameters)
+		{
+			if (parameter.NeedsRefStructPipeline())
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 #pragma warning disable S107 // Methods should not have too many parameters
 	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name,
 		bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
@@ -1626,7 +1707,8 @@ internal static partial class Sources
 	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockRegistryName,
 		MockClass? mockClass, MemberIdTable memberIds, string memberIdPrefix,
 		Dictionary<string, int>? signatureIndicesOverride = null,
-		int[]? nextSignatureIndexRef = null)
+		int[]? nextSignatureIndexRef = null,
+		bool useFastBuffers = true)
 	{
 		string className = @class.ClassFullName;
 		sb.Append("\t\t#region ").Append(@class.DisplayString).AppendLine();
@@ -1680,7 +1762,7 @@ internal static partial class Sources
 			{
 				AppendMockSubject_ImplementClass_AddMethod(sb, method, mockRegistryName, className,
 					mockClass is not null,
-					@class.IsInterface, @class, memberIds, memberIdPrefix);
+					@class.IsInterface, @class, memberIds, memberIdPrefix, useFastBuffers);
 				sb.AppendLine();
 			}
 		}
@@ -2188,7 +2270,7 @@ internal static partial class Sources
 	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method,
 		string mockRegistryName, string className,
 		bool explicitInterfaceImplementation, bool isClassInterface, Class @class,
-		MemberIdTable memberIds, string memberIdPrefix)
+		MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers = true)
 	{
 		string mockRegistry = method.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.')
@@ -2360,20 +2442,41 @@ internal static partial class Sources
 
 		sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t").Append(mockRegistry)
-			.Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
-		if (method.Parameters.Count > 0)
+		if (useFastBuffers && IsFastBufferEligibleMethod(method))
 		{
-			sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append('>');
-		}
+			int arity = method.Parameters.Count;
+			string typeArgs = arity == 0
+				? string.Empty
+				: "<" + string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper())) + ">";
+			string bufferType = $"global::Mockolate.Interactions.FastMethod{arity}Buffer{typeArgs}";
 
-		sb.Append("(").Append(method.GetUniqueNameString());
-		if (method.Parameters.Count > 0)
+			sb.Append("\t\t\t\t((").Append(bufferType).Append(")((global::Mockolate.Interactions.FastMockInteractions)")
+				.Append(mockRegistry).Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
+				.Append(method.GetUniqueNameString());
+			if (arity > 0)
+			{
+				sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper())));
+			}
+
+			sb.Append(");").AppendLine();
+		}
+		else
 		{
-			sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper())));
-		}
+			sb.Append("\t\t\t\t").Append(mockRegistry)
+				.Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append('>');
+			}
 
-		sb.Append("));").AppendLine();
+			sb.Append("(").Append(method.GetUniqueNameString());
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper())));
+			}
+
+			sb.Append("));").AppendLine();
+		}
 		sb.Append("\t\t\t}").AppendLine();
 
 		sb.Append("\t\t\ttry").AppendLine();

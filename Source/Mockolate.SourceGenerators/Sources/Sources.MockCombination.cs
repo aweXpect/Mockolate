@@ -383,13 +383,17 @@ internal static partial class Sources
 
 		Dictionary<string, int> signatureIndices = new();
 		int[] nextSignatureIndex = [0];
+		// Combined mocks reuse the base mock's MockRegistry (and thus its FastMockInteractions sized
+		// to the base MemberCount). Combined member ids would index past those buffers, so emit the
+		// legacy RegisterInteraction path instead — recordings still flow through FastMockInteractions'
+		// fallback buffer and remain shared with the base mock.
 		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, memberIds, memberIdPrefix,
-			signatureIndices, nextSignatureIndex);
+			signatureIndices, nextSignatureIndex, useFastBuffers: false);
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
 			AppendMockSubject_ImplementClass(sb, item.Class, mockRegistryName, @class as MockClass,
-				memberIds, memberIdPrefix, signatureIndices, nextSignatureIndex);
+				memberIds, memberIdPrefix, signatureIndices, nextSignatureIndex, useFastBuffers: false);
 		}
 
 		sb.AppendLine();

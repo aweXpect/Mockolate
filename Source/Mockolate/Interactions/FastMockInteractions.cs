@@ -78,17 +78,26 @@ public class FastMockInteractions : IMockInteractions
 		=> _buffers[memberId] = buffer;
 
 	/// <summary>
-	///     Reserves the next sequence number for a recording. Buffers call this once per
-	///     <see cref="IFastMemberBuffer" /> append.
+	///     Reserves the next sequence number for a recording. Buffer implementations call this once
+	///     per <see cref="IFastMemberBuffer" /> append so cross-buffer enumeration preserves
+	///     registration order.
 	/// </summary>
-	internal long NextSequence()
+	/// <remarks>
+	///     Public because the source generator emits arity-N buffers in the consumer assembly that
+	///     need to participate in the same sequence stream. Not intended for end-user code.
+	/// </remarks>
+	public long NextSequence()
 		=> Interlocked.Increment(ref _globalSequence) - 1;
 
 	/// <summary>
-	///     Fires the <see cref="InteractionAdded" /> event. Buffers call this after publishing a
-	///     new record.
+	///     Fires the <see cref="InteractionAdded" /> event. Buffer implementations call this after
+	///     publishing a new record.
 	/// </summary>
-	internal void RaiseAdded()
+	/// <remarks>
+	///     Public because the source generator emits arity-N buffers in the consumer assembly that
+	///     need to drive the event. Not intended for end-user code.
+	/// </remarks>
+	public void RaiseAdded()
 		=> InteractionAdded?.Invoke(this, EventArgs.Empty);
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
