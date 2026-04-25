@@ -72,26 +72,6 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		_expectationFactory = expectation;
 	}
 
-	/// <inheritdoc cref="VerificationResult{TVerify}" />
-	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
-	public VerificationResult(TVerify verify,
-		MockInteractions interactions,
-		Func<IInteraction, bool> predicate,
-		string expectation)
-		: this(verify, (IMockInteractions)interactions, predicate, expectation)
-	{
-	}
-
-	/// <inheritdoc cref="VerificationResult{TVerify}" />
-	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
-	public VerificationResult(TVerify verify,
-		MockInteractions interactions,
-		Func<IInteraction, bool> predicate,
-		Func<string> expectation)
-		: this(verify, (IMockInteractions)interactions, predicate, expectation)
-	{
-	}
-
 	#region IVerificationResult<TVerify>
 
 	/// <inheritdoc cref="IVerificationResult{TVerify}.Object" />

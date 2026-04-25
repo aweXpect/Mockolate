@@ -45,6 +45,14 @@ public partial class MockRegistry
 	///     <paramref name="methodName" /> and that satisfies <paramref name="predicate" />, or <see langword="null" />
 	///     when no setup matches. Scenario-scoped setups take precedence over default-scope setups.
 	/// </summary>
+	/// <remarks>
+	///     Cold-path fallback for the generator-emitted dispatch — proxy method bodies first walk the
+	///     lock-free <see cref="GetMethodSetupSnapshot(int)" /> array with a stack-evaluated matcher, and
+	///     only call this overload when an active scenario is set or when a setup was registered through a
+	///     non-member-id-keyed path (such as the <c>HttpClientExtensions.SetupMethod</c> pipeline). This
+	///     overload allocates a closure per invocation, takes the storage lock, and runs a string-name
+	///     comparison; prefer <see cref="GetMethodSetupSnapshot(int)" /> on hot paths.
+	/// </remarks>
 	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
 	/// <param name="methodName">The simple method name.</param>
 	/// <param name="predicate">Argument matcher applied to each candidate setup.</param>
