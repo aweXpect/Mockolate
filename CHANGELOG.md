@@ -52,6 +52,10 @@ migration guide.
   `IndexerGetterAccess<T...>` / `IndexerSetterAccess<T...>` constructors and
   their `ParameterName1..N` properties dropped. Recorded interactions still
   expose values via `Parameter1..N` and `GetParameterValueAt(int)`.
+- **Breaking:** `IParametersMatch.Matches` now takes `ReadOnlySpan<object?>`
+  (was `object?[]`) and `INamedParametersMatch.Matches` now takes
+  `ReadOnlySpan<(string, object?)>` (was `(string, object?)[]`). Removes the
+  per-call array allocation on the `WithParameters` matching path.
 - Generator-emitted proxy method bodies now dispatch through
   `GetMethodSetupSnapshot(memberId)` for default-scope calls; the legacy
   closure-based `GetMethodSetup<T>(string, Func<T, bool>)` is reserved for

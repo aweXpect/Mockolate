@@ -981,7 +981,7 @@ namespace Mockolate.Parameters
     public interface IDefaultEventParameters { }
     public interface INamedParametersMatch
     {
-        bool Matches(System.ValueTuple<string, object?>[] values);
+        bool Matches(System.ReadOnlySpan<System.ValueTuple<string, object?>> values);
     }
     public interface IOutParameter<T>
     {
@@ -1010,7 +1010,7 @@ namespace Mockolate.Parameters
     public interface IParameters { }
     public interface IParametersMatch
     {
-        bool Matches(object?[] values);
+        bool Matches(System.ReadOnlySpan<object?> values);
     }
     public interface IRefParameter<T>
     {

@@ -1,3 +1,5 @@
+using System;
+
 namespace Mockolate.Parameters;
 
 /// <summary>
@@ -8,5 +10,5 @@ public interface INamedParametersMatch
 	/// <summary>
 	///     Checks if the <paramref name="values" /> match the expectations.
 	/// </summary>
-	bool Matches((string, object?)[] values);
+	bool Matches(ReadOnlySpan<(string, object?)> values);
 }
