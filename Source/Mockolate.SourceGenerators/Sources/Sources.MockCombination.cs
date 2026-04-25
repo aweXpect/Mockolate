@@ -491,23 +491,31 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockVerifyFor{name}", MemberType.Public);
+		// Combined mocks reuse the base mock's MockRegistry whose FastMockInteractions buffers are sized
+		// to the base MemberCount and indexed by the base mock's member ids. The combination's own
+		// memberIds enumerate a different (typically larger) set, so they cannot be used to fetch the
+		// base buffers — emit the slow Verify path here instead. Recordings flow through the
+		// FastMockInteractions fallback buffer (see AppendMockSubject_ImplementClass useFastBuffers: false).
+		ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockVerifyFor{name}", MemberType.Public,
+			memberIds, memberIdPrefix, useFastBuffers: false);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockProtectedVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockProtectedVerifyFor{name}", MemberType.Protected);
+			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockProtectedVerifyFor{name}",
+				MemberType.Protected, memberIds, memberIdPrefix, useFastBuffers: false);
 			sb.Append("\t\t#endregion IMockProtectedVerifyFor").Append(name).AppendLine();
 		}
-		
+
 		if (hasStaticMembers || hasStaticEvents)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockStaticVerifyFor{name}", MemberType.Static);
+			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockStaticVerifyFor{name}", MemberType.Static,
+				memberIds, memberIdPrefix, useFastBuffers: false);
 			sb.Append("\t\t#endregion IMockStaticVerifyFor").Append(name).AppendLine();
 		}
 		foreach ((string Name, Class Class) item in additionalInterfaces)
@@ -515,7 +523,8 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockVerifyFor").Append(item.Name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, item.Class, mockRegistryName, $"IMockVerifyFor{item.Name}", MemberType.Public);
+			ImplementVerifyInterface(sb, item.Class, mockRegistryName, $"IMockVerifyFor{item.Name}", MemberType.Public,
+				memberIds, memberIdPrefix, useFastBuffers: false);
 			sb.Append("\t\t#endregion IMockVerifyFor").Append(item.Name).AppendLine();
 		}
 

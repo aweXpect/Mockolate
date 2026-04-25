@@ -783,7 +783,8 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockVerifyFor{name}", MemberType.Public);
+		ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockVerifyFor{name}", MemberType.Public,
+			memberIds, memberIdPrefix);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
 
 		if (hasProtectedMembers || hasProtectedEvents)
@@ -792,7 +793,7 @@ internal static partial class Sources
 			sb.Append("\t\t#region IMockProtectedVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
 			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockProtectedVerifyFor{name}",
-				MemberType.Protected);
+				MemberType.Protected, memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockProtectedVerifyFor").Append(name).AppendLine();
 		}
 
@@ -801,7 +802,8 @@ internal static partial class Sources
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
-			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockStaticVerifyFor{name}", MemberType.Static);
+			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockStaticVerifyFor{name}", MemberType.Static,
+				memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockStaticVerifyFor").Append(name).AppendLine();
 		}
 
@@ -823,7 +825,8 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockVerifyFor{name}", MemberType.Public);
+		ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockVerifyFor{name}", MemberType.Public,
+			memberIds, memberIdPrefix);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
 		sb.Append("\t}").AppendLine();
 
@@ -4495,12 +4498,21 @@ internal static partial class Sources
 	}
 
 	private static void AppendIndexerVerifyImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
-		string verifyName, bool[]? valueFlags = null)
+		string verifyName, MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers,
+		bool[]? valueFlags = null)
 	{
 		if (indexer.IndexerParameters!.Value.Any(p => p.NeedsRefStructPipeline()))
 		{
 			return;
 		}
+
+		bool useFastForIndexer = useFastBuffers && IsFastBufferEligibleIndexer(indexer);
+		string indexerGetMemberId = useFastForIndexer
+			? memberIdPrefix + memberIds.GetIndexerGetIdentifier(indexer)
+			: "-1";
+		string indexerSetMemberId = useFastForIndexer
+			? memberIdPrefix + memberIds.GetIndexerSetIdentifier(indexer)
+			: "-1";
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append(
@@ -4541,7 +4553,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName)
 			.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
-			.Append(",").AppendLine();
+			.Append(", ").Append(indexerGetMemberId).Append(", ").Append(indexerSetMemberId).Append(",").AppendLine();
 
 		sb.Append("\t\t\t\t\tinteraction => interaction is global::Mockolate.Interactions.IndexerGetterAccess<");
 		int ti = 0;
@@ -4972,7 +4984,8 @@ internal static partial class Sources
 	}
 
 	private static void ImplementVerifyInterface(StringBuilder sb, Class @class, string mockRegistryName,
-		string verifyName, MemberType memberType)
+		string verifyName, MemberType memberType, MemberIdTable memberIds, string memberIdPrefix,
+		bool useFastBuffers = true)
 	{
 		#region Properties
 
@@ -4981,6 +4994,13 @@ internal static partial class Sources
 			   property.MemberType == memberType;
 		foreach (Property property in @class.AllProperties().Where(propertyPredicate))
 		{
+			bool useFastForProperty = useFastBuffers && IsFastBufferEligibleProperty(property);
+			string propertyGetMemberId = useFastForProperty
+				? memberIdPrefix + memberIds.GetPropertyGetIdentifier(property)
+				: "-1";
+			string propertySetMemberId = useFastForProperty
+				? memberIdPrefix + memberIds.GetPropertySetIdentifier(property)
+				: "-1";
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append(
 					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
@@ -4993,7 +5013,8 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName)
 				.Append(", ").Append(property.Type.Fullname).Append(">(this, this.").Append(mockRegistryName)
-				.Append(", ").Append(property.GetUniqueNameString()).Append(");").AppendLine();
+				.Append(", ").Append(propertyGetMemberId).Append(", ").Append(propertySetMemberId).Append(", ")
+				.Append(property.GetUniqueNameString()).Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -5008,12 +5029,14 @@ internal static partial class Sources
 			   indexer.MemberType == memberType;
 		foreach (Property indexer in @class.AllProperties().Where(indexerPredicate))
 		{
-			AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName);
+			AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName, memberIds, memberIdPrefix,
+				useFastBuffers);
 			if (indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters)
 			{
 				foreach (bool[] valueFlags in GenerateValueFlagCombinations(indexer.IndexerParameters.Value))
 				{
-					AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName, valueFlags);
+					AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName, memberIds,
+						memberIdPrefix, useFastBuffers, valueFlags);
 				}
 			}
 			else
@@ -5022,7 +5045,8 @@ internal static partial class Sources
 					.ToArray();
 				if (allValueFlags.Any(f => f))
 				{
-					AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName, allValueFlags);
+					AppendIndexerVerifyImplementation(sb, indexer, mockRegistryName, verifyName, memberIds,
+						memberIdPrefix, useFastBuffers, allValueFlags);
 				}
 			}
 		}
@@ -5045,7 +5069,8 @@ internal static partial class Sources
 				Method? method = methodGroup.Single();
 				if (method.Parameters.Count > 0)
 				{
-					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, true);
+					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, true,
+						memberIds, memberIdPrefix, useFastBuffers);
 				}
 			}
 
@@ -5053,17 +5078,19 @@ internal static partial class Sources
 			{
 				if (method.Parameters.Count == 0)
 				{
-					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false);
+					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
+						memberIds, memberIdPrefix, useFastBuffers);
 				}
 				else
 				{
-					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false);
+					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
+						memberIds, memberIdPrefix, useFastBuffers);
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
 						{
 							AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
-								valueFlags: valueFlags);
+								memberIds, memberIdPrefix, useFastBuffers, valueFlags: valueFlags);
 						}
 					}
 					else
@@ -5073,7 +5100,7 @@ internal static partial class Sources
 						if (allValueFlags.Any(f => f))
 						{
 							AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
-								valueFlags: allValueFlags);
+								memberIds, memberIdPrefix, useFastBuffers, valueFlags: allValueFlags);
 						}
 					}
 				}
@@ -5088,6 +5115,13 @@ internal static partial class Sources
 		                                             @event.MemberType == memberType;
 		foreach (Event @event in @class.AllEvents().Where(eventPredicate))
 		{
+			bool useFastForEvent = useFastBuffers && IsFastBufferEligibleEvent(@event);
+			string subMemberId = useFastForEvent
+				? memberIdPrefix + memberIds.GetEventSubscribeIdentifier(@event)
+				: "-1";
+			string unsubMemberId = useFastForEvent
+				? memberIdPrefix + memberIds.GetEventUnsubscribeIdentifier(@event)
+				: "-1";
 			sb.AppendXmlSummary(
 				$"Verify subscriptions on the {@event.Name} event <see cref=\"{@event.ContainingType.EscapeForXmlDoc()}.{@event.Name}\" />.");
 			sb.Append(
@@ -5099,8 +5133,8 @@ internal static partial class Sources
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationEventResult<").Append(verifyName)
-				.Append(">(this, this.").Append(mockRegistryName).Append(", ").Append(@event.GetUniqueNameString())
-				.Append(");").AppendLine();
+				.Append(">(this, this.").Append(mockRegistryName).Append(", ").Append(subMemberId).Append(", ")
+				.Append(unsubMemberId).Append(", ").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
@@ -5111,7 +5145,8 @@ internal static partial class Sources
 
 	private static void AppendMethodVerifyImplementation(StringBuilder sb, Method method, string mockRegistryName,
 		string verifyName,
-		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null)
+		bool useParameters, MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers,
+		string? methodNameOverride = null, bool[]? valueFlags = null)
 	{
 		// Mirror the AppendMethodVerifyDefinition short-circuit for ref-struct signatures.
 		if (method.Parameters.Any(p => p.NeedsRefStructPipeline()))
@@ -5119,6 +5154,10 @@ internal static partial class Sources
 			return;
 		}
 
+		bool useFastForMethod = useFastBuffers && IsFastBufferEligibleMethod(method);
+		string methodMemberId = useFastForMethod
+			? memberIdPrefix + memberIds.GetMethodIdentifier(method)
+			: "-1";
 		string methodName = methodNameOverride ?? method.Name;
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<");
@@ -5180,7 +5219,7 @@ internal static partial class Sources
 			sb.Append("<").Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append(">");
 		}
 
-		sb.Append(">(this, ").Append(method.GetUniqueNameString());
+		sb.Append(">(this, ").Append(methodMemberId).Append(", ").Append(method.GetUniqueNameString());
 		if (useParameters)
 		{
 			sb.Append(", i => parameters switch").AppendLine();

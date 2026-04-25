@@ -226,7 +226,9 @@ namespace Mockolate
         public TResult GetProperty<TResult>(int memberId, string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.IMockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, int memberId, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSet<T, TValue>(T subject, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TValue>, bool> setPredicate, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<T> IndexerSet<T, TValue>(T subject, int memberId, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TValue>, bool> setPredicate, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
         public void InitializeStorage(int indexerCount) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, Mockolate.Setup.IMethodSetup methodSetup) { }
         public void RegisterInteraction(Mockolate.Interactions.IInteraction interaction) { }
@@ -246,12 +248,18 @@ namespace Mockolate
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
         public void SetupProperty(string scenario, Mockolate.Setup.PropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
+        public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, int memberId, string eventName) { }
         public void TransitionTo(string scenario) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
+        public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, int memberId, string eventName) { }
         public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T, TMethod>(T subject, string methodName, System.Func<TMethod, bool> predicate, System.Func<string> expectation)
             where TMethod : Mockolate.Interactions.IMethodInteraction { }
+        public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T, TMethod>(T subject, int memberId, string methodName, System.Func<TMethod, bool> predicate, System.Func<string> expectation)
+            where TMethod : Mockolate.Interactions.IMethodInteraction { }
         public Mockolate.Verify.VerificationResult<T> VerifyProperty<T>(T subject, string propertyName) { }
+        public Mockolate.Verify.VerificationResult<T> VerifyProperty<T>(T subject, int memberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, string propertyName, Mockolate.Parameters.IParameterMatch<TValue> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, int memberId, string propertyName, Mockolate.Parameters.IParameterMatch<TValue> value) { }
         public static Mockolate.MockRegistry op_Implicit(Mockolate.MockBehavior behavior) { }
     }
     public static class ParameterExtensions
@@ -2820,12 +2828,14 @@ namespace Mockolate.Verify
     public class VerificationEventResult<TSubject>
     {
         public VerificationEventResult(TSubject subject, Mockolate.MockRegistry mockRegistry, string name) { }
+        public VerificationEventResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int subscribeMemberId, int unsubscribeMemberId, string name) { }
         public Mockolate.Verify.VerificationResult<TSubject> Subscribed() { }
         public Mockolate.Verify.VerificationResult<TSubject> Unsubscribed() { }
     }
     public class VerificationIndexerResult<TSubject, TParameter>
     {
         public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TParameter>, bool> setPredicate, System.Func<string> parametersDescription) { }
+        public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TParameter>, bool> setPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
@@ -2833,6 +2843,7 @@ namespace Mockolate.Verify
     public class VerificationPropertyResult<TSubject, TParameter>
     {
         public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, string propertyName) { }
+        public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
