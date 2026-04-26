@@ -15,6 +15,70 @@ public sealed class MockRegistryTests
 		=> typeof(MockRegistryTests).GetMethod(nameof(GetMethodInfo),
 			BindingFlags.Static | BindingFlags.NonPublic)!;
 
+	public sealed class ConstructorSkipFlagAgreementTests
+	{
+		[Fact]
+		public async Task BehaviorAndInteractions_WhenSkipFlagsDisagree_Throws()
+		{
+			MockBehavior recordingBehavior = MockBehavior.Default;
+			FastMockInteractions skippingInteractions = new(0, true);
+
+			void Act()
+			{
+				_ = new MockRegistry(recordingBehavior, skippingInteractions);
+			}
+
+			await That(Act).Throws<ArgumentException>()
+				.WithMessage("*SkipInteractionRecording*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task BehaviorAndInteractions_WhenSkippingBehaviorMeetsRecordingInteractions_Throws()
+		{
+			MockBehavior skippingBehavior = MockBehavior.Default.SkippingInteractionRecording();
+			FastMockInteractions recordingInteractions = new(0);
+
+			void Act()
+			{
+				_ = new MockRegistry(skippingBehavior, recordingInteractions);
+			}
+
+			await That(Act).Throws<ArgumentException>()
+				.WithMessage("*SkipInteractionRecording*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task RegistryAndInteractions_WhenSkipFlagsDisagree_Throws()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			FastMockInteractions skippingInteractions = new(0, true);
+
+			void Act()
+			{
+				_ = new MockRegistry(registry, skippingInteractions);
+			}
+
+			await That(Act).Throws<ArgumentException>()
+				.WithMessage("*SkipInteractionRecording*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task RegistryAndInteractions_WhenSkippingRegistryMeetsRecordingInteractions_Throws()
+		{
+			MockBehavior skippingBehavior = MockBehavior.Default.SkippingInteractionRecording();
+			MockRegistry registry = new(skippingBehavior, new FastMockInteractions(0, true));
+			FastMockInteractions recordingInteractions = new(0);
+
+			void Act()
+			{
+				_ = new MockRegistry(registry, recordingInteractions);
+			}
+
+			await That(Act).Throws<ArgumentException>()
+				.WithMessage("*SkipInteractionRecording*").AsWildcard();
+		}
+	}
+
 	public sealed class GetIndexerSetupScenarioScopingTests
 	{
 		[Fact]
