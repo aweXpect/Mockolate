@@ -8,14 +8,25 @@ namespace Mockolate.SourceGenerators;
 internal static class MockGeneratorHelpers
 {
 	internal static bool IsCreateMethodInvocation(this SyntaxNode node)
-		=> node is InvocationExpressionSyntax
+	{
+		if (node is not InvocationExpressionSyntax
+		    {
+			    Expression: MemberAccessExpressionSyntax memberAccess,
+		    })
 		{
-			Expression: MemberAccessExpressionSyntax
-			{
-				Name: IdentifierNameSyntax { Identifier.ValueText: "CreateMock", }
-				or GenericNameSyntax { Identifier.ValueText: "Implementing", },
-			},
-		};
+			return false;
+		}
+
+		switch (memberAccess.Name)
+		{
+			case IdentifierNameSyntax { Identifier.ValueText: "CreateMock", }:
+				return true;
+			case GenericNameSyntax { Identifier.ValueText: "Implementing", }:
+				return true;
+			default:
+				return false;
+		}
+	}
 
 	private static bool IsInGlobalMockolateNamespace(ISymbol symbol)
 		=> symbol.ContainingNamespace is { Name: "Mockolate", ContainingNamespace.IsGlobalNamespace: true, };
@@ -46,7 +57,6 @@ internal static class MockGeneratorHelpers
 		return symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().Any(IsImplementingMethod);
 	}
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	internal static IEnumerable<MockClass> ExtractMockOrMockFactoryCreateSyntaxOrDefault(
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
 	{
@@ -140,9 +150,7 @@ internal static class MockGeneratorHelpers
 			}
 		}
 	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes,
 		IAssemblySymbol sourceAssembly)
 	{
@@ -171,7 +179,6 @@ internal static class MockGeneratorHelpers
 			}
 		}
 	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	private static bool IsMockable([NotNullWhen(true)] ITypeSymbol? typeSymbol)
 		=> typeSymbol is

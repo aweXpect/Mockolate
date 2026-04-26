@@ -7,7 +7,6 @@ using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
 	private const int MaxExplicitParameters = 4;
@@ -5453,4 +5452,3 @@ internal static partial class Sources
 
 	#endregion Verify Helpers
 }
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

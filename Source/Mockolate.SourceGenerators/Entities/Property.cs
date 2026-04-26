@@ -13,7 +13,7 @@ internal record Property
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
 		string rawName = propertySymbol.ExplicitInterfaceImplementations.Length > 0 ? propertySymbol.ExplicitInterfaceImplementations[0].Name : propertySymbol.Name;
 		Name = propertySymbol.IsIndexer ? rawName : Helpers.EscapeIfKeyword(rawName);
-		Type = new Type(propertySymbol.Type);
+		Type = Type.From(propertySymbol.Type);
 		ContainingType = propertySymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		IsIndexer = propertySymbol.IsIndexer;
 		IsAbstract = propertySymbol.IsAbstract;
@@ -21,7 +21,7 @@ internal record Property
 		if (IsIndexer && propertySymbol.Parameters.Length > 0)
 		{
 			IndexerParameters = new EquatableArray<MethodParameter>(
-				propertySymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
+				propertySymbol.Parameters.Select(MethodParameter.From).ToArray());
 		}
 
 		Attributes = propertySymbol.GetAttributes().ToAttributeArray(sourceAssembly);

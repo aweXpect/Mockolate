@@ -13,7 +13,7 @@ internal record Event
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
 		IsAbstract = eventSymbol.IsAbstract;
 		Name = Helpers.EscapeIfKeyword(eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name);
-		Type = new Type(eventSymbol.Type);
+		Type = Type.From(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Delegate = new Method(delegateInvokeMethod, null, sourceAssembly);
 		Attributes = eventSymbol.GetAttributes().ToAttributeArray(sourceAssembly);

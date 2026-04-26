@@ -6,7 +6,6 @@ using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
 	private static StringBuilder InitializeBuilder()
@@ -191,8 +190,6 @@ internal static partial class Sources
 
 		sb.Append(indent).Append("}").AppendLine();
 
-		// Setup-side dispatch: indexer setups are always indexed under the GETTER member id (they apply to both
-		// directions). Setter call sites pass the getter id via setupMemberIdRef; getters reuse memberIdRef.
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
 			setupMemberIdRef);
 	}
@@ -220,8 +217,6 @@ internal static partial class Sources
 
 		if (memberIdRef is null)
 		{
-			// Legacy path: no fast-buffer dispatch, fall straight through to the closure-free
-			// access-keyed lookup (matches pre-D-refactor emission shape).
 			sb.Append(indent).Append(typedSetupName).Append("? ").Append(setupVarName).Append(" = ")
 				.Append(mockRegistry).Append(".GetIndexerSetup<").Append(typedSetupName).Append(">(")
 				.Append(accessVarName).Append(");").AppendLine();
@@ -411,6 +406,11 @@ internal static partial class Sources
 	internal static string ExpandCrefs(string source)
 	{
 		const string OpenTag = "<see cref=\"";
+		if (source.IndexOf(OpenTag, StringComparison.Ordinal) < 0)
+		{
+			return source;
+		}
+
 		int searchFrom = 0;
 		int copiedUpTo = 0;
 		StringBuilder? result = null;
@@ -655,4 +655,3 @@ internal static partial class Sources
 				.Append(text).Append("</exception>").AppendLine();
 	}
 }
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Mockolate.SourceGenerators.Entities;
+using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators;
@@ -19,18 +20,136 @@ public class MockGenerator : IIncrementalGenerator
 			"Mock.g.cs",
 			ToSource(Sources.Sources.MockClass())));
 
-		IncrementalValueProvider<ImmutableArray<MockClass>> expectationsToRegister = context.SyntaxProvider
+		// Per-mock stream. Equality on MockClass is now keyed only on its canonical identity
+		// (ClassFullName + AdditionalImplementations.ClassFullName), so Roslyn can correctly skip
+		// per-mock outputs when the same mock identity is rediscovered across edits.
+		IncrementalValuesProvider<MockClass> mocksProvider = context.SyntaxProvider
 			.CreateSyntaxProvider(
 				static (s, _) => s.IsCreateMethodInvocation(),
-				(ctx, _) => ctx.Node.ExtractMockOrMockFactoryCreateSyntaxOrDefault(ctx.SemanticModel))
-			.SelectMany(static (mocks, _) => mocks)
-			.Collect();
+				static (ctx, _) =>
+				{
+					// Set the per-compilation EntityCache as ambient state for this transform
+					// invocation so Type / MethodParameter constructors deduplicate identical
+					// ITypeSymbol references against an already-built record. Materialize the
+					// IEnumerable inside the using scope; the cache scope unwinds on return.
+					EntityCache cache = EntityCache.GetOrCreate(ctx.SemanticModel.Compilation);
+					using EntityCache.Scope scope = EntityCache.EnterScope(cache);
+					return ctx.Node
+						.ExtractMockOrMockFactoryCreateSyntaxOrDefault(ctx.SemanticModel)
+						.ToArray();
+				})
+			.SelectMany(static (mocks, _) => mocks);
+
+		// Stable, deduplicated, sorted view across all mocks. Used by every cross-mock stage
+		// (naming, aggregate setup files). Sorting by ClassFullName makes the array's content
+		// deterministic so downstream Select stages cache cleanly.
+		IncrementalValueProvider<EquatableArray<MockClass>> collectedMocks = mocksProvider
+			.Collect()
+			.Select(static (mocks, _) => Distinct(mocks));
 
 		IncrementalValueProvider<bool> hasOverloadResolutionPriority = context.CompilationProvider
-			.Select(static (compilation, _) => HasAttribute(compilation, "System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute"));
+			.Select(static (compilation, _) => HasAttribute(compilation,
+				"System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute"));
 
-		context.RegisterSourceOutput(expectationsToRegister.Combine(hasOverloadResolutionPriority),
-			(spc, source) => Execute([..source.Left.Distinct(),], source.Right, spc));
+		// Naming step: cross-mock disambiguation. Cached as a unit; one NamedMock per emission.
+		IncrementalValueProvider<EquatableArray<NamedMock>> namedMocksAggregate = collectedMocks
+			.Select(static (arr, _) => CreateNamedMocks(arr));
+
+		IncrementalValuesProvider<NamedMock> perMock = namedMocksAggregate
+			.SelectMany(static (arr, _) => arr);
+
+		// Per-mock source output: cache hit when the NamedMock is identity-equal to last run.
+		context.RegisterSourceOutput(
+			perMock.Combine(hasOverloadResolutionPriority),
+			static (spc, source) => EmitMockFile(spc, source.Left, source.Right));
+
+		// As<T> bridge extensions across (a, b) pairs. Cross-mock dedup; one file.
+		IncrementalValueProvider<EquatableArray<MockAsExtensionPair>> asPairs = namedMocksAggregate
+			.Select(static (arr, _) => CollectAsExtensionPairs(arr));
+
+		context.RegisterSourceOutput(asPairs, static (spc, pairs) =>
+		{
+			if (pairs.Count > 0)
+			{
+				spc.AddSource("Mock.AsExtensions.g.cs",
+					ToSource(Sources.Sources.MockAsExtensions(pairs)));
+			}
+		});
+
+		// Aggregate inputs derived from per-mock projections — each aggregate caches independently.
+		IncrementalValueProvider<EquatableArray<int>> indexerSetupArities = collectedMocks
+			.Select(static (arr, _) => CollectIndexerSetupArities(arr));
+
+		context.RegisterSourceOutput(indexerSetupArities, static (spc, arities) =>
+		{
+			if (arities.Count > 0)
+			{
+				spc.AddSource("IndexerSetups.g.cs",
+					ToSource(Sources.Sources.IndexerSetups(ToHashSet(arities))));
+			}
+		});
+
+		IncrementalValueProvider<EquatableArray<MethodSetupKey>> methodSetupKeys = collectedMocks
+			.Select(static (arr, _) => CollectMethodSetupKeys(arr));
+
+		context.RegisterSourceOutput(methodSetupKeys, static (spc, keys) =>
+		{
+			if (keys.Count == 0)
+			{
+				return;
+			}
+
+			HashSet<(int, bool)> set = ToMethodSetupHashSet(keys);
+			spc.AddSource("MethodSetups.g.cs", ToSource(Sources.Sources.MethodSetups(set)));
+
+			const int dotNetFuncActionParameterLimit = 16;
+			if (set.Any(x => x.Item1 >= dotNetFuncActionParameterLimit))
+			{
+				spc.AddSource("ActionFunc.g.cs",
+					ToSource(Sources.Sources.ActionFunc(set
+						.Where(x => x.Item1 >= dotNetFuncActionParameterLimit)
+						.SelectMany<(int, bool), int>(x => [x.Item1, x.Item1 + 1,])
+						.Where(x => x > dotNetFuncActionParameterLimit)
+						.Distinct())));
+			}
+
+			if (set.Any(x => !x.Item2))
+			{
+				spc.AddSource("ReturnsThrowsAsyncExtensions.g.cs",
+					ToSource(Sources.Sources.ReturnsThrowsAsyncExtensions(set
+						.Where(x => !x.Item2).Select(x => x.Item1).ToArray())));
+			}
+		});
+
+		IncrementalValueProvider<RefStructAggregate> refStructAggregate = collectedMocks
+			.Select(static (arr, _) => CollectRefStructAggregate(arr));
+
+		context.RegisterSourceOutput(refStructAggregate, static (spc, agg) =>
+		{
+			if (agg.MethodSetups.Count == 0 && agg.IndexerSetups.Count == 0)
+			{
+				return;
+			}
+
+			HashSet<(int, bool)> methodSet = ToMethodSetupHashSet(agg.MethodSetups);
+			Dictionary<int, (bool HasGetter, bool HasSetter)> indexerArities = new();
+			foreach (RefStructIndexerSetup item in agg.IndexerSetups)
+			{
+				indexerArities[item.Arity] = (item.HasGetter, item.HasSetter);
+			}
+
+			spc.AddSource("RefStructMethodSetups.g.cs",
+				ToSource(Sources.Sources.RefStructMethodSetups(methodSet, indexerArities)));
+		});
+
+		// MockBehaviorExtensions: only depends on whether HttpClient appears as a mock target.
+		// Reduce to a bool so the aggregate cache holds across mock-set churn that doesn't toggle it.
+		IncrementalValueProvider<bool> includeHttpClient = collectedMocks
+			.Select(static (arr, _) => arr.AsArray()?.Any(m => m.ClassFullName == "global::System.Net.Http.HttpClient") ?? false);
+
+		context.RegisterSourceOutput(includeHttpClient, static (spc, hasHttp) =>
+			spc.AddSource("MockBehaviorExtensions.g.cs",
+				ToSource(Sources.Sources.MockBehaviorExtensions(hasHttp))));
 
 		static bool HasAttribute(Compilation c, string attributeName)
 		{
@@ -45,175 +164,476 @@ public class MockGenerator : IIncrementalGenerator
 	private static SourceText ToSource(string source)
 		=> SourceText.From(Sources.Sources.ExpandCrefs(source), Encoding.UTF8);
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
-	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, bool hasOverloadResolutionPriority, SourceProductionContext context)
+	private static EquatableArray<MockClass> Distinct(ImmutableArray<MockClass> mocks)
 	{
-		IEnumerable<(string FileName, string Name, Class Class, (string Name, Class Class)[]? AdditionalClasses)> namedMocksToGenerate = CreateNames(mocksToGenerate);
-
-		HashSet<(string, string)> combinationSet = new();
-		foreach ((string FileName, string Name, Class Class, (string Name, Class Class)[]? AdditionalClasses) mockToGenerate in namedMocksToGenerate)
+		if (mocks.IsDefaultOrEmpty)
 		{
-			if (mockToGenerate.Class is MockClass { Delegate: not null, } mockClass)
+			return new EquatableArray<MockClass>([]);
+		}
+
+		HashSet<MockClass> seen = new();
+		List<MockClass> distinct = new(mocks.Length);
+		foreach (MockClass mc in mocks)
+		{
+			if (seen.Add(mc))
 			{
-				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
-					ToSource(Sources.Sources.MockDelegate(mockToGenerate.Name, mockClass, mockClass.Delegate)));
-			}
-			else if (mockToGenerate.AdditionalClasses is null)
-			{
-				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
-					ToSource(Sources.Sources.MockClass(mockToGenerate.Name, mockToGenerate.Class, hasOverloadResolutionPriority)));
-			}
-			else
-			{
-				context.AddSource($"Mock.{mockToGenerate.FileName}.g.cs",
-					ToSource(Sources.Sources.MockCombinationClass(mockToGenerate.FileName, mockToGenerate.Name, mockToGenerate.Class, mockToGenerate.AdditionalClasses, combinationSet)));
+				distinct.Add(mc);
 			}
 		}
 
-		HashSet<int> indexerSetups = new();
-		foreach (int item in mocksToGenerate
-			         .SelectMany(m => m.AllProperties())
-			         .Where(m => m.IndexerParameters?.Count > 4)
-			         .Select(m => m.IndexerParameters!.Value.Count))
+		distinct.Sort(static (a, b) =>
 		{
-			indexerSetups.Add(item);
-		}
-
-		if (indexerSetups.Any())
-		{
-			context.AddSource("IndexerSetups.g.cs",
-				ToSource(Sources.Sources.IndexerSetups(indexerSetups)));
-		}
-
-		HashSet<(int, bool)> methodSetups = new();
-		foreach ((int Count, bool) item in mocksToGenerate
-			         .SelectMany(m => m.AllMethods())
-			         .Where(m => m.Parameters.Count > 4)
-			         .Select(m => (m.Parameters.Count, m.ReturnType == Type.Void)))
-		{
-			methodSetups.Add(item);
-		}
-
-		if (methodSetups.Any())
-		{
-			context.AddSource("MethodSetups.g.cs",
-				ToSource(Sources.Sources.MethodSetups(methodSetups)));
-		}
-
-		const int dotNetFuncActionParameterLimit = 16;
-		if (methodSetups.Any(x => x.Item1 >= dotNetFuncActionParameterLimit))
-		{
-			context.AddSource("ActionFunc.g.cs",
-				ToSource(Sources.Sources.ActionFunc(methodSetups
-					.Where(x => x.Item1 >= dotNetFuncActionParameterLimit)
-					.SelectMany<(int, bool), int>(x => [x.Item1, x.Item1 + 1,])
-					.Where(x => x > dotNetFuncActionParameterLimit)
-					.Distinct())));
-		}
-
-		if (methodSetups.Any(x => !x.Item2))
-		{
-			context.AddSource("ReturnsThrowsAsyncExtensions.g.cs",
-				ToSource(Sources.Sources.ReturnsThrowsAsyncExtensions(methodSetups
-					.Where(x => !x.Item2).Select(x => x.Item1).ToArray())));
-		}
-
-		// Ref-struct method setups for arity > 4. The hand-written types in
-		// Source/Mockolate/Setup/RefStruct{Void,Return}MethodSetup.cs cover arities 1-4; the
-		// generator mirrors the same shape for arity 5+.
-		HashSet<(int, bool)> refStructMethodSetups = new();
-		foreach ((int Count, bool) item in mocksToGenerate
-			         .SelectMany(m => m.AllMethods())
-			         .Where(m => m.Parameters.Count > 4 &&
-			                     m.Parameters.Any(p => p.NeedsRefStructPipeline()))
-			         .Select(m => (m.Parameters.Count, m.ReturnType == Type.Void)))
-		{
-			refStructMethodSetups.Add(item);
-		}
-
-		// Ref-struct-keyed indexer setups for arity > 4. Same split as methods: arities 1-4 are
-		// hand-written; arity 5+ is generator-emitted. Per arity we track whether the getter,
-		// setter, or both accessors need to be emitted — a single mock source may declare
-		// indexers with different accessor combinations at the same arity.
-		Dictionary<int, (bool HasGetter, bool HasSetter)> refStructIndexerArities = new();
-		foreach (Property indexer in mocksToGenerate
-			         .SelectMany(m => m.AllProperties())
-			         .Where(p => p is { IsIndexer: true, IndexerParameters: not null, } &&
-			                     p.IndexerParameters.Value.Count > 4 &&
-			                     p.IndexerParameters.Value.Any(kp => kp.NeedsRefStructPipeline())))
-		{
-			int arity = indexer.IndexerParameters!.Value.Count;
-			bool hasGetter = indexer.Getter is not null;
-			bool hasSetter = indexer.Setter is not null;
-			if (refStructIndexerArities.TryGetValue(arity, out (bool, bool) existing))
+			int cmp = StringComparer.Ordinal.Compare(a.ClassFullName, b.ClassFullName);
+			if (cmp != 0)
 			{
-				refStructIndexerArities[arity] = (existing.Item1 || hasGetter, existing.Item2 || hasSetter);
+				return cmp;
 			}
-			else
+
+			Class[]? aAdds = a.AdditionalImplementations.AsArray();
+			Class[]? bAdds = b.AdditionalImplementations.AsArray();
+			int aLen = aAdds?.Length ?? 0;
+			int bLen = bAdds?.Length ?? 0;
+			cmp = aLen.CompareTo(bLen);
+			if (cmp != 0 || aAdds is null || bAdds is null)
 			{
-				refStructIndexerArities[arity] = (hasGetter, hasSetter);
+				return cmp;
 			}
-		}
 
-		if (refStructMethodSetups.Any() || refStructIndexerArities.Any())
-		{
-			context.AddSource("RefStructMethodSetups.g.cs",
-				ToSource(Sources.Sources.RefStructMethodSetups(refStructMethodSetups, refStructIndexerArities)));
-		}
+			for (int i = 0; i < aLen; i++)
+			{
+				cmp = StringComparer.Ordinal.Compare(aAdds[i].ClassFullName, bAdds[i].ClassFullName);
+				if (cmp != 0)
+				{
+					return cmp;
+				}
+			}
 
-		context.AddSource("MockBehaviorExtensions.g.cs",
-			ToSource(Sources.Sources.MockBehaviorExtensions(mocksToGenerate)));
+			return 0;
+		});
+
+		return new EquatableArray<MockClass>(distinct.ToArray());
 	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
-	private static IEnumerable<(string FileName, string Name, Class Class, (string Name, Class Class)[]? AdditionalClasses)> CreateNames(ImmutableArray<MockClass> mocksToGenerate)
+	private static HashSet<int> ToHashSet(EquatableArray<int> arities)
 	{
+		HashSet<int> set = new();
+		int[]? arr = arities.AsArray();
+		if (arr is null)
+		{
+			return set;
+		}
+
+		foreach (int item in arr)
+		{
+			set.Add(item);
+		}
+
+		return set;
+	}
+
+	private static HashSet<(int, bool)> ToMethodSetupHashSet(EquatableArray<MethodSetupKey> keys)
+	{
+		HashSet<(int, bool)> set = new();
+		MethodSetupKey[]? arr = keys.AsArray();
+		if (arr is null)
+		{
+			return set;
+		}
+
+		foreach (MethodSetupKey item in arr)
+		{
+			set.Add((item.Arity, item.IsVoid));
+		}
+
+		return set;
+	}
+
+	private static EquatableArray<int> CollectIndexerSetupArities(EquatableArray<MockClass> mocks)
+	{
+		MockClass[]? arr = mocks.AsArray();
+		if (arr is null)
+		{
+			return new EquatableArray<int>([]);
+		}
+
+		HashSet<int> set = new();
+		foreach (MockClass mc in arr)
+		{
+			foreach (Property property in mc.AllProperties())
+			{
+				if (property.IndexerParameters?.Count > 4)
+				{
+					set.Add(property.IndexerParameters.Value.Count);
+				}
+			}
+		}
+
+		int[] sorted = set.ToArray();
+		Array.Sort(sorted);
+		return new EquatableArray<int>(sorted);
+	}
+
+	private static EquatableArray<MethodSetupKey> CollectMethodSetupKeys(EquatableArray<MockClass> mocks)
+	{
+		MockClass[]? arr = mocks.AsArray();
+		if (arr is null)
+		{
+			return new EquatableArray<MethodSetupKey>([]);
+		}
+
+		HashSet<MethodSetupKey> set = new();
+		foreach (MockClass mc in arr)
+		{
+			foreach (Method m in mc.AllMethods())
+			{
+				if (m.Parameters.Count > 4)
+				{
+					set.Add(new MethodSetupKey(m.Parameters.Count, m.ReturnType == Type.Void));
+				}
+			}
+		}
+
+		MethodSetupKey[] sorted = set.ToArray();
+		Array.Sort(sorted, static (a, b) =>
+		{
+			int cmp = a.Arity.CompareTo(b.Arity);
+			if (cmp != 0)
+			{
+				return cmp;
+			}
+
+			return a.IsVoid.CompareTo(b.IsVoid);
+		});
+		return new EquatableArray<MethodSetupKey>(sorted);
+	}
+
+	private static RefStructAggregate CollectRefStructAggregate(EquatableArray<MockClass> mocks)
+	{
+		MockClass[]? arr = mocks.AsArray();
+		if (arr is null)
+		{
+			return new RefStructAggregate(
+				new EquatableArray<MethodSetupKey>([]),
+				new EquatableArray<RefStructIndexerSetup>([]));
+		}
+
+		HashSet<MethodSetupKey> methods = new();
+		Dictionary<int, (bool HasGetter, bool HasSetter)> indexerMap = new();
+		foreach (MockClass mc in arr)
+		{
+			foreach (Method m in mc.AllMethods())
+			{
+				if (m.Parameters.Count > 4 && m.Parameters.Any(p => p.NeedsRefStructPipeline()))
+				{
+					methods.Add(new MethodSetupKey(m.Parameters.Count, m.ReturnType == Type.Void));
+				}
+			}
+
+			foreach (Property indexer in mc.AllProperties())
+			{
+				if (indexer is { IsIndexer: true, IndexerParameters: not null, } &&
+				    indexer.IndexerParameters.Value.Count > 4 &&
+				    indexer.IndexerParameters.Value.Any(kp => kp.NeedsRefStructPipeline()))
+				{
+					int arity = indexer.IndexerParameters.Value.Count;
+					bool hasGetter = indexer.Getter is not null;
+					bool hasSetter = indexer.Setter is not null;
+					if (indexerMap.TryGetValue(arity, out (bool, bool) existing))
+					{
+						indexerMap[arity] = (existing.Item1 || hasGetter, existing.Item2 || hasSetter);
+					}
+					else
+					{
+						indexerMap[arity] = (hasGetter, hasSetter);
+					}
+				}
+			}
+		}
+
+		MethodSetupKey[] methodArr = methods.ToArray();
+		Array.Sort(methodArr, static (a, b) =>
+		{
+			int cmp = a.Arity.CompareTo(b.Arity);
+			if (cmp != 0)
+			{
+				return cmp;
+			}
+
+			return a.IsVoid.CompareTo(b.IsVoid);
+		});
+
+		RefStructIndexerSetup[] indexerArr = indexerMap
+			.OrderBy(kvp => kvp.Key)
+			.Select(kvp => new RefStructIndexerSetup(kvp.Key, kvp.Value.HasGetter, kvp.Value.HasSetter))
+			.ToArray();
+
+		return new RefStructAggregate(
+			new EquatableArray<MethodSetupKey>(methodArr),
+			new EquatableArray<RefStructIndexerSetup>(indexerArr));
+	}
+
+	private static EquatableArray<NamedMock> CreateNamedMocks(EquatableArray<MockClass> mocks)
+	{
+		MockClass[]? arr = mocks.AsArray();
+		if (arr is null || arr.Length == 0)
+		{
+			return new EquatableArray<NamedMock>([]);
+		}
+
 		HashSet<string> classNames = new(StringComparer.OrdinalIgnoreCase);
-		Dictionary<Class, string> baseClassNames = new(Class.EqualityComparer);
-		foreach (Class @class in mocksToGenerate.Where(IsValidMockDeclaration).SelectMany(x => x.AllImplementations()).Distinct(Class.EqualityComparer))
+		Dictionary<string, string> baseClassNames = new(StringComparer.Ordinal);
+		List<NamedMock> result = new(arr.Length);
+		HashSet<string> seenBaseClasses = new(StringComparer.Ordinal);
+
+		// Pass 1: assign disambiguated names to every distinct base/additional class. The order
+		// here must be deterministic so the same input set always yields the same names.
+		foreach (MockClass mc in arr)
 		{
-			string name = @class.GetClassNameWithoutDots();
+			if (!IsValidMockDeclaration(mc))
+			{
+				continue;
+			}
+
+			foreach (Class @class in mc.AllImplementations())
+			{
+				if (!seenBaseClasses.Add(@class.ClassFullName))
+				{
+					continue;
+				}
+
+				string baseName = @class.GetClassNameWithoutDots();
+				int suffix = 1;
+				string actualName = baseName;
+				while (!classNames.Add(actualName))
+				{
+					actualName = $"{baseName}_{suffix++}";
+				}
+
+				baseClassNames[@class.ClassFullName] = actualName;
+				result.Add(new NamedMock(actualName, actualName, @class, null));
+			}
+		}
+
+		// Pass 2: combination mocks (additional implementations).
+		foreach (MockClass mc in arr)
+		{
+			if (!IsValidMockDeclaration(mc) || mc.AdditionalImplementations.Count == 0)
+			{
+				continue;
+			}
+
+			string parentBaseName = mc.GetClassNameWithoutDots();
+			string combinedName = parentBaseName + "__" +
+			                      string.Join("__", mc.AdditionalImplementations.Select(t => t.GetClassNameWithoutDots()));
 			int suffix = 1;
-			string actualName = name;
+			string actualName = combinedName;
 			while (!classNames.Add(actualName))
 			{
-				actualName = $"{name}_{suffix++}";
+				actualName = $"{combinedName}_{suffix++}";
 			}
 
-			baseClassNames.Add(@class, actualName);
-			yield return (actualName, actualName, @class, null);
+			NamedClass[] additionalNamed = mc.AdditionalImplementations
+				.Select(additional => new NamedClass(LookupName(baseClassNames, additional), additional))
+				.ToArray();
+
+			result.Add(new NamedMock(actualName, LookupName(baseClassNames, mc), mc, new EquatableArray<NamedClass>(additionalNamed)));
 		}
 
-		foreach (MockClass mockClass in mocksToGenerate.Where(IsValidMockDeclaration).Where(x => x.AdditionalImplementations.Any()))
+		return new EquatableArray<NamedMock>(result.ToArray());
+
+		static string LookupName(Dictionary<string, string> map, Class @class)
 		{
-			string name = mockClass.GetClassNameWithoutDots() + "__" +
-			              string.Join("__", mockClass.AdditionalImplementations.Select(t => t.GetClassNameWithoutDots()));
-
-			int suffix = 1;
-			string actualName = name;
-			while (!classNames.Add(actualName))
-			{
-				actualName = $"{name}_{suffix++}";
-			}
-
-			yield return (actualName, GetValueOrDefault(baseClassNames, mockClass), mockClass, [
-				..mockClass.AdditionalImplementations
-					.Select(additional => (GetValueOrDefault(baseClassNames, additional), additional)),
-			]);
+			return map.TryGetValue(@class.ClassFullName, out string? v) ? v : "";
 		}
+	}
 
-		static string GetValueOrDefault(Dictionary<Class, string> dictionary, Class key)
+	private static EquatableArray<MockAsExtensionPair> CollectAsExtensionPairs(EquatableArray<NamedMock> mocks)
+	{
+		NamedMock[]? arr = mocks.AsArray();
+		if (arr is null)
 		{
-			if (dictionary.TryGetValue(key, out string? value))
+			return new EquatableArray<MockAsExtensionPair>([]);
+		}
+
+		HashSet<MockAsExtensionPair> seen = new();
+		List<MockAsExtensionPair> ordered = new();
+		foreach (NamedMock nm in arr)
+		{
+			if (nm.AdditionalClasses is not { } additional || additional.Count == 0)
 			{
-				return value;
+				continue;
 			}
 
-			return "";
+			NamedClass[]? additionalArr = additional.AsArray();
+			if (additionalArr is null || additionalArr.Length == 0)
+			{
+				continue;
+			}
+
+			NamedClass last = additionalArr[additionalArr.Length - 1];
+
+			AddIfNew(seen, ordered, MockAsExtensionPair.Create(nm.ParentName, nm.Mock.ClassFullName, last.Name, last.Class.ClassFullName));
+			for (int i = 0; i < additionalArr.Length - 1; i++)
+			{
+				AddIfNew(seen, ordered, MockAsExtensionPair.Create(additionalArr[i].Name, additionalArr[i].Class.ClassFullName, last.Name, last.Class.ClassFullName));
+			}
 		}
+
+		MockAsExtensionPair[] sorted = ordered.ToArray();
+		Array.Sort(sorted, static (a, b) =>
+		{
+			int cmp = StringComparer.Ordinal.Compare(a.SourceName, b.SourceName);
+			if (cmp != 0)
+			{
+				return cmp;
+			}
+
+			return StringComparer.Ordinal.Compare(a.OtherName, b.OtherName);
+		});
+		return new EquatableArray<MockAsExtensionPair>(sorted);
+
+		static void AddIfNew(HashSet<MockAsExtensionPair> set, List<MockAsExtensionPair> list, MockAsExtensionPair pair)
+		{
+			if (set.Add(pair))
+			{
+				list.Add(pair);
+			}
+		}
+	}
+
+	private static void EmitMockFile(SourceProductionContext context, NamedMock named, bool hasOverloadResolutionPriority)
+	{
+		string fileName = named.FileName;
+		Class @class = named.Mock;
+
+		if (@class is MockClass { Delegate: not null, } mockClass)
+		{
+			context.AddSource($"Mock.{fileName}.g.cs",
+				ToSource(Sources.Sources.MockDelegate(named.ParentName, mockClass, mockClass.Delegate)));
+			return;
+		}
+
+		if (named.AdditionalClasses is not { } additional || additional.Count == 0)
+		{
+			context.AddSource($"Mock.{fileName}.g.cs",
+				ToSource(Sources.Sources.MockClass(named.ParentName, @class, hasOverloadResolutionPriority)));
+			return;
+		}
+
+		NamedClass[] additionalNamed = additional.AsArray() ?? [];
+		(string Name, Class Class)[] additionalArr = new (string Name, Class Class)[additionalNamed.Length];
+		for (int i = 0; i < additionalNamed.Length; i++)
+		{
+			additionalArr[i] = (additionalNamed[i].Name, additionalNamed[i].Class);
+		}
+
+		context.AddSource($"Mock.{fileName}.g.cs",
+			ToSource(Sources.Sources.MockCombinationClass(fileName, named.ParentName, @class, additionalArr)));
 	}
 
 	private static bool IsValidMockDeclaration(MockClass mockClass)
 		=> (mockClass.IsInterface || mockClass.Constructors is { Count: > 0, }) &&
 		   mockClass.AdditionalImplementations.All(x => x.IsInterface);
+}
+
+internal readonly record struct MethodSetupKey(int Arity, bool IsVoid);
+
+internal readonly record struct RefStructIndexerSetup(int Arity, bool HasGetter, bool HasSetter);
+
+internal readonly record struct MockAsExtensionPair(
+	string SourceName,
+	string SourceFullName,
+	string OtherName,
+	string OtherFullName)
+{
+	public static MockAsExtensionPair Create(string nameA, string fullNameA, string nameB, string fullNameB)
+		=> string.CompareOrdinal(nameA, nameB) <= 0
+			? new MockAsExtensionPair(nameA, fullNameA, nameB, fullNameB)
+			: new MockAsExtensionPair(nameB, fullNameB, nameA, fullNameA);
+}
+
+internal sealed class RefStructAggregate : IEquatable<RefStructAggregate>
+{
+	public RefStructAggregate(
+		EquatableArray<MethodSetupKey> methodSetups,
+		EquatableArray<RefStructIndexerSetup> indexerSetups)
+	{
+		MethodSetups = methodSetups;
+		IndexerSetups = indexerSetups;
+	}
+
+	public EquatableArray<MethodSetupKey> MethodSetups { get; }
+	public EquatableArray<RefStructIndexerSetup> IndexerSetups { get; }
+
+	public bool Equals(RefStructAggregate? other)
+		=> other is not null &&
+		   MethodSetups.Equals(other.MethodSetups) &&
+		   IndexerSetups.Equals(other.IndexerSetups);
+
+	public override bool Equals(object? obj) => Equals(obj as RefStructAggregate);
+
+	public override int GetHashCode() => unchecked((MethodSetups.GetHashCode() * 17) + IndexerSetups.GetHashCode());
+}
+
+internal readonly record struct NamedClass(string Name, Class Class);
+
+internal sealed class NamedMock : IEquatable<NamedMock>
+{
+	public NamedMock(string fileName, string parentName, Class mock, EquatableArray<NamedClass>? additionalClasses)
+	{
+		FileName = fileName;
+		ParentName = parentName;
+		Mock = mock;
+		AdditionalClasses = additionalClasses;
+	}
+
+	public string FileName { get; }
+	public string ParentName { get; }
+	public Class Mock { get; }
+	public EquatableArray<NamedClass>? AdditionalClasses { get; }
+
+	public bool Equals(NamedMock? other)
+	{
+		if (other is null)
+		{
+			return false;
+		}
+
+		if (FileName != other.FileName || ParentName != other.ParentName)
+		{
+			return false;
+		}
+
+		if (!Mock.Equals(other.Mock))
+		{
+			return false;
+		}
+
+		if (AdditionalClasses is null)
+		{
+			return other.AdditionalClasses is null;
+		}
+
+		if (other.AdditionalClasses is null)
+		{
+			return false;
+		}
+
+		return AdditionalClasses.Value.Equals(other.AdditionalClasses.Value);
+	}
+
+	public override bool Equals(object? obj) => Equals(obj as NamedMock);
+
+	public override int GetHashCode()
+	{
+		int hash = FileName.GetHashCode();
+		hash = unchecked((hash * 17) + ParentName.GetHashCode());
+		hash = unchecked((hash * 17) + Mock.GetHashCode());
+		if (AdditionalClasses is { } additional)
+		{
+			hash = unchecked((hash * 17) + additional.GetHashCode());
+		}
+
+		return hash;
+	}
 }

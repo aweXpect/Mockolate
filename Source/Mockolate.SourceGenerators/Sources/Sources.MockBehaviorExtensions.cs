@@ -1,15 +1,11 @@
-using System.Collections.Immutable;
 using System.Text;
-using Mockolate.SourceGenerators.Entities;
 
 namespace Mockolate.SourceGenerators.Sources;
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
-	public static string MockBehaviorExtensions(ImmutableArray<MockClass> mockClasses)
+	public static string MockBehaviorExtensions(bool includeHttpClient)
 	{
-		bool includeHttpClient = mockClasses.Any(m => m.ClassFullName == "global::System.Net.Http.HttpClient");
 		StringBuilder sb = InitializeBuilder();
 
 		sb.Append("""
@@ -377,4 +373,3 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 }
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

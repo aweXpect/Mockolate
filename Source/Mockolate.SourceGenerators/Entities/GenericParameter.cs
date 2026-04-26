@@ -18,7 +18,7 @@ internal readonly record struct GenericParameter
 		NullableAnnotation = typeSymbol.ReferenceTypeConstraintNullableAnnotation;
 
 		ConstraintTypes = new EquatableArray<Type>(typeSymbol.ConstraintTypes
-			.Select(x => new Type(x)).ToArray());
+			.Select(Type.From).ToArray());
 	}
 
 	public EquatableArray<Type> ConstraintTypes { get; }
@@ -32,7 +32,6 @@ internal readonly record struct GenericParameter
 	public NullableAnnotation NullableAnnotation { get; }
 	public bool IsClass { get; }
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	public void AppendWhereConstraint(StringBuilder sb, string prefix, bool inheritsConstraints = false, bool isExplicitInterfaceImpl = false)
 	{
 		bool isUnconstrained = !ConstraintTypes.Any() && !IsStruct && !IsClass && !IsNotNull && !IsUnmanaged &&
@@ -119,5 +118,4 @@ internal readonly record struct GenericParameter
 			sb.Append("new()");
 		}
 	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 }

@@ -13,11 +13,11 @@ internal record Method
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
 		IsAbstract = methodSymbol.IsAbstract;
 		IsStatic = methodSymbol.IsStatic;
-		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : new Type(methodSymbol.ReturnType);
+		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : Type.From(methodSymbol.ReturnType);
 		Name = Helpers.EscapeIfKeyword(methodSymbol.ExplicitInterfaceImplementations.Length > 0 ? methodSymbol.ExplicitInterfaceImplementations[0].Name : methodSymbol.Name);
 		ContainingType = methodSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Parameters = new EquatableArray<MethodParameter>(
-			methodSymbol.Parameters.Select(x => new MethodParameter(x)).ToArray());
+			methodSymbol.Parameters.Select(MethodParameter.From).ToArray());
 
 		if (methodSymbol.IsGenericMethod)
 		{

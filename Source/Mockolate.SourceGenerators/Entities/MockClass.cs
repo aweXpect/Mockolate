@@ -3,8 +3,10 @@ using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
-internal record MockClass : Class
+internal sealed class MockClass : Class, IEquatable<MockClass>
 {
+	private readonly int _mockSurfaceHash;
+
 	public MockClass(ITypeSymbol[] types, IAssemblySymbol sourceAssembly) : base(types[0], sourceAssembly)
 	{
 		AdditionalImplementations = new EquatableArray<Class>(
@@ -23,6 +25,8 @@ internal record MockClass : Class
 				Delegate = new Method(namedTypeSymbol.DelegateInvokeMethod, null, sourceAssembly);
 			}
 		}
+
+		_mockSurfaceHash = ComputeMockSurfaceHash();
 	}
 
 	public Method? Delegate { get; }
@@ -38,5 +42,42 @@ internal record MockClass : Class
 		{
 			yield return additionalImplementation;
 		}
+	}
+
+	/// <summary>
+	///     MockClass equality is keyed on <see cref="Class.ClassFullName" /> plus a content-derived
+	///     hash that folds the base surface together with the mock-only fields
+	///     (<see cref="AdditionalImplementations" />, <see cref="Constructors" />,
+	///     <see cref="Delegate" />). Two mocks of the same root with different additional
+	///     interfaces, different constructor surfaces, or different delegate signatures must hash
+	///     apart so Roslyn's incremental cache invalidates when any of those change.
+	/// </summary>
+	public bool Equals(MockClass? other)
+		=> ReferenceEquals(this, other) ||
+		   (other is not null &&
+		    _mockSurfaceHash == other._mockSurfaceHash &&
+		    ClassFullName == other.ClassFullName);
+
+	public override bool Equals(Class? other) => other is MockClass mc && Equals(mc);
+
+	public override bool Equals(object? obj) => Equals(obj as MockClass);
+
+	public override int GetHashCode() => _mockSurfaceHash;
+
+	private int ComputeMockSurfaceHash()
+	{
+		int hash = base.GetHashCode();
+		hash = unchecked((hash * 17) + AdditionalImplementations.GetHashCode());
+		if (Constructors is { } constructors)
+		{
+			hash = unchecked((hash * 17) + constructors.GetHashCode());
+		}
+
+		if (Delegate is { } @delegate)
+		{
+			hash = unchecked((hash * 17) + @delegate.GetHashCode());
+		}
+
+		return hash;
 	}
 }
