@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
 using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
@@ -16,21 +14,15 @@ namespace Mockolate.Interactions;
 public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer getter access.
@@ -38,17 +30,12 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 	public void Append(T1 parameter1)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -66,17 +53,12 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 	public void Append(IndexerGetterAccess<T1> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -84,51 +66,17 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1>(r.P1);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -137,19 +85,17 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1>(r.P1);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -163,18 +109,16 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 	public int ConsumeMatching(IParameterMatch<T1> match1)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -182,7 +126,7 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;
@@ -200,21 +144,15 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer getter access.
@@ -222,18 +160,13 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 	public void Append(T1 parameter1, T2 parameter2)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].P2 = parameter2;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.P2 = parameter2;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -247,18 +180,13 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 	public void Append(IndexerGetterAccess<T1, T2> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].P2 = access.Parameter2;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.P2 = access.Parameter2;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -266,51 +194,17 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1, T2>(r.P1, r.P2);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -319,19 +213,17 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1, T2>(r.P1, r.P2);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -345,18 +237,16 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -364,7 +254,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;
@@ -383,21 +273,15 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer getter access.
@@ -405,19 +289,14 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 	public void Append(T1 parameter1, T2 parameter2, T3 parameter3)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].P2 = parameter2;
-		records[slot].P3 = parameter3;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.P2 = parameter2;
+		r.P3 = parameter3;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -431,19 +310,14 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 	public void Append(IndexerGetterAccess<T1, T2, T3> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].P2 = access.Parameter2;
-		records[slot].P3 = access.Parameter3;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.P2 = access.Parameter2;
+		r.P3 = access.Parameter3;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -451,51 +325,17 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1, T2, T3>(r.P1, r.P2, r.P3);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -504,19 +344,17 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1, T2, T3>(r.P1, r.P2, r.P3);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -530,18 +368,16 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -549,7 +385,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;
@@ -569,21 +405,15 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer getter access.
@@ -591,20 +421,15 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 	public void Append(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].P2 = parameter2;
-		records[slot].P3 = parameter3;
-		records[slot].P4 = parameter4;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.P2 = parameter2;
+		r.P3 = parameter3;
+		r.P4 = parameter4;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -618,20 +443,15 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 	public void Append(IndexerGetterAccess<T1, T2, T3, T4> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].P2 = access.Parameter2;
-		records[slot].P3 = access.Parameter3;
-		records[slot].P4 = access.Parameter4;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.P2 = access.Parameter2;
+		r.P3 = access.Parameter3;
+		r.P4 = access.Parameter4;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -639,51 +459,17 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1, T2, T3, T4>(r.P1, r.P2, r.P3, r.P4);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -692,19 +478,17 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerGetterAccess<T1, T2, T3, T4>(r.P1, r.P2, r.P3, r.P4);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -718,18 +502,16 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && match4.Matches(r.P4))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -737,7 +519,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;
@@ -758,21 +540,15 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer setter access.
@@ -780,18 +556,13 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 	public void Append(T1 parameter1, TValue value)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].Value = value;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.Value = value;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -805,18 +576,13 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 	public void Append(IndexerSetterAccess<T1, TValue> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].Value = access.TypedValue;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.Value = access.TypedValue;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -824,51 +590,17 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, TValue>(r.P1, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -877,19 +609,17 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, TValue>(r.P1, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -904,18 +634,16 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && matchValue.Matches(r.Value))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -923,7 +651,7 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;
@@ -942,21 +670,15 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer setter access.
@@ -964,19 +686,14 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 	public void Append(T1 parameter1, T2 parameter2, TValue value)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].P2 = parameter2;
-		records[slot].Value = value;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.P2 = parameter2;
+		r.Value = value;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -990,19 +707,14 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 	public void Append(IndexerSetterAccess<T1, T2, TValue> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].P2 = access.Parameter2;
-		records[slot].Value = access.TypedValue;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.P2 = access.Parameter2;
+		r.Value = access.TypedValue;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -1010,51 +722,17 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, T2, TValue>(r.P1, r.P2, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -1063,19 +741,17 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, T2, TValue>(r.P1, r.P2, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -1090,18 +766,16 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && matchValue.Matches(r.Value))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -1109,7 +783,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;
@@ -1129,21 +803,15 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer setter access.
@@ -1151,20 +819,15 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 	public void Append(T1 parameter1, T2 parameter2, T3 parameter3, TValue value)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].P2 = parameter2;
-		records[slot].P3 = parameter3;
-		records[slot].Value = value;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.P2 = parameter2;
+		r.P3 = parameter3;
+		r.Value = value;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -1178,20 +841,15 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 	public void Append(IndexerSetterAccess<T1, T2, T3, TValue> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].P2 = access.Parameter2;
-		records[slot].P3 = access.Parameter3;
-		records[slot].Value = access.TypedValue;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.P2 = access.Parameter2;
+		r.P3 = access.Parameter3;
+		r.Value = access.TypedValue;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -1199,51 +857,17 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, T2, T3, TValue>(r.P1, r.P2, r.P3, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -1252,19 +876,17 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, T2, T3, TValue>(r.P1, r.P2, r.P3, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -1279,18 +901,16 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && matchValue.Matches(r.Value))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -1298,7 +918,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;
@@ -1319,21 +939,15 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an indexer setter access.
@@ -1341,21 +955,16 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	public void Append(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, TValue value)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = parameter1;
-		records[slot].P2 = parameter2;
-		records[slot].P3 = parameter3;
-		records[slot].P4 = parameter4;
-		records[slot].Value = value;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = parameter1;
+		r.P2 = parameter2;
+		r.P3 = parameter3;
+		r.P4 = parameter4;
+		r.Value = value;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -1369,21 +978,16 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	public void Append(IndexerSetterAccess<T1, T2, T3, T4, TValue> access)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].P1 = access.Parameter1;
-		records[slot].P2 = access.Parameter2;
-		records[slot].P3 = access.Parameter3;
-		records[slot].P4 = access.Parameter4;
-		records[slot].Value = access.TypedValue;
-		records[slot].Boxed = access;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.P1 = access.Parameter1;
+		r.P2 = access.Parameter2;
+		r.P3 = access.Parameter3;
+		r.P4 = access.Parameter4;
+		r.Value = access.TypedValue;
+		r.Boxed = access;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -1391,51 +995,17 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, T2, T3, T4, TValue>(r.P1, r.P2, r.P3, r.P4, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -1444,19 +1014,17 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= new IndexerSetterAccess<T1, T2, T3, T4, TValue>(r.P1, r.P2, r.P3, r.P4, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
@@ -1471,18 +1039,16 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && match4.Matches(r.P4) && matchValue.Matches(r.Value))
 				{
 					matches++;
-					verified[i] = true;
+					_storage.VerifiedUnderLock(slot) = true;
 				}
 			}
 		}
@@ -1490,7 +1056,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 		return matches;
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public T1 P1;

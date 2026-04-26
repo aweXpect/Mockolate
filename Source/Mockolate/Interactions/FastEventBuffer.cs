@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using System.Threading;
 
 namespace Mockolate.Interactions;
 
@@ -30,22 +28,16 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 	private readonly FastEventBufferKind _kind;
-	private readonly MockolateLock _growLock = new();
-	private Record[] _records;
-	private bool[] _verifiedSlots;
-	private int _reserved;
-	private int _published;
+	private readonly ChunkedSlotStorage<Record> _storage = new();
 
 	internal FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
 	{
 		_owner = owner;
 		_kind = kind;
-		_records = new Record[4];
-		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _published);
+	public int Count => _storage.Count;
 
 	/// <summary>
 	///     Records an event subscription or unsubscription.
@@ -53,19 +45,14 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	public void Append(string name, object? target, MethodInfo method)
 	{
 		long seq = _owner.NextSequence();
-		int slot = Interlocked.Increment(ref _reserved) - 1;
-		Record[] records = Volatile.Read(ref _records);
-		if (slot >= records.Length)
-		{
-			records = GrowToFit(slot);
-		}
-
-		records[slot].Seq = seq;
-		records[slot].Name = name;
-		records[slot].Target = target;
-		records[slot].Method = method;
-		records[slot].Boxed = null;
-		Interlocked.Increment(ref _published);
+		int slot = _storage.Reserve();
+		ref Record r = ref _storage.SlotForWrite(slot);
+		r.Seq = seq;
+		r.Name = name;
+		r.Target = target;
+		r.Method = method;
+		r.Boxed = null;
+		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
@@ -73,51 +60,17 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 		}
 	}
 
-	private Record[] GrowToFit(int slot)
-	{
-		lock (_growLock)
-		{
-			Record[] records = _records;
-			while (slot >= records.Length)
-			{
-				Record[] bigger = new Record[records.Length * 2];
-				Array.Copy(records, bigger, records.Length);
-				records = bigger;
-			}
-
-			Volatile.Write(ref _records, records);
-			if (_verifiedSlots.Length < records.Length)
-			{
-				bool[] biggerBits = new bool[records.Length];
-				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
-				_verifiedSlots = biggerBits;
-			}
-
-			return records;
-		}
-	}
-
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
-	public void Clear()
-	{
-		lock (_growLock)
-		{
-			Array.Clear(_records, 0, _published);
-			_reserved = 0;
-			Volatile.Write(ref _published, 0);
-			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
-		}
-	}
+	public void Clear() => _storage.Clear();
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= _kind == FastEventBufferKind.Subscribe
 					? new EventSubscription(r.Name, r.Target, r.Method)
 					: (IInteraction)new EventUnsubscription(r.Name, r.Target, r.Method);
@@ -128,19 +81,17 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 
 	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			Record[] records = _records;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				if (verified[i])
+				if (_storage.VerifiedUnderLock(slot))
 				{
 					continue;
 				}
 
-				ref Record r = ref records[i];
+				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= _kind == FastEventBufferKind.Subscribe
 					? new EventSubscription(r.Name, r.Target, r.Method)
 					: (IInteraction)new EventUnsubscription(r.Name, r.Target, r.Method);
@@ -158,20 +109,19 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	/// </summary>
 	public int ConsumeMatching()
 	{
-		lock (_growLock)
+		lock (_storage.Lock)
 		{
-			int n = _published;
-			bool[] verified = _verifiedSlots;
-			for (int i = 0; i < n; i++)
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
 			{
-				verified[i] = true;
+				_storage.VerifiedUnderLock(slot) = true;
 			}
 
 			return n;
 		}
 	}
 
-	private struct Record
+	internal struct Record
 	{
 		public long Seq;
 		public string Name;
