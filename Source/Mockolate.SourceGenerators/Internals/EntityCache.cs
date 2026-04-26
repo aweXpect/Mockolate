@@ -42,8 +42,6 @@ internal sealed class EntityCache
 		return new Scope(previous);
 	}
 
-	private static void ExitScope(EntityCache? previous) => Current = previous;
-
 	public Type GetOrAddType(ITypeSymbol symbol, Func<ITypeSymbol, Type> factory)
 		=> _types.GetOrAdd(symbol, factory);
 
@@ -52,6 +50,8 @@ internal sealed class EntityCache
 
 	public readonly struct Scope : IDisposable
 	{
+		private static void ExitScope(EntityCache? previous) => Current = previous;
+		
 		private readonly EntityCache? _previous;
 
 		internal Scope(EntityCache? previous)
