@@ -542,6 +542,7 @@ public sealed partial class MockTests
 			         void @event(int @params);
 			         int @void<@class>(int @ref);
 			         string this[int @params, string @void] { get; set; }
+			         event EventHandler @event;
 			     }
 			     """);
 
@@ -550,7 +551,10 @@ public sealed partial class MockTests
 			.Contains("public string @return()").And
 			.Contains("public void @event(int @params)").And
 			.Contains("public int @void<@class>(int @ref)").And
-			.Contains("public string this[int @params, string @void]");
+			.Contains("public string this[int @params, string @void]").And
+			.Contains("public event global::System.EventHandler @event").And
+			.Contains("private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_event;").And
+			.DoesNotContain("_mockolateEvent_global__MyCode_IMyService_@event");;
 	}
 
 	[Fact]
