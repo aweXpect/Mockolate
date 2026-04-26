@@ -205,6 +205,40 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task ClassWithBaseConstructorAlreadyAnnotatedSetsRequiredMembers_ShouldNotDuplicateAttribute()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System.Diagnostics.CodeAnalysis;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = AnnotatedShape.CreateMock();
+				         }
+				     }
+
+				     public abstract class AnnotatedShape
+				     {
+				         public required string Name { get; init; }
+
+				         [SetsRequiredMembers]
+				         protected AnnotatedShape() { }
+
+				         public abstract int Compute();
+				     }
+				     """);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.AnnotatedShape.g.cs").WhoseValue
+				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Once();
+		}
+
+		[Fact]
 		public async Task InterfaceWithEvents_ShouldIncludeRaiseRemarkBullet()
 		{
 			GeneratorResult result = Generator
