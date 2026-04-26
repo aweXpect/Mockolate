@@ -1148,7 +1148,7 @@ public partial class MockGeneratorTests
 	[Fact]
 	public async Task WhenTypedCreateMockOverloadIsEmitted_ConstructorCrefShouldResolve()
 	{
-		const string expectedCref = "global::MyCode.MyService.MyService(int, string)";
+		const string expectedCref = "global::MyCode.MyService(int, string)";
 
 		GeneratorResult result = Generator
 			.Run("""
@@ -1239,5 +1239,36 @@ public partial class MockGeneratorTests
 
 		await That(result.Sources).ContainsKey("Mock.HttpMessageHandler.g.cs").And
 			.ContainsKey("Mock.HttpClient.g.cs");
+	}
+
+	[Fact]
+	public async Task WhenTypedCreateMockOverloadIsEmittedForExternalType_ConstructorCrefShouldResolve()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Net.Http;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = HttpClient.CreateMock(default(HttpMessageHandler));
+			         }
+			     }
+			     """, DocumentationMode.Diagnose, typeof(HttpClient));
+
+		await That(result.Sources).ContainsKey("Mock.HttpClient.g.cs").WhoseValue
+			.Contains("<see cref=\"global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)\">")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("HttpClient.HttpClient(")
+			.IgnoringNewlineStyle();
+
+		string[] crefFailures = result.Diagnostics
+			.Where(d => d.Contains("CS1574") || d.Contains("CS1584") || d.Contains("CS1658"))
+			.ToArray();
+		await That(crefFailures).IsEmpty();
 	}
 }

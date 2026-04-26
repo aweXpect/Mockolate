@@ -1580,16 +1580,16 @@ internal static partial class Sources
 	/// <summary>
 	///     Builds an XML-doc cref string and a matching short display text for the given
 	///     <paramref name="constructor" /> on <paramref name="class" />. The cref has the form
-	///     <c>{class-cref}.{simple-name}({fully-qualified-param-types})</c>; the display has the
-	///     form <c>{simple-name}({short-param-types})</c>, intended as the inner text of
+	///     <c>{class-cref}({fully-qualified-param-types})</c>; the display has the form
+	///     <c>{simple-name}({short-param-types})</c>, intended as the inner text of
 	///     <c>&lt;see cref="..."&gt;...&lt;/see&gt;</c> so the rendered prose reads
-	///     <c>the MyClass(int) constructor</c> rather than <c>the MyClass.MyClass(int) constructor</c>.
+	///     <c>the MyClass(int) constructor</c>.
 	///     Returns <see langword="null" /> when no valid cref can be produced.
 	/// </summary>
 	/// <remarks>
 	///     Generic classes are skipped because the cref type-parameter-list syntax (e.g. <c>{T}</c>)
 	///     expects identifier tokens, not the concrete type arguments that closed generics carry —
-	///     emitting <c>MyClass{int}.MyClass(int)</c> would surface CS1584/CS1658 on the consumer side.
+	///     emitting <c>MyClass{int}(int)</c> would surface CS1584/CS1658 on the consumer side.
 	/// </remarks>
 	private static (string Cref, string Display)? BuildConstructorCref(Class @class, Method constructor)
 	{
@@ -1605,7 +1605,7 @@ internal static partial class Sources
 
 		StringBuilder cref = new();
 		StringBuilder display = new();
-		cref.Append(fullName).Append('.').Append(simpleName).Append('(');
+		cref.Append(fullName).Append('(');
 		display.Append(simpleName).Append('(');
 		bool first = true;
 		foreach (MethodParameter parameter in constructor.Parameters)
