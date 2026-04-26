@@ -5206,6 +5206,35 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
+
+		bool canUseTypedVerify = useFastForMethod
+			&& !useParameters
+			&& method.Parameters.Count <= 4
+			&& (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
+			&& (valueFlags is null || !valueFlags.Any(x => x))
+			&& !method.Parameters.Any(p => p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref || p.RefKind == RefKind.RefReadOnlyParameter);
+
+		if (canUseTypedVerify)
+		{
+			sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".VerifyMethod<").Append(verifyName);
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", ").Append(parameter.ToTypeOrWrapper());
+			}
+
+			sb.Append(">(this, ").Append(methodMemberId).Append(", ").Append(method.GetUniqueNameString());
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				string paramType = parameter.ToTypeOrWrapper();
+				sb.Append(", ").Append(parameter.Name).Append(" is null ? ")
+					.Append("(global::Mockolate.Parameters.IParameterMatch<").Append(paramType).Append(">)global::Mockolate.It.Is<").Append(paramType).Append(">(default!) : ")
+					.Append("CovariantParameterAdapter<").Append(paramType).Append(">.Wrap(").Append(parameter.Name).Append(")");
+			}
+
+			sb.Append(", () => $\"").Append(method.Name).Append("(").Append(string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}"))).Append(")\");").AppendLine();
+			return;
+		}
+
 		sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".VerifyMethod<").Append(verifyName)
 			.Append(", global::Mockolate.Interactions.MethodInvocation");
 		if (method.Parameters.Count > 0)

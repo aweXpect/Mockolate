@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
 
@@ -16,12 +17,13 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastMethod0Buffer(FastMockInteractions owner)
 	{
@@ -30,7 +32,7 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records a parameterless method call.
@@ -38,45 +40,73 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 	public void Append(string name)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= new MethodInvocation(r.Name);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
 	}
+
+	/// <summary>
+	///     Returns the number of recorded calls. Parameterless overload of the typed
+	///     <see cref="FastMethod1Buffer{T1}.CountMatching(IParameterMatch{T1})" /> family — provided so
+	///     count-only verification can dispatch uniformly across arities without allocating a boxed
+	///     <see cref="IInteraction" /> per recorded call.
+	/// </summary>
+	public int CountMatching() => Volatile.Read(ref _published);
 
 	private struct Record
 	{
@@ -97,12 +127,13 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastMethod1Buffer(FastMockInteractions owner)
 	{
@@ -111,7 +142,7 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records a 1-parameter method call.
@@ -119,45 +150,90 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 	public void Append(string name, T1 parameter1)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].P1 = parameter1;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].P1 = parameter1;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= new MethodInvocation<T1>(r.Name, r.P1);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
+	}
+
+	/// <summary>
+	///     Counts recorded calls whose parameter satisfies <paramref name="match1" />. Walks the typed
+	///     storage in place and never allocates an <see cref="IInteraction" />, so count-only
+	///     verification is allocation-free in the common case.
+	/// </summary>
+	public int CountMatching(IParameterMatch<T1> match1)
+	{
+		int matches = 0;
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = 0; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				if (match1.Matches(r.P1))
+				{
+					matches++;
+				}
+			}
+		}
+
+		return matches;
 	}
 
 	private struct Record
@@ -180,12 +256,13 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastMethod2Buffer(FastMockInteractions owner)
 	{
@@ -194,7 +271,7 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records a 2-parameter method call.
@@ -202,46 +279,91 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 	public void Append(string name, T1 parameter1, T2 parameter2)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].P1 = parameter1;
-			_records[n].P2 = parameter2;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].P1 = parameter1;
+		records[slot].P2 = parameter2;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= new MethodInvocation<T1, T2>(r.Name, r.P1, r.P2);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
+	}
+
+	/// <summary>
+	///     Counts recorded calls whose parameters satisfy the supplied matchers. Allocation-free
+	///     fast path for count-only verification; mirrors
+	///     <see cref="FastMethod1Buffer{T1}.CountMatching(IParameterMatch{T1})" />.
+	/// </summary>
+	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2)
+	{
+		int matches = 0;
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = 0; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				if (match1.Matches(r.P1) && match2.Matches(r.P2))
+				{
+					matches++;
+				}
+			}
+		}
+
+		return matches;
 	}
 
 	private struct Record
@@ -265,12 +387,13 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastMethod3Buffer(FastMockInteractions owner)
 	{
@@ -279,7 +402,7 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records a 3-parameter method call.
@@ -287,47 +410,91 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 	public void Append(string name, T1 parameter1, T2 parameter2, T3 parameter3)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].P1 = parameter1;
-			_records[n].P2 = parameter2;
-			_records[n].P3 = parameter3;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].P1 = parameter1;
+		records[slot].P2 = parameter2;
+		records[slot].P3 = parameter3;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= new MethodInvocation<T1, T2, T3>(r.Name, r.P1, r.P2, r.P3);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
+	}
+
+	/// <summary>
+	///     Counts recorded calls whose parameters satisfy the supplied matchers. Allocation-free
+	///     fast path for count-only verification.
+	/// </summary>
+	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3)
+	{
+		int matches = 0;
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = 0; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3))
+				{
+					matches++;
+				}
+			}
+		}
+
+		return matches;
 	}
 
 	private struct Record
@@ -352,12 +519,13 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastMethod4Buffer(FastMockInteractions owner)
 	{
@@ -366,7 +534,7 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records a 4-parameter method call.
@@ -374,48 +542,92 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 	public void Append(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].P1 = parameter1;
-			_records[n].P2 = parameter2;
-			_records[n].P3 = parameter3;
-			_records[n].P4 = parameter4;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].P1 = parameter1;
+		records[slot].P2 = parameter2;
+		records[slot].P3 = parameter3;
+		records[slot].P4 = parameter4;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= new MethodInvocation<T1, T2, T3, T4>(r.Name, r.P1, r.P2, r.P3, r.P4);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
+	}
+
+	/// <summary>
+	///     Counts recorded calls whose parameters satisfy the supplied matchers. Allocation-free
+	///     fast path for count-only verification.
+	/// </summary>
+	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4)
+	{
+		int matches = 0;
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = 0; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && match4.Matches(r.P4))
+				{
+					matches++;
+				}
+			}
+		}
+
+		return matches;
 	}
 
 	private struct Record

@@ -57,11 +57,54 @@ public class FastMockInteractions : IMockInteractions
 	/// <inheritdoc cref="IMockInteractions.SkipInteractionRecording" />
 	public bool SkipInteractionRecording { get; }
 
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private EventHandler? _interactionAdded;
+
 	/// <inheritdoc cref="IMockInteractions.InteractionAdded" />
-	public event EventHandler? InteractionAdded;
+	public event EventHandler? InteractionAdded
+	{
+		add
+		{
+			EventHandler? current = Volatile.Read(ref _interactionAdded);
+			while (true)
+			{
+				EventHandler? combined = (EventHandler?)Delegate.Combine(current, value);
+				EventHandler? actual = Interlocked.CompareExchange(ref _interactionAdded, combined, current);
+				if (ReferenceEquals(actual, current))
+				{
+					break;
+				}
+
+				current = actual;
+			}
+		}
+		remove
+		{
+			EventHandler? current = Volatile.Read(ref _interactionAdded);
+			while (true)
+			{
+				EventHandler? removed = (EventHandler?)Delegate.Remove(current, value);
+				EventHandler? actual = Interlocked.CompareExchange(ref _interactionAdded, removed, current);
+				if (ReferenceEquals(actual, current))
+				{
+					break;
+				}
+
+				current = actual;
+			}
+		}
+	}
 
 	/// <inheritdoc cref="IMockInteractions.OnClearing" />
 	public event EventHandler? OnClearing;
+
+	/// <summary>
+	///     <see langword="true" /> when at least one subscriber has registered with
+	///     <see cref="InteractionAdded" />. Buffer Append paths read this flag to skip
+	///     <see cref="RaiseAdded" /> when nothing is listening, which is the common case (the event is
+	///     used today only by <c>Within(TimeSpan)</c> waiting).
+	/// </summary>
+	public bool HasInteractionAddedSubscribers => Volatile.Read(ref _interactionAdded) is not null;
 
 	/// <summary>
 	///     The number of interactions contained in the collection across all per-member buffers.
@@ -91,14 +134,15 @@ public class FastMockInteractions : IMockInteractions
 
 	/// <summary>
 	///     Fires the <see cref="InteractionAdded" /> event. Buffer implementations call this after
-	///     publishing a new record.
+	///     publishing a new record, but only when <see cref="HasInteractionAddedSubscribers" /> is
+	///     <see langword="true" /> — the field check is a single read; the call site is a method call.
 	/// </summary>
 	/// <remarks>
 	///     Public because the source generator emits arity-N buffers in the consumer assembly that
 	///     need to drive the event. Not intended for end-user code.
 	/// </remarks>
 	public void RaiseAdded()
-		=> InteractionAdded?.Invoke(this, EventArgs.Empty);
+		=> Volatile.Read(ref _interactionAdded)?.Invoke(this, EventArgs.Empty);
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	/// <remarks>

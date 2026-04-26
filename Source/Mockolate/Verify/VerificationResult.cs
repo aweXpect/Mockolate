@@ -32,6 +32,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	private readonly Func<string> _expectationFactory;
 	private readonly IMockInteractions _interactions;
 	private readonly IFastMemberBuffer? _buffer;
+	private readonly IFastCountSource? _fastCountSource;
 	private Func<IInteraction, bool> _predicate;
 	private readonly TVerify _verify;
 
@@ -72,6 +73,21 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		_expectationFactory = expectation;
 	}
 
+	internal VerificationResult(TVerify verify,
+		IMockInteractions interactions,
+		IFastMemberBuffer? buffer,
+		IFastCountSource? fastCountSource,
+		Func<IInteraction, bool> predicate,
+		Func<string> expectation)
+	{
+		_verify = verify;
+		_interactions = interactions;
+		_buffer = buffer;
+		_fastCountSource = fastCountSource;
+		_predicate = predicate;
+		_expectationFactory = expectation;
+	}
+
 	#region IVerificationResult<TVerify>
 
 	/// <inheritdoc cref="IVerificationResult{TVerify}.Object" />
@@ -81,11 +97,20 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	#endregion
 
 	internal VerificationResult<T> Map<T>(T mock)
-		=> _buffer is null
-			? new(mock, _interactions, _predicate, _expectationFactory)
-			: new(mock, _interactions, _buffer, _predicate, _expectationFactory);
+	{
+		if (_buffer is null && _fastCountSource is null)
+		{
+			return new VerificationResult<T>(mock, _interactions, _predicate, _expectationFactory);
+		}
+
+		return new VerificationResult<T>(mock, _interactions, _buffer, _fastCountSource, _predicate, _expectationFactory);
+	}
 
 	private protected bool HasBuffer => _buffer is not null;
+
+	private bool _useCountAll;
+
+	private protected void EnableCountAll() => _useCountAll = true;
 
 	private void ReplacePredicate(Func<IInteraction, bool> predicate)
 		=> _predicate = predicate;
@@ -182,9 +207,10 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		///     expected interactions to occur.
 		/// </summary>
 		public Awaitable(VerificationResult<TVerify> inner, TimeSpan timeout)
-			: base(inner._verify, inner._interactions, inner._buffer, inner._predicate, inner._expectationFactory)
+			: base(inner._verify, inner._interactions, inner._buffer, inner._fastCountSource, inner._predicate, inner._expectationFactory)
 		{
 			_timeout = timeout;
+			if (inner._useCountAll) EnableCountAll();
 		}
 
 		/// <summary>
@@ -193,9 +219,10 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		///     expected interactions to occur.
 		/// </summary>
 		public Awaitable(VerificationResult<TVerify> inner, CancellationToken cancellationToken)
-			: base(inner._verify, inner._interactions, inner._buffer, inner._predicate, inner._expectationFactory)
+			: base(inner._verify, inner._interactions, inner._buffer, inner._fastCountSource, inner._predicate, inner._expectationFactory)
 		{
 			_cancellationToken = cancellationToken;
+			if (inner._useCountAll) EnableCountAll();
 		}
 
 		/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
@@ -211,6 +238,101 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			}
 
 			return VerifyAsync(predicate).ConfigureAwait(false).GetAwaiter().GetResult();
+		}
+
+		/// <inheritdoc cref="IVerificationResult.VerifyCount(Func{int, Boolean})" />
+		bool IVerificationResult.VerifyCount(Func<int, bool> countPredicate)
+		{
+			ThrowIfRecordingDisabled(_interactions);
+			if (_fastCountSource is not null)
+			{
+				int count = _useCountAll ? _fastCountSource.CountAll() : _fastCountSource.Count();
+				if (countPredicate(count))
+				{
+					return true;
+				}
+
+				return VerifyCountAsync(countPredicate).ConfigureAwait(false).GetAwaiter().GetResult();
+			}
+
+			IInteraction[] matchingInteractions = CollectMatching();
+			_interactions.Verified(matchingInteractions);
+			if (countPredicate(matchingInteractions.Length))
+			{
+				return true;
+			}
+
+			return VerifyAsync(arr => countPredicate(arr.Length)).ConfigureAwait(false).GetAwaiter().GetResult();
+		}
+
+		private async Task<bool> VerifyCountAsync(Func<int, bool> countPredicate)
+		{
+			try
+			{
+				CancellationTokenSource? cts = null;
+				CancellationToken token;
+				if (_timeout is null)
+				{
+					token = _cancellationToken!.Value;
+				}
+				else
+				{
+					if (_cancellationToken is not null)
+					{
+						cts = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken.Value);
+					}
+					else
+					{
+						cts = new CancellationTokenSource();
+					}
+
+					cts.CancelAfter(_timeout.Value);
+					token = cts.Token;
+				}
+
+				SemaphoreSlim semaphore = new(0);
+				try
+				{
+					_interactions.InteractionAdded += OnInteractionAdded;
+					do
+					{
+						int count = _useCountAll ? _fastCountSource!.CountAll() : _fastCountSource!.Count();
+						if (countPredicate(count))
+						{
+							return true;
+						}
+
+						await semaphore.WaitAsync(token).ConfigureAwait(false);
+					} while (true);
+				}
+				finally
+				{
+					_interactions.InteractionAdded -= OnInteractionAdded;
+					cts?.Cancel();
+					cts?.Dispose();
+					semaphore.Dispose();
+				}
+
+				void OnInteractionAdded(object? sender, EventArgs eventArgs)
+				{
+					try
+					{
+						semaphore.Release();
+					}
+					catch (ObjectDisposedException)
+					{
+					}
+				}
+			}
+			catch (OperationCanceledException ex)
+			{
+				if (_cancellationToken?.IsCancellationRequested == true)
+				{
+					throw new MockVerificationTimeoutException(null, ex);
+				}
+
+				throw new MockVerificationTimeoutException(_timeout, ex);
+			}
 		}
 
 		/// <inheritdoc cref="IAsyncVerificationResult.VerifyAsync(Func{IInteraction[], Boolean})" />
@@ -330,6 +452,21 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		return predicate(matchingInteractions);
 	}
 
+	/// <inheritdoc cref="IVerificationResult.VerifyCount(Func{int, Boolean})" />
+	bool IVerificationResult.VerifyCount(Func<int, bool> countPredicate)
+	{
+		ThrowIfRecordingDisabled(_interactions);
+		if (_fastCountSource is not null)
+		{
+			int count = _useCountAll ? _fastCountSource.CountAll() : _fastCountSource.Count();
+			return countPredicate(count);
+		}
+
+		IInteraction[] matchingInteractions = CollectMatching();
+		_interactions.Verified(matchingInteractions);
+		return countPredicate(matchingInteractions.Length);
+	}
+
 	#endregion
 
 	/// <summary>
@@ -380,11 +517,25 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			_methodName = methodName;
 		}
 
+		internal IgnoreParameters(
+			TVerify verify,
+			IMockInteractions interactions,
+			IFastMemberBuffer? buffer,
+			IFastCountSource? fastCountSource,
+			string methodName,
+			Func<IInteraction, bool> predicate,
+			Func<string> expectation)
+			: base(verify, interactions, buffer, fastCountSource, predicate, expectation)
+		{
+			_methodName = methodName;
+		}
+
 		/// <summary>
 		///     Replaces the explicit parameter matcher with <see cref="Match.AnyParameters()" />.
 		/// </summary>
 		public VerificationResult<TVerify> AnyParameters()
 		{
+			EnableCountAll();
 			if (HasBuffer)
 			{
 				ReplacePredicate(static _ => true);

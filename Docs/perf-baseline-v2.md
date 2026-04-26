@@ -245,3 +245,23 @@ The functional confirmation that the typed buffers are wired comes from
 verify each member kind's `FastPropertyGetterBuffer` / `FastPropertySetterBuffer<T>` /
 `FastIndexerGetterBuffer<T…>` / `FastIndexerSetterBuffer<T…, TVal>` / `FastEventBuffer`
 sees the recordings, with `SkipInteractionRecording = true` short-circuiting them.
+
+## After Verify-Fast-Path follow-up (Phase 1.1 + 1.2 + 2 + 3 + 4 partial)
+
+Implemented per [Verify-Fast-Path-Plan.md](./Verify-Fast-Path-Plan.md):
+
+- **Phase 1.1** — `CountMatching(IParameterMatch<T1>, …)` on every per-member buffer (methods 0–4, property get/set, indexer get/set 1–4 keys, event). Generator emits the same for arity 5+ methods. Allocation-free count walk that avoids `IFastMemberBuffer.AppendBoxed`.
+- **Phase 1.2** — Lock-free `Append`. Slot reservation via `Interlocked.Increment(ref _reserved)`; `_records` array swapped under `_growLock` only during grow; `_published` is incremented after the slot write so readers observe a consistent frontier. `RaiseAdded()` is now skipped via `_owner.HasInteractionAddedSubscribers` when no one is listening to `InteractionAdded`.
+- **Phase 1.3** — *Skipped* (slim Record + name-in-ctor). Wide-reaching API change for marginal allocation savings; the bigger wins come from Phase 2.
+- **Phase 2.1 + 2.2** — `IFastCountSource` + `IVerificationResult.VerifyCount`. Every count terminator (`Once`, `Exactly`, `Never`, `AtLeast`, `AtMost`, `Between`, `Times`) routes through `VerifyCount` which calls `Count()` / `CountAll()` on the source instead of materializing `IInteraction[]` via `CollectMatching`.
+- **Phase 2.3** — Verified-tracking deferred. The fast count source does **not** mark slots as verified yet, so `VerifyThatAllInteractionsAreVerified` works correctly only for predicate-path verifications (the existing call sites that don't use the new typed overloads). When a future test reveals a need, the per-buffer bitmap approach from the plan can be added.
+- **Phase 3.1** — `MockRegistry.VerifyMethod<T, T1, …>` typed overloads (arity 0–4). Construct an arity-N `MethodNCountSource<T1…TN>(buffer, m1…mN)` per call. Property / indexer / event variants follow the same pattern (`VerifyPropertyTyped`, `IndexerGotTyped`, `IndexerSetTyped`, `SubscribedToTyped`, `UnsubscribedFromTyped`). All fall back to the predicate path when the buffer is missing or of an unexpected runtime type.
+- **Phase 4.1** — Generator emits the typed `VerifyMethod<T, T1, …>` call for *eligible* method overloads — i.e. all parameters are matchers, no value flags, no ref/out, arity ≤ 4, no open generics, fast buffer is installed. Other overloads keep the predicate path. Indexer/property/event verify emission still uses the predicate path (intentionally — those wins were not on the critical path of `OptimizedMockComparisonBenchmarks`).
+
+Tests:
+
+- `Tests/Mockolate.Internal.Tests/Interactions/FastBufferCountMatchingTests.cs` — 11 tests, one per buffer kind, exercising `CountMatching` with `It.IsAny`, `It.Is(value)`, hits, misses, mixed.
+- `Tests/Mockolate.Internal.Tests/Interactions/FastBufferConcurrencyTests.cs` — multi-writer stress (`8 × 1000` appends) + `InteractionAdded` subscriber gating.
+- `Tests/Mockolate.Internal.Tests/Verify/TypedVerifyFastPathTests.cs` — 4 tests covering arity 0/1/2 typed `VerifyMethod`, `AnyParameters → CountAll`, and the failure-message path.
+
+Benchmarks have not been re-run for this row — record the numbers when you next run `OptimizedMockComparisonBenchmarks` against this branch and append them as a new column.

@@ -22,6 +22,12 @@ public interface IVerificationResult
 	///     Verifies that the specified <paramref name="predicate" /> holds true for the current set of interactions.
 	/// </summary>
 	bool Verify(Func<IInteraction[], bool> predicate);
+
+	/// <summary>
+	///     Allocation-free fast path for count terminators. Routes to the typed per-member buffer's
+	///     <c>CountMatching</c> when available; falls back to the predicate-based path otherwise.
+	/// </summary>
+	internal bool VerifyCount(Func<int, bool> countPredicate);
 }
 
 /// <summary>
