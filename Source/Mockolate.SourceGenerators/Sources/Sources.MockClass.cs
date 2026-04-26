@@ -1947,8 +1947,11 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tadd").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t").Append(mockRegistry).Append(addCall).Append(@event.GetUniqueNameString())
-				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\t\tif (value is not null)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\t").Append(mockRegistry).Append(addCall).Append(@event.GetUniqueNameString())
+				.Append(", value.Target, value.Method);").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" += value;").AppendLine();
 			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)")
 				.AppendLine();
@@ -1966,8 +1969,11 @@ internal static partial class Sources
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\tremove").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t").Append(mockRegistry).Append(removeCall).Append(@event.GetUniqueNameString())
-				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\t\tif (value is not null)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\t").Append(mockRegistry).Append(removeCall).Append(@event.GetUniqueNameString())
+				.Append(", value.Target, value.Method);").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" -= value;").AppendLine();
 			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)")
 				.AppendLine();
@@ -1988,14 +1994,20 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t\tadd").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t").Append(mockRegistry).Append(addCall).Append(@event.GetUniqueNameString())
-				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\t\tif (value is not null)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\t").Append(mockRegistry).Append(addCall).Append(@event.GetUniqueNameString())
+				.Append(", value.Target, value.Method);").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" += value;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t\tremove").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t").Append(mockRegistry).Append(removeCall).Append(@event.GetUniqueNameString())
-				.Append(", value?.Target, value?.Method);").AppendLine();
+			sb.Append("\t\t\t\tif (value is not null)").AppendLine();
+			sb.Append("\t\t\t\t{").AppendLine();
+			sb.Append("\t\t\t\t\t").Append(mockRegistry).Append(removeCall).Append(@event.GetUniqueNameString())
+				.Append(", value.Target, value.Method);").AppendLine();
+			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" -= value;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 		}

@@ -1574,26 +1574,6 @@ processor.Mock.Verify(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
 **Note:**  
 Delegate parameters also support [argument matchers](#argument-matchers).
 
-## Performance
-
-Mockolate v3.0 ships the **D refactor** — per-member typed interaction storage,
-member-id-keyed setup dispatch, and per-member `Verify` walks. Marginal
-per-call cost, extracted as `(N=10 − N=1) / 9` from `OptimizedMockComparisonBenchmarks`
-on AMD Ryzen 7 PRO 8840HS / .NET 10 Release / `InProcessEmit`:
-
-| Member | v2 baseline | v3 (D) | Speedup | Allocation reduction |
-|---|---:|---:|---:|---:|
-| Method (2-arg) | ~189 ns · ~300 B | ~142 ns · ~136 B | 1.3× | 2.2× |
-| Property get | ~287 ns · ~260 B | ~55 ns · ~48 B | 5.2× | 5.4× |
-| Indexer get (1 key) | ~298 ns · ~172 B | ~38 ns · ~69 B | 7.8× | 2.5× |
-| Event subscribe | ~185 ns · ~369 B | ~61 ns · ~192 B | 3.0× | 1.9× |
-
-Absolute numbers depend on hardware — the speedup column is the stable signal.
-See [`Docs/pages/performance.md`](Docs/pages/performance.md) for the full
-breakdown of what changed under the hood, and
-[`Docs/pages/migration-v3.md`](Docs/pages/migration-v3.md) for the v3.0
-migration guide.
-
 ## Analyzers
 
 Mockolate ships with some Roslyn analyzers to help you adopt best practices and catch issues early, at compile time.
