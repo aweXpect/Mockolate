@@ -41,6 +41,7 @@ internal record Class
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
+		HasRequiredMembers = ComputeHasRequiredMembers(type);
 		ImmutableArray<ISymbol> members = type.GetMembers();
 		List<Method> methods = ToListExcept(members.OfType<IMethodSymbol>()
 			// Exclude getter/setter methods
@@ -114,6 +115,7 @@ internal record Class
 	public EquatableArray<Event> Events { get; }
 
 	public bool IsInterface { get; }
+	public bool HasRequiredMembers { get; }
 	public string ClassFullName { get; }
 	public string ClassName { get; }
 	public string DisplayString { get; }
@@ -268,6 +270,24 @@ internal record Class
 		}
 
 		return true;
+	}
+
+	private static bool ComputeHasRequiredMembers(ITypeSymbol type)
+	{
+		for (ITypeSymbol? current = type;
+		     current is not null && current.SpecialType != SpecialType.System_Object;
+		     current = current.BaseType)
+		{
+			foreach (ISymbol member in current.GetMembers())
+			{
+				if (member is IPropertySymbol { IsRequired: true, } or IFieldSymbol { IsRequired: true, })
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high

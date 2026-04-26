@@ -110,6 +110,101 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task ClassWithRequiredMember_ShouldEmitSetsRequiredMembersOnGeneratedConstructor()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = RequiredShape.CreateMock();
+				         }
+				     }
+
+				     public abstract class RequiredShape
+				     {
+				         public required string Name { get; init; }
+				         public abstract int Compute();
+				     }
+				     """);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.RequiredShape.g.cs").WhoseValue
+				.Contains("""
+				          		[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
+				          		public RequiredShape(global::Mockolate.MockRegistry mockRegistry)
+				          """)
+				.IgnoringNewlineStyle();
+		}
+
+		[Fact]
+		public async Task ClassWithoutRequiredMember_ShouldNotEmitSetsRequiredMembers()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = PlainShape.CreateMock();
+				         }
+				     }
+
+				     public abstract class PlainShape
+				     {
+				         public string Name { get; init; } = "";
+				         public abstract int Compute();
+				     }
+				     """);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.PlainShape.g.cs").WhoseValue
+				.DoesNotContain("SetsRequiredMembers");
+		}
+
+		[Fact]
+		public async Task ClassWithInheritedRequiredMember_ShouldEmitSetsRequiredMembersOnGeneratedConstructor()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = DerivedShape.CreateMock();
+				         }
+				     }
+
+				     public abstract class BaseShape
+				     {
+				         public required string Name { get; init; }
+				     }
+
+				     public abstract class DerivedShape : BaseShape
+				     {
+				         public abstract int Compute();
+				     }
+				     """);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.DerivedShape.g.cs").WhoseValue
+				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]");
+		}
+
+		[Fact]
 		public async Task InterfaceWithEvents_ShouldIncludeRaiseRemarkBullet()
 		{
 			GeneratorResult result = Generator
