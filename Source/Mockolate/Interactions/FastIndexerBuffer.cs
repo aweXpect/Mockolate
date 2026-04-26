@@ -22,6 +22,7 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -29,6 +30,7 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -99,6 +101,13 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -110,6 +119,7 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -128,9 +138,30 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerGetterAccess<T1>(r.P1);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded indexer getter accesses whose key satisfies <paramref name="match1" />.
-	///     Allocation-free fast path for count-only verification.
+	///     Counts recorded indexer getter accesses whose key satisfies <paramref name="match1" />,
+	///     marking each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1)
 	{
@@ -139,12 +170,14 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -176,6 +209,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -183,6 +217,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -251,6 +286,13 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -262,6 +304,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -280,9 +323,30 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerGetterAccess<T1, T2>(r.P1, r.P2);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers.
-	///     Allocation-free fast path for count-only verification.
+	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers, marking
+	///     each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2)
 	{
@@ -291,12 +355,14 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -329,6 +395,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -336,6 +403,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -406,6 +474,13 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -417,6 +492,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -435,9 +511,30 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerGetterAccess<T1, T2, T3>(r.P1, r.P2, r.P3);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers.
-	///     Allocation-free fast path for count-only verification.
+	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers, marking
+	///     each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3)
 	{
@@ -446,12 +543,14 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -485,6 +584,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -492,6 +592,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -564,6 +665,13 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -575,6 +683,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -593,9 +702,30 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerGetterAccess<T1, T2, T3, T4>(r.P1, r.P2, r.P3, r.P4);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers.
-	///     Allocation-free fast path for count-only verification.
+	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers, marking
+	///     each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4)
 	{
@@ -604,12 +734,14 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && match4.Matches(r.P4))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -644,6 +776,7 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -651,6 +784,7 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -719,6 +853,13 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -730,6 +871,7 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -748,9 +890,31 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerSetterAccess<T1, TValue>(r.P1, r.Value);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
 	///     Counts recorded indexer setter accesses whose key and assigned value satisfy the supplied
-	///     matchers. Allocation-free fast path for count-only verification.
+	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
+	///     verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<TValue> matchValue)
 	{
@@ -759,12 +923,14 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && matchValue.Matches(r.Value))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -797,6 +963,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -804,6 +971,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -874,6 +1042,13 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -885,6 +1060,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -903,9 +1079,31 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerSetterAccess<T1, T2, TValue>(r.P1, r.P2, r.Value);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
 	///     Counts recorded indexer setter accesses whose keys and assigned value satisfy the supplied
-	///     matchers. Allocation-free fast path for count-only verification.
+	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
+	///     verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<TValue> matchValue)
 	{
@@ -914,12 +1112,14 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && matchValue.Matches(r.Value))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -953,6 +1153,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -960,6 +1161,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -1032,6 +1234,13 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -1043,6 +1252,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -1061,9 +1271,31 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerSetterAccess<T1, T2, T3, TValue>(r.P1, r.P2, r.P3, r.Value);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
 	///     Counts recorded indexer setter accesses whose keys and assigned value satisfy the supplied
-	///     matchers. Allocation-free fast path for count-only verification.
+	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
+	///     verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<TValue> matchValue)
 	{
@@ -1072,12 +1304,14 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && matchValue.Matches(r.Value))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -1112,6 +1346,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -1119,6 +1354,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -1193,6 +1429,13 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -1204,6 +1447,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -1222,9 +1466,31 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new IndexerSetterAccess<T1, T2, T3, T4, TValue>(r.P1, r.P2, r.P3, r.P4, r.Value);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
 	///     Counts recorded indexer setter accesses whose keys and assigned value satisfy the supplied
-	///     matchers. Allocation-free fast path for count-only verification.
+	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
+	///     verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4, IParameterMatch<TValue> matchValue)
 	{
@@ -1233,12 +1499,14 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && match4.Matches(r.P4) && matchValue.Matches(r.Value))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}

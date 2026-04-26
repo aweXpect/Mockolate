@@ -38,6 +38,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	private Record[] _records;
 	private int _reserved;
 	private int _published;
+	private int _verifiedCursor;
 
 	internal FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
 	{
@@ -99,6 +100,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			_verifiedCursor = 0;
 		}
 	}
 
@@ -119,11 +121,41 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = _verifiedCursor; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				r.Boxed ??= _kind == FastEventBufferKind.Subscribe
+					? new EventSubscription(r.Name, r.Target, r.Method)
+					: (IInteraction)new EventUnsubscription(r.Name, r.Target, r.Method);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Returns the number of recorded subscribe/unsubscribe accesses. Allocation-free fast path
-	///     equivalent to <see cref="Count" />.
+	///     Returns the number of recorded subscribe/unsubscribe accesses and marks every
+	///     currently-published slot as verified. Allocation-free fast path equivalent to
+	///     <see cref="Count" /> with a side-effecting cursor advance.
 	/// </summary>
-	public int CountMatching() => Volatile.Read(ref _published);
+	public int CountMatching()
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			if (_verifiedCursor < n)
+			{
+				_verifiedCursor = n;
+			}
+
+			return n;
+		}
+	}
 
 	private struct Record
 	{

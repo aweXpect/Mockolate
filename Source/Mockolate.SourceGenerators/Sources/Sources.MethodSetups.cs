@@ -177,6 +177,7 @@ internal static partial class Sources
 		sb.Append("\t\tprivate readonly object _growLock = new();").AppendLine();
 		sb.Append("#endif").AppendLine();
 		sb.Append("\t\tprivate Record[] _records = new Record[4];").AppendLine();
+		sb.Append("\t\tprivate bool[] _verifiedSlots = new bool[4];").AppendLine();
 		sb.Append("\t\tprivate int _reserved;").AppendLine();
 		sb.Append("\t\tprivate int _published;").AppendLine();
 		sb.AppendLine();
@@ -213,13 +214,19 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\trecords = bigger;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t\tglobal::System.Threading.Volatile.Write(ref _records, records);").AppendLine();
+		sb.Append("\t\t\t\tif (_verifiedSlots.Length < records.Length)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tbool[] biggerBits = new bool[records.Length];").AppendLine();
+		sb.Append("\t\t\t\t\tglobal::System.Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);").AppendLine();
+		sb.Append("\t\t\t\t\t_verifiedSlots = biggerBits;").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t\treturn records;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\tpublic void Clear()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tlock (_growLock) { _reserved = 0; global::System.Threading.Volatile.Write(ref _published, 0); }").AppendLine();
+		sb.Append("\t\t\tlock (_growLock) { _reserved = 0; global::System.Threading.Volatile.Write(ref _published, 0); global::System.Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length); }").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\tvoid IFastMemberBuffer.AppendBoxed(global::System.Collections.Generic.List<global::System.ValueTuple<long, IInteraction>> dest)")
@@ -240,6 +247,26 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
+		sb.Append("\t\tvoid IFastMemberBuffer.AppendBoxedUnverified(global::System.Collections.Generic.List<global::System.ValueTuple<long, IInteraction>> dest)")
+			.AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tlock (_growLock)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tint n = _published;").AppendLine();
+		sb.Append("\t\t\t\tRecord[] records = _records;").AppendLine();
+		sb.Append("\t\t\t\tbool[] verified = _verifiedSlots;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < n; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tif (verified[i]) continue;").AppendLine();
+		sb.Append("\t\t\t\t\tref Record r = ref records[i];").AppendLine();
+		sb.Append("\t\t\t\t\tr.Boxed ??= new MethodInvocation<").Append(typeArgs).Append(">(r.Name, ").Append(boxedArgs)
+			.Append(");").AppendLine();
+		sb.Append("\t\t\t\t\tdest.Add(new global::System.ValueTuple<long, IInteraction>(r.Seq, r.Boxed));").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
 		string countMatchingParams = string.Join(", ", Enumerable.Range(1, count).Select(x => $"global::Mockolate.Parameters.IParameterMatch<T{x}> match{x}"));
 		string countMatchingPredicate = string.Join(" && ", Enumerable.Range(1, count).Select(x => $"match{x}.Matches(r.P{x})"));
 		sb.Append("\t\tpublic int CountMatching(").Append(countMatchingParams).Append(")").AppendLine();
@@ -249,12 +276,14 @@ internal static partial class Sources
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tint n = _published;").AppendLine();
 		sb.Append("\t\t\t\tRecord[] records = _records;").AppendLine();
+		sb.Append("\t\t\t\tbool[] verified = _verifiedSlots;").AppendLine();
 		sb.Append("\t\t\t\tfor (int i = 0; i < n; i++)").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tref Record r = ref records[i];").AppendLine();
 		sb.Append("\t\t\t\t\tif (").Append(countMatchingPredicate).Append(")").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tmatches++;").AppendLine();
+		sb.Append("\t\t\t\t\t\tverified[i] = true;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();

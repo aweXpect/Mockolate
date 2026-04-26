@@ -28,4 +28,13 @@ public interface IFastMemberBuffer
 	/// </summary>
 	/// <param name="dest">Destination list that boxed records are appended to.</param>
 	void AppendBoxed(List<(long Seq, IInteraction Interaction)> dest);
+
+	/// <summary>
+	///     Like <see cref="AppendBoxed" />, but skips slots that the typed fast-count path has already
+	///     marked as verified. The slow path additionally filters the result against
+	///     <c>MockInteractions._verified</c>; this method only handles the fast-path bookkeeping that
+	///     lives inside the buffer itself.
+	/// </summary>
+	/// <param name="dest">Destination list that boxed records are appended to.</param>
+	void AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest);
 }

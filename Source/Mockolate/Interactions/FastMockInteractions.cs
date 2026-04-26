@@ -166,18 +166,48 @@ public class FastMockInteractions : IMockInteractions
 	}
 
 	/// <inheritdoc cref="IMockInteractions.GetUnverifiedInteractions" />
+	/// <remarks>
+	///     Each typed buffer tracks fast-path verifications internally (per-slot bitmap or
+	///     monotonic cursor) and only emits records still considered unverified.
+	///     <see cref="IMockInteractions.Verified(IEnumerable{IInteraction})" /> still feeds
+	///     <c>_verified</c> for slow-path callers, so the result is the intersection of "not marked by
+	///     a fast-count walk" and "not seen by a slow-path Verify."
+	/// </remarks>
 	public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
 	{
-		IInteraction[] snapshot = SnapshotOrdered();
+		List<(long Seq, IInteraction Interaction)> unverified = new();
+		foreach (IFastMemberBuffer? buffer in _buffers)
+		{
+			buffer?.AppendBoxedUnverified(unverified);
+		}
+
+		Volatile.Read(ref _fallback)?.AppendBoxedUnverified(unverified);
+
+		if (unverified.Count > 1)
+		{
+			unverified.Sort(static (left, right) => left.Seq.CompareTo(right.Seq));
+		}
+
 		lock (_verifiedLock)
 		{
 			if (_verified is null || _verified.Count == 0)
 			{
-				return snapshot;
+				if (unverified.Count == 0)
+				{
+					return Array.Empty<IInteraction>();
+				}
+
+				IInteraction[] all = new IInteraction[unverified.Count];
+				for (int i = 0; i < unverified.Count; i++)
+				{
+					all[i] = unverified[i].Interaction;
+				}
+
+				return all;
 			}
 
-			List<IInteraction> result = new(snapshot.Length);
-			foreach (IInteraction interaction in snapshot)
+			List<IInteraction> result = new(unverified.Count);
+			foreach ((long _, IInteraction interaction) in unverified)
 			{
 				if (!_verified.Contains(interaction))
 				{
@@ -318,5 +348,8 @@ public class FastMockInteractions : IMockInteractions
 				dest.Add(snapshot[i]);
 			}
 		}
+
+		public void AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+			=> AppendBoxed(dest);
 	}
 }

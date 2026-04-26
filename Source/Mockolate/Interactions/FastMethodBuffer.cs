@@ -24,6 +24,7 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 	private Record[] _records;
 	private int _reserved;
 	private int _published;
+	private int _verifiedCursor;
 
 	internal FastMethod0Buffer(FastMockInteractions owner)
 	{
@@ -82,6 +83,7 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			_verifiedCursor = 0;
 		}
 	}
 
@@ -100,13 +102,42 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = _verifiedCursor; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				r.Boxed ??= new MethodInvocation(r.Name);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Returns the number of recorded calls. Parameterless overload of the typed
+	///     Returns the number of recorded calls and marks every currently-published slot as verified
+	///     so a subsequent <see cref="MockInteractions.GetUnverifiedInteractions" /> walk skips them.
+	///     Parameterless overload of the typed
 	///     <see cref="FastMethod1Buffer{T1}.CountMatching(IParameterMatch{T1})" /> family — provided so
 	///     count-only verification can dispatch uniformly across arities without allocating a boxed
 	///     <see cref="IInteraction" /> per recorded call.
 	/// </summary>
-	public int CountMatching() => Volatile.Read(ref _published);
+	public int CountMatching()
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			if (_verifiedCursor < n)
+			{
+				_verifiedCursor = n;
+			}
+
+			return n;
+		}
+	}
 
 	private struct Record
 	{
@@ -132,6 +163,7 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -139,6 +171,7 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -182,6 +215,13 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -193,6 +233,7 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -211,10 +252,33 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new MethodInvocation<T1>(r.Name, r.P1);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded calls whose parameter satisfies <paramref name="match1" />. Walks the typed
-	///     storage in place and never allocates an <see cref="IInteraction" />, so count-only
-	///     verification is allocation-free in the common case.
+	///     Counts recorded calls whose parameter satisfies <paramref name="match1" />, marking each
+	///     matched slot as verified so it is skipped by a later
+	///     <see cref="MockInteractions.GetUnverifiedInteractions" /> walk. Walks the typed storage in
+	///     place and never allocates an <see cref="IInteraction" />, so count-only verification is
+	///     allocation-free in the common case.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1)
 	{
@@ -223,12 +287,14 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -261,6 +327,7 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -268,6 +335,7 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -312,6 +380,13 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -323,6 +398,7 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -341,9 +417,30 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new MethodInvocation<T1, T2>(r.Name, r.P1, r.P2);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded calls whose parameters satisfy the supplied matchers. Allocation-free
-	///     fast path for count-only verification; mirrors
+	///     Counts recorded calls whose parameters satisfy the supplied matchers, marking each matched
+	///     slot as verified. Allocation-free fast path for count-only verification; mirrors
 	///     <see cref="FastMethod1Buffer{T1}.CountMatching(IParameterMatch{T1})" />.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2)
@@ -353,12 +450,14 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -392,6 +491,7 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -399,6 +499,7 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -444,6 +545,13 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -455,6 +563,7 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -473,9 +582,30 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new MethodInvocation<T1, T2, T3>(r.Name, r.P1, r.P2, r.P3);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded calls whose parameters satisfy the supplied matchers. Allocation-free
-	///     fast path for count-only verification.
+	///     Counts recorded calls whose parameters satisfy the supplied matchers, marking each matched
+	///     slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3)
 	{
@@ -484,12 +614,14 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
@@ -524,6 +656,7 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -531,6 +664,7 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -577,6 +711,13 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -588,6 +729,7 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -606,9 +748,30 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new MethodInvocation<T1, T2, T3, T4>(r.Name, r.P1, r.P2, r.P3, r.P4);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded calls whose parameters satisfy the supplied matchers. Allocation-free
-	///     fast path for count-only verification.
+	///     Counts recorded calls whose parameters satisfy the supplied matchers, marking each matched
+	///     slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4)
 	{
@@ -617,12 +780,14 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && match4.Matches(r.P4))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}

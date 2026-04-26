@@ -197,6 +197,99 @@ public class FastMockInteractionsTests
 		await That(unverified).HasCount(1);
 	}
 
+	[Fact]
+	public async Task GetUnverifiedInteractions_AfterMatcherLessCountMatching_ShouldDropMarkedSlots()
+	{
+		FastMockInteractions sut = new(memberCount: 1);
+		FastMethod0Buffer methodBuffer = sut.InstallMethod(memberId: 0);
+		methodBuffer.Append("first");
+		methodBuffer.Append("second");
+
+		_ = methodBuffer.CountMatching();
+
+		await That(sut.GetUnverifiedInteractions()).IsEmpty();
+
+		methodBuffer.Append("third");
+
+		IReadOnlyCollection<IInteraction> unverified = sut.GetUnverifiedInteractions();
+		await That(unverified).HasCount(1);
+		await That(((MethodInvocation)unverified.Single()).Name).IsEqualTo("third");
+	}
+
+	[Fact]
+	public async Task GetUnverifiedInteractions_AfterTypedCountMatching_ShouldDropOnlyMatchedSlots()
+	{
+		FastMockInteractions sut = new(memberCount: 1);
+		FastMethod1Buffer<int> methodBuffer = sut.InstallMethod<int>(memberId: 0);
+		methodBuffer.Append("Dispense", 1);
+		methodBuffer.Append("Dispense", 2);
+
+		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
+
+		IReadOnlyCollection<IInteraction> unverified = sut.GetUnverifiedInteractions();
+		await That(unverified).HasCount(1);
+		await That(((MethodInvocation<int>)unverified.Single()).Parameter1).IsEqualTo(2);
+
+		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(2));
+
+		await That(sut.GetUnverifiedInteractions()).IsEmpty();
+	}
+
+	[Fact]
+	public async Task GetUnverifiedInteractions_AcrossMultipleBuffers_ShouldUnionFastAndSlowVerifications()
+	{
+		FastMockInteractions sut = new(memberCount: 2);
+		FastMethod1Buffer<int> methodBuffer = sut.InstallMethod<int>(memberId: 0);
+		FastPropertyGetterBuffer getterBuffer = sut.InstallPropertyGetter(memberId: 1);
+
+		methodBuffer.Append("M", 7);
+		getterBuffer.Append("Prop");
+
+		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(7));
+		_ = getterBuffer.CountMatching();
+
+		await That(sut.GetUnverifiedInteractions()).IsEmpty();
+	}
+
+	[Fact]
+	public async Task GetUnverifiedInteractions_FastPathPlusSlowPath_ShouldFilterByBoth()
+	{
+		FastMockInteractions sut = new(memberCount: 1);
+		FastMethod1Buffer<int> methodBuffer = sut.InstallMethod<int>(memberId: 0);
+		methodBuffer.Append("M", 1);
+		methodBuffer.Append("M", 2);
+		methodBuffer.Append("M", 3);
+
+		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
+
+		List<IInteraction> all = [..sut];
+		((IMockInteractions)sut).Verified([all[1]]);
+
+		IReadOnlyCollection<IInteraction> unverified = sut.GetUnverifiedInteractions();
+		await That(unverified).HasCount(1);
+		await That(((MethodInvocation<int>)unverified.Single()).Parameter1).IsEqualTo(3);
+	}
+
+	[Fact]
+	public async Task Clear_ShouldResetPerBufferVerifiedTracking()
+	{
+		FastMockInteractions sut = new(memberCount: 2);
+		FastMethod1Buffer<int> methodBuffer = sut.InstallMethod<int>(memberId: 0);
+		FastPropertyGetterBuffer getterBuffer = sut.InstallPropertyGetter(memberId: 1);
+
+		methodBuffer.Append("M", 1);
+		getterBuffer.Append("Prop");
+		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
+		_ = getterBuffer.CountMatching();
+
+		sut.Clear();
+
+		methodBuffer.Append("M", 2);
+		getterBuffer.Append("Prop");
+
+		await That(sut.GetUnverifiedInteractions()).HasCount(2);
+	}
+
 	public sealed class MethodBufferTests
 	{
 		[Fact]

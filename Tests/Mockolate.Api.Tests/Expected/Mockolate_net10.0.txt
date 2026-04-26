@@ -844,6 +844,9 @@ namespace Mockolate.Interactions
         void AppendBoxed([System.Runtime.CompilerServices.TupleElementNames(new string[] {
                 "Seq",
                 "Interaction"})] System.Collections.Generic.List<System.ValueTuple<long, Mockolate.Interactions.IInteraction>> dest);
+        void AppendBoxedUnverified([System.Runtime.CompilerServices.TupleElementNames(new string[] {
+                "Seq",
+                "Interaction"})] System.Collections.Generic.List<System.ValueTuple<long, Mockolate.Interactions.IInteraction>> dest);
         void Clear();
     }
     public interface IInteraction { }

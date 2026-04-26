@@ -24,6 +24,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 	private Record[] _records;
 	private int _reserved;
 	private int _published;
+	private int _verifiedCursor;
 
 	internal FastPropertyGetterBuffer(FastMockInteractions owner)
 	{
@@ -82,6 +83,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			_verifiedCursor = 0;
 		}
 	}
 
@@ -100,12 +102,39 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = _verifiedCursor; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				r.Boxed ??= new PropertyGetterAccess(r.Name);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Returns the number of recorded property getter accesses. Allocation-free fast path
-	///     equivalent to <see cref="Count" />, exposed for symmetry with the matcher-taking
+	///     Returns the number of recorded property getter accesses and marks every currently-published
+	///     slot as verified. Allocation-free fast path, exposed for symmetry with the matcher-taking
 	///     <see cref="FastPropertySetterBuffer{T}.CountMatching(IParameterMatch{T})" />.
 	/// </summary>
-	public int CountMatching() => Volatile.Read(ref _published);
+	public int CountMatching()
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			if (_verifiedCursor < n)
+			{
+				_verifiedCursor = n;
+			}
+
+			return n;
+		}
+	}
 
 	private struct Record
 	{
@@ -131,6 +160,7 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
 
@@ -138,6 +168,7 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -181,6 +212,13 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -192,6 +230,7 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -210,9 +249,30 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 		}
 	}
 
+	void IFastMemberBuffer.AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
+	{
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
+			{
+				if (verified[i])
+				{
+					continue;
+				}
+
+				ref Record r = ref records[i];
+				r.Boxed ??= new PropertySetterAccess<T>(r.Name, r.Value);
+				dest.Add((r.Seq, r.Boxed));
+			}
+		}
+	}
+
 	/// <summary>
-	///     Counts recorded setter accesses whose assigned value satisfies <paramref name="match" />.
-	///     Allocation-free fast path for count-only verification.
+	///     Counts recorded setter accesses whose assigned value satisfies <paramref name="match" />,
+	///     marking each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
 	public int CountMatching(IParameterMatch<T> match)
 	{
@@ -221,12 +281,14 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
+			bool[] verified = _verifiedSlots;
 			for (int i = 0; i < n; i++)
 			{
 				ref Record r = ref records[i];
 				if (match.Matches(r.Value))
 				{
 					matches++;
+					verified[i] = true;
 				}
 			}
 		}
