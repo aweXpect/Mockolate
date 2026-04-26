@@ -331,13 +331,6 @@ internal static partial class Sources
 		sb.Append("\t\tglobal::Mockolate.IMock").AppendLine();
 		sb.Append("\t{").AppendLine();
 
-		if (@class.IsInterface)
-		{
-			sb.AppendXmlSummary(
-				"The wrapped instance (if any) of the mocked interface to call the base implementation on.");
-			sb.Append("\t\tprivate ").Append(@class.ClassFullName).Append("? Wraps { get; }").AppendLine();
-		}
-
 		memberIds.Emit(sb, "\t\t");
 		sb.AppendLine();
 

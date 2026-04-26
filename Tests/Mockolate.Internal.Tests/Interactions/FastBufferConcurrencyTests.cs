@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -15,6 +16,11 @@ public class FastBufferConcurrencyTests
 
 		FastMockInteractions store = new(memberCount: 1);
 		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(memberId: 0);
+#if NET48
+		CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+#else
+		CancellationToken cancellationToken = CancellationToken.None;
+#endif
 
 		Task[] writers = new Task[writerCount];
 		for (int w = 0; w < writerCount; w++)
@@ -26,7 +32,7 @@ public class FastBufferConcurrencyTests
 				{
 					buffer.Append("Foo", seed + i);
 				}
-			});
+			}, cancellationToken);
 		}
 
 		await Task.WhenAll(writers);

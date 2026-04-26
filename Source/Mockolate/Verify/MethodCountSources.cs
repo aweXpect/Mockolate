@@ -296,7 +296,9 @@ internal sealed class IndexerSetter3CountSource<T1, T2, T3, TValue> : IFastCount
 /// <summary>
 ///     Allocation-free count source backed by a 4-key indexer setter buffer.
 /// </summary>
+#pragma warning disable S2436 // Types and methods should not have too many generic parameters
 internal sealed class IndexerSetter4CountSource<T1, T2, T3, T4, TValue> : IFastCountSource
+#pragma warning restore S2436 // Types and methods should not have too many generic parameters
 {
 	private readonly FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> _buffer;
 	private readonly IParameterMatch<T1> _match1;
