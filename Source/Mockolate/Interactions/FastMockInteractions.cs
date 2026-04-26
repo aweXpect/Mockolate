@@ -195,8 +195,6 @@ public class FastMockInteractions : IMockInteractions
 	/// <inheritdoc cref="IMockInteractions.Clear" />
 	public void Clear()
 	{
-		OnClearing?.Invoke(this, EventArgs.Empty);
-
 		Interlocked.Exchange(ref _globalSequence, 0);
 		foreach (IFastMemberBuffer? buffer in _buffers)
 		{
@@ -209,6 +207,8 @@ public class FastMockInteractions : IMockInteractions
 		{
 			_verified = null;
 		}
+
+		OnClearing?.Invoke(this, EventArgs.Empty);
 	}
 
 	/// <inheritdoc cref="IEnumerable{IInteraction}.GetEnumerator()" />
@@ -301,7 +301,8 @@ public class FastMockInteractions : IMockInteractions
 			lock (_lock)
 			{
 				n = _count;
-				snapshot = _records;
+				snapshot = new (long Seq, IInteraction Interaction)[n];
+				Array.Copy(_records, 0, snapshot, 0, n);
 			}
 
 			for (int i = 0; i < n; i++)
