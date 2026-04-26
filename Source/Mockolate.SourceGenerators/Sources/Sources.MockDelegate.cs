@@ -5,7 +5,6 @@ using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
 	public static string MockDelegate(string name, MockClass @class, Method delegateMethod)
@@ -505,4 +504,3 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 }
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

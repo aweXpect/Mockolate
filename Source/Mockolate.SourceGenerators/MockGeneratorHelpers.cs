@@ -57,7 +57,6 @@ internal static class MockGeneratorHelpers
 		return symbolInfo.CandidateSymbols.OfType<IMethodSymbol>().Any(IsImplementingMethod);
 	}
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	internal static IEnumerable<MockClass> ExtractMockOrMockFactoryCreateSyntaxOrDefault(
 		this SyntaxNode syntaxNode, SemanticModel semanticModel)
 	{
@@ -151,9 +150,7 @@ internal static class MockGeneratorHelpers
 			}
 		}
 	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static IEnumerable<MockClass> DiscoverMockableTypes(IEnumerable<ITypeSymbol> initialTypes,
 		IAssemblySymbol sourceAssembly)
 	{
@@ -182,7 +179,6 @@ internal static class MockGeneratorHelpers
 			}
 		}
 	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	private static bool IsMockable([NotNullWhen(true)] ITypeSymbol? typeSymbol)
 		=> typeSymbol is

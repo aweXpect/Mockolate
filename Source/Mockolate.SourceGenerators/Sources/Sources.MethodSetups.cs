@@ -2,7 +2,6 @@ using System.Text;
 
 namespace Mockolate.SourceGenerators.Sources;
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
 	public static string MethodSetups(HashSet<(int, bool)> methodSetups)
@@ -1623,4 +1622,3 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 }
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

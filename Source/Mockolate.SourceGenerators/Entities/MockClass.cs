@@ -5,6 +5,8 @@ namespace Mockolate.SourceGenerators.Entities;
 
 internal sealed class MockClass : Class, IEquatable<MockClass>
 {
+	private readonly int _mockSurfaceHash;
+
 	public MockClass(ITypeSymbol[] types, IAssemblySymbol sourceAssembly) : base(types[0], sourceAssembly)
 	{
 		AdditionalImplementations = new EquatableArray<Class>(
@@ -23,6 +25,8 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 				Delegate = new Method(namedTypeSymbol.DelegateInvokeMethod, null, sourceAssembly);
 			}
 		}
+
+		_mockSurfaceHash = ComputeMockSurfaceHash();
 	}
 
 	public Method? Delegate { get; }
@@ -32,15 +36,18 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 	public EquatableArray<Class> AdditionalImplementations { get; }
 
 	/// <summary>
-	///     MockClass identity is the root ClassFullName plus the ClassFullNames of any additional
-	///     implementations: two mocks of the same root with different additional interfaces produce
-	///     different generated files, so the per-mock incremental cache must distinguish them.
+	///     MockClass equality is keyed on <see cref="Class.ClassFullName" /> plus a content-derived
+	///     hash that folds the base surface together with the mock-only fields
+	///     (<see cref="AdditionalImplementations" />, <see cref="Constructors" />,
+	///     <see cref="Delegate" />). Two mocks of the same root with different additional
+	///     interfaces, different constructor surfaces, or different delegate signatures must hash
+	///     apart so Roslyn's incremental cache invalidates when any of those change.
 	/// </summary>
 	public bool Equals(MockClass? other)
 		=> ReferenceEquals(this, other) ||
 		   (other is not null &&
-		    ClassFullName == other.ClassFullName &&
-		    AdditionalImplementationsEqual(AdditionalImplementations, other.AdditionalImplementations));
+		    _mockSurfaceHash == other._mockSurfaceHash &&
+		    ClassFullName == other.ClassFullName);
 
 	public IEnumerable<Class> AllImplementations()
 	{
@@ -55,47 +62,22 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 
 	public override bool Equals(object? obj) => Equals(obj as MockClass);
 
-	public override int GetHashCode()
+	public override int GetHashCode() => _mockSurfaceHash;
+
+	private int ComputeMockSurfaceHash()
 	{
-		int hash = ClassFullName.GetHashCode();
-		Class[]? additional = AdditionalImplementations.AsArray();
-		if (additional is null)
+		int hash = base.GetHashCode();
+		hash = unchecked((hash * 17) + AdditionalImplementations.GetHashCode());
+		if (Constructors is { } constructors)
 		{
-			return hash;
+			hash = unchecked((hash * 17) + constructors.GetHashCode());
 		}
 
-		int multiplier = 17;
-		foreach (Class c in additional)
+		if (Delegate is { } @delegate)
 		{
-			hash = unchecked(hash + (c.ClassFullName.GetHashCode() * multiplier));
-			multiplier *= 17;
+			hash = unchecked((hash * 17) + @delegate.GetHashCode());
 		}
 
 		return hash;
-	}
-
-	private static bool AdditionalImplementationsEqual(EquatableArray<Class> left, EquatableArray<Class> right)
-	{
-		if (left.Count != right.Count)
-		{
-			return false;
-		}
-
-		Class[]? leftArray = left.AsArray();
-		Class[]? rightArray = right.AsArray();
-		if (leftArray is null || rightArray is null)
-		{
-			return leftArray is null && rightArray is null;
-		}
-
-		for (int i = 0; i < leftArray.Length; i++)
-		{
-			if (leftArray[i].ClassFullName != rightArray[i].ClassFullName)
-			{
-				return false;
-			}
-		}
-
-		return true;
 	}
 }

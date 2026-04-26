@@ -11,6 +11,7 @@ namespace Mockolate.SourceGenerators.Entities;
 internal class Class : IEquatable<Class>
 {
 	private readonly IAssemblySymbol _sourceAssembly;
+	private readonly int _surfaceHash;
 	private List<Event>? _allEvents;
 	private List<Method>? _allMethods;
 	private List<Property>? _allProperties;
@@ -137,6 +138,8 @@ internal class Class : IEquatable<Class>
 
 		ReservedNames = ComputeReservedNames(type);
 
+		_surfaceHash = ComputeSurfaceHash();
+
 		bool ShouldIncludeMember(ISymbol member)
 		{
 			if (IsInterface || member.IsAbstract)
@@ -146,6 +149,28 @@ internal class Class : IEquatable<Class>
 
 			return Helpers.IsOverridableFrom(member, _sourceAssembly);
 		}
+	}
+
+	/// <summary>
+	///     Folds the member surface (methods, properties, events, recursive base/interface chain,
+	///     reserved names, kind, required-member flag) into a single content-derived integer.
+	///     Roslyn's incremental cache uses <see cref="Equals(Class?)" /> to decide whether a
+	///     downstream stage's input changed; if equality only checked the type's name, an edit
+	///     that altered the member surface but not the name would let stale generated source
+	///     persist. Folding members into a hash keeps the comparison O(1) on the cache hot path
+	///     while still invalidating on any surface change.
+	/// </summary>
+	private int ComputeSurfaceHash()
+	{
+		int hash = ClassFullName.GetHashCode();
+		hash = unchecked((hash * 17) + Methods.GetHashCode());
+		hash = unchecked((hash * 17) + Properties.GetHashCode());
+		hash = unchecked((hash * 17) + Events.GetHashCode());
+		hash = unchecked((hash * 17) + InheritedTypes.GetHashCode());
+		hash = unchecked((hash * 17) + ReservedNames.GetHashCode());
+		hash = unchecked((hash * 17) + (IsInterface ? 1 : 0));
+		hash = unchecked((hash * 17) + (HasRequiredMembers ? 1 : 0));
+		return hash;
 	}
 
 	public EquatableArray<Method> Methods { get; }
@@ -160,20 +185,23 @@ internal class Class : IEquatable<Class>
 	public string ClassName { get; }
 	public string DisplayString { get; }
 
-	public static IEqualityComparer<Class> EqualityComparer { get; } = new ClassEqualityComparer();
-
 	/// <summary>
-	///     Equality is keyed only on ClassFullName: it uniquely identifies the type within a
-	///     compilation, so it's both necessary and sufficient as a Roslyn incremental cache key.
-	///     Two Class instances built from the same fully-qualified type are interchangeable from
-	///     the generator's perspective — the body of the type is reified deterministically by the
-	///     constructor. Comparing the full Methods/Properties/Events graph would be quadratic in
-	///     member count and dwarfs the rest of the generator on large mock surfaces.
+	///     Equality is keyed on <see cref="ClassFullName" /> plus a content-derived hash of the
+	///     member surface (<see cref="ComputeSurfaceHash" />). The full name alone is necessary
+	///     but not sufficient as a Roslyn incremental cache key: across edits, a target type can
+	///     keep its name while its members change, and a name-only comparison would let Roslyn
+	///     skip downstream stages and persist stale generated source. Folding the surface into a
+	///     precomputed hash keeps the comparison O(1) on the cache hot path while still
+	///     invalidating on any change to the emitted member set. Hash collisions are theoretically
+	///     possible but the leaf entities (<see cref="Method" />, <see cref="Property" />, and
+	///     <see cref="Event" />) are records with content-based hashes that propagate through
+	///     <see cref="EquatableArray{T}" />, so different surfaces almost always hash apart.
 	/// </summary>
 	public virtual bool Equals(Class? other)
 		=> ReferenceEquals(this, other) ||
 		   (other is not null &&
 		    GetType() == other.GetType() &&
+		    _surfaceHash == other._surfaceHash &&
 		    ClassFullName == other.ClassFullName);
 
 	/// <summary>
@@ -405,7 +433,6 @@ internal class Class : IEquatable<Class>
 		return false;
 	}
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	public static IEnumerable<ITypeSymbol> GetInheritedTypes(ITypeSymbol type)
 	{
 		ITypeSymbol? current = type;
@@ -427,7 +454,6 @@ internal class Class : IEquatable<Class>
 			current = current.BaseType;
 		}
 	}
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high
 
 	public IEnumerable<Property> AllProperties()
 	{
@@ -487,7 +513,7 @@ internal class Class : IEquatable<Class>
 
 	public override bool Equals(object? obj) => Equals(obj as Class);
 
-	public override int GetHashCode() => ClassFullName.GetHashCode();
+	public override int GetHashCode() => _surfaceHash;
 
 	public static bool operator ==(Class? left, Class? right)
 	{
@@ -497,15 +523,5 @@ internal class Class : IEquatable<Class>
 	public static bool operator !=(Class? left, Class? right)
 	{
 		return !(left == right);
-	}
-
-	private sealed class ClassEqualityComparer : IEqualityComparer<Class>
-	{
-		public bool Equals(Class? x, Class? y)
-			=> (x is null && y is null) ||
-			   (x is not null && y is not null &&
-			    x.ClassFullName == y.ClassFullName);
-
-		public int GetHashCode(Class obj) => obj.ClassFullName.GetHashCode();
 	}
 }

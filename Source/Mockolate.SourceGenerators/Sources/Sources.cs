@@ -6,7 +6,6 @@ using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
 
-#pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 internal static partial class Sources
 {
 	private static StringBuilder InitializeBuilder()
@@ -656,4 +655,3 @@ internal static partial class Sources
 				.Append(text).Append("</exception>").AppendLine();
 	}
 }
-#pragma warning restore S3776 // Cognitive Complexity of methods should not be too high

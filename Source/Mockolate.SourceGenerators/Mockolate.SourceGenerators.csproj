@@ -8,6 +8,7 @@
 		<LangVersion>preview</LangVersion>
 		<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<NoWarn>S3776</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
