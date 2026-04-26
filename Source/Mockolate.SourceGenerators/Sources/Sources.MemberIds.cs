@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -202,9 +203,11 @@ internal static partial class Sources
 	///         pipeline) live only in the string-keyed list, so the fallback also covers them.
 	///     </para>
 	/// </remarks>
+#pragma warning disable S107 // Methods should not have too many parameters
 	internal static void EmitFastMethodSetupLookup(StringBuilder sb, string indent, string mockRegistry,
 		string methodSetup, string methodSetupType, string memberIdRef, string uniqueNameString, string matchArgs,
 		bool isGeneric)
+#pragma warning restore S107
 	{
 		sb.Append(indent).Append(methodSetupType).Append("? ").Append(methodSetup).Append(" = null;").AppendLine();
 		sb.Append(indent).Append("if (string.IsNullOrEmpty(").Append(mockRegistry).Append(".Scenario))").AppendLine();
@@ -263,39 +266,24 @@ internal static partial class Sources
 		MemberIdTable table = new();
 		foreach (Class @class in classes)
 		{
-			foreach (Property property in @class.AllProperties().Where(p => !p.IsIndexer))
-			{
-				if (!table.PropertyGetIds.ContainsKey(property))
-				{
-					table.AddProperty(property);
-				}
-			}
-
-			foreach (Event @event in @class.AllEvents())
-			{
-				if (!table.EventSubscribeIds.ContainsKey(@event))
-				{
-					table.AddEvent(@event);
-				}
-			}
-
-			foreach (Property indexer in @class.AllProperties().Where(p => p.IsIndexer))
-			{
-				if (!table.IndexerGetIds.ContainsKey(indexer))
-				{
-					table.AddIndexer(indexer);
-				}
-			}
-
-			foreach (Method method in @class.AllMethods())
-			{
-				if (!table.MethodIds.ContainsKey(method))
-				{
-					table.AddMethod(method);
-				}
-			}
+			AddMissing(@class.AllProperties().Where(p => !p.IsIndexer), table.PropertyGetIds, table.AddProperty);
+			AddMissing(@class.AllEvents(), table.EventSubscribeIds, table.AddEvent);
+			AddMissing(@class.AllProperties().Where(p => p.IsIndexer), table.IndexerGetIds, table.AddIndexer);
+			AddMissing(@class.AllMethods(), table.MethodIds, table.AddMethod);
 		}
 
 		return table;
+	}
+
+	private static void AddMissing<T>(IEnumerable<T> items, Dictionary<T, int> existing, Action<T> add)
+		where T : notnull
+	{
+		foreach (T item in items)
+		{
+			if (!existing.ContainsKey(item))
+			{
+				add(item);
+			}
+		}
 	}
 }

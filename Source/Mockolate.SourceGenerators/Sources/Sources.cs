@@ -119,10 +119,12 @@ internal static partial class Sources
 	///     mockRegistry.RegisterInteraction(access);
 	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(access);</code>
 	/// </summary>
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void EmitIndexerGetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
 		Type propertyType, EquatableArray<MethodParameter> parameters,
 		bool useFastBuffers = false, string? memberIdRef = null)
+#pragma warning restore S107
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerGetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);
@@ -166,10 +168,12 @@ internal static partial class Sources
 	/// <summary>
 	///     Emits variable declarations for the indexer setter access and matching setup.
 	/// </summary>
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void EmitIndexerSetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
 		Type propertyType, EquatableArray<MethodParameter> parameters,
 		bool useFastBuffers = false, string? memberIdRef = null)
+#pragma warning restore S107
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerSetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);

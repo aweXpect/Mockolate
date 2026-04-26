@@ -1803,11 +1803,13 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendMockSubject_ImplementClass(StringBuilder sb, Class @class, string mockRegistryName,
 		MockClass? mockClass, MemberIdTable memberIds, string memberIdPrefix,
 		Dictionary<string, int>? signatureIndicesOverride = null,
 		int[]? nextSignatureIndexRef = null,
 		bool useFastBuffers = true)
+#pragma warning restore S107
 	{
 		string className = @class.ClassFullName;
 		sb.Append("\t\t#region ").Append(@class.DisplayString).AppendLine();
@@ -1869,10 +1871,12 @@ internal static partial class Sources
 		sb.Append("\t\t#endregion ").Append(@class.DisplayString).AppendLine();
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendMockSubject_ImplementClass_AddEvent(StringBuilder sb, Event @event,
 		string mockRegistryName, string className,
 		bool explicitInterfaceImplementation, bool isClassInterface,
 		MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers)
+#pragma warning restore S107
 	{
 		string mockRegistry = @event.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
 		bool useFast = useFastBuffers && IsFastBufferEligibleEvent(@event);
@@ -1999,10 +2003,12 @@ internal static partial class Sources
 		sb.AppendLine("\t\t}");
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendMockSubject_ImplementClass_AddProperty(StringBuilder sb, Property property,
 		string mockRegistryName,
 		string className, bool explicitInterfaceImplementation, bool isClassInterface, int signatureIndex,
 		MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers)
+#pragma warning restore S107
 	{
 		string mockRegistry = property.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
 		bool useFastForProperty = useFastBuffers && !property.IsIndexer && IsFastBufferEligibleProperty(property);
@@ -2401,10 +2407,12 @@ internal static partial class Sources
 		sb.AppendLine("\t\t}");
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendMockSubject_ImplementClass_AddMethod(StringBuilder sb, Method method,
 		string mockRegistryName, string className,
 		bool explicitInterfaceImplementation, bool isClassInterface, Class @class,
 		MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers = true)
+#pragma warning restore S107
 	{
 		string mockRegistry = method.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.')
@@ -3496,9 +3504,11 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void ImplementSetupInterface(StringBuilder sb, Class @class, string mockRegistryName,
 		string setupName, MemberType memberType, MemberIdTable memberIds, string memberIdPrefix,
 		string? scopeExpression = null)
+#pragma warning restore S107
 	{
 		string scopePrefix = scopeExpression is null ? "" : scopeExpression + ", ";
 
@@ -3908,9 +3918,11 @@ internal static partial class Sources
 	///     <c>RefStruct{Void,Return}MethodSetup&lt;T1..Tn&gt;</c>, registers it via
 	///     <c>SetupMethod</c>, and returns it as its narrow interface.
 	/// </summary>
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendRefStructMethodSetupImplementation(StringBuilder sb, Method method,
 		string mockRegistryName, string setupName, MemberIdTable memberIds, string memberIdPrefix,
 		string? methodNameOverride, string? scopeExpression)
+#pragma warning restore S107
 	{
 		bool unsupported = method.Parameters.Any(p =>
 			                   p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
@@ -4053,9 +4065,11 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendIndexerSetupImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
 		string setupName, MemberIdTable memberIds, string memberIdPrefix,
 		bool[]? valueFlags = null, string? scopeExpression = null)
+#pragma warning restore S107
 	{
 		// Mirror AppendIndexerSetupDefinition: dispatch to the appropriate ref-struct facade
 		// implementation depending on whether the indexer has a getter, a setter, or both.
@@ -4497,9 +4511,11 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendIndexerVerifyImplementation(StringBuilder sb, Property indexer, string mockRegistryName,
 		string verifyName, MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers,
 		bool[]? valueFlags = null)
+#pragma warning restore S107
 	{
 		if (indexer.IndexerParameters!.Value.Any(p => p.NeedsRefStructPipeline()))
 		{
@@ -4983,9 +4999,11 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void ImplementVerifyInterface(StringBuilder sb, Class @class, string mockRegistryName,
 		string verifyName, MemberType memberType, MemberIdTable memberIds, string memberIdPrefix,
 		bool useFastBuffers = true)
+#pragma warning restore S107
 	{
 		#region Properties
 
@@ -5143,10 +5161,12 @@ internal static partial class Sources
 		#endregion
 	}
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void AppendMethodVerifyImplementation(StringBuilder sb, Method method, string mockRegistryName,
 		string verifyName,
 		bool useParameters, MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers,
 		string? methodNameOverride = null, bool[]? valueFlags = null)
+#pragma warning restore S107
 	{
 		// Mirror the AppendMethodVerifyDefinition short-circuit for ref-struct signatures.
 		if (method.Parameters.Any(p => p.NeedsRefStructPipeline()))

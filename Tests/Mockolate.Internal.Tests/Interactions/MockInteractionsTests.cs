@@ -68,8 +68,8 @@ public class MockInteractionsTests
 		[Fact]
 		public async Task SkipInteractionRecording_ShouldReflectConstructionValue()
 		{
-			IMockInteractions skipping = new MockInteractions { SkipInteractionRecording = true };
-			IMockInteractions recording = new MockInteractions { SkipInteractionRecording = false };
+			MockInteractions skipping = new MockInteractions { SkipInteractionRecording = true };
+			MockInteractions recording = new MockInteractions { SkipInteractionRecording = false };
 
 			await That(skipping.SkipInteractionRecording).IsTrue();
 			await That(recording.SkipInteractionRecording).IsFalse();
