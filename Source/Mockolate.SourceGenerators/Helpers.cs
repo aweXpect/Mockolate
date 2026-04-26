@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Mockolate.SourceGenerators.Entities;
 using Mockolate.SourceGenerators.Internals;
 using Attribute = Mockolate.SourceGenerators.Entities.Attribute;
@@ -10,6 +11,9 @@ namespace Mockolate.SourceGenerators;
 
 internal static class Helpers
 {
+	public static string EscapeIfKeyword(string name)
+		=> SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ? "@" + name : name;
+
 	public static SymbolDisplayFormat TypeDisplayFormat { get; } = new(
 		miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
 		                      SymbolDisplayMiscellaneousOptions.UseSpecialTypes |

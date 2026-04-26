@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
@@ -13,9 +12,7 @@ internal record Property
 		Accessibility = propertySymbol.DeclaredAccessibility;
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
 		string rawName = propertySymbol.ExplicitInterfaceImplementations.Length > 0 ? propertySymbol.ExplicitInterfaceImplementations[0].Name : propertySymbol.Name;
-		Name = !propertySymbol.IsIndexer && SyntaxFacts.GetKeywordKind(rawName) != SyntaxKind.None
-			? "@" + rawName
-			: rawName;
+		Name = propertySymbol.IsIndexer ? rawName : Helpers.EscapeIfKeyword(rawName);
 		Type = new Type(propertySymbol.Type);
 		ContainingType = propertySymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		IsIndexer = propertySymbol.IsIndexer;

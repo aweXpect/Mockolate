@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
@@ -13,10 +12,7 @@ internal record Event
 		Accessibility = eventSymbol.DeclaredAccessibility;
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
 		IsAbstract = eventSymbol.IsAbstract;
-		string rawName = eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name;
-		Name = SyntaxFacts.GetKeywordKind(rawName) != SyntaxKind.None
-			? "@" + rawName
-			: rawName;
+		Name = Helpers.EscapeIfKeyword(eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name);
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Delegate = new Method(delegateInvokeMethod, null, sourceAssembly);

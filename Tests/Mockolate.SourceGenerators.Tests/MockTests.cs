@@ -540,7 +540,8 @@ public sealed partial class MockTests
 			         int @class { get; }
 			         string @return();
 			         void @event(int @params);
-			         @class @void<@class>(@class @ref);
+			         int @void<@class>(int @ref);
+			         string this[int @params, string @void] { get; set; }
 			     }
 			     """);
 
@@ -548,7 +549,8 @@ public sealed partial class MockTests
 			.Contains("public int @class").And
 			.Contains("public string @return()").And
 			.Contains("public void @event(int @params)").And
-			.Contains("public @class @void<@class>(@class @ref)");
+			.Contains("public int @void<@class>(int @ref)").And
+			.Contains("public string this[int @params, string @void]");
 	}
 
 	[Fact]

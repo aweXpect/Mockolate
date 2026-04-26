@@ -8,9 +8,7 @@ internal readonly record struct MethodParameter
 	public MethodParameter(IParameterSymbol parameterSymbol)
 	{
 		Type = new Type(parameterSymbol.Type);
-		Name = SyntaxFacts.GetKeywordKind(parameterSymbol.Name) != SyntaxKind.None
-			? "@" + parameterSymbol.Name
-			: parameterSymbol.Name;
+		Name = Helpers.EscapeIfKeyword(parameterSymbol.Name);
 		RefKind = parameterSymbol.RefKind;
 		IsNullableAnnotated = parameterSymbol.NullableAnnotation == NullableAnnotation.Annotated;
 		IsParams = parameterSymbol.IsParams;
