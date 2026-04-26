@@ -22,10 +22,7 @@ internal static class MockGeneratorHelpers
 			case IdentifierNameSyntax { Identifier.ValueText: "CreateMock", }:
 				return true;
 			case GenericNameSyntax { Identifier.ValueText: "Implementing", }:
-				// `Implementing<T>` only fires inside a chain whose receiver is itself an
-				// invocation (T.CreateMock().Implementing<U>() or another Implementing<>() before
-				// it).
-				return memberAccess.Expression is InvocationExpressionSyntax;
+				return true;
 			default:
 				return false;
 		}
