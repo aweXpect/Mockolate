@@ -110,8 +110,7 @@ public class FastMockInteractions : IMockInteractions
 	///     Transitional fallback for code paths that still produce a heap-allocated
 	///     <see cref="IInteraction" /> instance. The hot-path generator emission bypasses this entirely
 	///     and writes straight into the typed per-member buffer. <c>RegisterInteraction</c> here
-	///     dispatches by interaction type to the matching buffer when the receiver knows its member id;
-	///     otherwise the record falls back to a global "unattributed" buffer that still participates
+	///     always appends to the global "unattributed" fallback buffer, which still participates
 	///     in ordered enumeration and verification.
 	/// </remarks>
 	TInteraction IMockInteractions.RegisterInteraction<TInteraction>(TInteraction interaction)
