@@ -8,7 +8,7 @@ internal readonly record struct GenericParameter
 {
 	public GenericParameter(ITypeParameterSymbol typeSymbol)
 	{
-		Name = typeSymbol.Name;
+		Name = Helpers.EscapeIfKeyword(typeSymbol.Name);
 		IsUnmanaged = typeSymbol.HasUnmanagedTypeConstraint;
 		IsClass = typeSymbol.HasReferenceTypeConstraint;
 		IsStruct = typeSymbol.HasValueTypeConstraint;

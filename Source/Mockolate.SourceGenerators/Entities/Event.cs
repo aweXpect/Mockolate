@@ -12,7 +12,7 @@ internal record Event
 		Accessibility = eventSymbol.DeclaredAccessibility;
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
 		IsAbstract = eventSymbol.IsAbstract;
-		Name = eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name;
+		Name = Helpers.EscapeIfKeyword(eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name);
 		Type = new Type(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		Delegate = new Method(delegateInvokeMethod, null, sourceAssembly);
@@ -62,7 +62,8 @@ internal record Event
 	internal string GetBackingFieldName()
 	{
 		char[] sanitized = ContainingType.Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray();
-		return $"_mockolateEvent_{new string(sanitized)}_{Name}";
+		string nameForField = Name.StartsWith("@") ? Name.Substring(1) : Name;
+		return $"_mockolateEvent_{new string(sanitized)}_{nameForField}";
 	}
 
 	private sealed class EventEqualityComparer : IEqualityComparer<Event>

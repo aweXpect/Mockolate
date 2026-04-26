@@ -11,7 +11,8 @@ internal record Property
 	{
 		Accessibility = propertySymbol.DeclaredAccessibility;
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
-		Name = propertySymbol.ExplicitInterfaceImplementations.Length > 0 ? propertySymbol.ExplicitInterfaceImplementations[0].Name : propertySymbol.Name;
+		string rawName = propertySymbol.ExplicitInterfaceImplementations.Length > 0 ? propertySymbol.ExplicitInterfaceImplementations[0].Name : propertySymbol.Name;
+		Name = propertySymbol.IsIndexer ? rawName : Helpers.EscapeIfKeyword(rawName);
 		Type = new Type(propertySymbol.Type);
 		ContainingType = propertySymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
 		IsIndexer = propertySymbol.IsIndexer;
