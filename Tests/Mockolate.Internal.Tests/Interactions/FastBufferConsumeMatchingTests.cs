@@ -56,6 +56,58 @@ public class FastBufferConsumeMatchingTests
 	}
 
 	[Fact]
+	public async Task FastIndexerGetterBuffer3_ConsumeMatching_ShouldHonorAllMatchers()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string, bool> buffer = store.InstallIndexerGetter<int, string, bool>(0);
+
+		buffer.Append(1, "a", true);
+		buffer.Append(2, "a", false);
+		buffer.Append(1, "b", true);
+
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.IsAny<int>(),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>())).IsEqualTo(3);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.Is(true))).IsEqualTo(2);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("a"),
+			(IParameterMatch<bool>)It.Is(false))).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task FastIndexerGetterBuffer4_ConsumeMatching_ShouldHonorAllMatchers()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string, bool, double> buffer =
+			store.InstallIndexerGetter<int, string, bool, double>(0);
+
+		buffer.Append(1, "a", true, 1.0);
+		buffer.Append(1, "b", true, 2.0);
+		buffer.Append(2, "a", false, 3.0);
+
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.IsAny<int>(),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>())).IsEqualTo(3);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>())).IsEqualTo(2);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(99),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>())).IsEqualTo(0);
+	}
+
+	[Fact]
 	public async Task FastIndexerSetterBuffer1_ConsumeMatching_ShouldHonorMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -74,6 +126,90 @@ public class FastBufferConsumeMatchingTests
 		await That(buffer.ConsumeMatching(
 			(IParameterMatch<int>)It.Is(99),
 			(IParameterMatch<string>)It.IsAny<string>())).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer2_ConsumeMatching_ShouldHonorAllMatchers()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool> buffer =
+			store.InstallIndexerSetter<int, string, bool>(0);
+
+		buffer.Append(1, "a", true);
+		buffer.Append(1, "b", false);
+		buffer.Append(2, "a", true);
+
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.IsAny<int>(),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>())).IsEqualTo(3);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.Is(true))).IsEqualTo(1);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(99),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>())).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer3_ConsumeMatching_ShouldHonorAllMatchers()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool, double> buffer =
+			store.InstallIndexerSetter<int, string, bool, double>(0);
+
+		buffer.Append(1, "a", true, 1.0);
+		buffer.Append(1, "b", true, 2.0);
+		buffer.Append(2, "a", false, 1.0);
+
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.IsAny<int>(),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>())).IsEqualTo(3);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.Is(true),
+			(IParameterMatch<double>)It.Is(1.0))).IsEqualTo(1);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(99),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>())).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer4_ConsumeMatching_ShouldHonorAllMatchers()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool, double, char> buffer =
+			store.InstallIndexerSetter<int, string, bool, double, char>(0);
+
+		buffer.Append(1, "a", true, 1.0, 'x');
+		buffer.Append(1, "b", true, 2.0, 'x');
+		buffer.Append(2, "a", false, 3.0, 'y');
+
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.IsAny<int>(),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>(),
+			(IParameterMatch<char>)It.IsAny<char>())).IsEqualTo(3);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>(),
+			(IParameterMatch<char>)It.Is('x'))).IsEqualTo(2);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(99),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.IsAny<double>(),
+			(IParameterMatch<char>)It.IsAny<char>())).IsEqualTo(0);
 	}
 
 	[Fact]
@@ -148,6 +284,14 @@ public class FastBufferConsumeMatchingTests
 			(IParameterMatch<int>)It.Is(1),
 			(IParameterMatch<string>)It.IsAny<string>(),
 			(IParameterMatch<bool>)It.Is(true))).IsEqualTo(2);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.Is(false))).IsEqualTo(0);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.IsAny<int>(),
+			(IParameterMatch<string>)It.Is<string>("b"),
+			(IParameterMatch<bool>)It.Is(false))).IsEqualTo(0);
 	}
 
 	[Fact]
@@ -176,6 +320,16 @@ public class FastBufferConsumeMatchingTests
 			(IParameterMatch<string>)It.IsAny<string>(),
 			(IParameterMatch<bool>)It.IsAny<bool>(),
 			(IParameterMatch<double>)It.IsAny<double>())).IsEqualTo(0);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.Is(false),
+			(IParameterMatch<double>)It.IsAny<double>())).IsEqualTo(0);
+		await That(buffer.ConsumeMatching(
+			(IParameterMatch<int>)It.IsAny<int>(),
+			(IParameterMatch<string>)It.IsAny<string>(),
+			(IParameterMatch<bool>)It.IsAny<bool>(),
+			(IParameterMatch<double>)It.Is(99.0))).IsEqualTo(0);
 	}
 
 	[Fact]
