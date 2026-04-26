@@ -442,7 +442,9 @@ public class MockGenerator : IIncrementalGenerator
 		return new EquatableArray<NamedMock>(result.ToArray());
 
 		static string LookupName(Dictionary<string, string> map, Class @class)
-			=> map.TryGetValue(@class.ClassFullName, out string? v) ? v : "";
+		{
+			return map.TryGetValue(@class.ClassFullName, out string? v) ? v : "";
+		}
 	}
 
 	private static EquatableArray<MockAsExtensionPair> CollectAsExtensionPairs(EquatableArray<NamedMock> mocks)
@@ -524,6 +526,7 @@ public class MockGenerator : IIncrementalGenerator
 		{
 			additionalArr[i] = (additionalNamed[i].Name, additionalNamed[i].Class);
 		}
+
 		context.AddSource($"Mock.{fileName}.g.cs",
 			ToSource(Sources.Sources.MockCombinationClass(fileName, named.ParentName, @class, additionalArr)));
 	}
@@ -538,7 +541,10 @@ internal readonly record struct MethodSetupKey(int Arity, bool IsVoid);
 internal readonly record struct RefStructIndexerSetup(int Arity, bool HasGetter, bool HasSetter);
 
 internal readonly record struct MockAsExtensionPair(
-	string SourceName, string SourceFullName, string OtherName, string OtherFullName)
+	string SourceName,
+	string SourceFullName,
+	string OtherName,
+	string OtherFullName)
 {
 	public static MockAsExtensionPair Create(string nameA, string fullNameA, string nameB, string fullNameB)
 		=> string.CompareOrdinal(nameA, nameB) <= 0
@@ -566,7 +572,7 @@ internal sealed class RefStructAggregate : IEquatable<RefStructAggregate>
 
 	public override bool Equals(object? obj) => Equals(obj as RefStructAggregate);
 
-	public override int GetHashCode() => unchecked(MethodSetups.GetHashCode() * 17 + IndexerSetups.GetHashCode());
+	public override int GetHashCode() => unchecked((MethodSetups.GetHashCode() * 17) + IndexerSetups.GetHashCode());
 }
 
 internal readonly record struct NamedClass(string Name, Class Class);
@@ -621,11 +627,11 @@ internal sealed class NamedMock : IEquatable<NamedMock>
 	public override int GetHashCode()
 	{
 		int hash = FileName.GetHashCode();
-		hash = unchecked(hash * 17 + ParentName.GetHashCode());
-		hash = unchecked(hash * 17 + Mock.GetHashCode());
+		hash = unchecked((hash * 17) + ParentName.GetHashCode());
+		hash = unchecked((hash * 17) + Mock.GetHashCode());
 		if (AdditionalClasses is { } additional)
 		{
-			hash = unchecked(hash * 17 + additional.GetHashCode());
+			hash = unchecked((hash * 17) + additional.GetHashCode());
 		}
 
 		return hash;

@@ -191,8 +191,6 @@ internal static partial class Sources
 
 		sb.Append(indent).Append("}").AppendLine();
 
-		// Setup-side dispatch: indexer setups are always indexed under the GETTER member id (they apply to both
-		// directions). Setter call sites pass the getter id via setupMemberIdRef; getters reuse memberIdRef.
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
 			setupMemberIdRef);
 	}
@@ -220,8 +218,6 @@ internal static partial class Sources
 
 		if (memberIdRef is null)
 		{
-			// Legacy path: no fast-buffer dispatch, fall straight through to the closure-free
-			// access-keyed lookup (matches pre-D-refactor emission shape).
 			sb.Append(indent).Append(typedSetupName).Append("? ").Append(setupVarName).Append(" = ")
 				.Append(mockRegistry).Append(".GetIndexerSetup<").Append(typedSetupName).Append(">(")
 				.Append(accessVarName).Append(");").AppendLine();
@@ -411,9 +407,6 @@ internal static partial class Sources
 	internal static string ExpandCrefs(string source)
 	{
 		const string OpenTag = "<see cref=\"";
-		// Many of the smaller generator outputs (ActionFunc.g.cs, ReturnsThrowsAsyncExtensions.g.cs,
-		// MockBehaviorExtensions.g.cs) carry no self-closing cref tags. Exit before the StringBuilder
-		// is allocated and the source is rewalked.
 		if (source.IndexOf(OpenTag, StringComparison.Ordinal) < 0)
 		{
 			return source;

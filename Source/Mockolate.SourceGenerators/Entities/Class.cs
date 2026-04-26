@@ -44,11 +44,6 @@ internal class Class : IEquatable<Class>
 		HasRequiredMembers = ComputeHasRequiredMembers(type);
 		ImmutableArray<ISymbol> members = type.GetMembers();
 
-		// Single-pass member walk. The original code did six separate LINQ chains over `members`
-		// (three include passes producing Methods/Properties/Events plus three except-list passes).
-		// Each `.OfType<T>()` allocated an enumerator and rewalked the array — for a class deep in
-		// the inheritance graph this work compounds across every base class. Folding into one
-		// `foreach` collapses the constant factor without changing observable behavior.
 		List<Method> methodIncludes = new();
 		List<Property> propertyIncludes = new();
 		List<Event> eventIncludes = new();
@@ -61,58 +56,58 @@ internal class Class : IEquatable<Class>
 			switch (member)
 			{
 				case IMethodSymbol methodSymbol when methodSymbol.MethodKind is MethodKind.Ordinary:
-				{
-					if (!methodSymbol.IsSealed && (IsInterface || methodSymbol.IsVirtual || methodSymbol.IsAbstract) &&
-					    ShouldIncludeMember(methodSymbol))
 					{
-						methodIncludes.Add(new Method(methodSymbol, alreadyDefinedMethods, sourceAssembly));
-					}
+						if (!methodSymbol.IsSealed && (IsInterface || methodSymbol.IsVirtual || methodSymbol.IsAbstract) &&
+						    ShouldIncludeMember(methodSymbol))
+						{
+							methodIncludes.Add(new Method(methodSymbol, alreadyDefinedMethods, sourceAssembly));
+						}
 
-					if (methodSymbol.IsSealed || HidesBaseOverridable(methodSymbol, type))
-					{
-						methodExceptCandidates.Add(new Method(methodSymbol, null, sourceAssembly));
-					}
+						if (methodSymbol.IsSealed || HidesBaseOverridable(methodSymbol, type))
+						{
+							methodExceptCandidates.Add(new Method(methodSymbol, null, sourceAssembly));
+						}
 
-					break;
-				}
-
-				case IPropertySymbol propertySymbol:
-				{
-					if (!propertySymbol.IsSealed && (IsInterface || propertySymbol.IsVirtual || propertySymbol.IsAbstract) &&
-					    ShouldIncludeMember(propertySymbol))
-					{
-						propertyIncludes.Add(new Property(propertySymbol, alreadyDefinedProperties, sourceAssembly));
-					}
-
-					if (propertySymbol.IsSealed || HidesBaseOverridable(propertySymbol, type))
-					{
-						propertyExceptCandidates.Add(new Property(propertySymbol, null, sourceAssembly));
-					}
-
-					break;
-				}
-
-				case IEventSymbol eventSymbol:
-				{
-					IMethodSymbol? invoke = (eventSymbol.Type as INamedTypeSymbol)?.DelegateInvokeMethod;
-					if (invoke is null)
-					{
 						break;
 					}
 
-					if (!eventSymbol.IsSealed && (IsInterface || eventSymbol.IsVirtual || eventSymbol.IsAbstract) &&
-					    ShouldIncludeMember(eventSymbol))
+				case IPropertySymbol propertySymbol:
 					{
-						eventIncludes.Add(new Event(eventSymbol, invoke, alreadyDefinedEvents, sourceAssembly));
+						if (!propertySymbol.IsSealed && (IsInterface || propertySymbol.IsVirtual || propertySymbol.IsAbstract) &&
+						    ShouldIncludeMember(propertySymbol))
+						{
+							propertyIncludes.Add(new Property(propertySymbol, alreadyDefinedProperties, sourceAssembly));
+						}
+
+						if (propertySymbol.IsSealed || HidesBaseOverridable(propertySymbol, type))
+						{
+							propertyExceptCandidates.Add(new Property(propertySymbol, null, sourceAssembly));
+						}
+
+						break;
 					}
 
-					if (eventSymbol.IsSealed || HidesBaseOverridable(eventSymbol, type))
+				case IEventSymbol eventSymbol:
 					{
-						eventExceptCandidates.Add(new Event(eventSymbol, invoke, null, sourceAssembly));
-					}
+						IMethodSymbol? invoke = (eventSymbol.Type as INamedTypeSymbol)?.DelegateInvokeMethod;
+						if (invoke is null)
+						{
+							break;
+						}
 
-					break;
-				}
+						if (!eventSymbol.IsSealed && (IsInterface || eventSymbol.IsVirtual || eventSymbol.IsAbstract) &&
+						    ShouldIncludeMember(eventSymbol))
+						{
+							eventIncludes.Add(new Event(eventSymbol, invoke, alreadyDefinedEvents, sourceAssembly));
+						}
+
+						if (eventSymbol.IsSealed || HidesBaseOverridable(eventSymbol, type))
+						{
+							eventExceptCandidates.Add(new Event(eventSymbol, invoke, null, sourceAssembly));
+						}
+
+						break;
+					}
 			}
 		}
 
@@ -167,10 +162,26 @@ internal class Class : IEquatable<Class>
 
 	public static IEqualityComparer<Class> EqualityComparer { get; } = new ClassEqualityComparer();
 
-	// Identifiers that the mock class shares its scope with but that aren't surfaced through
-	// Methods/Properties/Events: generic type parameters of the type itself, nested types, and
-	// fields declared on the type. A generated member colliding with any of these would either
-	// fail to compile (CS0102 / type-parameter shadowing) or hide an inherited field (CS0108).
+	/// <summary>
+	///     Equality is keyed only on ClassFullName: it uniquely identifies the type within a
+	///     compilation, so it's both necessary and sufficient as a Roslyn incremental cache key.
+	///     Two Class instances built from the same fully-qualified type are interchangeable from
+	///     the generator's perspective — the body of the type is reified deterministically by the
+	///     constructor. Comparing the full Methods/Properties/Events graph would be quadratic in
+	///     member count and dwarfs the rest of the generator on large mock surfaces.
+	/// </summary>
+	public virtual bool Equals(Class? other)
+		=> ReferenceEquals(this, other) ||
+		   (other is not null &&
+		    GetType() == other.GetType() &&
+		    ClassFullName == other.ClassFullName);
+
+	/// <summary>
+	///     Identifiers that the mock class shares its scope with but that aren't surfaced through
+	///     Methods/Properties/Events: generic type parameters of the type itself, nested types, and
+	///     fields declared on the type. A generated member colliding with any of these would either
+	///     fail to compile (CS0102 / type-parameter shadowing) or hide an inherited field (CS0108).
+	/// </summary>
 	private static EquatableArray<string> ComputeReservedNames(ITypeSymbol type)
 	{
 		HashSet<string> names = new();
@@ -286,8 +297,9 @@ internal class Class : IEquatable<Class>
 		return source.Except(except, comparer).ToList();
 	}
 
-	// In-place dedup that preserves insertion order and uses default equality. Mirrors the
-	// behavior of `.Distinct()` on the lists produced by the single-pass member walk.
+	/// <summary>
+	///     In-place deduplication of the <paramref name="list" /> that preserves insertion order and uses default equality.
+	/// </summary>
 	private static List<T> DistinctList<T>(List<T> list) where T : notnull
 	{
 		if (list.Count <= 1)
@@ -308,10 +320,13 @@ internal class Class : IEquatable<Class>
 		return result;
 	}
 
-	// True when `member` (declared on `thisType`) hides an overridable member of the same
-	// signature on a base class. The hidden base cannot be overridden from a class deriving from
-	// `thisType` — the compiler resolves the override target to the hiding member first and fails
-	// with CS0506. Overrides are not hiding: they continue the virtual slot.
+	/// <summary>
+	///     True when `member` (declared on `thisType`) hides an overridable member of the same
+	///     signature on a base class. The hidden base cannot be overridden from a class deriving from
+	///     `thisType` — the compiler resolves the override target to the hiding member first and fails
+	///     with CS0506.<br />
+	///     Overrides are not hiding: they continue the virtual slot.
+	/// </summary>
 	private static bool HidesBaseOverridable(ISymbol member, ITypeSymbol thisType)
 	{
 		if (member is IMethodSymbol { IsOverride: true, } or IPropertySymbol { IsOverride: true, } or IEventSymbol { IsOverride: true, })
@@ -470,25 +485,19 @@ internal class Class : IEquatable<Class>
 		return _classNameWithoutDots = sb.ToString();
 	}
 
-	// Equality is keyed only on ClassFullName: it uniquely identifies the type within a
-	// compilation, so it's both necessary and sufficient as a Roslyn incremental cache key.
-	// Two Class instances built from the same fully-qualified type are interchangeable from
-	// the generator's perspective — the body of the type is reified deterministically by the
-	// constructor. Comparing the full Methods/Properties/Events graph would be quadratic in
-	// member count and dwarfs the rest of the generator on large mock surfaces.
-	public virtual bool Equals(Class? other)
-		=> ReferenceEquals(this, other) ||
-		   (other is not null &&
-		    GetType() == other.GetType() &&
-		    ClassFullName == other.ClassFullName);
-
 	public override bool Equals(object? obj) => Equals(obj as Class);
 
 	public override int GetHashCode() => ClassFullName.GetHashCode();
 
-	public static bool operator ==(Class? left, Class? right) => left?.Equals(right) ?? right is null;
+	public static bool operator ==(Class? left, Class? right)
+	{
+		return left?.Equals(right) ?? right is null;
+	}
 
-	public static bool operator !=(Class? left, Class? right) => !(left == right);
+	public static bool operator !=(Class? left, Class? right)
+	{
+		return !(left == right);
+	}
 
 	private sealed class ClassEqualityComparer : IEqualityComparer<Class>
 	{

@@ -24,10 +24,7 @@ internal static class MockGeneratorHelpers
 			case GenericNameSyntax { Identifier.ValueText: "Implementing", }:
 				// `Implementing<T>` only fires inside a chain whose receiver is itself an
 				// invocation (T.CreateMock().Implementing<U>() or another Implementing<>() before
-				// it). Skip the expensive semantic-model query in
-				// `ExtractMockOrMockFactoryCreateSyntaxOrDefault` for any unrelated user-defined
-				// `Implementing<>` whose receiver is a value, type, or member-access — those
-				// cannot be Mockolate calls.
+				// it).
 				return memberAccess.Expression is InvocationExpressionSyntax;
 			default:
 				return false;

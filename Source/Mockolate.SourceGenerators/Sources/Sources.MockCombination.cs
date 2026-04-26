@@ -211,10 +211,6 @@ internal static partial class Sources
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
-		// As<T> bridge extensions across the (source, lastInterface) name pairs are emitted
-		// once per pair into a single aggregate file (Mock.AsExtensions.g.cs) — see
-		// MockAsExtensionPair / MockAsExtensions in MockGenerator.
-
 		#endregion Extensions
 
 		#region MockForXXX

@@ -1,5 +1,4 @@
 using System.Text;
-using Mockolate.SourceGenerators;
 
 namespace Mockolate.SourceGenerators.Sources;
 
@@ -55,4 +54,3 @@ internal static partial class Sources
 		sb.AppendLine();
 	}
 }
-

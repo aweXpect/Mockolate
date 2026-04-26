@@ -846,7 +846,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\treturn index >= 0 ? name.Substring(index + 1) : name;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t}").AppendLine(); // close WithParameters
+		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
 		// WithParameterCollection inner class
@@ -941,7 +941,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\treturn index >= 0 ? name.Substring(index + 1) : name;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t}").AppendLine(); // close WithParameterCollection
+		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 	}
@@ -1523,7 +1523,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\treturn index >= 0 ? name.Substring(index + 1) : name;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t}").AppendLine(); // close WithParameters
+		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
 		// WithParameterCollection inner class
@@ -1618,7 +1618,7 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\treturn index >= 0 ? name.Substring(index + 1) : name;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
-		sb.Append("\t\t}").AppendLine(); // close WithParameterCollection
+		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 	}

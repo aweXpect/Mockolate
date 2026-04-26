@@ -31,6 +31,17 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 
 	public EquatableArray<Class> AdditionalImplementations { get; }
 
+	/// <summary>
+	///     MockClass identity is the root ClassFullName plus the ClassFullNames of any additional
+	///     implementations: two mocks of the same root with different additional interfaces produce
+	///     different generated files, so the per-mock incremental cache must distinguish them.
+	/// </summary>
+	public bool Equals(MockClass? other)
+		=> ReferenceEquals(this, other) ||
+		   (other is not null &&
+		    ClassFullName == other.ClassFullName &&
+		    AdditionalImplementationsEqual(AdditionalImplementations, other.AdditionalImplementations));
+
 	public IEnumerable<Class> AllImplementations()
 	{
 		yield return this;
@@ -39,15 +50,6 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 			yield return additionalImplementation;
 		}
 	}
-
-	// MockClass identity is the root ClassFullName plus the ClassFullNames of any additional
-	// implementations: two mocks of the same root with different additional interfaces produce
-	// different generated files, so the per-mock incremental cache must distinguish them.
-	public bool Equals(MockClass? other)
-		=> ReferenceEquals(this, other) ||
-		   (other is not null &&
-		    ClassFullName == other.ClassFullName &&
-		    AdditionalImplementationsEqual(AdditionalImplementations, other.AdditionalImplementations));
 
 	public override bool Equals(Class? other) => other is MockClass mc && Equals(mc);
 
@@ -65,7 +67,7 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 		int multiplier = 17;
 		foreach (Class c in additional)
 		{
-			hash = unchecked(hash + c.ClassFullName.GetHashCode() * multiplier);
+			hash = unchecked(hash + (c.ClassFullName.GetHashCode() * multiplier));
 			multiplier *= 17;
 		}
 
