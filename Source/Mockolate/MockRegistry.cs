@@ -48,6 +48,18 @@ public partial class MockRegistry
 	public MockRegistry(MockBehavior behavior, IMockInteractions interactions,
 		object?[]? constructorParameters = null)
 	{
+		if (behavior.SkipInteractionRecording != interactions.SkipInteractionRecording)
+		{
+			throw new ArgumentException(
+				$"{nameof(behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} " +
+				$"({behavior.SkipInteractionRecording}) and " +
+				$"{nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} " +
+				$"({interactions.SkipInteractionRecording}) must agree; recording paths gate on the " +
+				"behavior flag while verification gates on the interactions flag, so a mismatch leaves " +
+				"the registry in an inconsistent state.",
+				nameof(interactions));
+		}
+
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
 		Interactions = interactions;
@@ -96,6 +108,18 @@ public partial class MockRegistry
 	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
 	public MockRegistry(MockRegistry registry, IMockInteractions interactions)
 	{
+		if (registry.Behavior.SkipInteractionRecording != interactions.SkipInteractionRecording)
+		{
+			throw new ArgumentException(
+				$"{nameof(registry)}.{nameof(Behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} " +
+				$"({registry.Behavior.SkipInteractionRecording}) and " +
+				$"{nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} " +
+				$"({interactions.SkipInteractionRecording}) must agree; recording paths gate on the " +
+				"behavior flag while verification gates on the interactions flag, so a mismatch leaves " +
+				"the registry in an inconsistent state.",
+				nameof(interactions));
+		}
+
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
 		Interactions = interactions;

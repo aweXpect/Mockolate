@@ -27,7 +27,7 @@ namespace Mockolate.Verify;
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
 #endif
-public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult
+public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerificationResult, IFastVerifyCountResult
 {
 	private readonly Func<string> _expectationFactory;
 	private readonly IMockInteractions _interactions;
@@ -197,7 +197,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 	///     An awaitable <see cref="VerificationResult{TVerify}" /> that uses the timeout or cancellation token to wait for the
 	///     expected interactions to occur.
 	/// </summary>
-	internal class Awaitable : VerificationResult<TVerify>, IAsyncVerificationResult
+	internal class Awaitable : VerificationResult<TVerify>, IAsyncVerificationResult, IFastVerifyCountResult
 	{
 		private CancellationToken? _cancellationToken;
 		private TimeSpan? _timeout;
@@ -240,8 +240,8 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			return VerifyAsync(predicate).ConfigureAwait(false).GetAwaiter().GetResult();
 		}
 
-		/// <inheritdoc cref="IVerificationResult.VerifyCount(Func{int, Boolean})" />
-		bool IVerificationResult.VerifyCount(Func<int, bool> countPredicate)
+		/// <inheritdoc cref="IFastVerifyCountResult.VerifyCount(Func{int, Boolean})" />
+		bool IFastVerifyCountResult.VerifyCount(Func<int, bool> countPredicate)
 		{
 			ThrowIfRecordingDisabled(_interactions);
 			if (_fastCountSource is not null)
@@ -452,8 +452,8 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		return predicate(matchingInteractions);
 	}
 
-	/// <inheritdoc cref="IVerificationResult.VerifyCount(Func{int, Boolean})" />
-	bool IVerificationResult.VerifyCount(Func<int, bool> countPredicate)
+	/// <inheritdoc cref="IFastVerifyCountResult.VerifyCount(Func{int, Boolean})" />
+	bool IFastVerifyCountResult.VerifyCount(Func<int, bool> countPredicate)
 	{
 		ThrowIfRecordingDisabled(_interactions);
 		if (_fastCountSource is not null)

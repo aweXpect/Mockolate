@@ -322,7 +322,10 @@ public class FastMockInteractions : IMockInteractions
 				Volatile.Write(ref _count, n + 1);
 			}
 
-			_owner.RaiseAdded();
+			if (_owner.HasInteractionAddedSubscribers)
+			{
+				_owner.RaiseAdded();
+			}
 		}
 
 		public void Clear()
