@@ -19,11 +19,7 @@ internal partial class MockSetups
 	{
 		private int _count;
 		private PropertySetup[]? _storage;
-#if NET10_0_OR_GREATER
-		private readonly Lock _writeLock = new();
-#else
-		private readonly object _writeLock = new();
-#endif
+		private readonly MockolateLock _writeLock = new();
 
 		public int Count => Volatile.Read(ref _count);
 

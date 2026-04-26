@@ -38,7 +38,7 @@ public class FastBufferConcurrencyTests
 		await Task.WhenAll(writers);
 
 		await That(buffer.Count).IsEqualTo(writerCount * appendsPerWriter);
-		await That(buffer.CountMatching((IParameterMatch<int>)It.IsAny<int>()))
+		await That(buffer.ConsumeMatching((IParameterMatch<int>)It.IsAny<int>()))
 			.IsEqualTo(writerCount * appendsPerWriter);
 	}
 

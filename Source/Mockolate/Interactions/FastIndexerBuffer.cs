@@ -16,11 +16,7 @@ namespace Mockolate.Interactions;
 public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -163,7 +159,7 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 	///     Counts recorded indexer getter accesses whose key satisfies <paramref name="match1" />,
 	///     marking each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1)
+	public int ConsumeMatching(IParameterMatch<T1> match1)
 	{
 		int matches = 0;
 		lock (_growLock)
@@ -203,11 +199,7 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -348,7 +340,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers, marking
 	///     each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2)
+	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2)
 	{
 		int matches = 0;
 		lock (_growLock)
@@ -389,11 +381,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -536,7 +524,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers, marking
 	///     each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3)
+	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3)
 	{
 		int matches = 0;
 		lock (_growLock)
@@ -578,11 +566,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -727,7 +711,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 	///     Counts recorded indexer getter accesses whose keys satisfy the supplied matchers, marking
 	///     each matched slot as verified. Allocation-free fast path for count-only verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4)
+	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4)
 	{
 		int matches = 0;
 		lock (_growLock)
@@ -770,11 +754,7 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -916,7 +896,7 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
 	///     verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<TValue> matchValue)
+	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
 		lock (_growLock)
@@ -957,11 +937,7 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -1105,7 +1081,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
 	///     verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<TValue> matchValue)
+	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
 		lock (_growLock)
@@ -1147,11 +1123,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -1297,7 +1269,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
 	///     verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<TValue> matchValue)
+	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
 		lock (_growLock)
@@ -1340,11 +1312,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -1492,7 +1460,7 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	///     matchers, marking each matched slot as verified. Allocation-free fast path for count-only
 	///     verification.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4, IParameterMatch<TValue> matchValue)
+	public int ConsumeMatching(IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4, IParameterMatch<TValue> matchValue)
 	{
 		int matches = 0;
 		lock (_growLock)

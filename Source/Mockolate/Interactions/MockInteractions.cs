@@ -2,9 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-#if NET10_0_OR_GREATER
-using System.Threading;
-#endif
 
 namespace Mockolate.Interactions;
 
@@ -21,14 +18,8 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 	private readonly List<IInteraction> _interactions = [];
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-#if NET10_0_OR_GREATER
-	private readonly Lock _listLock = new();
-	private readonly Lock _verifiedLock = new();
-#else
-	private readonly object _listLock = new();
-
-	private readonly object _verifiedLock = new();
-#endif
+	private readonly MockolateLock _listLock = new();
+	private readonly MockolateLock _verifiedLock = new();
 
 	private HashSet<IInteraction>? _verified;
 

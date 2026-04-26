@@ -16,20 +16,17 @@ namespace Mockolate.Interactions;
 public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
-	private int _verifiedCursor;
 
 	internal FastPropertyGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -72,6 +69,13 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -83,7 +87,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
-			_verifiedCursor = 0;
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -108,8 +112,14 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
-			for (int i = _verifiedCursor; i < n; i++)
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
 			{
+				if (verified[i])
+				{
+					continue;
+				}
+
 				ref Record r = ref records[i];
 				r.Boxed ??= new PropertyGetterAccess(r.Name);
 				dest.Add((r.Seq, r.Boxed));
@@ -119,17 +129,20 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 
 	/// <summary>
 	///     Returns the number of recorded property getter accesses and marks every currently-published
-	///     slot as verified. Allocation-free fast path, exposed for symmetry with the matcher-taking
-	///     <see cref="FastPropertySetterBuffer{T}.CountMatching(IParameterMatch{T})" />.
+	///     slot as verified so a later <see cref="MockInteractions.GetUnverifiedInteractions" /> walk
+	///     skips them. The name reflects the side effect: this is a <c>Count</c> + <c>MarkVerified</c>
+	///     step, exposed for symmetry with
+	///     <see cref="FastPropertySetterBuffer{T}.ConsumeMatching(IParameterMatch{T})" />.
 	/// </summary>
-	public int CountMatching()
+	public int ConsumeMatching()
 	{
 		lock (_growLock)
 		{
 			int n = _published;
-			if (_verifiedCursor < n)
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
 			{
-				_verifiedCursor = n;
+				verified[i] = true;
 			}
 
 			return n;
@@ -154,11 +167,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
 	private bool[] _verifiedSlots;
 	private int _reserved;
@@ -272,9 +281,11 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 
 	/// <summary>
 	///     Counts recorded setter accesses whose assigned value satisfies <paramref name="match" />,
-	///     marking each matched slot as verified. Allocation-free fast path for count-only verification.
+	///     marking each matched slot as verified so a later
+	///     <see cref="MockInteractions.GetUnverifiedInteractions" /> walk skips them. The name
+	///     reflects the side effect: this is a <c>Count</c> + <c>MarkVerified</c> step, not a pure read.
 	/// </summary>
-	public int CountMatching(IParameterMatch<T> match)
+	public int ConsumeMatching(IParameterMatch<T> match)
 	{
 		int matches = 0;
 		lock (_growLock)

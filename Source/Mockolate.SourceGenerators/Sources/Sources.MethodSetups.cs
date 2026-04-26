@@ -269,7 +269,7 @@ internal static partial class Sources
 
 		string countMatchingParams = string.Join(", ", Enumerable.Range(1, count).Select(x => $"global::Mockolate.Parameters.IParameterMatch<T{x}> match{x}"));
 		string countMatchingPredicate = string.Join(" && ", Enumerable.Range(1, count).Select(x => $"match{x}.Matches(r.P{x})"));
-		sb.Append("\t\tpublic int CountMatching(").Append(countMatchingParams).Append(")").AppendLine();
+		sb.Append("\t\tpublic int ConsumeMatching(").Append(countMatchingParams).Append(")").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tint matches = 0;").AppendLine();
 		sb.Append("\t\t\tlock (_growLock)").AppendLine();

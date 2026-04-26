@@ -4,9 +4,6 @@ using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
-#if NET10_0_OR_GREATER
-using System.Threading;
-#endif
 
 namespace Mockolate.Setup;
 
@@ -172,11 +169,7 @@ public class PropertySetup<T> : PropertySetup,
 {
 	private readonly MockRegistry _mockRegistry;
 	private readonly string _name;
-#if NET10_0_OR_GREATER
-	private readonly Lock _initializationLock = new();
-#else
-	private readonly object _initializationLock = new();
-#endif
+	private readonly MockolateLock _initializationLock = new();
 	private Callbacks<Action<int, T>>? _getterCallbacks;
 	private bool _isInitialized;
 	private bool _isUserInitialized;

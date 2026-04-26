@@ -198,14 +198,14 @@ public class FastMockInteractionsTests
 	}
 
 	[Fact]
-	public async Task GetUnverifiedInteractions_AfterMatcherLessCountMatching_ShouldDropMarkedSlots()
+	public async Task GetUnverifiedInteractions_AfterMatcherLessConsumeMatching_ShouldDropMarkedSlots()
 	{
 		FastMockInteractions sut = new(memberCount: 1);
 		FastMethod0Buffer methodBuffer = sut.InstallMethod(memberId: 0);
 		methodBuffer.Append("first");
 		methodBuffer.Append("second");
 
-		_ = methodBuffer.CountMatching();
+		_ = methodBuffer.ConsumeMatching();
 
 		await That(sut.GetUnverifiedInteractions()).IsEmpty();
 
@@ -217,20 +217,20 @@ public class FastMockInteractionsTests
 	}
 
 	[Fact]
-	public async Task GetUnverifiedInteractions_AfterTypedCountMatching_ShouldDropOnlyMatchedSlots()
+	public async Task GetUnverifiedInteractions_AfterTypedConsumeMatching_ShouldDropOnlyMatchedSlots()
 	{
 		FastMockInteractions sut = new(memberCount: 1);
 		FastMethod1Buffer<int> methodBuffer = sut.InstallMethod<int>(memberId: 0);
 		methodBuffer.Append("Dispense", 1);
 		methodBuffer.Append("Dispense", 2);
 
-		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
+		_ = methodBuffer.ConsumeMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
 
 		IReadOnlyCollection<IInteraction> unverified = sut.GetUnverifiedInteractions();
 		await That(unverified).HasCount(1);
 		await That(((MethodInvocation<int>)unverified.Single()).Parameter1).IsEqualTo(2);
 
-		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(2));
+		_ = methodBuffer.ConsumeMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(2));
 
 		await That(sut.GetUnverifiedInteractions()).IsEmpty();
 	}
@@ -245,8 +245,8 @@ public class FastMockInteractionsTests
 		methodBuffer.Append("M", 7);
 		getterBuffer.Append("Prop");
 
-		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(7));
-		_ = getterBuffer.CountMatching();
+		_ = methodBuffer.ConsumeMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(7));
+		_ = getterBuffer.ConsumeMatching();
 
 		await That(sut.GetUnverifiedInteractions()).IsEmpty();
 	}
@@ -260,7 +260,7 @@ public class FastMockInteractionsTests
 		methodBuffer.Append("M", 2);
 		methodBuffer.Append("M", 3);
 
-		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
+		_ = methodBuffer.ConsumeMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
 
 		List<IInteraction> all = [..sut];
 		((IMockInteractions)sut).Verified([all[1]]);
@@ -279,8 +279,8 @@ public class FastMockInteractionsTests
 
 		methodBuffer.Append("M", 1);
 		getterBuffer.Append("Prop");
-		_ = methodBuffer.CountMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
-		_ = getterBuffer.CountMatching();
+		_ = methodBuffer.ConsumeMatching((Mockolate.Parameters.IParameterMatch<int>)It.Is<int>(1));
+		_ = getterBuffer.ConsumeMatching();
 
 		sut.Clear();
 

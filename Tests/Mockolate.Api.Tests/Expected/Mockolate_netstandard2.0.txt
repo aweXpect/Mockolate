@@ -607,7 +607,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name, object? target, System.Reflection.MethodInfo method) { }
         public void Clear() { }
-        public int CountMatching() { }
+        public int ConsumeMatching() { }
     }
     public static class FastEventBufferFactory
     {
@@ -637,7 +637,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1> access) { }
         public void Append(T1 parameter1) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1, T2> : Mockolate.Interactions.IFastMemberBuffer
@@ -646,7 +646,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1, T2> access) { }
         public void Append(T1 parameter1, T2 parameter2) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1, T2, T3> : Mockolate.Interactions.IFastMemberBuffer
@@ -655,7 +655,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1, T2, T3> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : Mockolate.Interactions.IFastMemberBuffer
@@ -664,7 +664,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1, T2, T3, T4> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, TValue> : Mockolate.Interactions.IFastMemberBuffer
@@ -673,7 +673,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, TValue> access) { }
         public void Append(T1 parameter1, TValue value) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : Mockolate.Interactions.IFastMemberBuffer
@@ -682,7 +682,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, T2, TValue> access) { }
         public void Append(T1 parameter1, T2 parameter2, TValue value) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : Mockolate.Interactions.IFastMemberBuffer
@@ -691,7 +691,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, T2, T3, TValue> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3, TValue value) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : Mockolate.Interactions.IFastMemberBuffer
@@ -700,7 +700,7 @@ namespace Mockolate.Interactions
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, T2, T3, T4, TValue> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, TValue value) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, Mockolate.Parameters.IParameterMatch<TValue> matchValue) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod0Buffer : Mockolate.Interactions.IFastMemberBuffer
@@ -708,7 +708,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name) { }
         public void Clear() { }
-        public int CountMatching() { }
+        public int ConsumeMatching() { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod1Buffer<T1> : Mockolate.Interactions.IFastMemberBuffer
@@ -716,7 +716,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name, T1 parameter1) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod2Buffer<T1, T2> : Mockolate.Interactions.IFastMemberBuffer
@@ -724,7 +724,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name, T1 parameter1, T2 parameter2) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod3Buffer<T1, T2, T3> : Mockolate.Interactions.IFastMemberBuffer
@@ -732,7 +732,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name, T1 parameter1, T2 parameter2, T3 parameter3) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod4Buffer<T1, T2, T3, T4> : Mockolate.Interactions.IFastMemberBuffer
@@ -740,7 +740,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4) { }
     }
     public static class FastMethodBufferFactory
     {
@@ -778,7 +778,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name) { }
         public void Clear() { }
-        public int CountMatching() { }
+        public int ConsumeMatching() { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} property sets")]
     public sealed class FastPropertySetterBuffer<T> : Mockolate.Interactions.IFastMemberBuffer
@@ -786,7 +786,7 @@ namespace Mockolate.Interactions
         public int Count { get; }
         public void Append(string name, T value) { }
         public void Clear() { }
-        public int CountMatching(Mockolate.Parameters.IParameterMatch<T> match) { }
+        public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T> match) { }
     }
     public interface IFastMemberBuffer
     {

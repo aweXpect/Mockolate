@@ -30,21 +30,18 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 	private readonly FastEventBufferKind _kind;
-#if NET10_0_OR_GREATER
-	private readonly Lock _growLock = new();
-#else
-	private readonly object _growLock = new();
-#endif
+	private readonly MockolateLock _growLock = new();
 	private Record[] _records;
+	private bool[] _verifiedSlots;
 	private int _reserved;
 	private int _published;
-	private int _verifiedCursor;
 
 	internal FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
 	{
 		_owner = owner;
 		_kind = kind;
 		_records = new Record[4];
+		_verifiedSlots = new bool[4];
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
@@ -89,6 +86,13 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 			}
 
 			Volatile.Write(ref _records, records);
+			if (_verifiedSlots.Length < records.Length)
+			{
+				bool[] biggerBits = new bool[records.Length];
+				Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);
+				_verifiedSlots = biggerBits;
+			}
+
 			return records;
 		}
 	}
@@ -100,7 +104,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 		{
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
-			_verifiedCursor = 0;
+			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
 		}
 	}
 
@@ -127,8 +131,14 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 		{
 			int n = _published;
 			Record[] records = _records;
-			for (int i = _verifiedCursor; i < n; i++)
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
 			{
+				if (verified[i])
+				{
+					continue;
+				}
+
 				ref Record r = ref records[i];
 				r.Boxed ??= _kind == FastEventBufferKind.Subscribe
 					? new EventSubscription(r.Name, r.Target, r.Method)
@@ -140,17 +150,20 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 
 	/// <summary>
 	///     Returns the number of recorded subscribe/unsubscribe accesses and marks every
-	///     currently-published slot as verified. Allocation-free fast path equivalent to
-	///     <see cref="Count" /> with a side-effecting cursor advance.
+	///     currently-published slot as verified so a later
+	///     <see cref="MockInteractions.GetUnverifiedInteractions" /> walk skips them.
+	///     The name reflects the side effect: this is a <c>Count</c> + <c>MarkVerified</c> step,
+	///     not a pure read.
 	/// </summary>
-	public int CountMatching()
+	public int ConsumeMatching()
 	{
 		lock (_growLock)
 		{
 			int n = _published;
-			if (_verifiedCursor < n)
+			bool[] verified = _verifiedSlots;
+			for (int i = 0; i < n; i++)
 			{
-				_verifiedCursor = n;
+				verified[i] = true;
 			}
 
 			return n;

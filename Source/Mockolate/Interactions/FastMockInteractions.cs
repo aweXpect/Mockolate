@@ -25,11 +25,7 @@ public class FastMockInteractions : IMockInteractions
 	private long _globalSequence;
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-#if NET10_0_OR_GREATER
-	private readonly Lock _verifiedLock = new();
-#else
-	private readonly object _verifiedLock = new();
-#endif
+	private readonly MockolateLock _verifiedLock = new();
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private HashSet<IInteraction>? _verified;
@@ -57,43 +53,8 @@ public class FastMockInteractions : IMockInteractions
 	/// <inheritdoc cref="IMockInteractions.SkipInteractionRecording" />
 	public bool SkipInteractionRecording { get; }
 
-	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private EventHandler? _interactionAdded;
-
 	/// <inheritdoc cref="IMockInteractions.InteractionAdded" />
-	public event EventHandler? InteractionAdded
-	{
-		add
-		{
-			EventHandler? current = Volatile.Read(ref _interactionAdded);
-			while (true)
-			{
-				EventHandler? combined = (EventHandler?)Delegate.Combine(current, value);
-				EventHandler? actual = Interlocked.CompareExchange(ref _interactionAdded, combined, current);
-				if (ReferenceEquals(actual, current))
-				{
-					break;
-				}
-
-				current = actual;
-			}
-		}
-		remove
-		{
-			EventHandler? current = Volatile.Read(ref _interactionAdded);
-			while (true)
-			{
-				EventHandler? removed = (EventHandler?)Delegate.Remove(current, value);
-				EventHandler? actual = Interlocked.CompareExchange(ref _interactionAdded, removed, current);
-				if (ReferenceEquals(actual, current))
-				{
-					break;
-				}
-
-				current = actual;
-			}
-		}
-	}
+	public event EventHandler? InteractionAdded;
 
 	/// <inheritdoc cref="IMockInteractions.OnClearing" />
 	public event EventHandler? OnClearing;
@@ -104,7 +65,7 @@ public class FastMockInteractions : IMockInteractions
 	///     <see cref="RaiseAdded" /> when nothing is listening, which is the common case (the event is
 	///     used today only by <c>Within(TimeSpan)</c> waiting).
 	/// </summary>
-	public bool HasInteractionAddedSubscribers => Volatile.Read(ref _interactionAdded) is not null;
+	public bool HasInteractionAddedSubscribers => InteractionAdded is not null;
 
 	/// <summary>
 	///     The number of interactions contained in the collection across all per-member buffers.
@@ -142,7 +103,7 @@ public class FastMockInteractions : IMockInteractions
 	///     need to drive the event. Not intended for end-user code.
 	/// </remarks>
 	public void RaiseAdded()
-		=> Volatile.Read(ref _interactionAdded)?.Invoke(this, EventArgs.Empty);
+		=> InteractionAdded?.Invoke(this, EventArgs.Empty);
 
 	/// <inheritdoc cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" />
 	/// <remarks>
@@ -297,11 +258,7 @@ public class FastMockInteractions : IMockInteractions
 	private sealed class FallbackBuffer(FastMockInteractions owner) : IFastMemberBuffer
 	{
 		private readonly FastMockInteractions _owner = owner;
-#if NET10_0_OR_GREATER
-		private readonly Lock _lock = new();
-#else
-		private readonly object _lock = new();
-#endif
+		private readonly MockolateLock _lock = new();
 		private (long Seq, IInteraction Interaction)[] _records = new (long, IInteraction)[4];
 		private int _count;
 
