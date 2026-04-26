@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
@@ -8,7 +9,9 @@ internal readonly record struct GenericParameter
 {
 	public GenericParameter(ITypeParameterSymbol typeSymbol)
 	{
-		Name = typeSymbol.Name;
+		Name = SyntaxFacts.GetKeywordKind(typeSymbol.Name) != SyntaxKind.None
+			? "@" + typeSymbol.Name
+			: typeSymbol.Name;
 		IsUnmanaged = typeSymbol.HasUnmanagedTypeConstraint;
 		IsClass = typeSymbol.HasReferenceTypeConstraint;
 		IsStruct = typeSymbol.HasValueTypeConstraint;

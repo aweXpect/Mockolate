@@ -519,6 +519,39 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyService.CreateMock();
+			         }
+			     }
+
+			     public interface IMyService
+			     {
+			         int @class { get; }
+			         string @return();
+			         void @event(int @params);
+			         @class @void<@class>(@class @ref);
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+			.Contains("public int @class").And
+			.Contains("public string @return()").And
+			.Contains("public void @event(int @params)").And
+			.Contains("public @class @void<@class>(@class @ref)");
+	}
+
+	[Fact]
 	public async Task ShouldHandleComplexInheritanceWithSealedAndInternalMembers()
 	{
 		GeneratorResult result = Generator
