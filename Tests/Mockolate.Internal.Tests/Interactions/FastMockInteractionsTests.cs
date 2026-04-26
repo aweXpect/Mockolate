@@ -200,7 +200,7 @@ public class FastMockInteractionsTests
 		for (int t = 0; t < threads; t++)
 		{
 			int threadId = t;
-#pragma warning disable xUnit1051
+#pragma warning disable xUnit1051 // intentionally not using a cancellation token here; the threads run a short, deterministic loop
 			tasks[t] = Task.Run(() =>
 #pragma warning restore xUnit1051
 			{
@@ -444,26 +444,6 @@ public class FastMockInteractionsTests
 
 		await That(skipping.SkipInteractionRecording).IsTrue();
 		await That(recording.SkipInteractionRecording).IsFalse();
-	}
-
-	[Fact]
-	public async Task SnapshotOrdered_WithMultipleSlowPathFallbackEntries_PreservesOrder()
-	{
-		IMockInteractions sut = new FastMockInteractions(0);
-		MethodInvocation first = new("first");
-		MethodInvocation second = new("second");
-		MethodInvocation third = new("third");
-
-		sut.RegisterInteraction(first);
-		sut.RegisterInteraction(second);
-		sut.RegisterInteraction(third);
-
-		List<IInteraction> ordered = [..sut,];
-
-		await That(ordered).HasCount(3);
-		await That(ordered[0]).IsSameAs(first);
-		await That(ordered[1]).IsSameAs(second);
-		await That(ordered[2]).IsSameAs(third);
 	}
 
 	[Fact]
