@@ -151,6 +151,77 @@ public class FastMockInteractionsTests
 	}
 
 	[Fact]
+	public async Task RegisterInteraction_FallbackPath_ShouldEnumerateMultipleInRegistrationOrder()
+	{
+		IMockInteractions sut = new FastMockInteractions(memberCount: 0);
+		MethodInvocation first = new("first");
+		MethodInvocation second = new("second");
+
+		sut.RegisterInteraction(first);
+		sut.RegisterInteraction(second);
+
+		List<IInteraction> enumerated = [.. sut];
+
+		await That(sut.Count).IsEqualTo(2);
+		await That(enumerated).HasCount(2);
+		await That(enumerated[0]).IsSameAs(first);
+		await That(enumerated[1]).IsSameAs(second);
+	}
+
+	[Fact]
+	public async Task RegisterInteraction_FallbackPath_ShouldFireInteractionAddedPerCall()
+	{
+		int invocations = 0;
+		IMockInteractions sut = new FastMockInteractions(memberCount: 0);
+		sut.InteractionAdded += Handler;
+
+		sut.RegisterInteraction(new MethodInvocation("foo"));
+		sut.RegisterInteraction(new MethodInvocation("bar"));
+
+		sut.InteractionAdded -= Handler;
+
+		await That(invocations).IsEqualTo(2);
+
+		void Handler(object? sender, EventArgs e) => invocations++;
+	}
+
+	[Fact]
+	public async Task RegisterInteraction_FallbackPath_OnClearing_ShouldFireWhenClearIsInvoked()
+	{
+		int invocations = 0;
+		IMockInteractions sut = new FastMockInteractions(memberCount: 0);
+		sut.RegisterInteraction(new MethodInvocation("foo"));
+		sut.OnClearing += Handler;
+
+		sut.Clear();
+
+		sut.OnClearing -= Handler;
+
+		await That(invocations).IsEqualTo(1);
+		await That(sut.Count).IsEqualTo(0);
+
+		void Handler(object? sender, EventArgs e) => invocations++;
+	}
+
+	[Fact]
+	public async Task RegisterInteraction_FallbackPath_GetUnverifiedInteractions_ShouldRespectVerifiedSet()
+	{
+		IMockInteractions sut = new FastMockInteractions(memberCount: 0);
+		MethodInvocation first = new("first");
+		MethodInvocation second = new("second");
+		sut.RegisterInteraction(first);
+		sut.RegisterInteraction(second);
+
+		sut.Verified([first]);
+
+		IReadOnlyCollection<IInteraction> unverified = sut.GetUnverifiedInteractions();
+
+		await That(unverified).HasCount(1);
+		await That(unverified.Contains(first)).IsFalse();
+		await That(unverified.Contains(second)).IsTrue();
+	}
+
+	[Fact]
 	public async Task GetUnverifiedInteractions_ShouldRespectVerifiedSet()
 	{
 		FastMockInteractions sut = new(memberCount: 1);

@@ -15,7 +15,7 @@ public sealed class MockRegistryTests
 		sut.Mock.Setup["Dark"].Returns(5);
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 		ISetup setup = await That(result).HasSingle();
 		await That(setup.ToString()).IsEqualTo("int this[\"Dark\"]");
@@ -28,7 +28,7 @@ public sealed class MockRegistryTests
 		sut.Mock.Setup.DoSomething(null, 3.5, It.IsAny<string>()).DoesNotThrow();
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 		ISetup setup = await That(result).HasSingle();
 		await That(setup.ToString()).IsEqualTo("void DoSomething(null, 3.5, It.IsAny<string>())");
@@ -41,7 +41,7 @@ public sealed class MockRegistryTests
 		sut.Mock.Setup.TotalDispensed.InitializeWith(4);
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 		ISetup setup = await That(result).HasSingle();
 		await That(setup.ToString()).IsEqualTo("int TotalDispensed");
@@ -54,7 +54,7 @@ public sealed class MockRegistryTests
 		sut.Mock.Setup.DoSomething(new DateTime(2026, 4, 1, 12, 0, 0), 3.5).DoesNotThrow();
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
-		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+		IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 		ISetup setup = await That(result).HasSingle();
 		await That(setup.ToString()).IsEqualTo("void DoSomething(04/01/2026 12:00:00, 3.5)");

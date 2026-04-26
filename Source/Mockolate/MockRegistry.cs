@@ -28,7 +28,7 @@ public partial class MockRegistry
 	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
 	public MockRegistry(MockBehavior behavior, object?[]? constructorParameters = null)
 		: this(behavior,
-			new MockInteractions { SkipInteractionRecording = behavior.SkipInteractionRecording, },
+			new FastMockInteractions(0, behavior.SkipInteractionRecording),
 			constructorParameters)
 	{
 	}
@@ -39,8 +39,9 @@ public partial class MockRegistry
 	/// </summary>
 	/// <remarks>
 	///     The generator-emitted <c>CreateMock</c> paths use this overload to install a
-	///     <see cref="FastMockInteractions" /> tailored to the mocked type. Pass a plain
-	///     <see cref="MockInteractions" /> when constructing a registry by hand.
+	///     <see cref="FastMockInteractions" /> tailored to the mocked type. Pass any
+	///     <see cref="IMockInteractions" /> implementation (e.g. <c>new FastMockInteractions(0)</c>)
+	///     when constructing a registry by hand.
 	/// </remarks>
 	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
 	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
@@ -78,7 +79,7 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Interactions = new MockInteractions { SkipInteractionRecording = registry.Behavior.SkipInteractionRecording };
+		Interactions = new FastMockInteractions(0, registry.Behavior.SkipInteractionRecording);
 		Setup = registry.Setup;
 		_scenarioState = registry._scenarioState;
 		Wraps = wraps;
@@ -126,13 +127,6 @@ public partial class MockRegistry
 		Setup = registry.Setup;
 		_scenarioState = registry._scenarioState;
 		Wraps = registry.Wraps;
-	}
-
-	/// <inheritdoc cref="MockRegistry(MockRegistry, IMockInteractions)" />
-	[Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a future release.")]
-	public MockRegistry(MockRegistry registry, MockInteractions interactions)
-		: this(registry, (IMockInteractions)interactions)
-	{
 	}
 
 	/// <summary>

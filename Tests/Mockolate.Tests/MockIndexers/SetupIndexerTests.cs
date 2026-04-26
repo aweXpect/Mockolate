@@ -311,7 +311,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1]");
@@ -340,7 +340,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2]");
@@ -397,7 +397,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2, 3].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3]");
@@ -413,7 +413,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2, 3, 4].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3, 4]");
@@ -429,7 +429,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2, 3, 4, 5].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3, 4, 5]");

@@ -152,7 +152,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	/// <summary>
 	///     Returns the number of recorded subscribe/unsubscribe accesses and marks every
 	///     currently-published slot as verified so a later
-	///     <see cref="MockInteractions.GetUnverifiedInteractions" /> walk skips them.
+	///     <see cref="IMockInteractions.GetUnverifiedInteractions" /> walk skips them.
 	///     The name reflects the side effect: this is a <c>Count</c> + <c>MarkVerified</c> step,
 	///     not a pure read.
 	/// </summary>

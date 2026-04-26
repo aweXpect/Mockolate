@@ -130,7 +130,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 
 	/// <summary>
 	///     Returns the number of recorded property getter accesses and marks every currently-published
-	///     slot as verified so a later <see cref="MockInteractions.GetUnverifiedInteractions" /> walk
+	///     slot as verified so a later <see cref="IMockInteractions.GetUnverifiedInteractions" /> walk
 	///     skips them. The name reflects the side effect: this is a <c>Count</c> + <c>MarkVerified</c>
 	///     step, exposed for symmetry with
 	///     <see cref="FastPropertySetterBuffer{T}.ConsumeMatching(IParameterMatch{T})" />.
@@ -284,7 +284,7 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 	/// <summary>
 	///     Counts recorded setter accesses whose assigned value satisfies <paramref name="match" />,
 	///     marking each matched slot as verified so a later
-	///     <see cref="MockInteractions.GetUnverifiedInteractions" /> walk skips them. The name
+	///     <see cref="IMockInteractions.GetUnverifiedInteractions" /> walk skips them. The name
 	///     reflects the side effect: this is a <c>Count</c> + <c>MarkVerified</c> step, not a pure read.
 	/// </summary>
 	public int ConsumeMatching(IParameterMatch<T> match)

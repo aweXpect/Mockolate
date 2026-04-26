@@ -9,7 +9,7 @@ public sealed partial class VerificationResultTests
 	[Fact]
 	public async Task CustomVerificationResult_ShouldKeepExpectation()
 	{
-		IMockInteractions interactions = new MockInteractions();
+		IMockInteractions interactions = new FastMockInteractions(0);
 		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
 
 		string result = ((IVerificationResult)sut).Expectation;
@@ -20,7 +20,7 @@ public sealed partial class VerificationResultTests
 	[Fact]
 	public async Task CustomVerificationResult_WithFuncExpectation_ShouldKeepExpectation()
 	{
-		IMockInteractions interactions = new MockInteractions();
+		IMockInteractions interactions = new FastMockInteractions(0);
 		VerificationResult<int> sut = new(1, interactions, _ => false, () => "foo");
 
 		string result = ((IVerificationResult)sut).Expectation;
@@ -31,37 +31,13 @@ public sealed partial class VerificationResultTests
 	[Fact]
 	public async Task CustomVerificationResult_WithIMockInteractions_ShouldExposeInteractions()
 	{
-		IMockInteractions interactions = new MockInteractions();
+		IMockInteractions interactions = new FastMockInteractions(0);
 		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
 
 		IMockInteractions exposed = ((IVerificationResult)sut).Interactions;
 
 		await That(exposed).IsSameAs(interactions);
 	}
-
-#pragma warning disable CS0618 // forwarding-shim coverage
-	[Fact]
-	public async Task CustomVerificationResult_WithMockInteractionsObsoleteOverload_ShouldForward()
-	{
-		MockInteractions interactions = new();
-		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
-
-		string result = ((IVerificationResult)sut).Expectation;
-
-		await That(result).IsEqualTo("foo");
-	}
-
-	[Fact]
-	public async Task CustomVerificationResult_WithMockInteractionsObsoleteFuncOverload_ShouldForward()
-	{
-		MockInteractions interactions = new();
-		VerificationResult<int> sut = new(1, interactions, _ => false, () => "foo");
-
-		string result = ((IVerificationResult)sut).Expectation;
-
-		await That(result).IsEqualTo("foo");
-	}
-#pragma warning restore CS0618
 
 	[Fact]
 	public async Task VerificationResult_Got_ShouldHaveExpectedValue()

@@ -174,9 +174,6 @@ namespace Mockolate
     {
         public MockRegistry(Mockolate.MockBehavior behavior, object?[]? constructorParameters = null) { }
         public MockRegistry(Mockolate.MockRegistry registry, Mockolate.Interactions.IMockInteractions interactions) { }
-        [System.Obsolete("Use the IMockInteractions overload instead. This overload will be removed in a fu" +
-            "ture release.")]
-        public MockRegistry(Mockolate.MockRegistry registry, Mockolate.Interactions.MockInteractions interactions) { }
         public MockRegistry(Mockolate.MockRegistry registry, object wraps) { }
         public MockRegistry(Mockolate.MockRegistry registry, object?[] constructorParameters) { }
         public MockRegistry(Mockolate.MockBehavior behavior, Mockolate.Interactions.IMockInteractions interactions, object?[]? constructorParameters = null) { }
@@ -964,18 +961,6 @@ namespace Mockolate.Interactions
         public T4 Parameter4 { get; }
         public override string ToString() { }
     }
-    [System.Diagnostics.DebuggerDisplay("{_interactions.Count} interactions")]
-    public class MockInteractions : Mockolate.Interactions.IMockInteractions, System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction>, System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction>, System.Collections.IEnumerable
-    {
-        public MockInteractions() { }
-        public int Count { get; }
-        public bool SkipInteractionRecording { get; init; }
-        public event System.EventHandler? InteractionAdded;
-        public event System.EventHandler? OnClearing;
-        public void Clear() { }
-        public System.Collections.Generic.IEnumerator<Mockolate.Interactions.IInteraction> GetEnumerator() { }
-        public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
-    }
     [System.Diagnostics.DebuggerDisplay("{ToString()}")]
     public abstract class PropertyAccess : Mockolate.Interactions.IInteraction
     {
@@ -1001,7 +986,7 @@ namespace Mockolate.Monitor
     public abstract class MockMonitor
     {
         protected MockMonitor(Mockolate.Interactions.IMockInteractions mockInteractions) { }
-        protected Mockolate.Interactions.MockInteractions Interactions { get; }
+        protected Mockolate.Interactions.IMockInteractions Interactions { get; }
         public System.IDisposable Run() { }
         protected void UpdateInteractions() { }
     }

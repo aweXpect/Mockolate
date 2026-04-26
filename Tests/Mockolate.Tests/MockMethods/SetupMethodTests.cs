@@ -615,7 +615,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method1(1).Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string Method1(1)");
@@ -711,7 +711,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method2(1, 2).Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string Method2(1, 2)");
@@ -842,7 +842,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method3(1, 2, 3).Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string Method3(1, 2, 3)");
@@ -1042,7 +1042,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method4(1, 2, 3, 4).Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string Method4(1, 2, 3, 4)");
@@ -1389,7 +1389,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method5(1, 2, 3, 4, 5).Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string Method5(1, 2, 3, 4, 5)");
@@ -1527,7 +1527,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method1(1).DoesNotThrow();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("void Method1(1)");
@@ -1593,7 +1593,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method2(1, 2).DoesNotThrow();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("void Method2(1, 2)");
@@ -1660,7 +1660,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method3(1, 2, 3).DoesNotThrow();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("void Method3(1, 2, 3)");
@@ -1728,7 +1728,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method4(1, 2, 3, 4).DoesNotThrow();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("void Method4(1, 2, 3, 4)");
@@ -1799,7 +1799,7 @@ public sealed partial class SetupMethodTests
 			sut.Mock.Setup.Method5(1, 2, 3, 4, 5).DoesNotThrow();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("void Method5(1, 2, 3, 4, 5)");

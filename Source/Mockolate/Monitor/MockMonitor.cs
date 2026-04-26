@@ -25,13 +25,13 @@ public abstract class MockMonitor
 	protected MockMonitor(IMockInteractions mockInteractions)
 	{
 		_monitoredInteractions = mockInteractions;
-		Interactions = new MockInteractions { SkipInteractionRecording = mockInteractions.SkipInteractionRecording };
+		Interactions = new FastMockInteractions(0, mockInteractions.SkipInteractionRecording);
 	}
 
 	/// <summary>
 	///     The interactions that were recorded during the monitoring session.
 	/// </summary>
-	protected MockInteractions Interactions { get; }
+	protected IMockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Begins monitoring interactions and returns a scope that ends monitoring when disposed.
@@ -61,7 +61,7 @@ public abstract class MockMonitor
 		{
 			foreach (IInteraction interaction in _monitoredInteractions.Skip(_monitoringStart))
 			{
-				((IMockInteractions)Interactions).RegisterInteraction(interaction);
+				Interactions.RegisterInteraction(interaction);
 			}
 		}
 
@@ -85,7 +85,7 @@ public abstract class MockMonitor
 			int copied = 0;
 			foreach (IInteraction interaction in _monitoredInteractions.Skip(_monitoringStart))
 			{
-				((IMockInteractions)Interactions).RegisterInteraction(interaction);
+				Interactions.RegisterInteraction(interaction);
 				copied++;
 			}
 

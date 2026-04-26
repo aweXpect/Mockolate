@@ -130,7 +130,7 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 
 	/// <summary>
 	///     Returns the number of recorded calls and marks every currently-published slot as verified
-	///     so a subsequent <see cref="MockInteractions.GetUnverifiedInteractions" /> walk skips them.
+	///     so a subsequent <see cref="IMockInteractions.GetUnverifiedInteractions" /> walk skips them.
 	///     Parameterless overload of the typed
 	///     <see cref="FastMethod1Buffer{T1}.ConsumeMatching(IParameterMatch{T1})" /> family — provided so
 	///     count-only verification can dispatch uniformly across arities without allocating a boxed
@@ -286,7 +286,7 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 	/// <summary>
 	///     Counts recorded calls whose parameter satisfies <paramref name="match1" />, marking each
 	///     matched slot as verified so it is skipped by a later
-	///     <see cref="MockInteractions.GetUnverifiedInteractions" /> walk. Walks the typed storage in
+	///     <see cref="IMockInteractions.GetUnverifiedInteractions" /> walk. Walks the typed storage in
 	///     place and never allocates an <see cref="IInteraction" />, so count-only verification is
 	///     allocation-free in the common case.
 	/// </summary>

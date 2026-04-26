@@ -69,7 +69,7 @@ public record MockBehavior : IMockBehaviorAccess
 	///     <para />
 	///     When set to <see langword="true" />, the mock skips allocating interaction records, avoids the
 	///     interaction-list lock, and does not raise the
-	///     <see cref="Mockolate.Interactions.MockInteractions" /> added-event. Setups, returns, callbacks, and
+	///     <see cref="Mockolate.Interactions.IMockInteractions.InteractionAdded" /> event. Setups, returns, callbacks, and
 	///     base-class delegation continue to work normally - only verification is disabled. Any attempt to
 	///     verify throws a <see cref="Mockolate.Exceptions.MockException" />.
 	/// </remarks>
