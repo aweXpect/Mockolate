@@ -36,7 +36,7 @@
 		<PackageVersion Include="PublicApiGenerator" Version="11.5.4"/>
 		<PackageVersion Include="aweXpect" Version="2.31.0"/>
 		<PackageVersion Include="aweXpect.Chronology" Version="1.0.0"/>
-		<PackageVersion Include="aweXpect.Mockolate" Version="2.3.0"/>
+		<PackageVersion Include="aweXpect.Mockolate" Version="3.0.0-pre.1"/>
 		<PackageVersion Include="Testably.Abstractions" Version="10.2.0"/>
 		<PackageVersion Include="Azure.Data.Tables" Version="12.11.0"/>
 		<PackageVersion Include="Azure.Storage.Blobs" Version="12.27.0"/>
