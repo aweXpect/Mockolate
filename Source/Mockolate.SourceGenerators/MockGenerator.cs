@@ -13,9 +13,6 @@ namespace Mockolate.SourceGenerators;
 [Generator]
 public class MockGenerator : IIncrementalGenerator
 {
-	private static SourceText ToSource(string source)
-		=> SourceText.From(Sources.Sources.ExpandCrefs(source), Encoding.UTF8);
-
 	void IIncrementalGenerator.Initialize(IncrementalGeneratorInitializationContext context)
 	{
 		context.RegisterPostInitializationOutput(ctx => ctx.AddSource(
@@ -44,6 +41,9 @@ public class MockGenerator : IIncrementalGenerator
 			         SymbolEqualityComparer.Default.Equals(attributeSymbol.ContainingAssembly, c.Assembly)));
 		}
 	}
+
+	private static SourceText ToSource(string source)
+		=> SourceText.From(Sources.Sources.ExpandCrefs(source), Encoding.UTF8);
 
 #pragma warning disable S3776 // Cognitive Complexity of methods should not be too high
 	private static void Execute(ImmutableArray<MockClass> mocksToGenerate, bool hasOverloadResolutionPriority, SourceProductionContext context)

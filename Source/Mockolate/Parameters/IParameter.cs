@@ -33,5 +33,5 @@ public interface IParameter<out T> : IParameter
 #if NET9_0_OR_GREATER
 	where T : allows ref struct
 #endif
-	;
+;
 #pragma warning restore S2326 // Unused type parameters should be removed

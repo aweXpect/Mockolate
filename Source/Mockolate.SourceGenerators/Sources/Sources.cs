@@ -108,20 +108,24 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append('"').Append(p.Name).Append("\", ").Append(p.ToNameOrWrapper());
+			sb.Append(p.ToNameOrWrapper());
 			first = false;
 		}
 	}
 
 	/// <summary>
 	///     Emits variable declarations for the indexer getter access and matching setup:
-	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;("p", p, ...);
+	///     <code>var access = new IndexerGetterAccess&lt;T...&gt;(p, ...);
 	///     mockRegistry.RegisterInteraction(access);
 	///     var setup = mockRegistry.GetIndexerSetup&lt;IndexerSetup&lt;TValue, T...&gt;&gt;(access);</code>
 	/// </summary>
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void EmitIndexerGetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
-		Type propertyType, EquatableArray<MethodParameter> parameters)
+		Type propertyType, EquatableArray<MethodParameter> parameters,
+		bool useFastBuffers = false, string? memberIdRef = null,
+		string? setupMemberIdRef = null)
+#pragma warning restore S107
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerGetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);
@@ -131,32 +135,36 @@ internal static partial class Sources
 
 		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
 		sb.Append(indent).Append("{").AppendLine();
-		sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
-			.AppendLine();
+		if (useFastBuffers && memberIdRef is not null)
+		{
+			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastIndexerGetterBuffer<");
+			AppendIndexerParameterTypes(sb, parameters);
+			sb.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
+				.Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
+				.Append(accessVarName).Append(");").AppendLine();
+		}
+		else
+		{
+			sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+				.AppendLine();
+		}
+
 		sb.Append(indent).Append("}").AppendLine();
 
-		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
-		foreach (MethodParameter p in parameters)
-		{
-			sb.Append(", ").AppendTypeOrWrapper(p.Type);
-		}
-
-		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry)
-			.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
-		foreach (MethodParameter p in parameters)
-		{
-			sb.Append(", ").AppendTypeOrWrapper(p.Type);
-		}
-
-		sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
+		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
+			setupMemberIdRef ?? memberIdRef);
 	}
 
 	/// <summary>
 	///     Emits variable declarations for the indexer setter access and matching setup.
 	/// </summary>
+#pragma warning disable S107 // Methods should not have too many parameters
 	private static void EmitIndexerSetterAccessAndSetup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
-		Type propertyType, EquatableArray<MethodParameter> parameters)
+		Type propertyType, EquatableArray<MethodParameter> parameters,
+		bool useFastBuffers = false, string? memberIdRef = null,
+		string? setupMemberIdRef = null)
+#pragma warning restore S107
 	{
 		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerSetterAccess<");
 		AppendIndexerParameterTypes(sb, parameters);
@@ -166,24 +174,89 @@ internal static partial class Sources
 
 		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
 		sb.Append(indent).Append("{").AppendLine();
-		sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
-			.AppendLine();
+		if (useFastBuffers && memberIdRef is not null)
+		{
+			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastIndexerSetterBuffer<");
+			AppendIndexerParameterTypes(sb, parameters);
+			sb.Append(", ").AppendTypeOrWrapper(propertyType)
+				.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
+				.Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
+				.Append(accessVarName).Append(");").AppendLine();
+		}
+		else
+		{
+			sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
+				.AppendLine();
+		}
+
 		sb.Append(indent).Append("}").AppendLine();
 
-		sb.Append(indent).Append("global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
+		// Setup-side dispatch: indexer setups are always indexed under the GETTER member id (they apply to both
+		// directions). Setter call sites pass the getter id via setupMemberIdRef; getters reuse memberIdRef.
+		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
+			setupMemberIdRef);
+	}
+
+	/// <summary>
+	///     Emits the indexer-setup lookup variable. When <paramref name="memberIdRef" /> is provided the lookup
+	///     scans the lock-free <c>GetIndexerSetupSnapshot</c> array first (default-scope fast path), and falls back
+	///     to the closure-free <c>GetIndexerSetup&lt;T&gt;(access)</c> overload for scenario-scoped setups.
+	/// </summary>
+#pragma warning disable S107 // Methods should not have too many parameters
+	private static void EmitIndexerSetupLookup(StringBuilder sb, string indent,
+		string mockRegistry, string accessVarName, string setupVarName,
+		Type propertyType, EquatableArray<MethodParameter> parameters, string? memberIdRef)
+#pragma warning restore S107
+	{
+		StringBuilder typedSetup = new("global::Mockolate.Setup.IndexerSetup<");
+		typedSetup.AppendTypeOrWrapper(propertyType);
 		foreach (MethodParameter p in parameters)
 		{
-			sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			typedSetup.Append(", ").AppendTypeOrWrapper(p.Type);
 		}
 
-		sb.Append(">? ").Append(setupVarName).Append(" = ").Append(mockRegistry)
-			.Append(".GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<").AppendTypeOrWrapper(propertyType);
-		foreach (MethodParameter p in parameters)
+		typedSetup.Append('>');
+		string typedSetupName = typedSetup.ToString();
+
+		if (memberIdRef is null)
 		{
-			sb.Append(", ").AppendTypeOrWrapper(p.Type);
+			// Legacy path: no fast-buffer dispatch, fall straight through to the closure-free
+			// access-keyed lookup (matches pre-D-refactor emission shape).
+			sb.Append(indent).Append(typedSetupName).Append("? ").Append(setupVarName).Append(" = ")
+				.Append(mockRegistry).Append(".GetIndexerSetup<").Append(typedSetupName).Append(">(")
+				.Append(accessVarName).Append(");").AppendLine();
+			return;
 		}
 
-		sb.Append(">>(").Append(accessVarName).Append(");").AppendLine();
+		string snapshotVar = "snapshot_" + setupVarName;
+		string indexVar = "i_" + setupVarName;
+		string itemVar = "s_" + setupVarName;
+		sb.Append(indent).Append(typedSetupName).Append("? ").Append(setupVarName).Append(" = null;").AppendLine();
+		sb.Append(indent).Append("if (string.IsNullOrEmpty(").Append(mockRegistry).Append(".Scenario))").AppendLine();
+		sb.Append(indent).Append('{').AppendLine();
+		sb.Append(indent).Append("\tglobal::Mockolate.Setup.IndexerSetup[]? ").Append(snapshotVar)
+			.Append(" = ").Append(mockRegistry).Append(".GetIndexerSetupSnapshot(").Append(memberIdRef).Append(");")
+			.AppendLine();
+		sb.Append(indent).Append("\tif (").Append(snapshotVar).Append(" is not null)").AppendLine();
+		sb.Append(indent).Append("\t{").AppendLine();
+		sb.Append(indent).Append("\t\tfor (int ").Append(indexVar).Append(" = ").Append(snapshotVar)
+			.Append(".Length - 1; ").Append(indexVar).Append(" >= 0; ").Append(indexVar).Append("--)").AppendLine();
+		sb.Append(indent).Append("\t\t{").AppendLine();
+		sb.Append(indent).Append("\t\t\tif (").Append(snapshotVar).Append('[').Append(indexVar)
+			.Append("] is ").Append(typedSetupName).Append(' ').Append(itemVar)
+			.Append(" && ((global::Mockolate.Setup.IInteractiveIndexerSetup)").Append(itemVar)
+			.Append(").Matches(").Append(accessVarName).Append("))").AppendLine();
+		sb.Append(indent).Append("\t\t\t{").AppendLine();
+		sb.Append(indent).Append("\t\t\t\t").Append(setupVarName).Append(" = ").Append(itemVar)
+			.Append(';').AppendLine();
+		sb.Append(indent).Append("\t\t\t\tbreak;").AppendLine();
+		sb.Append(indent).Append("\t\t\t}").AppendLine();
+		sb.Append(indent).Append("\t\t}").AppendLine();
+		sb.Append(indent).Append("\t}").AppendLine();
+		sb.Append(indent).Append('}').AppendLine();
+		sb.Append(indent).Append(setupVarName).Append(" ??= ").Append(mockRegistry)
+			.Append(".GetIndexerSetup<").Append(typedSetupName).Append(">(").Append(accessVarName).Append(");")
+			.AppendLine();
 	}
 
 	/// <summary>
@@ -305,54 +378,21 @@ internal static partial class Sources
 	private static string CreateUniquePropertyName(Class @class, string initialValue)
 	{
 		string propertyName = initialValue;
-		if (@class.Properties.Any(m => m.Name == propertyName))
+		if (@class.HasReservedName(propertyName))
 		{
 			propertyName = $"Mockolate_{initialValue}";
 		}
 
-		if (@class.Properties.Any(m => m.Name == propertyName))
+		if (@class.HasReservedName(propertyName))
 		{
 			int index = 1;
 			do
 			{
 				propertyName = $"Mockolate_{initialValue}__" + index++;
-			} while (@class.Properties.Any(m => m.Name == propertyName));
+			} while (@class.HasReservedName(propertyName));
 		}
 
 		return propertyName;
-	}
-
-	extension(Accessibility accessibility)
-	{
-		internal string ToVisibilityString()
-			=> accessibility switch
-			{
-				Accessibility.Protected => "protected",
-				Accessibility.Internal => "internal",
-				Accessibility.ProtectedOrInternal => "protected",
-				Accessibility.Public => "public",
-				Accessibility.ProtectedAndInternal => "private protected",
-				_ => "private",
-			};
-	}
-
-	extension(RefKind refKind)
-	{
-		internal string GetString(bool replaceRefReadonlyWithIn = false)
-			=> refKind switch
-			{
-				RefKind.In => "in ",
-				RefKind.Out => "out ",
-				RefKind.Ref => "ref ",
-				RefKind.RefReadOnlyParameter => replaceRefReadonlyWithIn ? "in " : "ref readonly ",
-				_ => "",
-			};
-	}
-
-	extension(string value)
-	{
-		private string EscapeForXmlDoc()
-			=> value.Replace('<', '{').Replace('>', '}');
 	}
 
 	/// <summary>
@@ -444,7 +484,7 @@ internal static partial class Sources
 	private static string SimplifyCrefForDisplay(string cref)
 	{
 		string stripped = cref.Replace("global::", string.Empty);
-		int firstBracket = stripped.IndexOfAny(['{', '(']);
+		int firstBracket = stripped.IndexOfAny(['{', '(',]);
 		int searchEnd = firstBracket < 0 ? stripped.Length : firstBracket;
 		int lastDot = searchEnd > 0 ? stripped.LastIndexOf('.', searchEnd - 1) : -1;
 		string simplified = lastDot >= 0 ? stripped.Substring(lastDot + 1) : stripped;
@@ -460,7 +500,7 @@ internal static partial class Sources
 	/// </summary>
 	private static string StripInnerNamespaces(string value)
 	{
-		int firstBracket = value.IndexOfAny(['{', '(']);
+		int firstBracket = value.IndexOfAny(['{', '(',]);
 		if (firstBracket < 0)
 		{
 			return value;
@@ -496,8 +536,48 @@ internal static partial class Sources
 
 		return sb.ToString();
 
-		static bool IsIdentifierStart(char c) => char.IsLetter(c) || c == '_';
-		static bool IsIdentifierPart(char c) => char.IsLetterOrDigit(c) || c == '_';
+		static bool IsIdentifierStart(char c)
+		{
+			return char.IsLetter(c) || c == '_';
+		}
+
+		static bool IsIdentifierPart(char c)
+		{
+			return char.IsLetterOrDigit(c) || c == '_';
+		}
+	}
+
+	extension(Accessibility accessibility)
+	{
+		internal string ToVisibilityString()
+			=> accessibility switch
+			{
+				Accessibility.Protected => "protected",
+				Accessibility.Internal => "internal",
+				Accessibility.ProtectedOrInternal => "protected",
+				Accessibility.Public => "public",
+				Accessibility.ProtectedAndInternal => "private protected",
+				_ => "private",
+			};
+	}
+
+	extension(RefKind refKind)
+	{
+		internal string GetString(bool replaceRefReadonlyWithIn = false)
+			=> refKind switch
+			{
+				RefKind.In => "in ",
+				RefKind.Out => "out ",
+				RefKind.Ref => "ref ",
+				RefKind.RefReadOnlyParameter => replaceRefReadonlyWithIn ? "in " : "ref readonly ",
+				_ => "",
+			};
+	}
+
+	extension(string value)
+	{
+		private string EscapeForXmlDoc()
+			=> value.Replace('<', '{').Replace('>', '}');
 	}
 
 	extension(StringBuilder sb)
@@ -540,8 +620,10 @@ internal static partial class Sources
 				{
 					sb.Append("<br />");
 				}
+
 				sb.AppendLine();
 			}
+
 			sb.Append(indent).Append("/// </remarks>").AppendLine();
 		}
 

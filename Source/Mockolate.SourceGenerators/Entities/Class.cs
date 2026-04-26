@@ -98,6 +98,8 @@ internal record Class
 						exceptEvents))
 				.ToArray());
 
+		ReservedNames = ComputeReservedNames(type);
+
 		bool ShouldIncludeMember(ISymbol member)
 		{
 			if (IsInterface || member.IsAbstract)
@@ -113,6 +115,7 @@ internal record Class
 	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }
 	public EquatableArray<Event> Events { get; }
+	public EquatableArray<string> ReservedNames { get; }
 
 	public bool IsInterface { get; }
 	public bool HasRequiredMembers { get; }
@@ -121,6 +124,39 @@ internal record Class
 	public string DisplayString { get; }
 
 	public static IEqualityComparer<Class> EqualityComparer { get; } = new ClassEqualityComparer();
+
+	// Identifiers that the mock class shares its scope with but that aren't surfaced through
+	// Methods/Properties/Events: generic type parameters of the type itself, nested types, and
+	// fields declared on the type. A generated member colliding with any of these would either
+	// fail to compile (CS0102 / type-parameter shadowing) or hide an inherited field (CS0108).
+	private static EquatableArray<string> ComputeReservedNames(ITypeSymbol type)
+	{
+		HashSet<string> names = new();
+		if (type is INamedTypeSymbol namedType)
+		{
+			foreach (ITypeParameterSymbol typeParameter in namedType.TypeParameters)
+			{
+				names.Add(typeParameter.Name);
+			}
+		}
+
+		foreach (INamedTypeSymbol nested in type.GetTypeMembers())
+		{
+			names.Add(nested.Name);
+		}
+
+		foreach (IFieldSymbol field in type.GetMembers().OfType<IFieldSymbol>())
+		{
+			if (field.IsImplicitlyDeclared)
+			{
+				continue;
+			}
+
+			names.Add(field.Name);
+		}
+
+		return new EquatableArray<string>(names.ToArray());
+	}
 
 	private string GetTypeName(ITypeSymbol type)
 	{

@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
-using Mockolate.Parameters;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
@@ -106,19 +104,6 @@ public sealed partial class SetupIndexerTests
 	}
 
 	[Fact]
-	public async Task StoredNullValue_ShouldNotFallBackToDefault()
-	{
-		IIndexerService sut = IIndexerService.CreateMock();
-
-		string resultBefore = sut[1];
-		sut[1] = null!;
-		string resultAfter = sut[1];
-
-		await That(resultBefore).IsNotNull();
-		await That(resultAfter).IsNull();
-	}
-
-	[Fact]
 	public async Task ShouldSupportNullAsParameter()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -142,6 +127,19 @@ public sealed partial class SetupIndexerTests
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEmpty();
+	}
+
+	[Fact]
+	public async Task StoredNullValue_ShouldNotFallBackToDefault()
+	{
+		IIndexerService sut = IIndexerService.CreateMock();
+
+		string resultBefore = sut[1];
+		sut[1] = null!;
+		string resultAfter = sut[1];
+
+		await That(resultBefore).IsNotNull();
+		await That(resultAfter).IsNull();
 	}
 
 	[Fact]
@@ -212,13 +210,13 @@ public sealed partial class SetupIndexerTests
 		MockRegistry registry = ((IMock)sut).MockRegistry;
 
 		IndexerSetup? stringSetup = registry.GetIndexerSetup<IndexerSetup>(s => true);
-		IndexerGetterAccess<int> access1 = new("index", 1);
-		IndexerGetterAccess<int> access2 = new("index", 1);
+		IndexerGetterAccess<int> access1 = new(1);
+		IndexerGetterAccess<int> access2 = new(1);
 		string result1 = registry.ApplyIndexerGetter<string>(access1, stringSetup, () => "", 0);
 		// Use a different signature index for the int-typed access: each per-signature storage slot
 		// is bound to a single TValue on first access (it is an IndexerValueStorage<TValue>), so
 		// reusing index 0 with TValue=int would now throw an InvalidOperationException.
-		int result2 = registry.ApplyIndexerGetter<int>(access2, stringSetup, () => 0, 100);
+		int result2 = registry.ApplyIndexerGetter(access2, stringSetup, () => 0, 100);
 
 		await That(result1).IsEqualTo("foo");
 		await That(result2).IsEqualTo(0);
@@ -311,7 +309,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1]");
@@ -340,7 +338,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2]");
@@ -397,7 +395,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2, 3].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3]");
@@ -413,7 +411,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2, 3, 4].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3, 4]");
@@ -429,7 +427,7 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[1, 2, 3, 4, 5].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 
-			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new MockInteractions());
+			IReadOnlyCollection<ISetup> result = registry.GetUnusedSetups(new FastMockInteractions(0));
 
 			ISetup setup = await That(result).HasSingle();
 			await That(setup.ToString()).IsEqualTo("string this[1, 2, 3, 4, 5]");
@@ -440,41 +438,48 @@ public sealed partial class SetupIndexerTests
 	public class NegativeArgumentValidation
 	{
 		[Fact]
-		public async Task InitializeStorage_WithNegativeCount_ShouldThrow()
+		public async Task ApplyIndexerGetter_WithBaseValue_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
-				=> registry.InitializeStorage(-1);
-
-			await That(Act).Throws<ArgumentOutOfRangeException>()
-				.WithParamName("indexerCount");
-		}
-
-		[Fact]
-		public async Task SetIndexerValue_WithNegativeSignatureIndex_ShouldThrow()
-		{
-			IIndexerService sut = IIndexerService.CreateMock();
-			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
-
-			void Act()
-				=> registry.SetIndexerValue(access, "foo", -1);
+			{
+				registry.ApplyIndexerGetter<string>(access, null, "base", -1);
+			}
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithParamName("signatureIndex");
 		}
 
 		[Fact]
-		public async Task GetIndexerFallback_WithNegativeSignatureIndex_ShouldThrow()
+		public async Task ApplyIndexerGetter_WithGenerator_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
-				=> registry.GetIndexerFallback<string>(access, -1);
+			{
+				registry.ApplyIndexerGetter<string>(access, null, () => "base", -1);
+			}
+
+			await That(Act).Throws<ArgumentOutOfRangeException>()
+				.WithParamName("signatureIndex");
+		}
+
+		[Fact]
+		public async Task ApplyIndexerSetter_WithNegativeSignatureIndex_ShouldThrow()
+		{
+			IIndexerService sut = IIndexerService.CreateMock();
+			MockRegistry registry = ((IMock)sut).MockRegistry;
+			IndexerSetterAccess<int, string> access = new(1, "foo");
+
+			void Act()
+			{
+				registry.ApplyIndexerSetter<string>(access, null, "foo", -1);
+			}
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithParamName("signatureIndex");
@@ -487,52 +492,59 @@ public sealed partial class SetupIndexerTests
 			sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
 			MockRegistry registry = ((IMock)sut).MockRegistry;
 			IndexerSetup setup = registry.GetIndexerSetup<IndexerSetup>(s => true)!;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
-				=> registry.ApplyIndexerSetup<string>(access, setup, -1);
+			{
+				registry.ApplyIndexerSetup<string>(access, setup, -1);
+			}
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithParamName("signatureIndex");
 		}
 
 		[Fact]
-		public async Task ApplyIndexerGetter_WithBaseValue_WithNegativeSignatureIndex_ShouldThrow()
+		public async Task GetIndexerFallback_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
-				=> registry.ApplyIndexerGetter<string>(access, null, "base", -1);
+			{
+				registry.GetIndexerFallback<string>(access, -1);
+			}
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithParamName("signatureIndex");
 		}
 
 		[Fact]
-		public async Task ApplyIndexerGetter_WithGenerator_WithNegativeSignatureIndex_ShouldThrow()
+		public async Task InitializeStorage_WithNegativeCount_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new("index", 1);
 
 			void Act()
-				=> registry.ApplyIndexerGetter<string>(access, null, () => "base", -1);
+			{
+				registry.InitializeStorage(-1);
+			}
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
-				.WithParamName("signatureIndex");
+				.WithParamName("indexerCount");
 		}
 
 		[Fact]
-		public async Task ApplyIndexerSetter_WithNegativeSignatureIndex_ShouldThrow()
+		public async Task SetIndexerValue_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
 			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerSetterAccess<int, string> access = new("index", 1, "foo");
+			IndexerGetterAccess<int> access = new(1);
 
 			void Act()
-				=> registry.ApplyIndexerSetter<string>(access, null, "foo", -1);
+			{
+				registry.SetIndexerValue(access, "foo", -1);
+			}
 
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithParamName("signatureIndex");

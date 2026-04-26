@@ -21,9 +21,15 @@ public static partial class ItExtensions
 		///     Use this when you need to match on the whole request rather than individual parts. Chain builders on the
 		///     returned <see cref="IHttpRequestMessageParameter" /> to add constraints:
 		///     <list type="bullet">
-		///       <item><description><c>.WhoseUriIs(uri)</c> / <c>.WhoseUriIs(configure)</c> - constrain the request URI (same surface as <c>It.IsUri(...)</c>).</description></item>
-		///       <item><description><c>.WhoseContentIs(configure)</c> / <c>.WhoseContentIs(mediaType, configure)</c> - constrain the request body (same surface as <c>It.IsHttpContent(...)</c>).</description></item>
-		///       <item><description><c>.WithHeaders(...)</c> - require specific request headers.</description></item>
+		///         <item>
+		///             <description><c>.WhoseUriIs(uri)</c> / <c>.WhoseUriIs(configure)</c> - constrain the request URI (same surface as <c>It.IsUri(...)</c>).</description>
+		///         </item>
+		///         <item>
+		///             <description><c>.WhoseContentIs(configure)</c> / <c>.WhoseContentIs(mediaType, configure)</c> - constrain the request body (same surface as <c>It.IsHttpContent(...)</c>).</description>
+		///         </item>
+		///         <item>
+		///             <description><c>.WithHeaders(...)</c> - require specific request headers.</description>
+		///         </item>
 		///     </list>
 		///     For the common verbs prefer <c>Setup.GetAsync</c>/<c>PostAsync</c>/... which internally use this matcher;
 		///     reach for <c>It.IsHttpRequestMessage(...)</c> when composing a <c>SendAsync</c>-level setup.

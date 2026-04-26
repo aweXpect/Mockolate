@@ -89,7 +89,7 @@ public sealed partial class HttpClientExtensionsTests
 			[Fact]
 			public async Task StringUri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
 			{
-				HttpClient httpClient = HttpClient.CreateMock(constructorParameters: []);
+				HttpClient httpClient = HttpClient.CreateMock([]);
 
 				void Act()
 				{
@@ -176,7 +176,7 @@ public sealed partial class HttpClientExtensionsTests
 			[Fact]
 			public async Task Uri_WithoutMockedHttpMessageHandler_ShouldThrowMockException()
 			{
-				HttpClient httpClient = HttpClient.CreateMock(constructorParameters: []);
+				HttpClient httpClient = HttpClient.CreateMock([]);
 
 				void Act()
 				{

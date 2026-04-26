@@ -96,7 +96,7 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		return this;
 
 		[DebuggerNonUserCode]
-		void Delegate(int _, object? _target, MethodInfo _method)
+		void Delegate(int _, object? target, MethodInfo method)
 		{
 			callback();
 		}
@@ -132,7 +132,7 @@ public class EventSetup(MockRegistry mockRegistry, string name)
 		return this;
 
 		[DebuggerNonUserCode]
-		void Delegate(int _, object? _target, MethodInfo _method)
+		void Delegate(int _, object? target, MethodInfo method)
 		{
 			callback();
 		}

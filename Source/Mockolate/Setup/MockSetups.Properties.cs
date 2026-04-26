@@ -19,11 +19,7 @@ internal partial class MockSetups
 	{
 		private int _count;
 		private PropertySetup[]? _storage;
-#if NET10_0_OR_GREATER
-		private readonly Lock _writeLock = new();
-#else
-		private readonly object _writeLock = new();
-#endif
+		private readonly MockolateLock _writeLock = new();
 
 		public int Count => Volatile.Read(ref _count);
 
@@ -97,7 +93,7 @@ internal partial class MockSetups
 			return false;
 		}
 
-		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(MockInteractions interactions)
+		internal IEnumerable<PropertySetup> EnumerateUnusedSetupsBy(IMockInteractions interactions)
 		{
 			PropertySetup[]? storage = Volatile.Read(ref _storage);
 			if (storage is null || storage.Length == 0)

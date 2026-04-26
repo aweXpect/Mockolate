@@ -50,8 +50,9 @@ internal record Event
 	{
 		(true, _) => MemberType.Static,
 		(_, true) => MemberType.Protected,
-		(_, _) => MemberType.Public
+		(_, _) => MemberType.Public,
 	};
+
 	public Accessibility Accessibility { get; }
 	public string Name { get; }
 	public string? ExplicitImplementation { get; }

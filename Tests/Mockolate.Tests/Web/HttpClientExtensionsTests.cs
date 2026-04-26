@@ -24,9 +24,9 @@ public sealed partial class HttpClientExtensionsTests
 
 		void Act()
 		{
-			methodSetup.Matches("request",
+			methodSetup.Matches(
 				new HttpRequestMessage(HttpMethod.Get, "http://localhost/"),
-				"cancellationToken", CancellationToken.None);
+				CancellationToken.None);
 		}
 
 		await That(Act).Throws<NotSupportedException>();
@@ -89,8 +89,7 @@ public sealed partial class HttpClientExtensionsTests
 		ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 			(ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>)setup;
 
-		bool result = methodSetup.Matches("request", new HttpRequestMessage(), "cancellationToken",
-			CancellationToken.None);
+		bool result = methodSetup.Matches(new HttpRequestMessage(), CancellationToken.None);
 
 		await That(result).IsFalse();
 	}
@@ -106,8 +105,7 @@ public sealed partial class HttpClientExtensionsTests
 		ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken> methodSetup =
 			(ReturnMethodSetup<Task<HttpResponseMessage>, HttpRequestMessage, CancellationToken>)setup;
 
-		bool result = methodSetup.Matches("request", new HttpRequestMessage(), "cancellationToken",
-			CancellationToken.None);
+		bool result = methodSetup.Matches(new HttpRequestMessage(), CancellationToken.None);
 
 		await That(result).IsFalse();
 	}
@@ -185,13 +183,13 @@ public sealed partial class HttpClientExtensionsTests
 
 	private sealed class InvalidParameter : IParameter<string?>
 	{
-		public IParameter<string?> Do(Action<string?> callback)
-			=> throw new NotSupportedException();
-
 		public bool Matches(object? value)
 			=> throw new NotSupportedException();
 
 		public void InvokeCallbacks(object? value)
+			=> throw new NotSupportedException();
+
+		public IParameter<string?> Do(Action<string?> callback)
 			=> throw new NotSupportedException();
 	}
 

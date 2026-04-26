@@ -339,8 +339,8 @@ public sealed partial class MockTests
 				// must win — a racing default insert must not have overwritten it.
 				await That(sut.MyStringProperty).IsEqualTo("hello");
 				await That(sut.MyGuidProperty).IsEqualTo(expectedGuid);
-				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly(readerCount * iterationsPerReader + 1);
-				await That(sut.Mock.Verify.MyGuidProperty.Got()).Exactly(readerCount * iterationsPerReader + 1);
+				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly((readerCount * iterationsPerReader) + 1);
+				await That(sut.Mock.Verify.MyGuidProperty.Got()).Exactly((readerCount * iterationsPerReader) + 1);
 			}
 		}
 

@@ -12,6 +12,9 @@ internal static partial class Sources
 	{
 		string mockRegistryName = @class.GetUniqueName("MockRegistry", "MockolateMockRegistry");
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
+		MemberIdTable memberIds = new();
+		memberIds.AddMethod(delegateMethod);
+		string memberIdPrefix = $"global::Mockolate.Mock.{name}.";
 		StringBuilder sb = InitializeBuilder();
 		sb.Append("#nullable enable annotations").AppendLine();
 		sb.Append("namespace Mockolate;").AppendLine();
@@ -109,6 +112,9 @@ internal static partial class Sources
 		sb.Append("\t\tIMockFor").Append(name).Append(',').AppendLine();
 		sb.Append("\t\tglobal::Mockolate.IMock").AppendLine();
 		sb.Append("\t{").AppendLine();
+		memberIds.Emit(sb, "\t\t");
+		sb.AppendLine();
+
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.MockRegistry global::Mockolate.IMock.MockRegistry => this.").Append(mockRegistryName).Append(';').AppendLine();
@@ -158,7 +164,7 @@ internal static partial class Sources
 				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", delegateMethod.Parameters);
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
 			}
 			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
 			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
@@ -167,11 +173,11 @@ internal static partial class Sources
 
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.ToNameOrWrapper()).Append(';')
 					.AppendLine();
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(paramRef);
+				sb2.Append(paramRef);
 			}
 			else
 			{
-				sb2.Append("\"").Append(p.Name).Append("\", ").Append(
+				sb2.Append(
 					p.RefKind switch
 					{
 						RefKind.Out => "default",
@@ -180,11 +186,10 @@ internal static partial class Sources
 			}
 		}
 
-		sb.Append("\t\t\tvar ").Append(methodSetup)
-			.Append(" = this.").Append(mockRegistryName).Append(".GetMethodSetup<").Append(methodSetupType).Append(">(")
-			.Append(delegateMethod.GetUniqueNameString()).Append(", m => m.Matches(");
-		sb.Append(sb2);
-		sb.AppendLine("));");
+		string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(delegateMethod);
+		bool isGeneric = delegateMethod.GenericParameters is not null && delegateMethod.GenericParameters.Value.Count > 0;
+		EmitFastMethodSetupLookup(sb, "\t\t\t", $"this.{mockRegistryName}", methodSetup, methodSetupType,
+			memberIdRef, delegateMethod.GetUniqueNameString(), sb2.ToString(), isGeneric);
 
 		if (hasOutParams)
 		{
@@ -196,6 +201,8 @@ internal static partial class Sources
 
 		if (hasOutParams || hasRefParams)
 		{
+			string outParamBase = Helpers.GetUniqueIndexedLocalVariableBase("outParam", delegateMethod.Parameters);
+			string refParamBase = Helpers.GetUniqueIndexedLocalVariableBase("refParam", delegateMethod.Parameters);
 			sb.Append("\t\t\tif (").Append(methodSetup).Append(" is ").Append(methodSetupType)
 				.Append(".WithParameterCollection ").Append(wpc).Append(')').AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -207,8 +214,8 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is not global::Mockolate.Parameters.IOutParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> outParam").Append(parameterIndex)
-						.Append(" || !outParam").Append(parameterIndex).Append(".TryGetValue(out ")
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase).Append(parameterIndex)
+						.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
 						.Append(parameter.Name).Append("))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = ")
@@ -220,10 +227,10 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is global::Mockolate.Parameters.IRefParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> refParam").Append(parameterIndex)
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(refParamBase).Append(parameterIndex)
 						.Append(")").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = refParam").Append(parameterIndex)
+					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(refParamBase).Append(parameterIndex)
 						.Append(".GetValue(").Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
@@ -244,7 +251,7 @@ internal static partial class Sources
 		sb.Append("(").Append(delegateMethod.GetUniqueNameString());
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			sb.Append(", ").Append(string.Join(", ", delegateMethod.Parameters.Select(p => $"\"{p.Name}\", {p.ToNameOrWrapper()}")));
+			sb.Append(", ").Append(string.Join(", ", delegateMethod.Parameters.Select(p => p.ToNameOrWrapper())));
 		}
 
 		sb.Append("));").AppendLine();
@@ -260,13 +267,14 @@ internal static partial class Sources
 
 		if (delegateMethod.ReturnType != Type.Void)
 		{
+			string returnValue = Helpers.GetUniqueLocalVariableName("returnValue", delegateMethod.Parameters);
 			sb.Append("\t\t\treturn ").Append(methodSetup).Append("?.TryGetReturnValue(");
 			if (delegateMethod.Parameters.Count > 0)
 			{
 				sb.Append(string.Join(", ", delegateMethod.Parameters.Select(p => p.ToNameOrWrapper()))).Append(", ");
 			}
 
-			sb.Append("out var returnValue) == true ? returnValue : ")
+			sb.Append("out var ").Append(returnValue).Append(") == true ? ").Append(returnValue).Append(" : ")
 				.AppendDefaultValueGeneratorFor(delegateMethod.ReturnType, $"this.{mockRegistryName}.Behavior.DefaultValue")
 				.Append(';').AppendLine();
 		}
@@ -279,17 +287,20 @@ internal static partial class Sources
 		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock\";").AppendLine();
 		sb.AppendLine();
 
-		AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup");
+		AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false,
+			memberIds, memberIdPrefix, "Setup");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", true, "Setup");
+			AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", true,
+				memberIds, memberIdPrefix, "Setup");
 		}
 
 		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
 		{
 			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
 			{
-				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", valueFlags);
+				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false,
+					memberIds, memberIdPrefix, "Setup", valueFlags);
 			}
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
@@ -297,21 +308,26 @@ internal static partial class Sources
 			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
-				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false, "Setup", allValueFlags);
+				AppendMethodSetupImplementation(sb, delegateMethod, mockRegistryName, $"IMockSetupFor{name}", false,
+					memberIds, memberIdPrefix, "Setup", allValueFlags);
 			}
 		}
 
-		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify");
+		// Delegate mocks use a plain MockRegistry (no FastMockInteractions), so emit the slow Verify path.
+		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+			memberIds, memberIdPrefix, false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true,
+				memberIds, memberIdPrefix, false, "Verify");
 		}
 
 		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
 		{
 			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, false, "Verify", valueFlags);
 			}
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
@@ -319,7 +335,8 @@ internal static partial class Sources
 			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, false, "Verify", allValueFlags);
 			}
 		}
 
@@ -359,17 +376,21 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\t#region IMockVerifyFor").Append(name).AppendLine();
 		sb.AppendLine();
-		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify");
+		// Delegate mocks use a plain MockRegistry (no FastMockInteractions), so emit the slow Verify path.
+		AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+			memberIds, memberIdPrefix, false, "Verify");
 		if (delegateMethod.Parameters.Count > 0)
 		{
-			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true, "Verify");
+			AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", true,
+				memberIds, memberIdPrefix, false, "Verify");
 		}
 
 		if (delegateMethod.Parameters.Count is > 0 and <= MaxExplicitParameters)
 		{
 			foreach (bool[] valueFlags in GenerateValueFlagCombinations(delegateMethod.Parameters))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", valueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, false, "Verify", valueFlags);
 			}
 		}
 		else if (delegateMethod.Parameters.Count > MaxExplicitParameters)
@@ -377,7 +398,8 @@ internal static partial class Sources
 			bool[] allValueFlags = delegateMethod.Parameters.Select(p => p.CanUseNullableParameterOverload()).ToArray();
 			if (allValueFlags.Any(f => f))
 			{
-				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false, "Verify", allValueFlags);
+				AppendMethodVerifyImplementation(sb, delegateMethod, mockRegistryName, $"IMockVerifyFor{name}", false,
+					memberIds, memberIdPrefix, false, "Verify", allValueFlags);
 			}
 		}
 

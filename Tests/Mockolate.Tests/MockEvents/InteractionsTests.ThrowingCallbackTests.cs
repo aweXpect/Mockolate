@@ -11,7 +11,10 @@ public sealed partial class InteractionsTests
 			sut.Mock.Setup.SomeEvent.OnSubscribed
 				.Do(() => throw new InvalidOperationException("callback throws"));
 
-			void Act() => sut.SomeEvent += Handler;
+			void Act()
+			{
+				sut.SomeEvent += Handler;
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(sut.Mock.Verify.SomeEvent.Subscribed()).Once();
@@ -28,7 +31,10 @@ public sealed partial class InteractionsTests
 			sut.Mock.Setup.SomeEvent.OnUnsubscribed
 				.Do(() => throw new InvalidOperationException("callback throws"));
 
-			void Act() => sut.SomeEvent -= Handler;
+			void Act()
+			{
+				sut.SomeEvent -= Handler;
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(sut.Mock.Verify.SomeEvent.Unsubscribed()).Once();

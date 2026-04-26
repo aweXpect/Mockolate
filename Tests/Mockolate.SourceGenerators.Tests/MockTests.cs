@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Mockolate.SourceGenerators.Tests;
@@ -14,9 +14,9 @@ public sealed partial class MockTests
 			     using System.Collections.Generic;
 			     using System.Threading.Tasks;
 			     using Mockolate;
-			     
+
 			     namespace MyCode;
-			     
+
 			     public interface INestedInterface
 			     {
 			     	int NestedValue { get; }
@@ -86,18 +86,18 @@ public sealed partial class MockTests
 			.DoesNotContain("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.DirectValue").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.ParentValue").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForOuterClass, int> IMockVerifyForOuterClass.NestedValue").And
-			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.OuterMethod()").And
-			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.BaseClassMethod()").And
-			.DoesNotContain("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.DirectMethod()").And
-			.DoesNotContain("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.ParentMethod()").And
-			.DoesNotContain("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.NestedMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass>.IgnoreParameters IMockVerifyForOuterClass.OuterMethod()").And
+			.Contains("global::Mockolate.Verify.VerificationResult<IMockVerifyForOuterClass>.IgnoreParameters IMockVerifyForOuterClass.BaseClassMethod()").And
+			.DoesNotContain("IMockVerifyForOuterClass.DirectMethod()").And
+			.DoesNotContain("IMockVerifyForOuterClass.ParentMethod()").And
+			.DoesNotContain("IMockVerifyForOuterClass.NestedMethod()").And
 			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.OuterEvent").And
 			.Contains("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.BaseClassEvent").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.DirectEvent").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.ParentEvent").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.NestedEvent");
 	}
-	
+
 	[Fact]
 	public async Task ExplicitInterfaceImplementation_ShouldNotAddAccessibility()
 	{
@@ -108,16 +108,16 @@ public sealed partial class MockTests
 			     using System.Collections.Generic;
 			     using System.Threading.Tasks;
 			     using Mockolate;
-			     
+
 			     namespace MyCode;
-			     
+
 			     public abstract class MyService : IEnumerable<int>
 			     {
 			     	public IEnumerator<int> GetEnumerator()
 			     	{
 			     		return new List<int>().GetEnumerator();
 			     	}
-			     
+
 			     	IEnumerator IEnumerable.GetEnumerator()
 			     	{
 			     		return GetEnumerator();
@@ -135,7 +135,7 @@ public sealed partial class MockTests
 		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
 			.DoesNotContain("private global::System.Collections.IEnumerator GetEnumerator()");
 	}
-	
+
 	[Fact]
 	public async Task ForTypesWithAdditionalConstructorsWithParameters_ShouldWorkForAllNonPrivateConstructors()
 	{
@@ -459,6 +459,46 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyService.CreateMock();
+			         }
+			     }
+
+			     public interface IMyService
+			     {
+			         int @class { get; }
+			         string @return();
+			         void @event(int @params);
+			         int @void<@class>(int @ref);
+			         string this[int @params, string @void] { get; set; }
+			         event EventHandler @event;
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+			.Contains("public int @class").And
+			.Contains("public string @return()").And
+			.Contains("public void @event(int @params)").And
+			.Contains("public int @void<@class>(int @ref)").And
+			.Contains("public string this[int @params, string @void]").And
+			.Contains("public event global::System.EventHandler @event").And
+			.Contains("private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_event;").And
+			.DoesNotContain("_mockolateEvent_global__MyCode_IMyService_@event");
+		;
+	}
+
+	[Fact]
 	public async Task MethodOrIndexerParametersWithReservedNames_ShouldPrefixAtSymbol()
 	{
 		GeneratorResult result = Generator
@@ -495,7 +535,7 @@ public sealed partial class MockTests
 			          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
 			          		{
 			          			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::MyCode.IMyService.DoSomething", CovariantParameterAdapter<int>.Wrap(@event ?? global::Mockolate.It.IsNull<int>("null")));
-			          			this.MockRegistry.SetupMethod(methodSetup);
+			          			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IMyService.MemberId_DoSomething, methodSetup);
 			          			return methodSetup;
 			          		}
 			          """).IgnoringNewlineStyle().And
@@ -505,7 +545,7 @@ public sealed partial class MockTests
 			          			get
 			          			{
 			          				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int>(MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")));
-			          				this.MockRegistry.SetupIndexer(indexerSetup);
+			          				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IMyService.MemberId_Indexer_int_Get, indexerSetup);
 			          				return indexerSetup;
 			          			}
 			          		}
@@ -516,45 +556,6 @@ public sealed partial class MockTests
 			.Contains("""
 			          		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string> IMockVerifyForIMyService.this[global::Mockolate.Parameters.IParameter<int>? @true]
 			          """).IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using Mockolate;
-
-			     namespace MyCode;
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = IMyService.CreateMock();
-			         }
-			     }
-
-			     public interface IMyService
-			     {
-			         int @class { get; }
-			         string @return();
-			         void @event(int @params);
-			         int @void<@class>(int @ref);
-			         string this[int @params, string @void] { get; set; }
-			         event EventHandler @event;
-			     }
-			     """);
-
-		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-			.Contains("public int @class").And
-			.Contains("public string @return()").And
-			.Contains("public void @event(int @params)").And
-			.Contains("public int @void<@class>(int @ref)").And
-			.Contains("public string this[int @params, string @void]").And
-			.Contains("public event global::System.EventHandler @event").And
-			.Contains("private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_event;").And
-			.DoesNotContain("_mockolateEvent_global__MyCode_IMyService_@event");;
 	}
 
 	[Fact]
@@ -707,11 +708,15 @@ public sealed partial class MockTests
 			.Contains("""
 			          		public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
 			          		{
-			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>("global::MyCode.IMyService.MyMethod", m => m.Matches("v1", v1, "v2", v2, "v3", v3, "v4", v4, "v5", v5, "v6", v6, "v7", v7, "v8", v8, "v9", v9, "v10", v10, "v11", v11, "v12", v12, "v13", v13, "v14", v14, "v15", v15));
+			          """)
+			.IgnoringNewlineStyle().And
+			.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>(\"global::MyCode.IMyService.MyMethod\"))")
+			.IgnoringNewlineStyle().And
+			.Contains("""
 			          			bool hasWrappedResult = false;
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
-			          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>("global::MyCode.IMyService.MyMethod", "v1", v1, "v2", v2, "v3", v3, "v4", v4, "v5", v5, "v6", v6, "v7", v7, "v8", v8, "v9", v9, "v10", v10, "v11", v11, "v12", v12, "v13", v13, "v14", v14, "v15", v15));
+			          				((global::Mockolate.Interactions.FastMethod15Buffer<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_MyMethod]!).Append("global::MyCode.IMyService.MyMethod", v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
 			          			}
 			          			try
 			          			{

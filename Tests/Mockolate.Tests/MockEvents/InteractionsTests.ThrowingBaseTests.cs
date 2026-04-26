@@ -139,9 +139,9 @@ public sealed partial class InteractionsTests
 
 		public class BroadcastingService
 		{
-			#pragma warning disable CA1070
+#pragma warning disable CA1070
 			public virtual event PingDelegate? Ping;
-			#pragma warning restore CA1070
+#pragma warning restore CA1070
 
 			public void TriggerPing(int value) => Ping?.Invoke(value);
 		}

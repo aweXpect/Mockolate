@@ -41,8 +41,8 @@ public partial class Match
 	private sealed class ParametersMatch(Func<object?[], bool> predicate, string predicateExpression) : IParameters, IParametersMatch
 	{
 		/// <inheritdoc cref="IParametersMatch.Matches" />
-		public bool Matches(object?[] values)
-			=> predicate(values);
+		public bool Matches(ReadOnlySpan<object?> values)
+			=> predicate(values.ToArray());
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString() => $"Match.Parameters({predicateExpression})";

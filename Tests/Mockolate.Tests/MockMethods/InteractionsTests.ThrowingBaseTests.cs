@@ -7,158 +7,17 @@ public sealed partial class InteractionsTests
 	public sealed class ThrowingBaseTests
 	{
 		[Fact]
-		public async Task VoidMethodWith0Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		public async Task ReturnMethod_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordInvocation()
 		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
-			void Act() => sut.VoidMethodWith0Parameters();
+			void Act()
+			{
+				sut.ReturnMethodWith0Parameters();
+			}
 
-			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.VoidMethodWith0Parameters()).Once();
-		}
-
-		[Fact]
-		public async Task VoidMethodWith1Parameter_WhenBaseThrows_ShouldStillRecordInvocation()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-
-			void Act() => sut.VoidMethodWith1Parameter(1);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.VoidMethodWith1Parameter(1)).Once();
-		}
-
-		[Fact]
-		public async Task VoidMethodWith1Parameter_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-			sut.Mock.Setup.VoidMethodWith1Parameter(It.IsAny<int>().Monitor(out IParameterMonitor<int> v1))
-				.DoesNotThrow();
-
-			void Act() => sut.VoidMethodWith1Parameter(1);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
-		}
-
-		[Fact]
-		public async Task VoidMethodWith2Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-
-			void Act() => sut.VoidMethodWith2Parameters(1, 2);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.VoidMethodWith2Parameters(1, 2)).Once();
-		}
-
-		[Fact]
-		public async Task VoidMethodWith2Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-			sut.Mock.Setup.VoidMethodWith2Parameters(
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2))
-				.DoesNotThrow();
-
-			void Act() => sut.VoidMethodWith2Parameters(1, 2);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
-			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
-		}
-
-		[Fact]
-		public async Task VoidMethodWith3Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-
-			void Act() => sut.VoidMethodWith3Parameters(1, 2, 3);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.VoidMethodWith3Parameters(1, 2, 3)).Once();
-		}
-
-		[Fact]
-		public async Task VoidMethodWith3Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-			sut.Mock.Setup.VoidMethodWith3Parameters(
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v3))
-				.DoesNotThrow();
-
-			void Act() => sut.VoidMethodWith3Parameters(1, 2, 3);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
-			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
-			await That(v3.Values).HasSingle().Which.IsEqualTo(3);
-		}
-
-		[Fact]
-		public async Task VoidMethodWith4Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-
-			void Act() => sut.VoidMethodWith4Parameters(1, 2, 3, 4);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.VoidMethodWith4Parameters(1, 2, 3, 4)).Once();
-		}
-
-		[Fact]
-		public async Task VoidMethodWith4Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-			sut.Mock.Setup.VoidMethodWith4Parameters(
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v3),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v4))
-				.DoesNotThrow();
-
-			void Act() => sut.VoidMethodWith4Parameters(1, 2, 3, 4);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
-			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
-			await That(v3.Values).HasSingle().Which.IsEqualTo(3);
-			await That(v4.Values).HasSingle().Which.IsEqualTo(4);
-		}
-
-		[Fact]
-		public async Task VoidMethodWith5Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-
-			void Act() => sut.VoidMethodWith5Parameters(1, 2, 3, 4, 5);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.VoidMethodWith5Parameters(1, 2, 3, 4, 5)).Once();
-		}
-
-		[Fact]
-		public async Task VoidMethodWith5Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-			sut.Mock.Setup.VoidMethodWith5Parameters(
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v3),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v4),
-					It.IsAny<int>().Monitor(out IParameterMonitor<int> v5))
-				.DoesNotThrow();
-
-			void Act() => sut.VoidMethodWith5Parameters(1, 2, 3, 4, 5);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
-			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
-			await That(v3.Values).HasSingle().Which.IsEqualTo(3);
-			await That(v4.Values).HasSingle().Which.IsEqualTo(4);
-			await That(v5.Values).HasSingle().Which.IsEqualTo(5);
+			await That(Act).DoesNotThrow();
+			await That(sut.Mock.Verify.ReturnMethodWith0Parameters()).Once();
 		}
 
 		[Fact]
@@ -166,21 +25,13 @@ public sealed partial class InteractionsTests
 		{
 			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
 
-			void Act() => sut.ReturnMethodWith0Parameters();
+			void Act()
+			{
+				sut.ReturnMethodWith0Parameters();
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(sut.Mock.Verify.ReturnMethodWith0Parameters()).Once();
-		}
-
-		[Fact]
-		public async Task ReturnMethodWith1Parameter_WhenBaseThrows_ShouldStillRecordInvocation()
-		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
-
-			void Act() => sut.ReturnMethodWith1Parameter(1);
-
-			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.ReturnMethodWith1Parameter(1)).Once();
 		}
 
 		[Fact]
@@ -190,21 +41,27 @@ public sealed partial class InteractionsTests
 			sut.Mock.Setup.ReturnMethodWith1Parameter(It.IsAny<int>().Monitor(out IParameterMonitor<int> v1))
 				.Returns(0);
 
-			void Act() => sut.ReturnMethodWith1Parameter(1);
+			void Act()
+			{
+				sut.ReturnMethodWith1Parameter(1);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
 		}
 
 		[Fact]
-		public async Task ReturnMethodWith2Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		public async Task ReturnMethodWith1Parameter_WhenBaseThrows_ShouldStillRecordInvocation()
 		{
 			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
 
-			void Act() => sut.ReturnMethodWith2Parameters(1, 2);
+			void Act()
+			{
+				sut.ReturnMethodWith1Parameter(1);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.ReturnMethodWith2Parameters(1, 2)).Once();
+			await That(sut.Mock.Verify.ReturnMethodWith1Parameter(1)).Once();
 		}
 
 		[Fact]
@@ -216,7 +73,10 @@ public sealed partial class InteractionsTests
 					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2))
 				.Returns(0);
 
-			void Act() => sut.ReturnMethodWith2Parameters(1, 2);
+			void Act()
+			{
+				sut.ReturnMethodWith2Parameters(1, 2);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
@@ -224,14 +84,17 @@ public sealed partial class InteractionsTests
 		}
 
 		[Fact]
-		public async Task ReturnMethodWith3Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		public async Task ReturnMethodWith2Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
 		{
 			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
 
-			void Act() => sut.ReturnMethodWith3Parameters(1, 2, 3);
+			void Act()
+			{
+				sut.ReturnMethodWith2Parameters(1, 2);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.ReturnMethodWith3Parameters(1, 2, 3)).Once();
+			await That(sut.Mock.Verify.ReturnMethodWith2Parameters(1, 2)).Once();
 		}
 
 		[Fact]
@@ -244,7 +107,10 @@ public sealed partial class InteractionsTests
 					It.IsAny<int>().Monitor(out IParameterMonitor<int> v3))
 				.Returns(0);
 
-			void Act() => sut.ReturnMethodWith3Parameters(1, 2, 3);
+			void Act()
+			{
+				sut.ReturnMethodWith3Parameters(1, 2, 3);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
@@ -253,14 +119,17 @@ public sealed partial class InteractionsTests
 		}
 
 		[Fact]
-		public async Task ReturnMethodWith4Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		public async Task ReturnMethodWith3Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
 		{
 			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
 
-			void Act() => sut.ReturnMethodWith4Parameters(1, 2, 3, 4);
+			void Act()
+			{
+				sut.ReturnMethodWith3Parameters(1, 2, 3);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.ReturnMethodWith4Parameters(1, 2, 3, 4)).Once();
+			await That(sut.Mock.Verify.ReturnMethodWith3Parameters(1, 2, 3)).Once();
 		}
 
 		[Fact]
@@ -274,7 +143,10 @@ public sealed partial class InteractionsTests
 					It.IsAny<int>().Monitor(out IParameterMonitor<int> v4))
 				.Returns(0);
 
-			void Act() => sut.ReturnMethodWith4Parameters(1, 2, 3, 4);
+			void Act()
+			{
+				sut.ReturnMethodWith4Parameters(1, 2, 3, 4);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
@@ -284,14 +156,17 @@ public sealed partial class InteractionsTests
 		}
 
 		[Fact]
-		public async Task ReturnMethodWith5Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		public async Task ReturnMethodWith4Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
 		{
 			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
 
-			void Act() => sut.ReturnMethodWith5Parameters(1, 2, 3, 4, 5);
+			void Act()
+			{
+				sut.ReturnMethodWith4Parameters(1, 2, 3, 4);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
-			await That(sut.Mock.Verify.ReturnMethodWith5Parameters(1, 2, 3, 4, 5)).Once();
+			await That(sut.Mock.Verify.ReturnMethodWith4Parameters(1, 2, 3, 4)).Once();
 		}
 
 		[Fact]
@@ -306,7 +181,10 @@ public sealed partial class InteractionsTests
 					It.IsAny<int>().Monitor(out IParameterMonitor<int> v5))
 				.Returns(0);
 
-			void Act() => sut.ReturnMethodWith5Parameters(1, 2, 3, 4, 5);
+			void Act()
+			{
+				sut.ReturnMethodWith5Parameters(1, 2, 3, 4, 5);
+			}
 
 			await That(Act).Throws<InvalidOperationException>();
 			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
@@ -317,25 +195,219 @@ public sealed partial class InteractionsTests
 		}
 
 		[Fact]
+		public async Task ReturnMethodWith5Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+
+			void Act()
+			{
+				sut.ReturnMethodWith5Parameters(1, 2, 3, 4, 5);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(sut.Mock.Verify.ReturnMethodWith5Parameters(1, 2, 3, 4, 5)).Once();
+		}
+
+		[Fact]
 		public async Task VoidMethod_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordInvocation()
 		{
 			ThrowingBaseService sut = ThrowingBaseService.CreateMock(MockBehavior.Default.SkippingBaseClass());
 
-			void Act() => sut.VoidMethodWith0Parameters();
+			void Act()
+			{
+				sut.VoidMethodWith0Parameters();
+			}
 
 			await That(Act).DoesNotThrow();
 			await That(sut.Mock.Verify.VoidMethodWith0Parameters()).Once();
 		}
 
 		[Fact]
-		public async Task ReturnMethod_WhenBaseThrows_AndSkipBaseClass_ShouldNotThrow_AndShouldRecordInvocation()
+		public async Task VoidMethodWith0Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
 		{
-			ThrowingBaseService sut = ThrowingBaseService.CreateMock(MockBehavior.Default.SkippingBaseClass());
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
 
-			void Act() => sut.ReturnMethodWith0Parameters();
+			void Act()
+			{
+				sut.VoidMethodWith0Parameters();
+			}
 
-			await That(Act).DoesNotThrow();
-			await That(sut.Mock.Verify.ReturnMethodWith0Parameters()).Once();
+			await That(Act).Throws<InvalidOperationException>();
+			await That(sut.Mock.Verify.VoidMethodWith0Parameters()).Once();
+		}
+
+		[Fact]
+		public async Task VoidMethodWith1Parameter_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+			sut.Mock.Setup.VoidMethodWith1Parameter(It.IsAny<int>().Monitor(out IParameterMonitor<int> v1))
+				.DoesNotThrow();
+
+			void Act()
+			{
+				sut.VoidMethodWith1Parameter(1);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task VoidMethodWith1Parameter_WhenBaseThrows_ShouldStillRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+
+			void Act()
+			{
+				sut.VoidMethodWith1Parameter(1);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(sut.Mock.Verify.VoidMethodWith1Parameter(1)).Once();
+		}
+
+		[Fact]
+		public async Task VoidMethodWith2Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+			sut.Mock.Setup.VoidMethodWith2Parameters(
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2))
+				.DoesNotThrow();
+
+			void Act()
+			{
+				sut.VoidMethodWith2Parameters(1, 2);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
+			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task VoidMethodWith2Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+
+			void Act()
+			{
+				sut.VoidMethodWith2Parameters(1, 2);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(sut.Mock.Verify.VoidMethodWith2Parameters(1, 2)).Once();
+		}
+
+		[Fact]
+		public async Task VoidMethodWith3Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+			sut.Mock.Setup.VoidMethodWith3Parameters(
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v3))
+				.DoesNotThrow();
+
+			void Act()
+			{
+				sut.VoidMethodWith3Parameters(1, 2, 3);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
+			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
+			await That(v3.Values).HasSingle().Which.IsEqualTo(3);
+		}
+
+		[Fact]
+		public async Task VoidMethodWith3Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+
+			void Act()
+			{
+				sut.VoidMethodWith3Parameters(1, 2, 3);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(sut.Mock.Verify.VoidMethodWith3Parameters(1, 2, 3)).Once();
+		}
+
+		[Fact]
+		public async Task VoidMethodWith4Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+			sut.Mock.Setup.VoidMethodWith4Parameters(
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v3),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v4))
+				.DoesNotThrow();
+
+			void Act()
+			{
+				sut.VoidMethodWith4Parameters(1, 2, 3, 4);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
+			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
+			await That(v3.Values).HasSingle().Which.IsEqualTo(3);
+			await That(v4.Values).HasSingle().Which.IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task VoidMethodWith4Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+
+			void Act()
+			{
+				sut.VoidMethodWith4Parameters(1, 2, 3, 4);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(sut.Mock.Verify.VoidMethodWith4Parameters(1, 2, 3, 4)).Once();
+		}
+
+		[Fact]
+		public async Task VoidMethodWith5Parameters_WhenBaseThrows_ShouldRecordArgumentsPassedByCaller()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+			sut.Mock.Setup.VoidMethodWith5Parameters(
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v1),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v2),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v3),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v4),
+					It.IsAny<int>().Monitor(out IParameterMonitor<int> v5))
+				.DoesNotThrow();
+
+			void Act()
+			{
+				sut.VoidMethodWith5Parameters(1, 2, 3, 4, 5);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(v1.Values).HasSingle().Which.IsEqualTo(1);
+			await That(v2.Values).HasSingle().Which.IsEqualTo(2);
+			await That(v3.Values).HasSingle().Which.IsEqualTo(3);
+			await That(v4.Values).HasSingle().Which.IsEqualTo(4);
+			await That(v5.Values).HasSingle().Which.IsEqualTo(5);
+		}
+
+		[Fact]
+		public async Task VoidMethodWith5Parameters_WhenBaseThrows_ShouldStillRecordInvocation()
+		{
+			ThrowingBaseService sut = ThrowingBaseService.CreateMock();
+
+			void Act()
+			{
+				sut.VoidMethodWith5Parameters(1, 2, 3, 4, 5);
+			}
+
+			await That(Act).Throws<InvalidOperationException>();
+			await That(sut.Mock.Verify.VoidMethodWith5Parameters(1, 2, 3, 4, 5)).Once();
 		}
 
 		public class ThrowingBaseService

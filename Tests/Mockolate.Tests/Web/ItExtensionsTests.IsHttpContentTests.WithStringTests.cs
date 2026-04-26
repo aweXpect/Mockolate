@@ -79,25 +79,6 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Fact]
-			public async Task WithMultipleWithString_FailingVerification_ShouldJoinPredicatesWithAnd()
-			{
-				HttpClient httpClient = HttpClient.CreateMock();
-
-				void Act()
-				{
-					httpClient.Mock.Verify.PostAsync(
-							It.IsAny<string?>(),
-							It.IsHttpContent()
-								.WithString(s => s.StartsWith("abc"))
-								.WithString(s => s.EndsWith("xyz")))
-						.AtLeastOnce();
-				}
-
-				await That(Act).Throws<MockVerificationException>()
-					.WithMessage("*s => s.StartsWith(\"abc\") and s => s.EndsWith(\"xyz\")*").AsWildcard();
-			}
-
 			[Theory]
 			[InlineData("", true)]
 			[InlineData("foo", true)]
@@ -327,6 +308,25 @@ public sealed partial class ItExtensionsTests
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
+			}
+
+			[Fact]
+			public async Task WithMultipleWithString_FailingVerification_ShouldJoinPredicatesWithAnd()
+			{
+				HttpClient httpClient = HttpClient.CreateMock();
+
+				void Act()
+				{
+					httpClient.Mock.Verify.PostAsync(
+							It.IsAny<string?>(),
+							It.IsHttpContent()
+								.WithString(s => s.StartsWith("abc"))
+								.WithString(s => s.EndsWith("xyz")))
+						.AtLeastOnce();
+				}
+
+				await That(Act).Throws<MockVerificationException>()
+					.WithMessage("*s => s.StartsWith(\"abc\") and s => s.EndsWith(\"xyz\")*").AsWildcard();
 			}
 		}
 	}

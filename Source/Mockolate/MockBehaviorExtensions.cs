@@ -48,8 +48,8 @@ public static class MockBehaviorExtensions
 		///     and can be verified later.
 		///     <para />
 		///     Skipping interaction recording avoids the per-call allocation of an interaction record, the
-		///     interaction-list lock, and the <see cref="Mockolate.Interactions.MockInteractions" />
-		///     added-event. Setups, returns, callbacks, and base-class delegation continue to work normally -
+		///     interaction-list lock, and the <see cref="Mockolate.Interactions.IMockInteractions.InteractionAdded" />
+		///     event. Setups, returns, callbacks, and base-class delegation continue to work normally -
 		///     only verification is disabled. Any attempt to verify throws a
 		///     <see cref="Mockolate.Exceptions.MockException" />.
 		///     <para />

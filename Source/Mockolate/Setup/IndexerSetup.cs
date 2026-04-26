@@ -585,14 +585,16 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		else
 		{
 			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
-				? casted : default!;
+				? casted
+				: default!;
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
-			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+			? result
+			: behavior.DefaultValue.GenerateTyped<TResult>();
 	}
 
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
@@ -1185,14 +1187,16 @@ public class IndexerSetup<TValue, T1, T2>(
 		else
 		{
 			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
-				? casted : default!;
+				? casted
+				: default!;
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
-			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+			? result
+			: behavior.DefaultValue.GenerateTyped<TResult>();
 	}
 
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
@@ -1802,14 +1806,16 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		else
 		{
 			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
-				? casted : default!;
+				? casted
+				: default!;
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, p3, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
-			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+			? result
+			: behavior.DefaultValue.GenerateTyped<TResult>();
 	}
 
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />
@@ -2428,14 +2434,16 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		else
 		{
 			currentValue = TryCast(behavior.DefaultValue.GenerateTyped<TValue>(), out TValue casted, behavior)
-				? casted : default!;
+				? casted
+				: default!;
 		}
 
 		currentValue = ExecuteGetterCallbacks(p1, p2, p3, p4, currentValue);
 		currentValue = ExecuteReturnCallbacks(p1, p2, p3, p4, currentValue);
 		access.StoreValue(currentValue);
 		return TryCast(currentValue, out TResult result, behavior)
-			? result : behavior.DefaultValue.GenerateTyped<TResult>();
+			? result
+			: behavior.DefaultValue.GenerateTyped<TResult>();
 	}
 
 	/// <inheritdoc cref="IndexerSetup.GetResult{TResult}(IndexerAccess, MockBehavior, Func{TResult})" />

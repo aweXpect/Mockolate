@@ -110,7 +110,7 @@ internal static partial class Sources
 #endif
 			sb.Append("\tinternal class MethodInvocation<")
 				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x}"))).Append(">(string name, ")
-				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"string parameterName{x}, T{x} parameter{x}")))
+				.Append(string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x} parameter{x}")))
 				.Append(") : IMethodInteraction").AppendLine();
 			sb.Append("\t{").AppendLine();
 			sb.AppendXmlSummary("The name of the method.");
@@ -124,8 +124,6 @@ internal static partial class Sources
 					3 => "third",
 					_ => $"{i}th",
 				};
-				sb.AppendXmlSummary($"The {comment} parameter name of the method.");
-				sb.Append("\t\tpublic string ParameterName").Append(i).Append(" { get; } = parameterName").Append(i).Append(";").AppendLine();
 				sb.AppendXmlSummary($"The {comment} parameter value of the method.");
 				sb.Append("\t\tpublic T").Append(i).Append(" Parameter").Append(i).Append(" { get; } = parameter").Append(i).Append(";").AppendLine();
 			}
@@ -142,12 +140,166 @@ internal static partial class Sources
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.Append("\t}").AppendLine();
+
+			AppendFastMethodBuffer(sb, count);
 		}
 
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 		sb.AppendLine("#nullable disable");
 		return sb.ToString();
+	}
+
+	private static void AppendFastMethodBuffer(StringBuilder sb, int count)
+	{
+		string typeArgs = string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x}"));
+		string ctorParams = string.Join(", ", Enumerable.Range(1, count).Select(x => $"T{x} parameter{x}"));
+		string assignsBuf = string.Concat(Enumerable.Range(1, count).Select(x =>
+			$"\t\t\trecords[slot].P{x} = parameter{x};\n"));
+		string structFields = string.Concat(Enumerable.Range(1, count).Select(x =>
+			$"\t\t\tpublic T{x} P{x};\n"));
+		string boxedArgs = string.Join(", ", Enumerable.Range(1, count).Select(x => $"r.P{x}"));
+
+		sb.AppendXmlSummary(
+			$"Per-member buffer for {count}-parameter methods, synthesized for arity {count} use sites.",
+			"\t");
+		sb.Append("\t[global::System.Diagnostics.DebuggerDisplay(\"{Count} method calls\")]").AppendLine();
+#if !DEBUG
+		sb.Append("\t[global::System.Diagnostics.DebuggerNonUserCode]").AppendLine();
+#endif
+		sb.Append("\tinternal sealed class FastMethod").Append(count).Append("Buffer<").Append(typeArgs)
+			.Append("> : IFastMemberBuffer").AppendLine();
+		sb.Append("\t{").AppendLine();
+		sb.Append("\t\tprivate readonly FastMockInteractions _owner;").AppendLine();
+		sb.Append("#if NET10_0_OR_GREATER").AppendLine();
+		sb.Append("\t\tprivate readonly global::System.Threading.Lock _growLock = new();").AppendLine();
+		sb.Append("#else").AppendLine();
+		sb.Append("\t\tprivate readonly object _growLock = new();").AppendLine();
+		sb.Append("#endif").AppendLine();
+		sb.Append("\t\tprivate Record[] _records = new Record[4];").AppendLine();
+		sb.Append("\t\tprivate bool[] _verifiedSlots = new bool[4];").AppendLine();
+		sb.Append("\t\tprivate int _reserved;").AppendLine();
+		sb.Append("\t\tprivate int _published;").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tinternal FastMethod").Append(count).Append("Buffer(FastMockInteractions owner) => _owner = owner;")
+			.AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tpublic int Count => global::System.Threading.Volatile.Read(ref _published);").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tpublic void Append(string name, ").Append(ctorParams).Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tlong seq = _owner.NextSequence();").AppendLine();
+		sb.Append("\t\t\tint slot = global::System.Threading.Interlocked.Increment(ref _reserved) - 1;").AppendLine();
+		sb.Append("\t\t\tRecord[] records = global::System.Threading.Volatile.Read(ref _records);").AppendLine();
+		sb.Append("\t\t\tif (slot >= records.Length) records = GrowToFit(slot);").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t\trecords[slot].Seq = seq;").AppendLine();
+		sb.Append("\t\t\trecords[slot].Name = name;").AppendLine();
+		sb.Append(assignsBuf);
+		sb.Append("\t\t\trecords[slot].Boxed = null;").AppendLine();
+		sb.Append("\t\t\tglobal::System.Threading.Interlocked.Increment(ref _published);").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t\tif (_owner.HasInteractionAddedSubscribers) _owner.RaiseAdded();").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tprivate Record[] GrowToFit(int slot)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tlock (_growLock)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tRecord[] records = _records;").AppendLine();
+		sb.Append("\t\t\t\twhile (slot >= records.Length)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tRecord[] bigger = new Record[records.Length * 2];").AppendLine();
+		sb.Append("\t\t\t\t\tglobal::System.Array.Copy(records, bigger, records.Length);").AppendLine();
+		sb.Append("\t\t\t\t\trecords = bigger;").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\tglobal::System.Threading.Volatile.Write(ref _records, records);").AppendLine();
+		sb.Append("\t\t\t\tif (_verifiedSlots.Length < records.Length)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tbool[] biggerBits = new bool[records.Length];").AppendLine();
+		sb.Append("\t\t\t\t\tglobal::System.Array.Copy(_verifiedSlots, biggerBits, _verifiedSlots.Length);").AppendLine();
+		sb.Append("\t\t\t\t\t_verifiedSlots = biggerBits;").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\treturn records;").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tpublic void Clear()").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tlock (_growLock) { global::System.Array.Clear(_records, 0, _published); _reserved = 0; global::System.Threading.Volatile.Write(ref _published, 0); global::System.Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length); }").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\tvoid IFastMemberBuffer.AppendBoxed(global::System.Collections.Generic.List<global::System.ValueTuple<long, IInteraction>> dest)")
+			.AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tlock (_growLock)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tint n = _published;").AppendLine();
+		sb.Append("\t\t\t\tRecord[] records = _records;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < n; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tref Record r = ref records[i];").AppendLine();
+		sb.Append("\t\t\t\t\tr.Boxed ??= new MethodInvocation<").Append(typeArgs).Append(">(r.Name, ").Append(boxedArgs)
+			.Append(");").AppendLine();
+		sb.Append("\t\t\t\t\tdest.Add(new global::System.ValueTuple<long, IInteraction>(r.Seq, r.Boxed));").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\tvoid IFastMemberBuffer.AppendBoxedUnverified(global::System.Collections.Generic.List<global::System.ValueTuple<long, IInteraction>> dest)")
+			.AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tlock (_growLock)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tint n = _published;").AppendLine();
+		sb.Append("\t\t\t\tRecord[] records = _records;").AppendLine();
+		sb.Append("\t\t\t\tbool[] verified = _verifiedSlots;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < n; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tif (verified[i]) continue;").AppendLine();
+		sb.Append("\t\t\t\t\tref Record r = ref records[i];").AppendLine();
+		sb.Append("\t\t\t\t\tr.Boxed ??= new MethodInvocation<").Append(typeArgs).Append(">(r.Name, ").Append(boxedArgs)
+			.Append(");").AppendLine();
+		sb.Append("\t\t\t\t\tdest.Add(new global::System.ValueTuple<long, IInteraction>(r.Seq, r.Boxed));").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		string countMatchingParams = string.Join(", ", Enumerable.Range(1, count).Select(x => $"global::Mockolate.Parameters.IParameterMatch<T{x}> match{x}"));
+		string countMatchingPredicate = string.Join(" && ", Enumerable.Range(1, count).Select(x => $"match{x}.Matches(r.P{x})"));
+		sb.Append("\t\tpublic int ConsumeMatching(").Append(countMatchingParams).Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tint matches = 0;").AppendLine();
+		sb.Append("\t\t\tlock (_growLock)").AppendLine();
+		sb.Append("\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\tint n = _published;").AppendLine();
+		sb.Append("\t\t\t\tRecord[] records = _records;").AppendLine();
+		sb.Append("\t\t\t\tbool[] verified = _verifiedSlots;").AppendLine();
+		sb.Append("\t\t\t\tfor (int i = 0; i < n; i++)").AppendLine();
+		sb.Append("\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\tref Record r = ref records[i];").AppendLine();
+		sb.Append("\t\t\t\t\tif (").Append(countMatchingPredicate).Append(")").AppendLine();
+		sb.Append("\t\t\t\t\t{").AppendLine();
+		sb.Append("\t\t\t\t\t\tmatches++;").AppendLine();
+		sb.Append("\t\t\t\t\t\tverified[i] = true;").AppendLine();
+		sb.Append("\t\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t\t}").AppendLine();
+		sb.Append("\t\t\t}").AppendLine();
+		sb.AppendLine();
+		sb.Append("\t\t\treturn matches;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+
+		sb.Append("\t\tprivate struct Record").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tpublic long Seq;").AppendLine();
+		sb.Append("\t\t\tpublic string Name;").AppendLine();
+		sb.Append(structFields);
+		sb.Append("\t\t\tpublic IInteraction? Boxed;").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.Append("\t}").AppendLine();
 	}
 
 	private static void AppendVoidMethodSetup(StringBuilder sb, int numberOfParameters)
@@ -573,7 +725,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (interaction is global::Mockolate.Interactions.MethodInvocation<").Append(typeParams).Append("> invocation)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.ParameterName{i}, invocation.Parameter{i}"))).Append(");").AppendLine();
+		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.Parameter{i}"))).Append(");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t\treturn false;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -593,7 +745,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(");").AppendLine();
@@ -638,16 +790,33 @@ internal static partial class Sources
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against <see cref=\"global::Mockolate.Parameters.IParameters\" />.</summary>").AppendLine();
 		sb.Append("\t\tinternal class WithParameters : VoidMethodSetup<").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\tprivate readonly string _parameterName").Append(i).Append(";").AppendLine();
+		}
+
+		sb.AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}\" />").AppendLine();
-		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters)").AppendLine();
+		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(", string parameterName").Append(i);
+		}
+
+		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t: base(mockRegistry, name)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tParameters = parameters;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\t\t_parameterName").Append(i).Append(" = parameterName").Append(i).Append(";").AppendLine();
+		}
+
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tprivate global::Mockolate.Parameters.IParameters Parameters { get; }").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"string, T{i}"))).Append(")\" />").AppendLine();
+		sb.Append("\t\t\t/// <inheritdoc cref=\"VoidMethodSetup{").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append(")\" />").AppendLine();
 		sb.Append("\t\t\tpublic override bool Matches(");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
@@ -656,14 +825,14 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t=> Parameters switch").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}Value"))).Append("]),").AppendLine();
-		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(p{i}Name, p{i}Value)"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(_parameterName{i}, p{i}Value)"))).Append("]),").AppendLine();
 		sb.Append("\t\t\t\t\t\t_ => true,").AppendLine();
 		sb.Append("\t\t\t\t\t};").AppendLine();
 		sb.AppendLine();
@@ -732,7 +901,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();
@@ -1216,7 +1385,7 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tif (interaction is global::Mockolate.Interactions.MethodInvocation<").Append(typeParams).Append("> invocation)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.ParameterName{i}, invocation.Parameter{i}"))).Append(");").AppendLine();
+		sb.Append("\t\t\t\treturn Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"invocation.Parameter{i}"))).Append(");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t\treturn false;").AppendLine();
 		sb.Append("\t\t}").AppendLine();
@@ -1268,7 +1437,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(");").AppendLine();
@@ -1298,16 +1467,33 @@ internal static partial class Sources
 		sb.Append("\t\t/// <summary>Setup for a method with ").Append(numberOfParameters).Append(" parameter").Append(numberOfParameters > 1 ? "s" : "").Append(" matching against <see cref=\"global::Mockolate.Parameters.IParameters\" />.</summary>").AppendLine();
 		sb.Append("\t\tinternal class WithParameters : ReturnMethodSetup<TReturn, ").Append(typeParams).Append(">").AppendLine();
 		sb.Append("\t\t{").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\tprivate readonly string _parameterName").Append(i).Append(";").AppendLine();
+		}
+
+		sb.AppendLine();
 		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}\" />").AppendLine();
-		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters)").AppendLine();
+		sb.Append("\t\t\tpublic WithParameters(global::Mockolate.MockRegistry mockRegistry, string name, global::Mockolate.Parameters.IParameters parameters");
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(", string parameterName").Append(i);
+		}
+
+		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t: base(mockRegistry, name)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tParameters = parameters;").AppendLine();
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append("\t\t\t\t_parameterName").Append(i).Append(" = parameterName").Append(i).Append(";").AppendLine();
+		}
+
 		sb.Append("\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\tprivate global::Mockolate.Parameters.IParameters Parameters { get; }").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"string, T{i}"))).Append(")\" />").AppendLine();
+		sb.Append("\t\t\t/// <inheritdoc cref=\"ReturnMethodSetup{TReturn, ").Append(typeParams).Append("}.Matches(").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"T{i}"))).Append(")\" />").AppendLine();
 		sb.Append("\t\t\tpublic override bool Matches(");
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
@@ -1316,14 +1502,14 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();
 		sb.Append("\t\t\t\t=> Parameters switch").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"p{i}Value"))).Append("]),").AppendLine();
-		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(p{i}Name, p{i}Value)"))).Append("]),").AppendLine();
+		sb.Append("\t\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, numberOfParameters).Select(i => $"(_parameterName{i}, p{i}Value)"))).Append("]),").AppendLine();
 		sb.Append("\t\t\t\t\t\t_ => true,").AppendLine();
 		sb.Append("\t\t\t\t\t};").AppendLine();
 		sb.AppendLine();
@@ -1392,7 +1578,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("string p").Append(i).Append("Name, T").Append(i).Append(" p").Append(i).Append("Value");
+			sb.Append("T").Append(i).Append(" p").Append(i).Append("Value");
 		}
 
 		sb.Append(")").AppendLine();

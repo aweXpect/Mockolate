@@ -52,7 +52,6 @@ internal static partial class Sources
 		              		///     Fallback <c>CreateMock</c> that is only resolved when the Mockolate source generator did not run or when
 		              		///     <typeparamref name="T" /> is not mockable. Calling it always throws a <see cref="global::Mockolate.Exceptions.MockException" />.
 		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              		/// <param name="mockBehavior">Ignored; reserved for the generator-emitted overload.</param>
 		              		/// <returns>This method never returns - it always throws.</returns>
 		              		/// <remarks>
@@ -70,7 +69,6 @@ internal static partial class Sources
 		              		///     Fallback <c>CreateMock</c> that is only resolved when the Mockolate source generator did not run or when
 		              		///     <typeparamref name="T" /> is not mockable. Calling it always throws a <see cref="global::Mockolate.Exceptions.MockException" />.
 		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              		/// <param name="mockBehavior">Ignored; reserved for the generator-emitted overload.</param>
 		              		/// <param name="constructorParameters">Ignored; reserved for the generator-emitted overload.</param>
 		              		/// <returns>This method never returns - it always throws.</returns>
@@ -89,7 +87,6 @@ internal static partial class Sources
 		              		///     Fallback <c>CreateMock</c> that is only resolved when the Mockolate source generator did not run or when
 		              		///     <typeparamref name="T" /> is not mockable. Calling it always throws a <see cref="global::Mockolate.Exceptions.MockException" />.
 		              		/// </summary>
-		              		/// <typeparam name="T">Type to mock, which can be an interface or a class.</typeparam>
 		              		/// <param name="constructorParameters">Ignored; reserved for the generator-emitted overload.</param>
 		              		/// <returns>This method never returns - it always throws.</returns>
 		              		/// <remarks>

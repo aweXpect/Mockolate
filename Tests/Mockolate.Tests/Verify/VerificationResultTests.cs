@@ -7,13 +7,62 @@ namespace Mockolate.Tests.Verify;
 public sealed partial class VerificationResultTests
 {
 	[Fact]
+	public async Task AnyParameters_OnOverloadedGenericMethod_LegacyPath_ShouldOnlyCountTheTargetedOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.GetInstance<int>();
+		sut.GetInstance<int>();
+		sut.GetInstance<int>("key");
+
+		await That(sut.Mock.Verify.GetInstance<int>().AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.GetInstance<int>("ignored").AnyParameters()).Once();
+	}
+
+	[Fact]
+	public async Task AnyParameters_OnOverloadedMethod_FastPath_ShouldOnlyCountTheTargetedOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.DoSomething(1);
+		sut.DoSomething(2);
+		sut.DoSomething(3, true);
+
+		await That(sut.Mock.Verify.DoSomething(0).AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.DoSomething(0, false).AnyParameters()).Once();
+	}
+
+	[Fact]
 	public async Task CustomVerificationResult_ShouldKeepExpectation()
 	{
-		VerificationResult<int> sut = new(1, new MockInteractions(), _ => false, "foo");
+		IMockInteractions interactions = new FastMockInteractions(0);
+		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
 
 		string result = ((IVerificationResult)sut).Expectation;
 
 		await That(result).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task CustomVerificationResult_WithFuncExpectation_ShouldKeepExpectation()
+	{
+		IMockInteractions interactions = new FastMockInteractions(0);
+		VerificationResult<int> sut = new(1, interactions, _ => false, () => "foo");
+
+		string result = ((IVerificationResult)sut).Expectation;
+
+		await That(result).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task CustomVerificationResult_WithIMockInteractions_ShouldExposeInteractions()
+	{
+		IMockInteractions interactions = new FastMockInteractions(0);
+		VerificationResult<int> sut = new(1, interactions, _ => false, "foo");
+
+		IMockInteractions exposed = ((IVerificationResult)sut).Interactions;
+
+		await That(exposed).IsSameAs(interactions);
 	}
 
 	[Fact]
@@ -87,7 +136,7 @@ public sealed partial class VerificationResultTests
 		VerificationResult<Mock.IMockVerifyForIChocolateDispenser> result
 			= sut.Mock.Verify.TotalDispensed.Got();
 
-		await That(((IVerificationResult)result).MockInteractions.Count).IsEqualTo(5);
+		await That(((IVerificationResult)result).Interactions.Count).IsEqualTo(5);
 	}
 
 	[Fact]
@@ -161,5 +210,14 @@ public sealed partial class VerificationResultTests
 	internal interface IIndexerVerificationService
 	{
 		int? this[string p1, int? p2] { get; set; }
+	}
+
+	internal interface IOverloadedMethodService
+	{
+		void DoSomething(int value);
+		void DoSomething(int value, bool flag);
+
+		TService GetInstance<TService>();
+		TService GetInstance<TService>(string key);
 	}
 }

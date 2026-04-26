@@ -4,9 +4,6 @@ using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
-#if NET10_0_OR_GREATER
-using System.Threading;
-#endif
 
 namespace Mockolate.Setup;
 
@@ -87,6 +84,13 @@ public abstract class PropertySetup : IInteractivePropertySetup
 	/// <returns>The resolved getter value.</returns>
 	protected abstract TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator);
 
+	/// <summary>
+	///     Allocation-free variant of <see cref="InvokeGetter{TResult}(MockBehavior, Func{TResult})" /> that
+	///     accepts a behavior-keyed default-value generator. The source generator passes a <c>static</c>
+	///     lambda (cached by the C# compiler) so the proxy property body does not allocate a closure per call.
+	/// </summary>
+	internal abstract TResult InvokeGetterFast<TResult>(MockBehavior behavior, Func<MockBehavior, TResult> defaultValueGenerator);
+
 #if !DEBUG
 	[DebuggerNonUserCode]
 #endif
@@ -156,6 +160,23 @@ public abstract class PropertySetup : IInteractivePropertySetup
 
 			return defaultValueGenerator.Invoke();
 		}
+
+		/// <inheritdoc cref="PropertySetup.InvokeGetterFast{TResult}(MockBehavior, Func{MockBehavior, TResult})" />
+		internal override TResult InvokeGetterFast<TResult>(MockBehavior behavior,
+			Func<MockBehavior, TResult> defaultValueGenerator)
+		{
+			if (typeof(TResult) == typeof(T))
+			{
+				return Unsafe.As<T, TResult>(ref _value);
+			}
+
+			if (_value is TResult typedValue)
+			{
+				return typedValue;
+			}
+
+			return defaultValueGenerator(behavior);
+		}
 	}
 }
 
@@ -172,11 +193,7 @@ public class PropertySetup<T> : PropertySetup,
 {
 	private readonly MockRegistry _mockRegistry;
 	private readonly string _name;
-#if NET10_0_OR_GREATER
-	private readonly Lock _initializationLock = new();
-#else
-	private readonly object _initializationLock = new();
-#endif
+	private readonly MockolateLock _initializationLock = new();
 	private Callbacks<Action<int, T>>? _getterCallbacks;
 	private bool _isInitialized;
 	private bool _isUserInitialized;
@@ -283,6 +300,14 @@ public class PropertySetup<T> : PropertySetup,
 
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
 	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
+		=> InvokeGetterCore<TResult>();
+
+	/// <inheritdoc cref="PropertySetup.InvokeGetterFast{TResult}(MockBehavior, Func{MockBehavior, TResult})" />
+	internal override TResult InvokeGetterFast<TResult>(MockBehavior behavior,
+		Func<MockBehavior, TResult> defaultValueGenerator)
+		=> InvokeGetterCore<TResult>();
+
+	private TResult InvokeGetterCore<TResult>()
 	{
 		if (_getterCallbacks is not null)
 		{
@@ -444,7 +469,7 @@ public class PropertySetup<T> : PropertySetup,
 		return this;
 
 		[DebuggerNonUserCode]
-		void Delegate(int _, T _currentValue)
+		void Delegate(int _, T currentValue)
 		{
 			callback();
 		}

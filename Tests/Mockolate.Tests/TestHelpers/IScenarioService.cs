@@ -2,8 +2,6 @@ namespace Mockolate.Tests.TestHelpers;
 
 internal interface IScenarioService
 {
-	event EventHandler Event;
-
 	int Property { get; set; }
 
 	int this[int p1] { get; set; }
@@ -11,6 +9,7 @@ internal interface IScenarioService
 	int this[int p1, int p2, int p3] { get; set; }
 	int this[int p1, int p2, int p3, int p4] { get; set; }
 	int this[int p1, int p2, int p3, int p4, int p5] { get; set; }
+	event EventHandler Event;
 
 	int ReturnMethod0();
 	int ReturnMethod1(int p1);

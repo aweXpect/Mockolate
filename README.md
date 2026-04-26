@@ -14,6 +14,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
 - **Source generator-based**: No runtime proxy generation.
 - **Strongly-typed**: Compile-time safety and IntelliSense support.
 - **AOT compatible**: Works with Native AOT and trimming.
+- **Fast**: Per-member typed interaction storage on the hot path. v3.0 is up to ~7.8× faster per call than v2 — see [Performance](#performance).
 
 ## Getting Started
 
@@ -1606,7 +1607,6 @@ Mocked types must be mockable. This rule will prevent you from using unsupported
   Type must be an interface, a delegate or a supported class (e.g. not sealed)
 - `Implementing<T>()`  
   Type must be an interface
-
 
 ### Mockolate0003
 

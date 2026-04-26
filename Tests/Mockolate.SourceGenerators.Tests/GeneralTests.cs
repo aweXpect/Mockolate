@@ -564,6 +564,103 @@ public class GeneralTests
 	}
 
 	[Fact]
+	public async Task WhenClassHasFieldNamedMockRegistry_ShouldFallBackToAlternative()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected int MockRegistry;
+			         public virtual int Run() => 0;
+			     }
+			     """);
+
+		// A mock subclass declaring a property `MockRegistry` would hide the inherited field
+		// (CS0108). The dedup pipeline must skip past the conflicting member name.
+		await That(result.Sources)
+			.ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("MockolateMockRegistry")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry { get; }")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenClassHasNestedTypeNamedMockRegistry_ShouldFallBackToAlternative()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public class MockRegistry { }
+			         public virtual int Run() => 0;
+			     }
+			     """);
+
+		await That(result.Sources)
+			.ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("MockolateMockRegistry")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry { get; }")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenInterfaceHasMethodNamedMock_ExtensionMockPropertyShouldBeRenamed()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyInterface.CreateMock();
+			         }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         void Mock();
+			     }
+			     """);
+
+		// `Mock` is a method on the type, so the extension `Mock` property would shadow access.
+		// CreateUniquePropertyName must now skip past it to a Mockolate_-prefixed alternative.
+		await That(result.Sources)
+			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+			.Contains("Mockolate_Mock")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
 	public async Task WhenInterfaceHasMockAndMockolate_MockProperties_ShouldUseMockolate_Mock__1ForMockAccessProperty()
 	{
 		GeneratorResult result = Generator
@@ -794,12 +891,16 @@ public class GeneralTests
 			          		[global::System.ComponentModel.Localizable(false)]
 			          		public string MyMethod(string message)
 			          		{
-			          			var methodSetup = this.MockRegistry.GetMethodSetup<global::Mockolate.Setup.ReturnMethodSetup<string, string>>("global::MyCode.IMyService.MyMethod", m => m.Matches("message", message));
+			          			global::Mockolate.Setup.ReturnMethodSetup<string, string>? methodSetup = null;
+			          """).IgnoringNewlineStyle().And
+			.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<string, string> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<string, string>>(\"global::MyCode.IMyService.MyMethod\"))")
+			.IgnoringNewlineStyle().And
+			.Contains("""
 			          			bool hasWrappedResult = false;
 			          			string wrappedResult = default!;
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
-			          				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<string>("global::MyCode.IMyService.MyMethod", "message", message));
+			          				((global::Mockolate.Interactions.FastMethod1Buffer<string>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_MyMethod]!).Append("global::MyCode.IMyService.MyMethod", message);
 			          			}
 			          			try
 			          			{
@@ -832,7 +933,10 @@ public class GeneralTests
 			          		{
 			          			add
 			          			{
-			          				this.MockRegistry.AddEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				if (value is not null)
+			          				{
+			          					this.MockRegistry.AddEvent(global::Mockolate.Mock.IMyService.MemberId_MyEvent_Subscribe, "global::MyCode.IMyService.MyEvent", value.Target, value.Method);
+			          				}
 			          				this._mockolateEvent_global__MyCode_IMyService_MyEvent += value;
 			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{
@@ -841,7 +945,10 @@ public class GeneralTests
 			          			}
 			          			remove
 			          			{
-			          				this.MockRegistry.RemoveEvent("global::MyCode.IMyService.MyEvent", value?.Target, value?.Method);
+			          				if (value is not null)
+			          				{
+			          					this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IMyService.MemberId_MyEvent_Unsubscribe, "global::MyCode.IMyService.MyEvent", value.Target, value.Method);
+			          				}
 			          				this._mockolateEvent_global__MyCode_IMyService_MyEvent -= value;
 			          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
 			          				{

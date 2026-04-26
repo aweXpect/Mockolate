@@ -18,20 +18,20 @@ namespace Mockolate.Monitor;
 #endif
 public abstract class MockMonitor
 {
-	private readonly MockInteractions _monitoredInteractions;
+	private readonly IMockInteractions _monitoredInteractions;
 	private int _monitoringStart = -1;
 
 	/// <inheritdoc cref="MockMonitor" />
-	protected MockMonitor(MockInteractions mockInteractions)
+	protected MockMonitor(IMockInteractions mockInteractions)
 	{
 		_monitoredInteractions = mockInteractions;
-		Interactions = new MockInteractions { SkipInteractionRecording = mockInteractions.SkipInteractionRecording };
+		Interactions = new FastMockInteractions(0, mockInteractions.SkipInteractionRecording);
 	}
 
 	/// <summary>
 	///     The interactions that were recorded during the monitoring session.
 	/// </summary>
-	protected MockInteractions Interactions { get; }
+	protected IMockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Begins monitoring interactions and returns a scope that ends monitoring when disposed.
@@ -61,7 +61,7 @@ public abstract class MockMonitor
 		{
 			foreach (IInteraction interaction in _monitoredInteractions.Skip(_monitoringStart))
 			{
-				((IMockInteractions)Interactions).RegisterInteraction(interaction);
+				Interactions.RegisterInteraction(interaction);
 			}
 		}
 
@@ -85,7 +85,7 @@ public abstract class MockMonitor
 			int copied = 0;
 			foreach (IInteraction interaction in _monitoredInteractions.Skip(_monitoringStart))
 			{
-				((IMockInteractions)Interactions).RegisterInteraction(interaction);
+				Interactions.RegisterInteraction(interaction);
 				copied++;
 			}
 
@@ -115,7 +115,7 @@ public abstract class MockMonitor
 public sealed class MockMonitor<T> : MockMonitor
 {
 	/// <inheritdoc cref="MockMonitor{T}" />
-	public MockMonitor(MockInteractions interactions, Func<MockInteractions, T> verify) : base(interactions)
+	public MockMonitor(IMockInteractions interactions, Func<IMockInteractions, T> verify) : base(interactions)
 	{
 		Verify = verify(Interactions);
 	}

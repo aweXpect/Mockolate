@@ -16,7 +16,7 @@ public interface IVerificationResult
 	/// <summary>
 	///     Gets the complete collection of mock interactions recorded during test execution.
 	/// </summary>
-	MockInteractions MockInteractions { get; }
+	IMockInteractions Interactions { get; }
 
 	/// <summary>
 	///     Verifies that the specified <paramref name="predicate" /> holds true for the current set of interactions.

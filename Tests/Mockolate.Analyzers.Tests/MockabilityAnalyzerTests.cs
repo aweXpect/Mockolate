@@ -7,6 +7,37 @@ namespace Mockolate.Analyzers.Tests;
 public class MockabilityAnalyzerTests
 {
 	[Fact]
+	public async Task WhenCreateMockIsNotInMockolateNamespace_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace OtherNamespace
+			{
+				internal static class MockExtensions
+				{
+					public static MyNamespace.IMyInterface CreateMock(
+						this MyNamespace.IMyInterface mock) => default!;
+				}
+			}
+
+			namespace MyNamespace
+			{
+				public interface IMyInterface
+				{
+				}
+
+				public class MyClass
+				{
+					public void MyTest()
+					{
+						IMyInterface sut = null!;
+						sut.CreateMock();
+					}
+				}
+			}
+			"""
+		);
+
+	[Fact]
 	public async Task WhenImplementingAClass_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -33,6 +64,43 @@ public class MockabilityAnalyzerTests
 			Verifier.Diagnostic(Rules.MockabilityRule)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.MyImplementingClass", "You can only implement additional interfaces")
+		);
+
+	[Fact]
+	public async Task WhenInvocationIsNotMemberAccess_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace MyNamespace
+			{
+				public class MyClass
+				{
+					public void MyTest()
+					{
+						System.Action action = () => { };
+						action();
+					}
+				}
+			}
+			"""
+		);
+
+	[Fact]
+	public async Task WhenMethodNameIsUnrelated_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace MyNamespace
+			{
+				public class MyClass
+				{
+					public static int Helper() => 0;
+
+					public void MyTest()
+					{
+						MyClass.Helper();
+					}
+				}
+			}
+			"""
 		);
 
 	[Fact]
@@ -205,6 +273,38 @@ public class MockabilityAnalyzerTests
 		);
 
 	[Fact]
+	public async Task WhenMockingOpenGenericClass_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerAsync(
+			"""
+			namespace Mockolate
+			{
+				internal static partial class MockExtensionsForIGenericInterface
+				{
+					extension<T>(MyNamespace.IGenericInterface<T> mock)
+					{
+						public static MyNamespace.IGenericInterface<T> CreateMock() => default!;
+					}
+				}
+			}
+
+			namespace MyNamespace
+			{
+				public interface IGenericInterface<T>
+				{
+				}
+
+				public class MyClass<T>
+				{
+					public void MyTest()
+					{
+						IGenericInterface<T>.CreateMock();
+					}
+				}
+			}
+			"""
+		);
+
+	[Fact]
 	public async Task WhenMockingRecord_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
@@ -280,106 +380,6 @@ public class MockabilityAnalyzerTests
 			Verifier.Diagnostic(Rules.MockabilityRule)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.MyStruct", "type is a struct")
-		);
-
-	[Fact]
-	public async Task WhenInvocationIsNotMemberAccess_ShouldNotBeFlagged() => await Verifier
-		.VerifyAnalyzerAsync(
-			"""
-			namespace MyNamespace
-			{
-				public class MyClass
-				{
-					public void MyTest()
-					{
-						System.Action action = () => { };
-						action();
-					}
-				}
-			}
-			"""
-		);
-
-	[Fact]
-	public async Task WhenMethodNameIsUnrelated_ShouldNotBeFlagged() => await Verifier
-		.VerifyAnalyzerAsync(
-			"""
-			namespace MyNamespace
-			{
-				public class MyClass
-				{
-					public static int Helper() => 0;
-
-					public void MyTest()
-					{
-						MyClass.Helper();
-					}
-				}
-			}
-			"""
-		);
-
-	[Fact]
-	public async Task WhenCreateMockIsNotInMockolateNamespace_ShouldNotBeFlagged() => await Verifier
-		.VerifyAnalyzerAsync(
-			"""
-			namespace OtherNamespace
-			{
-				internal static class MockExtensions
-				{
-					public static MyNamespace.IMyInterface CreateMock(
-						this MyNamespace.IMyInterface mock) => default!;
-				}
-			}
-
-			namespace MyNamespace
-			{
-				public interface IMyInterface
-				{
-				}
-
-				public class MyClass
-				{
-					public void MyTest()
-					{
-						IMyInterface sut = null!;
-						sut.CreateMock();
-					}
-				}
-			}
-			"""
-		);
-
-	[Fact]
-	public async Task WhenMockingOpenGenericClass_ShouldNotBeFlagged() => await Verifier
-		.VerifyAnalyzerAsync(
-			"""
-			namespace Mockolate
-			{
-				internal static partial class MockExtensionsForIGenericInterface
-				{
-					extension<T>(MyNamespace.IGenericInterface<T> mock)
-					{
-						public static MyNamespace.IGenericInterface<T> CreateMock() => default!;
-					}
-				}
-			}
-
-			namespace MyNamespace
-			{
-				public interface IGenericInterface<T>
-				{
-				}
-
-				public class MyClass<T>
-				{
-					public void MyTest()
-					{
-						IGenericInterface<T>.CreateMock();
-					}
-				}
-			}
-			"""
 		);
 
 	private static string GeneratedPrefix(string fullyQualifiedTypeName, bool includeImplementing = false)

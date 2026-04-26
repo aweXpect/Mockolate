@@ -7,6 +7,34 @@ namespace Mockolate.Tests;
 public sealed class OverlappingSetupsTests
 {
 	[Fact]
+	public async Task Indexer_NarrowMatcherDefinedLater_ShouldWinForMatchingArguments()
+	{
+		SetupIndexerTests.IIndexerService sut = SetupIndexerTests.IIndexerService.CreateMock();
+
+		sut.Mock.Setup[It.IsAny<int>()].InitializeWith("foo");
+		sut.Mock.Setup[It.Is(2)].InitializeWith("bar");
+
+		string matching = sut[2];
+		string nonMatching = sut[1];
+
+		await That(matching).IsEqualTo("bar");
+		await That(nonMatching).IsEqualTo("foo");
+	}
+
+	[Fact]
+	public async Task Method_BroadMatcherDefinedLater_ShouldWinEvenForArgumentsTheNarrowMatcherCovered()
+	{
+		SetupMethodTests.IMethodService sut = SetupMethodTests.IMethodService.CreateMock();
+
+		sut.Mock.Setup.MyIntMethodWithParameters(It.Is(0), It.Is("foo")).Returns(2);
+		sut.Mock.Setup.MyIntMethodWithParameters(It.IsAny<int>(), It.IsAny<string>()).Returns(1);
+
+		int previouslyNarrowMatch = sut.MyIntMethodWithParameters(0, "foo");
+
+		await That(previouslyNarrowMatch).IsEqualTo(1);
+	}
+
+	[Fact]
 	public async Task Method_MostRecentlyDefinedSetup_ShouldWin_WhenMatchersOverlap()
 	{
 		SetupMethodTests.IMethodService sut = SetupMethodTests.IMethodService.CreateMock();
@@ -36,19 +64,6 @@ public sealed class OverlappingSetupsTests
 	}
 
 	[Fact]
-	public async Task Method_BroadMatcherDefinedLater_ShouldWinEvenForArgumentsTheNarrowMatcherCovered()
-	{
-		SetupMethodTests.IMethodService sut = SetupMethodTests.IMethodService.CreateMock();
-
-		sut.Mock.Setup.MyIntMethodWithParameters(It.Is(0), It.Is("foo")).Returns(2);
-		sut.Mock.Setup.MyIntMethodWithParameters(It.IsAny<int>(), It.IsAny<string>()).Returns(1);
-
-		int previouslyNarrowMatch = sut.MyIntMethodWithParameters(0, "foo");
-
-		await That(previouslyNarrowMatch).IsEqualTo(1);
-	}
-
-	[Fact]
 	public async Task Property_LaterReturnsCall_ShouldReplacePreviousSetup()
 	{
 		SetupPropertyTests.IPropertyService sut = SetupPropertyTests.IPropertyService.CreateMock();
@@ -60,20 +75,5 @@ public sealed class OverlappingSetupsTests
 		int result = sut.MyProperty;
 
 		await That(result).IsEqualTo(3);
-	}
-
-	[Fact]
-	public async Task Indexer_NarrowMatcherDefinedLater_ShouldWinForMatchingArguments()
-	{
-		SetupIndexerTests.IIndexerService sut = SetupIndexerTests.IIndexerService.CreateMock();
-
-		sut.Mock.Setup[It.IsAny<int>()].InitializeWith("foo");
-		sut.Mock.Setup[It.Is(2)].InitializeWith("bar");
-
-		string matching = sut[2];
-		string nonMatching = sut[1];
-
-		await That(matching).IsEqualTo("bar");
-		await That(nonMatching).IsEqualTo("foo");
 	}
 }

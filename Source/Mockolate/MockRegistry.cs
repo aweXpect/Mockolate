@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -26,10 +27,43 @@ public partial class MockRegistry
 	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
 	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
 	public MockRegistry(MockBehavior behavior, object?[]? constructorParameters = null)
+		: this(behavior,
+			new FastMockInteractions(0, behavior.SkipInteractionRecording),
+			constructorParameters)
 	{
+	}
+
+	/// <summary>
+	///     Creates a new <see cref="MockRegistry" /> with the given <paramref name="behavior" />, a caller-provided
+	///     <paramref name="interactions" /> store, and optional <paramref name="constructorParameters" />.
+	/// </summary>
+	/// <remarks>
+	///     The generator-emitted <c>CreateMock</c> paths use this overload to install a
+	///     <see cref="FastMockInteractions" /> tailored to the mocked type. Pass any
+	///     <see cref="IMockInteractions" /> implementation (e.g. <c>new FastMockInteractions(0)</c>)
+	///     when constructing a registry by hand.
+	/// </remarks>
+	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
+	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
+	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
+	public MockRegistry(MockBehavior behavior, IMockInteractions interactions,
+		object?[]? constructorParameters = null)
+	{
+		if (behavior.SkipInteractionRecording != interactions.SkipInteractionRecording)
+		{
+			throw new ArgumentException(
+				$"{nameof(behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} " +
+				$"({behavior.SkipInteractionRecording}) and " +
+				$"{nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} " +
+				$"({interactions.SkipInteractionRecording}) must agree; recording paths gate on the " +
+				"behavior flag while verification gates on the interactions flag, so a mismatch leaves " +
+				"the registry in an inconsistent state.",
+				nameof(interactions));
+		}
+
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
-		Interactions = new MockInteractions { SkipInteractionRecording = behavior.SkipInteractionRecording };
+		Interactions = interactions;
 		Setup = new MockSetups();
 		_scenarioState = new ScenarioState();
 		Wraps = null;
@@ -45,7 +79,7 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Interactions = new MockInteractions { SkipInteractionRecording = registry.Behavior.SkipInteractionRecording };
+		Interactions = new FastMockInteractions(0, registry.Behavior.SkipInteractionRecording);
 		Setup = registry.Setup;
 		_scenarioState = registry._scenarioState;
 		Wraps = wraps;
@@ -73,8 +107,20 @@ public partial class MockRegistry
 	/// </summary>
 	/// <param name="registry">The source registry whose behavior, setups, constructor parameters, scenario state, and wrapped instance are reused.</param>
 	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
-	public MockRegistry(MockRegistry registry, MockInteractions interactions)
+	public MockRegistry(MockRegistry registry, IMockInteractions interactions)
 	{
+		if (registry.Behavior.SkipInteractionRecording != interactions.SkipInteractionRecording)
+		{
+			throw new ArgumentException(
+				$"{nameof(registry)}.{nameof(Behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} " +
+				$"({registry.Behavior.SkipInteractionRecording}) and " +
+				$"{nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} " +
+				$"({interactions.SkipInteractionRecording}) must agree; recording paths gate on the " +
+				"behavior flag while verification gates on the interactions flag, so a mismatch leaves " +
+				"the registry in an inconsistent state.",
+				nameof(interactions));
+		}
+
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
 		Interactions = interactions;
@@ -91,9 +137,15 @@ public partial class MockRegistry
 	/// <remarks>
 	///     When a member is invoked, Mockolate resolves a matching setup in this order:
 	///     <list type="number">
-	///         <item><description>the active scenario's bucket, when <see cref="Scenario" /> is not empty;</description></item>
-	///         <item><description>the default bucket (setups registered via <c>sut.Mock.Setup.*</c>);</description></item>
-	///         <item><description>the default response determined by <see cref="Behavior" />.</description></item>
+	///         <item>
+	///             <description>the active scenario's bucket, when <see cref="Scenario" /> is not empty;</description>
+	///         </item>
+	///         <item>
+	///             <description>the default bucket (setups registered via <c>sut.Mock.Setup.*</c>);</description>
+	///         </item>
+	///         <item>
+	///             <description>the default response determined by <see cref="Behavior" />.</description>
+	///         </item>
 	///     </list>
 	///     Scenario setups add to, rather than replace, the default bucket - register catch-alls at the default scope
 	///     and override specific members per scenario.
