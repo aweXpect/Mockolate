@@ -46,6 +46,33 @@ public class FastMockInteractionsTests
 	}
 
 	[Fact]
+	public async Task Clear_FallbackPath_ShouldNotResurfaceOldRecordsAfterRefill()
+	{
+		IMockInteractions sut = new FastMockInteractions(0);
+		MethodInvocation first = new("first");
+		MethodInvocation second = new("second");
+
+		sut.RegisterInteraction(first);
+		sut.RegisterInteraction(second);
+
+		sut.Clear();
+
+		MethodInvocation third = new("third");
+		MethodInvocation fourth = new("fourth");
+		sut.RegisterInteraction(third);
+		sut.RegisterInteraction(fourth);
+
+		List<IInteraction> ordered = [..sut,];
+
+		await That(sut.Count).IsEqualTo(2);
+		await That(ordered).HasCount(2);
+		await That(ordered.Contains(first)).IsFalse();
+		await That(ordered.Contains(second)).IsFalse();
+		await That(ordered[0]).IsSameAs(third);
+		await That(ordered[1]).IsSameAs(fourth);
+	}
+
+	[Fact]
 	public async Task Clear_ShouldFireOnClearing()
 	{
 		FastMockInteractions sut = new(1);
@@ -162,6 +189,37 @@ public class FastMockInteractionsTests
 	}
 
 	[Fact]
+	public async Task GetOrCreateFallbackBuffer_ConcurrentRace_RecordsAllInteractions()
+	{
+		const int threads = 8;
+		const int callsPerThread = 25;
+		IMockInteractions sut = new FastMockInteractions(0);
+
+		using ManualResetEventSlim start = new(false);
+		Task[] tasks = new Task[threads];
+		for (int t = 0; t < threads; t++)
+		{
+			int threadId = t;
+#pragma warning disable xUnit1051 // intentionally not using a cancellation token here; the threads run a short, deterministic loop
+			tasks[t] = Task.Run(() =>
+#pragma warning restore xUnit1051
+			{
+				start.Wait();
+				for (int i = 0; i < callsPerThread; i++)
+				{
+					sut.RegisterInteraction(new MethodInvocation($"t{threadId}-{i}"));
+				}
+			});
+		}
+
+		start.Set();
+		await Task.WhenAll(tasks);
+
+		await That(sut.Count).IsEqualTo(threads * callsPerThread);
+		await That(sut.ToList()).HasCount(threads * callsPerThread);
+	}
+
+	[Fact]
 	public async Task GetUnverifiedInteractions_AcrossMultipleBuffers_ShouldUnionFastAndSlowVerifications()
 	{
 		FastMockInteractions sut = new(2);
@@ -262,6 +320,20 @@ public class FastMockInteractionsTests
 		IReadOnlyCollection<IInteraction> unverified = sut.GetUnverifiedInteractions();
 
 		await That(unverified).HasCount(1);
+	}
+
+	[Fact]
+	public async Task NextSequence_ShouldReturnZeroBasedMonotonicValues()
+	{
+		FastMockInteractions sut = new(0);
+
+		long first = sut.NextSequence();
+		long second = sut.NextSequence();
+		long third = sut.NextSequence();
+
+		await That(first).IsEqualTo(0L);
+		await That(second).IsEqualTo(1L);
+		await That(third).IsEqualTo(2L);
 	}
 
 	[Fact]
@@ -372,6 +444,35 @@ public class FastMockInteractionsTests
 
 		await That(skipping.SkipInteractionRecording).IsTrue();
 		await That(recording.SkipInteractionRecording).IsFalse();
+	}
+
+	[Fact]
+	public async Task Verified_BeforeAnyAppend_OnSecondCallAddsToExistingSet()
+	{
+		FastMockInteractions sut = new(1);
+		FastMethod0Buffer buffer = sut.InstallMethod(0);
+
+		((IMockInteractions)sut).Verified([]);
+
+		buffer.Append("Foo");
+		MethodInvocation appended = (MethodInvocation)sut.Single();
+		((IMockInteractions)sut).Verified([appended,]);
+
+		await That(sut.GetUnverifiedInteractions()).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Verified_WithMultipleInteractions_AddsAllToInternalSet()
+	{
+		FastMockInteractions sut = new(1);
+		FastMethod0Buffer buffer = sut.InstallMethod(0);
+		buffer.Append("first");
+		buffer.Append("second");
+
+		List<IInteraction> all = [..sut,];
+		((IMockInteractions)sut).Verified(all);
+
+		await That(sut.GetUnverifiedInteractions()).IsEmpty();
 	}
 
 	public sealed class MethodBufferTests
