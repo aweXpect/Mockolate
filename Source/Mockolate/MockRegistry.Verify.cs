@@ -63,7 +63,7 @@ public partial class MockRegistry
 		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
 		if (buffer is null)
 		{
-			return VerifyMethod<T, TMethod>(subject, methodName, predicate, expectation);
+			return VerifyMethod(subject, methodName, predicate, expectation);
 		}
 
 		return new VerificationResult<T>.IgnoreParameters(
@@ -88,7 +88,7 @@ public partial class MockRegistry
 	/// <param name="subject">The verification facade the result is bound to.</param>
 	/// <param name="propertyName">The simple property name.</param>
 	/// <returns>A verification result pending a count terminator (e.g. <c>.Once()</c>).</returns>
-	public VerificationResult<T> VerifyProperty<T>(T subject, string propertyName)
+	internal VerificationResult<T> VerifyProperty<T>(T subject, string propertyName)
 	{
 		return new VerificationResult<T>(subject,
 			Interactions,
@@ -136,7 +136,7 @@ public partial class MockRegistry
 	/// <param name="propertyName">The simple property name.</param>
 	/// <param name="value">Parameter matcher evaluated against the assigned value.</param>
 	/// <returns>A verification result pending a count terminator.</returns>
-	public VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, string propertyName,
+	internal VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, string propertyName,
 		IParameterMatch<TValue> value)
 	{
 		return new VerificationResult<TSubject>(subject,
@@ -226,7 +226,7 @@ public partial class MockRegistry
 	/// <param name="gotPredicate">Predicate evaluated against each recorded interaction.</param>
 	/// <param name="parametersDescription">Factory producing the indexer-argument description used in failure messages.</param>
 	/// <returns>A verification result pending a count terminator.</returns>
-	public VerificationResult<T> IndexerGot<T>(T subject,
+	internal VerificationResult<T> IndexerGot<T>(T subject,
 		Func<IInteraction, bool> gotPredicate,
 		Func<string> parametersDescription)
 		=> new(subject,
@@ -272,7 +272,7 @@ public partial class MockRegistry
 	/// <param name="value">Parameter matcher evaluated against the assigned value.</param>
 	/// <param name="parametersDescription">Factory producing the indexer-argument description used in failure messages.</param>
 	/// <returns>A verification result pending a count terminator.</returns>
-	public VerificationResult<T> IndexerSet<T, TValue>(T subject,
+	internal VerificationResult<T> IndexerSet<T, TValue>(T subject,
 		Func<IInteraction, IParameterMatch<TValue>, bool> setPredicate,
 		IParameterMatch<TValue> value,
 		Func<string> parametersDescription)
@@ -332,7 +332,7 @@ public partial class MockRegistry
 	/// <param name="subject">The verification facade the result is bound to.</param>
 	/// <param name="eventName">The simple event name.</param>
 	/// <returns>A verification result pending a count terminator.</returns>
-	public VerificationResult<T> SubscribedTo<T>(T subject, string eventName)
+	internal VerificationResult<T> SubscribedTo<T>(T subject, string eventName)
 	{
 		return new VerificationResult<T>(subject, Interactions,
 			Predicate,
@@ -375,7 +375,7 @@ public partial class MockRegistry
 	/// <param name="subject">The verification facade the result is bound to.</param>
 	/// <param name="eventName">The simple event name.</param>
 	/// <returns>A verification result pending a count terminator.</returns>
-	public VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName)
+	internal VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName)
 	{
 		return new VerificationResult<T>(subject, Interactions,
 			Predicate,
@@ -646,7 +646,7 @@ public partial class MockRegistry
 				() => $"set indexer {parametersDescription()} to {value}");
 		}
 
-		return IndexerSet<T, TValue>(subject,
+		return IndexerSet(subject,
 			(interaction, v) => interaction is IndexerSetterAccess<T1, TValue> s && match1.Matches(s.Parameter1) && v.Matches(s.TypedValue),
 			value, parametersDescription);
 	}
@@ -667,7 +667,7 @@ public partial class MockRegistry
 				() => $"set indexer {parametersDescription()} to {value}");
 		}
 
-		return IndexerSet<T, TValue>(subject,
+		return IndexerSet(subject,
 			(interaction, v) => interaction is IndexerSetterAccess<T1, T2, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && v.Matches(s.TypedValue),
 			value, parametersDescription);
 	}
@@ -688,7 +688,7 @@ public partial class MockRegistry
 				() => $"set indexer {parametersDescription()} to {value}");
 		}
 
-		return IndexerSet<T, TValue>(subject,
+		return IndexerSet(subject,
 			(interaction, v) => interaction is IndexerSetterAccess<T1, T2, T3, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && match3.Matches(s.Parameter3) && v.Matches(s.TypedValue),
 			value, parametersDescription);
 	}
@@ -709,7 +709,7 @@ public partial class MockRegistry
 				() => $"set indexer {parametersDescription()} to {value}");
 		}
 
-		return IndexerSet<T, TValue>(subject,
+		return IndexerSet(subject,
 			(interaction, v) => interaction is IndexerSetterAccess<T1, T2, T3, T4, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && match3.Matches(s.Parameter3) && match4.Matches(s.Parameter4) && v.Matches(s.TypedValue),
 			value, parametersDescription);
 	}

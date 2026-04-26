@@ -200,13 +200,11 @@ namespace Mockolate
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetProperty<TResult>(int memberId, string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.IMockInteractions interactions) { }
-        public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, int memberId, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGotTyped<T, T1>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGotTyped<T, T1, T2>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGotTyped<T, T1, T2, T3>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGotTyped<T, T1, T2, T3, T4>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, System.Func<string> parametersDescription) { }
-        public Mockolate.Verify.VerificationResult<T> IndexerSet<T, TValue>(T subject, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TValue>, bool> setPredicate, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSet<T, TValue>(T subject, int memberId, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TValue>, bool> setPredicate, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSetTyped<T, T1, TValue>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSetTyped<T, T1, T2, TValue>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
@@ -230,11 +228,9 @@ namespace Mockolate
         public void SetupMethod(int memberId, string scenario, Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
         public void SetupProperty(string scenario, Mockolate.Setup.PropertySetup propertySetup) { }
-        public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, string eventName) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, int memberId, string eventName) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedToTyped<T>(T subject, int memberId, string eventName) { }
         public void TransitionTo(string scenario) { }
-        public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, string eventName) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFrom<T>(T subject, int memberId, string eventName) { }
         public Mockolate.Verify.VerificationResult<T> UnsubscribedFromTyped<T>(T subject, int memberId, string eventName) { }
         public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T>(T subject, int memberId, string methodName, System.Func<string> expectation) { }
@@ -246,9 +242,7 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2>(T subject, int memberId, string methodName, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, System.Func<string> expectation) { }
         public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2, T3>(T subject, int memberId, string methodName, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, System.Func<string> expectation) { }
         public Mockolate.Verify.VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2, T3, T4>(T subject, int memberId, string methodName, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, System.Func<string> expectation) { }
-        public Mockolate.Verify.VerificationResult<T> VerifyProperty<T>(T subject, string propertyName) { }
         public Mockolate.Verify.VerificationResult<T> VerifyProperty<T>(T subject, int memberId, string propertyName) { }
-        public Mockolate.Verify.VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, string propertyName, Mockolate.Parameters.IParameterMatch<TValue> value) { }
         public Mockolate.Verify.VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, int memberId, string propertyName, Mockolate.Parameters.IParameterMatch<TValue> value) { }
         public Mockolate.Verify.VerificationResult<T> VerifyPropertyTyped<T>(T subject, int memberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> VerifyPropertyTyped<TSubject, TValue>(TSubject subject, int memberId, string propertyName, Mockolate.Parameters.IParameterMatch<TValue> value) { }

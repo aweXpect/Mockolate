@@ -47,24 +47,18 @@ public class VerificationPropertyResult<TSubject, TParameter>
 	///     Verifies the property read access on the mock.
 	/// </summary>
 	public VerificationResult<TSubject> Got()
-		=> _getMemberId >= 0
-			? _mockRegistry.VerifyProperty(_subject, _getMemberId, _propertyName)
-			: _mockRegistry.VerifyProperty(_subject, _propertyName);
+		=> _mockRegistry.VerifyProperty(_subject, _getMemberId, _propertyName);
 
 	/// <summary>
 	///     Verifies the property write access on the mock with the given <paramref name="value" />.
 	/// </summary>
 	public VerificationResult<TSubject> Set(IParameter<TParameter> value)
-		=> _setMemberId >= 0
-			? _mockRegistry.VerifyProperty(_subject, _setMemberId, _propertyName, (IParameterMatch<TParameter>)value)
-			: _mockRegistry.VerifyProperty(_subject, _propertyName, (IParameterMatch<TParameter>)value);
+		=> _mockRegistry.VerifyProperty(_subject, _setMemberId, _propertyName, (IParameterMatch<TParameter>)value);
 
 	/// <summary>
 	///     Verifies the property write access on the mock with the given <paramref name="value" />.
 	/// </summary>
 	[OverloadResolutionPriority(1)]
 	public VerificationResult<TSubject> Set(TParameter value, [CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
-		=> _setMemberId >= 0
-			? _mockRegistry.VerifyProperty(_subject, _setMemberId, _propertyName, (IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue))
-			: _mockRegistry.VerifyProperty(_subject, _propertyName, (IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue));
+		=> _mockRegistry.VerifyProperty(_subject, _setMemberId, _propertyName, (IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue));
 }

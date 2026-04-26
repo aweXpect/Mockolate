@@ -44,15 +44,11 @@ public class VerificationEventResult<TSubject>
 	///     Verifies the subscriptions for the event.
 	/// </summary>
 	public VerificationResult<TSubject> Subscribed()
-		=> _subscribeMemberId >= 0
-			? _mockRegistry.SubscribedTo(_subject, _subscribeMemberId, _name)
-			: _mockRegistry.SubscribedTo(_subject, _name);
+		=> _mockRegistry.SubscribedTo(_subject, _subscribeMemberId, _name);
 
 	/// <summary>
 	///     Verifies the unsubscriptions from the event.
 	/// </summary>
 	public VerificationResult<TSubject> Unsubscribed()
-		=> _unsubscribeMemberId >= 0
-			? _mockRegistry.UnsubscribedFrom(_subject, _unsubscribeMemberId, _name)
-			: _mockRegistry.UnsubscribedFrom(_subject, _name);
+		=> _mockRegistry.UnsubscribedFrom(_subject, _unsubscribeMemberId, _name);
 }

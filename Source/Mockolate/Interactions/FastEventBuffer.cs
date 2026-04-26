@@ -73,7 +73,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= _kind == FastEventBufferKind.Subscribe
 					? new EventSubscription(r.Name, r.Target, r.Method)
-					: (IInteraction)new EventUnsubscription(r.Name, r.Target, r.Method);
+					: new EventUnsubscription(r.Name, r.Target, r.Method);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
@@ -94,7 +94,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 				ref Record r = ref _storage.SlotUnderLock(slot);
 				r.Boxed ??= _kind == FastEventBufferKind.Subscribe
 					? new EventSubscription(r.Name, r.Target, r.Method)
-					: (IInteraction)new EventUnsubscription(r.Name, r.Target, r.Method);
+					: new EventUnsubscription(r.Name, r.Target, r.Method);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}

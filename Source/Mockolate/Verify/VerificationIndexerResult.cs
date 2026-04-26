@@ -61,19 +61,14 @@ public class VerificationIndexerResult<TSubject, TParameter>
 	///     Verifies the indexer read access on the mock.
 	/// </summary>
 	public VerificationResult<TSubject> Got()
-		=> _getMemberId >= 0
-			? _mockRegistry.IndexerGot(_subject, _getMemberId, _gotPredicate, _parametersDescription)
-			: _mockRegistry.IndexerGot(_subject, _gotPredicate, _parametersDescription);
+		=> _mockRegistry.IndexerGot(_subject, _getMemberId, _gotPredicate, _parametersDescription);
 
 	/// <summary>
 	///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
 	/// </summary>
 	public VerificationResult<TSubject> Set(IParameter<TParameter> value)
-		=> _setMemberId >= 0
-			? _mockRegistry.IndexerSet(_subject, _setMemberId, _setPredicate,
-				(IParameterMatch<TParameter>)value, _parametersDescription)
-			: _mockRegistry.IndexerSet(_subject, _setPredicate,
-				(IParameterMatch<TParameter>)value, _parametersDescription);
+		=> _mockRegistry.IndexerSet(_subject, _setMemberId, _setPredicate,
+			(IParameterMatch<TParameter>)value, _parametersDescription);
 
 	/// <summary>
 	///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
@@ -82,9 +77,6 @@ public class VerificationIndexerResult<TSubject, TParameter>
 	public VerificationResult<TSubject> Set(TParameter value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
-		=> _setMemberId >= 0
-			? _mockRegistry.IndexerSet(_subject, _setMemberId, _setPredicate,
-				(IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue), _parametersDescription)
-			: _mockRegistry.IndexerSet(_subject, _setPredicate,
-				(IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue), _parametersDescription);
+		=> _mockRegistry.IndexerSet(_subject, _setMemberId, _setPredicate,
+			(IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue), _parametersDescription);
 }

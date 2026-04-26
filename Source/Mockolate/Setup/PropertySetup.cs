@@ -437,7 +437,7 @@ public class PropertySetup<T> : PropertySetup,
 		return this;
 
 		[DebuggerNonUserCode]
-		void Delegate(int _, T _currentValue)
+		void Delegate(int _, T currentValue)
 		{
 			callback();
 		}

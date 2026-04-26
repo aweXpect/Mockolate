@@ -34,6 +34,7 @@ public partial class MockRegistry
 		if (indexerCount < 0)
 		{
 			throw new ArgumentOutOfRangeException(nameof(indexerCount), indexerCount,
+				// ReSharper disable once LocalizableElement
 				"Indexer count must be non-negative.");
 		}
 
@@ -380,13 +381,13 @@ public partial class MockRegistry
 
 	private void RecordPropertyGetter(int memberId, string propertyName)
 	{
-		if (Interactions is FastMockInteractions __fast)
+		if (Interactions is FastMockInteractions fast)
 		{
-			IFastMemberBuffer?[] __buffers = __fast.Buffers;
-			if ((uint)memberId < (uint)__buffers.Length &&
-			    __buffers[memberId] is FastPropertyGetterBuffer __buffer)
+			IFastMemberBuffer?[] buffers = fast.Buffers;
+			if ((uint)memberId < (uint)buffers.Length &&
+			    buffers[memberId] is FastPropertyGetterBuffer buffer)
 			{
-				__buffer.Append(propertyName);
+				buffer.Append(propertyName);
 				return;
 			}
 		}
@@ -406,19 +407,20 @@ public partial class MockRegistry
 			return ((IInteractivePropertySetup)matchingSetup).InvokeGetter(interaction, Behavior,
 				defaultValueGenerator);
 		}
+
 		ExceptionDispatchInfo? capturedBaseException = null;
 		Func<TResult> safeBaseValueAccessor = () =>
+		{
+			try
 			{
-				try
-				{
-					return baseValueAccessor();
-				}
-				catch (Exception ex)
-				{
-					capturedBaseException = ExceptionDispatchInfo.Capture(ex);
-					return default!;
-				}
-			};
+				return baseValueAccessor();
+			}
+			catch (Exception ex)
+			{
+				capturedBaseException = ExceptionDispatchInfo.Capture(ex);
+				return default!;
+			}
+		};
 
 		matchingSetup = ResolvePropertySetup(
 			propertyName, defaultValueGenerator, safeBaseValueAccessor, true);
@@ -481,13 +483,13 @@ public partial class MockRegistry
 
 	private void RecordPropertySetter<T>(int memberId, string propertyName, T value)
 	{
-		if (Interactions is FastMockInteractions __fast)
+		if (Interactions is FastMockInteractions fast)
 		{
-			IFastMemberBuffer?[] __buffers = __fast.Buffers;
-			if ((uint)memberId < (uint)__buffers.Length &&
-			    __buffers[memberId] is FastPropertySetterBuffer<T> __buffer)
+			IFastMemberBuffer?[] buffers = fast.Buffers;
+			if ((uint)memberId < (uint)buffers.Length &&
+			    buffers[memberId] is FastPropertySetterBuffer<T> buffer)
 			{
-				__buffer.Append(propertyName, value);
+				buffer.Append(propertyName, value);
 				return;
 			}
 		}
@@ -603,7 +605,7 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			RecordEvent(memberId, name, target, method, isSubscribe: true);
+			RecordEvent(memberId, name, target, method, true);
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))
@@ -657,7 +659,7 @@ public partial class MockRegistry
 
 		if (!Behavior.SkipInteractionRecording)
 		{
-			RecordEvent(memberId, name, target, method, isSubscribe: false);
+			RecordEvent(memberId, name, target, method, false);
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))
@@ -668,19 +670,24 @@ public partial class MockRegistry
 
 	private void RecordEvent(int memberId, string name, object? target, MethodInfo method, bool isSubscribe)
 	{
-		if (Interactions is FastMockInteractions __fast)
+		if (Interactions is FastMockInteractions fast)
 		{
-			IFastMemberBuffer?[] __buffers = __fast.Buffers;
-			if ((uint)memberId < (uint)__buffers.Length &&
-			    __buffers[memberId] is FastEventBuffer __buffer)
+			IFastMemberBuffer?[] buffers = fast.Buffers;
+			if ((uint)memberId < (uint)buffers.Length &&
+			    buffers[memberId] is FastEventBuffer buffer)
 			{
-				__buffer.Append(name, target, method);
+				buffer.Append(name, target, method);
 				return;
 			}
 		}
 
-		Interactions.RegisterInteraction(isSubscribe
-			? new EventSubscription(name, target, method)
-			: (IInteraction)new EventUnsubscription(name, target, method));
+		if (isSubscribe)
+		{
+			Interactions.RegisterInteraction(new EventSubscription(name, target, method));
+		}
+		else
+		{
+			Interactions.RegisterInteraction(new EventUnsubscription(name, target, method));
+		}
 	}
 }
