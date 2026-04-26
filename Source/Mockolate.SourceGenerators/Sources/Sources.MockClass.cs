@@ -247,11 +247,11 @@ internal static partial class Sources
 
 		if (@class is { ClassFullName: "global::System.Net.Http.HttpClient", })
 		{
-			sb.Append("\t\t\tglobal::Mockolate.MockBehavior __effectiveBehavior = mockBehavior ?? global::Mockolate.MockBehavior.Default;")
+			sb.Append("\t\t\tglobal::Mockolate.MockBehavior effectiveBehavior = mockBehavior ?? global::Mockolate.MockBehavior.Default;")
 				.AppendLine();
 			sb.Append(
-					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(__effectiveBehavior, global::Mockolate.Mock.")
-				.Append(name).Append(".CreateFastInteractions(__effectiveBehavior), constructorParameters);")
+					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(effectiveBehavior, global::Mockolate.Mock.")
+				.Append(name).Append(".CreateFastInteractions(effectiveBehavior), constructorParameters);")
 				.AppendLine();
 			sb.Append("\t\t\tif (constructorParameters is null)").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -449,14 +449,14 @@ internal static partial class Sources
 		sb.Append("\t\t\tif (mock is global::Mockolate.IMock mockInterface)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append(
-				"\t\t\t\tglobal::Mockolate.MockRegistry __wrappingRegistry = new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance);")
+				"\t\t\t\tglobal::Mockolate.MockRegistry wrappingRegistry = new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance);")
 			.AppendLine();
 		sb.Append(
-				"\t\t\t\t__wrappingRegistry = new global::Mockolate.MockRegistry(__wrappingRegistry, global::Mockolate.Mock.")
-			.Append(name).Append(".CreateFastInteractions(__wrappingRegistry.Behavior));")
+				"\t\t\t\twrappingRegistry = new global::Mockolate.MockRegistry(wrappingRegistry, global::Mockolate.Mock.")
+			.Append(name).Append(".CreateFastInteractions(wrappingRegistry.Behavior));")
 			.AppendLine();
 		sb.Append(
-				"\t\t\t\treturn CreateMockInstance(__wrappingRegistry, mockInterface.MockRegistry.ConstructorParameters, null);")
+				"\t\t\t\treturn CreateMockInstance(wrappingRegistry, mockInterface.MockRegistry.ConstructorParameters, null);")
 			.AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");")
@@ -1217,7 +1217,7 @@ internal static partial class Sources
 			.Append("internal static global::Mockolate.Interactions.FastMockInteractions CreateFastInteractions(global::Mockolate.MockBehavior behavior)")
 			.AppendLine();
 		sb.Append(indent).Append("{").AppendLine();
-		sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastMockInteractions __fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);")
+		sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastMockInteractions fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);")
 			.AppendLine();
 
 		foreach (Method method in @class.AllMethods())
@@ -1236,14 +1236,14 @@ internal static partial class Sources
 			if (arity <= 4)
 			{
 				sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastMethodBufferFactory.InstallMethod")
-					.Append(typeArgs).Append("(__fast, ").Append(memberIdRef).Append(");").AppendLine();
+					.Append(typeArgs).Append("(fast, ").Append(memberIdRef).Append(");").AppendLine();
 			}
 			else
 			{
 				sb.Append(indent)
-					.Append("\t__fast.InstallBuffer(").Append(memberIdRef)
+					.Append("\tfast.InstallBuffer(").Append(memberIdRef)
 					.Append(", new global::Mockolate.Interactions.FastMethod").Append(arity)
-					.Append("Buffer").Append(typeArgs).Append("(__fast));").AppendLine();
+					.Append("Buffer").Append(typeArgs).Append("(fast));").AppendLine();
 			}
 		}
 
@@ -1255,13 +1255,13 @@ internal static partial class Sources
 			}
 
 			string getMemberIdRef = memberIdPrefix + memberIds.GetPropertyGetIdentifier(property);
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(__fast, ")
+			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(fast, ")
 				.Append(getMemberIdRef).Append(");").AppendLine();
 
 			string setMemberIdRef = memberIdPrefix + memberIds.GetPropertySetIdentifier(property);
 			string propertyType = property.Type.ToTypeOrWrapper();
 			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertySetter<")
-				.Append(propertyType).Append(">(__fast, ").Append(setMemberIdRef).Append(");").AppendLine();
+				.Append(propertyType).Append(">(fast, ").Append(setMemberIdRef).Append(");").AppendLine();
 		}
 
 		foreach (Property indexer in @class.AllProperties().Where(p => p.IsIndexer))
@@ -1277,9 +1277,9 @@ internal static partial class Sources
 			string indexerValueType = indexer.Type.ToTypeOrWrapper();
 
 			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastIndexerBufferFactory.InstallIndexerGetter<")
-				.Append(indexerKeyTypeArgs).Append(">(__fast, ").Append(getMemberIdRef).Append(");").AppendLine();
+				.Append(indexerKeyTypeArgs).Append(">(fast, ").Append(getMemberIdRef).Append(");").AppendLine();
 			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastIndexerBufferFactory.InstallIndexerSetter<")
-				.Append(indexerKeyTypeArgs).Append(", ").Append(indexerValueType).Append(">(__fast, ")
+				.Append(indexerKeyTypeArgs).Append(", ").Append(indexerValueType).Append(">(fast, ")
 				.Append(setMemberIdRef).Append(");").AppendLine();
 		}
 
@@ -1292,13 +1292,13 @@ internal static partial class Sources
 
 			string subMemberIdRef = memberIdPrefix + memberIds.GetEventSubscribeIdentifier(@event);
 			string unsubMemberIdRef = memberIdPrefix + memberIds.GetEventUnsubscribeIdentifier(@event);
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventSubscribe(__fast, ")
+			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventSubscribe(fast, ")
 				.Append(subMemberIdRef).Append(");").AppendLine();
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventUnsubscribe(__fast, ")
+			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventUnsubscribe(fast, ")
 				.Append(unsubMemberIdRef).Append(");").AppendLine();
 		}
 
-		sb.Append(indent).Append("\treturn __fast;").AppendLine();
+		sb.Append(indent).Append("\treturn fast;").AppendLine();
 		sb.Append(indent).Append("}").AppendLine();
 	}
 
@@ -2110,12 +2110,14 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
+					string wrapsVarName =
+						Helpers.GetUniqueLocalVariableName("wraps", property.IndexerParameters.Value);
 
 					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
 						useFastForIndexer ? indexerGetIdRef : null);
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className)
-						.Append(" wraps)").AppendLine();
+						.Append(' ').Append(wrapsVarName).Append(')').AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\treturn ").Append(setupVarName).Append(" is null")
 						.AppendLine();
@@ -2128,7 +2130,7 @@ internal static partial class Sources
 						.Append(setupVarName).Append(", ").Append(signatureIndex).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 					sb.Append("\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ').Append(baseResultVarName)
-						.Append(" = wraps[")
+						.Append(" = ").Append(wrapsVarName).Append('[')
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
 						.AppendLine();
 					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".ApplyIndexerGetter(")
@@ -2164,6 +2166,8 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
 					string baseResultVarName =
 						Helpers.GetUniqueLocalVariableName("baseResult", property.IndexerParameters.Value);
+					string wrapsVarName =
+						Helpers.GetUniqueLocalVariableName("wraps", property.IndexerParameters.Value);
 
 					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
@@ -2176,7 +2180,8 @@ internal static partial class Sources
 						sb.Append("\t\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ')
 							.Append(baseResultVarName).Append(" = this.")
 							.Append(mockRegistryName)
-							.Append(".Wraps is ").Append(className).Append(" wraps ? wraps[")
+							.Append(".Wraps is ").Append(className).Append(' ').Append(wrapsVarName).Append(" ? ")
+							.Append(wrapsVarName).Append('[')
 							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 							.Append("] : base[")
 							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value)).Append("];")
@@ -2280,6 +2285,8 @@ internal static partial class Sources
 						Helpers.GetUniqueLocalVariableName("access", property.IndexerParameters.Value);
 					string setupVarName =
 						Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
+					string wrapsVarName =
+						Helpers.GetUniqueLocalVariableName("wraps", property.IndexerParameters.Value);
 
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
@@ -2290,9 +2297,9 @@ internal static partial class Sources
 						.AppendLine();
 
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
-						.Append(" wraps)").AppendLine();
+						.Append(' ').Append(wrapsVarName).Append(')').AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\twraps[")
+					sb.Append("\t\t\t\t\t").Append(wrapsVarName).Append('[')
 						.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 						.AppendLine("] = value;");
 					sb.Append("\t\t\t\t}").AppendLine();
@@ -2319,6 +2326,8 @@ internal static partial class Sources
 					Helpers.GetUniqueLocalVariableName("access", property.IndexerParameters.Value);
 				string setupVarName =
 					Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
+				string wrapsVarName =
+					Helpers.GetUniqueLocalVariableName("wraps", property.IndexerParameters.Value);
 
 				if (!isClassInterface && !property.IsAbstract)
 				{
@@ -2332,9 +2341,9 @@ internal static partial class Sources
 					if (property.Setter?.IsProtected != true)
 					{
 						sb.Append("\t\t\t\t\tif (this.").Append(mockRegistryName).Append(".Wraps is ").Append(className)
-							.Append(" wraps)").AppendLine();
+							.Append(' ').Append(wrapsVarName).Append(')').AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
-						sb.Append("\t\t\t\t\t\twraps[")
+						sb.Append("\t\t\t\t\t\t").Append(wrapsVarName).Append('[')
 							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 							.AppendLine("] = value;");
 						sb.Append("\t\t\t\t\t}").AppendLine();
@@ -2523,6 +2532,7 @@ internal static partial class Sources
 		string hasWrappedResult = Helpers.GetUniqueLocalVariableName("hasWrappedResult", method.Parameters);
 		string wrappedResult = Helpers.GetUniqueLocalVariableName("wrappedResult", method.Parameters);
 		string wpc = Helpers.GetUniqueLocalVariableName("wpc", method.Parameters);
+		string wraps = Helpers.GetUniqueLocalVariableName("wraps", method.Parameters);
 		bool supportsWrapping = !explicitInterfaceImplementation && method is { IsStatic: false, IsProtected: false, };
 		bool isAbstractOrInterface = isClassInterface || method.IsAbstract;
 
@@ -2627,11 +2637,11 @@ internal static partial class Sources
 		if (supportsWrapping)
 		{
 			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
-				.Append(" wraps)").AppendLine();
+				.Append(' ').Append(wraps).Append(')').AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			if (method.ReturnType != Type.Void)
 			{
-				sb.Append("\t\t\t\t\t").Append(wrappedResult).Append(" = wraps").Append(".")
+				sb.Append("\t\t\t\t\t").Append(wrappedResult).Append(" = ").Append(wraps).Append('.')
 					.Append(method.Name).Append('(')
 					.Append(FormatMethodParametersWithRefKind(method.Parameters))
 					.Append(");").AppendLine();
@@ -2639,7 +2649,7 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\t\t\twraps").Append(".")
+				sb.Append("\t\t\t\t\t").Append(wraps).Append('.')
 					.Append(method.Name).Append('(')
 					.Append(FormatMethodParametersWithRefKind(method.Parameters))
 					.Append(");").AppendLine();
@@ -2696,6 +2706,8 @@ internal static partial class Sources
 
 		if (hasOutParams || hasRefParams)
 		{
+			string outParamBase = Helpers.GetUniqueIndexedLocalVariableBase("outParam", method.Parameters);
+			string refParamBase = Helpers.GetUniqueIndexedLocalVariableBase("refParam", method.Parameters);
 			sb.Append("\t\t\t\tif (!").Append(hasWrappedResult).Append(" || ").Append(methodSetup).Append(" is ").Append(methodSetupType)
 				.Append(".WithParameterCollection)")
 				.AppendLine();
@@ -2711,8 +2723,8 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is not global::Mockolate.Parameters.IOutParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> outParam").Append(parameterIndex)
-						.Append(" || !outParam").Append(parameterIndex).Append(".TryGetValue(out ")
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase).Append(parameterIndex)
+						.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
 						.Append(parameter.Name).Append("))").AppendLine();
 					sb.Append("\t\t\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
@@ -2724,10 +2736,10 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is global::Mockolate.Parameters.IRefParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> refParam").Append(parameterIndex)
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(refParamBase).Append(parameterIndex)
 						.Append(")").AppendLine();
 					sb.Append("\t\t\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = refParam").Append(parameterIndex)
+					sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(refParamBase).Append(parameterIndex)
 						.Append(".GetValue(").Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t\t\t\t}").AppendLine();
 				}
@@ -2761,6 +2773,7 @@ internal static partial class Sources
 
 		if (method.ReturnType != Type.Void)
 		{
+			string returnValue = Helpers.GetUniqueLocalVariableName("returnValue", method.Parameters);
 			sb.Append("\t\t\tif (").Append(methodSetup).Append("?.HasReturnCallbacks != true && ").Append(hasWrappedResult).Append(")").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\treturn ").Append(wrappedResult).Append(";").AppendLine();
@@ -2773,7 +2786,7 @@ internal static partial class Sources
 				defaultValueGeneratorSuffix = string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper()));
 			}
 
-			sb.Append("out var returnValue) == true ? returnValue : ")
+			sb.Append("out var ").Append(returnValue).Append(") == true ? ").Append(returnValue).Append(" : ")
 				.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue", defaultValueGeneratorSuffix)
 				.Append(';').AppendLine();
 		}
@@ -2861,22 +2874,24 @@ internal static partial class Sources
 		// accepts every positional argument. The matching runs synchronously on the stack so
 		// ref-struct values are not captured in a closure.
 		string paramNames = string.Join(", ", method.Parameters.Select(p => p.Name));
+		string setupVar = Helpers.GetUniqueLocalVariableName("setup", method.Parameters);
+		string matchedVar = Helpers.GetUniqueLocalVariableName("matched", method.Parameters);
 
-		sb.Append("\t\t\tbool __matched = false;").AppendLine();
-		sb.Append("\t\t\tforeach (").Append(setupType).Append(" __setup in ").Append(mockRegistry)
+		sb.Append("\t\t\tbool ").Append(matchedVar).Append(" = false;").AppendLine();
+		sb.Append("\t\t\tforeach (").Append(setupType).Append(' ').Append(setupVar).Append(" in ").Append(mockRegistry)
 			.Append(".GetMethodSetups<").Append(setupType).Append(">(").Append(method.GetUniqueNameString())
 			.Append("))").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tif (!__setup.Matches(").Append(paramNames).Append("))").AppendLine();
+		sb.Append("\t\t\t\tif (!").Append(setupVar).Append(".Matches(").Append(paramNames).Append("))").AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\tcontinue;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t\t__matched = true;").AppendLine();
+		sb.Append("\t\t\t\t").Append(matchedVar).Append(" = true;").AppendLine();
 
 		if (method.ReturnType == Type.Void)
 		{
-			sb.Append("\t\t\t\t__setup.Invoke(").Append(paramNames).Append(");").AppendLine();
+			sb.Append("\t\t\t\t").Append(setupVar).Append(".Invoke(").Append(paramNames).Append(");").AppendLine();
 			sb.Append("\t\t\t\treturn;").AppendLine();
 		}
 		else
@@ -2886,13 +2901,13 @@ internal static partial class Sources
 			// we still run Invoke for any Throws/DoesNotThrow side effect then break out of the
 			// search (a matching-but-unconfigured setup shadows later setups).
 			string comma = method.Parameters.Count > 0 ? ", " : "";
-			sb.Append("\t\t\t\tif (__setup.HasReturnValue)").AppendLine();
+			sb.Append("\t\t\t\tif (").Append(setupVar).Append(".HasReturnValue)").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t\treturn __setup.Invoke(").Append(paramNames).Append(comma)
+			sb.Append("\t\t\t\t\treturn ").Append(setupVar).Append(".Invoke(").Append(paramNames).Append(comma)
 				.Append("() => default!);").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
 			sb.AppendLine();
-			sb.Append("\t\t\t\t__setup.Invoke(").Append(paramNames).Append(comma)
+			sb.Append("\t\t\t\t").Append(setupVar).Append(".Invoke(").Append(paramNames).Append(comma)
 				.Append("() => default!);").AppendLine();
 			sb.Append("\t\t\t\tbreak;").AppendLine();
 		}
@@ -2903,7 +2918,7 @@ internal static partial class Sources
 		string displayMethodName =
 			$"{method.ContainingType}.{method.Name}({string.Join(", ", method.Parameters.Select(p => p.Type.DisplayName))})";
 
-		sb.Append("\t\t\tif (!__matched && ").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)")
+		sb.Append("\t\t\tif (!").Append(matchedVar).Append(" && ").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockNotSetupException(\"The method '")
@@ -2968,11 +2983,12 @@ internal static partial class Sources
 
 		// Iterate setups in latest-registered-first order; stop on the first matching setup.
 		string paramNames = string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name));
-		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(" __setup in ").Append(mockRegistry)
+		string setupVar = Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
+		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(' ').Append(setupVar).Append(" in ").Append(mockRegistry)
 			.Append(".GetMethodSetups<").Append(setupType).Append(">(").Append(indexerName).Append("))")
 			.AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\tif (!__setup.Matches(").Append(paramNames).Append("))").AppendLine();
+		sb.Append("\t\t\t\t\tif (!").Append(setupVar).Append(".Matches(").Append(paramNames).Append("))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tcontinue;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
@@ -2987,16 +3003,16 @@ internal static partial class Sources
 					p.NeedsRefStructPipeline() ? "null" : $"(object){p.Name}"))
 			: string.Empty;
 
-		sb.Append("\t\t\t\t\tif (__setup.HasReturnValue)").AppendLine();
+		sb.Append("\t\t\t\t\tif (").Append(setupVar).Append(".HasReturnValue)").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\t\treturn __setup.Invoke(").Append(paramNames).Append(rawKeysArgs)
+		sb.Append("\t\t\t\t\t\treturn ").Append(setupVar).Append(".Invoke(").Append(paramNames).Append(rawKeysArgs)
 			.Append(", () => default!);").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.AppendLine();
 
 		// Matching-but-unconfigured setup still invokes (for Throws side effects) and then shadows
 		// later setups in the iteration.
-		sb.Append("\t\t\t\t\t__setup.Invoke(").Append(paramNames).Append(rawKeysArgs)
+		sb.Append("\t\t\t\t\t").Append(setupVar).Append(".Invoke(").Append(paramNames).Append(rawKeysArgs)
 			.Append(", () => default!);").AppendLine();
 		sb.Append("\t\t\t\t\tbreak;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
@@ -3063,16 +3079,17 @@ internal static partial class Sources
 					p.NeedsRefStructPipeline() ? "null" : $"(object){p.Name}"))
 			: string.Empty;
 
-		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(" __setup in ").Append(mockRegistry)
+		string setupVar = Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
+		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(' ').Append(setupVar).Append(" in ").Append(mockRegistry)
 			.Append(".GetMethodSetups<").Append(setupType).Append(">(").Append(indexerName).Append("))")
 			.AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\t\tif (!__setup.Matches(").Append(keyNames).Append("))").AppendLine();
+		sb.Append("\t\t\t\t\tif (!").Append(setupVar).Append(".Matches(").Append(keyNames).Append("))").AppendLine();
 		sb.Append("\t\t\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\t\t\tcontinue;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t\t\t__setup.Invoke(").Append(keyNames).Append(", value").Append(rawKeysArgs).Append(");").AppendLine();
+		sb.Append("\t\t\t\t\t").Append(setupVar).Append(".Invoke(").Append(keyNames).Append(", value").Append(rawKeysArgs).Append(");").AppendLine();
 		sb.Append("\t\t\t\t\treturn;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 

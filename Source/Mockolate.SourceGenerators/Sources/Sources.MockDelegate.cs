@@ -201,6 +201,8 @@ internal static partial class Sources
 
 		if (hasOutParams || hasRefParams)
 		{
+			string outParamBase = Helpers.GetUniqueIndexedLocalVariableBase("outParam", delegateMethod.Parameters);
+			string refParamBase = Helpers.GetUniqueIndexedLocalVariableBase("refParam", delegateMethod.Parameters);
 			sb.Append("\t\t\tif (").Append(methodSetup).Append(" is ").Append(methodSetupType)
 				.Append(".WithParameterCollection ").Append(wpc).Append(')').AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -212,8 +214,8 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is not global::Mockolate.Parameters.IOutParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> outParam").Append(parameterIndex)
-						.Append(" || !outParam").Append(parameterIndex).Append(".TryGetValue(out ")
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase).Append(parameterIndex)
+						.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
 						.Append(parameter.Name).Append("))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = ")
@@ -225,10 +227,10 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is global::Mockolate.Parameters.IRefParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> refParam").Append(parameterIndex)
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(refParamBase).Append(parameterIndex)
 						.Append(")").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = refParam").Append(parameterIndex)
+					sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(refParamBase).Append(parameterIndex)
 						.Append(".GetValue(").Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t\t}").AppendLine();
 				}
@@ -265,13 +267,14 @@ internal static partial class Sources
 
 		if (delegateMethod.ReturnType != Type.Void)
 		{
+			string returnValue = Helpers.GetUniqueLocalVariableName("returnValue", delegateMethod.Parameters);
 			sb.Append("\t\t\treturn ").Append(methodSetup).Append("?.TryGetReturnValue(");
 			if (delegateMethod.Parameters.Count > 0)
 			{
 				sb.Append(string.Join(", ", delegateMethod.Parameters.Select(p => p.ToNameOrWrapper()))).Append(", ");
 			}
 
-			sb.Append("out var returnValue) == true ? returnValue : ")
+			sb.Append("out var ").Append(returnValue).Append(") == true ? ").Append(returnValue).Append(" : ")
 				.AppendDefaultValueGeneratorFor(delegateMethod.ReturnType, $"this.{mockRegistryName}.Behavior.DefaultValue")
 				.Append(';').AppendLine();
 		}

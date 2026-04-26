@@ -334,18 +334,18 @@ internal static partial class Sources
 	private static string CreateUniquePropertyName(Class @class, string initialValue)
 	{
 		string propertyName = initialValue;
-		if (@class.Properties.Any(m => m.Name == propertyName))
+		if (@class.HasReservedName(propertyName))
 		{
 			propertyName = $"Mockolate_{initialValue}";
 		}
 
-		if (@class.Properties.Any(m => m.Name == propertyName))
+		if (@class.HasReservedName(propertyName))
 		{
 			int index = 1;
 			do
 			{
 				propertyName = $"Mockolate_{initialValue}__" + index++;
-			} while (@class.Properties.Any(m => m.Name == propertyName));
+			} while (@class.HasReservedName(propertyName));
 		}
 
 		return propertyName;

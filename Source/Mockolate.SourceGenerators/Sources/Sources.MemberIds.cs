@@ -209,10 +209,17 @@ internal static partial class Sources
 		bool isGeneric)
 #pragma warning restore S107
 	{
+		// All loop-locals carry the unique `methodSetup` suffix so they inherit its
+		// parameter-dedup property and stay distinct across nested scopes.
+		string snapshotVar = $"snapshot_{methodSetup}";
+		string nameVar = $"name_{methodSetup}";
+		string indexVar = $"i_{methodSetup}";
+		string itemVar = $"s_{methodSetup}";
+
 		sb.Append(indent).Append(methodSetupType).Append("? ").Append(methodSetup).Append(" = null;").AppendLine();
 		sb.Append(indent).Append("if (string.IsNullOrEmpty(").Append(mockRegistry).Append(".Scenario))").AppendLine();
 		sb.Append(indent).Append('{').AppendLine();
-		sb.Append(indent).Append("\tglobal::Mockolate.Setup.MethodSetup[]? __snapshot_").Append(methodSetup)
+		sb.Append(indent).Append("\tglobal::Mockolate.Setup.MethodSetup[]? ").Append(snapshotVar)
 			.Append(" = ").Append(mockRegistry).Append(".GetMethodSetupSnapshot(").Append(memberIdRef).Append(");")
 			.AppendLine();
 		if (isGeneric)
@@ -221,25 +228,24 @@ internal static partial class Sources
 			// can hold setups whose closed-generic Name differs from this call site's instantiation.
 			// Pre-compute the runtime name and filter the bucket by setup.Name to keep lookups
 			// instantiation-scoped.
-			sb.Append(indent).Append("\tstring __name_").Append(methodSetup).Append(" = ")
+			sb.Append(indent).Append("\tstring ").Append(nameVar).Append(" = ")
 				.Append(uniqueNameString).Append(';').AppendLine();
 		}
-		sb.Append(indent).Append("\tif (__snapshot_").Append(methodSetup).Append(" is not null)").AppendLine();
+		sb.Append(indent).Append("\tif (").Append(snapshotVar).Append(" is not null)").AppendLine();
 		sb.Append(indent).Append("\t{").AppendLine();
-		sb.Append(indent).Append("\t\tfor (int __i_").Append(methodSetup).Append(" = __snapshot_")
-			.Append(methodSetup).Append(".Length - 1; __i_").Append(methodSetup).Append(" >= 0; __i_")
-			.Append(methodSetup).Append("--)").AppendLine();
+		sb.Append(indent).Append("\t\tfor (int ").Append(indexVar).Append(" = ").Append(snapshotVar)
+			.Append(".Length - 1; ").Append(indexVar).Append(" >= 0; ").Append(indexVar).Append("--)").AppendLine();
 		sb.Append(indent).Append("\t\t{").AppendLine();
-		sb.Append(indent).Append("\t\t\tif (__snapshot_").Append(methodSetup).Append("[__i_")
-			.Append(methodSetup).Append("] is ").Append(methodSetupType).Append(" __s_").Append(methodSetup);
+		sb.Append(indent).Append("\t\t\tif (").Append(snapshotVar).Append('[').Append(indexVar)
+			.Append("] is ").Append(methodSetupType).Append(' ').Append(itemVar);
 		if (isGeneric)
 		{
-			sb.Append(" && __s_").Append(methodSetup).Append(".Name == __name_").Append(methodSetup);
+			sb.Append(" && ").Append(itemVar).Append(".Name == ").Append(nameVar);
 		}
-		sb.Append(" && __s_").Append(methodSetup).Append(".Matches(").Append(matchArgs).Append("))")
+		sb.Append(" && ").Append(itemVar).Append(".Matches(").Append(matchArgs).Append("))")
 			.AppendLine();
 		sb.Append(indent).Append("\t\t\t{").AppendLine();
-		sb.Append(indent).Append("\t\t\t\t").Append(methodSetup).Append(" = __s_").Append(methodSetup)
+		sb.Append(indent).Append("\t\t\t\t").Append(methodSetup).Append(" = ").Append(itemVar)
 			.Append(';').AppendLine();
 		sb.Append(indent).Append("\t\t\t\tbreak;").AppendLine();
 		sb.Append(indent).Append("\t\t\t}").AppendLine();
@@ -248,13 +254,13 @@ internal static partial class Sources
 		sb.Append(indent).Append('}').AppendLine();
 		sb.Append(indent).Append("if (").Append(methodSetup).Append(" is null)").AppendLine();
 		sb.Append(indent).Append('{').AppendLine();
-		sb.Append(indent).Append("\tforeach (").Append(methodSetupType).Append(" __s in ").Append(mockRegistry)
+		sb.Append(indent).Append("\tforeach (").Append(methodSetupType).Append(' ').Append(itemVar).Append(" in ").Append(mockRegistry)
 			.Append(".GetMethodSetups<").Append(methodSetupType).Append(">(").Append(uniqueNameString).Append("))")
 			.AppendLine();
 		sb.Append(indent).Append("\t{").AppendLine();
-		sb.Append(indent).Append("\t\tif (__s.Matches(").Append(matchArgs).Append("))").AppendLine();
+		sb.Append(indent).Append("\t\tif (").Append(itemVar).Append(".Matches(").Append(matchArgs).Append("))").AppendLine();
 		sb.Append(indent).Append("\t\t{").AppendLine();
-		sb.Append(indent).Append("\t\t\t").Append(methodSetup).Append(" = __s;").AppendLine();
+		sb.Append(indent).Append("\t\t\t").Append(methodSetup).Append(" = ").Append(itemVar).Append(';').AppendLine();
 		sb.Append(indent).Append("\t\t\tbreak;").AppendLine();
 		sb.Append(indent).Append("\t\t}").AppendLine();
 		sb.Append(indent).Append("\t}").AppendLine();

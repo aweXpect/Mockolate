@@ -659,6 +659,103 @@ public class GeneralTests
 	}
 
 	[Fact]
+	public async Task WhenClassHasFieldNamedMockRegistry_ShouldFallBackToAlternative()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected int MockRegistry;
+			         public virtual int Run() => 0;
+			     }
+			     """);
+
+		// A mock subclass declaring a property `MockRegistry` would hide the inherited field
+		// (CS0108). The dedup pipeline must skip past the conflicting member name.
+		await That(result.Sources)
+			.ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("MockolateMockRegistry")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry { get; }")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenClassHasNestedTypeNamedMockRegistry_ShouldFallBackToAlternative()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public class MockRegistry { }
+			         public virtual int Run() => 0;
+			     }
+			     """);
+
+		await That(result.Sources)
+			.ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("MockolateMockRegistry")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry { get; }")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenInterfaceHasMethodNamedMock_ExtensionMockPropertyShouldBeRenamed()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyInterface.CreateMock();
+			         }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         void Mock();
+			     }
+			     """);
+
+		// `Mock` is a method on the type, so the extension `Mock` property would shadow access.
+		// CreateUniquePropertyName must now skip past it to a Mockolate_-prefixed alternative.
+		await That(result.Sources)
+			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+			.Contains("Mockolate_Mock")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
 	public async Task WithAttributes_ShouldAddAttributesToGeneratedCode()
 	{
 		GeneratorResult result = Generator
@@ -796,7 +893,7 @@ public class GeneralTests
 			          		{
 			          			global::Mockolate.Setup.ReturnMethodSetup<string, string>? methodSetup = null;
 			          """).IgnoringNewlineStyle().And
-			.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<string, string> __s in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<string, string>>(\"global::MyCode.IMyService.MyMethod\"))")
+			.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<string, string> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<string, string>>(\"global::MyCode.IMyService.MyMethod\"))")
 			.IgnoringNewlineStyle().And
 			.Contains("""
 			          			bool hasWrappedResult = false;

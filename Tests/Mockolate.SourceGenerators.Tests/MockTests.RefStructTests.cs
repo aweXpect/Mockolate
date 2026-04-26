@@ -73,7 +73,7 @@ public sealed partial class MockTests
 				.Contains("IRefStructReturnMethodSetup<int, global::MyCode.Packet>").And
 				// The return-side HasReturnValue gate is there so Throws-only setups still fall
 				// through to the framework default.
-				.Contains("if (__setup.HasReturnValue)");
+				.Contains("if (setup.HasReturnValue)");
 		}
 
 		[Fact]
@@ -106,7 +106,7 @@ public sealed partial class MockTests
 				// Two-arg ref-struct setup with the int flowing through as T2 (allows ref struct
 				// is satisfied by any type, so int works).
 				.Contains("RefStructVoidMethodSetup<global::MyCode.Packet, int>").And
-				.Contains("__setup.Matches(packet, priority)");
+				.Contains("setup.Matches(packet, priority)");
 		}
 
 		[Fact]
@@ -175,7 +175,7 @@ public sealed partial class MockTests
 			await That(result.Sources).ContainsKey("Mock.IBigSink.g.cs").WhoseValue
 				.Contains("RefStructVoidMethodSetup<global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet>").And
 				// The method body must not bail out to NotSupportedException for this arity.
-				.Contains("__matched = true");
+				.Contains("matched = true");
 
 			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
 				.Contains("#if NET9_0_OR_GREATER").And

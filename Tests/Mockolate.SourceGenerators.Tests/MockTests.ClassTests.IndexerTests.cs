@@ -35,6 +35,40 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task InterfaceIndexerWithParameterNamedWraps_ShouldRenameWrapsCastVariable()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         int this[int wraps] { get; set; }
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+					// The wrap-base pattern-match cast must not collide with the user's `wraps`
+					// indexer parameter.
+					.DoesNotContain("global::MyCode.IMyService wraps)")
+					.IgnoringNewlineStyle().And
+					.DoesNotContain("global::MyCode.IMyService wraps ?")
+					.IgnoringNewlineStyle().And
+					.Contains("global::MyCode.IMyService wraps1")
+					.IgnoringNewlineStyle();
+			}
+
+			[Fact]
 			public async Task ShouldImplementAllIndexersFromInterfaces()
 			{
 				GeneratorResult result = Generator
