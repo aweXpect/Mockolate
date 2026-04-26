@@ -11,6 +11,7 @@ public enum FastEventBufferKind
 {
 	/// <summary>The buffer records event subscriptions.</summary>
 	Subscribe,
+
 	/// <summary>The buffer records event unsubscriptions.</summary>
 	Unsubscribe,
 }

@@ -482,7 +482,7 @@ public partial class MockRegistry
 						((IInteractivePropertySetup)snapshot).InitializeWith(defaultValueGenerator(Behavior));
 					}
 
-					return snapshot.InvokeGetterFast<TResult>(Behavior, defaultValueGenerator);
+					return snapshot.InvokeGetterFast(Behavior, defaultValueGenerator);
 				}
 			}
 		}

@@ -564,101 +564,6 @@ public class GeneralTests
 	}
 
 	[Fact]
-	public async Task WhenInterfaceHasMockAndMockolate_MockProperties_ShouldUseMockolate_Mock__1ForMockAccessProperty()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = IMyInterface.CreateMock();
-			         }
-			     }
-
-			     public interface IMyInterface
-			     {
-			         int Mock { get; }
-			         bool Mockolate_Mock { get; }
-			     }
-			     """);
-
-		await That(result.Sources)
-			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
-			.Contains("Mockolate_Mock__1")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenInterfaceHasMockMockolate_MockAndMockolate_Mock__1Properties_ShouldUseMockolate_Mock__2()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = IMyInterface.CreateMock();
-			         }
-			     }
-
-			     public interface IMyInterface
-			     {
-			         int Mock { get; }
-			         bool Mockolate_Mock { get; }
-			         string Mockolate_Mock__1 { get; }
-			     }
-			     """);
-
-		await That(result.Sources)
-			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
-			.Contains("Mockolate_Mock__2")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenInterfaceMembersOccupyAllMockRegistryNameCandidates_ShouldUseMockRegistry_2()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = IMyInterface.CreateMock();
-			         }
-			     }
-
-			     public interface IMyInterface
-			     {
-			         string MockRegistry_1 { get; }
-			         event EventHandler MockRegistry;
-			         int MockolateMockRegistry(bool value);
-			     }
-			     """, typeof(EventHandler));
-
-		await That(result.Sources)
-			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
-			.Contains("MockRegistry_2")
-			.IgnoringNewlineStyle().And
-			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry_1 { get; }")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
 	public async Task WhenClassHasFieldNamedMockRegistry_ShouldFallBackToAlternative()
 	{
 		GeneratorResult result = Generator
@@ -752,6 +657,101 @@ public class GeneralTests
 		await That(result.Sources)
 			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
 			.Contains("Mockolate_Mock")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenInterfaceHasMockAndMockolate_MockProperties_ShouldUseMockolate_Mock__1ForMockAccessProperty()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyInterface.CreateMock();
+			         }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         int Mock { get; }
+			         bool Mockolate_Mock { get; }
+			     }
+			     """);
+
+		await That(result.Sources)
+			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+			.Contains("Mockolate_Mock__1")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenInterfaceHasMockMockolate_MockAndMockolate_Mock__1Properties_ShouldUseMockolate_Mock__2()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyInterface.CreateMock();
+			         }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         int Mock { get; }
+			         bool Mockolate_Mock { get; }
+			         string Mockolate_Mock__1 { get; }
+			     }
+			     """);
+
+		await That(result.Sources)
+			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+			.Contains("Mockolate_Mock__2")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenInterfaceMembersOccupyAllMockRegistryNameCandidates_ShouldUseMockRegistry_2()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyInterface.CreateMock();
+			         }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         string MockRegistry_1 { get; }
+			         event EventHandler MockRegistry;
+			         int MockolateMockRegistry(bool value);
+			     }
+			     """, typeof(EventHandler));
+
+		await That(result.Sources)
+			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+			.Contains("MockRegistry_2")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry_1 { get; }")
 			.IgnoringNewlineStyle();
 	}
 

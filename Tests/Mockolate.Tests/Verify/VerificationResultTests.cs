@@ -7,6 +7,32 @@ namespace Mockolate.Tests.Verify;
 public sealed partial class VerificationResultTests
 {
 	[Fact]
+	public async Task AnyParameters_OnOverloadedGenericMethod_LegacyPath_ShouldOnlyCountTheTargetedOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.GetInstance<int>();
+		sut.GetInstance<int>();
+		sut.GetInstance<int>("key");
+
+		await That(sut.Mock.Verify.GetInstance<int>().AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.GetInstance<int>("ignored").AnyParameters()).Once();
+	}
+
+	[Fact]
+	public async Task AnyParameters_OnOverloadedMethod_FastPath_ShouldOnlyCountTheTargetedOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.DoSomething(1);
+		sut.DoSomething(2);
+		sut.DoSomething(3, true);
+
+		await That(sut.Mock.Verify.DoSomething(0).AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.DoSomething(0, false).AnyParameters()).Once();
+	}
+
+	[Fact]
 	public async Task CustomVerificationResult_ShouldKeepExpectation()
 	{
 		IMockInteractions interactions = new FastMockInteractions(0);
@@ -179,32 +205,6 @@ public sealed partial class VerificationResultTests
 			= sut.Mock.Verify.ChocolateDispensed.Unsubscribed();
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event ChocolateDispensed");
-	}
-
-	[Fact]
-	public async Task AnyParameters_OnOverloadedMethod_FastPath_ShouldOnlyCountTheTargetedOverload()
-	{
-		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
-
-		sut.DoSomething(1);
-		sut.DoSomething(2);
-		sut.DoSomething(3, true);
-
-		await That(sut.Mock.Verify.DoSomething(0).AnyParameters()).Exactly(2);
-		await That(sut.Mock.Verify.DoSomething(0, false).AnyParameters()).Once();
-	}
-
-	[Fact]
-	public async Task AnyParameters_OnOverloadedGenericMethod_LegacyPath_ShouldOnlyCountTheTargetedOverload()
-	{
-		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
-
-		sut.GetInstance<int>();
-		sut.GetInstance<int>();
-		sut.GetInstance<int>("key");
-
-		await That(sut.Mock.Verify.GetInstance<int>().AnyParameters()).Exactly(2);
-		await That(sut.Mock.Verify.GetInstance<int>("ignored").AnyParameters()).Once();
 	}
 
 	internal interface IIndexerVerificationService

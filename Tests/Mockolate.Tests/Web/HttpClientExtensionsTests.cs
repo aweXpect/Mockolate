@@ -183,13 +183,13 @@ public sealed partial class HttpClientExtensionsTests
 
 	private sealed class InvalidParameter : IParameter<string?>
 	{
-		public IParameter<string?> Do(Action<string?> callback)
-			=> throw new NotSupportedException();
-
 		public bool Matches(object? value)
 			=> throw new NotSupportedException();
 
 		public void InvokeCallbacks(object? value)
+			=> throw new NotSupportedException();
+
+		public IParameter<string?> Do(Action<string?> callback)
 			=> throw new NotSupportedException();
 	}
 

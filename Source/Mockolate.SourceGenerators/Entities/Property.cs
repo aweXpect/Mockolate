@@ -37,9 +37,11 @@ internal record Property
 		}
 
 		Getter = propertySymbol.GetMethod is { } getter && Helpers.IsOverridableFrom(getter, sourceAssembly)
-			? new Method(getter, null, sourceAssembly) : null;
+			? new Method(getter, null, sourceAssembly)
+			: null;
 		Setter = propertySymbol.SetMethod is { } setter && Helpers.IsOverridableFrom(setter, sourceAssembly)
-			? new Method(setter, null, sourceAssembly) : null;
+			? new Method(setter, null, sourceAssembly)
+			: null;
 	}
 
 	public static IEqualityComparer<Property> EqualityComparer { get; } = new PropertyEqualityComparer();
@@ -56,8 +58,9 @@ internal record Property
 	{
 		(true, _) => MemberType.Static,
 		(_, true) => MemberType.Protected,
-		(_, _) => MemberType.Public
+		(_, _) => MemberType.Public,
 	};
+
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
 	public string ContainingType { get; }

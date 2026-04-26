@@ -81,7 +81,10 @@ public partial class It
 		{
 			string result =
 				$"It.SequenceEquals({string.Join(", ", expected.Select(v => v is string ? $"\"{v}\"" : v?.ToString() ?? "null"))})";
-			if (_comparer is not null) result += $".Using({_comparerExpression})";
+			if (_comparer is not null)
+			{
+				result += $".Using({_comparerExpression})";
+			}
 
 			return result;
 		}

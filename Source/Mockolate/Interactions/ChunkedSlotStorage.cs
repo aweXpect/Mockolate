@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Mockolate.Interactions;
@@ -19,7 +18,7 @@ namespace Mockolate.Interactions;
 ///     chunk cannot lose its data.
 /// </remarks>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 {

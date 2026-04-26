@@ -22,10 +22,18 @@ public static partial class ItExtensions
 		/// <remarks>
 		///     Narrow the match by chaining builders on the returned <see cref="IHttpContentParameter" />:
 		///     <list type="bullet">
-		///       <item><description><c>.WithString(predicate)</c> - match the request body as a string (UTF-8 unless the <c>Content-Type</c> header specifies a charset).</description></item>
-		///       <item><description><c>.WithBytes(predicate)</c> - match the raw byte payload.</description></item>
-		///       <item><description><c>.WithMediaType(mediaType)</c> - constrain the <c>Content-Type</c> media type.</description></item>
-		///       <item><description><c>.WithHeaders(...)</c> - require specific content headers; chain <c>.IncludingRequestHeaders()</c> to also consider <see cref="HttpRequestMessage.Headers" />.</description></item>
+		///         <item>
+		///             <description><c>.WithString(predicate)</c> - match the request body as a string (UTF-8 unless the <c>Content-Type</c> header specifies a charset).</description>
+		///         </item>
+		///         <item>
+		///             <description><c>.WithBytes(predicate)</c> - match the raw byte payload.</description>
+		///         </item>
+		///         <item>
+		///             <description><c>.WithMediaType(mediaType)</c> - constrain the <c>Content-Type</c> media type.</description>
+		///         </item>
+		///         <item>
+		///             <description><c>.WithHeaders(...)</c> - require specific content headers; chain <c>.IncludingRequestHeaders()</c> to also consider <see cref="HttpRequestMessage.Headers" />.</description>
+		///         </item>
 		///     </list>
 		///     A <see langword="null" /> body never matches.
 		/// </remarks>

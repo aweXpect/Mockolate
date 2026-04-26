@@ -7,13 +7,6 @@ namespace Mockolate.SourceGenerators.Tests;
 
 public partial class MockGeneratorTests
 {
-	[GeneratedRegex(@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+\)")]
-	private static partial Regex CreateMockBehaviorSignatureRegex();
-
-	[GeneratedRegex(@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+,\s+int\s+\w+\)")]
-	private static partial Regex CreateMockBehaviorIntSignatureRegex();
-
-
 	[Fact]
 	public async Task SameMethodDifferingOnlyByNullability_ShouldUseExplicitImplementationForConflictingInterface()
 	{
@@ -78,6 +71,598 @@ public partial class MockGeneratorTests
 			That(result.Sources.Keys).DoesNotContain("Mock.MyService.g.cs"),
 			That(result.Diagnostics).IsEmpty()
 		);
+	}
+
+	[Fact]
+	public async Task WhenClassHasConstructorWithParameters_ShouldGenerateTypedCreateMockOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(42);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(int value) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("public static global::MyCode.MyService CreateMock(int value)")
+			.IgnoringNewlineStyle().And
+			.Contains("=> CreateMock(null, null, new object?[] { value });")
+			.IgnoringNewlineStyle().And
+			.Contains("public static global::MyCode.MyService CreateMock(global::Mockolate.MockBehavior mockBehavior, int value)")
+			.IgnoringNewlineStyle().And
+			.Contains("public static global::MyCode.MyService CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForMyService> setup, int value)")
+			.IgnoringNewlineStyle().And
+			.Contains("public static global::MyCode.MyService CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyService> setup, int value)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenClassHasMultipleConstructors_ShouldGenerateTypedOverloadPerConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock("foo");
+			     		_ = MyService.CreateMock(1, "foo");
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(string text) { }
+			         public MyService(int number, string text) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("public static global::MyCode.MyService CreateMock(string text)")
+			.IgnoringNewlineStyle().And
+			.Contains("public static global::MyCode.MyService CreateMock(int number, string text)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenClassHasOnlyParameterlessConstructor_ShouldNotEmitAdditionalTypedOverloads()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			     	}
+			     }
+
+			     public class MyService { }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		// No typed overloads beyond the existing hand-written ones; the existing parameterless
+		// CreateMock() overload is still there and no typed overload is emitted for it.
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("public static global::MyCode.MyService CreateMock()")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasCharDefault_ShouldEscapeInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(char c = '\n') { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(char c = '\\n')")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasDecimalDefault_ShouldAppendMSuffixInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(decimal price = 19.95m) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(decimal price = 19.95m)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasEnumDefault_ShouldCastToFullyQualifiedEnumTypeInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public enum MyKind { Alpha, Beta }
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(MyKind kind = MyKind.Beta) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(global::MyCode.MyKind kind = (global::MyCode.MyKind)1)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasFloatDefault_ShouldAppendFSuffixInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(float factor = 3.14f) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(float factor = 3.14f)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasInParameter_ShouldNotEmitTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		int value = 42;
+			     		_ = MyService.CreateMock([value]);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(in int value) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.DoesNotContain("CreateMock(in int value)")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("CreateMock(int value)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasLongAndDoubleDefaults_ShouldPreserveLiteralsInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(long big = 9999999999L, double pi = 3.14) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(long big = 9999999999, double pi = 3.14)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasNullableDecimalDefault_ShouldAppendMSuffixInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     #nullable enable
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(decimal? price = 19.95m) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(decimal? price = 19.95m)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasNullableReferenceDefaultNull_ShouldEmitNullLiteralInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     #nullable enable
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(string? text = null) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(string? text = null)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasRefOrParamsParameter_ShouldNotEmitTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock([1, 2, 3]);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(params int[] values) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.DoesNotContain("public static global::MyCode.MyService CreateMock(int[] values)")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("public static global::MyCode.MyService CreateMock(params int[] values)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasStringDefaultWithQuotes_ShouldEscapeInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(string text = "has \"quotes\"") { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(string text = \"has \\\"quotes\\\"\")")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorHasValueTypeDefaultNull_ShouldEmitDefaultInTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public struct MyToken { public int Value; }
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(MyToken token = default) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(global::MyCode.MyToken token = default)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterIsMockBehavior_ShouldNotEmitAmbiguousTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(Mockolate.MockBehavior.Default);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(Mockolate.MockBehavior behavior) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		// The hand-written CreateMock(MockBehavior) overload already covers this signature.
+		// A typed single-parameter overload with the same signature would produce a duplicate
+		// definition, so the generator must skip it.
+		int matches = CreateMockBehaviorSignatureRegex().Count(result.Sources["Mock.MyService.g.cs"]);
+		await That(matches).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterIsUnrelatedAction_ShouldEmitTypedOverload()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+			     using System;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		Action<string> callback = s => { };
+			     		_ = MyService.CreateMock(callback);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(Action<string> callback) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		// Action<string> does not collide with the setup action type (Action<IMockSetupForMyService>),
+		// so the generator should emit the typed overload.
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("CreateMock(global::System.Action<string> callback)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenConstructorsDifferOnlyByNullableValueType_ShouldEmitBothTypedOverloads()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     #nullable enable
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(1);
+			     		_ = MyService.CreateMock((int?)1);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(int value) { }
+			         public MyService(int? value) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains("public static global::MyCode.MyService CreateMock(int value)")
+			.IgnoringNewlineStyle().And
+			.Contains("public static global::MyCode.MyService CreateMock(int? value)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenDerivedClassHasBaseClassConstructorParameters_ShouldEmitTypedOverloadForDerived()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = DerivedService.CreateMock("foo");
+			         }
+			     }
+
+			     public class BaseService
+			     {
+			         public BaseService(string text) { }
+			     }
+
+			     public class DerivedService : BaseService
+			     {
+			         public DerivedService(string text) : base(text) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.DerivedService.g.cs").WhoseValue
+			.Contains("public static global::MyCode.DerivedService CreateMock(string text)")
+			.IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task WhenGenericClassHasTypedConstructor_ShouldEmitTypedOverloadForClosedType()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService<string>.CreateMock("foo");
+			         }
+			     }
+
+			     public class MyService<T>
+			     {
+			         public MyService(T value) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		// The generator emits a mock for the closed generic MyService<string>. Locate the generated
+		// file and assert the typed overload was emitted with the substituted type argument.
+		string generated = string.Concat(result.Sources.Values);
+		await That(generated)
+			.Contains("CreateMock(string value)")
+			.IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -372,6 +957,41 @@ public partial class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenOneCtorStartsWithMockBehaviorAndAnotherOmitsIt_ShouldNotEmitDuplicateTypedOverloads()
+	{
+		// Two constructors that could produce the same C# signature after the generator's
+		// mockBehavior-prefixed overload expansion:
+		//   - ctor A: (MockBehavior, int)      → typed overload: CreateMock(MockBehavior, int)
+		//   - ctor B: (int) + mockBehavior    → typed overload: CreateMock(MockBehavior, int)
+		// The dedup key is built in emitted-signature order (prefix first, then ctor params), so
+		// the second emission must be skipped to avoid a duplicate method definition.
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(MockBehavior.Default, 42);
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(Mockolate.MockBehavior behavior, int value) { }
+			         public MyService(int value) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		int matches = CreateMockBehaviorIntSignatureRegex().Count(result.Sources["Mock.MyService.g.cs"]);
+		await That(matches).IsEqualTo(1);
+	}
+
+	[Fact]
 	public async Task WhenSameTypeImplementsDifferentCombinationsOfSameInterface_ShouldGenerateAllCombinations()
 	{
 		GeneratorResult result = Generator
@@ -408,6 +1028,107 @@ public partial class MockGeneratorTests
 			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface1__IAdditionalInterface2__ICommonInterface.g.cs").And
 			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface1__IAdditionalInterface2.g.cs").And
 			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface1.g.cs");
+	}
+
+	[Fact]
+	public async Task WhenTypedCreateMockOverloadIsEmitted_ConstructorCrefShouldResolve()
+	{
+		const string expectedCref = "global::MyCode.MyService(int, string)";
+
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(42, "x");
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService(int value, string text) { }
+			     }
+			     """, DocumentationMode.Diagnose);
+
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			.Contains($"to invoke the <see cref=\"{expectedCref}\">MyService(int, string)</see> constructor.")
+			.IgnoringNewlineStyle();
+
+		// CS1574/CS1584/CS1658 messages embed the offending cref text; if the constructor cref
+		// resolved cleanly under DocumentationMode.Diagnose, no diagnostic mentions it.
+		string[] crefFailures = result.Diagnostics
+			.Where(d => d.Contains(expectedCref))
+			.ToArray();
+		await That(crefFailures).IsEmpty();
+	}
+
+	[Fact]
+	public async Task WhenTypedCreateMockOverloadIsEmittedForExternalType_ConstructorCrefShouldResolve()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Net.Http;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = HttpClient.CreateMock(default(HttpMessageHandler));
+			         }
+			     }
+			     """, DocumentationMode.Diagnose, typeof(HttpClient));
+
+		await That(result.Sources).ContainsKey("Mock.HttpClient.g.cs").WhoseValue
+			.Contains("<see cref=\"global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)\">")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("HttpClient.HttpClient(")
+			.IgnoringNewlineStyle();
+
+		string[] crefFailures = result.Diagnostics
+			.Where(d => d.Contains("CS1574") || d.Contains("CS1584") || d.Contains("CS1658"))
+			.ToArray();
+		await That(crefFailures).IsEmpty();
+	}
+
+	[Fact]
+	public async Task WhenTypedCreateMockOverloadIsEmittedForGenericClass_ShouldNotEmitConstructorCref()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService<int>.CreateMock(42);
+			         }
+			     }
+
+			     public class MyService<T>
+			     {
+			         public MyService(T value) { }
+			     }
+			     """, DocumentationMode.Diagnose);
+
+		// Closed-generic constructor crefs (e.g. MyService{int}.MyService(int)) aren't valid C#
+		// cref syntax, so the generator falls back to the unlinked phrasing for generic classes
+		// rather than emit something that would surface CS1584 on the consumer side.
+		await That(result.Sources).ContainsKey("Mock.MyService_int.g.cs").WhoseValue
+			.Contains("to invoke the base-class constructor.")
+			.IgnoringNewlineStyle().And
+			.DoesNotContain("MyService.MyService(")
+			.IgnoringNewlineStyle();
 	}
 
 	[Fact]
@@ -519,703 +1240,6 @@ public partial class MockGeneratorTests
 	}
 
 	[Fact]
-	public async Task WhenClassHasConstructorWithParameters_ShouldGenerateTypedCreateMockOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock(42);
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(int value) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("public static global::MyCode.MyService CreateMock(int value)")
-			.IgnoringNewlineStyle().And
-			.Contains("=> CreateMock(null, null, new object?[] { value });")
-			.IgnoringNewlineStyle().And
-			.Contains("public static global::MyCode.MyService CreateMock(global::Mockolate.MockBehavior mockBehavior, int value)")
-			.IgnoringNewlineStyle().And
-			.Contains("public static global::MyCode.MyService CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForMyService> setup, int value)")
-			.IgnoringNewlineStyle().And
-			.Contains("public static global::MyCode.MyService CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyService> setup, int value)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenClassHasMultipleConstructors_ShouldGenerateTypedOverloadPerConstructor()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock("foo");
-			     		_ = MyService.CreateMock(1, "foo");
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(string text) { }
-			         public MyService(int number, string text) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("public static global::MyCode.MyService CreateMock(string text)")
-			.IgnoringNewlineStyle().And
-			.Contains("public static global::MyCode.MyService CreateMock(int number, string text)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasRefOrParamsParameter_ShouldNotEmitTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock([1, 2, 3]);
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(params int[] values) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.DoesNotContain("public static global::MyCode.MyService CreateMock(int[] values)")
-			.IgnoringNewlineStyle().And
-			.DoesNotContain("public static global::MyCode.MyService CreateMock(params int[] values)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenClassHasOnlyParameterlessConstructor_ShouldNotEmitAdditionalTypedOverloads()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			     	}
-			     }
-
-			     public class MyService { }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		// No typed overloads beyond the existing hand-written ones; the existing parameterless
-		// CreateMock() overload is still there and no typed overload is emitted for it.
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("public static global::MyCode.MyService CreateMock()")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasStringDefaultWithQuotes_ShouldEscapeInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(string text = "has \"quotes\"") { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(string text = \"has \\\"quotes\\\"\")")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasCharDefault_ShouldEscapeInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(char c = '\n') { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(char c = '\\n')")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasEnumDefault_ShouldCastToFullyQualifiedEnumTypeInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public enum MyKind { Alpha, Beta }
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(MyKind kind = MyKind.Beta) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(global::MyCode.MyKind kind = (global::MyCode.MyKind)1)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasNullableReferenceDefaultNull_ShouldEmitNullLiteralInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     #nullable enable
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(string? text = null) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(string? text = null)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasValueTypeDefaultNull_ShouldEmitDefaultInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public struct MyToken { public int Value; }
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(MyToken token = default) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(global::MyCode.MyToken token = default)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorsDifferOnlyByNullableValueType_ShouldEmitBothTypedOverloads()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     #nullable enable
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock(1);
-			     		_ = MyService.CreateMock((int?)1);
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(int value) { }
-			         public MyService(int? value) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("public static global::MyCode.MyService CreateMock(int value)")
-			.IgnoringNewlineStyle().And
-			.Contains("public static global::MyCode.MyService CreateMock(int? value)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenOneCtorStartsWithMockBehaviorAndAnotherOmitsIt_ShouldNotEmitDuplicateTypedOverloads()
-	{
-		// Two constructors that could produce the same C# signature after the generator's
-		// mockBehavior-prefixed overload expansion:
-		//   - ctor A: (MockBehavior, int)      → typed overload: CreateMock(MockBehavior, int)
-		//   - ctor B: (int) + mockBehavior    → typed overload: CreateMock(MockBehavior, int)
-		// The dedup key is built in emitted-signature order (prefix first, then ctor params), so
-		// the second emission must be skipped to avoid a duplicate method definition.
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock(MockBehavior.Default, 42);
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(Mockolate.MockBehavior behavior, int value) { }
-			         public MyService(int value) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		int matches = CreateMockBehaviorIntSignatureRegex().Count(result.Sources["Mock.MyService.g.cs"]);
-		await That(matches).IsEqualTo(1);
-	}
-
-	[Fact]
-	public async Task WhenConstructorParameterIsMockBehavior_ShouldNotEmitAmbiguousTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock(Mockolate.MockBehavior.Default);
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(Mockolate.MockBehavior behavior) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		// The hand-written CreateMock(MockBehavior) overload already covers this signature.
-		// A typed single-parameter overload with the same signature would produce a duplicate
-		// definition, so the generator must skip it.
-		int matches = CreateMockBehaviorSignatureRegex().Count(result.Sources["Mock.MyService.g.cs"]);
-		await That(matches).IsEqualTo(1);
-	}
-
-	[Fact]
-	public async Task WhenConstructorParameterIsUnrelatedAction_ShouldEmitTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-			     using System;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		Action<string> callback = s => { };
-			     		_ = MyService.CreateMock(callback);
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(Action<string> callback) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		// Action<string> does not collide with the setup action type (Action<IMockSetupForMyService>),
-		// so the generator should emit the typed overload.
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(global::System.Action<string> callback)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasInParameter_ShouldNotEmitTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		int value = 42;
-			     		_ = MyService.CreateMock([value]);
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(in int value) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.DoesNotContain("CreateMock(in int value)")
-			.IgnoringNewlineStyle().And
-			.DoesNotContain("CreateMock(int value)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenGenericClassHasTypedConstructor_ShouldEmitTypedOverloadForClosedType()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService<string>.CreateMock("foo");
-			         }
-			     }
-
-			     public class MyService<T>
-			     {
-			         public MyService(T value) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		// The generator emits a mock for the closed generic MyService<string>. Locate the generated
-		// file and assert the typed overload was emitted with the substituted type argument.
-		string generated = string.Concat(result.Sources.Values);
-		await That(generated)
-			.Contains("CreateMock(string value)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenDerivedClassHasBaseClassConstructorParameters_ShouldEmitTypedOverloadForDerived()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = DerivedService.CreateMock("foo");
-			         }
-			     }
-
-			     public class BaseService
-			     {
-			         public BaseService(string text) { }
-			     }
-
-			     public class DerivedService : BaseService
-			     {
-			         public DerivedService(string text) : base(text) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.DerivedService.g.cs").WhoseValue
-			.Contains("public static global::MyCode.DerivedService CreateMock(string text)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasDecimalDefault_ShouldAppendMSuffixInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(decimal price = 19.95m) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(decimal price = 19.95m)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasFloatDefault_ShouldAppendFSuffixInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(float factor = 3.14f) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(float factor = 3.14f)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasNullableDecimalDefault_ShouldAppendMSuffixInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     #nullable enable
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(decimal? price = 19.95m) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(decimal? price = 19.95m)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenConstructorHasLongAndDoubleDefaults_ShouldPreserveLiteralsInTypedOverload()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock();
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(long big = 9999999999L, double pi = 3.14) { }
-			     }
-			     """);
-
-		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains("CreateMock(long big = 9999999999, double pi = 3.14)")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task WhenTypedCreateMockOverloadIsEmitted_ConstructorCrefShouldResolve()
-	{
-		const string expectedCref = "global::MyCode.MyService(int, string)";
-
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService.CreateMock(42, "x");
-			         }
-			     }
-
-			     public class MyService
-			     {
-			         public MyService(int value, string text) { }
-			     }
-			     """, DocumentationMode.Diagnose);
-
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-			.Contains($"to invoke the <see cref=\"{expectedCref}\">MyService(int, string)</see> constructor.")
-			.IgnoringNewlineStyle();
-
-		// CS1574/CS1584/CS1658 messages embed the offending cref text; if the constructor cref
-		// resolved cleanly under DocumentationMode.Diagnose, no diagnostic mentions it.
-		string[] crefFailures = result.Diagnostics
-			.Where(d => d.Contains(expectedCref))
-			.ToArray();
-		await That(crefFailures).IsEmpty();
-	}
-
-	[Fact]
-	public async Task WhenTypedCreateMockOverloadIsEmittedForGenericClass_ShouldNotEmitConstructorCref()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using Mockolate;
-
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = MyService<int>.CreateMock(42);
-			         }
-			     }
-
-			     public class MyService<T>
-			     {
-			         public MyService(T value) { }
-			     }
-			     """, DocumentationMode.Diagnose);
-
-		// Closed-generic constructor crefs (e.g. MyService{int}.MyService(int)) aren't valid C#
-		// cref syntax, so the generator falls back to the unlinked phrasing for generic classes
-		// rather than emit something that would surface CS1584 on the consumer side.
-		await That(result.Sources).ContainsKey("Mock.MyService_int.g.cs").WhoseValue
-			.Contains("to invoke the base-class constructor.")
-			.IgnoringNewlineStyle().And
-			.DoesNotContain("MyService.MyService(")
-			.IgnoringNewlineStyle();
-	}
-
-	[Fact]
 	public async Task WithHttpClient_ShouldAlsoGenerateMockForHttpMessageHandler()
 	{
 		GeneratorResult result = Generator
@@ -1241,34 +1265,9 @@ public partial class MockGeneratorTests
 			.ContainsKey("Mock.HttpClient.g.cs");
 	}
 
-	[Fact]
-	public async Task WhenTypedCreateMockOverloadIsEmittedForExternalType_ConstructorCrefShouldResolve()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System.Net.Http;
-			     using Mockolate;
+	[GeneratedRegex(@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+\)")]
+	private static partial Regex CreateMockBehaviorSignatureRegex();
 
-			     namespace MyCode;
-
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = HttpClient.CreateMock(default(HttpMessageHandler));
-			         }
-			     }
-			     """, DocumentationMode.Diagnose, typeof(HttpClient));
-
-		await That(result.Sources).ContainsKey("Mock.HttpClient.g.cs").WhoseValue
-			.Contains("<see cref=\"global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)\">")
-			.IgnoringNewlineStyle().And
-			.DoesNotContain("HttpClient.HttpClient(")
-			.IgnoringNewlineStyle();
-
-		string[] crefFailures = result.Diagnostics
-			.Where(d => d.Contains("CS1574") || d.Contains("CS1584") || d.Contains("CS1658"))
-			.ToArray();
-		await That(crefFailures).IsEmpty();
-	}
+	[GeneratedRegex(@"CreateMock\(global::Mockolate\.MockBehavior\s+\w+,\s+int\s+\w+\)")]
+	private static partial Regex CreateMockBehaviorIntSignatureRegex();
 }

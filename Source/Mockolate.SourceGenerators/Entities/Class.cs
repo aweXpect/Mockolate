@@ -111,6 +111,20 @@ internal record Class
 		}
 	}
 
+	public EquatableArray<Method> Methods { get; }
+	public EquatableArray<Class> InheritedTypes { get; }
+	public EquatableArray<Property> Properties { get; }
+	public EquatableArray<Event> Events { get; }
+	public EquatableArray<string> ReservedNames { get; }
+
+	public bool IsInterface { get; }
+	public bool HasRequiredMembers { get; }
+	public string ClassFullName { get; }
+	public string ClassName { get; }
+	public string DisplayString { get; }
+
+	public static IEqualityComparer<Class> EqualityComparer { get; } = new ClassEqualityComparer();
+
 	// Identifiers that the mock class shares its scope with but that aren't surfaced through
 	// Methods/Properties/Events: generic type parameters of the type itself, nested types, and
 	// fields declared on the type. A generated member colliding with any of these would either
@@ -143,20 +157,6 @@ internal record Class
 
 		return new EquatableArray<string>(names.ToArray());
 	}
-
-	public EquatableArray<Method> Methods { get; }
-	public EquatableArray<Class> InheritedTypes { get; }
-	public EquatableArray<Property> Properties { get; }
-	public EquatableArray<Event> Events { get; }
-	public EquatableArray<string> ReservedNames { get; }
-
-	public bool IsInterface { get; }
-	public bool HasRequiredMembers { get; }
-	public string ClassFullName { get; }
-	public string ClassName { get; }
-	public string DisplayString { get; }
-
-	public static IEqualityComparer<Class> EqualityComparer { get; } = new ClassEqualityComparer();
 
 	private string GetTypeName(ITypeSymbol type)
 	{

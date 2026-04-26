@@ -148,6 +148,7 @@ internal static partial class Sources
 			sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
 				.AppendLine();
 		}
+
 		sb.Append(indent).Append("}").AppendLine();
 
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
@@ -187,6 +188,7 @@ internal static partial class Sources
 			sb.Append(indent).Append('\t').Append(mockRegistry).Append(".RegisterInteraction(").Append(accessVarName).Append(");")
 				.AppendLine();
 		}
+
 		sb.Append(indent).Append("}").AppendLine();
 
 		// Setup-side dispatch: indexer setups are always indexed under the GETTER member id (they apply to both
@@ -393,39 +395,6 @@ internal static partial class Sources
 		return propertyName;
 	}
 
-	extension(Accessibility accessibility)
-	{
-		internal string ToVisibilityString()
-			=> accessibility switch
-			{
-				Accessibility.Protected => "protected",
-				Accessibility.Internal => "internal",
-				Accessibility.ProtectedOrInternal => "protected",
-				Accessibility.Public => "public",
-				Accessibility.ProtectedAndInternal => "private protected",
-				_ => "private",
-			};
-	}
-
-	extension(RefKind refKind)
-	{
-		internal string GetString(bool replaceRefReadonlyWithIn = false)
-			=> refKind switch
-			{
-				RefKind.In => "in ",
-				RefKind.Out => "out ",
-				RefKind.Ref => "ref ",
-				RefKind.RefReadOnlyParameter => replaceRefReadonlyWithIn ? "in " : "ref readonly ",
-				_ => "",
-			};
-	}
-
-	extension(string value)
-	{
-		private string EscapeForXmlDoc()
-			=> value.Replace('<', '{').Replace('>', '}');
-	}
-
 	/// <summary>
 	///     Rewrites every self-closing <c>&lt;see cref="X" /&gt;</c> inside <paramref name="source" />
 	///     to <c>&lt;see cref="X"&gt;Display&lt;/see&gt;</c>, where <c>Display</c> is a simplified
@@ -515,7 +484,7 @@ internal static partial class Sources
 	private static string SimplifyCrefForDisplay(string cref)
 	{
 		string stripped = cref.Replace("global::", string.Empty);
-		int firstBracket = stripped.IndexOfAny(['{', '(']);
+		int firstBracket = stripped.IndexOfAny(['{', '(',]);
 		int searchEnd = firstBracket < 0 ? stripped.Length : firstBracket;
 		int lastDot = searchEnd > 0 ? stripped.LastIndexOf('.', searchEnd - 1) : -1;
 		string simplified = lastDot >= 0 ? stripped.Substring(lastDot + 1) : stripped;
@@ -531,7 +500,7 @@ internal static partial class Sources
 	/// </summary>
 	private static string StripInnerNamespaces(string value)
 	{
-		int firstBracket = value.IndexOfAny(['{', '(']);
+		int firstBracket = value.IndexOfAny(['{', '(',]);
 		if (firstBracket < 0)
 		{
 			return value;
@@ -567,8 +536,48 @@ internal static partial class Sources
 
 		return sb.ToString();
 
-		static bool IsIdentifierStart(char c) => char.IsLetter(c) || c == '_';
-		static bool IsIdentifierPart(char c) => char.IsLetterOrDigit(c) || c == '_';
+		static bool IsIdentifierStart(char c)
+		{
+			return char.IsLetter(c) || c == '_';
+		}
+
+		static bool IsIdentifierPart(char c)
+		{
+			return char.IsLetterOrDigit(c) || c == '_';
+		}
+	}
+
+	extension(Accessibility accessibility)
+	{
+		internal string ToVisibilityString()
+			=> accessibility switch
+			{
+				Accessibility.Protected => "protected",
+				Accessibility.Internal => "internal",
+				Accessibility.ProtectedOrInternal => "protected",
+				Accessibility.Public => "public",
+				Accessibility.ProtectedAndInternal => "private protected",
+				_ => "private",
+			};
+	}
+
+	extension(RefKind refKind)
+	{
+		internal string GetString(bool replaceRefReadonlyWithIn = false)
+			=> refKind switch
+			{
+				RefKind.In => "in ",
+				RefKind.Out => "out ",
+				RefKind.Ref => "ref ",
+				RefKind.RefReadOnlyParameter => replaceRefReadonlyWithIn ? "in " : "ref readonly ",
+				_ => "",
+			};
+	}
+
+	extension(string value)
+	{
+		private string EscapeForXmlDoc()
+			=> value.Replace('<', '{').Replace('>', '}');
 	}
 
 	extension(StringBuilder sb)
@@ -611,8 +620,10 @@ internal static partial class Sources
 				{
 					sb.Append("<br />");
 				}
+
 				sb.AppendLine();
 			}
+
 			sb.Append(indent).Append("/// </remarks>").AppendLine();
 		}
 

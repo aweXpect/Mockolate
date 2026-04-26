@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Mockolate.Setup;
 
 namespace Mockolate.Interactions;
@@ -36,7 +37,7 @@ public abstract class IndexerAccess : IInteraction
 	///     <see cref="IndexerGetterAccess{T1}" />, <see cref="IndexerSetterAccess{T1, TValue}" />, their
 	///     multi-parameter siblings, and the source-generated 5+ parameter variants.
 	/// </remarks>
-	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	protected abstract IndexerValueStorage? TraverseStorage(IndexerValueStorage? storage, bool createMissing);
 
 	/// <summary>
@@ -44,7 +45,7 @@ public abstract class IndexerAccess : IInteraction
 	/// </summary>
 	public bool TryFindStoredValue<T>(out T value)
 	{
-		if (TraverseStorage(Storage, createMissing: false) is IndexerValueStorage<T> typedLeaf && typedLeaf.HasValue)
+		if (TraverseStorage(Storage, false) is IndexerValueStorage<T> typedLeaf && typedLeaf.HasValue)
 		{
 			value = typedLeaf.Value;
 			return true;
@@ -59,7 +60,7 @@ public abstract class IndexerAccess : IInteraction
 	/// </summary>
 	public void StoreValue<T>(T value)
 	{
-		if (TraverseStorage(Storage, createMissing: true) is IndexerValueStorage<T> typedLeaf)
+		if (TraverseStorage(Storage, true) is IndexerValueStorage<T> typedLeaf)
 		{
 			typedLeaf.Value = value;
 			typedLeaf.HasValue = true;

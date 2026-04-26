@@ -29,9 +29,15 @@ public static partial class ItExtensions
 		/// <remarks>
 		///     Chain additional constraints on the returned matcher:
 		///     <list type="bullet">
-		///       <item><description><c>.ForHttp()</c> / <c>.ForHttps()</c> - require the scheme.</description></item>
-		///       <item><description><c>.WithHost(hostPattern)</c> / <c>.WithPort(port)</c> / <c>.WithPath(pathPattern)</c> - constrain individual URI components (host and path accept wildcards; path is URL-decoded before matching).</description></item>
-		///       <item><description><c>.WithQuery(key, value)</c> / <c>.WithQuery(queryString)</c> / <c>.WithQuery(parameters)</c> - require query parameters to be present; the order is ignored, values are URL-decoded.</description></item>
+		///         <item>
+		///             <description><c>.ForHttp()</c> / <c>.ForHttps()</c> - require the scheme.</description>
+		///         </item>
+		///         <item>
+		///             <description><c>.WithHost(hostPattern)</c> / <c>.WithPort(port)</c> / <c>.WithPath(pathPattern)</c> - constrain individual URI components (host and path accept wildcards; path is URL-decoded before matching).</description>
+		///         </item>
+		///         <item>
+		///             <description><c>.WithQuery(key, value)</c> / <c>.WithQuery(queryString)</c> / <c>.WithQuery(parameters)</c> - require query parameters to be present; the order is ignored, values are URL-decoded.</description>
+		///         </item>
 		///     </list>
 		/// </remarks>
 		/// <returns>A fluent <see cref="Uri" /> matcher; pass it to <c>Setup.GetAsync</c>/<c>PostAsync</c>/... or <c>Verify</c>.</returns>

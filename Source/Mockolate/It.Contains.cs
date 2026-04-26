@@ -83,7 +83,10 @@ public partial class It
 		public override string ToString()
 		{
 			string result = $"It.Contains({itemExpression})";
-			if (_comparer is not null) result += $".Using({_comparerExpression})";
+			if (_comparer is not null)
+			{
+				result += $".Using({_comparerExpression})";
+			}
 
 			return result;
 		}

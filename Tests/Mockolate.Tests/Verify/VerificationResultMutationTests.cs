@@ -9,19 +9,6 @@ namespace Mockolate.Tests.Verify;
 public sealed class VerificationResultMutationTests
 {
 	[Fact]
-	public async Task AwaitableVerify_WithRecordingDisabled_ShouldThrowMockException()
-	{
-		IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
-		sut.Mock.Setup.SomeFlag.InitializeWith(true);
-		_ = sut.SomeFlag;
-
-		void Act() => sut.Mock.Verify.SomeFlag.Got().Within(10.Milliseconds()).Exactly(1);
-
-		await That(Act).Throws<MockException>()
-			.WithMessage("*interaction recording is disabled*").AsWildcard();
-	}
-
-	[Fact]
 	public async Task AwaitableVerify_AfterMatching_ShouldMarkMatchingInteractionsAsVerified()
 	{
 		IMyService sut = IMyService.CreateMock();
@@ -32,5 +19,21 @@ public sealed class VerificationResultMutationTests
 
 		IMockInteractions interactions = ((IMock)sut).MockRegistry.Interactions;
 		await That(interactions.GetUnverifiedInteractions()).IsEmpty();
+	}
+
+	[Fact]
+	public async Task AwaitableVerify_WithRecordingDisabled_ShouldThrowMockException()
+	{
+		IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
+		sut.Mock.Setup.SomeFlag.InitializeWith(true);
+		_ = sut.SomeFlag;
+
+		void Act()
+		{
+			sut.Mock.Verify.SomeFlag.Got().Within(10.Milliseconds()).Exactly(1);
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("*interaction recording is disabled*").AsWildcard();
 	}
 }

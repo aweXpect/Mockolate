@@ -11,9 +11,6 @@ namespace Mockolate.SourceGenerators;
 
 internal static class Helpers
 {
-	public static string EscapeIfKeyword(string name)
-		=> SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ? "@" + name : name;
-
 	public static SymbolDisplayFormat TypeDisplayFormat { get; } = new(
 		miscellaneousOptions: SymbolDisplayMiscellaneousOptions.EscapeKeywordIdentifiers |
 		                      SymbolDisplayMiscellaneousOptions.UseSpecialTypes |
@@ -29,6 +26,9 @@ internal static class Helpers
 		globalNamespaceStyle: SymbolDisplayGlobalNamespaceStyle.Omitted,
 		typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypes,
 		genericsOptions: SymbolDisplayGenericsOptions.IncludeTypeParameters);
+
+	public static string EscapeIfKeyword(string name)
+		=> SyntaxFacts.GetKeywordKind(name) != SyntaxKind.None ? "@" + name : name;
 
 	/// <summary>
 	///     Generates a unique local variable name that does not conflict with any parameter names.
@@ -69,7 +69,7 @@ internal static class Helpers
 
 		static bool HasIndexedConflict(string @base, string parameterName, int count)
 		{
-			if (!parameterName.StartsWith(@base, System.StringComparison.Ordinal))
+			if (!parameterName.StartsWith(@base, StringComparison.Ordinal))
 			{
 				return false;
 			}
@@ -99,6 +99,40 @@ internal static class Helpers
 
 		return containingAssembly.GivesAccessTo(sourceAssembly);
 	}
+
+	public static string ToTypeOrWrapper(this Type type)
+	{
+		if (type.SpecialGenericType == SpecialGenericType.Span)
+		{
+			return $"global::Mockolate.Setup.SpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
+		}
+
+		if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+		{
+			return $"global::Mockolate.Setup.ReadOnlySpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
+		}
+
+		return type.Fullname;
+	}
+
+	/// <summary>
+	///     Returns true if the given type needs the ref-struct setup pipeline: it is a ref-like
+	///     type AND the existing Span/ReadOnlySpan wrapper fallback doesn't apply.
+	/// </summary>
+	/// <remarks>
+	///     <c>System.Span&lt;T&gt;</c> and <c>System.ReadOnlySpan&lt;T&gt;</c> are themselves
+	///     ref-like, but the generator already boxes them into <c>SpanWrapper&lt;T&gt;</c> /
+	///     <c>ReadOnlySpanWrapper&lt;T&gt;</c> (a plain class), so their setup flows through the
+	///     regular <c>VoidMethodSetup</c> hierarchy with a non-ref-struct <c>T</c>. Only types
+	///     outside that wrapping need the <c>RefStructVoidMethodSetup</c> /
+	///     <c>RefStructReturnMethodSetup</c> / <c>RefStructIndexerGetterSetup</c> path.
+	/// </remarks>
+	public static bool NeedsRefStructPipeline(this Type type)
+		=> type.IsRefStruct
+		   && type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
+
+	public static bool NeedsRefStructPipeline(this MethodParameter parameter)
+		=> parameter.Type.NeedsRefStructPipeline();
 
 	extension(ITypeSymbol typeSymbol)
 	{
@@ -381,39 +415,6 @@ internal static class Helpers
 			return sb;
 		}
 	}
-
-	public static string ToTypeOrWrapper(this Type type)
-	{
-		if (type.SpecialGenericType == SpecialGenericType.Span)
-		{
-			return $"global::Mockolate.Setup.SpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
-		}
-		if (type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
-		{
-			return $"global::Mockolate.Setup.ReadOnlySpanWrapper<{type.GenericTypeParameters!.Value.First().Fullname}>";
-		}
-
-		return type.Fullname;
-	}
-
-	/// <summary>
-	///     Returns true if the given type needs the ref-struct setup pipeline: it is a ref-like
-	///     type AND the existing Span/ReadOnlySpan wrapper fallback doesn't apply.
-	/// </summary>
-	/// <remarks>
-	///     <c>System.Span&lt;T&gt;</c> and <c>System.ReadOnlySpan&lt;T&gt;</c> are themselves
-	///     ref-like, but the generator already boxes them into <c>SpanWrapper&lt;T&gt;</c> /
-	///     <c>ReadOnlySpanWrapper&lt;T&gt;</c> (a plain class), so their setup flows through the
-	///     regular <c>VoidMethodSetup</c> hierarchy with a non-ref-struct <c>T</c>. Only types
-	///     outside that wrapping need the <c>RefStructVoidMethodSetup</c> /
-	///     <c>RefStructReturnMethodSetup</c> / <c>RefStructIndexerGetterSetup</c> path.
-	/// </remarks>
-	public static bool NeedsRefStructPipeline(this Type type)
-		=> type.IsRefStruct
-		   && type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
-
-	public static bool NeedsRefStructPipeline(this MethodParameter parameter)
-		=> parameter.Type.NeedsRefStructPipeline();
 
 	extension(MethodParameter parameter)
 	{

@@ -7,6 +7,41 @@ public sealed partial class MockTests
 		public sealed class MethodTests
 		{
 			[Fact]
+			public async Task ClassMethodWithParameterNamedWraps_ShouldRenameWrapsCastVariable()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = MyService.CreateMock();
+					         }
+					     }
+
+					     public class MyService
+					     {
+					         public virtual int Run(string wraps) => 0;
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+					// The pattern-match cast must not bind a local named `wraps` because the user's
+					// parameter already occupies that name.
+					.DoesNotContain("global::MyCode.MyService wraps)")
+					.IgnoringNewlineStyle().And
+					.Contains("global::MyCode.MyService wraps1)")
+					.IgnoringNewlineStyle().And
+					// The forwarding call must use the deduped name, not the parameter.
+					.Contains("wraps1.Run(wraps);")
+					.IgnoringNewlineStyle();
+			}
+
+			[Fact]
 			public async Task ExplicitInterfaceImplementation_WithUnconstrainedGeneric_ShouldHaveDefaultConstraint()
 			{
 				GeneratorResult result = Generator
@@ -41,46 +76,6 @@ public sealed partial class MockTests
 					          			where T : default
 					          		{
 					          """).IgnoringNewlineStyle();
-			}
-
-			[Fact]
-			public async Task VirtualMethodOverride_WithConstrainedGeneric_ShouldNotRepeatConstraints()
-			{
-				GeneratorResult result = Generator
-					.Run("""
-					     using System;
-					     using Mockolate;
-
-					     namespace MyCode;
-					     public class Program
-					     {
-					         public static void Main(string[] args)
-					         {
-					     		_ = MyService.CreateMock();
-					         }
-					     }
-
-					     public interface IMyInterface
-					     {
-					     }
-
-					     public class MyService
-					     {
-					         public virtual bool MyMethod<T>(T entity)
-					             where T : IMyInterface
-					         {
-					             return true;
-					         }
-					     }
-					     """);
-
-				await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-					.Contains("""
-					          		/// <inheritdoc cref="global::MyCode.MyService.MyMethod{T}(T)" />
-					          		public override bool MyMethod<T>(T entity)
-					          		{
-					          """).IgnoringNewlineStyle().And
-					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :").IgnoringNewlineStyle().Because("CS0460: constraints on override methods are inherited from the base method");
 			}
 
 			[Theory]
@@ -215,6 +210,39 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task InterfaceMethodWithParameterNamedOutParam1_ShouldRenameNumberedCastVariable()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         void Compute(out int outParam1, out int outParam2);
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+					// The numbered cast variable must not reuse the parameter name; the base is
+					// renamed so `outParam1`/`outParam2` (parameters) and `outParam_1` (cast)
+					// don't collide.
+					.Contains("IOutParameter<int> outParam_11")
+					.IgnoringNewlineStyle().And
+					.Contains("IOutParameter<int> outParam_12")
+					.IgnoringNewlineStyle();
+			}
+
+			[Fact]
 			public async Task InterfaceMethodWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
 			{
 				GeneratorResult result = Generator
@@ -247,41 +275,6 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
-			public async Task ClassMethodWithParameterNamedWraps_ShouldRenameWrapsCastVariable()
-			{
-				GeneratorResult result = Generator
-					.Run("""
-					     using Mockolate;
-
-					     namespace MyCode;
-
-					     public class Program
-					     {
-					         public static void Main(string[] args)
-					         {
-					     		_ = MyService.CreateMock();
-					         }
-					     }
-
-					     public class MyService
-					     {
-					         public virtual int Run(string wraps) => 0;
-					     }
-					     """);
-
-				await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-					// The pattern-match cast must not bind a local named `wraps` because the user's
-					// parameter already occupies that name.
-					.DoesNotContain("global::MyCode.MyService wraps)")
-					.IgnoringNewlineStyle().And
-					.Contains("global::MyCode.MyService wraps1)")
-					.IgnoringNewlineStyle().And
-					// The forwarding call must use the deduped name, not the parameter.
-					.Contains("wraps1.Run(wraps);")
-					.IgnoringNewlineStyle();
-			}
-
-			[Fact]
 			public async Task InterfaceMethodWithParameterNamedReturnValue_ShouldRenameReturnValueOutVar()
 			{
 				GeneratorResult result = Generator
@@ -308,39 +301,6 @@ public sealed partial class MockTests
 					.DoesNotContain("out var returnValue)")
 					.IgnoringNewlineStyle().And
 					.Contains("out var returnValue1) == true ? returnValue1 :")
-					.IgnoringNewlineStyle();
-			}
-
-			[Fact]
-			public async Task InterfaceMethodWithParameterNamedOutParam1_ShouldRenameNumberedCastVariable()
-			{
-				GeneratorResult result = Generator
-					.Run("""
-					     using Mockolate;
-
-					     namespace MyCode;
-
-					     public class Program
-					     {
-					         public static void Main(string[] args)
-					         {
-					     		_ = IMyService.CreateMock();
-					         }
-					     }
-
-					     public interface IMyService
-					     {
-					         void Compute(out int outParam1, out int outParam2);
-					     }
-					     """);
-
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-					// The numbered cast variable must not reuse the parameter name; the base is
-					// renamed so `outParam1`/`outParam2` (parameters) and `outParam_1` (cast)
-					// don't collide.
-					.Contains("IOutParameter<int> outParam_11")
-					.IgnoringNewlineStyle().And
-					.Contains("IOutParameter<int> outParam_12")
 					.IgnoringNewlineStyle();
 			}
 
@@ -1034,7 +994,7 @@ public sealed partial class MockTests
 					         void MyMethod3(in MyReadonlyStruct p1);
 					         void MyMethod4(ref readonly MyReadonlyStruct p1);
 					     }
-					     
+
 					     public readonly struct MyReadonlyStruct
 					     {
 					         public int Value { get; init; }
@@ -1256,6 +1216,46 @@ public sealed partial class MockTests
 					.Contains("""
 					          		global::Mockolate.Verify.VerificationResult<IMockVerifyForIMyService> IMockVerifyForIMyService.MyMethod2(global::Mockolate.Parameters.IVerifyReadOnlySpanParameter<int> values)
 					          """).IgnoringNewlineStyle();
+			}
+
+			[Fact]
+			public async Task VirtualMethodOverride_WithConstrainedGeneric_ShouldNotRepeatConstraints()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System;
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = MyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyInterface
+					     {
+					     }
+
+					     public class MyService
+					     {
+					         public virtual bool MyMethod<T>(T entity)
+					             where T : IMyInterface
+					         {
+					             return true;
+					         }
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+					.Contains("""
+					          		/// <inheritdoc cref="global::MyCode.MyService.MyMethod{T}(T)" />
+					          		public override bool MyMethod<T>(T entity)
+					          		{
+					          """).IgnoringNewlineStyle().And
+					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :").IgnoringNewlineStyle().Because("CS0460: constraints on override methods are inherited from the base method");
 			}
 		}
 	}

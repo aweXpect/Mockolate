@@ -9,12 +9,6 @@ namespace Mockolate.Interactions;
 public interface IMockInteractions : IReadOnlyCollection<IInteraction>
 {
 	/// <summary>
-	///     Registers an <paramref name="interaction" />.
-	/// </summary>
-	TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
-		where TInteraction : IInteraction;
-
-	/// <summary>
 	///     Whether interaction recording is suppressed. When <see langword="true" />,
 	///     <see cref="RegisterInteraction{TInteraction}(TInteraction)" /> is a no-op and
 	///     attempts to verify throw a <see cref="Mockolate.Exceptions.MockException" />.
@@ -23,6 +17,12 @@ public interface IMockInteractions : IReadOnlyCollection<IInteraction>
 	///     Mirrors <see cref="MockBehavior.SkipInteractionRecording" /> at construction time.
 	/// </remarks>
 	bool SkipInteractionRecording { get; }
+
+	/// <summary>
+	///     Registers an <paramref name="interaction" />.
+	/// </summary>
+	TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
+		where TInteraction : IInteraction;
 
 	/// <summary>
 	///     Raised after a new interaction has been appended to the collection.

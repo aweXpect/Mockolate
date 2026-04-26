@@ -10,7 +10,10 @@ internal sealed class Method0CountSource : IFastCountSource
 {
 	private readonly FastMethod0Buffer _buffer;
 
-	public Method0CountSource(FastMethod0Buffer buffer) => _buffer = buffer;
+	public Method0CountSource(FastMethod0Buffer buffer)
+	{
+		_buffer = buffer;
+	}
 
 	public int Count() => _buffer.ConsumeMatching();
 	public int CountAll() => _buffer.Count;
@@ -111,7 +114,10 @@ internal sealed class PropertyGetterCountSource : IFastCountSource
 {
 	private readonly FastPropertyGetterBuffer _buffer;
 
-	public PropertyGetterCountSource(FastPropertyGetterBuffer buffer) => _buffer = buffer;
+	public PropertyGetterCountSource(FastPropertyGetterBuffer buffer)
+	{
+		_buffer = buffer;
+	}
 
 	public int Count() => _buffer.ConsumeMatching();
 	public int CountAll() => _buffer.Count;
@@ -330,7 +336,10 @@ internal sealed class EventCountSource : IFastCountSource
 {
 	private readonly FastEventBuffer _buffer;
 
-	public EventCountSource(FastEventBuffer buffer) => _buffer = buffer;
+	public EventCountSource(FastEventBuffer buffer)
+	{
+		_buffer = buffer;
+	}
 
 	public int Count() => _buffer.ConsumeMatching();
 	public int CountAll() => _buffer.Count;

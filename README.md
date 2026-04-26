@@ -1608,7 +1608,6 @@ Mocked types must be mockable. This rule will prevent you from using unsupported
 - `Implementing<T>()`  
   Type must be an interface
 
-
 ### Mockolate0003
 
 A mocked member's signature routes through the ref-struct pipeline in a way Mockolate can't

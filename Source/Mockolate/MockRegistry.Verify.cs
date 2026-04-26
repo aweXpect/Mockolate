@@ -41,7 +41,9 @@ public partial class MockRegistry
 
 		[DebuggerNonUserCode]
 		static bool OverloadFilter(IInteraction interaction)
-			=> interaction is TMethod;
+		{
+			return interaction is TMethod;
+		}
 	}
 
 	/// <summary>

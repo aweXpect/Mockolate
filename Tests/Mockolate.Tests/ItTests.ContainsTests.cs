@@ -92,8 +92,18 @@ public sealed partial class ItTests
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
 			sut.Mock.Setup.WithSet(It.Contains(5)).Returns(42);
 
-			int hit = sut.WithSet(new HashSet<int> { 4, 5, 6, });
-			int miss = sut.WithSet(new HashSet<int> { 1, 2, 3, });
+			int hit = sut.WithSet(new HashSet<int>
+			{
+				4,
+				5,
+				6,
+			});
+			int miss = sut.WithSet(new HashSet<int>
+			{
+				1,
+				2,
+				3,
+			});
 
 			await That(hit).IsEqualTo(42);
 			await That(miss).IsEqualTo(0);

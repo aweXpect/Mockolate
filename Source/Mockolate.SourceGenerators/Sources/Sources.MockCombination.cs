@@ -288,18 +288,22 @@ internal static partial class Sources
 			sb.Append(", IMockProtectedSetupFor").Append(name);
 			sb.Append(", global::Mockolate.MockExtensionsFor").Append(name).Append(".IMockSetupInitializationFor").Append(name);
 		}
+
 		if (hasStaticMembers)
 		{
 			sb.Append(", IMockStaticSetupFor").Append(name);
 		}
+
 		if (hasEvents)
 		{
 			sb.Append(", IMockRaiseOn").Append(name);
 		}
+
 		if (hasProtectedEvents)
 		{
 			sb.Append(", IMockProtectedRaiseOn").Append(name);
 		}
+
 		if (hasStaticEvents)
 		{
 			sb.Append(", IMockStaticRaiseOn").Append(name);
@@ -310,6 +314,7 @@ internal static partial class Sources
 		{
 			sb.Append(", IMockProtectedVerifyFor").Append(name);
 		}
+
 		if (hasStaticMembers || hasStaticEvents)
 		{
 			sb.Append(", IMockStaticVerifyFor").Append(name);
@@ -350,7 +355,7 @@ internal static partial class Sources
 				additionalInterface.AllMethods().Any(x => x.IsStatic) || additionalInterface.AllProperties().Any(x => x.IsStatic),
 				additionalInterface.AllEvents().Any(x => x.IsStatic));
 		}
-		
+
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
 		sb.Append("\t\t\t=> \"").Append(@class.DisplayString).Append(" mock that also implements ").Append(string.Join(", ", additionalInterfaces.Select(x => x.Class.DisplayString))).Append("\";").AppendLine();
@@ -376,18 +381,18 @@ internal static partial class Sources
 		}
 
 		Dictionary<string, int> signatureIndices = new();
-		int[] nextSignatureIndex = [0];
+		int[] nextSignatureIndex = [0,];
 		// Combined mocks reuse the base mock's MockRegistry (and thus its FastMockInteractions sized
 		// to the base MemberCount). Combined member ids would index past those buffers, so emit the
 		// legacy RegisterInteraction path instead — recordings still flow through FastMockInteractions'
 		// fallback buffer and remain shared with the base mock.
 		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, memberIds, memberIdPrefix,
-			signatureIndices, nextSignatureIndex, useFastBuffers: false);
+			signatureIndices, nextSignatureIndex, false);
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
 			AppendMockSubject_ImplementClass(sb, item.Class, mockRegistryName, @class as MockClass,
-				memberIds, memberIdPrefix, signatureIndices, nextSignatureIndex, useFastBuffers: false);
+				memberIds, memberIdPrefix, signatureIndices, nextSignatureIndex, false);
 		}
 
 		sb.AppendLine();
@@ -408,6 +413,7 @@ internal static partial class Sources
 				memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockProtectedSetupFor").Append(name).AppendLine();
 		}
+
 		if (hasStaticMembers)
 		{
 			sb.AppendLine();
@@ -417,6 +423,7 @@ internal static partial class Sources
 				memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockStaticSetupFor").Append(name).AppendLine();
 		}
+
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
@@ -439,6 +446,7 @@ internal static partial class Sources
 			ImplementRaiseInterface(sb, @class, mockRegistryName, $"IMockRaiseOn{name}", MemberType.Public);
 			sb.Append("\t\t#endregion IMockRaiseOn").Append(name).AppendLine();
 		}
+
 		if (hasProtectedEvents)
 		{
 			#region IMockProtectedRaiseOnXXX
@@ -451,6 +459,7 @@ internal static partial class Sources
 
 			#endregion IMockProtectedRaiseOnXXX
 		}
+
 		if (hasStaticEvents)
 		{
 			#region IMockStaticRaiseOnXXX
@@ -490,7 +499,7 @@ internal static partial class Sources
 		// base buffers — emit the slow Verify path here instead. Recordings flow through the
 		// FastMockInteractions fallback buffer (see AppendMockSubject_ImplementClass useFastBuffers: false).
 		ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockVerifyFor{name}", MemberType.Public,
-			memberIds, memberIdPrefix, useFastBuffers: false);
+			memberIds, memberIdPrefix, false);
 		sb.Append("\t\t#endregion IMockVerifyFor").Append(name).AppendLine();
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
@@ -498,7 +507,7 @@ internal static partial class Sources
 			sb.Append("\t\t#region IMockProtectedVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
 			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockProtectedVerifyFor{name}",
-				MemberType.Protected, memberIds, memberIdPrefix, useFastBuffers: false);
+				MemberType.Protected, memberIds, memberIdPrefix, false);
 			sb.Append("\t\t#endregion IMockProtectedVerifyFor").Append(name).AppendLine();
 		}
 
@@ -508,16 +517,17 @@ internal static partial class Sources
 			sb.Append("\t\t#region IMockStaticVerifyFor").Append(name).AppendLine();
 			sb.AppendLine();
 			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockStaticVerifyFor{name}", MemberType.Static,
-				memberIds, memberIdPrefix, useFastBuffers: false);
+				memberIds, memberIdPrefix, false);
 			sb.Append("\t\t#endregion IMockStaticVerifyFor").Append(name).AppendLine();
 		}
+
 		foreach ((string Name, Class Class) item in additionalInterfaces)
 		{
 			sb.AppendLine();
 			sb.Append("\t\t#region IMockVerifyFor").Append(item.Name).AppendLine();
 			sb.AppendLine();
 			ImplementVerifyInterface(sb, item.Class, mockRegistryName, $"IMockVerifyFor{item.Name}", MemberType.Public,
-				memberIds, memberIdPrefix, useFastBuffers: false);
+				memberIds, memberIdPrefix, false);
 			sb.Append("\t\t#endregion IMockVerifyFor").Append(item.Name).AppendLine();
 		}
 

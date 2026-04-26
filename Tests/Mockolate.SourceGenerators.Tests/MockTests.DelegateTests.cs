@@ -170,6 +170,33 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Delegate_ShouldHaveCorrectReferenceInXMLDocumentation()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = DoSomething.CreateMock();
+				         }
+
+				         public delegate int DoSomething(int x, int y);
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.Program_DoSomething.g.cs").WhoseValue
+				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"x\"/>, <paramref name=\"y\"/>.").And
+				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"parameters\"/>.").And
+				.DoesNotContain("Verify invocations for the method <see cref=\"global::MyCode.Program.DoSomething.Verify(");
+		}
+
+		[Fact]
 		public async Task Delegates_ShouldCreateDelegateInsteadOfMockSubject()
 		{
 			GeneratorResult result = Generator
@@ -308,33 +335,6 @@ public sealed partial class MockTests
 				.IgnoringNewlineStyle().And
 				.Contains("methodSetup1?.TriggerCallbacks(methodSetup, value);")
 				.IgnoringNewlineStyle();
-		}
-
-		[Fact]
-		public async Task Delegate_ShouldHaveCorrectReferenceInXMLDocumentation()
-		{
-			GeneratorResult result = Generator
-				.Run("""
-				     using System;
-				     using Mockolate;
-
-				     namespace MyCode;
-
-				     public class Program
-				     {
-				         public static void Main(string[] args)
-				         {
-				     		_ = DoSomething.CreateMock();
-				         }
-
-				         public delegate int DoSomething(int x, int y);
-				     }
-				     """);
-
-			await That(result.Sources).ContainsKey("Mock.Program_DoSomething.g.cs").WhoseValue
-				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"x\"/>, <paramref name=\"y\"/>.").And
-				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"parameters\"/>.").And
-				.DoesNotContain("Verify invocations for the method <see cref=\"global::MyCode.Program.DoSomething.Verify(");
 		}
 	}
 }

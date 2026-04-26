@@ -34,6 +34,15 @@ internal readonly record struct MethodParameter
 		}
 	}
 
+	public string? ExplicitDefaultValue { get; }
+	public bool HasExplicitDefaultValue { get; }
+	public bool IsParams { get; }
+
+	public bool IsNullableAnnotated { get; }
+	public Type Type { get; }
+	public string Name { get; }
+	public RefKind RefKind { get; }
+
 	// SymbolDisplay.FormatPrimitive strips the 'm'/'f' type suffix from the literal, which would
 	// produce invalid C# (e.g. "decimal x = 19.95" is a narrowing conversion from double). Re-add
 	// the suffix based on the effective parameter type so the generated code compiles.
@@ -55,13 +64,4 @@ internal readonly record struct MethodParameter
 			_ => value,
 		};
 	}
-
-	public string? ExplicitDefaultValue { get; }
-	public bool HasExplicitDefaultValue { get; }
-	public bool IsParams { get; }
-
-	public bool IsNullableAnnotated { get; }
-	public Type Type { get; }
-	public string Name { get; }
-	public RefKind RefKind { get; }
 }

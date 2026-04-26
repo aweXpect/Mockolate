@@ -8,6 +8,83 @@ public sealed partial class MockTests
 	public sealed class CreateTests
 	{
 		[Fact]
+		public async Task TypedOverload_ConstructorWithDecimalDefault_ShouldForwardExplicitValue()
+		{
+			// This test exercises the generator's default-value emission end-to-end: if the
+			// generator dropped the 'm' suffix ("decimal price = 19.95"), the generated source
+			// would fail to compile, taking the whole test project down with it.
+			MyBaseClassWithDecimalDefault sut = MyBaseClassWithDecimalDefault.CreateMock(42.50m);
+
+			await That(sut.Price).IsEqualTo(42.50m);
+		}
+
+		[Fact]
+		public async Task TypedOverload_ConstructorWithDefaultValue_ShouldApplyDefault()
+		{
+			MyBaseClassWithMultipleConstructors sut = MyBaseClassWithMultipleConstructors.CreateMock(42);
+
+			await That(sut.Text).IsEqualTo("default");
+			await That(sut.Number).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task TypedOverload_MultipleConstructors_ShouldDispatchToMatchingConstructor()
+		{
+			MyBaseClassWithMultipleConstructors sutFromString =
+				MyBaseClassWithMultipleConstructors.CreateMock("foo");
+			MyBaseClassWithMultipleConstructors sutFromIntAndString =
+				MyBaseClassWithMultipleConstructors.CreateMock(42, "bar");
+
+			await That(sutFromString.Text).IsEqualTo("foo");
+			await That(sutFromString.Number).IsEqualTo(0);
+			await That(sutFromIntAndString.Text).IsEqualTo("bar");
+			await That(sutFromIntAndString.Number).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task TypedOverload_SingleConstructor_ShouldForwardToBaseClass()
+		{
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock("foo");
+
+			await That(sut.Text).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task TypedOverload_WithMockBehavior_ShouldUseBehavior()
+		{
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
+
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(behavior, "foo");
+
+			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
+			await That(sut.Text).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task TypedOverload_WithMockBehaviorAndSetup_ShouldApplyBoth()
+		{
+			MockBehavior behavior = MockBehavior.Default;
+
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
+				behavior,
+				setup => setup.VirtualMethod().Returns("bar"),
+				"foo");
+
+			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
+			await That(sut.VirtualMethod()).IsEqualTo("bar");
+		}
+
+		[Fact]
+		public async Task TypedOverload_WithSetup_ShouldApplySetup()
+		{
+			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
+				setup => setup.VirtualMethod().Returns("bar"),
+				"foo");
+
+			await That(sut.VirtualMethod()).IsEqualTo("bar");
+		}
+
+		[Fact]
 		public async Task With2Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -47,11 +124,11 @@ public sealed partial class MockTests
 		public async Task With2Arguments_WithSetups_ShouldApplySetups()
 		{
 			IMyService sut = IMyService.CreateMock(setup =>
-				{
-					setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2);
-					setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4);
-					setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8);
-				});
+			{
+				setup.Multiply(It.Is(1), It.IsAny<int?>()).Returns(2);
+				setup.Multiply(It.Is(2), It.IsAny<int?>()).Returns(4);
+				setup.Multiply(It.Is(3), It.IsAny<int?>()).Returns(8);
+			});
 
 			int result1 = sut.Multiply(1, null);
 			int result2 = sut.Multiply(2, null);
@@ -60,83 +137,6 @@ public sealed partial class MockTests
 			await That(result1).IsEqualTo(2);
 			await That(result2).IsEqualTo(4);
 			await That(result3).IsEqualTo(8);
-		}
-
-		[Fact]
-		public async Task TypedOverload_SingleConstructor_ShouldForwardToBaseClass()
-		{
-			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock("foo");
-
-			await That(sut.Text).IsEqualTo("foo");
-		}
-
-		[Fact]
-		public async Task TypedOverload_WithSetup_ShouldApplySetup()
-		{
-			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
-				setup => setup.VirtualMethod().Returns("bar"),
-				"foo");
-
-			await That(sut.VirtualMethod()).IsEqualTo("bar");
-		}
-
-		[Fact]
-		public async Task TypedOverload_WithMockBehavior_ShouldUseBehavior()
-		{
-			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
-
-			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(behavior, "foo");
-
-			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
-			await That(sut.Text).IsEqualTo("foo");
-		}
-
-		[Fact]
-		public async Task TypedOverload_WithMockBehaviorAndSetup_ShouldApplyBoth()
-		{
-			MockBehavior behavior = MockBehavior.Default;
-
-			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
-				behavior,
-				setup => setup.VirtualMethod().Returns("bar"),
-				"foo");
-
-			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
-			await That(sut.VirtualMethod()).IsEqualTo("bar");
-		}
-
-		[Fact]
-		public async Task TypedOverload_MultipleConstructors_ShouldDispatchToMatchingConstructor()
-		{
-			MyBaseClassWithMultipleConstructors sutFromString =
-				MyBaseClassWithMultipleConstructors.CreateMock("foo");
-			MyBaseClassWithMultipleConstructors sutFromIntAndString =
-				MyBaseClassWithMultipleConstructors.CreateMock(42, "bar");
-
-			await That(sutFromString.Text).IsEqualTo("foo");
-			await That(sutFromString.Number).IsEqualTo(0);
-			await That(sutFromIntAndString.Text).IsEqualTo("bar");
-			await That(sutFromIntAndString.Number).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task TypedOverload_ConstructorWithDefaultValue_ShouldApplyDefault()
-		{
-			MyBaseClassWithMultipleConstructors sut = MyBaseClassWithMultipleConstructors.CreateMock(42);
-
-			await That(sut.Text).IsEqualTo("default");
-			await That(sut.Number).IsEqualTo(42);
-		}
-
-		[Fact]
-		public async Task TypedOverload_ConstructorWithDecimalDefault_ShouldForwardExplicitValue()
-		{
-			// This test exercises the generator's default-value emission end-to-end: if the
-			// generator dropped the 'm' suffix ("decimal price = 19.95"), the generated source
-			// would fail to compile, taking the whole test project down with it.
-			MyBaseClassWithDecimalDefault sut = MyBaseClassWithDecimalDefault.CreateMock(42.50m);
-
-			await That(sut.Price).IsEqualTo(42.50m);
 		}
 
 		[Fact]

@@ -26,9 +26,15 @@ namespace Mockolate;
 ///     <para />
 ///     Typical flow:
 ///     <list type="bullet">
-///       <item><description>Setup: <c>httpClient.Mock.Setup.PostAsync(uriMatcher, contentMatcher).ReturnsAsync(response)</c> -  see <c>HttpClientExtensions.Setup.*</c>.</description></item>
-///       <item><description>Verify: <c>httpClient.Mock.Verify.GetAsync(uriMatcher).Once()</c> - see <c>HttpClientExtensions.Verify.*</c>.</description></item>
-///       <item><description>Match request pieces with <see cref="ItExtensions" />: <c>It.IsUri(...)</c>, <c>It.IsHttpContent(...)</c>, <c>It.IsHttpRequestMessage(...)</c> and their fluent <c>.WithString</c> / <c>.WithBytes</c> / <c>.WithFormData</c> / <c>.WithHeaders</c> builders.</description></item>
+///         <item>
+///             <description>Setup: <c>httpClient.Mock.Setup.PostAsync(uriMatcher, contentMatcher).ReturnsAsync(response)</c> -  see <c>HttpClientExtensions.Setup.*</c>.</description>
+///         </item>
+///         <item>
+///             <description>Verify: <c>httpClient.Mock.Verify.GetAsync(uriMatcher).Once()</c> - see <c>HttpClientExtensions.Verify.*</c>.</description>
+///         </item>
+///         <item>
+///             <description>Match request pieces with <see cref="ItExtensions" />: <c>It.IsUri(...)</c>, <c>It.IsHttpContent(...)</c>, <c>It.IsHttpRequestMessage(...)</c> and their fluent <c>.WithString</c> / <c>.WithBytes</c> / <c>.WithFormData</c> / <c>.WithHeaders</c> builders.</description>
+///         </item>
 ///     </list>
 ///     <para />
 ///     Throws <see cref="MockException" /> if the mock was constructed without a mockable

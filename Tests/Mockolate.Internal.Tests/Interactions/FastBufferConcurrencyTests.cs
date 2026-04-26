@@ -1,6 +1,4 @@
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 
@@ -14,8 +12,8 @@ public class FastBufferConcurrencyTests
 		const int writerCount = 8;
 		const int appendsPerWriter = 1000;
 
-		FastMockInteractions store = new(memberCount: 1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(memberId: 0);
+		FastMockInteractions store = new(1);
+		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
 #if NET48
 		CancellationToken cancellationToken = TestContext.Current.CancellationToken;
 #else
@@ -45,12 +43,15 @@ public class FastBufferConcurrencyTests
 	[Fact]
 	public async Task FastMethod1Buffer_InteractionAdded_ShouldFireWhenSubscribed()
 	{
-		FastMockInteractions store = new(memberCount: 1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(memberId: 0);
+		FastMockInteractions store = new(1);
+		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
 
 		int invocations = 0;
 
-		void Handler(object? sender, EventArgs e) => invocations++;
+		void Handler(object? sender, EventArgs e)
+		{
+			invocations++;
+		}
 
 		store.InteractionAdded += Handler;
 		try

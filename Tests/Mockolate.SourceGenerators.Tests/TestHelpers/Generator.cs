@@ -62,10 +62,10 @@ public static class Generator
 			new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
 		GeneratorDriver driver = CSharpGeneratorDriver.Create(
-			generators: [generator.AsSourceGenerator(),],
-			additionalTexts: [],
-			parseOptions: parseOptions,
-			optionsProvider: null);
+			[generator.AsSourceGenerator(),],
+			[],
+			parseOptions,
+			null);
 		driver = driver.RunGeneratorsAndUpdateCompilation(compilation, out Compilation outputCompilation,
 			out ImmutableArray<Diagnostic> diagnostics);
 

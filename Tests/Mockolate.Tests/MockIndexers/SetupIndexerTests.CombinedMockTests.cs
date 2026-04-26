@@ -56,7 +56,7 @@ public sealed partial class SetupIndexerTests
 		{
 			int this[int x] { get; set; }
 		}
-		
+
 		public interface IBazIndexer
 		{
 			int this[int x] { get; set; }

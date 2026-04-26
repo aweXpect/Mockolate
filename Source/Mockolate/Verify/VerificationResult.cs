@@ -17,10 +17,18 @@ namespace Mockolate.Verify;
 ///     <c>sut.Mock.InScenario(...).Verify</c>. Nothing is asserted until a terminator runs - until then the object
 ///     can still be composed:
 ///     <list type="bullet">
-///       <item><description>Terminate with a count assertion from <see cref="VerificationResultExtensions" /> &#8212; <c>Once()</c>, <c>Never()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>, <c>AtMost(n)</c>, <c>Between(min, max)</c>, <c>Times(n)</c> &#8212; to turn the result into a pass/fail check that throws <see cref="MockVerificationException" /> on mismatch.</description></item>
-///       <item><description>Chain <c>.Then(next)</c> to assert an ordering between two verifications.</description></item>
-///       <item><description>Call <see cref="Within(TimeSpan)" /> and/or <see cref="WithCancellation(CancellationToken)" /> before the terminator to wait for interactions produced on a background thread (synchronous wait; use the <c>aweXpect.Mockolate</c> package for the asynchronous variant).</description></item>
-///       <item><description>When the verification matcher uses <c>It.*</c> parameter matchers, the nested <see cref="IgnoreParameters" /> subtype also exposes <c>AnyParameters()</c> to widen the match to any argument list.</description></item>
+///         <item>
+///             <description>Terminate with a count assertion from <see cref="VerificationResultExtensions" /> &#8212; <c>Once()</c>, <c>Never()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>, <c>AtMost(n)</c>, <c>Between(min, max)</c>, <c>Times(n)</c> &#8212; to turn the result into a pass/fail check that throws <see cref="MockVerificationException" /> on mismatch.</description>
+///         </item>
+///         <item>
+///             <description>Chain <c>.Then(next)</c> to assert an ordering between two verifications.</description>
+///         </item>
+///         <item>
+///             <description>Call <see cref="Within(TimeSpan)" /> and/or <see cref="WithCancellation(CancellationToken)" /> before the terminator to wait for interactions produced on a background thread (synchronous wait; use the <c>aweXpect.Mockolate</c> package for the asynchronous variant).</description>
+///         </item>
+///         <item>
+///             <description>When the verification matcher uses <c>It.*</c> parameter matchers, the nested <see cref="IgnoreParameters" /> subtype also exposes <c>AnyParameters()</c> to widen the match to any argument list.</description>
+///         </item>
 ///     </list>
 /// </remarks>
 /// <typeparam name="TVerify">The mock's verification facade, used to continue verification chains (e.g. <c>.Then(...)</c>).</typeparam>
@@ -210,7 +218,10 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			: base(inner._verify, inner._interactions, inner._buffer, inner._fastCountSource, inner._predicate, inner._expectationFactory)
 		{
 			_timeout = timeout;
-			if (inner._useCountAll) EnableCountAll();
+			if (inner._useCountAll)
+			{
+				EnableCountAll();
+			}
 		}
 
 		/// <summary>
@@ -222,7 +233,10 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			: base(inner._verify, inner._interactions, inner._buffer, inner._fastCountSource, inner._predicate, inner._expectationFactory)
 		{
 			_cancellationToken = cancellationToken;
-			if (inner._useCountAll) EnableCountAll();
+			if (inner._useCountAll)
+			{
+				EnableCountAll();
+			}
 		}
 
 		/// <inheritdoc cref="IVerificationResult.Verify(Func{IInteraction[], Boolean})" />
@@ -238,6 +252,89 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			}
 
 			return VerifyAsync(predicate).ConfigureAwait(false).GetAwaiter().GetResult();
+		}
+
+		/// <inheritdoc cref="IAsyncVerificationResult.VerifyAsync(Func{IInteraction[], Boolean})" />
+		public async Task<bool> VerifyAsync(Func<IInteraction[], bool> predicate)
+		{
+			ThrowIfRecordingDisabled(_interactions);
+			IInteraction[] matchingInteractions = CollectMatching();
+			_interactions.Verified(matchingInteractions);
+			bool result = predicate(matchingInteractions);
+			if (result)
+			{
+				return true;
+			}
+
+			try
+			{
+				CancellationTokenSource? cts = null;
+				CancellationToken token;
+				if (_timeout is null)
+				{
+					token = _cancellationToken!.Value;
+				}
+				else
+				{
+					if (_cancellationToken is not null)
+					{
+						cts = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken.Value);
+					}
+					else
+					{
+						cts = new CancellationTokenSource();
+					}
+
+					cts.CancelAfter(_timeout.Value);
+					token = cts.Token;
+				}
+
+				SemaphoreSlim semaphore = new(0);
+				try
+				{
+					_interactions.InteractionAdded += OnInteractionAdded;
+					do
+					{
+						matchingInteractions = CollectMatching();
+						_interactions.Verified(matchingInteractions);
+						if (predicate(matchingInteractions))
+						{
+							return true;
+						}
+
+						await semaphore.WaitAsync(token).ConfigureAwait(false);
+					} while (true);
+				}
+				finally
+				{
+					_interactions.InteractionAdded -= OnInteractionAdded;
+					cts?.Cancel();
+					cts?.Dispose();
+					semaphore.Dispose();
+				}
+
+				void OnInteractionAdded(object? sender, EventArgs eventArgs)
+				{
+					try
+					{
+						// ReSharper disable once AccessToDisposedClosure
+						semaphore.Release();
+					}
+					catch (ObjectDisposedException)
+					{
+						// Ignore if the semaphore has already been disposed
+					}
+				}
+			}
+			catch (OperationCanceledException ex)
+			{
+				if (_cancellationToken?.IsCancellationRequested == true)
+				{
+					throw new MockVerificationTimeoutException(null, ex);
+				}
+
+				throw new MockVerificationTimeoutException(_timeout, ex);
+			}
 		}
 
 		/// <inheritdoc cref="IFastVerifyCountResult.VerifyCount(Func{int, Boolean})" />
@@ -321,89 +418,6 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					}
 					catch (ObjectDisposedException)
 					{
-					}
-				}
-			}
-			catch (OperationCanceledException ex)
-			{
-				if (_cancellationToken?.IsCancellationRequested == true)
-				{
-					throw new MockVerificationTimeoutException(null, ex);
-				}
-
-				throw new MockVerificationTimeoutException(_timeout, ex);
-			}
-		}
-
-		/// <inheritdoc cref="IAsyncVerificationResult.VerifyAsync(Func{IInteraction[], Boolean})" />
-		public async Task<bool> VerifyAsync(Func<IInteraction[], bool> predicate)
-		{
-			ThrowIfRecordingDisabled(_interactions);
-			IInteraction[] matchingInteractions = CollectMatching();
-			_interactions.Verified(matchingInteractions);
-			bool result = predicate(matchingInteractions);
-			if (result)
-			{
-				return true;
-			}
-
-			try
-			{
-				CancellationTokenSource? cts = null;
-				CancellationToken token;
-				if (_timeout is null)
-				{
-					token = _cancellationToken!.Value;
-				}
-				else
-				{
-					if (_cancellationToken is not null)
-					{
-						cts = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken.Value);
-					}
-					else
-					{
-						cts = new CancellationTokenSource();
-					}
-
-					cts.CancelAfter(_timeout.Value);
-					token = cts.Token;
-				}
-
-				SemaphoreSlim semaphore = new(0);
-				try
-				{
-					_interactions.InteractionAdded += OnInteractionAdded;
-					do
-					{
-						matchingInteractions = CollectMatching();
-						_interactions.Verified(matchingInteractions);
-						if (predicate(matchingInteractions))
-						{
-							return true;
-						}
-
-						await semaphore.WaitAsync(token).ConfigureAwait(false);
-					} while (true);
-				}
-				finally
-				{
-					_interactions.InteractionAdded -= OnInteractionAdded;
-					cts?.Cancel();
-					cts?.Dispose();
-					semaphore.Dispose();
-				}
-
-				void OnInteractionAdded(object? sender, EventArgs eventArgs)
-				{
-					try
-					{
-						// ReSharper disable once AccessToDisposedClosure
-						semaphore.Release();
-					}
-					catch (ObjectDisposedException)
-					{
-						// Ignore if the semaphore has already been disposed
 					}
 				}
 			}

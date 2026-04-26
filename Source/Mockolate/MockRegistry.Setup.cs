@@ -7,25 +7,25 @@ namespace Mockolate;
 
 public partial class MockRegistry
 {
-	/// <summary>
-	///     The registered setups for the mock, including methods, properties, indexers and events.
-	/// </summary>
-	internal MockSetups Setup { get; }
-
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private readonly object _setupsByMemberIdLock = new();
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private MethodSetup[]?[]? _setupsByMemberId;
-
-	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private PropertySetup?[]? _propertySetupsByMemberId;
+	private EventSetup[]?[]? _eventSetupsByMemberId;
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private IndexerSetup[]?[]? _indexerSetupsByMemberId;
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private EventSetup[]?[]? _eventSetupsByMemberId;
+	private PropertySetup?[]? _propertySetupsByMemberId;
+
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private MethodSetup[]?[]? _setupsByMemberId;
+
+	/// <summary>
+	///     The registered setups for the mock, including methods, properties, indexers and events.
+	/// </summary>
+	internal MockSetups Setup { get; }
 
 	/// <summary>
 	///     Registers <paramref name="indexerSetup" /> for the default scenario.
@@ -96,7 +96,10 @@ public partial class MockRegistry
 			IndexerSetup[] bucket;
 			if (existing is null || existing.Length == 0)
 			{
-				bucket = new[] { indexerSetup, };
+				bucket = new[]
+				{
+					indexerSetup,
+				};
 			}
 			else
 			{
@@ -184,7 +187,10 @@ public partial class MockRegistry
 			MethodSetup[] bucket;
 			if (existing is null || existing.Length == 0)
 			{
-				bucket = new[] { methodSetup, };
+				bucket = new[]
+				{
+					methodSetup,
+				};
 			}
 			else
 			{
@@ -357,7 +363,10 @@ public partial class MockRegistry
 			EventSetup[] bucket;
 			if (existing is null || existing.Length == 0)
 			{
-				bucket = new[] { eventSetup, };
+				bucket = new[]
+				{
+					eventSetup,
+				};
 			}
 			else
 			{

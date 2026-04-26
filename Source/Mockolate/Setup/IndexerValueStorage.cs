@@ -1,6 +1,7 @@
 #pragma warning disable CS8714 // Child lookups and additions use TKey after an explicit null check; callers forward via key!.
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 
@@ -8,7 +9,7 @@ namespace Mockolate.Setup;
 
 /// <summary>
 ///     Marker type for the typed child indexer of an <see cref="IndexerValueStorage" /> node.
-///     Concrete implementations inherit from <see cref="Dictionary{TKey, TValue}" /> for zero dispatch overhead.
+///     Concrete implementations inherit from <see cref="Dictionary{TKey,TValue}" /> for zero dispatch overhead.
 /// </summary>
 internal interface IIndexerChildIndex;
 
@@ -37,7 +38,7 @@ internal sealed class IndexerChildIndex<TKey, TValue>
 ///     <c>IndexerAccess.TraverseStorage</c>. It is not intended to be constructed or subclassed directly.
 /// </remarks>
 [DebuggerNonUserCode]
-[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 public abstract class IndexerValueStorage
 {
 	/// <summary>
@@ -61,19 +62,19 @@ public abstract class IndexerValueStorage
 [DebuggerNonUserCode]
 internal sealed class IndexerValueStorage<TValue> : IndexerValueStorage
 {
-	/// <summary>
-	///     The value stored at this tree node. Typed to avoid boxing for value-type indexer return types.
-	///     Only meaningful when <see cref="HasValue" /> is <see langword="true" />.
-	/// </summary>
-	internal TValue Value = default!;
+	private IIndexerChildIndex? _childIndex;
+	private IndexerValueStorage<TValue>? _nullChild;
 
 	/// <summary>
 	///     Whether <see cref="Value" /> has been assigned. Distinguishes "never stored" from "stored default".
 	/// </summary>
 	internal bool HasValue;
 
-	private IIndexerChildIndex? _childIndex;
-	private IndexerValueStorage<TValue>? _nullChild;
+	/// <summary>
+	///     The value stored at this tree node. Typed to avoid boxing for value-type indexer return types.
+	///     Only meaningful when <see cref="HasValue" /> is <see langword="true" />.
+	/// </summary>
+	internal TValue Value = default!;
 
 	/// <inheritdoc cref="IndexerValueStorage.GetChildDispatch{TKey}(TKey)" />
 	public override IndexerValueStorage? GetChildDispatch<TKey>(TKey key) => GetChild(key);

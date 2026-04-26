@@ -14,9 +14,9 @@ public sealed partial class MockTests
 			     using System.Collections.Generic;
 			     using System.Threading.Tasks;
 			     using Mockolate;
-			     
+
 			     namespace MyCode;
-			     
+
 			     public interface INestedInterface
 			     {
 			     	int NestedValue { get; }
@@ -97,7 +97,7 @@ public sealed partial class MockTests
 			.DoesNotContain("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.ParentEvent").And
 			.DoesNotContain("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.NestedEvent");
 	}
-	
+
 	[Fact]
 	public async Task ExplicitInterfaceImplementation_ShouldNotAddAccessibility()
 	{
@@ -108,16 +108,16 @@ public sealed partial class MockTests
 			     using System.Collections.Generic;
 			     using System.Threading.Tasks;
 			     using Mockolate;
-			     
+
 			     namespace MyCode;
-			     
+
 			     public abstract class MyService : IEnumerable<int>
 			     {
 			     	public IEnumerator<int> GetEnumerator()
 			     	{
 			     		return new List<int>().GetEnumerator();
 			     	}
-			     
+
 			     	IEnumerator IEnumerable.GetEnumerator()
 			     	{
 			     		return GetEnumerator();
@@ -135,7 +135,7 @@ public sealed partial class MockTests
 		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
 			.DoesNotContain("private global::System.Collections.IEnumerator GetEnumerator()");
 	}
-	
+
 	[Fact]
 	public async Task ForTypesWithAdditionalConstructorsWithParameters_ShouldWorkForAllNonPrivateConstructors()
 	{
@@ -459,6 +459,46 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyService.CreateMock();
+			         }
+			     }
+
+			     public interface IMyService
+			     {
+			         int @class { get; }
+			         string @return();
+			         void @event(int @params);
+			         int @void<@class>(int @ref);
+			         string this[int @params, string @void] { get; set; }
+			         event EventHandler @event;
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+			.Contains("public int @class").And
+			.Contains("public string @return()").And
+			.Contains("public void @event(int @params)").And
+			.Contains("public int @void<@class>(int @ref)").And
+			.Contains("public string this[int @params, string @void]").And
+			.Contains("public event global::System.EventHandler @event").And
+			.Contains("private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_event;").And
+			.DoesNotContain("_mockolateEvent_global__MyCode_IMyService_@event");
+		;
+	}
+
+	[Fact]
 	public async Task MethodOrIndexerParametersWithReservedNames_ShouldPrefixAtSymbol()
 	{
 		GeneratorResult result = Generator
@@ -516,45 +556,6 @@ public sealed partial class MockTests
 			.Contains("""
 			          		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string> IMockVerifyForIMyService.this[global::Mockolate.Parameters.IParameter<int>? @true]
 			          """).IgnoringNewlineStyle();
-	}
-
-	[Fact]
-	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using Mockolate;
-
-			     namespace MyCode;
-			     public class Program
-			     {
-			         public static void Main(string[] args)
-			         {
-			     		_ = IMyService.CreateMock();
-			         }
-			     }
-
-			     public interface IMyService
-			     {
-			         int @class { get; }
-			         string @return();
-			         void @event(int @params);
-			         int @void<@class>(int @ref);
-			         string this[int @params, string @void] { get; set; }
-			         event EventHandler @event;
-			     }
-			     """);
-
-		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-			.Contains("public int @class").And
-			.Contains("public string @return()").And
-			.Contains("public void @event(int @params)").And
-			.Contains("public int @void<@class>(int @ref)").And
-			.Contains("public string this[int @params, string @void]").And
-			.Contains("public event global::System.EventHandler @event").And
-			.Contains("private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_event;").And
-			.DoesNotContain("_mockolateEvent_global__MyCode_IMyService_@event");;
 	}
 
 	[Fact]

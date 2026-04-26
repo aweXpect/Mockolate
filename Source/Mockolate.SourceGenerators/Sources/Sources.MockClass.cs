@@ -72,14 +72,17 @@ internal static partial class Sources
 		{
 			mockPropertyRemarks.Add("  <item><description><c>Raise</c> - trigger events declared on the mocked type.</description></item>");
 		}
+
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
 			mockPropertyRemarks.Add("  <item><description><c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c> - target <see langword=\"protected\" /> members on class mocks.</description></item>");
 		}
+
 		if (hasStaticMembers || hasStaticEvents)
 		{
 			mockPropertyRemarks.Add("  <item><description><c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c> - target <see langword=\"static\" /> members on interface mocks.</description></item>");
 		}
+
 		mockPropertyRemarks.Add("  <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item>");
 		mockPropertyRemarks.Add("  <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item>");
 		mockPropertyRemarks.Add("  <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item>");
@@ -123,6 +126,7 @@ internal static partial class Sources
 		{
 			createMockRemarks.Add("  <item><description><c>.Mock.Raise</c> triggers events declared on the mocked type.</description></item>");
 		}
+
 		createMockRemarks.Add("</list>");
 		createMockRemarks.Add("With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword=\"null\" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref=\"global::Mockolate.MockBehavior\" /> to customize this (for example to make un-configured calls throw or to skip the base class).");
 		createMockRemarks.Add("Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.");
@@ -481,7 +485,7 @@ internal static partial class Sources
 		sb.AppendXmlRemarks(
 			"The <paramref name=\"setup\" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.");
 		sb.AppendXmlTypeParam("T", $"The mockable type derived from <see cref=\"{escapedClassName}\" /> that this setup should apply to.");
-		sb.AppendXmlParam("setup", $"Callback invoked when a new mock of <typeparamref name=\"T\" /> is created.");
+		sb.AppendXmlParam("setup", "Callback invoked when a new mock of <typeparamref name=\"T\" /> is created.");
 		sb.AppendXmlReturns("A new <see cref=\"global::Mockolate.MockBehavior\" /> with the registered initializer. The original instance is unchanged.");
 		sb.Append("\t\tpublic global::Mockolate.MockBehavior Initialize<T>(global::System.Action<").Append(setupType)
 			.Append("> setup)").AppendLine();
@@ -1563,16 +1567,16 @@ internal static partial class Sources
 				constructor.Parameters.Select(p => p.Type.Fullname));
 
 			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
-				includeMockBehavior: false, includeSetup: false, mockBehaviorName, setupName, baseSig,
+				false, false, mockBehaviorName, setupName, baseSig,
 				emittedSignatures);
 			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
-				includeMockBehavior: true, includeSetup: false, mockBehaviorName, setupName, baseSig,
+				true, false, mockBehaviorName, setupName, baseSig,
 				emittedSignatures);
 			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
-				includeMockBehavior: false, includeSetup: true, mockBehaviorName, setupName, baseSig,
+				false, true, mockBehaviorName, setupName, baseSig,
 				emittedSignatures);
 			TryEmitTypedCreateMockOverload(sb, @class, constructor, setupType, escapedClassName, createMockReturns,
-				includeMockBehavior: true, includeSetup: true, mockBehaviorName, setupName, baseSig,
+				true, true, mockBehaviorName, setupName, baseSig,
 				emittedSignatures);
 		}
 	}
@@ -1829,7 +1833,7 @@ internal static partial class Sources
 
 		List<Property>? mockProperties = mockClass?.AllProperties().ToList();
 		Dictionary<string, int> signatureIndices = signatureIndicesOverride ?? new Dictionary<string, int>();
-		int[] nextSignatureIndex = nextSignatureIndexRef ?? [0];
+		int[] nextSignatureIndex = nextSignatureIndexRef ?? [0,];
 		foreach (Property property in @class.AllProperties())
 		{
 			if (mockProperties?.All(p => !Property.EqualityComparer.Equals(property, p)) != false)
@@ -1838,10 +1842,10 @@ internal static partial class Sources
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
 					string signatureKey = property.ContainingType + "::" +
-						(property.ExplicitImplementation ?? "") + "::" +
-						property.Type.Fullname + "->|" +
-						string.Join("|",
-							property.IndexerParameters.Value.Select(p => p.RefKind + " " + p.Type.Fullname));
+					                      (property.ExplicitImplementation ?? "") + "::" +
+					                      property.Type.Fullname + "->|" +
+					                      string.Join("|",
+						                      property.IndexerParameters.Value.Select(p => p.RefKind + " " + p.Type.Fullname));
 					if (!signatureIndices.TryGetValue(signatureKey, out signatureIndex))
 					{
 						signatureIndex = nextSignatureIndex[0]++;
@@ -2733,6 +2737,7 @@ internal static partial class Sources
 
 			sb.Append("));").AppendLine();
 		}
+
 		sb.Append("\t\t\t}").AppendLine();
 
 		sb.Append("\t\t\ttry").AppendLine();
@@ -4145,7 +4150,7 @@ internal static partial class Sources
 			$"Setup for the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />");
 		string[] indexerNames = Enumerable.Range(1, indexer.IndexerParameters!.Value.Count)
 			.Select(i => $"parameter{i}").ToArray();
-		AppendOverloadDifferentiatorRemark(sb, indexerNames, useParameters: false, valueFlags);
+		AppendOverloadDifferentiatorRemark(sb, indexerNames, false, valueFlags);
 		if (hasOverloadResolutionPriority)
 		{
 			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
@@ -4598,7 +4603,7 @@ internal static partial class Sources
 			$"Verify interactions with the {indexer.Type.Fullname.EscapeForXmlDoc()} indexer <see cref=\"{indexer.ContainingType.EscapeForXmlDoc()}.this[{string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.RefKind.GetString() + p.Type.Fullname.EscapeForXmlDoc()))}]\" />.");
 		AppendOverloadDifferentiatorRemark(sb,
 			indexer.IndexerParameters!.Value.Select(p => p.Name).ToArray(),
-			useParameters: false, valueFlags, isVerify: true);
+			false, valueFlags, true);
 		if (hasOverloadResolutionPriority)
 		{
 			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
@@ -5054,7 +5059,7 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters, valueFlags, isVerify: true);
+		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters, valueFlags, true);
 		if (valueFlags?.All(x => x) == true || (method.Parameters.Count == 0 && !useParameters))
 		{
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName)
@@ -5361,11 +5366,11 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		bool canUseTypedVerify = useFastForMethod
-			&& !useParameters
-			&& method.Parameters.Count <= 4
-			&& (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
-			&& (valueFlags is null || !valueFlags.Any(x => x))
-			&& !method.Parameters.Any(p => p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref || p.RefKind == RefKind.RefReadOnlyParameter);
+		                         && !useParameters
+		                         && method.Parameters.Count <= 4
+		                         && (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
+		                         && (valueFlags is null || !valueFlags.Any(x => x))
+		                         && !method.Parameters.Any(p => p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref || p.RefKind == RefKind.RefReadOnlyParameter);
 
 		if (canUseTypedVerify)
 		{

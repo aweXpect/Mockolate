@@ -386,7 +386,10 @@ internal static partial class Sources
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
 
-		foreach (string side in new[] { "Getter", "Setter" })
+		foreach (string side in new[]
+		         {
+			         "Getter", "Setter",
+		         })
 		{
 			sb.AppendXmlSummary($"Sets up a {side.ToLowerInvariant()} callback for a <typeparamref name=\"TValue\"/> indexer for {GetTypeParametersDescription(numberOfParameters)}.", "\t");
 			sb.Append("\tinternal interface IIndexer").Append(side).Append("SetupCallbackBuilder<TValue, ").Append(outTypeParams)
@@ -810,7 +813,10 @@ internal static partial class Sources
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 
-		foreach ((string side, string fieldName) in new[] { ("Getter", "_getterCallbacks"), ("Setter", "_setterCallbacks") })
+		foreach ((string side, string fieldName) in new[]
+		         {
+			         ("Getter", "_getterCallbacks"), ("Setter", "_setterCallbacks"),
+		         })
 		{
 			sb.Append("\t\t/// <inheritdoc cref=\"IIndexer").Append(side).Append("SetupParallelCallbackBuilder{TValue, ").Append(typeParams)
 				.Append("}.When(global::System.Func{int, bool})\" />").AppendLine();

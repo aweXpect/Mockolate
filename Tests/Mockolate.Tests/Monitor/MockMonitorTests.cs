@@ -7,30 +7,6 @@ namespace Mockolate.Tests.Monitor;
 public sealed class MockMonitorTests
 {
 	[Fact]
-	public async Task WhenSkippingInteractionRecording_Verify_ShouldThrow()
-	{
-		IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
-		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
-
-		using IDisposable _ = monitor.Run();
-		sut.IsValid(1);
-
-		MockException? captured = null;
-		try
-		{
-			await That(monitor.Verify.IsValid(It.Is(1))).Once();
-		}
-		catch (System.Exception ex) when (ex.InnerException is MockException me)
-		{
-			captured = me;
-		}
-
-		await That(captured).IsNotNull()
-			.And.For(e => e!.Message, m => m.Contains("SkipInteractionRecording"));
-	}
-
-
-	[Fact]
 	public async Task ClearAllInteractions_WhenMonitorIsRunning_ShouldClearInternalCollection()
 	{
 		IMyService sut = IMyService.CreateMock();
@@ -225,5 +201,28 @@ public sealed class MockMonitorTests
 		await That(monitor.Verify.IsValid(It.Is(4))).Once();
 		await That(monitor.Verify.IsValid(It.Is(5))).Once();
 		await That(monitor.Verify.IsValid(It.Is(6))).Never();
+	}
+
+	[Fact]
+	public async Task WhenSkippingInteractionRecording_Verify_ShouldThrow()
+	{
+		IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
+		MockMonitor<Mock.IMockVerifyForIMyService> monitor = sut.Mock.Monitor();
+
+		using IDisposable _ = monitor.Run();
+		sut.IsValid(1);
+
+		MockException? captured = null;
+		try
+		{
+			await That(monitor.Verify.IsValid(It.Is(1))).Once();
+		}
+		catch (Exception ex) when (ex.InnerException is MockException me)
+		{
+			captured = me;
+		}
+
+		await That(captured).IsNotNull()
+			.And.For(e => e!.Message, m => m.Contains("SkipInteractionRecording"));
 	}
 }

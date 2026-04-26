@@ -11,9 +11,15 @@ namespace Mockolate;
 ///     Reach for <see cref="Match" /> when you want to match the full argument tuple with a single predicate, or
 ///     when per-parameter matchers would be too verbose. Available helpers:
 ///     <list type="bullet">
-///       <item><description><see cref="AnyParameters" /> - accept any argument list (equivalent to <c>It.IsAny&lt;T&gt;()</c> on every parameter).</description></item>
-///       <item><description><c>Match.Parameters(predicate)</c> - match when the predicate applied to the raw <see langword="object" /><c>?[]</c> argument array returns <see langword="true" />.</description></item>
-///       <item><description><c>Match.WithDefaultParameters()</c> - match an event invocation with the default <c>EventArgs</c>-like payload.</description></item>
+///         <item>
+///             <description><see cref="AnyParameters" /> - accept any argument list (equivalent to <c>It.IsAny&lt;T&gt;()</c> on every parameter).</description>
+///         </item>
+///         <item>
+///             <description><c>Match.Parameters(predicate)</c> - match when the predicate applied to the raw <see langword="object" /><c>?[]</c> argument array returns <see langword="true" />.</description>
+///         </item>
+///         <item>
+///             <description><c>Match.WithDefaultParameters()</c> - match an event invocation with the default <c>EventArgs</c>-like payload.</description>
+///         </item>
 ///     </list>
 ///     <para />
 ///     Because the generator cannot disambiguate which overload a <see cref="Match" />-based setup targets,

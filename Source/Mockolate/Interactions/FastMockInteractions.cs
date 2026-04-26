@@ -19,9 +19,6 @@ namespace Mockolate.Interactions;
 public class FastMockInteractions : IMockInteractions
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private readonly IFastMemberBuffer?[] _buffers;
-
-	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private long _globalSequence;
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -39,7 +36,7 @@ public class FastMockInteractions : IMockInteractions
 	/// <param name="skipInteractionRecording">Mirrors <see cref="MockBehavior.SkipInteractionRecording" />.</param>
 	public FastMockInteractions(int memberCount, bool skipInteractionRecording = false)
 	{
-		_buffers = new IFastMemberBuffer?[memberCount];
+		Buffers = new IFastMemberBuffer?[memberCount];
 		SkipInteractionRecording = skipInteractionRecording;
 	}
 
@@ -48,7 +45,7 @@ public class FastMockInteractions : IMockInteractions
 	///     this array to record interactions without going through the legacy
 	///     <see cref="IMockInteractions.RegisterInteraction{TInteraction}(TInteraction)" /> path.
 	/// </summary>
-	public IFastMemberBuffer?[] Buffers => _buffers;
+	public IFastMemberBuffer?[] Buffers { get; }
 
 	/// <inheritdoc cref="IMockInteractions.SkipInteractionRecording" />
 	public bool SkipInteractionRecording { get; }
@@ -79,7 +76,7 @@ public class FastMockInteractions : IMockInteractions
 	/// <param name="memberId">The generator-emitted member id for the buffer's target member.</param>
 	/// <param name="buffer">The per-member buffer to install.</param>
 	public void InstallBuffer(int memberId, IFastMemberBuffer buffer)
-		=> _buffers[memberId] = buffer;
+		=> Buffers[memberId] = buffer;
 
 	/// <summary>
 	///     Reserves the next sequence number for a recording. Buffer implementations call this once
@@ -136,7 +133,7 @@ public class FastMockInteractions : IMockInteractions
 	public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
 	{
 		List<(long Seq, IInteraction Interaction)> unverified = new();
-		foreach (IFastMemberBuffer? buffer in _buffers)
+		foreach (IFastMemberBuffer? buffer in Buffers)
 		{
 			buffer?.AppendBoxedUnverified(unverified);
 		}
@@ -195,7 +192,7 @@ public class FastMockInteractions : IMockInteractions
 	public void Clear()
 	{
 		Interlocked.Exchange(ref _globalSequence, 0);
-		foreach (IFastMemberBuffer? buffer in _buffers)
+		foreach (IFastMemberBuffer? buffer in Buffers)
 		{
 			buffer?.Clear();
 		}
@@ -221,7 +218,7 @@ public class FastMockInteractions : IMockInteractions
 	private IInteraction[] SnapshotOrdered()
 	{
 		List<(long Seq, IInteraction Interaction)> all = new();
-		foreach (IFastMemberBuffer? buffer in _buffers)
+		foreach (IFastMemberBuffer? buffer in Buffers)
 		{
 			buffer?.AppendBoxed(all);
 		}
@@ -256,33 +253,12 @@ public class FastMockInteractions : IMockInteractions
 
 	private sealed class FallbackBuffer(FastMockInteractions owner) : IFastMemberBuffer
 	{
-		private readonly FastMockInteractions _owner = owner;
 		private readonly MockolateLock _lock = new();
-		private (long Seq, IInteraction Interaction)[] _records = new (long, IInteraction)[4];
+		private readonly FastMockInteractions _owner = owner;
 		private int _count;
+		private (long Seq, IInteraction Interaction)[] _records = new (long, IInteraction)[4];
 
 		public int Count => Volatile.Read(ref _count);
-
-		public void Append(IInteraction interaction)
-		{
-			long seq = _owner.NextSequence();
-			lock (_lock)
-			{
-				int n = _count;
-				if (n == _records.Length)
-				{
-					Array.Resize(ref _records, n * 2);
-				}
-
-				_records[n] = (seq, interaction);
-				Volatile.Write(ref _count, n + 1);
-			}
-
-			if (_owner.HasInteractionAddedSubscribers)
-			{
-				_owner.RaiseAdded();
-			}
-		}
 
 		public void Clear()
 		{
@@ -312,5 +288,26 @@ public class FastMockInteractions : IMockInteractions
 
 		public void AppendBoxedUnverified(List<(long Seq, IInteraction Interaction)> dest)
 			=> AppendBoxed(dest);
+
+		public void Append(IInteraction interaction)
+		{
+			long seq = _owner.NextSequence();
+			lock (_lock)
+			{
+				int n = _count;
+				if (n == _records.Length)
+				{
+					Array.Resize(ref _records, n * 2);
+				}
+
+				_records[n] = (seq, interaction);
+				Volatile.Write(ref _count, n + 1);
+			}
+
+			if (_owner.HasInteractionAddedSubscribers)
+			{
+				_owner.RaiseAdded();
+			}
+		}
 	}
 }

@@ -1,5 +1,3 @@
-using System.Linq;
-using Mockolate;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -12,8 +10,8 @@ public class TypedVerifyFastPathTests
 	[Fact]
 	public async Task VerifyMethod0_TypedFastPath_ShouldCount()
 	{
-		FastMockInteractions store = new(memberCount: 1);
-		FastMethod0Buffer buffer = store.InstallMethod(memberId: 0);
+		FastMockInteractions store = new(1);
+		FastMethod0Buffer buffer = store.InstallMethod(0);
 
 		MockRegistry registry = new(MockBehavior.Default, store);
 
@@ -26,10 +24,26 @@ public class TypedVerifyFastPathTests
 	}
 
 	[Fact]
+	public async Task VerifyMethod1_TypedFastPath_FailsWithExpectedMessage()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+
+		MockRegistry registry = new(MockBehavior.Default, store);
+
+		buffer.Append("Foo", 1);
+		buffer.Append("Foo", 1);
+
+		await That(() => registry.VerifyMethod<object, int>(new object(), 0, "Foo",
+				(IParameterMatch<int>)It.Is(1), () => "Foo(1)").Once())
+			.Throws<MockVerificationException>();
+	}
+
+	[Fact]
 	public async Task VerifyMethod1_TypedFastPath_ShouldHonorMatcher()
 	{
-		FastMockInteractions store = new(memberCount: 1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(memberId: 0);
+		FastMockInteractions store = new(1);
+		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
 
 		MockRegistry registry = new(MockBehavior.Default, store);
 
@@ -37,8 +51,8 @@ public class TypedVerifyFastPathTests
 		buffer.Append("Foo", 2);
 		buffer.Append("Foo", 1);
 
-		registry.VerifyMethod<object, int>(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is<int>(1), () => "Foo(1)").Twice();
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(1), () => "Foo(1)").Twice();
 		registry.VerifyMethod<object, int>(new object(), 0, "Foo",
 			(IParameterMatch<int>)It.IsAny<int>(), () => "Foo(*)").Exactly(3);
 
@@ -48,8 +62,8 @@ public class TypedVerifyFastPathTests
 	[Fact]
 	public async Task VerifyMethod2_TypedFastPath_AnyParameters_UsesCountAll()
 	{
-		FastMockInteractions store = new(memberCount: 1);
-		FastMethod2Buffer<int, string> buffer = store.InstallMethod<int, string>(memberId: 0);
+		FastMockInteractions store = new(1);
+		FastMethod2Buffer<int, string> buffer = store.InstallMethod<int, string>(0);
 
 		MockRegistry registry = new(MockBehavior.Default, store);
 
@@ -58,31 +72,15 @@ public class TypedVerifyFastPathTests
 		buffer.Append("Foo", 3, "c");
 
 		// Without AnyParameters: only matches values where m1==1
-		VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod<object, int, string>(
+		VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod(
 			new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is<int>(1),
-			(IParameterMatch<string>)It.Is<string>("z"),  // never matches
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("z"), // never matches
 			() => "Foo(1, z)");
 
 		// AnyParameters → CountAll → all 3 match
 		result.AnyParameters().Exactly(3);
 
 		await That(true).IsTrue();
-	}
-
-	[Fact]
-	public async Task VerifyMethod1_TypedFastPath_FailsWithExpectedMessage()
-	{
-		FastMockInteractions store = new(memberCount: 1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(memberId: 0);
-
-		MockRegistry registry = new(MockBehavior.Default, store);
-
-		buffer.Append("Foo", 1);
-		buffer.Append("Foo", 1);
-
-		await That(() => registry.VerifyMethod<object, int>(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is<int>(1), () => "Foo(1)").Once())
-			.Throws<MockVerificationException>();
 	}
 }

@@ -137,9 +137,15 @@ public partial class MockRegistry
 	/// <remarks>
 	///     When a member is invoked, Mockolate resolves a matching setup in this order:
 	///     <list type="number">
-	///         <item><description>the active scenario's bucket, when <see cref="Scenario" /> is not empty;</description></item>
-	///         <item><description>the default bucket (setups registered via <c>sut.Mock.Setup.*</c>);</description></item>
-	///         <item><description>the default response determined by <see cref="Behavior" />.</description></item>
+	///         <item>
+	///             <description>the active scenario's bucket, when <see cref="Scenario" /> is not empty;</description>
+	///         </item>
+	///         <item>
+	///             <description>the default bucket (setups registered via <c>sut.Mock.Setup.*</c>);</description>
+	///         </item>
+	///         <item>
+	///             <description>the default response determined by <see cref="Behavior" />.</description>
+	///         </item>
 	///     </list>
 	///     Scenario setups add to, rather than replace, the default bucket - register catch-alls at the default scope
 	///     and override specific members per scenario.
