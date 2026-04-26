@@ -411,6 +411,343 @@ public partial class MockRegistry
 			() => $"unsubscribed from event {eventName.SubstringAfterLast('.')}");
 	}
 
+	/// <summary>
+	///     Typed fast-path Verify for parameterless methods. Walks the typed
+	///     <see cref="FastMethod0Buffer" /> via <see cref="IFastCountSource" /> so count terminators
+	///     run allocation-free.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T>(T subject, int memberId, string methodName,
+		Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod0Buffer typed)
+		{
+			Method0CountSource source = new(typed);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				static _ => true,
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, IMethodInteraction>(subject, methodName, _ => true, expectation);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 1-parameter methods.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1>(T subject, int memberId, string methodName,
+		IParameterMatch<T1> match1, Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod1Buffer<T1> typed)
+		{
+			Method1CountSource<T1> source = new(typed, match1);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				interaction => interaction is MethodInvocation<T1> m && match1.Matches(m.Parameter1),
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1>>(subject, methodName,
+			m => match1.Matches(m.Parameter1), expectation);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 2-parameter methods.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2>(T subject, int memberId, string methodName,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod2Buffer<T1, T2> typed)
+		{
+			Method2CountSource<T1, T2> source = new(typed, match1, match2);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				interaction => interaction is MethodInvocation<T1, T2> m && match1.Matches(m.Parameter1) && match2.Matches(m.Parameter2),
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1, T2>>(subject, methodName,
+			m => match1.Matches(m.Parameter1) && match2.Matches(m.Parameter2), expectation);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 3-parameter methods.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2, T3>(T subject, int memberId, string methodName,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod3Buffer<T1, T2, T3> typed)
+		{
+			Method3CountSource<T1, T2, T3> source = new(typed, match1, match2, match3);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				interaction => interaction is MethodInvocation<T1, T2, T3> m && match1.Matches(m.Parameter1) && match2.Matches(m.Parameter2) && match3.Matches(m.Parameter3),
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1, T2, T3>>(subject, methodName,
+			m => match1.Matches(m.Parameter1) && match2.Matches(m.Parameter2) && match3.Matches(m.Parameter3), expectation);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 4-parameter methods.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2, T3, T4>(T subject, int memberId, string methodName,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4,
+		Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod4Buffer<T1, T2, T3, T4> typed)
+		{
+			Method4CountSource<T1, T2, T3, T4> source = new(typed, match1, match2, match3, match4);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				interaction => interaction is MethodInvocation<T1, T2, T3, T4> m && match1.Matches(m.Parameter1) && match2.Matches(m.Parameter2) && match3.Matches(m.Parameter3) && match4.Matches(m.Parameter4),
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1, T2, T3, T4>>(subject, methodName,
+			m => match1.Matches(m.Parameter1) && match2.Matches(m.Parameter2) && match3.Matches(m.Parameter3) && match4.Matches(m.Parameter4),
+			expectation);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for property getter accesses.
+	/// </summary>
+	public VerificationResult<T> VerifyPropertyTyped<T>(T subject, int memberId, string propertyName)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastPropertyGetterBuffer typed)
+		{
+			PropertyGetterCountSource source = new(typed);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				static _ => true,
+				() => $"got property {propertyName.SubstringAfterLast('.')}");
+		}
+
+		return VerifyProperty(subject, propertyName);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for property setter accesses.
+	/// </summary>
+	public VerificationResult<TSubject> VerifyPropertyTyped<TSubject, TValue>(TSubject subject, int memberId,
+		string propertyName, IParameterMatch<TValue> value)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastPropertySetterBuffer<TValue> typed)
+		{
+			PropertySetterCountSource<TValue> source = new(typed, value);
+			return new VerificationResult<TSubject>(subject, Interactions, buffer, source,
+				interaction => interaction is PropertySetterAccess<TValue> p && value.Matches(p.Value),
+				() => $"set property {propertyName.SubstringAfterLast('.')} to {value}");
+		}
+
+		return VerifyProperty(subject, propertyName, value);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 1-key indexer getter.
+	/// </summary>
+	public VerificationResult<T> IndexerGotTyped<T, T1>(T subject, int memberId,
+		IParameterMatch<T1> match1, Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerGetterBuffer<T1> typed)
+		{
+			IndexerGetter1CountSource<T1> source = new(typed, match1);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerGetterAccess<T1> g && match1.Matches(g.Parameter1),
+				() => $"got indexer {parametersDescription()}");
+		}
+
+		return IndexerGot(subject,
+			interaction => interaction is IndexerGetterAccess<T1> g && match1.Matches(g.Parameter1),
+			parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 2-key indexer getter.
+	/// </summary>
+	public VerificationResult<T> IndexerGotTyped<T, T1, T2>(T subject, int memberId,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerGetterBuffer<T1, T2> typed)
+		{
+			IndexerGetter2CountSource<T1, T2> source = new(typed, match1, match2);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerGetterAccess<T1, T2> g && match1.Matches(g.Parameter1) && match2.Matches(g.Parameter2),
+				() => $"got indexer {parametersDescription()}");
+		}
+
+		return IndexerGot(subject,
+			interaction => interaction is IndexerGetterAccess<T1, T2> g && match1.Matches(g.Parameter1) && match2.Matches(g.Parameter2),
+			parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 3-key indexer getter.
+	/// </summary>
+	public VerificationResult<T> IndexerGotTyped<T, T1, T2, T3>(T subject, int memberId,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3,
+		Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerGetterBuffer<T1, T2, T3> typed)
+		{
+			IndexerGetter3CountSource<T1, T2, T3> source = new(typed, match1, match2, match3);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerGetterAccess<T1, T2, T3> g && match1.Matches(g.Parameter1) && match2.Matches(g.Parameter2) && match3.Matches(g.Parameter3),
+				() => $"got indexer {parametersDescription()}");
+		}
+
+		return IndexerGot(subject,
+			interaction => interaction is IndexerGetterAccess<T1, T2, T3> g && match1.Matches(g.Parameter1) && match2.Matches(g.Parameter2) && match3.Matches(g.Parameter3),
+			parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 4-key indexer getter.
+	/// </summary>
+	public VerificationResult<T> IndexerGotTyped<T, T1, T2, T3, T4>(T subject, int memberId,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4,
+		Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerGetterBuffer<T1, T2, T3, T4> typed)
+		{
+			IndexerGetter4CountSource<T1, T2, T3, T4> source = new(typed, match1, match2, match3, match4);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerGetterAccess<T1, T2, T3, T4> g && match1.Matches(g.Parameter1) && match2.Matches(g.Parameter2) && match3.Matches(g.Parameter3) && match4.Matches(g.Parameter4),
+				() => $"got indexer {parametersDescription()}");
+		}
+
+		return IndexerGot(subject,
+			interaction => interaction is IndexerGetterAccess<T1, T2, T3, T4> g && match1.Matches(g.Parameter1) && match2.Matches(g.Parameter2) && match3.Matches(g.Parameter3) && match4.Matches(g.Parameter4),
+			parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 1-key indexer setter.
+	/// </summary>
+	public VerificationResult<T> IndexerSetTyped<T, T1, TValue>(T subject, int memberId,
+		IParameterMatch<T1> match1, IParameterMatch<TValue> value, Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerSetterBuffer<T1, TValue> typed)
+		{
+			IndexerSetter1CountSource<T1, TValue> source = new(typed, match1, value);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerSetterAccess<T1, TValue> s && match1.Matches(s.Parameter1) && value.Matches(s.TypedValue),
+				() => $"set indexer {parametersDescription()} to {value}");
+		}
+
+		return IndexerSet<T, TValue>(subject,
+			(interaction, v) => interaction is IndexerSetterAccess<T1, TValue> s && match1.Matches(s.Parameter1) && v.Matches(s.TypedValue),
+			value, parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 2-key indexer setter.
+	/// </summary>
+	public VerificationResult<T> IndexerSetTyped<T, T1, T2, TValue>(T subject, int memberId,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2,
+		IParameterMatch<TValue> value, Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerSetterBuffer<T1, T2, TValue> typed)
+		{
+			IndexerSetter2CountSource<T1, T2, TValue> source = new(typed, match1, match2, value);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerSetterAccess<T1, T2, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && value.Matches(s.TypedValue),
+				() => $"set indexer {parametersDescription()} to {value}");
+		}
+
+		return IndexerSet<T, TValue>(subject,
+			(interaction, v) => interaction is IndexerSetterAccess<T1, T2, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && v.Matches(s.TypedValue),
+			value, parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 3-key indexer setter.
+	/// </summary>
+	public VerificationResult<T> IndexerSetTyped<T, T1, T2, T3, TValue>(T subject, int memberId,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3,
+		IParameterMatch<TValue> value, Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerSetterBuffer<T1, T2, T3, TValue> typed)
+		{
+			IndexerSetter3CountSource<T1, T2, T3, TValue> source = new(typed, match1, match2, match3, value);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerSetterAccess<T1, T2, T3, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && match3.Matches(s.Parameter3) && value.Matches(s.TypedValue),
+				() => $"set indexer {parametersDescription()} to {value}");
+		}
+
+		return IndexerSet<T, TValue>(subject,
+			(interaction, v) => interaction is IndexerSetterAccess<T1, T2, T3, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && match3.Matches(s.Parameter3) && v.Matches(s.TypedValue),
+			value, parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for 4-key indexer setter.
+	/// </summary>
+	public VerificationResult<T> IndexerSetTyped<T, T1, T2, T3, T4, TValue>(T subject, int memberId,
+		IParameterMatch<T1> match1, IParameterMatch<T2> match2, IParameterMatch<T3> match3, IParameterMatch<T4> match4,
+		IParameterMatch<TValue> value, Func<string> parametersDescription)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> typed)
+		{
+			IndexerSetter4CountSource<T1, T2, T3, T4, TValue> source = new(typed, match1, match2, match3, match4, value);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				interaction => interaction is IndexerSetterAccess<T1, T2, T3, T4, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && match3.Matches(s.Parameter3) && match4.Matches(s.Parameter4) && value.Matches(s.TypedValue),
+				() => $"set indexer {parametersDescription()} to {value}");
+		}
+
+		return IndexerSet<T, TValue>(subject,
+			(interaction, v) => interaction is IndexerSetterAccess<T1, T2, T3, T4, TValue> s && match1.Matches(s.Parameter1) && match2.Matches(s.Parameter2) && match3.Matches(s.Parameter3) && match4.Matches(s.Parameter4) && v.Matches(s.TypedValue),
+			value, parametersDescription);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for event subscribe.
+	/// </summary>
+	public VerificationResult<T> SubscribedToTyped<T>(T subject, int memberId, string eventName)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastEventBuffer typed)
+		{
+			EventCountSource source = new(typed);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				static _ => true,
+				() => $"subscribed to event {eventName.SubstringAfterLast('.')}");
+		}
+
+		return SubscribedTo(subject, eventName);
+	}
+
+	/// <summary>
+	///     Typed fast-path Verify for event unsubscribe.
+	/// </summary>
+	public VerificationResult<T> UnsubscribedFromTyped<T>(T subject, int memberId, string eventName)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastEventBuffer typed)
+		{
+			EventCountSource source = new(typed);
+			return new VerificationResult<T>(subject, Interactions, buffer, source,
+				static _ => true,
+				() => $"unsubscribed from event {eventName.SubstringAfterLast('.')}");
+		}
+
+		return UnsubscribedFrom(subject, eventName);
+	}
+
 	private IFastMemberBuffer? TryGetBuffer(int memberId)
 	{
 		if (Interactions is FastMockInteractions fast)

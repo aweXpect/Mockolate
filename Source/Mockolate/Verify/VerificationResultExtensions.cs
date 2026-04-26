@@ -50,10 +50,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length >= times;
+					    found = count;
+					    return count >= times;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -80,10 +80,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length >= 1;
+					    found = count;
+					    return count >= 1;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -110,10 +110,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length >= 2;
+					    found = count;
+					    return count >= 2;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -140,10 +140,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length <= times;
+					    found = count;
+					    return count <= times;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -186,10 +186,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length >= minimum && interactions.Length <= maximum;
+					    found = count;
+					    return count >= minimum && count <= maximum;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -216,10 +216,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length <= 1;
+					    found = count;
+					    return count <= 1;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -246,10 +246,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length <= 2;
+					    found = count;
+					    return count <= 2;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -276,10 +276,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length == times;
+					    found = count;
+					    return count == times;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -306,10 +306,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length == 0;
+					    found = count;
+					    return count == 0;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -336,10 +336,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length == 1;
+					    found = count;
+					    return count == 1;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -366,10 +366,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return interactions.Length == 2;
+					    found = count;
+					    return count == 2;
 				    }))
 				{
 					throw new MockVerificationException(
@@ -405,10 +405,10 @@ public static class VerificationResultExtensions
 			try
 			{
 				int found = 0;
-				if (!result.Verify(interactions =>
+				if (!result.VerifyCount(count =>
 				    {
-					    found = interactions.Length;
-					    return predicate(interactions.Length);
+					    found = count;
+					    return predicate(count);
 				    }))
 				{
 					throw new MockVerificationException(

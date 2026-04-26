@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Mockolate.Parameters;
 
 namespace Mockolate.Interactions;
 
@@ -16,12 +17,13 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastPropertyGetterBuffer(FastMockInteractions owner)
 	{
@@ -30,7 +32,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records a property getter access.
@@ -38,45 +40,72 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 	public void Append(string name)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= new PropertyGetterAccess(r.Name);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
 	}
+
+	/// <summary>
+	///     Returns the number of recorded property getter accesses. Allocation-free fast path
+	///     equivalent to <see cref="Count" />, exposed for symmetry with the matcher-taking
+	///     <see cref="FastPropertySetterBuffer{T}.CountMatching(IParameterMatch{T})" />.
+	/// </summary>
+	public int CountMatching() => Volatile.Read(ref _published);
 
 	private struct Record
 	{
@@ -97,12 +126,13 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastPropertySetterBuffer(FastMockInteractions owner)
 	{
@@ -111,7 +141,7 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records a property setter access.
@@ -119,45 +149,89 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 	public void Append(string name, T value)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].Value = value;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].Value = value;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= new PropertySetterAccess<T>(r.Name, r.Value);
 				dest.Add((r.Seq, r.Boxed));
 			}
 		}
+	}
+
+	/// <summary>
+	///     Counts recorded setter accesses whose assigned value satisfies <paramref name="match" />.
+	///     Allocation-free fast path for count-only verification.
+	/// </summary>
+	public int CountMatching(IParameterMatch<T> match)
+	{
+		int matches = 0;
+		lock (_growLock)
+		{
+			int n = _published;
+			Record[] records = _records;
+			for (int i = 0; i < n; i++)
+			{
+				ref Record r = ref records[i];
+				if (match.Matches(r.Value))
+				{
+					matches++;
+				}
+			}
+		}
+
+		return matches;
 	}
 
 	private struct Record

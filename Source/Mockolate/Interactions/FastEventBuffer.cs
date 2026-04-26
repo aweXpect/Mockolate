@@ -31,12 +31,13 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly FastEventBufferKind _kind;
 #if NET10_0_OR_GREATER
-	private readonly Lock _lock = new();
+	private readonly Lock _growLock = new();
 #else
-	private readonly object _lock = new();
+	private readonly object _growLock = new();
 #endif
 	private Record[] _records;
-	private int _count;
+	private int _reserved;
+	private int _published;
 
 	internal FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
 	{
@@ -46,7 +47,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
-	public int Count => Volatile.Read(ref _count);
+	public int Count => Volatile.Read(ref _published);
 
 	/// <summary>
 	///     Records an event subscription or unsubscription.
@@ -54,42 +55,62 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	public void Append(string name, object? target, MethodInfo method)
 	{
 		long seq = _owner.NextSequence();
-		lock (_lock)
+		int slot = Interlocked.Increment(ref _reserved) - 1;
+		Record[] records = Volatile.Read(ref _records);
+		if (slot >= records.Length)
 		{
-			int n = _count;
-			if (n == _records.Length)
-			{
-				Array.Resize(ref _records, n * 2);
-			}
-
-			_records[n].Seq = seq;
-			_records[n].Name = name;
-			_records[n].Target = target;
-			_records[n].Method = method;
-			_records[n].Boxed = null;
-			Volatile.Write(ref _count, n + 1);
+			records = GrowToFit(slot);
 		}
 
-		_owner.RaiseAdded();
+		records[slot].Seq = seq;
+		records[slot].Name = name;
+		records[slot].Target = target;
+		records[slot].Method = method;
+		records[slot].Boxed = null;
+		Interlocked.Increment(ref _published);
+
+		if (_owner.HasInteractionAddedSubscribers)
+		{
+			_owner.RaiseAdded();
+		}
+	}
+
+	private Record[] GrowToFit(int slot)
+	{
+		lock (_growLock)
+		{
+			Record[] records = _records;
+			while (slot >= records.Length)
+			{
+				Record[] bigger = new Record[records.Length * 2];
+				Array.Copy(records, bigger, records.Length);
+				records = bigger;
+			}
+
+			Volatile.Write(ref _records, records);
+			return records;
+		}
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
 	public void Clear()
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			_count = 0;
+			_reserved = 0;
+			Volatile.Write(ref _published, 0);
 		}
 	}
 
 	void IFastMemberBuffer.AppendBoxed(List<(long Seq, IInteraction Interaction)> dest)
 	{
-		lock (_lock)
+		lock (_growLock)
 		{
-			int n = _count;
+			int n = _published;
+			Record[] records = _records;
 			for (int i = 0; i < n; i++)
 			{
-				ref Record r = ref _records[i];
+				ref Record r = ref records[i];
 				r.Boxed ??= _kind == FastEventBufferKind.Subscribe
 					? new EventSubscription(r.Name, r.Target, r.Method)
 					: (IInteraction)new EventUnsubscription(r.Name, r.Target, r.Method);
@@ -97,6 +118,12 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 			}
 		}
 	}
+
+	/// <summary>
+	///     Returns the number of recorded subscribe/unsubscribe accesses. Allocation-free fast path
+	///     equivalent to <see cref="Count" />.
+	/// </summary>
+	public int CountMatching() => Volatile.Read(ref _published);
 
 	private struct Record
 	{
