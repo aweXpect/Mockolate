@@ -1,4 +1,6 @@
+using System.Linq;
 using System.Reflection;
+using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internal.Tests.TestHelpers;
 using Mockolate.Parameters;
@@ -301,6 +303,372 @@ public sealed class MockRegistryTests
 
 			await That(result).Never();
 			await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event bar");
+		}
+	}
+
+	public sealed class GetMethodSetupSnapshotTests
+	{
+		[Fact]
+		public async Task WithEmptyTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			MethodSetup[]? result = registry.GetMethodSetupSnapshot(0);
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithMemberIdAtBoundary_ShouldReturnTheBucket()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			ReturnMethodSetup<int>.WithParameterCollection setup = new(MockBehavior.Default, "Method");
+			registry.SetupMethod(5, setup);
+
+			MethodSetup[]? result = registry.GetMethodSetupSnapshot(5);
+
+			await That(result).IsNotNull();
+			await That(result!).Contains(setup);
+		}
+
+		[Fact]
+		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			ReturnMethodSetup<int>.WithParameterCollection setup = new(MockBehavior.Default, "Method");
+			registry.SetupMethod(0, setup);
+
+			MethodSetup[]? result = registry.GetMethodSetupSnapshot(5);
+
+			await That(result).IsNull();
+		}
+	}
+
+	public sealed class GetPropertySetupSnapshotTests
+	{
+		[Fact]
+		public async Task WithEmptyTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			PropertySetup? result = registry.GetPropertySetupSnapshot(0);
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithMemberIdAtBoundary_ShouldReturnTheSetup()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			PropertySetup<int> setup = new(registry, "P");
+			registry.SetupProperty(5, setup);
+
+			PropertySetup? result = registry.GetPropertySetupSnapshot(5);
+
+			await That(result).IsSameAs(setup);
+		}
+
+		[Fact]
+		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			PropertySetup<int> setup = new(registry, "P");
+			registry.SetupProperty(0, setup);
+
+			PropertySetup? result = registry.GetPropertySetupSnapshot(5);
+
+			await That(result).IsNull();
+		}
+	}
+
+	public sealed class GetIndexerSetupSnapshotTests
+	{
+		[Fact]
+		public async Task WithEmptyTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			IndexerSetup[]? result = registry.GetIndexerSetupSnapshot(0);
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithMemberIdAtBoundary_ShouldReturnTheBucket()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			IndexerSetup<string, int> setup = new(registry, (IParameterMatch<int>)It.IsAny<int>());
+			registry.SetupIndexer(5, setup);
+
+			IndexerSetup[]? result = registry.GetIndexerSetupSnapshot(5);
+
+			await That(result).IsNotNull();
+			await That(result!).Contains(setup);
+		}
+
+		[Fact]
+		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			IndexerSetup<string, int> setup = new(registry, (IParameterMatch<int>)It.IsAny<int>());
+			registry.SetupIndexer(0, setup);
+
+			IndexerSetup[]? result = registry.GetIndexerSetupSnapshot(5);
+
+			await That(result).IsNull();
+		}
+	}
+
+	public sealed class GetEventSetupSnapshotTests
+	{
+		[Fact]
+		public async Task WithEmptyTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			EventSetup[]? result = registry.GetEventSetupSnapshot(0);
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task WithMemberIdAtBoundary_ShouldReturnTheBucket()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			EventSetup setup = new(registry, "OnEvent");
+			registry.SetupEvent(5, setup);
+
+			EventSetup[]? result = registry.GetEventSetupSnapshot(5);
+
+			await That(result).IsNotNull();
+			await That(result!).Contains(setup);
+		}
+
+		[Fact]
+		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			EventSetup setup = new(registry, "OnEvent");
+			registry.SetupEvent(0, setup);
+
+			EventSetup[]? result = registry.GetEventSetupSnapshot(5);
+
+			await That(result).IsNull();
+		}
+	}
+
+	public sealed class GetPropertyFastTests
+	{
+		[Fact]
+		public async Task WithActiveScenario_ShouldAlwaysTakeColdPath()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			PropertySetup<int> defaultSetup = new(registry, "P");
+			defaultSetup.InitializeWith(10);
+			registry.SetupProperty(2, defaultSetup);
+
+			PropertySetup<int> scenarioSetup = new(registry, "P");
+			scenarioSetup.InitializeWith(99);
+			registry.SetupProperty(2, "myScenario", scenarioSetup);
+
+			registry.TransitionTo("myScenario");
+			int result = registry.GetPropertyFast(2, "P", _ => 0);
+
+			await That(result).IsEqualTo(99);
+		}
+
+		[Fact]
+		public async Task WithBaseValueAccessor_ShouldAlwaysTakeColdPath()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			PropertySetup<int> snapshot = new(registry, "P");
+			registry.SetupProperty(2, snapshot);
+
+			int baseInvocations = 0;
+
+			int Base()
+			{
+				baseInvocations++;
+				return 99;
+			}
+
+			int result = registry.GetPropertyFast(2, "P", _ => 7, Base);
+
+			await That(baseInvocations).IsEqualTo(1);
+			await That(result).IsEqualTo(99);
+		}
+
+		[Fact]
+		public async Task WithoutSnapshotSetup_ShouldFallBackToColdPath()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			int result = registry.GetPropertyFast(0, "P", _ => 7);
+
+			await That(result).IsEqualTo(7);
+		}
+
+		[Fact]
+		public async Task WithSnapshotSetup_ShouldBypassSlowResolverAndReturnSetupValue()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			PropertySetup<int> snapshot = new(registry, "P");
+			snapshot.InitializeWith(42);
+			registry.SetupProperty(2, snapshot);
+
+			int generatorInvocations = 0;
+
+			int Generator(MockBehavior _)
+			{
+				generatorInvocations++;
+				return -1;
+			}
+
+			int first = registry.GetPropertyFast(2, "P", Generator);
+			int second = registry.GetPropertyFast(2, "P", Generator);
+
+			await That(first).IsEqualTo(42);
+			await That(second).IsEqualTo(42);
+			await That(generatorInvocations).IsEqualTo(0);
+		}
+	}
+
+	public sealed class SetPropertyFastTests
+	{
+		[Fact]
+		public async Task WithoutSnapshotSetup_ShouldFallBackToResolveSetup()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			PropertySetup<int> setup = new(registry, "P");
+			setup.InitializeWith(10);
+			registry.SetupProperty(setup);
+
+			bool skipBase = registry.SetPropertyFast(2, 3, "P", 42);
+
+			await That(skipBase).IsFalse();
+			int after = registry.GetProperty("P", () => -1, null);
+			await That(after).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task WithSnapshotSetup_ShouldInvokeSetterAndStoreValue()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			PropertySetup<int> snapshot = new(registry, "P");
+			snapshot.InitializeWith(0);
+			registry.SetupProperty(2, snapshot);
+
+			bool skipBase = registry.SetPropertyFast(2, 3, "P", 42);
+
+			await That(skipBase).IsFalse();
+			int after = registry.GetPropertyFast(2, "P", _ => -1);
+			await That(after).IsEqualTo(42);
+		}
+	}
+
+	public sealed class AddEventMemberIdTests
+	{
+		[Fact]
+		public async Task AddEvent_WithMemberId_ShouldRecordAsEventSubscription()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			registry.AddEvent(0, "OnFoo", this, GetMethodInfo());
+
+			IInteraction recorded = registry.Interactions.Single();
+			await That(recorded).IsExactly<EventSubscription>();
+		}
+
+		[Fact]
+		public async Task AddEvent_WithMemberIdAndMatchingSnapshot_ShouldInvokeSubscribedCallback()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			int subscribedCount = 0;
+			EventSetup setup = new(registry, "OnFoo");
+			setup.OnSubscribed.Do(() => subscribedCount++);
+			registry.SetupEvent(7, setup);
+
+			registry.AddEvent(7, "OnFoo", this, GetMethodInfo());
+
+			await That(subscribedCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task AddEvent_WithNullMethod_ShouldThrowMockException()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			void Act()
+			{
+				registry.AddEvent(0, "OnFoo", this, null);
+			}
+
+			await That(Act).Throws<MockException>();
+		}
+	}
+
+	public sealed class RemoveEventMemberIdTests
+	{
+		[Fact]
+		public async Task RemoveEvent_WithMemberId_ShouldRecordAsEventUnsubscription()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			registry.RemoveEvent(0, "OnFoo", this, GetMethodInfo());
+
+			IInteraction recorded = registry.Interactions.Single();
+			await That(recorded).IsExactly<EventUnsubscription>();
+		}
+
+		[Fact]
+		public async Task RemoveEvent_WithMemberIdAndMatchingSnapshot_ShouldInvokeUnsubscribedCallback()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+			int unsubscribedCount = 0;
+			EventSetup setup = new(registry, "OnFoo");
+			setup.OnUnsubscribed.Do(() => unsubscribedCount++);
+			registry.SetupEvent(7, setup);
+
+			registry.RemoveEvent(7, "OnFoo", this, GetMethodInfo());
+
+			await That(unsubscribedCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task RemoveEvent_WithNullMethod_ShouldThrowMockException()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			void Act()
+			{
+				registry.RemoveEvent(0, "OnFoo", this, null);
+			}
+
+			await That(Act).Throws<MockException>();
+		}
+	}
+
+	public sealed class SetPropertyFallbackBehaviorTests
+	{
+		[Fact]
+		public async Task SetProperty_WithoutSnapshot_ShouldReturnBehaviorSkipBaseClassWhenSetupAllowsBase()
+		{
+			MockBehavior behavior = MockBehavior.Default.SkippingBaseClass();
+			MockRegistry registry = new(behavior);
+
+			bool result = registry.SetProperty("P", 42);
+
+			await That(result).IsTrue();
+		}
+
+		[Fact]
+		public async Task SetProperty_WithoutSnapshot_ShouldReturnFalseWhenBehaviorDoesNotSkip()
+		{
+			MockRegistry registry = new(MockBehavior.Default);
+
+			bool result = registry.SetProperty("P", 42);
+
+			await That(result).IsFalse();
 		}
 	}
 }
