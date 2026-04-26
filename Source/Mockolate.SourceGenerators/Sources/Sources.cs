@@ -411,6 +411,14 @@ internal static partial class Sources
 	internal static string ExpandCrefs(string source)
 	{
 		const string OpenTag = "<see cref=\"";
+		// Many of the smaller generator outputs (ActionFunc.g.cs, ReturnsThrowsAsyncExtensions.g.cs,
+		// MockBehaviorExtensions.g.cs) carry no self-closing cref tags. Exit before the StringBuilder
+		// is allocated and the source is rewalked.
+		if (source.IndexOf(OpenTag, StringComparison.Ordinal) < 0)
+		{
+			return source;
+		}
+
 		int searchFrom = 0;
 		int copiedUpTo = 0;
 		StringBuilder? result = null;

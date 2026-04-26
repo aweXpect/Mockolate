@@ -18,7 +18,7 @@ internal readonly record struct GenericParameter
 		NullableAnnotation = typeSymbol.ReferenceTypeConstraintNullableAnnotation;
 
 		ConstraintTypes = new EquatableArray<Type>(typeSymbol.ConstraintTypes
-			.Select(x => new Type(x)).ToArray());
+			.Select(Type.From).ToArray());
 	}
 
 	public EquatableArray<Type> ConstraintTypes { get; }

@@ -695,6 +695,7 @@ public partial class MockGeneratorTests
 
 		await That(result.Sources.Keys).IsEqualTo([
 			"Mock.g.cs",
+			"Mock.AsExtensions.g.cs",
 			"MockBehaviorExtensions.g.cs",
 			"Mock.IMyInterface1.g.cs",
 			"Mock.IMyInterface2.g.cs",

@@ -8,14 +8,31 @@ namespace Mockolate.SourceGenerators;
 internal static class MockGeneratorHelpers
 {
 	internal static bool IsCreateMethodInvocation(this SyntaxNode node)
-		=> node is InvocationExpressionSyntax
+	{
+		if (node is not InvocationExpressionSyntax
+		    {
+			    Expression: MemberAccessExpressionSyntax memberAccess,
+		    })
 		{
-			Expression: MemberAccessExpressionSyntax
-			{
-				Name: IdentifierNameSyntax { Identifier.ValueText: "CreateMock", }
-				or GenericNameSyntax { Identifier.ValueText: "Implementing", },
-			},
-		};
+			return false;
+		}
+
+		switch (memberAccess.Name)
+		{
+			case IdentifierNameSyntax { Identifier.ValueText: "CreateMock", }:
+				return true;
+			case GenericNameSyntax { Identifier.ValueText: "Implementing", }:
+				// `Implementing<T>` only fires inside a chain whose receiver is itself an
+				// invocation (T.CreateMock().Implementing<U>() or another Implementing<>() before
+				// it). Skip the expensive semantic-model query in
+				// `ExtractMockOrMockFactoryCreateSyntaxOrDefault` for any unrelated user-defined
+				// `Implementing<>` whose receiver is a value, type, or member-access — those
+				// cannot be Mockolate calls.
+				return memberAccess.Expression is InvocationExpressionSyntax;
+			default:
+				return false;
+		}
+	}
 
 	private static bool IsInGlobalMockolateNamespace(ISymbol symbol)
 		=> symbol.ContainingNamespace is { Name: "Mockolate", ContainingNamespace.IsGlobalNamespace: true, };

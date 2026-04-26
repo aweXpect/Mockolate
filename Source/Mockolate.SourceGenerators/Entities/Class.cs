@@ -8,7 +8,7 @@ using Mockolate.SourceGenerators.Internals;
 namespace Mockolate.SourceGenerators.Entities;
 
 [DebuggerDisplay("{DisplayString}")]
-internal record Class
+internal class Class : IEquatable<Class>
 {
 	private readonly IAssemblySymbol _sourceAssembly;
 	private List<Event>? _allEvents;
@@ -43,54 +43,96 @@ internal record Class
 		IsInterface = type.TypeKind == TypeKind.Interface;
 		HasRequiredMembers = ComputeHasRequiredMembers(type);
 		ImmutableArray<ISymbol> members = type.GetMembers();
-		List<Method> methods = ToListExcept(members.OfType<IMethodSymbol>()
-			// Exclude getter/setter methods
-			.Where(x => x.MethodKind is MethodKind.Ordinary)
-			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-			.Where(ShouldIncludeMember)
-			.Select(x => new Method(x, alreadyDefinedMethods, sourceAssembly))
-			.Distinct(), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
+
+		// Single-pass member walk. The original code did six separate LINQ chains over `members`
+		// (three include passes producing Methods/Properties/Events plus three except-list passes).
+		// Each `.OfType<T>()` allocated an enumerator and rewalked the array — for a class deep in
+		// the inheritance graph this work compounds across every base class. Folding into one
+		// `foreach` collapses the constant factor without changing observable behavior.
+		List<Method> methodIncludes = new();
+		List<Property> propertyIncludes = new();
+		List<Event> eventIncludes = new();
+		List<Method> methodExceptCandidates = new();
+		List<Property> propertyExceptCandidates = new();
+		List<Event> eventExceptCandidates = new();
+
+		foreach (ISymbol member in members)
+		{
+			switch (member)
+			{
+				case IMethodSymbol methodSymbol when methodSymbol.MethodKind is MethodKind.Ordinary:
+				{
+					if (!methodSymbol.IsSealed && (IsInterface || methodSymbol.IsVirtual || methodSymbol.IsAbstract) &&
+					    ShouldIncludeMember(methodSymbol))
+					{
+						methodIncludes.Add(new Method(methodSymbol, alreadyDefinedMethods, sourceAssembly));
+					}
+
+					if (methodSymbol.IsSealed || HidesBaseOverridable(methodSymbol, type))
+					{
+						methodExceptCandidates.Add(new Method(methodSymbol, null, sourceAssembly));
+					}
+
+					break;
+				}
+
+				case IPropertySymbol propertySymbol:
+				{
+					if (!propertySymbol.IsSealed && (IsInterface || propertySymbol.IsVirtual || propertySymbol.IsAbstract) &&
+					    ShouldIncludeMember(propertySymbol))
+					{
+						propertyIncludes.Add(new Property(propertySymbol, alreadyDefinedProperties, sourceAssembly));
+					}
+
+					if (propertySymbol.IsSealed || HidesBaseOverridable(propertySymbol, type))
+					{
+						propertyExceptCandidates.Add(new Property(propertySymbol, null, sourceAssembly));
+					}
+
+					break;
+				}
+
+				case IEventSymbol eventSymbol:
+				{
+					IMethodSymbol? invoke = (eventSymbol.Type as INamedTypeSymbol)?.DelegateInvokeMethod;
+					if (invoke is null)
+					{
+						break;
+					}
+
+					if (!eventSymbol.IsSealed && (IsInterface || eventSymbol.IsVirtual || eventSymbol.IsAbstract) &&
+					    ShouldIncludeMember(eventSymbol))
+					{
+						eventIncludes.Add(new Event(eventSymbol, invoke, alreadyDefinedEvents, sourceAssembly));
+					}
+
+					if (eventSymbol.IsSealed || HidesBaseOverridable(eventSymbol, type))
+					{
+						eventExceptCandidates.Add(new Event(eventSymbol, invoke, null, sourceAssembly));
+					}
+
+					break;
+				}
+			}
+		}
+
+		List<Method> methods = ToListExcept(DistinctList(methodIncludes), exceptMethods, Method.ContainingTypeIndependentEqualityComparer);
 		Methods = new EquatableArray<Method>(methods.ToArray());
 
-		List<Property> properties = ToListExcept(members.OfType<IPropertySymbol>()
-			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-			.Where(ShouldIncludeMember)
-			.Select(x => new Property(x, alreadyDefinedProperties, sourceAssembly))
-			.Distinct(), exceptProperties, Property.ContainingTypeIndependentEqualityComparer);
+		List<Property> properties = ToListExcept(DistinctList(propertyIncludes), exceptProperties, Property.ContainingTypeIndependentEqualityComparer);
 		Properties = new EquatableArray<Property>(properties.ToArray());
 
-		List<Event> events = ToListExcept(members.OfType<IEventSymbol>()
-			.Where(x => !x.IsSealed)
-			.Where(x => IsInterface || x.IsVirtual || x.IsAbstract)
-			.Where(ShouldIncludeMember)
-			.Select(x => (x, x.Type as INamedTypeSymbol))
-			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
-			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, alreadyDefinedEvents, sourceAssembly))
-			.Distinct(), exceptEvents, Event.ContainingTypeIndependentEqualityComparer);
+		List<Event> events = ToListExcept(DistinctList(eventIncludes), exceptEvents, Event.ContainingTypeIndependentEqualityComparer);
 		Events = new EquatableArray<Event>(events.ToArray());
 
 		exceptProperties ??= new List<Property>();
-		exceptProperties.AddRange(members.OfType<IPropertySymbol>()
-			.Where(x => x.IsSealed || HidesBaseOverridable(x, type))
-			.Select(x => new Property(x, null, sourceAssembly))
-			.Distinct());
+		exceptProperties.AddRange(DistinctList(propertyExceptCandidates));
 
 		exceptMethods ??= new List<Method>();
-		exceptMethods.AddRange(members.OfType<IMethodSymbol>()
-			.Where(x => x.MethodKind is MethodKind.Ordinary)
-			.Where(x => x.IsSealed || HidesBaseOverridable(x, type))
-			.Select(x => new Method(x, null, sourceAssembly))
-			.Distinct());
+		exceptMethods.AddRange(DistinctList(methodExceptCandidates));
 
 		exceptEvents ??= new List<Event>();
-		exceptEvents.AddRange(members.OfType<IEventSymbol>()
-			.Where(x => x.IsSealed || HidesBaseOverridable(x, type))
-			.Select(x => (x, x.Type as INamedTypeSymbol))
-			.Where(x => x.Item2?.DelegateInvokeMethod is not null)
-			.Select(x => new Event(x.x, x.Item2!.DelegateInvokeMethod!, null, sourceAssembly))
-			.Distinct());
+		exceptEvents.AddRange(DistinctList(eventExceptCandidates));
 
 		InheritedTypes = new EquatableArray<Class>(
 			GetInheritedTypes(type).Select(t
@@ -242,6 +284,28 @@ internal record Class
 		}
 
 		return source.Except(except, comparer).ToList();
+	}
+
+	// In-place dedup that preserves insertion order and uses default equality. Mirrors the
+	// behavior of `.Distinct()` on the lists produced by the single-pass member walk.
+	private static List<T> DistinctList<T>(List<T> list) where T : notnull
+	{
+		if (list.Count <= 1)
+		{
+			return list;
+		}
+
+		HashSet<T> seen = new();
+		List<T> result = new(list.Count);
+		foreach (T item in list)
+		{
+			if (seen.Add(item))
+			{
+				result.Add(item);
+			}
+		}
+
+		return result;
 	}
 
 	// True when `member` (declared on `thisType`) hides an overridable member of the same
@@ -405,6 +469,26 @@ internal record Class
 
 		return _classNameWithoutDots = sb.ToString();
 	}
+
+	// Equality is keyed only on ClassFullName: it uniquely identifies the type within a
+	// compilation, so it's both necessary and sufficient as a Roslyn incremental cache key.
+	// Two Class instances built from the same fully-qualified type are interchangeable from
+	// the generator's perspective — the body of the type is reified deterministically by the
+	// constructor. Comparing the full Methods/Properties/Events graph would be quadratic in
+	// member count and dwarfs the rest of the generator on large mock surfaces.
+	public virtual bool Equals(Class? other)
+		=> ReferenceEquals(this, other) ||
+		   (other is not null &&
+		    GetType() == other.GetType() &&
+		    ClassFullName == other.ClassFullName);
+
+	public override bool Equals(object? obj) => Equals(obj as Class);
+
+	public override int GetHashCode() => ClassFullName.GetHashCode();
+
+	public static bool operator ==(Class? left, Class? right) => left?.Equals(right) ?? right is null;
+
+	public static bool operator !=(Class? left, Class? right) => !(left == right);
 
 	private sealed class ClassEqualityComparer : IEqualityComparer<Class>
 	{

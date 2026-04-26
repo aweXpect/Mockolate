@@ -11,6 +11,19 @@ internal record Type
 		DisplayName = fullname;
 	}
 
+	// Shared factory: route through the per-compilation cache (when one is on this thread's
+	// scope) so identical ITypeSymbol references reuse a single Type record.
+	internal static Type From(ITypeSymbol typeSymbol)
+	{
+		EntityCache? cache = EntityCache.Current;
+		if (cache is null)
+		{
+			return new Type(typeSymbol);
+		}
+
+		return cache.GetOrAddType(typeSymbol, static s => new Type(s));
+	}
+
 	internal Type(ITypeSymbol typeSymbol)
 	{
 		// Removes '*' from multi-dimensional array types
@@ -22,12 +35,12 @@ internal record Type
 			if (typeSymbol.IsTupleType)
 			{
 				TupleTypes = new EquatableArray<Type>(namedTypeSymbol.TupleElements
-					.Select(x => new Type(x.Type))
+					.Select(x => From(x.Type))
 					.ToArray());
 			}
 
 			GenericTypeParameters = new EquatableArray<Type>(namedTypeSymbol.TypeArguments
-				.Select(x => new Type(x))
+				.Select(From)
 				.ToArray());
 		}
 

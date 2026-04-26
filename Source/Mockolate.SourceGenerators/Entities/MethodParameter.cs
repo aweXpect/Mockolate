@@ -1,13 +1,25 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
 internal readonly record struct MethodParameter
 {
+	internal static MethodParameter From(IParameterSymbol symbol)
+	{
+		EntityCache? cache = EntityCache.Current;
+		if (cache is null)
+		{
+			return new MethodParameter(symbol);
+		}
+
+		return cache.GetOrAddParameter(symbol, static s => new MethodParameter(s));
+	}
+
 	public MethodParameter(IParameterSymbol parameterSymbol)
 	{
-		Type = new Type(parameterSymbol.Type);
+		Type = Type.From(parameterSymbol.Type);
 		Name = Helpers.EscapeIfKeyword(parameterSymbol.Name);
 		RefKind = parameterSymbol.RefKind;
 		IsNullableAnnotated = parameterSymbol.NullableAnnotation == NullableAnnotation.Annotated;
