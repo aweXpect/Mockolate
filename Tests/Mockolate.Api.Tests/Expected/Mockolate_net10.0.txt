@@ -209,16 +209,20 @@ namespace Mockolate
         public bool ApplyIndexerSetter<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup? setup, TResult value, int signatureIndex) { }
         public TResult ApplyIndexerSetup<TResult>(Mockolate.Interactions.IndexerAccess access, Mockolate.Setup.IndexerSetup setup, int signatureIndex) { }
         public void ClearAllInteractions() { }
+        public Mockolate.Setup.EventSetup[]? GetEventSetupSnapshot(int memberId) { }
         public TResult GetIndexerFallback<TResult>(Mockolate.Interactions.IndexerAccess access, int signatureIndex) { }
         public T? GetIndexerSetup<T>(Mockolate.Interactions.IndexerAccess access)
             where T : Mockolate.Setup.IndexerSetup { }
         public T? GetIndexerSetup<T>(System.Func<T, bool> predicate)
             where T : Mockolate.Setup.IndexerSetup { }
+        public Mockolate.Setup.IndexerSetup[]? GetIndexerSetupSnapshot(int memberId) { }
         public Mockolate.Setup.MethodSetup[]? GetMethodSetupSnapshot(int memberId) { }
         public System.Collections.Generic.IEnumerable<T> GetMethodSetups<T>(string methodName)
             where T : Mockolate.Setup.MethodSetup { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetProperty<TResult>(int memberId, string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
+        public TResult GetPropertyFast<TResult>(int memberId, string propertyName, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
+        public Mockolate.Setup.PropertySetup? GetPropertySetupSnapshot(int memberId) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.IMockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, int memberId, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGotTyped<T, T1>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, System.Func<string> parametersDescription) { }
@@ -238,16 +242,23 @@ namespace Mockolate
         public void SetIndexerValue<TResult>(Mockolate.Interactions.IndexerAccess access, TResult value, int signatureIndex) { }
         public bool SetProperty<T>(string propertyName, T value) { }
         public bool SetProperty<T>(int memberId, string propertyName, T value) { }
+        public bool SetPropertyFast<T>(int memberId, int setterMemberId, string propertyName, T value) { }
         public void SetupEvent(Mockolate.Setup.EventSetup eventSetup) { }
+        public void SetupEvent(int memberId, Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupEvent(string scenario, Mockolate.Setup.EventSetup eventSetup) { }
+        public void SetupEvent(int memberId, string scenario, Mockolate.Setup.EventSetup eventSetup) { }
         public void SetupIndexer(Mockolate.Setup.IndexerSetup indexerSetup) { }
+        public void SetupIndexer(int memberId, Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupIndexer(string scenario, Mockolate.Setup.IndexerSetup indexerSetup) { }
+        public void SetupIndexer(int memberId, string scenario, Mockolate.Setup.IndexerSetup indexerSetup) { }
         public void SetupMethod(Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupMethod(int memberId, Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupMethod(string scenario, Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupMethod(int memberId, string scenario, Mockolate.Setup.MethodSetup methodSetup) { }
         public void SetupProperty(Mockolate.Setup.PropertySetup propertySetup) { }
+        public void SetupProperty(int memberId, Mockolate.Setup.PropertySetup propertySetup) { }
         public void SetupProperty(string scenario, Mockolate.Setup.PropertySetup propertySetup) { }
+        public void SetupProperty(int memberId, string scenario, Mockolate.Setup.PropertySetup propertySetup) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedTo<T>(T subject, int memberId, string eventName) { }
         public Mockolate.Verify.VerificationResult<T> SubscribedToTyped<T>(T subject, int memberId, string eventName) { }
         public void TransitionTo(string scenario) { }

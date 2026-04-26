@@ -2151,21 +2151,39 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(propertyGetMemberArg).Append(property.GetUniqueNameString()).Append(", () => ")
-						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
-					if (!property.IsStatic)
+					if (useFastForProperty)
 					{
-						sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className)
-							.Append(" wraps ? null : () => wraps.").Append(property.Name);
+						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetPropertyFast<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property))
+							.Append(", ").Append(property.GetUniqueNameString()).Append(", static b => ")
+							.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue");
+						if (!property.IsStatic)
+						{
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className)
+								.Append(" wraps ? null : () => wraps.").Append(property.Name);
+						}
+
+						sb.Append(");").AppendLine();
 					}
 					else
 					{
-						sb.Append(", null");
-					}
+						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(propertyGetMemberArg).Append(property.GetUniqueNameString()).Append(", () => ")
+							.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
+						if (!property.IsStatic)
+						{
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className)
+								.Append(" wraps ? null : () => wraps.").Append(property.Name);
+						}
+						else
+						{
+							sb.Append(", null");
+						}
 
-					sb.Append(");").AppendLine();
+						sb.Append(");").AppendLine();
+					}
 				}
 			}
 			else if (!isClassInterface && !property.IsAbstract)
@@ -2222,22 +2240,45 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(propertyGetMemberArg).Append(property.GetUniqueNameString()).Append(", () => ")
-						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
-					if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
+					if (useFastForProperty)
 					{
-						sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className)
-							.Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.")
-							.Append(property.Name);
+						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetPropertyFast<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property))
+							.Append(", ").Append(property.GetUniqueNameString()).Append(", static b => ")
+							.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue");
+						if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
+						{
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className)
+								.Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.")
+								.Append(property.Name);
+						}
+						else
+						{
+							sb.Append(", () => base.").Append(property.Name);
+						}
+
+						sb.Append(");").AppendLine();
 					}
 					else
 					{
-						sb.Append(", () => base.").Append(property.Name);
-					}
+						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(propertyGetMemberArg).Append(property.GetUniqueNameString()).Append(", () => ")
+							.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
+						if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
+						{
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className)
+								.Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.")
+								.Append(property.Name);
+						}
+						else
+						{
+							sb.Append(", () => base.").Append(property.Name);
+						}
 
-					sb.Append(");").AppendLine();
+						sb.Append(");").AppendLine();
+					}
 				}
 			}
 			else if (property is { IsIndexer: true, IndexerParameters: not null, })
@@ -2261,12 +2302,25 @@ internal static partial class Sources
 			}
 			else
 			{
-				sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
-					.AppendTypeOrWrapper(property.Type).Append(">(")
-					.Append(propertyGetMemberArg).Append(property.GetUniqueNameString())
-					.Append(", () => ")
-					.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue")
-					.Append(", null);").AppendLine();
+				if (useFastForProperty)
+				{
+					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetPropertyFast<")
+						.AppendTypeOrWrapper(property.Type).Append(">(")
+						.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property))
+						.Append(", ").Append(property.GetUniqueNameString())
+						.Append(", static b => ")
+						.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue")
+						.Append(");").AppendLine();
+				}
+				else
+				{
+					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
+						.AppendTypeOrWrapper(property.Type).Append(">(")
+						.Append(propertyGetMemberArg).Append(property.GetUniqueNameString())
+						.Append(", () => ")
+						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue")
+						.Append(", null);").AppendLine();
+				}
 			}
 
 			sb.AppendLine("\t\t\t}");
@@ -2302,7 +2356,8 @@ internal static partial class Sources
 
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
-						useFastForIndexer ? indexerSetIdRef : null);
+						useFastForIndexer ? indexerSetIdRef : null,
+						useFastForIndexer ? indexerGetIdRef : null);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append(");")
@@ -2318,10 +2373,22 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(propertySetMemberArg).Append(property.GetUniqueNameString())
-						.Append(", value);").AppendLine();
+					if (useFastForProperty)
+					{
+						sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetPropertyFast<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property)).Append(", ")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertySetIdentifier(property)).Append(", ")
+							.Append(property.GetUniqueNameString()).Append(", value);").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(propertySetMemberArg).Append(property.GetUniqueNameString())
+							.Append(", value);").AppendLine();
+					}
+
 					if (!property.IsStatic)
 					{
 						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
@@ -2345,7 +2412,8 @@ internal static partial class Sources
 				{
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
-						useFastForIndexer ? indexerSetIdRef : null);
+						useFastForIndexer ? indexerSetIdRef : null,
+						useFastForIndexer ? indexerGetIdRef : null);
 					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append("))").AppendLine();
@@ -2379,7 +2447,8 @@ internal static partial class Sources
 				{
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
-						useFastForIndexer ? indexerSetIdRef : null);
+						useFastForIndexer ? indexerSetIdRef : null,
+						useFastForIndexer ? indexerGetIdRef : null);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append(");").AppendLine();
@@ -2389,10 +2458,22 @@ internal static partial class Sources
 			{
 				if (!isClassInterface && !property.IsAbstract)
 				{
-					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(propertySetMemberArg).Append(property.GetUniqueNameString())
-						.Append(", value))").AppendLine();
+					if (useFastForProperty)
+					{
+						sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetPropertyFast<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property)).Append(", ")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertySetIdentifier(property)).Append(", ")
+							.Append(property.GetUniqueNameString()).Append(", value))").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".SetProperty<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(propertySetMemberArg).Append(property.GetUniqueNameString())
+							.Append(", value))").AppendLine();
+					}
+
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property is { IsStatic: false, } && property.Setter?.IsProtected != true)
 					{
@@ -2415,10 +2496,21 @@ internal static partial class Sources
 				}
 				else
 				{
-					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
-						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(propertySetMemberArg).Append(property.GetUniqueNameString())
-						.AppendLine(", value);");
+					if (useFastForProperty)
+					{
+						sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetPropertyFast<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property)).Append(", ")
+							.Append(memberIdPrefix).Append(memberIds.GetPropertySetIdentifier(property)).Append(", ")
+							.Append(property.GetUniqueNameString()).AppendLine(", value);");
+					}
+					else
+					{
+						sb.Append("\t\t\t\t").Append(mockRegistry).Append(".SetProperty<")
+							.AppendTypeOrWrapper(property.Type).Append(">(")
+							.Append(propertySetMemberArg).Append(property.GetUniqueNameString())
+							.AppendLine(", value);");
+					}
 				}
 			}
 
@@ -3561,7 +3653,9 @@ internal static partial class Sources
 				.Append(property.Type.Fullname).Append(">(").Append(mockRegistryName).Append(", ")
 				.Append(property.GetUniqueNameString()).Append(");")
 				.AppendLine();
-			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupProperty(").Append(scopePrefix).Append("propertySetup);").AppendLine();
+			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupProperty(")
+				.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property)).Append(", ")
+				.Append(scopePrefix).Append("propertySetup);").AppendLine();
 			sb.Append("\t\t\t\treturn propertySetup;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
@@ -3587,7 +3681,9 @@ internal static partial class Sources
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\tglobal::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(")
 				.Append(mockRegistryName).Append(", ").Append(@event.GetUniqueNameString()).Append(");").AppendLine();
-			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupEvent(").Append(scopePrefix).Append("eventSetup);").AppendLine();
+			sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupEvent(")
+				.Append(memberIdPrefix).Append(memberIds.GetEventSubscribeIdentifier(@event)).Append(", ")
+				.Append(scopePrefix).Append("eventSetup);").AppendLine();
 			sb.Append("\t\t\t\treturn eventSetup;").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();
@@ -4208,7 +4304,9 @@ internal static partial class Sources
 		}
 
 		sb.Append(");").AppendLine();
-		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupIndexer(").Append(scopePrefix).Append("indexerSetup);").AppendLine();
+		sb.Append("\t\t\t\tthis.").Append(mockRegistryName).Append(".SetupIndexer(")
+			.Append(memberIdPrefix).Append(memberIds.GetIndexerGetIdentifier(indexer)).Append(", ")
+			.Append(scopePrefix).Append("indexerSetup);").AppendLine();
 		sb.Append("\t\t\t\treturn indexerSetup;").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();

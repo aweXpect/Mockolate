@@ -65,6 +65,71 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Returns the current default-scope property setup registered under the generator-emitted
+	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
+	/// </summary>
+	/// <remarks>
+	///     Reads are lock-free. Only sees setups registered via the <c>SetupProperty(int, ...)</c> overloads;
+	///     scenario-scoped registrations still go through the string-keyed fallback.
+	/// </remarks>
+	/// <param name="memberId">The generator-emitted member id.</param>
+	/// <returns>The property setup for the member, or <see langword="null" /> when none is registered.</returns>
+	public PropertySetup? GetPropertySetupSnapshot(int memberId)
+	{
+		PropertySetup?[]? table = Volatile.Read(ref _propertySetupsByMemberId);
+		if (table is null || (uint)memberId >= (uint)table.Length)
+		{
+			return null;
+		}
+
+		return table[memberId];
+	}
+
+	/// <summary>
+	///     Returns the current snapshot of default-scope indexer setups registered under the generator-emitted
+	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
+	/// </summary>
+	/// <remarks>
+	///     The returned array is immutable — callers may iterate it without a lock. Setups are appended in
+	///     registration order, so callers walking for latest-registered-first should iterate in reverse.
+	/// </remarks>
+	/// <param name="memberId">The generator-emitted member id.</param>
+	/// <returns>The setups array for the member, or <see langword="null" /> when none are registered.</returns>
+	public IndexerSetup[]? GetIndexerSetupSnapshot(int memberId)
+	{
+		IndexerSetup[]?[]? table = Volatile.Read(ref _indexerSetupsByMemberId);
+		if (table is null || (uint)memberId >= (uint)table.Length)
+		{
+			return null;
+		}
+
+		return table[memberId];
+	}
+
+	/// <summary>
+	///     Returns the current snapshot of default-scope event setups registered under the generator-emitted
+	///     subscribe-side <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
+	/// </summary>
+	/// <remarks>
+	///     The returned array is immutable — callers may iterate it without a lock. Setups are appended in
+	///     registration order. Both subscribe and unsubscribe dispatch consult this snapshot under the
+	///     subscribe-side member id; the bucket is shared because a single <see cref="EventSetup" /> wires both
+	///     directions.
+	/// </remarks>
+	/// <param name="memberId">The generator-emitted subscribe-side member id.</param>
+	/// <returns>The setups array for the event, or <see langword="null" /> when none are registered.</returns>
+	public EventSetup[]? GetEventSetupSnapshot(int memberId)
+	{
+		EventSetup[]?[]? table = Volatile.Read(ref _eventSetupsByMemberId);
+		if (table is null || (uint)memberId >= (uint)table.Length)
+		{
+			return null;
+		}
+
+		return table[memberId];
+	}
+
+	/// <summary>
 	///     Enumerates method setups of type <typeparamref name="T" /> matching <paramref name="methodName" />
 	///     in latest-registered-first order, scenario-scoped setups before default-scope setups.
 	/// </summary>
@@ -379,6 +444,57 @@ public partial class MockRegistry
 		return ResolveGetterInternal(propertyName, defaultValueGenerator, baseValueAccessor, null);
 	}
 
+	/// <summary>
+	///     Allocation-free fast-path overload of <see cref="GetProperty{TResult}(int, string, Func{TResult}, Func{TResult}?)" />.
+	///     Avoids the per-call closure allocation by accepting a static <see cref="Func{T, TResult}" /> that takes the
+	///     active <see cref="MockBehavior" /> as its argument — the source generator emits a <c>static</c> lambda so
+	///     the C# compiler caches the delegate in a static field.
+	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="defaultValueGenerator">Cached factory invoked with the active <see cref="MockBehavior" /> when a default value is needed.</param>
+	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered. Pass <see langword="null" /> for the no-wrapping fast path.</param>
+	/// <returns>The resolved getter value.</returns>
+	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
+	public TResult GetPropertyFast<TResult>(int memberId, string propertyName,
+		Func<MockBehavior, TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor = null)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertyGetter(memberId, propertyName);
+		}
+
+		// Hot path: setup registered via SetupProperty(int, ...), no scenario active, no base accessor.
+		if (baseValueAccessor is null && string.IsNullOrEmpty(Scenario))
+		{
+			PropertySetup?[]? table = Volatile.Read(ref _propertySetupsByMemberId);
+			if (table is not null && (uint)memberId < (uint)table.Length)
+			{
+				PropertySetup? snapshot = table[memberId];
+				if (snapshot is not null)
+				{
+					if (!snapshot.IsValueInitialized)
+					{
+						// First read of a not-yet-initialized setup: seed it with the default value.
+						// Mirrors ResolvePropertySetup's contract — without this the next read would
+						// auto-init via the cold path and overwrite a value set by a prior setter.
+						((IInteractivePropertySetup)snapshot).InitializeWith(defaultValueGenerator(Behavior));
+					}
+
+					return snapshot.InvokeGetterFast<TResult>(Behavior, defaultValueGenerator);
+				}
+			}
+		}
+
+		// Cold path: scenario, uninitialized snapshot, base-class wrapping, or legacy SetupProperty overload.
+		// Bridge to the existing closure-based resolver via a per-call adapter — this allocation is
+		// acceptable because we only land here outside the hot path.
+		MockBehavior behavior = Behavior;
+		Func<TResult> bridge = () => defaultValueGenerator(behavior);
+		return ResolveGetterInternal(propertyName, bridge, baseValueAccessor, null);
+	}
+
 	private void RecordPropertyGetter(int memberId, string propertyName)
 	{
 		if (Interactions is FastMockInteractions fast)
@@ -476,6 +592,53 @@ public partial class MockRegistry
 		}
 
 		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
+
+		((IInteractivePropertySetup)matchingSetup).InvokeSetter(null, value, Behavior);
+		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
+	}
+
+	/// <summary>
+	///     Allocation-free fast-path overload of <see cref="SetProperty{T}(int, string, T)" /> that uses the
+	///     member-id-keyed property setup snapshot for default-scope dispatch and bypasses the string-keyed
+	///     dictionary scan when a snapshot setup is registered.
+	/// </summary>
+	/// <typeparam name="T">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property setter.</param>
+	/// <param name="propertyName">The simple property name.</param>
+	/// <param name="setterMemberId">The generator-emitted member id for the property setter accessor (for FastPropertySetterBuffer dispatch).</param>
+	/// <param name="value">The value being assigned.</param>
+	/// <returns><see langword="true" /> when the base-class setter should be skipped.</returns>
+	public bool SetPropertyFast<T>(int memberId, int setterMemberId, string propertyName, T value)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertySetter(setterMemberId, propertyName, value);
+		}
+
+		PropertySetup? matchingSetup = null;
+		if (string.IsNullOrEmpty(Scenario))
+		{
+			PropertySetup?[]? table = Volatile.Read(ref _propertySetupsByMemberId);
+			if (table is not null && (uint)memberId < (uint)table.Length)
+			{
+				matchingSetup = table[memberId];
+			}
+		}
+
+		if (matchingSetup is not null)
+		{
+			if (!matchingSetup.IsValueInitialized)
+			{
+				// Mirror the OLD ResolvePropertySetup<T>(propertyName, null, null, false) call: mark the
+				// setup as initialized without overwriting _value, so a subsequent reader's IsValueInitialized
+				// check short-circuits to the value about to be written below.
+				((IInteractivePropertySetup)matchingSetup).InitializeWith(null);
+			}
+		}
+		else
+		{
+			matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
+		}
 
 		((IInteractivePropertySetup)matchingSetup).InvokeSetter(null, value, Behavior);
 		return ((IInteractivePropertySetup)matchingSetup).SkipBaseClass() ?? Behavior.SkipBaseClass;
@@ -608,6 +771,23 @@ public partial class MockRegistry
 			RecordEvent(memberId, name, target, method, true);
 		}
 
+		// Hot path: setups registered via SetupEvent(int, ...), no scenario active.
+		// The snapshot is keyed off the subscribe-side member id (the value the proxy passes here),
+		// so a non-null snapshot replaces the string-keyed dictionary scan entirely.
+		if (string.IsNullOrEmpty(Scenario))
+		{
+			EventSetup[]? snapshot = GetEventSetupSnapshot(memberId);
+			if (snapshot is not null)
+			{
+				for (int i = 0; i < snapshot.Length; i++)
+				{
+					snapshot[i].InvokeSubscribed(target, method);
+				}
+
+				return;
+			}
+		}
+
 		foreach (EventSetup setup in GetEventSetupsByName(name))
 		{
 			setup.InvokeSubscribed(target, method);
@@ -660,6 +840,24 @@ public partial class MockRegistry
 		if (!Behavior.SkipInteractionRecording)
 		{
 			RecordEvent(memberId, name, target, method, false);
+		}
+
+		// Hot path: setups registered via SetupEvent(int, ...), no scenario active. The proxy passes the
+		// unsubscribe-side member id here; a snapshot is only present when the source generator emitted the
+		// fast SetupEvent(int, ...) overload AND keyed it under this same id. Today only the subscribe id
+		// participates, so the dictionary fall-through still serves the unsubscribe path.
+		if (string.IsNullOrEmpty(Scenario))
+		{
+			EventSetup[]? snapshot = GetEventSetupSnapshot(memberId);
+			if (snapshot is not null)
+			{
+				for (int i = 0; i < snapshot.Length; i++)
+				{
+					snapshot[i].InvokeUnsubscribed(target, method);
+				}
+
+				return;
+			}
 		}
 
 		foreach (EventSetup setup in GetEventSetupsByName(name))
