@@ -672,7 +672,8 @@ internal static partial class Sources
 		{
 			foreach (Method constructor in constructors)
 			{
-				AppendMockSubject_BaseClassConstructor(sb, mockRegistryName, name, constructor);
+				AppendMockSubject_BaseClassConstructor(sb, mockRegistryName, name, constructor,
+					@class.HasRequiredMembers);
 			}
 		}
 		else
@@ -1572,11 +1573,16 @@ internal static partial class Sources
 	#region Mock Helpers
 
 	private static void AppendMockSubject_BaseClassConstructor(StringBuilder sb, string mockRegistryName, string name,
-		Method constructor)
+		Method constructor, bool hasRequiredMembers)
 	{
 		string mockRegistry = CreateUniqueParameterName(constructor.Parameters, "mockRegistry");
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
 		sb.Append(constructor.Attributes, "\t\t");
+		if (hasRequiredMembers && constructor.Attributes?.Any(a => a.Name == "global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers") != true)
+		{
+			sb.Append("\t\t[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").AppendLine();
+		}
+
 		sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockRegistry ").Append(mockRegistry);
 		foreach (MethodParameter parameter in constructor.Parameters)
 		{
