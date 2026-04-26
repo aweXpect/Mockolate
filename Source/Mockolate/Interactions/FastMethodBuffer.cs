@@ -85,6 +85,7 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 	{
 		lock (_growLock)
 		{
+			Array.Clear(_records, 0, _published);
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
 			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
@@ -239,6 +240,7 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 	{
 		lock (_growLock)
 		{
+			Array.Clear(_records, 0, _published);
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
 			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
@@ -400,6 +402,7 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 	{
 		lock (_growLock)
 		{
+			Array.Clear(_records, 0, _published);
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
 			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
@@ -561,6 +564,7 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 	{
 		lock (_growLock)
 		{
+			Array.Clear(_records, 0, _published);
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
 			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);
@@ -723,6 +727,7 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 	{
 		lock (_growLock)
 		{
+			Array.Clear(_records, 0, _published);
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
 			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);

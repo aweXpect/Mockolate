@@ -102,6 +102,7 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	{
 		lock (_growLock)
 		{
+			Array.Clear(_records, 0, _published);
 			_reserved = 0;
 			Volatile.Write(ref _published, 0);
 			Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length);

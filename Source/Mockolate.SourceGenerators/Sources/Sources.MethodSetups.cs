@@ -226,7 +226,7 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.Append("\t\tpublic void Clear()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
-		sb.Append("\t\t\tlock (_growLock) { _reserved = 0; global::System.Threading.Volatile.Write(ref _published, 0); global::System.Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length); }").AppendLine();
+		sb.Append("\t\t\tlock (_growLock) { global::System.Array.Clear(_records, 0, _published); _reserved = 0; global::System.Threading.Volatile.Write(ref _published, 0); global::System.Array.Clear(_verifiedSlots, 0, _verifiedSlots.Length); }").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\tvoid IFastMemberBuffer.AppendBoxed(global::System.Collections.Generic.List<global::System.ValueTuple<long, IInteraction>> dest)")

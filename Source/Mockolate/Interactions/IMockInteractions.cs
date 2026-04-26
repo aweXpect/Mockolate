@@ -30,7 +30,7 @@ public interface IMockInteractions : IReadOnlyCollection<IInteraction>
 	event EventHandler? InteractionAdded;
 
 	/// <summary>
-	///     Raised when all recorded interactions are about to be cleared.
+	///     Raised after all recorded interactions have been cleared and the verified-set bookkeeping has been reset.
 	/// </summary>
 	event EventHandler? OnClearing;
 

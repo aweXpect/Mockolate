@@ -113,6 +113,8 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 	/// <inheritdoc cref="IMockInteractions.Clear" />
 	public void Clear()
 	{
+		OnClearing?.Invoke(this, EventArgs.Empty);
+
 		lock (_listLock)
 		{
 			_interactions.Clear();
@@ -123,8 +125,6 @@ public class MockInteractions : IReadOnlyCollection<IInteraction>, IMockInteract
 		{
 			_verified = null;
 		}
-
-		OnClearing?.Invoke(this, EventArgs.Empty);
 	}
 
 	private IInteraction[] Snapshot()
