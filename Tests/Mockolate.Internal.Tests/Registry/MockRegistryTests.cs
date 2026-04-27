@@ -144,6 +144,127 @@ public sealed class MockRegistryTests
 		}
 	}
 
+	public sealed class ApplyIndexerGetterLazyGeneratorTests
+	{
+		[Fact]
+		public async Task WithNullSetup_LooseMode_NoStoredValue_ShouldInvokeGeneratorAndStore()
+		{
+			int callCount = 0;
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			IndexerGetterAccess<int> first = new(1);
+			IndexerGetterAccess<int> second = new(1);
+
+			int firstResult = registry.ApplyIndexerGetter(first, null, () => ++callCount, 0);
+			int secondResult = registry.ApplyIndexerGetter(second, null, () => ++callCount, 0);
+
+			await That(firstResult).IsEqualTo(1);
+			await That(secondResult).IsEqualTo(1);
+			await That(callCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task WithNullSetup_StrictMode_NoStoredValue_ShouldThrow()
+		{
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
+			MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
+			IndexerGetterAccess<int> access = new(1);
+
+			void Act()
+			{
+				registry.ApplyIndexerGetter(access, null, () => 99, 0);
+			}
+
+			await That(Act).Throws<MockNotSetupException>()
+				.WithMessage("*was accessed without prior setup*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task WithNullSetup_StrictMode_WhenValueWasPreviouslyStored_ShouldReturnStored()
+		{
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
+			MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
+			IndexerSetterAccess<int, int> setterAccess = new(1, 7);
+			IndexerGetterAccess<int> getterAccess = new(1);
+
+			registry.SetIndexerValue(setterAccess, 7, 0);
+			int result = registry.ApplyIndexerGetter(getterAccess, null, () => 99, 0);
+
+			await That(result).IsEqualTo(7);
+		}
+	}
+
+	public sealed class GetIndexerFallbackTests
+	{
+		[Fact]
+		public async Task StrictMode_NoStoredValue_ShouldThrow()
+		{
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
+			MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
+			IndexerGetterAccess<int> access = new(1);
+
+			void Act()
+			{
+				registry.GetIndexerFallback<int>(access, 0);
+			}
+
+			await That(Act).Throws<MockNotSetupException>()
+				.WithMessage("*was accessed without prior setup*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task WhenValueWasPreviouslyStored_ShouldReturnStoredWithoutGeneratingDefault()
+		{
+			int counter = 0;
+			MockBehavior behavior = MockBehavior.Default.WithDefaultValueFor(() => ++counter);
+			MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
+			IndexerSetterAccess<int, int> setterAccess = new(1, 42);
+			IndexerGetterAccess<int> getterAccess = new(1);
+
+			registry.SetIndexerValue(setterAccess, 42, 0);
+			int result = registry.GetIndexerFallback<int>(getterAccess, 0);
+
+			await That(result).IsEqualTo(42);
+			await That(counter).IsEqualTo(0);
+		}
+	}
+
+	public sealed class SetIndexerValueTests
+	{
+		[Fact]
+		public async Task ShouldStoreValueRetrievableViaApplyIndexerGetter()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			IndexerSetterAccess<int, string> setterAccess = new(7, "stored");
+			IndexerGetterAccess<int> getterAccess = new(7);
+
+			registry.SetIndexerValue(setterAccess, "stored", 0);
+			string result = registry.ApplyIndexerGetter<string>(getterAccess, null, () => "default", 0);
+
+			await That(result).IsEqualTo("stored");
+		}
+
+		[Fact]
+		public async Task WithMultiKeyAccess_ShouldStorePerKeyTuple()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			IndexerSetterAccess<int, int, string> setA = new(1, 2, "a");
+			IndexerSetterAccess<int, int, string> setB = new(3, 4, "b");
+			IndexerGetterAccess<int, int> getA = new(1, 2);
+			IndexerGetterAccess<int, int> getB = new(3, 4);
+			IndexerGetterAccess<int, int> miss = new(5, 6);
+
+			registry.SetIndexerValue(setA, "a", 0);
+			registry.SetIndexerValue(setB, "b", 0);
+			string a = registry.ApplyIndexerGetter<string>(getA, null, () => "default", 0);
+			string b = registry.ApplyIndexerGetter<string>(getB, null, () => "default", 0);
+			string m = registry.ApplyIndexerGetter<string>(miss, null, () => "default", 0);
+
+			await That(a).IsEqualTo("a");
+			await That(b).IsEqualTo("b");
+			await That(m).IsEqualTo("default");
+		}
+	}
+
 	public sealed class InitializeStorageTests
 	{
 		[Fact]
