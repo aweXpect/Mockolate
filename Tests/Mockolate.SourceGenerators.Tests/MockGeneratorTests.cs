@@ -993,6 +993,113 @@ public partial class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenSameCombinationIsDeclaredTwice_ShouldDeduplicateToSingleEmittedFile()
+	{
+		// Same root mock with the same .Implementing<T>() chain in different call sites must
+		// dedupe. The Distinct comparator iterates AdditionalImplementations; identical
+		// sequences must collapse to a single emitted combination file.
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyService.CreateMock().Implementing<IMyExtra>();
+			     		_ = IMyService.CreateMock().Implementing<IMyExtra>();
+			         }
+			     }
+
+			     public interface IMyService { }
+			     public interface IMyExtra { }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+
+		string[] combinationKeys = result.Sources.Keys
+			.Where(k => k.Contains("__"))
+			.ToArray();
+		await That(combinationKeys).IsEqualTo(["Mock.IMyService__IMyExtra.g.cs",]).InAnyOrder();
+	}
+
+	[Fact]
+	public async Task WhenSameMethodInTwoInterfacesDiffersOnlyInRefKind_ShouldUseExplicitImplementation()
+	{
+		// Two interfaces declare a method with the same name and parameter type but different
+		// RefKind (ref vs in). The ContainingTypeIndependentMethodEqualityComparer must treat
+		// these as different, so the second method is emitted as an explicit implementation
+		// rather than collapsed onto the first.
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IInterface1.CreateMock().Implementing<IInterface2>();
+			         }
+			     }
+
+			     public interface IInterface1
+			     {
+			         void Method(ref int value);
+			     }
+
+			     public interface IInterface2
+			     {
+			         void Method(in int value);
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+
+		await That(result.Sources).ContainsKey("Mock.IInterface1__IInterface2.g.cs").WhoseValue
+			.Contains("public void Method(ref int value)").And
+			.Contains("void global::MyCode.IInterface2.Method(in int value)");
+	}
+
+	[Fact]
+	public async Task WhenSameMockIsDeclaredTwice_ShouldDeduplicateToSingleEmittedFile()
+	{
+		// Two identical Mock.Create<IFoo>() declarations must collapse to a single emitted
+		// Mock.IFoo.g.cs. The dedup pipeline relies on the Distinct comparator returning 0 when
+		// ClassFullName and AdditionalImplementations match across the two MockClass entries.
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = IMyInterface.CreateMock();
+			     		_ = IMyInterface.CreateMock();
+			         }
+			     }
+
+			     public interface IMyInterface
+			     {
+			         void DoWork();
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+
+		string[] interfaceMockKeys = result.Sources.Keys
+			.Where(k => k.StartsWith("Mock.IMyInterface", StringComparison.Ordinal))
+			.ToArray();
+		await That(interfaceMockKeys).IsEqualTo(["Mock.IMyInterface.g.cs",]).InAnyOrder();
+	}
+
+	[Fact]
 	public async Task WhenSameTypeImplementsDifferentCombinationsOfSameInterface_ShouldGenerateAllCombinations()
 	{
 		GeneratorResult result = Generator
