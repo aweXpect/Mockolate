@@ -57,7 +57,7 @@ public sealed class IndexerSetupTests
 		indexerSetup.OnGet.Do(() => { callCount++; });
 		IndexerGetterAccess<int> access = new(1);
 
-		string result = indexerSetup.DoGetResult(access, "foo");
+		indexerSetup.DoGetResult(access, "foo");
 
 		await That(callCount).IsEqualTo(1);
 	}
@@ -233,7 +233,7 @@ public sealed class IndexerSetupTests
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<int, int> access = new(1, 2);
 
-			string result = indexerSetup.DoGetResult(access, "foo");
+			indexerSetup.DoGetResult(access, "foo");
 
 			await That(callCount).IsEqualTo(1);
 		}
@@ -333,7 +333,7 @@ public sealed class IndexerSetupTests
 		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
 		{
 			IndexerSetup<string, int, int> setup = new(
-				new MockRegistry(MockBehavior.Default),
+				new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
 				(IParameterMatch<int>)It.IsAny<int>(),
 				(IParameterMatch<int>)It.IsAny<int>());
 			setup.InitializeWith((p1, p2) => $"{p1}-{p2}");
@@ -432,7 +432,7 @@ public sealed class IndexerSetupTests
 			indexerSetup.OnGet.Do(() => { callCount++; });
 			IndexerGetterAccess<int, int, int> access = new(1, 2, 3);
 
-			string result = indexerSetup.DoGetResult(access, "foo");
+			indexerSetup.DoGetResult(access, "foo");
 
 			await That(callCount).IsEqualTo(1);
 		}
@@ -535,7 +535,7 @@ public sealed class IndexerSetupTests
 		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
 		{
 			IndexerSetup<string, int, int, int> setup = new(
-				new MockRegistry(MockBehavior.Default),
+				new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
 				(IParameterMatch<int>)It.IsAny<int>(),
 				(IParameterMatch<int>)It.IsAny<int>(),
 				(IParameterMatch<int>)It.IsAny<int>());
@@ -639,7 +639,7 @@ public sealed class IndexerSetupTests
 			IndexerGetterAccess<int, int, int, int> access =
 				new(1, 2, 3, 4);
 
-			string result = indexerSetup.DoGetResult(access, "foo");
+			indexerSetup.DoGetResult(access, "foo");
 
 			await That(callCount).IsEqualTo(1);
 		}
@@ -748,7 +748,7 @@ public sealed class IndexerSetupTests
 		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
 		{
 			IndexerSetup<string, int, int, int, int> setup = new(
-				new MockRegistry(MockBehavior.Default),
+				new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
 				(IParameterMatch<int>)It.IsAny<int>(),
 				(IParameterMatch<int>)It.IsAny<int>(),
 				(IParameterMatch<int>)It.IsAny<int>(),
@@ -855,7 +855,7 @@ public sealed class IndexerSetupTests
 			IndexerGetterAccess<int, int, int, int, int> access =
 				new(1, 2, 3, 4, 5);
 
-			string result = indexerSetup.DoGetResult(access, "foo");
+			indexerSetup.DoGetResult(access, "foo");
 
 			await That(callCount).IsEqualTo(1);
 		}

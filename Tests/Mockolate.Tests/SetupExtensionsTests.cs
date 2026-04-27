@@ -757,6 +757,22 @@ public sealed class SetupExtensionsTests
 
 			await That(values).IsEqualTo([1, 1, 1,]);
 		}
+
+		[Fact]
+		public async Task OnSet_OnlyOnce_With5Parameters_WithFor_ShouldInvokeTheCallbackOnlyForTimes()
+		{
+			List<int> values = [];
+			ISetupExtensionsTestService sut = ISetupExtensionsTestService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnSet.Do(() => values.Add(1)).For(3).OnlyOnce();
+
+			for (int i = 0; i < 10; i++)
+			{
+				sut[10, 20, 30, 40, 50] = i;
+			}
+
+			await That(values).IsEqualTo([1, 1, 1,]);
+		}
 	}
 
 	public sealed class ReturnMethodSetupReturnWhenBuilderTests
