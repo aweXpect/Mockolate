@@ -216,13 +216,8 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static HashSet<int> ToHashSet(EquatableArray<int> arities)
 	{
+		int[] arr = arities.AsArray() ?? [];
 		HashSet<int> set = new();
-		int[]? arr = arities.AsArray();
-		if (arr is null)
-		{
-			return set;
-		}
-
 		foreach (int item in arr)
 		{
 			set.Add(item);
@@ -233,13 +228,8 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static HashSet<(int, bool)> ToMethodSetupHashSet(EquatableArray<MethodSetupKey> keys)
 	{
+		MethodSetupKey[] arr = keys.AsArray() ?? [];
 		HashSet<(int, bool)> set = new();
-		MethodSetupKey[]? arr = keys.AsArray();
-		if (arr is null)
-		{
-			return set;
-		}
-
 		foreach (MethodSetupKey item in arr)
 		{
 			set.Add((item.Arity, item.IsVoid));
@@ -250,12 +240,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<int> CollectIndexerSetupArities(EquatableArray<MockClass> mocks)
 	{
-		MockClass[]? arr = mocks.AsArray();
-		if (arr is null)
-		{
-			return new EquatableArray<int>([]);
-		}
-
+		MockClass[] arr = mocks.AsArray() ?? [];
 		HashSet<int> set = new();
 		foreach (MockClass mc in arr)
 		{
@@ -275,12 +260,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<MethodSetupKey> CollectMethodSetupKeys(EquatableArray<MockClass> mocks)
 	{
-		MockClass[]? arr = mocks.AsArray();
-		if (arr is null)
-		{
-			return new EquatableArray<MethodSetupKey>([]);
-		}
-
+		MockClass[] arr = mocks.AsArray() ?? [];
 		HashSet<MethodSetupKey> set = new();
 		foreach (MockClass mc in arr)
 		{
@@ -309,14 +289,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static RefStructAggregate CollectRefStructAggregate(EquatableArray<MockClass> mocks)
 	{
-		MockClass[]? arr = mocks.AsArray();
-		if (arr is null)
-		{
-			return new RefStructAggregate(
-				new EquatableArray<MethodSetupKey>([]),
-				new EquatableArray<RefStructIndexerSetup>([]));
-		}
-
+		MockClass[] arr = mocks.AsArray() ?? [];
 		HashSet<MethodSetupKey> methods = new();
 		Dictionary<int, (bool HasGetter, bool HasSetter)> indexerMap = new();
 		foreach (MockClass mc in arr)
@@ -374,8 +347,8 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<NamedMock> CreateNamedMocks(EquatableArray<MockClass> mocks)
 	{
-		MockClass[]? arr = mocks.AsArray();
-		if (arr is null || arr.Length == 0)
+		MockClass[] arr = mocks.AsArray() ?? [];
+		if (arr.Length == 0)
 		{
 			return new EquatableArray<NamedMock>([]);
 		}
@@ -449,12 +422,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<MockAsExtensionPair> CollectAsExtensionPairs(EquatableArray<NamedMock> mocks)
 	{
-		NamedMock[]? arr = mocks.AsArray();
-		if (arr is null)
-		{
-			return new EquatableArray<MockAsExtensionPair>([]);
-		}
-
+		NamedMock[] arr = mocks.AsArray() ?? [];
 		HashSet<MockAsExtensionPair> seen = new();
 		List<MockAsExtensionPair> ordered = new();
 		foreach (NamedMock nm in arr)
@@ -464,8 +432,8 @@ public class MockGenerator : IIncrementalGenerator
 				continue;
 			}
 
-			NamedClass[]? additionalArr = additional.AsArray();
-			if (additionalArr is null || additionalArr.Length == 0)
+			NamedClass[] additionalArr = additional.AsArray() ?? [];
+			if (additionalArr.Length == 0)
 			{
 				continue;
 			}
