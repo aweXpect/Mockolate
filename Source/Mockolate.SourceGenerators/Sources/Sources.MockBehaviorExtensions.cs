@@ -276,41 +276,6 @@ internal static partial class Sources
 		          #endif
 
 		          		/// <summary>
-		          		///     Generates a tuple of (<typeparamref name="T1" />, <typeparamref name="T2" />), with
-		          		///     the <paramref name="parameters" /> for context.
-		          		/// </summary>
-		          		public (T1, T2) Generate<T1, T2>((T1, T2) nullValue, params object?[] parameters)
-		          		{
-		          			if (parameters.Length >= 2 && parameters[0] is global::System.Func<T1> func1 && parameters[1] is global::System.Func<T2> func2)
-		          			{
-		          				return (func1(), func2());
-		          			}
-		          			
-		          			return (generator.Generate(default(T1)!, parameters), generator.Generate(default(T2)!, parameters));
-		          		}
-		          """).AppendLine();
-		for (int i = 3; i <= 8; i++)
-		{
-			string ts = string.Join(", ", Enumerable.Range(1, i).Select(x => $"T{x}"));
-			sb.Append($$"""
-			            		/// <summary>
-			            		///     Generates a tuple of ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"<typeparamref name=\"T{x}\" />"))}}), with
-			            		///     the <paramref name="parameters" /> for context.
-			            		/// </summary>
-			            		public ({{ts}}) Generate<{{ts}}>(({{ts}}) nullValue, params object?[] parameters)
-			            		{
-			            			if (parameters.Length >= {{i}} && {{string.Join(" && ", Enumerable.Range(1, i).Select(x => $"parameters[{x - 1}] is global::System.Func<T{x}> func{x}"))}})
-			            			{
-			            				return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"func{x}()"))}});
-			            			}
-			            			
-			            			return ({{string.Join(", ", Enumerable.Range(1, i).Select(x => $"generator.Generate(default(T{x})!, parameters)"))}});
-			            		}
-			            """).AppendLine();
-		}
-
-		sb.Append("""
-		          		/// <summary>
 		          		///     Generates an empty enumerable of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>

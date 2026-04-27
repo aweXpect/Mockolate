@@ -101,6 +101,18 @@ public sealed partial class InteractionsTests
 			await That(result.IsCanceled).IsTrue();
 		}
 #endif
+
+		[Fact]
+		public async Task WithTupleContainingTask_ShouldCancelTaskElement()
+		{
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
+			CancellationToken canceledToken = new(true);
+
+			(Task task, string text) result = sut.TupleWithTaskMethod(canceledToken);
+
+			await That(result.task.IsCanceled).IsTrue();
+			await That(result.text).IsEqualTo(string.Empty);
+		}
 	}
 
 	public interface IMockWithCancellationToken
@@ -111,5 +123,6 @@ public sealed partial class InteractionsTests
 		ValueTask ValueTaskMethod(CancellationToken cancellationToken);
 		ValueTask<int> ValueTaskOfIntMethod(CancellationToken cancellationToken);
 		Task<int> MultipleParametersMethod(string param1, int param2, CancellationToken cancellationToken);
+		(Task, string) TupleWithTaskMethod(CancellationToken cancellationToken);
 	}
 }
