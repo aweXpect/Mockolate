@@ -113,7 +113,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(access.Parameter1))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -146,7 +146,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(access.Parameter1, access.TypedValue))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -182,7 +182,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, bool?> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, bool?> s_setup && s_setup.Matches(access.Parameter1, access.Parameter2))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -221,7 +221,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, string> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, string> s_setup && s_setup.Matches(access.Parameter1, access.Parameter2, access.TypedValue))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -438,7 +438,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && s_setup.Matches(access.Parameter1))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -471,7 +471,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && s_setup.Matches(access.Parameter1, access.TypedValue))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -507,7 +507,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && s_setup.Matches(access.Parameter1))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -540,7 +540,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && s_setup.Matches(access.Parameter1, access.TypedValue))
 					          							{
 					          								setup = s_setup;
 					          								break;

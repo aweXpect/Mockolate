@@ -164,7 +164,7 @@ internal static partial class Sources
 		sb.Append(indent).Append("}").AppendLine();
 
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
-			setupMemberIdRef ?? memberIdRef);
+			setupMemberIdRef ?? memberIdRef, isSetter: false);
 	}
 
 	/// <summary>
@@ -216,18 +216,23 @@ internal static partial class Sources
 		sb.Append(indent).Append("}").AppendLine();
 
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
-			setupMemberIdRef);
+			setupMemberIdRef, isSetter: true);
 	}
 
 	/// <summary>
 	///     Emits the indexer-setup lookup variable. When <paramref name="memberIdRef" /> is provided the lookup
 	///     scans the lock-free <c>GetIndexerSetupSnapshot</c> array first (default-scope fast path), and falls back
 	///     to the closure-free <c>GetIndexerSetup&lt;T&gt;(access)</c> overload for scenario-scoped setups.
+	///     The snapshot match check uses the typed <c>Matches(p1, ...)</c> overload (and <c>access.TypedValue</c>
+	///     for setters) on the concrete <c>IndexerSetup&lt;TValue, T1, ...&gt;</c> instead of dispatching through
+	///     <c>IInteractiveIndexerSetup.Matches(IndexerAccess)</c>, which avoids the interface-cast and the
+	///     getter/setter type test on every snapshot entry.
 	/// </summary>
 #pragma warning disable S107 // Methods should not have too many parameters
 	private static void EmitIndexerSetupLookup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
-		Type propertyType, EquatableArray<MethodParameter> parameters, string? memberIdRef)
+		Type propertyType, EquatableArray<MethodParameter> parameters, string? memberIdRef,
+		bool isSetter)
 #pragma warning restore S107
 	{
 		StringBuilder typedSetup = new("global::Mockolate.Setup.IndexerSetup<");
@@ -264,8 +269,30 @@ internal static partial class Sources
 		sb.Append(indent).Append("\t\t{").AppendLine();
 		sb.Append(indent).Append("\t\t\tif (").Append(snapshotVar).Append('[').Append(indexVar)
 			.Append("] is ").Append(typedSetupName).Append(' ').Append(itemVar)
-			.Append(" && ((global::Mockolate.Setup.IInteractiveIndexerSetup)").Append(itemVar)
-			.Append(").Matches(").Append(accessVarName).Append("))").AppendLine();
+			.Append(" && ").Append(itemVar).Append(".Matches(");
+		bool firstArg = true;
+		for (int i = 1; i <= parameters.Count; i++)
+		{
+			if (!firstArg)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append(accessVarName).Append(".Parameter").Append(i);
+			firstArg = false;
+		}
+
+		if (isSetter)
+		{
+			if (!firstArg)
+			{
+				sb.Append(", ");
+			}
+
+			sb.Append(accessVarName).Append(".TypedValue");
+		}
+
+		sb.Append("))").AppendLine();
 		sb.Append(indent).Append("\t\t\t{").AppendLine();
 		sb.Append(indent).Append("\t\t\t\t").Append(setupVarName).Append(" = ").Append(itemVar)
 			.Append(';').AppendLine();
