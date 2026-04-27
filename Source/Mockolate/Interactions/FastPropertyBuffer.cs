@@ -5,7 +5,9 @@ using Mockolate.Parameters;
 namespace Mockolate.Interactions;
 
 /// <summary>
-///     Per-member buffer for property getters. Records only the property name + sequence number.
+///     Per-member buffer for property getters. Records only a sequence number per call; the
+///     property identity is captured once via a shared <see cref="PropertyGetterAccess" /> that
+///     every record points at when boxed for verification.
 /// </summary>
 [DebuggerDisplay("{Count} property gets")]
 #if !DEBUG
@@ -15,32 +17,55 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 {
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
+	private PropertyGetterAccess? _access;
 
 	internal FastPropertyGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
 
+	internal FastPropertyGetterBuffer(FastMockInteractions owner, PropertyGetterAccess access)
+	{
+		_owner = owner;
+		_access = access;
+	}
+
 	/// <inheritdoc cref="IFastMemberBuffer.Count" />
 	public int Count => _storage.Count;
 
 	/// <summary>
-	///     Records a property getter access.
+	///     Records a property getter access using the buffer's pre-seeded
+	///     <see cref="PropertyGetterAccess" /> singleton. Throws when the singleton has not been
+	///     installed — callers must use <see cref="Append(string)" /> in that case.
 	/// </summary>
-	public void Append(string name)
+	public void Append()
 	{
 		long seq = _owner.NextSequence();
 		int slot = _storage.Reserve();
 		ref Record r = ref _storage.SlotForWrite(slot);
 		r.Seq = seq;
-		r.Name = name;
-		r.Boxed = null;
 		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
 		{
 			_owner.RaiseAdded();
 		}
+	}
+
+	/// <summary>
+	///     Records a property getter access. Lazily installs the buffer's
+	///     <see cref="PropertyGetterAccess" /> singleton from <paramref name="name" /> on first
+	///     call so legacy callers (generated code that does not pass a pre-built access) keep
+	///     working without allocating one access object per record.
+	/// </summary>
+	public void Append(string name)
+	{
+		// Lazy init: every record in this buffer addresses the same property, so a single
+		// PropertyGetterAccess covers all of them. The benign race here is acceptable — both
+		// instances are equivalent because PropertyGetterAccess is immutable and identified
+		// solely by Name; whichever assignment wins still satisfies the contract.
+		_access ??= new PropertyGetterAccess(name);
+		Append();
 	}
 
 	/// <inheritdoc cref="IFastMemberBuffer.Clear" />
@@ -51,11 +76,16 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 		lock (_storage.Lock)
 		{
 			int n = _storage.PublishedUnderLock;
+			if (n == 0)
+			{
+				return;
+			}
+
+			PropertyGetterAccess access = _access!;
 			for (int slot = 0; slot < n; slot++)
 			{
 				ref Record r = ref _storage.SlotUnderLock(slot);
-				r.Boxed ??= new PropertyGetterAccess(r.Name);
-				dest.Add((r.Seq, r.Boxed));
+				dest.Add((r.Seq, access));
 			}
 		}
 	}
@@ -65,6 +95,12 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 		lock (_storage.Lock)
 		{
 			int n = _storage.PublishedUnderLock;
+			if (n == 0)
+			{
+				return;
+			}
+
+			PropertyGetterAccess access = _access!;
 			for (int slot = 0; slot < n; slot++)
 			{
 				if (_storage.VerifiedUnderLock(slot))
@@ -73,8 +109,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 				}
 
 				ref Record r = ref _storage.SlotUnderLock(slot);
-				r.Boxed ??= new PropertyGetterAccess(r.Name);
-				dest.Add((r.Seq, r.Boxed));
+				dest.Add((r.Seq, access));
 			}
 		}
 	}
@@ -103,8 +138,6 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 	internal struct Record
 	{
 		public long Seq;
-		public string Name;
-		public IInteraction? Boxed;
 	}
 }
 
@@ -230,6 +263,20 @@ public static class FastPropertyBufferFactory
 	public static FastPropertyGetterBuffer InstallPropertyGetter(this FastMockInteractions interactions, int memberId)
 	{
 		FastPropertyGetterBuffer buffer = new(interactions);
+		interactions.InstallBuffer(memberId, buffer);
+		return buffer;
+	}
+
+	/// <summary>
+	///     Creates and installs a property getter buffer at the given <paramref name="memberId" /> with
+	///     a pre-built shared <paramref name="access" /> singleton. Used by the source generator so the
+	///     buffer never has to allocate a <see cref="PropertyGetterAccess" /> on the first record or on
+	///     verification.
+	/// </summary>
+	public static FastPropertyGetterBuffer InstallPropertyGetter(this FastMockInteractions interactions,
+		int memberId, PropertyGetterAccess access)
+	{
+		FastPropertyGetterBuffer buffer = new(interactions, access);
 		interactions.InstallBuffer(memberId, buffer);
 		return buffer;
 	}

@@ -1331,9 +1331,10 @@ internal static partial class Sources
 			}
 
 			string getMemberIdRef = memberIdPrefix + memberIds.GetPropertyGetIdentifier(property);
+			string accessFieldRef = memberIdPrefix + memberIds.GetPropertyGetterAccessFieldName(property);
 			sb.Append(indent)
 				.Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(fast, ")
-				.Append(getMemberIdRef).Append(");").AppendLine();
+				.Append(getMemberIdRef).Append(", ").Append(accessFieldRef).Append(");").AppendLine();
 
 			string setMemberIdRef = memberIdPrefix + memberIds.GetPropertySetIdentifier(property);
 			string propertyType = property.Type.ToTypeOrWrapper();
@@ -2334,12 +2335,13 @@ internal static partial class Sources
 				}
 				else
 				{
+					string accessFieldRef = memberIdPrefix + memberIds.GetPropertyGetterAccessFieldName(property);
 					if (useFastForProperty)
 					{
 						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetPropertyFast<")
 							.AppendTypeOrWrapper(property.Type).Append(">(")
 							.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property))
-							.Append(", ").Append(property.GetUniqueNameString()).Append(", static b => ")
+							.Append(", ").Append(accessFieldRef).Append(", static b => ")
 							.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue");
 						if (!property.IsStatic)
 						{
@@ -2353,7 +2355,7 @@ internal static partial class Sources
 					{
 						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
 							.AppendTypeOrWrapper(property.Type).Append(">(")
-							.Append(propertyGetMemberArg).Append(property.GetUniqueNameString()).Append(", () => ")
+							.Append(propertyGetMemberArg).Append(accessFieldRef).Append(", () => ")
 							.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 						if (!property.IsStatic)
 						{
@@ -2423,12 +2425,13 @@ internal static partial class Sources
 				}
 				else
 				{
+					string accessFieldRef = memberIdPrefix + memberIds.GetPropertyGetterAccessFieldName(property);
 					if (useFastForProperty)
 					{
 						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetPropertyFast<")
 							.AppendTypeOrWrapper(property.Type).Append(">(")
 							.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property))
-							.Append(", ").Append(property.GetUniqueNameString()).Append(", static b => ")
+							.Append(", ").Append(accessFieldRef).Append(", static b => ")
 							.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue");
 						if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
 						{
@@ -2447,7 +2450,7 @@ internal static partial class Sources
 					{
 						sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
 							.AppendTypeOrWrapper(property.Type).Append(">(")
-							.Append(propertyGetMemberArg).Append(property.GetUniqueNameString()).Append(", () => ")
+							.Append(propertyGetMemberArg).Append(accessFieldRef).Append(", () => ")
 							.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 						if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
 						{
@@ -2485,12 +2488,13 @@ internal static partial class Sources
 			}
 			else
 			{
+				string accessFieldRef = memberIdPrefix + memberIds.GetPropertyGetterAccessFieldName(property);
 				if (useFastForProperty)
 				{
 					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetPropertyFast<")
 						.AppendTypeOrWrapper(property.Type).Append(">(")
 						.Append(memberIdPrefix).Append(memberIds.GetPropertyGetIdentifier(property))
-						.Append(", ").Append(property.GetUniqueNameString())
+						.Append(", ").Append(accessFieldRef)
 						.Append(", static b => ")
 						.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue")
 						.Append(");").AppendLine();
@@ -2499,7 +2503,7 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\treturn ").Append(mockRegistry).Append(".GetProperty<")
 						.AppendTypeOrWrapper(property.Type).Append(">(")
-						.Append(propertyGetMemberArg).Append(property.GetUniqueNameString())
+						.Append(propertyGetMemberArg).Append(accessFieldRef)
 						.Append(", () => ")
 						.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue")
 						.Append(", null);").AppendLine();

@@ -132,10 +132,12 @@ internal static partial class Sources
 	{
 		private readonly List<string> _declarations = new();
 		private readonly Dictionary<string, int> _usedIdentifiers = new();
+		private readonly List<(Property Property, string FieldName)> _propertyGetterAccessFields = new();
 
 		internal Dictionary<Method, int> MethodIds { get; } = new();
 		internal Dictionary<Property, int> PropertyGetIds { get; } = new();
 		internal Dictionary<Property, int> PropertySetIds { get; } = new();
+		internal Dictionary<Property, string> PropertyGetterAccessFieldNames { get; } = new();
 		internal Dictionary<Property, int> IndexerGetIds { get; } = new();
 		internal Dictionary<Property, int> IndexerSetIds { get; } = new();
 		internal Dictionary<Event, int> EventSubscribeIds { get; } = new();
@@ -190,10 +192,21 @@ internal static partial class Sources
 			int getId = AllocateId("MemberId_" + identifierGet);
 			PropertyGetIds[property] = getId;
 
+			// PropertyGetterAccess is parameterless and identified solely by Name, so we can
+			// share one instance across every recorded access for a given property. The
+			// generator emits a static readonly field next to MemberId_<X>_Get; both the
+			// FastPropertyGetterBuffer and the legacy RecordPropertyGetter path use it.
+			string accessFieldName = "PropertyAccess_" + identifierGet;
+			PropertyGetterAccessFieldNames[property] = accessFieldName;
+			_propertyGetterAccessFields.Add((property, accessFieldName));
+
 			string identifierSet = UniqueIdentifier(property.Name + "_Set");
 			int setId = AllocateId("MemberId_" + identifierSet);
 			PropertySetIds[property] = setId;
 		}
+
+		internal string GetPropertyGetterAccessFieldName(Property property)
+			=> PropertyGetterAccessFieldNames[property];
 
 		internal void AddIndexer(Property indexer)
 		{
@@ -241,6 +254,16 @@ internal static partial class Sources
 
 			sb.Append(indent).Append("internal const int MemberCount = ").Append(_declarations.Count)
 				.Append(';').AppendLine();
+
+			foreach ((Property property, string fieldName) in _propertyGetterAccessFields)
+			{
+				sb.Append(indent)
+					.Append(
+						"internal static readonly global::Mockolate.Interactions.PropertyGetterAccess ")
+					.Append(fieldName)
+					.Append(" = new global::Mockolate.Interactions.PropertyGetterAccess(")
+					.Append(property.GetUniqueNameString()).Append(");").AppendLine();
+			}
 		}
 
 		private static string BuildIndexerSignatureSuffix(Property indexer)
