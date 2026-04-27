@@ -472,7 +472,7 @@ public sealed class GeneratedPacketSinkTests
 			}
 
 			await That(match).IsEqualTo("hit");
-			// Nothing matches -> framework default "".
+			// Nothing matches -> Mockolate default string value "".
 			await That(miss).IsEqualTo("");
 			await That(ActWriteHit).Throws<InvalidOperationException>();
 		}
