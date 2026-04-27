@@ -1839,7 +1839,7 @@ internal static partial class Sources
 	#region Mock Helpers
 
 	private static void AppendMockSubject_BaseClassConstructor(StringBuilder sb, string mockRegistryName, string name,
-		Method constructor, bool hasRequiredMembers)
+		Method constructor, bool hasRequiredMembers, bool setsMockRegistryProvider = false)
 	{
 		string mockRegistry = CreateUniqueParameterName(constructor.Parameters, "mockRegistry");
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
@@ -1883,6 +1883,11 @@ internal static partial class Sources
 		sb.Append(')').AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = ").Append(mockRegistry).Append(';').AppendLine();
+		if (setsMockRegistryProvider)
+		{
+			sb.Append("\t\t\tMockRegistryProvider.Value = ").Append(mockRegistry).Append(';').AppendLine();
+		}
+
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 	}
