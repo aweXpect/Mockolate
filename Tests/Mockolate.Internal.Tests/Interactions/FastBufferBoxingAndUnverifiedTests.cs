@@ -238,7 +238,7 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
-	public async Task FastPropertyGetterBuffer_Append_WithoutInstalledTemplate_ShouldThrow()
+	public async Task FastPropertyGetterBuffer_Append_WithoutInstalledSingleton_ShouldThrow()
 	{
 		FastMockInteractions store = new(1);
 		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
@@ -252,7 +252,7 @@ public class FastBufferBoxingAndUnverifiedTests
 	}
 
 	[Fact]
-	public async Task FastPropertyGetterBuffer_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	public async Task FastPropertyGetterBuffer_AppendBoxed_RepeatedCallsReturnSameSingleton()
 	{
 		FastMockInteractions store = new(1);
 		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
@@ -270,8 +270,14 @@ public class FastBufferBoxingAndUnverifiedTests
 	}
 
 	[Fact]
-	public async Task FastPropertyGetterBuffer_AppendBoxed_DistinctSlotsProduceDistinctInteractions()
+	public async Task FastPropertyGetterBuffer_AppendBoxed_SharesSingletonAcrossRecords()
 	{
+		// All recorded getter accesses for the same property surface as one PropertyGetterAccess
+		// reference. This is intentional — getters carry no parameters, so every record is
+		// semantically identical, and the two reference-keyed verification paths
+		// (FastMockInteractions._verified and VerificationResultExtensions.Then) tolerate
+		// shared identity (the Then walker is positional, the verified filter is
+		// all-or-nothing per matched property).
 		FastMockInteractions store = new(1);
 		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
 
@@ -282,7 +288,7 @@ public class FastBufferBoxingAndUnverifiedTests
 		((IFastMemberBuffer)buffer).AppendBoxed(dest);
 
 		await That(dest).HasCount(2);
-		await That(dest[0].Interaction).IsNotSameAs(dest[1].Interaction);
+		await That(dest[0].Interaction).IsSameAs(dest[1].Interaction);
 	}
 
 	[Fact]

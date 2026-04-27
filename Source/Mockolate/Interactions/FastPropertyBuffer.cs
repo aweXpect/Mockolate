@@ -6,12 +6,15 @@ using Mockolate.Parameters;
 namespace Mockolate.Interactions;
 
 /// <summary>
-///     Per-member buffer for property getters. The buffer is bound to a single property and
-///     keeps the property name on a per-buffer <see cref="PropertyGetterAccess" /> template, so
-///     the per-call hot path only stores the sequence number. Verification still emits a fresh
-///     <see cref="PropertyGetterAccess" /> per recorded slot — the template is only used as a
-///     name source — because reference-keyed bookkeeping (Then ordering, the verified set)
-///     requires each recorded interaction to be a distinct object.
+///     Per-member buffer for property getters. The buffer is bound to a single property; every
+///     recorded record stores only a sequence number and shares a single
+///     <see cref="PropertyGetterAccess" /> when boxed for verification. Sharing one reference
+///     across records is safe because property getters carry no parameters — every recorded
+///     access is semantically identical — and the two reference-keyed verification paths in
+///     this codebase tolerate it: <c>FastMockInteractions._verified</c> filters all-or-nothing
+///     per matched property, and <c>VerificationResultExtensions.Then</c> walks the snapshot
+///     positionally so repeated occurrences of the same reference still resolve to distinct
+///     positions.
 /// </summary>
 [DebuggerDisplay("{Count} property gets")]
 #if !DEBUG
@@ -39,23 +42,22 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 
 	/// <summary>
 	///     Records a property getter access using the buffer's pre-seeded
-	///     <see cref="PropertyGetterAccess" /> template. Throws when the template has not been
+	///     <see cref="PropertyGetterAccess" /> singleton. Throws when the singleton has not been
 	///     installed — callers must use <see cref="Append(string)" /> in that case.
 	/// </summary>
-	/// <exception cref="InvalidOperationException">No template was supplied at install time.</exception>
+	/// <exception cref="InvalidOperationException">No singleton was supplied at install time.</exception>
 	public void Append()
 	{
 		if (_access is null)
 		{
 			throw new InvalidOperationException(
-				$"{nameof(Append)}() requires the buffer to be installed with a {nameof(PropertyGetterAccess)} template via {nameof(FastPropertyBufferFactory)}.{nameof(FastPropertyBufferFactory.InstallPropertyGetter)}(memberId, access). Use {nameof(Append)}(string) when no template is available.");
+				$"{nameof(Append)}() requires the buffer to be installed with a {nameof(PropertyGetterAccess)} singleton via {nameof(FastPropertyBufferFactory)}.{nameof(FastPropertyBufferFactory.InstallPropertyGetter)}(memberId, access). Use {nameof(Append)}(string) when no singleton is available.");
 		}
 
 		long seq = _owner.NextSequence();
 		int slot = _storage.Reserve();
 		ref Record r = ref _storage.SlotForWrite(slot);
 		r.Seq = seq;
-		r.Boxed = null;
 		_storage.Publish();
 
 		if (_owner.HasInteractionAddedSubscribers)
@@ -66,17 +68,16 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 
 	/// <summary>
 	///     Records a property getter access. Lazily installs the buffer's
-	///     <see cref="PropertyGetterAccess" /> template from <paramref name="name" /> on first
-	///     call so legacy callers (generated code that does not pass a pre-built template) keep
-	///     working without allocating one template object per record.
+	///     <see cref="PropertyGetterAccess" /> singleton from <paramref name="name" /> on first
+	///     call so legacy callers (generated code that does not pass a pre-built singleton) keep
+	///     working without allocating one access object per record.
 	/// </summary>
 	public void Append(string name)
 	{
-		// Lazy init: the buffer is bound to a single property, so one template covers every
+		// Lazy init: the buffer is bound to a single property, so one singleton covers every
 		// record. The benign race here is acceptable — both instances are equivalent because
 		// PropertyGetterAccess is identified solely by Name; whichever assignment wins still
-		// satisfies the contract. The template is only a Name source; per-record identity is
-		// preserved by allocating a fresh PropertyGetterAccess in AppendBoxed.
+		// satisfies the contract.
 		_access ??= new PropertyGetterAccess(name);
 		Append();
 	}
@@ -94,12 +95,11 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 				return;
 			}
 
-			string name = _access!.Name;
+			PropertyGetterAccess access = _access!;
 			for (int slot = 0; slot < n; slot++)
 			{
 				ref Record r = ref _storage.SlotUnderLock(slot);
-				r.Boxed ??= new PropertyGetterAccess(name);
-				dest.Add((r.Seq, r.Boxed));
+				dest.Add((r.Seq, access));
 			}
 		}
 	}
@@ -114,7 +114,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 				return;
 			}
 
-			string name = _access!.Name;
+			PropertyGetterAccess access = _access!;
 			for (int slot = 0; slot < n; slot++)
 			{
 				if (_storage.VerifiedUnderLock(slot))
@@ -123,8 +123,7 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 				}
 
 				ref Record r = ref _storage.SlotUnderLock(slot);
-				r.Boxed ??= new PropertyGetterAccess(name);
-				dest.Add((r.Seq, r.Boxed));
+				dest.Add((r.Seq, access));
 			}
 		}
 	}
@@ -153,7 +152,6 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 	internal struct Record
 	{
 		public long Seq;
-		public IInteraction? Boxed;
 	}
 }
 

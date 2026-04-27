@@ -441,11 +441,6 @@ public static class VerificationResultExtensions
 			IVerificationResult result = verificationResult;
 			TMock mockVerify = ((IVerificationResult<TMock>)verificationResult).Object;
 			IInteraction[] snapshot = result.Interactions.ToArray();
-			Dictionary<IInteraction, int> positions = new(snapshot.Length);
-			for (int i = 0; i < snapshot.Length; i++)
-			{
-				positions[snapshot[i]] = i;
-			}
 
 			int after = -1;
 			foreach (Func<TMock, VerificationResult<TMock>> check in orderedChecks)
@@ -467,23 +462,31 @@ public static class VerificationResultExtensions
 
 			bool VerifyInteractions(IInteraction[] interactions, IVerificationResult currentResult)
 			{
-				int bestPosition = int.MaxValue;
-				IInteraction? firstInteraction = null;
-				foreach (IInteraction candidate in interactions)
+				// Walk the snapshot from `after + 1` and stop on the first slot whose interaction
+				// is in the verification's matched set. The membership check uses reference
+				// equality, but the search is positional — repeated entries with the same
+				// reference (e.g. shared property-getter access singletons) still resolve to
+				// distinct positions because each call to this lambda picks up where the
+				// previous one stopped.
+				int firstPos = -1;
+				// `after == int.MaxValue` is the "earlier step already failed" signal — skip the
+				// walk so subsequent steps cascade to failure without going through the loop
+				// (and without triggering int overflow on `after + 1`).
+				if (after < snapshot.Length)
 				{
-					// Stryker disable once Equality : positions are unique per interaction, so position <= bestPosition can only differ from position < bestPosition on exact equality, which never occurs.
-					if (positions.TryGetValue(candidate, out int position) &&
-					    position > after &&
-					    position < bestPosition)
+					HashSet<IInteraction> matched = new(interactions);
+					for (int i = after + 1; i < snapshot.Length; i++)
 					{
-						bestPosition = position;
-						firstInteraction = candidate;
+						if (matched.Contains(snapshot[i]))
+						{
+							firstPos = i;
+							break;
+						}
 					}
 				}
 
-				bool hasInteractionAfter = firstInteraction is not null;
-				// Stryker disable once Conditional : when hasInteractionAfter is false, bestPosition is still the int.MaxValue seed, so the ternary branches produce identical values.
-				after = hasInteractionAfter ? bestPosition : int.MaxValue;
+				bool hasInteractionAfter = firstPos >= 0;
+				after = hasInteractionAfter ? firstPos : int.MaxValue;
 				if (!hasInteractionAfter && error is null)
 				{
 					error = interactions.Length > 0
