@@ -218,8 +218,11 @@ namespace Mockolate
         public Mockolate.Setup.MethodSetup[]? GetMethodSetupSnapshot(int memberId) { }
         public System.Collections.Generic.IEnumerable<T> GetMethodSetups<T>(string methodName)
             where T : Mockolate.Setup.MethodSetup { }
+        public TResult GetProperty<TResult>(Mockolate.Interactions.PropertyGetterAccess access, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
+        public TResult GetProperty<TResult>(int memberId, Mockolate.Interactions.PropertyGetterAccess access, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetProperty<TResult>(int memberId, string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
+        public TResult GetPropertyFast<TResult>(int memberId, Mockolate.Interactions.PropertyGetterAccess access, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
         public TResult GetPropertyFast<TResult>(int memberId, string propertyName, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
         public Mockolate.Setup.PropertySetup? GetPropertySetupSnapshot(int memberId) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.IMockInteractions interactions) { }
@@ -820,12 +823,14 @@ namespace Mockolate.Interactions
     public static class FastPropertyBufferFactory
     {
         public static Mockolate.Interactions.FastPropertyGetterBuffer InstallPropertyGetter(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
+        public static Mockolate.Interactions.FastPropertyGetterBuffer InstallPropertyGetter(this Mockolate.Interactions.FastMockInteractions interactions, int memberId, Mockolate.Interactions.PropertyGetterAccess access) { }
         public static Mockolate.Interactions.FastPropertySetterBuffer<T> InstallPropertySetter<T>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} property gets")]
     public sealed class FastPropertyGetterBuffer : Mockolate.Interactions.IFastMemberBuffer
     {
         public int Count { get; }
+        public void Append() { }
         public void Append(string name) { }
         public void Clear() { }
         public int ConsumeMatching() { }

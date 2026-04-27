@@ -422,6 +422,34 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Singleton-aware overload of <see cref="GetProperty{TResult}(string, Func{TResult}, Func{TResult}?)" />.
+	///     Records the shared <paramref name="access" /> singleton emitted by the source generator
+	///     (one static instance per non-indexer property), avoiding the per-call
+	///     <see cref="PropertyGetterAccess" /> allocation. Sharing one reference across recorded
+	///     accesses is safe because the only reference-keyed bookkeeping in the codebase tolerates
+	///     it — the <c>_verified</c> filter is all-or-nothing per matched property, and
+	///     <c>Then</c> walks the snapshot positionally rather than mapping interactions to a
+	///     position via a dictionary.
+	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="access">The shared <see cref="PropertyGetterAccess" /> singleton for the property.</param>
+	/// <param name="defaultValueGenerator">Producer of the default value when no setup supplies one.</param>
+	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered.</param>
+	/// <returns>The resolved getter value.</returns>
+	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
+	public TResult GetProperty<TResult>(PropertyGetterAccess access, Func<TResult> defaultValueGenerator,
+		Func<TResult>? baseValueAccessor)
+	{
+		IInteraction? interaction = null;
+		if (!Behavior.SkipInteractionRecording)
+		{
+			interaction = Interactions.RegisterInteraction(access);
+		}
+
+		return ResolveGetterInternal(access.Name, defaultValueGenerator, baseValueAccessor, interaction);
+	}
+
+	/// <summary>
 	///     Member-id-keyed overload of <see cref="GetProperty{TResult}(string, Func{TResult}, Func{TResult}?)" /> that
 	///     records via the typed <see cref="FastPropertyGetterBuffer" /> when the mock is wired to a
 	///     <see cref="FastMockInteractions" />, falling back to the legacy list otherwise.
@@ -445,6 +473,30 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Singleton-aware overload of <see cref="GetProperty{TResult}(int, string, Func{TResult}, Func{TResult}?)" />
+	///     that records the supplied <paramref name="access" /> directly. The source generator emits one shared
+	///     <see cref="PropertyGetterAccess" /> per non-indexer property; reusing it keeps every recorded access
+	///     in the matching <see cref="FastPropertyGetterBuffer" /> pointing at the same singleton.
+	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
+	/// <param name="access">The shared <see cref="PropertyGetterAccess" /> singleton for the property.</param>
+	/// <param name="defaultValueGenerator">Producer of the default value when no setup supplies one.</param>
+	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered.</param>
+	/// <returns>The resolved getter value.</returns>
+	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
+	public TResult GetProperty<TResult>(int memberId, PropertyGetterAccess access,
+		Func<TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertyGetter(memberId, access);
+		}
+
+		return ResolveGetterInternal(access.Name, defaultValueGenerator, baseValueAccessor, null);
+	}
+
+	/// <summary>
 	///     Allocation-free fast-path overload of <see cref="GetProperty{TResult}(int, string, Func{TResult}, Func{TResult}?)" />.
 	///     Avoids the per-call closure allocation by accepting a static <see cref="Func{T, TResult}" /> that takes the
 	///     active <see cref="MockBehavior" /> as its argument — the source generator emits a <c>static</c> lambda so
@@ -465,6 +517,39 @@ public partial class MockRegistry
 			RecordPropertyGetter(memberId, propertyName);
 		}
 
+		return ResolvePropertyFast(memberId, propertyName, defaultValueGenerator, baseValueAccessor);
+	}
+
+	/// <summary>
+	///     Singleton-aware overload of
+	///     <see cref="GetPropertyFast{TResult}(int, string, Func{MockBehavior, TResult}, Func{TResult}?)" />
+	///     that records the shared <paramref name="access" /> singleton emitted by the source generator,
+	///     avoiding the per-call <see cref="PropertyGetterAccess" /> allocation. The
+	///     <see cref="FastPropertyGetterBuffer" /> stores only a sequence number per call and emits the
+	///     same singleton for every recorded record on verification; the cold-path fall-through likewise
+	///     registers the singleton.
+	/// </summary>
+	/// <typeparam name="TResult">The property's value type.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
+	/// <param name="access">The shared <see cref="PropertyGetterAccess" /> singleton for the property.</param>
+	/// <param name="defaultValueGenerator">Cached factory invoked with the active <see cref="MockBehavior" /> when a default value is needed.</param>
+	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered. Pass <see langword="null" /> for the no-wrapping fast path.</param>
+	/// <returns>The resolved getter value.</returns>
+	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
+	public TResult GetPropertyFast<TResult>(int memberId, PropertyGetterAccess access,
+		Func<MockBehavior, TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor = null)
+	{
+		if (!Behavior.SkipInteractionRecording)
+		{
+			RecordPropertyGetter(memberId, access);
+		}
+
+		return ResolvePropertyFast(memberId, access.Name, defaultValueGenerator, baseValueAccessor);
+	}
+
+	private TResult ResolvePropertyFast<TResult>(int memberId, string propertyName,
+		Func<MockBehavior, TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor)
+	{
 		// Hot path: setup registered via SetupProperty(int, ...), no scenario active, no base accessor.
 		if (baseValueAccessor is null && string.IsNullOrEmpty(Scenario))
 		{
@@ -509,6 +594,22 @@ public partial class MockRegistry
 		}
 
 		Interactions.RegisterInteraction(new PropertyGetterAccess(propertyName));
+	}
+
+	private void RecordPropertyGetter(int memberId, PropertyGetterAccess access)
+	{
+		if (Interactions is FastMockInteractions fast)
+		{
+			IFastMemberBuffer?[] buffers = fast.Buffers;
+			if ((uint)memberId < (uint)buffers.Length &&
+			    buffers[memberId] is FastPropertyGetterBuffer buffer)
+			{
+				buffer.Append();
+				return;
+			}
+		}
+
+		Interactions.RegisterInteraction(access);
 	}
 
 	private TResult ResolveGetterInternal<TResult>(string propertyName, Func<TResult> defaultValueGenerator,

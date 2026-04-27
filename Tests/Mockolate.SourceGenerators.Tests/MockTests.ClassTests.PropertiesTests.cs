@@ -80,7 +80,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomeProperty_Get, "global::MyCode.IMyService.SomeProperty", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeProperty);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomeProperty_Get, global::Mockolate.Mock.IMyService.PropertyAccess_SomeProperty_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeProperty);
 					          			}
 					          			set
 					          			{
@@ -98,7 +98,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<bool?>(global::Mockolate.Mock.IMyService.MemberId_SomeReadOnlyProperty_Get, "global::MyCode.IMyService.SomeReadOnlyProperty", static b => b.DefaultValue.Generate(default(bool?)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeReadOnlyProperty);
+					          				return this.MockRegistry.GetPropertyFast<bool?>(global::Mockolate.Mock.IMyService.MemberId_SomeReadOnlyProperty_Get, global::Mockolate.Mock.IMyService.PropertyAccess_SomeReadOnlyProperty_Get, static b => b.DefaultValue.Generate(default(bool?)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeReadOnlyProperty);
 					          			}
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -122,7 +122,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomeInternalProperty_Get, "global::MyCode.IMyService.SomeInternalProperty", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeInternalProperty);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomeInternalProperty_Get, global::Mockolate.Mock.IMyService.PropertyAccess_SomeInternalProperty_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomeInternalProperty);
 					          			}
 					          			set
 					          			{
@@ -140,7 +140,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomePrivateProperty_Get, "global::MyCode.IMyService.SomePrivateProperty", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomePrivateProperty);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomePrivateProperty_Get, global::Mockolate.Mock.IMyService.PropertyAccess_SomePrivateProperty_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomePrivateProperty);
 					          			}
 					          			set
 					          			{
@@ -158,7 +158,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomePrivateProtectedProperty_Get, "global::MyCode.IMyService.SomePrivateProtectedProperty", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomePrivateProtectedProperty);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_SomePrivateProtectedProperty_Get, global::Mockolate.Mock.IMyService.PropertyAccess_SomePrivateProtectedProperty_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.SomePrivateProtectedProperty);
 					          			}
 					          			set
 					          			{
@@ -217,7 +217,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyDirectProperty_Get, "global::MyCode.IMyService.MyDirectProperty", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyDirectProperty);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyDirectProperty_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyDirectProperty_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyDirectProperty);
 					          			}
 					          			set
 					          			{
@@ -235,7 +235,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty1_Get, "global::MyCode.IMyServiceBase1.MyBaseProperty1", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty1);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty1_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty1_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty1);
 					          			}
 					          			set
 					          			{
@@ -253,7 +253,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty2_Get, "global::MyCode.IMyServiceBase2.MyBaseProperty2", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty2);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty2_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty2_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty2);
 					          			}
 					          			set
 					          			{
@@ -271,7 +271,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty3_Get, "global::MyCode.IMyServiceBase3.MyBaseProperty3", static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty3);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty3_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty3_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty3);
 					          			}
 					          			set
 					          			{
@@ -331,7 +331,7 @@ public sealed partial class MockTests
 					          		{
 					          			protected get
 					          			{
-					          				return this.MockRegistry.GetProperty<int>("global::MyCode.MyService.SomeProperty1", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), () => base.SomeProperty1);
+					          				return this.MockRegistry.GetProperty<int>(global::Mockolate.Mock.MyService__IMyOtherService.PropertyAccess_SomeProperty1_Get, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), () => base.SomeProperty1);
 					          			}
 					          			set
 					          			{
@@ -355,7 +355,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetProperty<int>("global::MyCode.MyService.SomeProperty2", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is global::MyCode.MyService wraps ? () => wraps.SomeProperty2 : () => base.SomeProperty2);
+					          				return this.MockRegistry.GetProperty<int>(global::Mockolate.Mock.MyService__IMyOtherService.PropertyAccess_SomeProperty2_Get, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is global::MyCode.MyService wraps ? () => wraps.SomeProperty2 : () => base.SomeProperty2);
 					          			}
 					          			protected set
 					          			{
@@ -372,7 +372,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetProperty<bool?>("global::MyCode.MyService.SomeReadOnlyProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool?)!), () => base.SomeReadOnlyProperty);
+					          				return this.MockRegistry.GetProperty<bool?>(global::Mockolate.Mock.MyService__IMyOtherService.PropertyAccess_SomeReadOnlyProperty_Get, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(bool?)!), () => base.SomeReadOnlyProperty);
 					          			}
 					          		}
 					          """).IgnoringNewlineStyle().And
@@ -396,7 +396,7 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetProperty<int>("global::MyCode.IMyOtherService.SomeAdditionalProperty", () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), null);
+					          				return this.MockRegistry.GetProperty<int>(global::Mockolate.Mock.MyService__IMyOtherService.PropertyAccess_SomeAdditionalProperty_Get, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), null);
 					          			}
 					          			set
 					          			{
