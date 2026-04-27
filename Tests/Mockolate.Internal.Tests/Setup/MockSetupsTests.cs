@@ -1,4 +1,5 @@
 using System.Reflection;
+using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 
@@ -9,7 +10,8 @@ public partial class MockSetupsTests
 	[Fact]
 	public async Task EventSetup_ToString_ShouldReturnEventName()
 	{
-		EventSetup setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "global::MyCode.IMyService.SomeEvent");
+		EventSetup setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
+			"global::MyCode.IMyService.SomeEvent");
 
 		string result = setup.ToString();
 
