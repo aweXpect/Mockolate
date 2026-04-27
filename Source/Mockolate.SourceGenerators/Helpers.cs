@@ -284,6 +284,25 @@ internal static class Helpers
 		public StringBuilder AppendDefaultValueGeneratorFor(Type type,
 			string defaultValueName, string suffix = "")
 		{
+			if (type.TupleTypes is not null)
+			{
+				sb.Append("(");
+				bool first = true;
+				foreach (Type? genericType in type.TupleTypes.Value)
+				{
+					if (!first)
+					{
+						sb.Append(", ");
+					}
+
+					first = false;
+					sb.AppendDefaultValueGeneratorFor(genericType, defaultValueName, suffix);
+				}
+
+				sb.Append(")");
+				return sb;
+			}
+
 			sb.Append(defaultValueName);
 			sb.Append(".Generate(default(");
 
@@ -302,29 +321,13 @@ internal static class Helpers
 
 			sb.Append(")!");
 
-			if (type.TupleTypes is not null)
-			{
-				foreach (Type? genericType in type.TupleTypes.Value)
-				{
-					sb.Append(", ").Append("() => ")
-						.AppendDefaultValueGeneratorFor(genericType, defaultValueName);
-				}
-
-				if (!string.IsNullOrWhiteSpace(suffix))
-				{
-					sb.Append(", ").Append(suffix);
-				}
-
-				sb.Append(")");
-				return sb;
-			}
-
-			if (type.SpecialGenericType != SpecialGenericType.None && type.GenericTypeParameters?.Count > 0)
+			if (type.SpecialGenericType is SpecialGenericType.Task or SpecialGenericType.ValueTask
+			    && type.GenericTypeParameters?.Count > 0)
 			{
 				foreach (Type? genericType in type.GenericTypeParameters.Value)
 				{
-					sb.Append(", ").Append("() => ")
-						.AppendDefaultValueGeneratorFor(genericType, defaultValueName);
+					sb.Append(", ")
+						.AppendDefaultValueGeneratorFor(genericType, defaultValueName, suffix);
 				}
 			}
 

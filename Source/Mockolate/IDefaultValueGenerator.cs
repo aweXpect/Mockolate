@@ -15,8 +15,7 @@ public interface IDefaultValueGenerator
 	/// </summary>
 	/// <param name="type">The runtime type to produce a default value for.</param>
 	/// <param name="parameters">
-	///     The runtime arguments of the mocked invocation, in declaration order (for tuple defaults, nested
-	///     <c>Func&lt;T&gt;</c> factories for each tuple element are appended). Implementations can inspect this
+	///     The runtime arguments of the mocked invocation, in declaration order. Implementations can inspect this
 	///     array to return a more appropriate default - for example, the built-in cancellable-task factory scans it
 	///     for a cancelled <see cref="System.Threading.CancellationToken" /> and returns
 	///     <see cref="System.Threading.Tasks.Task.FromCanceled(System.Threading.CancellationToken)" /> instead of
