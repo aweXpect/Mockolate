@@ -544,7 +544,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int>.WithParameterCollection setup = new(MockBehavior.Default, "Foo");
+			ReturnMethodSetup<int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo");
 
 			string result = setup.ToString();
 
@@ -601,7 +601,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1");
+			ReturnMethodSetup<int, string>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1");
 
 			string result = setup.ToString();
 
@@ -624,7 +624,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string>.WithParameterCollection setup = new(MockBehavior.Default, "Foo", (IParameterMatch<string>)It.IsAny<string>());
+			ReturnMethodSetup<int, string>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", (IParameterMatch<string>)It.IsAny<string>());
 
 			string result = setup.ToString();
 
@@ -697,7 +697,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2");
+			ReturnMethodSetup<int, string, long>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2");
 
 			string result = setup.ToString();
 
@@ -720,8 +720,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long>.WithParameterCollection setup = new(
-				MockBehavior.Default, "Foo",
+			ReturnMethodSetup<int, string, long>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>());
 
@@ -828,7 +827,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3");
+			ReturnMethodSetup<int, string, long, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3");
 
 			string result = setup.ToString();
 
@@ -851,8 +850,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int>.WithParameterCollection setup = new(
-				MockBehavior.Default, "Foo",
+			ReturnMethodSetup<int, string, long, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>(),
 				(IParameterMatch<int>)It.IsAny<int>());
@@ -1028,7 +1026,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
+			ReturnMethodSetup<int, string, long, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
 
 			string result = setup.ToString();
 
@@ -1051,8 +1049,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int>.WithParameterCollection setup = new(
-				MockBehavior.Default, "Foo",
+			ReturnMethodSetup<int, string, long, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>(),
 				(IParameterMatch<int>)It.IsAny<int>(),
@@ -1375,7 +1372,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
+			ReturnMethodSetup<int, string, long, int, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
 
 			string result = setup.ToString();
 
@@ -1398,8 +1395,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			ReturnMethodSetup<int, string, long, int, int, int>.WithParameterCollection setup = new(
-				MockBehavior.Default, "Foo",
+			ReturnMethodSetup<int, string, long, int, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>(),
 				(IParameterMatch<int>)It.IsAny<int>(),
@@ -1472,7 +1468,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup.WithParameterCollection setup = new(MockBehavior.Default, "Foo");
+			VoidMethodSetup.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo");
 
 			string result = setup.ToString();
 
@@ -1513,7 +1509,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1");
+			VoidMethodSetup<string>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1");
 
 			string result = setup.ToString();
 
@@ -1536,7 +1532,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+			VoidMethodSetup<string>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>());
 
 			string result = setup.ToString();
@@ -1579,7 +1575,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2");
+			VoidMethodSetup<string, long>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2");
 
 			string result = setup.ToString();
 
@@ -1602,7 +1598,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+			VoidMethodSetup<string, long>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>());
 
@@ -1646,7 +1642,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3");
+			VoidMethodSetup<string, long, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3");
 
 			string result = setup.ToString();
 
@@ -1669,7 +1665,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+			VoidMethodSetup<string, long, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>(),
 				(IParameterMatch<int>)It.IsAny<int>());
@@ -1714,7 +1710,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
+			VoidMethodSetup<string, long, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
 
 			string result = setup.ToString();
 
@@ -1737,7 +1733,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int>.WithParameterCollection setup = new(MockBehavior.Default, "Foo",
+			VoidMethodSetup<string, long, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>(),
 				(IParameterMatch<int>)It.IsAny<int>(),
@@ -1785,7 +1781,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int, int>.WithParameters setup = new(MockBehavior.Default, "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
+			VoidMethodSetup<string, long, int, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
 
 			string result = setup.ToString();
 
@@ -1808,8 +1804,7 @@ public sealed partial class SetupMethodTests
 		[Fact]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
-			VoidMethodSetup<string, long, int, int, int>.WithParameterCollection setup = new(
-				MockBehavior.Default, "Foo",
+			VoidMethodSetup<string, long, int, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
 				(IParameterMatch<string>)It.IsAny<string>(),
 				(IParameterMatch<long>)It.IsAny<long>(),
 				(IParameterMatch<int>)It.IsAny<int>(),

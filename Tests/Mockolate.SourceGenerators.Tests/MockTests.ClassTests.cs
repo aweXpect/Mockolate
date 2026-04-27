@@ -68,8 +68,11 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Diagnostics).IsEmpty();
+			// One occurrence per generator-emitted public ctor: the (MockRegistry, ...) overload and
+			// the typed (MockBehavior, ...) overload that subclasses use. The base ctor already carries
+			// the attribute, and the dedup check still suppresses an injected duplicate on each.
 			await That(result.Sources).ContainsKey("Mock.AnnotatedShape.g.cs").WhoseValue
-				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Once();
+				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Exactly(2);
 		}
 
 		[Fact]

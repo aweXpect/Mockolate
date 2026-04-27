@@ -5,7 +5,7 @@ namespace Mockolate.Internal.Tests.TestHelpers;
 
 internal sealed class FakeIndexerSetup : IndexerSetup
 {
-	internal FakeIndexerSetup(bool match) : base(new MockRegistry(MockBehavior.Default))
+	internal FakeIndexerSetup(bool match) : base(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)))
 	{
 		ShouldMatch = match;
 	}

@@ -1,4 +1,4 @@
-﻿using Mockolate.Exceptions;
+using Mockolate.Exceptions;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockProperties;
@@ -132,7 +132,7 @@ public sealed partial class SetupPropertyTests
 	[Fact]
 	public async Task ToString_ShouldReturnType()
 	{
-		PropertySetup<int> setup = new(new MockRegistry(MockBehavior.Default), "Foo");
+		PropertySetup<int> setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo");
 
 		string result = setup.ToString();
 
@@ -169,7 +169,7 @@ public sealed partial class SetupPropertyTests
 	}
 
 	private sealed class MyPropertySetup<T>()
-		: PropertySetup<T>(new MockRegistry(MockBehavior.Default), "My.Property")
+		: PropertySetup<T>(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "My.Property")
 	{
 		public void InvokeSetter<TValue>(TValue value)
 			=> InvokeSetter(value, MockBehavior.Default);
@@ -181,7 +181,7 @@ public sealed partial class SetupPropertyTests
 			=> InitializeValue(value);
 	}
 
-	private sealed class InitializeValueCountingPropertySetup<T>(string name) : PropertySetup<T>(MockBehavior.Default, name)
+	private sealed class InitializeValueCountingPropertySetup<T>(string name) : PropertySetup<T>(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), name)
 	{
 		public int InitializeValueCallCount { get; private set; }
 

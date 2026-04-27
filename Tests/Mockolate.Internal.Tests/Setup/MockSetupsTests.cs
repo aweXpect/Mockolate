@@ -9,7 +9,7 @@ public partial class MockSetupsTests
 	[Fact]
 	public async Task EventSetup_ToString_ShouldReturnEventName()
 	{
-		EventSetup setup = new(new MockRegistry(MockBehavior.Default), "global::MyCode.IMyService.SomeEvent");
+		EventSetup setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "global::MyCode.IMyService.SomeEvent");
 
 		string result = setup.ToString();
 
@@ -36,7 +36,7 @@ public partial class MockSetupsTests
 		for (int i = 0; i < methodCount; i++)
 		{
 			mock.MockRegistry.SetupMethod(
-				new ReturnMethodSetup<int>.WithParameterCollection(MockBehavior.Default, $"my.method{i}"));
+				new ReturnMethodSetup<int>.WithParameterCollection(mock.MockRegistry, $"my.method{i}"));
 		}
 
 		for (int i = 0; i < propertyCount; i++)

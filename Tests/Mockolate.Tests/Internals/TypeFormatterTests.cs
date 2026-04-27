@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using Mockolate.Setup;
 
@@ -13,7 +13,7 @@ public sealed class TypeFormatterTests
 
 	public static TheoryData<string, string> ProvideTestData()
 	{
-		MockRegistry registry = new(MockBehavior.Default);
+		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 		return new TheoryData<string, string>
 		{
 			{

@@ -192,7 +192,6 @@ namespace Mockolate
     [System.Diagnostics.DebuggerDisplay("{Interactions} | {Setup}")]
     public class MockRegistry
     {
-        public MockRegistry(Mockolate.MockBehavior behavior, object?[]? constructorParameters = null) { }
         public MockRegistry(Mockolate.MockRegistry registry, Mockolate.Interactions.IMockInteractions interactions) { }
         public MockRegistry(Mockolate.MockRegistry registry, object wraps) { }
         public MockRegistry(Mockolate.MockRegistry registry, object?[] constructorParameters) { }
@@ -277,7 +276,6 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<TSubject> VerifyProperty<TSubject, TValue>(TSubject subject, int memberId, string propertyName, Mockolate.Parameters.IParameterMatch<TValue> value) { }
         public Mockolate.Verify.VerificationResult<T> VerifyPropertyTyped<T>(T subject, int memberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> VerifyPropertyTyped<TSubject, TValue>(TSubject subject, int memberId, string propertyName, Mockolate.Parameters.IParameterMatch<TValue> value) { }
-        public static Mockolate.MockRegistry op_Implicit(Mockolate.MockBehavior behavior) { }
     }
     public static class ParameterExtensions
     {
