@@ -143,8 +143,9 @@ internal static partial class Sources
 		sb.Append(indent).Append("{").AppendLine();
 		if (cachedBufferRef is not null)
 		{
-			sb.Append(indent).Append('\t').Append(cachedBufferRef).Append(".Append(").Append(accessVarName)
-				.Append(");").AppendLine();
+			sb.Append(indent).Append('\t').Append(cachedBufferRef).Append(".Append(");
+			AppendIndexerParameterArguments(sb, parameters);
+			sb.Append(");").AppendLine();
 		}
 		else if (useFastBuffers && memberIdRef is not null)
 		{
@@ -193,8 +194,9 @@ internal static partial class Sources
 		sb.Append(indent).Append("{").AppendLine();
 		if (cachedBufferRef is not null)
 		{
-			sb.Append(indent).Append('\t').Append(cachedBufferRef).Append(".Append(").Append(accessVarName)
-				.Append(");").AppendLine();
+			sb.Append(indent).Append('\t').Append(cachedBufferRef).Append(".Append(");
+			AppendIndexerParameterArguments(sb, parameters);
+			sb.Append(", value);").AppendLine();
 		}
 		else if (useFastBuffers && memberIdRef is not null)
 		{
