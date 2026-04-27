@@ -28,13 +28,15 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-				.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\"))")
+				.Contains(
+					"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\"))")
 				.IgnoringNewlineStyle().And
 				.Contains("wrappedResult = base.ProcessData(baseResult);")
 				.IgnoringNewlineStyle().And
 				.Contains("methodSetup?.TriggerCallbacks(baseResult);")
 				.IgnoringNewlineStyle().And
-				.Contains("return methodSetup?.TryGetReturnValue(baseResult, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, baseResult);")
+				.Contains(
+					"return methodSetup?.TryGetReturnValue(baseResult, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, baseResult);")
 				.IgnoringNewlineStyle();
 		}
 
@@ -68,8 +70,11 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Diagnostics).IsEmpty();
+			// One occurrence per generator-emitted public ctor: the (MockRegistry, ...) overload and
+			// the typed (MockBehavior, ...) overload that subclasses use. The base ctor already carries
+			// the attribute, and the dedup check still suppresses an injected duplicate on each.
 			await That(result.Sources).ContainsKey("Mock.AnnotatedShape.g.cs").WhoseValue
-				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Once();
+				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Exactly(2);
 		}
 
 		[Fact]
@@ -198,14 +203,27 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-				.Contains("Setup for the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\">BaseProperty</see>.").And
-				.Contains("Verify interactions with the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\">BaseProperty</see>.").And
-				.Contains("Setup for the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\">this[string]</see>").And
-				.Contains("Verify interactions with the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\">this[string]</see>.").And
-				.Contains("Setup for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\">BaseMethod()</see>.").And
-				.Contains("Verify invocations for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\">BaseMethod()</see>.").And
+				.Contains(
+					"Setup for the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\">BaseProperty</see>.")
+				.And
+				.Contains(
+					"Verify interactions with the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\">BaseProperty</see>.")
+				.And
+				.Contains(
+					"Setup for the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\">this[string]</see>")
+				.And
+				.Contains(
+					"Verify interactions with the int indexer <see cref=\"global::MyCode.IMyBaseService.this[string]\">this[string]</see>.")
+				.And
+				.Contains(
+					"Setup for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\">BaseMethod()</see>.")
+				.And
+				.Contains(
+					"Verify invocations for the method <see cref=\"global::MyCode.IMyBaseService.BaseMethod()\">BaseMethod()</see>.")
+				.And
 				.Contains("Raise the <see cref=\"global::MyCode.IMyBaseService.BaseEvent\">BaseEvent</see> event.").And
-				.Contains("Verify subscriptions on the BaseEvent event of <see cref=\"global::MyCode.IMyBaseService.BaseEvent\">BaseEvent</see>.");
+				.Contains(
+					"Verify subscriptions on the BaseEvent event of <see cref=\"global::MyCode.IMyBaseService.BaseEvent\">BaseEvent</see>.");
 		}
 
 		[Fact]

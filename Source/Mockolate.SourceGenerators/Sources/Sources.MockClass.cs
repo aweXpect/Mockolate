@@ -69,25 +69,32 @@ internal static partial class Sources
 		};
 		if (hasEvents)
 		{
-			mockPropertyRemarks.Add("  <item><description><c>Raise</c> - trigger events declared on the mocked type.</description></item>");
+			mockPropertyRemarks.Add(
+				"  <item><description><c>Raise</c> - trigger events declared on the mocked type.</description></item>");
 		}
 
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
-			mockPropertyRemarks.Add("  <item><description><c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c> - target <see langword=\"protected\" /> members on class mocks.</description></item>");
+			mockPropertyRemarks.Add(
+				"  <item><description><c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c> - target <see langword=\"protected\" /> members on class mocks.</description></item>");
 		}
 
 		if (hasStaticMembers || hasStaticEvents)
 		{
-			mockPropertyRemarks.Add("  <item><description><c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c> - target <see langword=\"static\" /> members on interface mocks.</description></item>");
+			mockPropertyRemarks.Add(
+				"  <item><description><c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c> - target <see langword=\"static\" /> members on interface mocks.</description></item>");
 		}
 
-		mockPropertyRemarks.Add("  <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item>");
-		mockPropertyRemarks.Add("  <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item>");
-		mockPropertyRemarks.Add("  <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item>");
+		mockPropertyRemarks.Add(
+			"  <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item>");
+		mockPropertyRemarks.Add(
+			"  <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item>");
+		mockPropertyRemarks.Add(
+			"  <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item>");
 		mockPropertyRemarks.Add("</list>");
 
-		sb.AppendXmlSummary($"Gets the mock accessor for <see cref=\"{escapedClassName}\" /> - the entry point for configuring setups, verifying interactions and raising events.");
+		sb.AppendXmlSummary(
+			$"Gets the mock accessor for <see cref=\"{escapedClassName}\" /> - the entry point for configuring setups, verifying interactions and raising events.");
 		sb.AppendXmlRemarks(mockPropertyRemarks.ToArray());
 		sb.AppendXmlException("global::Mockolate.Exceptions.MockException",
 			$"The instance is not a Mockolate-generated mock of <see cref=\"{escapedClassName}\" />.");
@@ -123,12 +130,15 @@ internal static partial class Sources
 		};
 		if (hasEvents)
 		{
-			createMockRemarks.Add("  <item><description><c>.Mock.Raise</c> triggers events declared on the mocked type.</description></item>");
+			createMockRemarks.Add(
+				"  <item><description><c>.Mock.Raise</c> triggers events declared on the mocked type.</description></item>");
 		}
 
 		createMockRemarks.Add("</list>");
-		createMockRemarks.Add("With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword=\"null\" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref=\"global::Mockolate.MockBehavior\" /> to customize this (for example to make un-configured calls throw or to skip the base class).");
-		createMockRemarks.Add("Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.");
+		createMockRemarks.Add(
+			"With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword=\"null\" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref=\"global::Mockolate.MockBehavior\" /> to customize this (for example to make un-configured calls throw or to skip the base class).");
+		createMockRemarks.Add(
+			"Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.");
 
 		sb.AppendXmlSummary(
 			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />.");
@@ -140,8 +150,10 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary(
 			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> with the default <see cref=\"global::Mockolate.MockBehavior\" />, applying the given <paramref name=\"setup\" /> immediately.");
-		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
-		sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
+		sb.AppendXmlRemarks(
+			"The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
+		sb.AppendXmlParam("setup",
+			"Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName).Append(" CreateMock(global::System.Action<")
 			.Append(setupType).Append("> setup)").AppendLine();
@@ -150,7 +162,8 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary(
 			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />.");
-		sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
+		sb.AppendXmlParam("mockBehavior",
+			"Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 			.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior)").AppendLine();
@@ -159,9 +172,12 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary(
 			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> with the given <paramref name=\"mockBehavior\" />, applying the given <paramref name=\"setup\" /> immediately.");
-		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
-		sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
-		sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
+		sb.AppendXmlRemarks(
+			"The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
+		sb.AppendXmlParam("mockBehavior",
+			"Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
+		sb.AppendXmlParam("setup",
+			"Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 			.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<").Append(setupType)
@@ -173,7 +189,8 @@ internal static partial class Sources
 		{
 			sb.AppendXmlSummary(
 				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"constructorParameters\" /> to invoke the base-class constructor.");
-			sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
+			sb.AppendXmlParam("constructorParameters",
+				"Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
 			sb.AppendXmlReturns(createMockReturns);
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 				.Append(" CreateMock(object?[] constructorParameters)").AppendLine();
@@ -182,8 +199,10 @@ internal static partial class Sources
 
 			sb.AppendXmlSummary(
 				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"mockBehavior\" /> and <paramref name=\"constructorParameters\" />.");
-			sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
-			sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
+			sb.AppendXmlParam("mockBehavior",
+				"Controls how the mock responds when members are invoked without a matching setup; see <see cref=\"global::Mockolate.MockBehavior\" />.");
+			sb.AppendXmlParam("constructorParameters",
+				"Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
 			sb.AppendXmlReturns(createMockReturns);
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 				.Append(" CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)")
@@ -193,9 +212,12 @@ internal static partial class Sources
 
 			sb.AppendXmlSummary(
 				$"Creates a new mock of <see cref=\"{escapedClassName}\" /> applying the given <paramref name=\"setup\" /> immediately, using the given <paramref name=\"constructorParameters\" />.");
-			sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
-			sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
-			sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
+			sb.AppendXmlRemarks(
+				"The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
+			sb.AppendXmlParam("setup",
+				"Callback that receives the mock's setup surface and registers initial setups before the mock is returned.");
+			sb.AppendXmlParam("constructorParameters",
+				"Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.");
 			sb.AppendXmlReturns(createMockReturns);
 			sb.Append("\t\tpublic static ").Append(@class.ClassFullName)
 				.Append(" CreateMock(global::System.Action<").Append(setupType)
@@ -208,10 +230,14 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary(
 			$"Creates a new mock of <see cref=\"{escapedClassName}\" /> using the given <paramref name=\"mockBehavior\" />, applying the given <paramref name=\"setup\" /> immediately, using the given <paramref name=\"constructorParameters\" />.");
-		sb.AppendXmlRemarks("The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
-		sb.AppendXmlParam("mockBehavior", "Controls how the mock responds when members are invoked without a matching setup, or <see langword=\"null\" /> for <c>MockBehavior.Default</c>.");
-		sb.AppendXmlParam("setup", "Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword=\"null\" /> to skip.");
-		sb.AppendXmlParam("constructorParameters", "Values forwarded to a matching base-class constructor, or <see langword=\"null\" /> to use the parameterless constructor.");
+		sb.AppendXmlRemarks(
+			"The provided <paramref name=\"setup\" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.");
+		sb.AppendXmlParam("mockBehavior",
+			"Controls how the mock responds when members are invoked without a matching setup, or <see langword=\"null\" /> for <c>MockBehavior.Default</c>.");
+		sb.AppendXmlParam("setup",
+			"Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword=\"null\" /> to skip.");
+		sb.AppendXmlParam("constructorParameters",
+			"Values forwarded to a matching base-class constructor, or <see langword=\"null\" /> to use the parameterless constructor.");
 		sb.AppendXmlReturns(createMockReturns);
 		sb.Append("\t\t").Append(hasParameterizedConstructor ? "public" : "private").Append(" static ")
 			.Append(@class.ClassFullName)
@@ -250,7 +276,8 @@ internal static partial class Sources
 
 		if (@class is { ClassFullName: "global::System.Net.Http.HttpClient", })
 		{
-			sb.Append("\t\t\tglobal::Mockolate.MockBehavior effectiveBehavior = mockBehavior ?? global::Mockolate.MockBehavior.Default;")
+			sb.Append(
+					"\t\t\tglobal::Mockolate.MockBehavior effectiveBehavior = mockBehavior ?? global::Mockolate.MockBehavior.Default;")
 				.AppendLine();
 			sb.Append(
 					"\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(effectiveBehavior, global::Mockolate.Mock.")
@@ -443,9 +470,12 @@ internal static partial class Sources
 		#endregion CreateMock
 
 		sb.AppendXmlSummary("Creates a mock that wraps the given <paramref name=\"instance\" />.");
-		sb.AppendXmlRemarks("Public members on the mock forward to <paramref name=\"instance\" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.");
-		sb.AppendXmlParam("instance", "The real object whose calls should be forwarded. Must not be <see langword=\"null\" />.");
-		sb.AppendXmlReturns($"A new mock of <see cref=\"{escapedClassName}\" /> that delegates to <paramref name=\"instance\" />.");
+		sb.AppendXmlRemarks(
+			"Public members on the mock forward to <paramref name=\"instance\" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.");
+		sb.AppendXmlParam("instance",
+			"The real object whose calls should be forwarded. Must not be <see langword=\"null\" />.");
+		sb.AppendXmlReturns(
+			$"A new mock of <see cref=\"{escapedClassName}\" /> that delegates to <paramref name=\"instance\" />.");
 		sb.Append("\t\tpublic ").Append(@class.ClassFullName).Append(" Wrapping(").Append(@class.ClassFullName)
 			.Append(" instance)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
@@ -483,9 +513,11 @@ internal static partial class Sources
 			"Initializes mocks of type <typeparamref name=\"T\" /> with the given <paramref name=\"setup\" />.");
 		sb.AppendXmlRemarks(
 			"The <paramref name=\"setup\" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.");
-		sb.AppendXmlTypeParam("T", $"The mockable type derived from <see cref=\"{escapedClassName}\" /> that this setup should apply to.");
+		sb.AppendXmlTypeParam("T",
+			$"The mockable type derived from <see cref=\"{escapedClassName}\" /> that this setup should apply to.");
 		sb.AppendXmlParam("setup", "Callback invoked when a new mock of <typeparamref name=\"T\" /> is created.");
-		sb.AppendXmlReturns("A new <see cref=\"global::Mockolate.MockBehavior\" /> with the registered initializer. The original instance is unchanged.");
+		sb.AppendXmlReturns(
+			"A new <see cref=\"global::Mockolate.MockBehavior\" /> with the registered initializer. The original instance is unchanged.");
 		sb.Append("\t\tpublic global::Mockolate.MockBehavior Initialize<T>(global::System.Action<").Append(setupType)
 			.Append("> setup)").AppendLine();
 		sb.Append("\t\t\twhere T : ").Append(@class.ClassFullName).AppendLine();
@@ -633,6 +665,10 @@ internal static partial class Sources
 		AppendCreateFastInteractions(sb, "\t\t", @class, memberIds, memberIdPrefix);
 		sb.AppendLine();
 
+		bool hasMockRegistryProvider = constructors?.Count > 0 || (@class.IsInterface && hasStaticMembers);
+		AppendCreateRegistryFromBehavior(sb, "\t\t", hasMockRegistryProvider);
+		sb.AppendLine();
+
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append(
 				"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
@@ -690,12 +726,15 @@ internal static partial class Sources
 
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
+			AppendMockSubject_BehaviorConstructor(sb, name);
 		}
 		else if (constructors is not null)
 		{
 			foreach (Method constructor in constructors)
 			{
 				AppendMockSubject_BaseClassConstructor(sb, mockRegistryName, name, constructor,
+					@class.HasRequiredMembers);
+				AppendMockSubject_BehaviorBaseClassConstructor(sb, name, constructor,
 					@class.HasRequiredMembers);
 			}
 		}
@@ -707,6 +746,7 @@ internal static partial class Sources
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = mockRegistry;").AppendLine();
 			sb.Append("\t\t}").AppendLine();
 			sb.AppendLine();
+			AppendMockSubject_BehaviorConstructor(sb, name);
 		}
 
 		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, memberIds, memberIdPrefix);
@@ -848,7 +888,8 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; }").AppendLine();
+		sb.Append("\t\tprivate global::Mockolate.MockRegistry ").Append(mockRegistryName).Append(" { get; }")
+			.AppendLine();
 		sb.Append("\t\tprivate string _scenarioName;").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\tpublic MockInScenarioFor").Append(name)
@@ -867,7 +908,8 @@ internal static partial class Sources
 		{
 			sb.Append("\t\t/// <inheritdoc />").AppendLine();
 			sb.Append("\t\tglobal::Mockolate.Mock.IMockProtectedSetupFor").Append(name)
-				.Append(" global::Mockolate.Mock.IMockInScenarioFor").Append(name).Append(".SetupProtected").AppendLine();
+				.Append(" global::Mockolate.Mock.IMockInScenarioFor").Append(name).Append(".SetupProtected")
+				.AppendLine();
 			sb.Append("\t\t\t=> this;").AppendLine();
 			sb.AppendLine();
 		}
@@ -895,13 +937,16 @@ internal static partial class Sources
 
 		#region IMockForXXX
 
-		sb.AppendXmlSummary($"The Mockolate accessor for a mock of <see cref=\"{escapedClassName}\" />, reached through <c>.Mock</c> on the mocked instance.", "\t");
+		sb.AppendXmlSummary(
+			$"The Mockolate accessor for a mock of <see cref=\"{escapedClassName}\" />, reached through <c>.Mock</c> on the mocked instance.",
+			"\t");
 		sb.AppendXmlRemarks([
 			"Groups every operation that acts on the mock rather than on the mocked subject: setups, verifications, event raising, scenarios and monitoring.",
 		], "\t");
 		sb.Append("\tinternal interface IMockFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.AppendXmlSummary($"Configures how members of the mock of <see cref=\"{escapedClassName}\" /> respond when invoked.");
+		sb.AppendXmlSummary(
+			$"Configures how members of the mock of <see cref=\"{escapedClassName}\" /> respond when invoked.");
 		sb.AppendXmlRemarks([
 			"Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.",
 			"When two setups overlap, the most recently defined one wins.",
@@ -910,7 +955,8 @@ internal static partial class Sources
 		sb.AppendLine();
 		if (hasProtectedMembers)
 		{
-			sb.AppendXmlSummary($"Configures how <see langword=\"protected\" /> virtual members of the mock of <see cref=\"{escapedClassName}\" /> respond when invoked.");
+			sb.AppendXmlSummary(
+				$"Configures how <see langword=\"protected\" /> virtual members of the mock of <see cref=\"{escapedClassName}\" /> respond when invoked.");
 			sb.AppendXmlRemarks([
 				"Only members declared as <see langword=\"protected\" /> (or <see langword=\"protected\" /> <see langword=\"internal\" />) on the mocked class appear here. All setup chain operators (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, sequences, <c>.For</c>/<c>.Only</c>/<c>.Forever</c>, ...) work identically to <see cref=\"Setup\" />.",
 			]);
@@ -920,7 +966,8 @@ internal static partial class Sources
 
 		if (hasStaticMembers)
 		{
-			sb.AppendXmlSummary($"Configures how <see langword=\"static\" /> members declared on <see cref=\"{escapedClassName}\" /> respond when invoked.");
+			sb.AppendXmlSummary(
+				$"Configures how <see langword=\"static\" /> members declared on <see cref=\"{escapedClassName}\" /> respond when invoked.");
 			sb.AppendXmlRemarks([
 				"Static members are scoped per async/execution flow while the mock is alive; invocations from other flows are not intercepted.",
 			]);
@@ -928,27 +975,34 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary($"Opens a named scenario scope on the mock of <see cref=\"{escapedClassName}\" /> so that additional setups can be registered for that scenario.");
+		sb.AppendXmlSummary(
+			$"Opens a named scenario scope on the mock of <see cref=\"{escapedClassName}\" /> so that additional setups can be registered for that scenario.");
 		sb.AppendXmlRemarks([
 			"Scenarios let you define per-state behavior. Setups registered inside the returned <c>IMockInScenarioFor...</c> scope only apply while the mock's current scenario matches <paramref name=\"scenario\" />; switch scenarios with <see cref=\"TransitionTo\" />.",
 		]);
-		sb.AppendXmlParam("scenario", "Name of the scenario to enter. Any non-null string acts as a key; the mock starts in an unnamed default scenario.");
-		sb.AppendXmlReturns("A scoped accessor whose <c>Setup</c> (and <c>SetupProtected</c>, where applicable) register scenario-specific setups.");
+		sb.AppendXmlParam("scenario",
+			"Name of the scenario to enter. Any non-null string acts as a key; the mock starts in an unnamed default scenario.");
+		sb.AppendXmlReturns(
+			"A scoped accessor whose <c>Setup</c> (and <c>SetupProtected</c>, where applicable) register scenario-specific setups.");
 		sb.Append("\t\tIMockInScenarioFor").Append(name).Append(" InScenario(string scenario);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Opens a named scenario scope on the mock of <see cref=\"{escapedClassName}\" /> and immediately invokes <paramref name=\"setup\" /> to register scenario-specific setups.");
+		sb.AppendXmlSummary(
+			$"Opens a named scenario scope on the mock of <see cref=\"{escapedClassName}\" /> and immediately invokes <paramref name=\"setup\" /> to register scenario-specific setups.");
 		sb.AppendXmlRemarks([
 			"Equivalent to <c>InScenario(scenario)</c> followed by the setup callback, but returns the original <c>IMockFor...</c> accessor so it chains nicely at mock-creation time.",
 		]);
 		sb.AppendXmlParam("scenario", "Name of the scenario to enter.");
-		sb.AppendXmlParam("setup", "Callback that receives the scenario-scoped setup surface and registers scenario-specific setups.");
+		sb.AppendXmlParam("setup",
+			"Callback that receives the scenario-scoped setup surface and registers scenario-specific setups.");
 		sb.AppendXmlReturns("This accessor, to allow chaining.");
-		sb.Append("\t\tIMockFor").Append(name).Append(" InScenario(string scenario, global::System.Action<IMockInScenarioFor")
+		sb.Append("\t\tIMockFor").Append(name)
+			.Append(" InScenario(string scenario, global::System.Action<IMockInScenarioFor")
 			.Append(name).Append("> setup);").AppendLine();
 		sb.AppendLine();
 
-		sb.AppendXmlSummary($"Switches the active scenario of the mock of <see cref=\"{escapedClassName}\" /> to <paramref name=\"scenario\" />.");
+		sb.AppendXmlSummary(
+			$"Switches the active scenario of the mock of <see cref=\"{escapedClassName}\" /> to <paramref name=\"scenario\" />.");
 		sb.AppendXmlRemarks([
 			"After the transition, setups registered via <see cref=\"InScenario(string)\" /> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.",
 		]);
@@ -959,7 +1013,8 @@ internal static partial class Sources
 
 		if (hasEvents)
 		{
-			sb.AppendXmlSummary($"Triggers events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
+			sb.AppendXmlSummary(
+				$"Triggers events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
 			sb.AppendXmlRemarks([
 				"One entry per event is generated; the signature matches the event's delegate. Only handlers that are subscribed at the moment of the <c>Raise</c> call are invoked - handlers subscribed later (or already removed) are skipped.",
 			]);
@@ -969,7 +1024,8 @@ internal static partial class Sources
 
 		if (hasProtectedEvents)
 		{
-			sb.AppendXmlSummary($"Triggers <see langword=\"protected\" /> events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
+			sb.AppendXmlSummary(
+				$"Triggers <see langword=\"protected\" /> events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
 			sb.AppendXmlRemarks([
 				"Same semantics as <see cref=\"Raise\" /> but for events whose accessibility prevents external subscription from outside the class. Useful when testing code that subclasses the mocked type.",
 			]);
@@ -979,7 +1035,8 @@ internal static partial class Sources
 
 		if (hasStaticEvents)
 		{
-			sb.AppendXmlSummary($"Triggers <see langword=\"static\" /> events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
+			sb.AppendXmlSummary(
+				$"Triggers <see langword=\"static\" /> events declared on <see cref=\"{escapedClassName}\" /> so that currently subscribed handlers are invoked.");
 			sb.AppendXmlRemarks([
 				"Static events are scoped per async/execution flow while the mock is alive.",
 			]);
@@ -987,7 +1044,8 @@ internal static partial class Sources
 			sb.AppendLine();
 		}
 
-		sb.AppendXmlSummary($"Asserts how often, and in which order, members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
+		sb.AppendXmlSummary(
+			$"Asserts how often, and in which order, members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
 		sb.AppendXmlRemarks([
 			"Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never()</c>, <c>Once()</c>, <c>Twice()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce()</c>/<c>AtLeastTwice()</c>, <c>AtMost(n)</c>/<c>AtMostOnce()</c>/<c>AtMostTwice()</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.",
 			"Use <c>Within(TimeSpan)</c> / <c>WithCancellation(CancellationToken)</c> before the terminator to wait for expected interactions that happen on background threads.",
@@ -997,7 +1055,8 @@ internal static partial class Sources
 		sb.AppendLine();
 		if (hasProtectedMembers || hasProtectedEvents)
 		{
-			sb.AppendXmlSummary($"Asserts how often, and in which order, <see langword=\"protected\" /> members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
+			sb.AppendXmlSummary(
+				$"Asserts how often, and in which order, <see langword=\"protected\" /> members of the mock of <see cref=\"{escapedClassName}\" /> were invoked.");
 			sb.AppendXmlRemarks([
 				"Same terminators and modifiers as <see cref=\"Verify\" /> (<c>Once()</c>, <c>Exactly(n)</c>, <c>Within(...)</c>, <c>Then(...)</c>, ...); applies to <see langword=\"protected\" /> members and events instead of public ones.",
 			]);
@@ -1007,7 +1066,8 @@ internal static partial class Sources
 
 		if (hasStaticMembers || hasStaticEvents)
 		{
-			sb.AppendXmlSummary($"Asserts how often, and in which order, <see langword=\"static\" /> members declared on <see cref=\"{escapedClassName}\" /> were invoked.");
+			sb.AppendXmlSummary(
+				$"Asserts how often, and in which order, <see langword=\"static\" /> members declared on <see cref=\"{escapedClassName}\" /> were invoked.");
 			sb.AppendXmlRemarks([
 				"Same terminators and modifiers as <see cref=\"Verify\" />; scoped per async/execution flow in the same way as <see cref=\"SetupStatic\" />.",
 			]);
@@ -1019,26 +1079,32 @@ internal static partial class Sources
 		sb.AppendXmlRemarks([
 			"Useful when you want to verify &quot;this <em>particular</em> setup was hit N times&quot; without re-stating the matchers. Chain the usual count terminators (<c>Once()</c>, <c>AtLeastOnce()</c>, <c>Exactly(n)</c>, ...) on the returned result.",
 		]);
-		sb.AppendXmlParam("setup", "The setup previously registered through <see cref=\"Setup\" /> (typically returned from a <c>Returns(...)</c>/<c>Throws(...)</c> call).");
+		sb.AppendXmlParam("setup",
+			"The setup previously registered through <see cref=\"Setup\" /> (typically returned from a <c>Returns(...)</c>/<c>Throws(...)</c> call).");
 		sb.AppendXmlReturns("A <c>VerificationResult</c> that counts invocations matching the given setup.");
 		sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<IMockVerifyFor").Append(name)
 			.Append("> VerifySetup(global::Mockolate.Setup.IMethodSetup setup);").AppendLine();
 		sb.AppendLine();
-		sb.AppendXmlSummary("Checks whether every recorded interaction on this mock has been observed by at least one <c>Verify</c> call.");
+		sb.AppendXmlSummary(
+			"Checks whether every recorded interaction on this mock has been observed by at least one <c>Verify</c> call.");
 		sb.AppendXmlRemarks([
 			"Useful in test teardown to catch unexpected interactions (&quot;strict verification&quot;): if any recorded call has never been matched by a verification, the method returns <see langword=\"false\" />.",
 		]);
-		sb.AppendXmlReturns("<see langword=\"true\" /> if every recorded interaction was verified at least once; otherwise <see langword=\"false\" />.");
+		sb.AppendXmlReturns(
+			"<see langword=\"true\" /> if every recorded interaction was verified at least once; otherwise <see langword=\"false\" />.");
 		sb.Append("\t\tbool VerifyThatAllInteractionsAreVerified();").AppendLine();
 		sb.AppendLine();
-		sb.AppendXmlSummary("Checks whether every registered setup on this mock was matched by at least one actual invocation.");
+		sb.AppendXmlSummary(
+			"Checks whether every registered setup on this mock was matched by at least one actual invocation.");
 		sb.AppendXmlRemarks([
 			"Useful to catch unused setups that silently rot as the test subject evolves.",
 		]);
-		sb.AppendXmlReturns("<see langword=\"true\" /> if every registered setup was used at least once; otherwise <see langword=\"false\" />.");
+		sb.AppendXmlReturns(
+			"<see langword=\"true\" /> if every registered setup was used at least once; otherwise <see langword=\"false\" />.");
 		sb.Append("\t\tbool VerifyThatAllSetupsAreUsed();").AppendLine();
 		sb.AppendLine();
-		sb.AppendXmlSummary("Removes every recorded interaction from this mock while keeping all registered setups intact.");
+		sb.AppendXmlSummary(
+			"Removes every recorded interaction from this mock while keeping all registered setups intact.");
 		sb.AppendXmlRemarks([
 			"Handy when a single test exercises multiple logical phases and you only want to verify the interactions of the latest phase.",
 		]);
@@ -1049,7 +1115,8 @@ internal static partial class Sources
 		sb.AppendXmlRemarks([
 			"The underlying mock keeps recording all interactions as usual - only the monitor's <c>Verify</c> view is scoped. Useful to verify only the interactions produced by a specific block of test code without resetting the mock.",
 		]);
-		sb.AppendXmlReturns("A <see cref=\"global::Mockolate.Monitor.MockMonitor{T}\" /> that exposes <c>Verify</c> over the monitored interactions and a <c>Run()</c> method that opens the recording scope.");
+		sb.AppendXmlReturns(
+			"A <see cref=\"global::Mockolate.Monitor.MockMonitor{T}\" /> that exposes <c>Verify</c> over the monitored interactions and a <c>Run()</c> method that opens the recording scope.");
 		sb.Append("\t\tglobal::Mockolate.Monitor.MockMonitor<IMockVerifyFor").Append(name).Append("> Monitor();")
 			.AppendLine();
 		sb.Append("\t}").AppendLine();
@@ -1060,7 +1127,8 @@ internal static partial class Sources
 
 		#region IMockInScenarioForXXX
 
-		sb.AppendXmlSummary($"Scoped access to setups for a scenario on the mock of <see cref=\"{escapedClassName}\" />.", "\t");
+		sb.AppendXmlSummary(
+			$"Scoped access to setups for a scenario on the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockInScenarioFor").Append(name).AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.AppendXmlSummary($"Set up the mock of <see cref=\"{escapedClassName}\" /> within the scenario scope.");
@@ -1068,7 +1136,8 @@ internal static partial class Sources
 		if (hasProtectedMembers)
 		{
 			sb.AppendLine();
-			sb.AppendXmlSummary($"Set up protected members of the mock of <see cref=\"{escapedClassName}\" /> within the scenario scope.");
+			sb.AppendXmlSummary(
+				$"Set up protected members of the mock of <see cref=\"{escapedClassName}\" /> within the scenario scope.");
 			sb.Append("\t\tIMockProtectedSetupFor").Append(name).Append(" SetupProtected { get; }").AppendLine();
 		}
 
@@ -1213,14 +1282,18 @@ internal static partial class Sources
 		MemberIdTable memberIds, string memberIdPrefix)
 	{
 		sb.Append(indent).Append("/// <summary>").AppendLine();
-		sb.Append(indent).Append("///     Creates a <see cref=\"global::Mockolate.Interactions.FastMockInteractions\" /> sized to ")
+		sb.Append(indent)
+			.Append("///     Creates a <see cref=\"global::Mockolate.Interactions.FastMockInteractions\" /> sized to ")
 			.Append("<see cref=\"MemberCount\" /> for use as the mock's interaction store.").AppendLine();
 		sb.Append(indent).Append("/// </summary>").AppendLine();
 		sb.Append(indent)
-			.Append("internal static global::Mockolate.Interactions.FastMockInteractions CreateFastInteractions(global::Mockolate.MockBehavior behavior)")
+			.Append(
+				"internal static global::Mockolate.Interactions.FastMockInteractions CreateFastInteractions(global::Mockolate.MockBehavior behavior)")
 			.AppendLine();
 		sb.Append(indent).Append("{").AppendLine();
-		sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastMockInteractions fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);")
+		sb.Append(indent)
+			.Append(
+				"\tglobal::Mockolate.Interactions.FastMockInteractions fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);")
 			.AppendLine();
 
 		foreach (Method method in @class.AllMethods())
@@ -1258,12 +1331,14 @@ internal static partial class Sources
 			}
 
 			string getMemberIdRef = memberIdPrefix + memberIds.GetPropertyGetIdentifier(property);
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(fast, ")
+			sb.Append(indent)
+				.Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(fast, ")
 				.Append(getMemberIdRef).Append(");").AppendLine();
 
 			string setMemberIdRef = memberIdPrefix + memberIds.GetPropertySetIdentifier(property);
 			string propertyType = property.Type.ToTypeOrWrapper();
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertySetter<")
+			sb.Append(indent)
+				.Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertySetter<")
 				.Append(propertyType).Append(">(fast, ").Append(setMemberIdRef).Append(");").AppendLine();
 		}
 
@@ -1276,7 +1351,8 @@ internal static partial class Sources
 
 			string getMemberIdRef = memberIdPrefix + memberIds.GetIndexerGetIdentifier(indexer);
 			string setMemberIdRef = memberIdPrefix + memberIds.GetIndexerSetIdentifier(indexer);
-			string indexerKeyTypeArgs = string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.ToTypeOrWrapper()));
+			string indexerKeyTypeArgs =
+				string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.ToTypeOrWrapper()));
 			string indexerValueType = indexer.Type.ToTypeOrWrapper();
 
 			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastIndexerBufferFactory.InstallIndexerGetter<")
@@ -1295,9 +1371,11 @@ internal static partial class Sources
 
 			string subMemberIdRef = memberIdPrefix + memberIds.GetEventSubscribeIdentifier(@event);
 			string unsubMemberIdRef = memberIdPrefix + memberIds.GetEventUnsubscribeIdentifier(@event);
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventSubscribe(fast, ")
+			sb.Append(indent)
+				.Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventSubscribe(fast, ")
 				.Append(subMemberIdRef).Append(");").AppendLine();
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventUnsubscribe(fast, ")
+			sb.Append(indent)
+				.Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventUnsubscribe(fast, ")
 				.Append(unsubMemberIdRef).Append(");").AppendLine();
 		}
 
@@ -1765,7 +1843,9 @@ internal static partial class Sources
 		string mockRegistry = CreateUniqueParameterName(constructor.Parameters, "mockRegistry");
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
 		sb.Append(constructor.Attributes, "\t\t");
-		if (hasRequiredMembers && constructor.Attributes?.Any(a => a.Name == "global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers") != true)
+		if (hasRequiredMembers &&
+		    constructor.Attributes?.Any(a => a.Name == "global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers") !=
+		    true)
 		{
 			sb.Append("\t\t[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").AppendLine();
 		}
@@ -1802,6 +1882,105 @@ internal static partial class Sources
 		sb.Append(')').AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = ").Append(mockRegistry).Append(';').AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+	}
+
+	/// <summary>
+	///     Emits a static helper that creates a typed-buffer-sized <c>MockRegistry</c> from a
+	///     <c>MockBehavior</c>. Used by the generator-emitted <c>(MockBehavior)</c> constructors so
+	///     subclasses of the generated mock can construct from a behavior without bypassing the FastMockInteractions
+	///     sizing. When <paramref name="setsMockRegistryProvider" /> is true, the helper also primes the
+	///     <c>MockRegistryProvider</c> AsyncLocal so virtual calls during base-class construction can resolve
+	///     the registry before the chained constructor body has run.
+	/// </summary>
+	private static void AppendCreateRegistryFromBehavior(StringBuilder sb, string indent,
+		bool setsMockRegistryProvider)
+	{
+		sb.Append(indent).Append("/// <summary>").AppendLine();
+		sb.Append(indent)
+			.Append("///     Builds a <see cref=\"global::Mockolate.MockRegistry\" /> backed by a typed-buffer-sized ")
+			.Append(
+				"<see cref=\"global::Mockolate.Interactions.FastMockInteractions\" /> from <paramref name=\"behavior\" />.")
+			.AppendLine();
+		sb.Append(indent).Append("/// </summary>").AppendLine();
+		sb.Append(indent)
+			.Append(
+				"private static global::Mockolate.MockRegistry MockolateCreateRegistryFromBehavior(global::Mockolate.MockBehavior behavior)")
+			.AppendLine();
+		sb.Append(indent).Append("{").AppendLine();
+		sb.Append(indent)
+			.Append(
+				"\tglobal::Mockolate.MockRegistry registry = new global::Mockolate.MockRegistry(behavior, CreateFastInteractions(behavior));")
+			.AppendLine();
+		if (setsMockRegistryProvider)
+		{
+			sb.Append(indent).Append("\tMockRegistryProvider.Value = registry;").AppendLine();
+		}
+
+		sb.Append(indent).Append("\treturn registry;").AppendLine();
+		sb.Append(indent).Append("}").AppendLine();
+	}
+
+	/// <summary>
+	///     Emits a public <c>(MockBehavior)</c> constructor on the generated mock for interface targets and class
+	///     targets without detected base-class constructors. Chains via <c>: this(...)</c> to the existing
+	///     <c>(MockRegistry)</c> constructor with a properly-sized registry.
+	/// </summary>
+	private static void AppendMockSubject_BehaviorConstructor(StringBuilder sb, string name)
+	{
+		sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
+		sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockBehavior behavior)").AppendLine();
+		sb.Append("\t\t\t: this(MockolateCreateRegistryFromBehavior(behavior))").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t}").AppendLine();
+		sb.AppendLine();
+	}
+
+	/// <summary>
+	///     Emits a public <c>(MockBehavior, ...baseCtorParams)</c> constructor sibling for each detected base-class
+	///     constructor. The chained <c>(MockRegistry, ...baseCtorParams)</c> constructor handles base invocation;
+	///     <c>MockolateCreateRegistryFromBehavior</c> primes the <c>MockRegistryProvider</c> AsyncLocal before that
+	///     chain so virtual calls during base construction resolve the registry.
+	/// </summary>
+	private static void AppendMockSubject_BehaviorBaseClassConstructor(StringBuilder sb, string name,
+		Method constructor, bool hasRequiredMembers)
+	{
+		string behavior = CreateUniqueParameterName(constructor.Parameters, "behavior");
+		sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
+		sb.Append(constructor.Attributes, "\t\t");
+		if (hasRequiredMembers &&
+		    constructor.Attributes?.Any(a => a.Name == "global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers") !=
+		    true)
+		{
+			sb.Append("\t\t[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").AppendLine();
+		}
+
+		sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockBehavior ").Append(behavior);
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			sb.Append(", ");
+			if (parameter.IsParams)
+			{
+				sb.Append("params ");
+			}
+
+			sb.Append(parameter.Type.Fullname).Append(' ').Append(parameter.Name);
+			if (parameter.HasExplicitDefaultValue)
+			{
+				sb.Append(" = ").Append(parameter.ExplicitDefaultValue);
+			}
+		}
+
+		sb.Append(")").AppendLine();
+		sb.Append("\t\t\t: this(MockolateCreateRegistryFromBehavior(").Append(behavior).Append(")");
+		foreach (MethodParameter parameter in constructor.Parameters)
+		{
+			sb.Append(", ").Append(parameter.Name);
+		}
+
+		sb.Append(")").AppendLine();
+		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
 	}
@@ -1844,7 +2023,8 @@ internal static partial class Sources
 					                      (property.ExplicitImplementation ?? "") + "::" +
 					                      property.Type.Fullname + "->|" +
 					                      string.Join("|",
-						                      property.IndexerParameters.Value.Select(p => p.RefKind + " " + p.Type.Fullname));
+						                      property.IndexerParameters.Value.Select(p
+							                      => p.RefKind + " " + p.Type.Fullname));
 					if (!signatureIndices.TryGetValue(signatureKey, out signatureIndex))
 					{
 						signatureIndex = nextSignatureIndex[0]++;
@@ -2604,7 +2784,8 @@ internal static partial class Sources
 		if (method.GenericParameters is not null && method.GenericParameters.Value.Count > 0)
 		{
 			bool isOverride = !isClassInterface && method.UseOverride;
-			bool isExplicitImplementation = explicitInterfaceImplementation || method.ExplicitImplementation is not null;
+			bool isExplicitImplementation =
+				explicitInterfaceImplementation || method.ExplicitImplementation is not null;
 			bool inheritsConstraints = isExplicitImplementation || isOverride || method.IsEquals() ||
 			                           method.IsGetHashCode() || method.IsToString();
 			foreach (GenericParameter gp in method.GenericParameters.Value)
@@ -2630,9 +2811,11 @@ internal static partial class Sources
 		string methodSetupType = (method.ReturnType == Type.Void, method.Parameters.Count) switch
 		{
 			(true, 0) => "global::Mockolate.Setup.VoidMethodSetup",
-			(true, _) => $"global::Mockolate.Setup.VoidMethodSetup<{string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
+			(true, _) =>
+				$"global::Mockolate.Setup.VoidMethodSetup<{string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
 			(_, 0) => $"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}>",
-			(_, _) => $"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}, {string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
+			(_, _) =>
+				$"global::Mockolate.Setup.ReturnMethodSetup<{method.ReturnType.ToTypeOrWrapper()}, {string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))}>",
 		};
 		bool hasOutParams = method.Parameters.Any(p => p.RefKind is RefKind.Out);
 		bool hasRefParams = method.Parameters.Any(p => p.RefKind is RefKind.Ref);
@@ -2699,7 +2882,8 @@ internal static partial class Sources
 			}
 		}
 
-		sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)").AppendLine();
+		sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)")
+			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		if (useFastBuffers && IsFastBufferEligibleMethod(method))
 		{
@@ -2725,7 +2909,8 @@ internal static partial class Sources
 				.Append(".RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation");
 			if (method.Parameters.Count > 0)
 			{
-				sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper()))).Append('>');
+				sb.Append('<').Append(string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper())))
+					.Append('>');
 			}
 
 			sb.Append("(").Append(method.GetUniqueNameString());
@@ -2816,7 +3001,8 @@ internal static partial class Sources
 		{
 			string outParamBase = Helpers.GetUniqueIndexedLocalVariableBase("outParam", method.Parameters);
 			string refParamBase = Helpers.GetUniqueIndexedLocalVariableBase("refParam", method.Parameters);
-			sb.Append("\t\t\t\tif (!").Append(hasWrappedResult).Append(" || ").Append(methodSetup).Append(" is ").Append(methodSetupType)
+			sb.Append("\t\t\t\tif (!").Append(hasWrappedResult).Append(" || ").Append(methodSetup).Append(" is ")
+				.Append(methodSetupType)
 				.Append(".WithParameterCollection)")
 				.AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
@@ -2831,7 +3017,8 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is not global::Mockolate.Parameters.IOutParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase).Append(parameterIndex)
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase)
+						.Append(parameterIndex)
 						.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
 						.Append(parameter.Name).Append("))").AppendLine();
 					sb.Append("\t\t\t\t\t\t{").AppendLine();
@@ -2844,10 +3031,12 @@ internal static partial class Sources
 				{
 					sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
 						.Append(" is global::Mockolate.Parameters.IRefParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(refParamBase).Append(parameterIndex)
+						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(refParamBase)
+						.Append(parameterIndex)
 						.Append(")").AppendLine();
 					sb.Append("\t\t\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(refParamBase).Append(parameterIndex)
+					sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(refParamBase)
+						.Append(parameterIndex)
 						.Append(".GetValue(").Append(parameter.Name).Append(");").AppendLine();
 					sb.Append("\t\t\t\t\t\t}").AppendLine();
 				}
@@ -2873,16 +3062,20 @@ internal static partial class Sources
 		AppendTriggerCallbacks(sb, "\t\t\t\t", methodSetup, method.Parameters);
 		sb.Append("\t\t\t}").AppendLine();
 
-		string displayMethodName = $"{method.ContainingType}.{method.Name}({string.Join(", ", method.Parameters.Select(p => p.Type.DisplayName))})";
-		sb.Append("\t\t\tif (").Append(methodSetup).Append(" is null && !").Append(hasWrappedResult).Append(" && ").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)").AppendLine();
+		string displayMethodName =
+			$"{method.ContainingType}.{method.Name}({string.Join(", ", method.Parameters.Select(p => p.Type.DisplayName))})";
+		sb.Append("\t\t\tif (").Append(methodSetup).Append(" is null && !").Append(hasWrappedResult).Append(" && ")
+			.Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockNotSetupException(\"The method '").Append(displayMethodName).Append("' was invoked without prior setup.\");").AppendLine();
+		sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockNotSetupException(\"The method '")
+			.Append(displayMethodName).Append("' was invoked without prior setup.\");").AppendLine();
 		sb.Append("\t\t\t}").AppendLine();
 
 		if (method.ReturnType != Type.Void)
 		{
 			string returnValue = Helpers.GetUniqueLocalVariableName("returnValue", method.Parameters);
-			sb.Append("\t\t\tif (").Append(methodSetup).Append("?.HasReturnCallbacks != true && ").Append(hasWrappedResult).Append(")").AppendLine();
+			sb.Append("\t\t\tif (").Append(methodSetup).Append("?.HasReturnCallbacks != true && ")
+				.Append(hasWrappedResult).Append(")").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\treturn ").Append(wrappedResult).Append(";").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
@@ -2895,7 +3088,8 @@ internal static partial class Sources
 			}
 
 			sb.Append("out var ").Append(returnValue).Append(") == true ? ").Append(returnValue).Append(" : ")
-				.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue", defaultValueGeneratorSuffix)
+				.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
+					defaultValueGeneratorSuffix)
 				.Append(';').AppendLine();
 		}
 
@@ -3026,7 +3220,8 @@ internal static partial class Sources
 		string displayMethodName =
 			$"{method.ContainingType}.{method.Name}({string.Join(", ", method.Parameters.Select(p => p.Type.DisplayName))})";
 
-		sb.Append("\t\t\tif (!").Append(matchedVar).Append(" && ").Append(mockRegistry).Append(".Behavior.ThrowWhenNotSetup)")
+		sb.Append("\t\t\tif (!").Append(matchedVar).Append(" && ").Append(mockRegistry)
+			.Append(".Behavior.ThrowWhenNotSetup)")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
 		sb.Append("\t\t\t\tthrow new global::Mockolate.Exceptions.MockNotSetupException(\"The method '")
@@ -3092,7 +3287,8 @@ internal static partial class Sources
 		// Iterate setups in latest-registered-first order; stop on the first matching setup.
 		string paramNames = string.Join(", ", property.IndexerParameters.Value.Select(p => p.Name));
 		string setupVar = Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
-		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(' ').Append(setupVar).Append(" in ").Append(mockRegistry)
+		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(' ').Append(setupVar).Append(" in ")
+			.Append(mockRegistry)
 			.Append(".GetMethodSetups<").Append(setupType).Append(">(").Append(indexerName).Append("))")
 			.AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
@@ -3188,7 +3384,8 @@ internal static partial class Sources
 			: string.Empty;
 
 		string setupVar = Helpers.GetUniqueLocalVariableName("setup", property.IndexerParameters.Value);
-		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(' ').Append(setupVar).Append(" in ").Append(mockRegistry)
+		sb.Append("\t\t\t\tforeach (").Append(setupType).Append(' ').Append(setupVar).Append(" in ")
+			.Append(mockRegistry)
 			.Append(".GetMethodSetups<").Append(setupType).Append(">(").Append(indexerName).Append("))")
 			.AppendLine();
 		sb.Append("\t\t\t\t{").AppendLine();
@@ -3197,7 +3394,8 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t\t\tcontinue;").AppendLine();
 		sb.Append("\t\t\t\t\t}").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\t\t\t\t").Append(setupVar).Append(".Invoke(").Append(keyNames).Append(", value").Append(rawKeysArgs).Append(");").AppendLine();
+		sb.Append("\t\t\t\t\t").Append(setupVar).Append(".Invoke(").Append(keyNames).Append(", value")
+			.Append(rawKeysArgs).Append(");").AppendLine();
 		sb.Append("\t\t\t\t\treturn;").AppendLine();
 		sb.Append("\t\t\t\t}").AppendLine();
 
@@ -3222,13 +3420,17 @@ internal static partial class Sources
 	{
 		sb.AppendLine();
 		sb.Append("\t[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]").AppendLine();
-		sb.Append("\tprivate sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>").AppendLine();
+		sb.Append(
+				"\tprivate sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>")
+			.AppendLine();
 		sb.Append("\t{").AppendLine();
 		sb.Append("\t\tpublic bool Matches(T value) => inner.Matches(value);").AppendLine();
 		sb.Append("\t\tpublic void InvokeCallbacks(T value) => inner.InvokeCallbacks(value);").AppendLine();
 		sb.Append("\t\tpublic override string? ToString() => inner.ToString();").AppendLine();
 		sb.AppendLine();
-		sb.Append("\t\tpublic static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)").AppendLine();
+		sb.Append(
+				"\t\tpublic static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)")
+			.AppendLine();
 		sb.Append("\t\t\t=> parameter is global::Mockolate.Parameters.IParameterMatch<T> direct").AppendLine();
 		sb.Append("\t\t\t\t? direct").AppendLine();
 		sb.Append("\t\t\t\t: new CovariantParameterAdapter<T>(parameter);").AppendLine();
@@ -3421,7 +3623,8 @@ internal static partial class Sources
 		}
 		else if (valueFlags is null)
 		{
-			text = "This overload takes <see cref=\"global::Mockolate.It\" /> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.";
+			text =
+				"This overload takes <see cref=\"global::Mockolate.It\" /> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.";
 		}
 		else if (valueFlags.All(x => x))
 		{
@@ -3506,7 +3709,8 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters, valueFlags);
+		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters,
+			valueFlags);
 		if (method.ReturnType != Type.Void)
 		{
 			if (valueFlags?.All(x => x) == true)
@@ -4719,7 +4923,8 @@ internal static partial class Sources
 		AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "g");
 		sb.Append(",").AppendLine();
 
-		sb.Append("\t\t\t\t\t(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<");
+		sb.Append(
+			"\t\t\t\t\t(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<");
 		ti = 0;
 		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
 		{
@@ -5058,7 +5263,8 @@ internal static partial class Sources
 
 		sb.Append(".").AppendLine();
 		sb.Append("\t\t/// </summary>").AppendLine();
-		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters, valueFlags, true);
+		AppendOverloadDifferentiatorRemark(sb, method.Parameters.Select(p => p.Name).ToArray(), useParameters,
+			valueFlags, true);
 		if (valueFlags?.All(x => x) == true || (method.Parameters.Count == 0 && !useParameters))
 		{
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName)
@@ -5369,7 +5575,9 @@ internal static partial class Sources
 		                         && method.Parameters.Count <= 4
 		                         && (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
 		                         && (valueFlags is null || !valueFlags.Any(x => x))
-		                         && !method.Parameters.Any(p => p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref || p.RefKind == RefKind.RefReadOnlyParameter);
+		                         && !method.Parameters.Any(p
+			                         => p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
+			                            p.RefKind == RefKind.RefReadOnlyParameter);
 
 		if (canUseTypedVerify)
 		{
@@ -5384,11 +5592,14 @@ internal static partial class Sources
 			{
 				string paramType = parameter.ToTypeOrWrapper();
 				sb.Append(", ").Append(parameter.Name).Append(" is null ? ")
-					.Append("(global::Mockolate.Parameters.IParameterMatch<").Append(paramType).Append(">)global::Mockolate.It.Is<").Append(paramType).Append(">(default!) : ")
-					.Append("CovariantParameterAdapter<").Append(paramType).Append(">.Wrap(").Append(parameter.Name).Append(")");
+					.Append("(global::Mockolate.Parameters.IParameterMatch<").Append(paramType)
+					.Append(">)global::Mockolate.It.Is<").Append(paramType).Append(">(default!) : ")
+					.Append("CovariantParameterAdapter<").Append(paramType).Append(">.Wrap(").Append(parameter.Name)
+					.Append(")");
 			}
 
-			sb.Append(", () => $\"").Append(method.Name).Append("(").Append(string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}"))).Append(")\");").AppendLine();
+			sb.Append(", () => $\"").Append(method.Name).Append("(")
+				.Append(string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}"))).Append(")\");").AppendLine();
 			return;
 		}
 
@@ -5404,8 +5615,12 @@ internal static partial class Sources
 		{
 			sb.Append(", i => parameters switch").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([").Append(string.Join(", ", Enumerable.Range(1, method.Parameters.Count).Select(i => $"i.Parameter{i}"))).Append("]),").AppendLine();
-			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([").Append(string.Join(", ", method.Parameters.Select((p, i) => $"(\"{p.Name}\", i.Parameter{i + 1})"))).Append("]),").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([")
+				.Append(string.Join(", ", Enumerable.Range(1, method.Parameters.Count).Select(i => $"i.Parameter{i}")))
+				.Append("]),").AppendLine();
+			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([")
+				.Append(string.Join(", ", method.Parameters.Select((p, i) => $"(\"{p.Name}\", i.Parameter{i + 1})")))
+				.Append("]),").AppendLine();
 			sb.Append("\t\t\t\t\t_ => true").AppendLine();
 			sb.Append("\t\t\t\t}");
 		}
@@ -5430,24 +5645,30 @@ internal static partial class Sources
 				bool isValueParam = valueFlags?[i] == true;
 				if (isValueParam)
 				{
-					sb.Append($"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, i.Parameter{i + 1}))");
+					sb.Append(
+						$"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, i.Parameter{i + 1}))");
 				}
-				else if (parameter.RefKind == RefKind.Out || parameter.RefKind == RefKind.Ref || parameter.RefKind == RefKind.RefReadOnlyParameter)
+				else if (parameter.RefKind == RefKind.Out || parameter.RefKind == RefKind.Ref ||
+				         parameter.RefKind == RefKind.RefReadOnlyParameter)
 				{
 					// out/ref verify parameters use IVerifyOutParameter<T> / IVerifyRefParameter<T>, which don't inherit
 					// from IParameter<T> — covariance isn't applicable, so keep the direct IParameterMatch<T> check.
-					sb.Append($"({parameter.Name} is global::Mockolate.Parameters.IParameterMatch<{parameter.ToTypeOrWrapper()}> {parameter.Name}Match ? {parameter.Name}Match.Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
+					sb.Append(
+						$"({parameter.Name} is global::Mockolate.Parameters.IParameterMatch<{parameter.ToTypeOrWrapper()}> {parameter.Name}Match ? {parameter.Name}Match.Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
 				}
 				else
 				{
-					sb.Append($"({parameter.Name} is not null ? CovariantParameterAdapter<{parameter.ToTypeOrWrapper()}>.Wrap({parameter.Name}).Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
+					sb.Append(
+						$"({parameter.Name} is not null ? CovariantParameterAdapter<{parameter.ToTypeOrWrapper()}>.Wrap({parameter.Name}).Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
 				}
 
 				i++;
 			}
 		}
 
-		sb.Append(", () => $\"").Append(method.Name).Append("(").Append(useParameters ? "{parameters}" : string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}"))).Append(")\");").AppendLine();
+		sb.Append(", () => $\"").Append(method.Name).Append("(")
+			.Append(useParameters ? "{parameters}" : string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}")))
+			.Append(")\");").AppendLine();
 	}
 
 	#endregion Verify Helpers

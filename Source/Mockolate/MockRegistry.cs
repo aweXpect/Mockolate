@@ -21,43 +21,26 @@ public partial class MockRegistry
 	private readonly ScenarioState _scenarioState;
 
 	/// <summary>
-	///     Creates a new <see cref="MockRegistry" /> with the given <paramref name="behavior" /> and, optionally,
-	///     <paramref name="constructorParameters" /> for a class mock's base-class constructor.
-	/// </summary>
-	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
-	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
-	public MockRegistry(MockBehavior behavior, object?[]? constructorParameters = null)
-		: this(behavior,
-			new FastMockInteractions(0, behavior.SkipInteractionRecording),
-			constructorParameters)
-	{
-	}
-
-	/// <summary>
 	///     Creates a new <see cref="MockRegistry" /> with the given <paramref name="behavior" />, a caller-provided
 	///     <paramref name="interactions" /> store, and optional <paramref name="constructorParameters" />.
 	/// </summary>
 	/// <remarks>
 	///     The generator-emitted <c>CreateMock</c> paths use this overload to install a
-	///     <see cref="FastMockInteractions" /> tailored to the mocked type. Pass any
-	///     <see cref="IMockInteractions" /> implementation (e.g. <c>new FastMockInteractions(0)</c>)
-	///     when constructing a registry by hand.
+	///     <see cref="FastMockInteractions" /> tailored to the mocked type.
 	/// </remarks>
 	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
 	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
-	/// <param name="constructorParameters">Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.</param>
+	/// <param name="constructorParameters">
+	///     Values forwarded to the base-class constructor, or <see langword="null" /> if no
+	///     base constructor call is needed.
+	/// </param>
 	public MockRegistry(MockBehavior behavior, IMockInteractions interactions,
 		object?[]? constructorParameters = null)
 	{
 		if (behavior.SkipInteractionRecording != interactions.SkipInteractionRecording)
 		{
 			throw new ArgumentException(
-				$"{nameof(behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} " +
-				$"({behavior.SkipInteractionRecording}) and " +
-				$"{nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} " +
-				$"({interactions.SkipInteractionRecording}) must agree; recording paths gate on the " +
-				"behavior flag while verification gates on the interactions flag, so a mismatch leaves " +
-				"the registry in an inconsistent state.",
+				$"""{nameof(behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} ({behavior.SkipInteractionRecording}) and {nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} ({interactions.SkipInteractionRecording}) must agree; recording paths gate on the behavior flag while verification gates on the interactions flag, so a mismatch leaves the registry in an inconsistent state.""",
 				nameof(interactions));
 		}
 
@@ -105,19 +88,17 @@ public partial class MockRegistry
 	///     Creates a <see cref="MockRegistry" /> that shares all state with <paramref name="registry" /> but records
 	///     into the supplied <paramref name="interactions" /> collection. Used for scoped monitoring.
 	/// </summary>
-	/// <param name="registry">The source registry whose behavior, setups, constructor parameters, scenario state, and wrapped instance are reused.</param>
+	/// <param name="registry">
+	///     The source registry whose behavior, setups, constructor parameters, scenario state, and wrapped
+	///     instance are reused.
+	/// </param>
 	/// <param name="interactions">The interaction collection that new invocations should be appended to.</param>
 	public MockRegistry(MockRegistry registry, IMockInteractions interactions)
 	{
 		if (registry.Behavior.SkipInteractionRecording != interactions.SkipInteractionRecording)
 		{
 			throw new ArgumentException(
-				$"{nameof(registry)}.{nameof(Behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} " +
-				$"({registry.Behavior.SkipInteractionRecording}) and " +
-				$"{nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} " +
-				$"({interactions.SkipInteractionRecording}) must agree; recording paths gate on the " +
-				"behavior flag while verification gates on the interactions flag, so a mismatch leaves " +
-				"the registry in an inconsistent state.",
+				$"""{nameof(registry)}.{nameof(Behavior)}.{nameof(MockBehavior.SkipInteractionRecording)} ({registry.Behavior.SkipInteractionRecording}) and {nameof(interactions)}.{nameof(IMockInteractions.SkipInteractionRecording)} ({interactions.SkipInteractionRecording}) must agree; recording paths gate on the behavior flag while verification gates on the interactions flag, so a mismatch leaves the registry in an inconsistent state.""",
 				nameof(interactions));
 		}
 
@@ -186,15 +167,6 @@ public partial class MockRegistry
 	/// </remarks>
 	public void TransitionTo(string scenario)
 		=> _scenarioState.Current = scenario;
-
-	/// <summary>
-	///     Implicitly converts a <see cref="MockBehavior" /> to a <see cref="MockRegistry" /> with the given behavior and an
-	///     empty interaction collection.
-	/// </summary>
-	public static implicit operator MockRegistry(MockBehavior behavior)
-	{
-		return new MockRegistry(behavior);
-	}
 
 	private sealed class ScenarioState
 	{

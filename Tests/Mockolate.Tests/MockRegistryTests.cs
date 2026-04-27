@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using Mockolate.Interactions;
 using Mockolate.Setup;
@@ -61,20 +61,9 @@ public sealed class MockRegistryTests
 	}
 
 	[Fact]
-	public async Task ImplicitConversionFromMockBehavior()
-	{
-		MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
-
-		MockRegistry result = behavior;
-
-		await That(result.Behavior).IsSameAs(behavior);
-		await That(result.Interactions).IsEmpty();
-	}
-
-	[Fact]
 	public async Task RegisterInteraction_ShouldBeThreadSafe()
 	{
-		MockRegistry sut = new(MockBehavior.Default);
+		MockRegistry sut = new(MockBehavior.Default, new FastMockInteractions(0));
 		Task[] tasks = new Task[50];
 		for (int i = 0; i < 50; i++)
 		{

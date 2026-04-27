@@ -50,7 +50,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task RegistryAndInteractions_WhenSkipFlagsDisagree_Throws()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			FastMockInteractions skippingInteractions = new(0, true);
 
 			void Act()
@@ -84,7 +84,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithActiveScenario_ShouldReturnScopedSetupOverGlobalSetup()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			FakeIndexerSetup globalSetup = new(true);
 			FakeIndexerSetup scopedSetup = new(true);
 			registry.Setup.Indexers.Add(globalSetup);
@@ -99,7 +99,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithoutActiveScenario_ShouldFallBackToGlobalSetup()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			FakeIndexerSetup globalSetup = new(true);
 			FakeIndexerSetup scopedSetup = new(true);
 			registry.Setup.Indexers.Add(globalSetup);
@@ -116,7 +116,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task ApplyIndexerGetter_WithNullSetup_ShouldStoreBaseValueForLaterLookup()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			IndexerGetterAccess<int> access1 = new(1);
 			IndexerGetterAccess<int> access2 = new(1);
 
@@ -132,7 +132,7 @@ public sealed class MockRegistryTests
 		{
 			int counter = 0;
 			MockBehavior behavior = MockBehavior.Default.WithDefaultValueFor(() => ++counter);
-			MockRegistry registry = new(behavior);
+			MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
 			IndexerGetterAccess<int> access1 = new(1);
 			IndexerGetterAccess<int> access2 = new(1);
 
@@ -149,7 +149,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithNegative_ShouldThrowWithDescriptiveMessage()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			void Act()
 			{
@@ -163,7 +163,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithZero_ShouldNotThrow()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			void Act()
 			{
@@ -180,7 +180,7 @@ public sealed class MockRegistryTests
 		public async Task WhenBehaviorSkipsInteractionRecording_WrappedRegistryAlsoSkipsRecording()
 		{
 			MockBehavior behavior = MockBehavior.Default.SkippingInteractionRecording();
-			MockRegistry original = new(behavior);
+			MockRegistry original = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
 			object wrapped = new();
 
 			MockRegistry wrappingRegistry = new(original, wrapped);
@@ -197,7 +197,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task MockGot_WhenNameDoesNotMatch_ShouldReturnNever()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.GetProperty("foo.bar", () => 0, null);
 
 			VerificationResult<object> result = registry.VerifyProperty<object>(this, "baz.bar");
@@ -208,7 +208,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task MockGot_WhenNameMatches_ShouldReturnOnce()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.GetProperty("foo.bar", () => 0, null);
 
 			VerificationResult<object> result = registry.VerifyProperty<object>(this, "foo.bar");
@@ -219,7 +219,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task MockGot_WithoutInteractions_ShouldReturnNeverResultWithExpectation()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			VerificationResult<object> result = registry.VerifyProperty<object>(this, "foo.bar");
 
@@ -230,7 +230,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task MockSet_WhenNameAndValueMatches_ShouldReturnOnce()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.SetProperty("foo.bar", 4);
 
 			VerificationResult<object> result =
@@ -242,7 +242,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task MockSet_WhenOnlyNameMatches_ShouldReturnNever()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.SetProperty("foo.bar", 4);
 
 			VerificationResult<object> result =
@@ -254,7 +254,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task MockSet_WhenOnlyValueMatches_ShouldReturnNever()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.SetProperty("foo.bar", 4);
 
 			VerificationResult<object> result =
@@ -266,7 +266,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task MockSet_WithoutInteractions_ShouldReturnNeverResultWithExpectation()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			VerificationResult<object> result =
 				registry.VerifyProperty<object, int>(this, "foo.bar", (IParameterMatch<int>)It.IsAny<int>());
@@ -278,7 +278,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task VerifyProperty_WhenNameContainsNoDot_ShouldIncludeFullNameInExpectation()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			VerificationResult<int> result = registry.VerifyProperty(0, "SomeNameWithoutADot");
 
@@ -289,7 +289,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task VerifyProperty_WhenNameStartsWithDot_ShouldOmitDotInExpectation()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			VerificationResult<int> result = registry.VerifyProperty(0, ".bar");
 
@@ -303,7 +303,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task Subscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.AddEvent("foo.bar", this, GetMethodInfo());
 
 			VerificationResult<object> result = registry.SubscribedTo<object>(this, "baz.bar");
@@ -314,7 +314,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task Subscribed_WhenNameMatches_ShouldReturnOnce()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.AddEvent("foo.bar", this, GetMethodInfo());
 
 			VerificationResult<object> result = registry.SubscribedTo<object>(this, "foo.bar");
@@ -325,7 +325,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task Subscribed_WithoutInteractions_ShouldReturnNeverResultWithExpectation()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			VerificationResult<object> result = registry.SubscribedTo<object>(this, "baz.bar");
 
@@ -339,7 +339,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task Unsubscribed_WhenNameDoesNotMatch_ShouldReturnNever()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.RemoveEvent("foo.bar", this, GetMethodInfo());
 
 			VerificationResult<object> result = registry.UnsubscribedFrom<object>(this, "baz.bar");
@@ -350,7 +350,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task Unsubscribed_WhenNameMatches_ShouldReturnOnce()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			registry.RemoveEvent("foo.bar", this, GetMethodInfo());
 
 			VerificationResult<object> result = registry.UnsubscribedFrom<object>(this, "foo.bar");
@@ -361,7 +361,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task Unsubscribed_WithoutInteractions_ShouldReturnNeverResultWithExpectation()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			VerificationResult<object> result = registry.UnsubscribedFrom<object>(this, "baz.bar");
 
@@ -375,7 +375,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithEmptyTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			MethodSetup[]? result = registry.GetMethodSetupSnapshot(0);
 
@@ -385,8 +385,9 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdAtBoundary_ShouldReturnTheBucket()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
-			ReturnMethodSetup<int>.WithParameterCollection setup = new(MockBehavior.Default, "Method");
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			ReturnMethodSetup<int>.WithParameterCollection setup =
+				new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Method");
 			registry.SetupMethod(5, setup);
 
 			MethodSetup[]? result = registry.GetMethodSetupSnapshot(5);
@@ -398,8 +399,9 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
-			ReturnMethodSetup<int>.WithParameterCollection setup = new(MockBehavior.Default, "Method");
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			ReturnMethodSetup<int>.WithParameterCollection setup =
+				new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Method");
 			registry.SetupMethod(0, setup);
 
 			MethodSetup[]? result = registry.GetMethodSetupSnapshot(5);
@@ -413,7 +415,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithEmptyTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			PropertySetup? result = registry.GetPropertySetupSnapshot(0);
 
@@ -423,7 +425,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdAtBoundary_ShouldReturnTheSetup()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> setup = new(registry, "P");
 			registry.SetupProperty(5, setup);
 
@@ -435,7 +437,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> setup = new(registry, "P");
 			registry.SetupProperty(0, setup);
 
@@ -450,7 +452,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithEmptyTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			IndexerSetup[]? result = registry.GetIndexerSetupSnapshot(0);
 
@@ -460,7 +462,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdAtBoundary_ShouldReturnTheBucket()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			IndexerSetup<string, int> setup = new(registry, (IParameterMatch<int>)It.IsAny<int>());
 			registry.SetupIndexer(5, setup);
 
@@ -473,7 +475,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			IndexerSetup<string, int> setup = new(registry, (IParameterMatch<int>)It.IsAny<int>());
 			registry.SetupIndexer(0, setup);
 
@@ -488,7 +490,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithEmptyTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			EventSetup[]? result = registry.GetEventSetupSnapshot(0);
 
@@ -498,7 +500,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdAtBoundary_ShouldReturnTheBucket()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			EventSetup setup = new(registry, "OnEvent");
 			registry.SetupEvent(5, setup);
 
@@ -511,7 +513,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			EventSetup setup = new(registry, "OnEvent");
 			registry.SetupEvent(0, setup);
 
@@ -526,7 +528,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithActiveScenario_ShouldAlwaysTakeColdPath()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> defaultSetup = new(registry, "P");
 			defaultSetup.InitializeWith(10);
 			registry.SetupProperty(2, defaultSetup);
@@ -544,7 +546,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithBaseValueAccessor_ShouldAlwaysTakeColdPath()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> snapshot = new(registry, "P");
 			registry.SetupProperty(2, snapshot);
 
@@ -565,7 +567,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithoutSnapshotSetup_ShouldFallBackToColdPath()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			int result = registry.GetPropertyFast(0, "P", _ => 7);
 
@@ -575,7 +577,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithSnapshotSetup_ShouldBypassSlowResolverAndReturnSetupValue()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> snapshot = new(registry, "P");
 			snapshot.InitializeWith(42);
 			registry.SetupProperty(2, snapshot);
@@ -602,7 +604,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithoutSnapshotSetup_ShouldFallBackToResolveSetup()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> setup = new(registry, "P");
 			setup.InitializeWith(10);
 			registry.SetupProperty(setup);
@@ -617,7 +619,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithSnapshotSetup_ShouldInvokeSetterAndStoreValue()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> snapshot = new(registry, "P");
 			snapshot.InitializeWith(0);
 			registry.SetupProperty(2, snapshot);
@@ -635,7 +637,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task AddEvent_WithMemberId_ShouldRecordAsEventSubscription()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			registry.AddEvent(0, "OnFoo", this, GetMethodInfo());
 
@@ -646,7 +648,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task AddEvent_WithMemberIdAndMatchingSnapshot_ShouldInvokeSubscribedCallback()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			int subscribedCount = 0;
 			EventSetup setup = new(registry, "OnFoo");
 			setup.OnSubscribed.Do(() => subscribedCount++);
@@ -660,7 +662,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task AddEvent_WithNullMethod_ShouldThrowMockException()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			void Act()
 			{
@@ -676,7 +678,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task RemoveEvent_WithMemberId_ShouldRecordAsEventUnsubscription()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			registry.RemoveEvent(0, "OnFoo", this, GetMethodInfo());
 
@@ -687,7 +689,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task RemoveEvent_WithMemberIdAndMatchingSnapshot_ShouldInvokeUnsubscribedCallback()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			int unsubscribedCount = 0;
 			EventSetup setup = new(registry, "OnFoo");
 			setup.OnUnsubscribed.Do(() => unsubscribedCount++);
@@ -701,7 +703,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task RemoveEvent_WithNullMethod_ShouldThrowMockException()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			void Act()
 			{
@@ -718,7 +720,7 @@ public sealed class MockRegistryTests
 		public async Task SetProperty_WithoutSnapshot_ShouldReturnBehaviorSkipBaseClassWhenSetupAllowsBase()
 		{
 			MockBehavior behavior = MockBehavior.Default.SkippingBaseClass();
-			MockRegistry registry = new(behavior);
+			MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
 
 			bool result = registry.SetProperty("P", 42);
 
@@ -728,7 +730,7 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task SetProperty_WithoutSnapshot_ShouldReturnFalseWhenBehaviorDoesNotSkip()
 		{
-			MockRegistry registry = new(MockBehavior.Default);
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
 			bool result = registry.SetProperty("P", 42);
 
