@@ -239,6 +239,19 @@ public sealed class IndexerSetupTests
 		}
 
 		[Fact]
+		public async Task ExecuteSetterCallback_WhenAssignedValueDoesNotCastToTValue_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int, int> indexerSetup = new();
+			indexerSetup.OnSet.Do(() => { callCount++; });
+			IndexerSetterAccess<int, int, string> access = new(1, 2, "bar");
+
+			indexerSetup.DoSetResult(access, 2L);
+
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -314,6 +327,33 @@ public sealed class IndexerSetupTests
 			await That(result).IsEqualTo("base");
 			await That(found).IsTrue();
 			await That(stored).IsEqualTo("base");
+		}
+
+		[Fact]
+		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
+		{
+			IndexerSetup<string, int, int> setup = new(
+				new MockRegistry(MockBehavior.Default),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
+			setup.InitializeWith((p1, p2) => $"{p1}-{p2}");
+			IndexerValueStorage<string> storage = new();
+			IndexerGetterAccess<int, int> access1 = new(7, 9)
+			{
+				Storage = storage,
+			};
+
+			string result = setup.GetResult<string>(access1, MockBehavior.Default, () => "fallback");
+
+			IndexerGetterAccess<int, int> access2 = new(7, 9)
+			{
+				Storage = storage,
+			};
+			bool found = access2.TryFindStoredValue(out string stored);
+
+			await That(result).IsEqualTo("7-9");
+			await That(found).IsTrue();
+			await That(stored).IsEqualTo("7-9");
 		}
 
 		private sealed class MyIndexerSetup<T1, T2>()
@@ -398,6 +438,19 @@ public sealed class IndexerSetupTests
 		}
 
 		[Fact]
+		public async Task ExecuteSetterCallback_WhenAssignedValueDoesNotCastToTValue_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int, int, int> indexerSetup = new();
+			indexerSetup.OnSet.Do(() => { callCount++; });
+			IndexerSetterAccess<int, int, int, string> access = new(1, 2, 3, "bar");
+
+			indexerSetup.DoSetResult(access, 2L);
+
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -476,6 +529,34 @@ public sealed class IndexerSetupTests
 			await That(result).IsEqualTo("base");
 			await That(found).IsTrue();
 			await That(stored).IsEqualTo("base");
+		}
+
+		[Fact]
+		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
+		{
+			IndexerSetup<string, int, int, int> setup = new(
+				new MockRegistry(MockBehavior.Default),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
+			setup.InitializeWith((p1, p2, p3) => $"{p1}-{p2}-{p3}");
+			IndexerValueStorage<string> storage = new();
+			IndexerGetterAccess<int, int, int> access1 = new(7, 8, 9)
+			{
+				Storage = storage,
+			};
+
+			string result = setup.GetResult<string>(access1, MockBehavior.Default, () => "fallback");
+
+			IndexerGetterAccess<int, int, int> access2 = new(7, 8, 9)
+			{
+				Storage = storage,
+			};
+			bool found = access2.TryFindStoredValue(out string stored);
+
+			await That(result).IsEqualTo("7-8-9");
+			await That(found).IsTrue();
+			await That(stored).IsEqualTo("7-8-9");
 		}
 
 		private sealed class MyIndexerSetup<T1, T2, T3>()
@@ -564,6 +645,20 @@ public sealed class IndexerSetupTests
 		}
 
 		[Fact]
+		public async Task ExecuteSetterCallback_WhenAssignedValueDoesNotCastToTValue_ShouldNotExecute()
+		{
+			int callCount = 0;
+			MyIndexerSetup<int, int, int, int> indexerSetup = new();
+			indexerSetup.OnSet.Do(() => { callCount++; });
+			IndexerSetterAccess<int, int, int, int, string> access =
+				new(1, 2, 3, 4, "bar");
+
+			indexerSetup.DoSetResult(access, 2L);
+
+			await That(callCount).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -647,6 +742,35 @@ public sealed class IndexerSetupTests
 			await That(result).IsEqualTo("base");
 			await That(found).IsTrue();
 			await That(stored).IsEqualTo("base");
+		}
+
+		[Fact]
+		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
+		{
+			IndexerSetup<string, int, int, int, int> setup = new(
+				new MockRegistry(MockBehavior.Default),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
+			setup.InitializeWith((p1, p2, p3, p4) => $"{p1}-{p2}-{p3}-{p4}");
+			IndexerValueStorage<string> storage = new();
+			IndexerGetterAccess<int, int, int, int> access1 = new(6, 7, 8, 9)
+			{
+				Storage = storage,
+			};
+
+			string result = setup.GetResult<string>(access1, MockBehavior.Default, () => "fallback");
+
+			IndexerGetterAccess<int, int, int, int> access2 = new(6, 7, 8, 9)
+			{
+				Storage = storage,
+			};
+			bool found = access2.TryFindStoredValue(out string stored);
+
+			await That(result).IsEqualTo("6-7-8-9");
+			await That(found).IsTrue();
+			await That(stored).IsEqualTo("6-7-8-9");
 		}
 
 		private sealed class MyIndexerSetup<T1, T2, T3, T4>()

@@ -1,3 +1,4 @@
+using Mockolate.Exceptions;
 using Mockolate.Internal.Tests.TestHelpers;
 using Mockolate.Setup;
 
@@ -29,6 +30,48 @@ public sealed class PropertySetupTests
 		float value = interactive.InvokeGetter(null, MockBehavior.Default, () => 99f);
 
 		await That(value).IsEqualTo(99f);
+	}
+
+	[Fact]
+	public async Task DefaultInvokeSetter_WhenValueIsNullAndUnderlyingTypeIsNullable_ShouldStoreDefault()
+	{
+		PropertySetup.Default<int?> setup = new("p", 5);
+		IInteractivePropertySetup interactive = setup;
+
+		interactive.InvokeSetter<object?>(null, null, MockBehavior.Default);
+
+		int? value = interactive.InvokeGetter<int?>(null, MockBehavior.Default, () => 42);
+		await That(value).IsNull();
+	}
+
+	[Fact]
+	public async Task DefaultInvokeSetter_WhenValueIsNullButUnderlyingTypeIsNonNullable_ShouldThrow()
+	{
+		PropertySetup.Default<int> setup = new("p", 5);
+		IInteractivePropertySetup interactive = setup;
+
+		void Act()
+		{
+			interactive.InvokeSetter<object?>(null, null, MockBehavior.Default);
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("*int*").AsWildcard();
+	}
+
+	[Fact]
+	public async Task DefaultInvokeSetter_WhenValueTypeMismatch_ShouldThrowWithFormattedMessage()
+	{
+		PropertySetup.Default<int> setup = new("p", 5);
+		IInteractivePropertySetup interactive = setup;
+
+		void Act()
+		{
+			interactive.InvokeSetter<string>(null, "string-value", MockBehavior.Default);
+		}
+
+		await That(Act).Throws<MockException>()
+			.WithMessage("*'int'*'string'*").AsWildcard();
 	}
 
 	[Fact]
