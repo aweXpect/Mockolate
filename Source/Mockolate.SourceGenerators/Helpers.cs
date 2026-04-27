@@ -321,12 +321,13 @@ internal static class Helpers
 
 			sb.Append(")!");
 
-			if (type.SpecialGenericType != SpecialGenericType.None && type.GenericTypeParameters?.Count > 0)
+			if (type.SpecialGenericType is SpecialGenericType.Task or SpecialGenericType.ValueTask
+			    && type.GenericTypeParameters?.Count > 0)
 			{
 				foreach (Type? genericType in type.GenericTypeParameters.Value)
 				{
-					sb.Append(", ").Append("() => ")
-						.AppendDefaultValueGeneratorFor(genericType, defaultValueName);
+					sb.Append(", ")
+						.AppendDefaultValueGeneratorFor(genericType, defaultValueName, suffix);
 				}
 			}
 

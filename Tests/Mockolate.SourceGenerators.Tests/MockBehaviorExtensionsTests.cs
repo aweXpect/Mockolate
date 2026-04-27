@@ -119,7 +119,7 @@ public sealed class MockBehaviorExtensionsTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params object?[] parameters)
+			          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, T value, params object?[] parameters)
 			          		{
 			          			global::System.Threading.CancellationToken cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
 			          				global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(parameters)) ?? global::System.Threading.CancellationToken.None;
@@ -127,17 +127,11 @@ public sealed class MockBehaviorExtensionsTests
 			          			{
 			          				return global::System.Threading.Tasks.Task.FromCanceled<T>(cancellationToken);
 			          			}
-			          """).IgnoringNewlineStyle().And
-			.Contains("""
-			          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
-			          			{
-			          				return global::System.Threading.Tasks.Task.FromResult(func());
-			          			}
-			          """).IgnoringNewlineStyle().And
-			.Contains("""
-			          			return global::System.Threading.Tasks.Task.FromResult(generator.Generate(default(T)!, parameters));
+
+			          			return global::System.Threading.Tasks.Task.FromResult(value);
 			          		}
-			          """).IgnoringNewlineStyle();
+			          """).IgnoringNewlineStyle().And
+			.DoesNotContain("global::System.Func<T>");
 	}
 
 	[Fact]
@@ -170,7 +164,7 @@ public sealed class MockBehaviorExtensionsTests
 
 		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
 			.Contains("""
-			          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params object?[] parameters)
+			          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, T value, params object?[] parameters)
 			          		{
 			          			global::System.Threading.CancellationToken cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
 			          				global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(parameters)) ?? global::System.Threading.CancellationToken.None;
@@ -178,17 +172,11 @@ public sealed class MockBehaviorExtensionsTests
 			          			{
 			          				return global::System.Threading.Tasks.ValueTask.FromCanceled<T>(cancellationToken);
 			          			}
-			          """).IgnoringNewlineStyle().And
-			.Contains("""
-			          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
-			          			{
-			          				return global::System.Threading.Tasks.ValueTask.FromResult(func());
-			          			}
-			          """).IgnoringNewlineStyle().And
-			.Contains("""
-			          			return global::System.Threading.Tasks.ValueTask.FromResult(generator.Generate(default(T)!, parameters));
+
+			          			return global::System.Threading.Tasks.ValueTask.FromResult(value);
 			          		}
-			          """).IgnoringNewlineStyle();
+			          """).IgnoringNewlineStyle().And
+			.DoesNotContain("global::System.Func<T>");
 	}
 
 	[Fact]

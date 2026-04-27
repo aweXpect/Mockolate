@@ -94,7 +94,7 @@ public sealed partial class MockTests
 				          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.Program.DoSomething1.Invoke(int)' was invoked without prior setup.");
 				          			}
 				          			methodSetup?.TriggerCallbacks(x);
-				          			return methodSetup?.TryGetReturnValue(x, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<char>)!, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!));
+				          			return methodSetup?.TryGetReturnValue(x, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<char>)!);
 				          		}
 				          """).IgnoringNewlineStyle();
 			await That(result.Sources)
@@ -117,7 +117,7 @@ public sealed partial class MockTests
 				          				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::MyCode.Program.DoSomething2.Invoke(int)' was invoked without prior setup.");
 				          			}
 				          			methodSetup?.TriggerCallbacks(x);
-				          			return methodSetup?.TryGetReturnValue(x, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<char>)!, () => this.MockRegistry.Behavior.DefaultValue.Generate(default(char)!));
+				          			return methodSetup?.TryGetReturnValue(x, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<char>)!);
 				          		}
 				          """).IgnoringNewlineStyle();
 		}

@@ -235,7 +235,7 @@ internal static partial class Sources
 		          		///     Generates a <see cref="global::System.Threading.Tasks.Task" /> of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
-		          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, params object?[] parameters)
+		          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, T value, params object?[] parameters)
 		          		{
 		          			global::System.Threading.CancellationToken cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
 		          				global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(parameters)) ?? global::System.Threading.CancellationToken.None;
@@ -243,13 +243,8 @@ internal static partial class Sources
 		          			{
 		          				return global::System.Threading.Tasks.Task.FromCanceled<T>(cancellationToken);
 		          			}
-		          			
-		          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
-		          			{
-		          				return global::System.Threading.Tasks.Task.FromResult(func());
-		          			}
-		          			
-		          			return global::System.Threading.Tasks.Task.FromResult(generator.Generate(default(T)!, parameters));
+
+		          			return global::System.Threading.Tasks.Task.FromResult(value);
 		          		}
 
 		          #if NET8_0_OR_GREATER
@@ -257,7 +252,7 @@ internal static partial class Sources
 		          		///     Generates a <see cref="global::System.Threading.Tasks.ValueTask" /> of <typeparamref name="T" />, with
 		          		///     the <paramref name="parameters" /> for context.
 		          		/// </summary>
-		          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, params object?[] parameters)
+		          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, T value, params object?[] parameters)
 		          		{
 		          			global::System.Threading.CancellationToken cancellationToken = global::System.Linq.Enumerable.FirstOrDefault(
 		          				global::System.Linq.Enumerable.OfType<global::System.Threading.CancellationToken?>(parameters)) ?? global::System.Threading.CancellationToken.None;
@@ -265,13 +260,8 @@ internal static partial class Sources
 		          			{
 		          				return global::System.Threading.Tasks.ValueTask.FromCanceled<T>(cancellationToken);
 		          			}
-		          			
-		          			if (parameters.Length > 0 && parameters[0] is global::System.Func<T> func)
-		          			{
-		          				return global::System.Threading.Tasks.ValueTask.FromResult(func());
-		          			}
-		          			
-		          			return global::System.Threading.Tasks.ValueTask.FromResult(generator.Generate(default(T)!, parameters));
+
+		          			return global::System.Threading.Tasks.ValueTask.FromResult(value);
 		          		}
 		          #endif
 
