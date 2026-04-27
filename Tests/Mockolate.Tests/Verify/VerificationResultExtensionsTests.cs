@@ -437,6 +437,18 @@ public class VerificationResultExtensionsTests
 			.Then(m => m.Dispense(It.IsAny<string>(), It.Is(2)));
 	}
 
+	[Fact]
+	public void Then_RepeatedPropertyGetter_ShouldNotCollapseIntoOnePosition()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		_ = sut.TotalDispensed;
+		sut.Dispense("Dark", 1);
+		_ = sut.TotalDispensed;
+
+		sut.Mock.Verify.TotalDispensed.Got()
+			.Then(m => m.TotalDispensed.Got());
+	}
+
 	[Theory]
 	[InlineData(false, 1, 2, 3, 4)]
 	[InlineData(true, 1, 2, 2, 4)]

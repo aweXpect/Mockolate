@@ -238,6 +238,20 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
+	public async Task FastPropertyGetterBuffer_Append_WithoutInstalledTemplate_ShouldThrow()
+	{
+		FastMockInteractions store = new(1);
+		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+
+		void Act()
+		{
+			buffer.Append();
+		}
+
+		await That(Act).Throws<InvalidOperationException>();
+	}
+
+	[Fact]
 	public async Task FastPropertyGetterBuffer_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
 	{
 		FastMockInteractions store = new(1);
@@ -253,6 +267,22 @@ public class FastBufferBoxingAndUnverifiedTests
 		await That(first).HasCount(1);
 		await That(second).HasCount(1);
 		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastPropertyGetterBuffer_AppendBoxed_DistinctSlotsProduceDistinctInteractions()
+	{
+		FastMockInteractions store = new(1);
+		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+
+		buffer.Append("P");
+		buffer.Append("P");
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(dest);
+
+		await That(dest).HasCount(2);
+		await That(dest[0].Interaction).IsNotSameAs(dest[1].Interaction);
 	}
 
 	[Fact]

@@ -192,10 +192,14 @@ internal static partial class Sources
 			int getId = AllocateId("MemberId_" + identifierGet);
 			PropertyGetIds[property] = getId;
 
-			// PropertyGetterAccess is parameterless and identified solely by Name, so we can
-			// share one instance across every recorded access for a given property. The
-			// generator emits a static readonly field next to MemberId_<X>_Get; both the
-			// FastPropertyGetterBuffer and the legacy RecordPropertyGetter path use it.
+			// PropertyGetterAccess is identified solely by Name, so the generator emits one
+			// static readonly per-property template next to MemberId_<X>_Get. The template is a
+			// cheap name source: FastPropertyGetterBuffer caches it once instead of storing the
+			// name on every record, and the cold-path RecordPropertyGetter constructs fresh
+			// PropertyGetterAccess instances from the template's Name. Per-record identity is
+			// preserved (every recorded interaction is still a distinct object) — reference-
+			// keyed bookkeeping like Then ordering and FastMockInteractions._verified depends
+			// on that.
 			string accessFieldName = "PropertyAccess_" + identifierGet;
 			PropertyGetterAccessFieldNames[property] = accessFieldName;
 			_propertyGetterAccessFields.Add((property, accessFieldName));
