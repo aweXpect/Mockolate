@@ -79,19 +79,12 @@ public class PropertyEqualityComparerTests
 	}
 
 	private static Property CreateProperty(string source, string propertyName)
-	{
-		(IPropertySymbol symbol, _) = ParsePropertySymbol(source, propertyName, false);
-		return new Property(symbol, null);
-	}
+		=> new Property(ParsePropertySymbol(source, propertyName, false), null);
 
 	private static Property CreateIndexer(string source)
-	{
-		(IPropertySymbol symbol, _) = ParsePropertySymbol(source, null, true);
-		return new Property(symbol, null);
-	}
+		=> new Property(ParsePropertySymbol(source, null, true), null);
 
-	private static (IPropertySymbol Symbol, SemanticModel Model) ParsePropertySymbol(string source,
-		string? propertyName, bool isIndexer)
+	private static IPropertySymbol ParsePropertySymbol(string source, string? propertyName, bool isIndexer)
 	{
 		SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
 		CSharpCompilation compilation = CSharpCompilation.Create(
@@ -105,16 +98,12 @@ public class PropertyEqualityComparerTests
 			IndexerDeclarationSyntax declaration = tree.GetRoot().DescendantNodes()
 				.OfType<IndexerDeclarationSyntax>()
 				.First();
-			IPropertySymbol symbol = model.GetDeclaredSymbol(declaration)!;
-			return (symbol, model);
+			return model.GetDeclaredSymbol(declaration)!;
 		}
-		else
-		{
-			PropertyDeclarationSyntax declaration = tree.GetRoot().DescendantNodes()
-				.OfType<PropertyDeclarationSyntax>()
-				.First(p => p.Identifier.Text == propertyName);
-			IPropertySymbol symbol = model.GetDeclaredSymbol(declaration)!;
-			return (symbol, model);
-		}
+
+		PropertyDeclarationSyntax propertyDeclaration = tree.GetRoot().DescendantNodes()
+			.OfType<PropertyDeclarationSyntax>()
+			.First(p => p.Identifier.Text == propertyName);
+		return model.GetDeclaredSymbol(propertyDeclaration)!;
 	}
 }
