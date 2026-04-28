@@ -610,20 +610,21 @@ public class FastBufferBoxingAndUnverifiedTests
 	[Fact]
 	public async Task FastPropertyGetterBuffer_AppendString_LazyInitsAccessOnce()
 	{
-		// Kills the `_access ??= new PropertyGetterAccess(name)` -> `_access = new ...` mutation.
-		// With the mutation, every Append(name) call would create a fresh PropertyGetterAccess,
-		// so successive AppendBoxed calls would surface DIFFERENT singletons across records.
 		FastMockInteractions store = new(1);
 		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
 
 		buffer.Append("P");
+		List<(long Seq, IInteraction Interaction)> firstSnapshot = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(firstSnapshot);
+
 		buffer.Append("P");
+		List<(long Seq, IInteraction Interaction)> secondSnapshot = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(secondSnapshot);
 
-		List<(long Seq, IInteraction Interaction)> dest = [];
-		((IFastMemberBuffer)buffer).AppendBoxed(dest);
-
-		await That(dest).HasCount(2);
-		await That(dest[1].Interaction).IsSameAs(dest[0].Interaction);
+		await That(firstSnapshot).HasCount(1);
+		await That(secondSnapshot).HasCount(2);
+		await That(secondSnapshot[0].Interaction).IsSameAs(firstSnapshot[0].Interaction);
+		await That(secondSnapshot[1].Interaction).IsSameAs(firstSnapshot[0].Interaction);
 	}
 
 	[Fact]
