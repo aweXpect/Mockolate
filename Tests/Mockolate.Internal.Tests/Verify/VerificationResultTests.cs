@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using aweXpect.Chronology;
 using Mockolate.Exceptions;
@@ -47,6 +48,38 @@ public class VerificationResultTests
 
 			await That(Act).Throws<MockVerificationException>()
 				.WithMessage("*timed out*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task VerifyCount_WithUseCountAll_ShouldPickCountAllNotFilteredCount()
+		{
+			// Pins the `_useCountAll ? CountAll() : Count()` conditional in Awaitable.VerifyCount.
+			// Buffer holds 3 records, the matcher accepts only 1 of them, AnyParameters() flips
+			// _useCountAll = true. With the original code, CountAll()=3 satisfies Exactly(3) — but
+			// here we assert against Exactly(1), which is the *filtered* count: only the false-branch
+			// (Count()) of the mutated conditional satisfies it synchronously, then short-circuits
+			// before the async loop can re-evaluate via the unmutated CountAll().
+			FastMockInteractions store = new(1);
+			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			buffer.Append("Foo", 1);
+			buffer.Append("Foo", 2);
+			buffer.Append("Foo", 3);
+
+			VerificationResult<object>.IgnoreParameters typed = registry.VerifyMethod(
+				new object(), 0, "Foo",
+				(IParameterMatch<int>)It.Is(1),
+				() => "Foo(1)");
+
+			VerificationResult<object> widened = typed.AnyParameters();
+
+			void Act()
+			{
+				widened.Within(50.Milliseconds()).Exactly(1);
+			}
+
+			await That(Act).Throws<MockVerificationException>();
 		}
 
 		[Fact]
@@ -105,6 +138,61 @@ public class VerificationResultTests
 	public sealed class MapTests
 	{
 		[Fact]
+		public async Task Map_WhenBufferAndFastSourceBothNull_DropsToSimpleConstructor()
+		{
+			// Mirrors the buffer-only case from the other side: with neither buffer nor source, the
+			// only valid Map output is the simple constructor. Asserts via reflection that _buffer
+			// stays null after Map so the equality-mutation that would force the buffer-carrying
+			// constructor (and crash on the null buffer) is killed.
+			FastMockInteractions store = new(0);
+			VerificationResult<object> source = new(
+				new object(), store, _ => true, "expected");
+
+			VerificationResult<int> mapped = source.Map(42);
+
+			FieldInfo bufferField = typeof(VerificationResult<int>).GetField(
+				"_buffer", BindingFlags.Instance | BindingFlags.NonPublic)!;
+			FieldInfo fastSourceField = typeof(VerificationResult<int>).GetField(
+				"_fastCountSource", BindingFlags.Instance | BindingFlags.NonPublic)!;
+
+			await That(bufferField.GetValue(mapped)).IsNull();
+			await That(fastSourceField.GetValue(mapped)).IsNull();
+		}
+
+		[Fact]
+		public async Task Map_WhenBufferOnlyAndFastSourceNull_PreservesBuffer()
+		{
+			// The buffer-only IgnoreParameters constructor is wired with no fast source. Map must
+			// take the buffer-preserving branch — if it slips into the simple constructor, the next
+			// CollectMatching falls back to a global Where over _interactions, which would pick up
+			// records from OTHER buffers that satisfy the (un-name-filtered) predicate.
+			FastMockInteractions store = new(2);
+			FastMethod1Buffer<int> bufA = store.InstallMethod<int>(0);
+			FastMethod1Buffer<int> bufB = store.InstallMethod<int>(1);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			bufA.Append("Foo", 1);
+			bufA.Append("Foo", 2);
+			bufB.Append("Bar", 99);
+
+			VerificationResult<object>.IgnoreParameters result =
+				registry.VerifyMethod<object, MethodInvocation<int>>(
+					new object(), 0, "Foo", _ => true, () => "Foo()");
+
+			VerificationResult<string> mapped = result.Map("newMock");
+
+			int observedLength = -1;
+			bool verified = ((IVerificationResult)mapped).Verify(arr =>
+			{
+				observedLength = arr.Length;
+				return true;
+			});
+
+			await That(verified).IsTrue();
+			await That(observedLength).IsEqualTo(2);
+		}
+
+		[Fact]
 		public async Task Map_WithBuffer_PreservesFastPathSource()
 		{
 			FastMockInteractions store = new(1);
@@ -150,6 +238,38 @@ public class VerificationResultTests
 
 	public sealed class CollectMatchingTests
 	{
+		[Fact]
+		public async Task WithBufferAndExactlyTwoRecords_PreservesSequenceOrder()
+		{
+			// Crosses the `records.Count > 1` boundary in CollectMatching at exactly N=2. Combined
+			// with the existing N=1 / N=3 / N=0 cases, this pins the boundary so flipping `> 1` to
+			// `>= 1` is no longer a silent rewrite of the sort path.
+			FastMockInteractions store = new(1);
+			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			buffer.Append("Foo", 10);
+			buffer.Append("Foo", 20);
+
+			VerificationResult<object>.IgnoreParameters result =
+				registry.VerifyMethod<object, MethodInvocation<int>>(
+					new object(), 0, "Foo", _ => true, () => "Foo()");
+
+			List<int> values = new();
+			bool verified = ((IVerificationResult)result).Verify(arr =>
+			{
+				foreach (IInteraction interaction in arr)
+				{
+					values.Add(((MethodInvocation<int>)interaction).Parameter1);
+				}
+
+				return arr.Length == 2;
+			});
+
+			await That(verified).IsTrue();
+			await That(values).IsEqualTo([10, 20,]);
+		}
+
 		[Fact]
 		public async Task WithBufferAndMultipleRecords_PreservesSequenceOrder()
 		{
@@ -244,6 +364,72 @@ public class VerificationResultTests
 
 			await That(verified).IsTrue();
 			await That(observed).IsEqualTo(0);
+		}
+	}
+
+	public sealed class SkipInteractionRecordingTests
+	{
+		[Fact]
+		public async Task Verify_WhenRecordingDisabled_AndAwaitableViaWithin_ShouldThrowMockException()
+		{
+			// Same guard, Awaitable Verify (records-array) path. Constructed with a predicate-based
+			// VR (not a typed CountSource) so we exercise the slow CollectMatching branch.
+			FastMockInteractions store = new(0, true);
+			VerificationResult<object> result = new(
+				new object(), store, _ => true, "expected");
+
+			VerificationResult<object> awaitable = result.Within(50.Milliseconds());
+
+			void Act()
+			{
+				((IVerificationResult)awaitable).Verify(_ => true);
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("*recording is disabled*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task VerifyCount_WhenRecordingDisabled_AndAwaitableViaWithin_ShouldThrowMockException()
+		{
+			// Same guard, Awaitable path (via Within). Distinct mutation site.
+			FastMockInteractions store = new(1, true);
+			store.InstallMethod(0);
+			MockRegistry registry = new(MockBehavior.Default with
+			{
+				SkipInteractionRecording = true,
+			}, store);
+
+			void Act()
+			{
+				registry.VerifyMethod<object>(new object(), 0, "Foo", () => "Foo()")
+					.Within(50.Milliseconds()).Once();
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("*recording is disabled*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task VerifyCount_WhenRecordingDisabled_ShouldThrowMockException()
+		{
+			// Kills the ThrowIfRecordingDisabled statement-removal mutation on the non-Awaitable
+			// IFastVerifyCountResult.VerifyCount path. Without the guard, Once() would silently
+			// report a (probably false) count and never throw.
+			FastMockInteractions store = new(1, true);
+			store.InstallMethod(0);
+			MockRegistry registry = new(MockBehavior.Default with
+			{
+				SkipInteractionRecording = true,
+			}, store);
+
+			void Act()
+			{
+				registry.VerifyMethod<object>(new object(), 0, "Foo", () => "Foo()").Once();
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("*recording is disabled*").AsWildcard();
 		}
 	}
 

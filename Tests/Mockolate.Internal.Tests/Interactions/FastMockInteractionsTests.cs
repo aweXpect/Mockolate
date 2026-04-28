@@ -220,6 +220,32 @@ public class FastMockInteractionsTests
 	}
 
 	[Fact]
+	public async Task GetUnverifiedInteractions_AcrossBuffersWithInterleavedAppends_ReturnsInSequenceOrder()
+	{
+		// Pins the `unverified.Count > 1` boundary that gates the defensive Sort by Seq inside
+		// GetUnverifiedInteractions. With multiple buffers contributing in non-Seq order (each
+		// buffer is iterated in install order, but appends are interleaved across the global
+		// sequence), the Sort step is what restores chronological order. Mutations that skip the
+		// Sort (`< 1`, `<= 1`, `!(>1)`) leave the snapshot grouped by buffer, not by Seq.
+		FastMockInteractions sut = new(2);
+		FastMethod1Buffer<int> bufA = sut.InstallMethod<int>(0);
+		FastMethod1Buffer<int> bufB = sut.InstallMethod<int>(1);
+
+		bufA.Append("A", 0);
+		bufB.Append("B", 1);
+		bufA.Append("A", 2);
+		bufB.Append("B", 3);
+
+		IInteraction[] unverified = sut.GetUnverifiedInteractions().ToArray();
+
+		await That(unverified).HasCount(4);
+		await That(((MethodInvocation<int>)unverified[0]).Parameter1).IsEqualTo(0);
+		await That(((MethodInvocation<int>)unverified[1]).Parameter1).IsEqualTo(1);
+		await That(((MethodInvocation<int>)unverified[2]).Parameter1).IsEqualTo(2);
+		await That(((MethodInvocation<int>)unverified[3]).Parameter1).IsEqualTo(3);
+	}
+
+	[Fact]
 	public async Task GetUnverifiedInteractions_AcrossMultipleBuffers_ShouldUnionFastAndSlowVerifications()
 	{
 		FastMockInteractions sut = new(2);
@@ -457,6 +483,24 @@ public class FastMockInteractionsTests
 		buffer.Append("Foo");
 		MethodInvocation appended = (MethodInvocation)sut.Single();
 		((IMockInteractions)sut).Verified([appended,]);
+
+		await That(sut.GetUnverifiedInteractions()).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Verified_OnSecondCallWithDifferentItems_PreservesPreviouslyVerifiedItems()
+	{
+		// Pins the `_verified ??= []` lazy-init in Verified(). With the assignment turned into a
+		// plain `_verified = []`, the second call would reset the verified set, so the first
+		// call's entry would re-surface as "unverified".
+		FastMockInteractions sut = new(1);
+		FastMethod0Buffer buffer = sut.InstallMethod(0);
+		buffer.Append("first");
+		buffer.Append("second");
+		List<IInteraction> all = [..sut,];
+
+		((IMockInteractions)sut).Verified([all[0],]);
+		((IMockInteractions)sut).Verified([all[1],]);
 
 		await That(sut.GetUnverifiedInteractions()).IsEmpty();
 	}
