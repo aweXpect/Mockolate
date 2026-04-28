@@ -271,3 +271,26 @@ httpClient.Mock.Setup.GetAsync(It.IsAny<Uri>())
     // Returns a response with status code 200 OK and a PNG image content with the provided bytes
     .ReturnsAsync(HttpStatusCode.OK, bytes, "image/png");
 ```
+
+## Whole-request matching
+
+Use `It.IsHttpRequestMessage(HttpMethod?)` together with `Setup.SendAsync(...)` to match against the entire
+`HttpRequestMessage`, optionally restricted to a specific HTTP method. This is the catch-all entry point that the
+verb-specific overloads (`GetAsync`, `PostAsync`, …) route through internally - reach for it when you need the full
+request (e.g. to inspect headers, or to handle non-standard verbs like `HEAD` or `OPTIONS`).
+
+Chain builders to add constraints:
+
+- `.WhoseUriIs(string)` / `.WhoseUriIs(Action<IUriParameter>)`: same surface as `It.IsUri(...)`.
+- `.WhoseContentIs(Action<IHttpContentParameter>)` / `.WhoseContentIs(string mediaType, …)`: same surface as
+  `It.IsHttpContent(...)`.
+- `.WithHeaders(...)`: require specific request headers.
+
+```csharp
+// Match any POST to /api/chocolate/dispense with a JSON body containing "Dark"
+httpClient.Mock.Setup
+    .SendAsync(It.IsHttpRequestMessage(HttpMethod.Post)
+        .WhoseUriIs(uri => uri.WithPath("/api/chocolate/dispense"))
+        .WhoseContentIs("application/json", c => c.WithStringMatching("*\"type\": \"Dark\"*")))
+    .ReturnsAsync(HttpStatusCode.OK);
+```

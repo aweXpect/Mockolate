@@ -8,8 +8,11 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values.
+- `It.IsNot<T>(value)`: Matches any value not equal to `value`.
+- `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values.
+- `It.IsNotOneOf<T>(params IEnumerable<T> values)`: Matches any value that is not in the given set.
 - `It.IsNull<T>()`: Matches null.
+- `It.IsNotNull<T>()`: Matches any non-null value.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
   minimum and maximum value.
@@ -148,7 +151,7 @@ or your own `ref struct Packet`) using these matchers:
   predicate can read the struct's fields at the time the call is made.
 - `It.IsRefStructBy<T, TKey>(projection)` / `It.IsRefStructBy<T, TKey>(projection, predicate)`:
   For ref-struct-keyed indexers, projects the key to an equatable value so writes and reads can
-  be correlated. Works at any arity — apply it to every ref-struct slot and non-ref-struct slots
+  be correlated. Works at any arity - apply it to every ref-struct slot and non-ref-struct slots
   contribute their raw value to the composite dispatch key (see *Indexer storage* in the remarks).
 
 ```csharp
@@ -196,7 +199,7 @@ generic delegates:
   `Callbacks<T>` builder (`InParallel`, `When`, `For`, `Only`, `TransitionTo`) are not offered
   for ref-struct parameters.
 - **Verify.** `Verify` counts calls to the method but cannot match on the parameter value after
-  the fact — the ref-struct value isn't retained past the call. Use a setup-time matcher to
+  the fact - the ref-struct value isn't retained past the call. Use a setup-time matcher to
   filter at call time.
 - **Indexer storage.** By default, values written through a ref-struct-keyed indexer setter are
   not read back by the getter. Apply `It.IsRefStructBy<T, TKey>(projection)` to every ref-struct

@@ -12,9 +12,26 @@
 It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, .NET 10 and .NET Framework 4.8.
 
 - **Source generator-based**: No runtime proxy generation.
+- **Fast**: Direct dispatch with no reflection or dynamic proxies.
 - **Strongly-typed**: Compile-time safety and IntelliSense support.
 - **AOT compatible**: Works with Native AOT and trimming.
-- **Fast**: Per-member typed interaction storage on the hot path. v3.0 is up to ~7.8× faster per call than v2 — see [Performance](#performance).
+- **Modern C#**: First-class support for ref structs, static interface members, and current language features.
+
+## Why Mockolate
+
+|                | Reflection-based mocks (Moq, NSubstitute, …) | Mockolate                  |
+|----------------|----------------------------------------------|----------------------------|
+| AOT / trimming | not supported                                | supported                  |
+| Validation     | runtime exceptions                           | analyzers + compile errors |
+| Setup API      | `Expression<Func<…>>` trees                  | regular method calls       |
+| Hot path       | dynamic-proxy dispatch                       | direct dispatch            |
+
+For side-by-side setup, usage, and verification syntax against Moq, NSubstitute, and FakeItEasy, see the
+[full code comparison](https://awexpect.com/docs/mockolate/comparison).
+
+Already on Moq? The companion package [`Mockolate.Migration`](https://github.com/aweXpect/Mockolate.Migration) ships
+analyzers and code fixers that translate common Moq patterns to Mockolate syntax in-place: point it at an existing test
+project and apply the suggested fixes.
 
 ## Getting Started
 
@@ -31,52 +48,26 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    ```csharp
    using Mockolate;
 
-   public delegate void ChocolateDispensedDelegate(string type, int amount);
    public interface IChocolateDispenser
    {
-       int this[string type] { get; set; }
-       int TotalDispensed { get; set; }
        bool Dispense(string type, int amount);
-       event ChocolateDispensedDelegate ChocolateDispensed;
    }
-   
-   // Create a mock of IChocolateDispenser
+
+   // Create a mock
    IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-   
-   // Setup: Initial stock of 10 for Dark chocolate
-   sut.Mock.Setup["Dark"].InitializeWith(10);
-   // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.Mock.Setup.Dispense("Dark", It.IsAny<int>())
-       .Returns((type, amount) =>
-       {
-           int current = sut[type];
-           if (current >= amount)
-           {
-               sut[type] = current - amount;
-               sut.Mock.Raise.ChocolateDispensed(type, amount);
-               return true;
-           }
-           return false;
-       });
-   
-   // Track dispensed amount via event
-   int dispensedAmount = 0;
-   sut.ChocolateDispensed += (type, amount) =>
-   {
-       dispensedAmount += amount;
-   };
-   
-   // Act: Try to dispense chocolates
-   bool gotChoc1 = sut.Dispense("Dark", 4); // true
-   bool gotChoc2 = sut.Dispense("Dark", 5); // true
-   bool gotChoc3 = sut.Dispense("Dark", 6); // false
-   
-   // Verify: Check interactions
-   sut.Mock.Verify.Dispense("Dark", It.IsAny<int>()).Exactly(3);
-   
-   // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
-   Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
+
+   // Setup: Dispense returns true for any Dark chocolate request
+   sut.Mock.Setup.Dispense("Dark", It.IsAny<int>()).Returns(true);
+
+   // Act
+   bool success = sut.Dispense("Dark", 4);
+
+   // Verify
+   sut.Mock.Verify.Dispense("Dark", It.IsAny<int>()).Once();
    ```
+
+   For a richer walkthrough combining properties, indexers, events, and stateful setup,
+   see [A complete example](#a-complete-example) at the end of the README.
 
 ## Create mocks
 
@@ -108,40 +99,35 @@ MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(behavior, "Dark
 
 **`MockBehavior` options**
 
-- `SkipBaseClass` (bool):
-  - If `false` (default), the mock will call the base class implementation and use its return values as default
-    values, if no explicit setup is defined.
-  - If `true`, the mock will not call any base class implementations.
-- `ThrowWhenNotSetup` (bool):
-  - If `false` (default), the mock will return a default value (see `DefaultValue`), when no matching setup is found.
-  - If `true`, the mock will throw an exception when no matching setup is found.
-- `SkipInteractionRecording` (bool):
-  - If `false` (default), every interaction with the mock is recorded and can be verified later.
-  - If `true`, the mock skips recording interactions for faster execution.
-    Setups, returns, callbacks and base-class delegation continue to work - only verification is disabled. Any
-    attempt to call `.Verify.X()` throws a `MockException`.
-- `DefaultValue` (IDefaultValueGenerator):
-  - Customizes how default values are generated for methods/properties that are not set up.
-  - The default implementation provides sensible defaults for the most common use cases:
-    - Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
-    - Empty string for `string`
-    - Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
-    - Tuples with recursively defaulted values
-    - `null` for other reference types
-  - You can add custom default value factories for specific types using `.WithDefaultValueFor<T>()`:
-    ```csharp
-    MockBehavior behavior = MockBehavior.Default
-      .WithDefaultValueFor<string>(() => "default")
-      .WithDefaultValueFor<int>(() => 42);
-    IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior);
-    ```
-    This is useful when you want mocks to return specific default values for certain types instead of the standard
-    defaults.
-- `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
-  - Automatically initialize all mocks of type T with the given setups when they are created.
-- `UseConstructorParametersFor<T>(object?[])`:
-  - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
-    during mock creation via `CreateMock([…])`.
+| Option                                | Default           | Purpose                                                                                                                                                                                                               |
+|---------------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SkipBaseClass`                       | `false`           | When `true`, the mock does not call any base class implementations. Otherwise, the base class implementation is used as the default value when no explicit setup matches.                                             |
+| `ThrowWhenNotSetup`                   | `false`           | When `true`, the mock throws when no matching setup is found. Otherwise, it returns a default value (see `DefaultValue` below).                                                                                       |
+| `SkipInteractionRecording`            | `false`           | When `true`, interactions are not recorded - setups, returns, callbacks, and base-class delegation still work, but `.Verify.X()` throws a `MockException`. Useful in performance-sensitive scenarios.                 |
+| `DefaultValue`                        | sensible defaults | Customizes how default values are generated for unset methods and properties (see below).                                                                                                                             |
+| `Initialize<T>(...)`                  | -                 | Automatically applies the given setups to all mocks of type `T` when they are created.                                                                                                                                |
+| `UseConstructorParametersFor<T>(...)` | -                 | Configures default constructor parameters for mocks of type `T`, unless explicit parameters are supplied to `CreateMock([…])`. The `Func<object?[]>` overload defers parameter resolution until each mock is created. |
+
+**Default value generation**
+
+The default `IDefaultValueGenerator` provides sensible defaults for the most common cases:
+
+- Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`)
+- Empty string for `string`
+- Completed tasks for `Task`, `Task<T>`, `ValueTask`, and `ValueTask<T>`
+- Tuples with recursively defaulted values
+- `null` for other reference types
+
+You can register custom factories per type using `.WithDefaultValueFor<T>()`:
+
+```csharp
+MockBehavior behavior = MockBehavior.Default
+  .WithDefaultValueFor<string>(() => "default")
+  .WithDefaultValueFor<int>(() => 42);
+IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior);
+```
+
+For full control, implement `IDefaultValueGenerator` directly and assign it to `MockBehavior.DefaultValue`.
 
 **Using a shared behavior**
 
@@ -159,7 +145,18 @@ This is especially useful when you need consistent mock setups across multiple t
 
 ### Setups
 
-Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to virtual interactions in the constructor.
+Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to
+virtual interactions in the constructor.
+
+```csharp
+IChocolateDispenser sut = IChocolateDispenser.CreateMock(setup =>
+{
+    setup.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(true);
+    setup.TotalDispensed.InitializeWith(0);
+});
+```
+
+You can combine the setup callback with a `MockBehavior` and constructor parameters in the same call.
 
 ### Implementing additional interfaces
 
@@ -173,6 +170,23 @@ MyChocolateDispenser sut = MyChocolateDispenser.CreateMock().Implementing<ILemon
 IChocolateDispenser sut2 = IChocolateDispenser.CreateMock()
     .Implementing<ILemonadeDispenser>(setup => setup.DispenseLemonade(It.IsAny<int>()).Returns(true));
 ```
+
+**Accessing the additional interface's mock surface**
+
+Use `Mock.As<T>()` to reach the `Setup` and `Verify` properties for an additional interface added via
+`.Implementing<T>()`:
+
+```csharp
+MyChocolateDispenser sut = MyChocolateDispenser.CreateMock()
+    .Implementing<ILemonadeDispenser>();
+
+// Set up and verify members of the additional interface
+sut.Mock.As<ILemonadeDispenser>().Setup.DispenseLemonade(It.IsAny<int>()).Returns(true);
+sut.Mock.As<ILemonadeDispenser>().Verify.DispenseLemonade(5).Once();
+```
+
+The returned mock shares the registry of the original - recorded interactions, scenario state, and setups apply
+across all faces of the same instance.
 
 **Notes:**
 
@@ -369,7 +383,7 @@ sut.Mock.Setup[It.IsAny<string>()]
 
 sut.Mock.Setup[It.Is("Dark")]
     .InitializeWith(10)
-    .OnSet.Do((value, type) => Console.WriteLine($"Set [{type}] to {value}"));
+    .OnSet.Do((type, value) => Console.WriteLine($"Set [{type}] to {value}"));
 ```
 
 **Initialization**
@@ -455,8 +469,11 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values.
+- `It.IsNot<T>(value)`: Matches any value not equal to `value`.
+- `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values.
+- `It.IsNotOneOf<T>(params IEnumerable<T> values)`: Matches any value that is not in the given set.
 - `It.IsNull<T>()`: Matches null.
+- `It.IsNotNull<T>()`: Matches any non-null value.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
   minimum and maximum value.
@@ -524,7 +541,8 @@ sut.Increment(ref value);
 
 Both matchers support method parameters declared as `IEnumerable<T>`, `ICollection<T>`, `IList<T>`,
 `IReadOnlyCollection<T>`, `IReadOnlyList<T>`, `T[]`, `List<T>`, `Queue<T>` or `Stack<T>`.
-`It.Contains<T>` additionally supports the unordered shapes `ISet<T>` and `HashSet<T>`; `It.SequenceEquals<T>` intentionally
+`It.Contains<T>` additionally supports the unordered shapes `ISet<T>` and `HashSet<T>`; `It.SequenceEquals<T>`
+intentionally
 does not, because their enumeration order is not guaranteed.
 
 Append `.Using(IEqualityComparer<T>)` to either matcher to control element equality.
@@ -594,7 +612,7 @@ or your own `ref struct Packet`) using these matchers:
   predicate can read the struct's fields at the time the call is made.
 - `It.IsRefStructBy<T, TKey>(projection)` / `It.IsRefStructBy<T, TKey>(projection, predicate)`:
   For ref-struct-keyed indexers, projects the key to an equatable value so writes and reads can
-  be correlated. Works at any arity — apply it to every ref-struct slot and non-ref-struct slots
+  be correlated. Works at any arity - apply it to every ref-struct slot and non-ref-struct slots
   contribute their raw value to the composite dispatch key (see *Indexer storage* in the remarks).
 
 ```csharp
@@ -642,7 +660,7 @@ generic delegates:
   `Callbacks<T>` builder (`InParallel`, `When`, `For`, `Only`, `TransitionTo`) are not offered
   for ref-struct parameters.
 - **Verify.** `Verify` counts calls to the method but cannot match on the parameter value after
-  the fact — the ref-struct value isn't retained past the call. Use a setup-time matcher to
+  the fact - the ref-struct value isn't retained past the call. Use a setup-time matcher to
   filter at call time.
 - **Indexer storage.** By default, values written through a ref-struct-keyed indexer setter are
   not read back by the getter. Apply `It.IsRefStructBy<T, TKey>(projection)` to every ref-struct
@@ -659,7 +677,8 @@ The following cases are rejected at compile time with diagnostic `Mockolate0003`
 
 #### Parameter Predicates
 
-When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:
+When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible
+parameters matching:
 
 - `Match.AnyParameters()`: Matches any parameter combination.
 - `Match.Parameters(Func<object?[], bool> predicate)`: Matches parameters based on a custom predicate.
@@ -774,13 +793,15 @@ sut.Mock.Verify.Dispense(It.Is("Dark"), It.Is(5))
 ```
 
 You can also use `WithCancellation(CancellationToken)` to wait for the expected interactions until the cancellation
-token is canceled. If you combine this with the `Within` method, both the timeout and the cancellation token are respected.
+token is canceled. If you combine this with the `Within` method, both the timeout and the cancellation token are
+respected.
 
 In both cases, it will block the test execution until the expected interaction occurs or the timeout is reached.
 If the interaction does not occur within the specified time, a `MockVerificationException` will be thrown.
 
 If you need truly asynchronous verification without blocking the test thread, you can use the
-[aweXpect.Mockolate](https://awexpect.com/aweXpect.Mockolate) extension package which has an asynchronous `Within(TimeSpan)` variant.
+[aweXpect.Mockolate](https://awexpect.com/aweXpect.Mockolate) NuGet package, which integrates Mockolate's verification
+API with [aweXpect](https://awexpect.com) and offers an awaitable `Within(TimeSpan)` variant.
 
 ### Properties
 
@@ -865,14 +886,19 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
   comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
-  provide a custom equality comparer.
+- `It.IsNot<T>(value)`: Matches any value not equal to `value`.
+- `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`,
+  you can provide a custom equality comparer.
+- `It.IsNotOneOf<T>(params IEnumerable<T> values)`: Matches any value that is not in the given set.
 - `It.IsNull<T>()`: Matches null.
+- `It.IsNotNull<T>()`: Matches any non-null value.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
   minimum and maximum value.
-- `It.IsOut<T>()`: Matches any out parameter of type `T`
-- `It.IsRef<T>()`: Matches any ref parameter of type `T`
+- `It.IsOut<T>()`: Matches any out parameter of type `T`.
+- `It.IsRef<T>()`: Matches any ref parameter of type `T`.
+- `It.IsSpan<T>(predicate)` / `It.IsAnySpan<T>()`: Matches `Span<T>` parameters (.NET 8+).
+- `It.IsReadOnlySpan<T>(predicate)` / `It.IsAnyReadOnlySpan<T>()`: Matches `ReadOnlySpan<T>` parameters (.NET 8+).
 - `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
   regular expressions instead.
 - `It.Contains<T>(item)`: Matches a collection parameter that contains `item`. With `.Using(IEqualityComparer<T>)`, you
@@ -880,6 +906,10 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 - `It.SequenceEquals<T>(params IEnumerable<T> values)`: Matches a collection parameter whose elements equal `values` in
   order. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
+
+*Note:* Custom `ref struct` matchers (`It.IsRefStruct<T>`, `It.IsAnyRefStruct<T>`, `It.IsRefStructBy<T,TKey>`) only
+apply at setup time - `Verify` counts calls to ref-struct members but cannot match on the value after the fact, since
+the ref-struct value isn't retained past the call.
 
 **Example:**
 
@@ -1049,6 +1079,11 @@ sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
 
 sut.Mock.Setup.TotalDispensed.OnGet
     .Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
+
+// Indexer setter - count, then the indexer key(s), then the new value
+sut.Mock.Setup[It.IsAny<string>()].OnSet
+    .Do((count, type, newValue) =>
+        Console.WriteLine($"Set #{count}: this[{type}] = {newValue}"));
 ```
 
 ### Monitor interactions
@@ -1482,6 +1517,29 @@ httpClient.Mock.Setup.GetAsync(It.IsAny<Uri>())
     .ReturnsAsync(HttpStatusCode.OK, bytes, "image/png");
 ```
 
+#### Whole-request matching
+
+Use `It.IsHttpRequestMessage(HttpMethod?)` together with `Setup.SendAsync(...)` to match against the entire
+`HttpRequestMessage`, optionally restricted to a specific HTTP method. This is the catch-all entry point that the
+verb-specific overloads (`GetAsync`, `PostAsync`, …) route through internally - reach for it when you need the full
+request (e.g. to inspect headers, or to handle non-standard verbs like `HEAD` or `OPTIONS`).
+
+Chain builders to add constraints:
+
+- `.WhoseUriIs(string)` / `.WhoseUriIs(Action<IUriParameter>)`: same surface as `It.IsUri(...)`.
+- `.WhoseContentIs(Action<IHttpContentParameter>)` / `.WhoseContentIs(string mediaType, …)`: same surface as
+  `It.IsHttpContent(...)`.
+- `.WithHeaders(...)`: require specific request headers.
+
+```csharp
+// Match any POST to /api/chocolate/dispense with a JSON body containing "Dark"
+httpClient.Mock.Setup
+    .SendAsync(It.IsHttpRequestMessage(HttpMethod.Post)
+        .WhoseUriIs(uri => uri.WithPath("/api/chocolate/dispense"))
+        .WhoseContentIs("application/json", c => c.WithStringMatching("*\"type\": \"Dark\"*")))
+    .ReturnsAsync(HttpStatusCode.OK);
+```
+
 ### Delegates
 
 Mockolate supports mocking delegates including `Action`, `Func<T>`, and custom delegates.
@@ -1574,6 +1632,58 @@ processor.Mock.Verify(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
 **Note:**  
 Delegate parameters also support [argument matchers](#argument-matchers).
 
+## A complete example
+
+The following example combines properties, indexers, events, methods, stateful setup, and verification
+into a single end-to-end scenario:
+
+```csharp
+using Mockolate;
+
+public delegate void ChocolateDispensedDelegate(string type, int amount);
+public interface IChocolateDispenser
+{
+    int this[string type] { get; set; }
+    int TotalDispensed { get; set; }
+    bool Dispense(string type, int amount);
+    event ChocolateDispensedDelegate ChocolateDispensed;
+}
+
+// Create a mock of IChocolateDispenser
+IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+
+// Setup: Initial stock of 10 for Dark chocolate
+sut.Mock.Setup["Dark"].InitializeWith(10);
+// Setup: Dispense decreases Dark chocolate if enough, returns true/false
+sut.Mock.Setup.Dispense("Dark", It.IsAny<int>())
+    .Returns((type, amount) =>
+    {
+        int current = sut[type];
+        if (current >= amount)
+        {
+            sut[type] = current - amount;
+            sut.Mock.Raise.ChocolateDispensed(type, amount);
+            return true;
+        }
+        return false;
+    });
+
+// Track dispensed amount via event
+int dispensedAmount = 0;
+sut.ChocolateDispensed += (type, amount) =>
+{
+    dispensedAmount += amount;
+};
+
+// Act: Try to dispense chocolates
+bool gotChoc1 = sut.Dispense("Dark", 4); // true
+bool gotChoc2 = sut.Dispense("Dark", 5); // true
+bool gotChoc3 = sut.Dispense("Dark", 6); // false
+
+// Verify: Check interactions
+sut.Mock.Verify.Dispense("Dark", It.IsAny<int>()).Exactly(3);
+```
+
 ## Analyzers
 
 Mockolate ships with some Roslyn analyzers to help you adopt best practices and catch issues early, at compile time.
@@ -1630,7 +1740,7 @@ framework and/or `<LangVersion>` to resolve it.
 These fire on every compilation target, including .NET 9+ / C# 13+:
 
 - Parameters marked `out`, `ref`, or `ref readonly` whose type is a non-`Span<T>` /
-  non-`ReadOnlySpan<T>` ref struct — the mock can't round-trip the value through
+  non-`ReadOnlySpan<T>` ref struct - the mock can't round-trip the value through
   `IOutParameter<T>` / `IRefParameter<T>` when `T` is a ref struct.
 - Methods returning a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct.
 

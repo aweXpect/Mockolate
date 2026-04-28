@@ -28,40 +28,35 @@ MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(behavior, "Dark
 
 **`MockBehavior` options**
 
-- `SkipBaseClass` (bool):
-  - If `false` (default), the mock will call the base class implementation and use its return values as default
-    values, if no explicit setup is defined.
-  - If `true`, the mock will not call any base class implementations.
-- `ThrowWhenNotSetup` (bool):
-  - If `false` (default), the mock will return a default value (see `DefaultValue`), when no matching setup is found.
-  - If `true`, the mock will throw an exception when no matching setup is found.
-- `SkipInteractionRecording` (bool):
-  - If `false` (default), every interaction with the mock is recorded and can be verified later.
-  - If `true`, the mock skips recording interactions for faster execution.
-    Setups, returns, callbacks and base-class delegation continue to work - only verification is disabled. Any
-    attempt to call `.Verify.X()` throws a `MockException`.
-- `DefaultValue` (IDefaultValueGenerator):
-  - Customizes how default values are generated for methods/properties that are not set up.
-  - The default implementation provides sensible defaults for the most common use cases:
-    - Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`, etc.)
-    - Empty string for `string`
-    - Completed tasks for `Task`, `Task<T>`, `ValueTask` and `ValueTask<T>`
-    - Tuples with recursively defaulted values
-    - `null` for other reference types
-  - You can add custom default value factories for specific types using `.WithDefaultValueFor<T>()`:
-    ```csharp
-    MockBehavior behavior = MockBehavior.Default
-      .WithDefaultValueFor<string>(() => "default")
-      .WithDefaultValueFor<int>(() => 42);
-    IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior);
-    ```
-    This is useful when you want mocks to return specific default values for certain types instead of the standard
-    defaults.
-- `Initialize<T>(params Action<IMockSetup<T>>[] setups)`:
-  - Automatically initialize all mocks of type T with the given setups when they are created.
-- `UseConstructorParametersFor<T>(object?[])`:
-  - Configures constructor parameters to use when creating mocks of type `T`, unless explicit parameters are provided
-    during mock creation via `CreateMock([…])`.
+| Option | Default | Purpose |
+|---|---|---|
+| `SkipBaseClass` | `false` | When `true`, the mock does not call any base class implementations. Otherwise, the base class implementation is used as the default value when no explicit setup matches. |
+| `ThrowWhenNotSetup` | `false` | When `true`, the mock throws when no matching setup is found. Otherwise, it returns a default value (see `DefaultValue` below). |
+| `SkipInteractionRecording` | `false` | When `true`, interactions are not recorded - setups, returns, callbacks, and base-class delegation still work, but `.Verify.X()` throws a `MockException`. Useful in performance-sensitive scenarios. |
+| `DefaultValue` | sensible defaults | Customizes how default values are generated for unset methods and properties (see below). |
+| `Initialize<T>(...)` | - | Automatically applies the given setups to all mocks of type `T` when they are created. |
+| `UseConstructorParametersFor<T>(...)` | - | Configures default constructor parameters for mocks of type `T`, unless explicit parameters are supplied to `CreateMock([…])`. The `Func<object?[]>` overload defers parameter resolution until each mock is created. |
+
+**Default value generation**
+
+The default `IDefaultValueGenerator` provides sensible defaults for the most common cases:
+
+- Empty collections for collection types (e.g., `IEnumerable<T>`, `List<T>`)
+- Empty string for `string`
+- Completed tasks for `Task`, `Task<T>`, `ValueTask`, and `ValueTask<T>`
+- Tuples with recursively defaulted values
+- `null` for other reference types
+
+You can register custom factories per type using `.WithDefaultValueFor<T>()`:
+
+```csharp
+MockBehavior behavior = MockBehavior.Default
+  .WithDefaultValueFor<string>(() => "default")
+  .WithDefaultValueFor<int>(() => 42);
+IChocolateDispenser sut = IChocolateDispenser.CreateMock(behavior);
+```
+
+For full control, implement `IDefaultValueGenerator` directly and assign it to `MockBehavior.DefaultValue`.
 
 **Using a shared behavior**
 
@@ -79,7 +74,18 @@ This is especially useful when you need consistent mock setups across multiple t
 
 ## Setups
 
-Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to virtual interactions in the constructor.
+Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to
+virtual interactions in the constructor.
+
+```csharp
+IChocolateDispenser sut = IChocolateDispenser.CreateMock(setup =>
+{
+    setup.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(true);
+    setup.TotalDispensed.InitializeWith(0);
+});
+```
+
+You can combine the setup callback with a `MockBehavior` and constructor parameters in the same call.
 
 ## Implementing additional interfaces
 
@@ -93,6 +99,23 @@ MyChocolateDispenser sut = MyChocolateDispenser.CreateMock().Implementing<ILemon
 IChocolateDispenser sut2 = IChocolateDispenser.CreateMock()
     .Implementing<ILemonadeDispenser>(setup => setup.DispenseLemonade(It.IsAny<int>()).Returns(true));
 ```
+
+**Accessing the additional interface's mock surface**
+
+Use `Mock.As<T>()` to reach the `Setup` and `Verify` properties for an additional interface added via
+`.Implementing<T>()`:
+
+```csharp
+MyChocolateDispenser sut = MyChocolateDispenser.CreateMock()
+    .Implementing<ILemonadeDispenser>();
+
+// Set up and verify members of the additional interface
+sut.Mock.As<ILemonadeDispenser>().Setup.DispenseLemonade(It.IsAny<int>()).Returns(true);
+sut.Mock.As<ILemonadeDispenser>().Verify.DispenseLemonade(5).Once();
+```
+
+The returned mock shares the registry of the original - recorded interactions, scenario state, and setups apply
+across all faces of the same instance.
 
 **Notes:**
 

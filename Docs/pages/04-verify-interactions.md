@@ -120,14 +120,19 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
   comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
-  provide a custom equality comparer.
+- `It.IsNot<T>(value)`: Matches any value not equal to `value`.
+- `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`,
+  you can provide a custom equality comparer.
+- `It.IsNotOneOf<T>(params IEnumerable<T> values)`: Matches any value that is not in the given set.
 - `It.IsNull<T>()`: Matches null.
+- `It.IsNotNull<T>()`: Matches any non-null value.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
   minimum and maximum value.
-- `It.IsOut<T>()`: Matches any out parameter of type `T`
-- `It.IsRef<T>()`: Matches any ref parameter of type `T`
+- `It.IsOut<T>()`: Matches any out parameter of type `T`.
+- `It.IsRef<T>()`: Matches any ref parameter of type `T`.
+- `It.IsSpan<T>(predicate)` / `It.IsAnySpan<T>()`: Matches `Span<T>` parameters (.NET 8+).
+- `It.IsReadOnlySpan<T>(predicate)` / `It.IsAnyReadOnlySpan<T>()`: Matches `ReadOnlySpan<T>` parameters (.NET 8+).
 - `It.Matches<string>(pattern)`: Matches strings using wildcard patterns (`*` and `?`). With `.AsRegex()`, you can use
   regular expressions instead.
 - `It.Contains<T>(item)`: Matches a collection parameter that contains `item`. With `.Using(IEqualityComparer<T>)`, you
@@ -135,6 +140,10 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 - `It.SequenceEquals<T>(params IEnumerable<T> values)`: Matches a collection parameter whose elements equal `values` in
   order. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality comparer.
 - `It.Satisfies<T>(predicate)`: Matches values based on a predicate.
+
+**Note:** Custom `ref struct` matchers (`It.IsRefStruct<T>`, `It.IsAnyRefStruct<T>`, `It.IsRefStructBy<T,TKey>`) only
+apply at setup time - `Verify` counts calls to ref-struct members but cannot match on the value after the fact, since
+the ref-struct value isn't retained past the call.
 
 **Example:**
 

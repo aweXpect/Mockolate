@@ -8,8 +8,23 @@
 It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, .NET 10 and .NET Framework 4.8.
 
 - **Source generator-based**: No runtime proxy generation.
+- **Fast**: Direct dispatch with no reflection or dynamic proxies.
 - **Strongly-typed**: Compile-time safety and IntelliSense support.
 - **AOT compatible**: Works with Native AOT and trimming.
+- **Modern C#**: First-class support for ref structs, static interface members, and current language features.
+
+## Why Mockolate
+
+|  | Reflection-based mocks (Moq, NSubstitute, …) | Mockolate |
+|---|---|---|
+| AOT / trimming | not supported | supported |
+| Validation | runtime exceptions | analyzers + compile errors |
+| Setup API | `Expression<Func<…>>` trees | regular method calls |
+| Hot path | dynamic-proxy dispatch | direct dispatch |
+
+For side-by-side setup, usage, and verification syntax against Moq, NSubstitute, and FakeItEasy, see the [full code comparison](08-comparison.md).
+
+Already on Moq? The companion package [`Mockolate.Migration`](https://github.com/aweXpect/Mockolate.Migration) ships analyzers and code fixers that translate common Moq patterns to Mockolate syntax in-place - point it at an existing test project and apply the suggested fixes.
 
 ## Getting Started
 
@@ -26,49 +41,23 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
    ```csharp
    using Mockolate;
 
-   public delegate void ChocolateDispensedDelegate(string type, int amount);
    public interface IChocolateDispenser
    {
-       int this[string type] { get; set; }
-       int TotalDispensed { get; set; }
        bool Dispense(string type, int amount);
-       event ChocolateDispensedDelegate ChocolateDispensed;
    }
-   
-   // Create a mock of IChocolateDispenser
+
+   // Create a mock
    IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-   
-   // Setup: Initial stock of 10 for Dark chocolate
-   sut.Mock.Setup["Dark"].InitializeWith(10);
-   // Setup: Dispense decreases Dark chocolate if enough, returns true/false
-   sut.Mock.Setup.Dispense("Dark", It.IsAny<int>())
-       .Returns((type, amount) =>
-       {
-           int current = sut[type];
-           if (current >= amount)
-           {
-               sut[type] = current - amount;
-               sut.Mock.Raise.ChocolateDispensed(type, amount);
-               return true;
-           }
-           return false;
-       });
-   
-   // Track dispensed amount via event
-   int dispensedAmount = 0;
-   sut.ChocolateDispensed += (type, amount) =>
-   {
-       dispensedAmount += amount;
-   };
-   
-   // Act: Try to dispense chocolates
-   bool gotChoc1 = sut.Dispense("Dark", 4); // true
-   bool gotChoc2 = sut.Dispense("Dark", 5); // true
-   bool gotChoc3 = sut.Dispense("Dark", 6); // false
-   
-   // Verify: Check interactions
-   sut.Mock.Verify.Dispense("Dark", It.IsAny<int>()).Exactly(3);
-   
-   // Output: "Dispensed amount: 9. Got chocolate? True, True, False"
-   Console.WriteLine($"Dispensed amount: {dispensedAmount}. Got chocolate? {gotChoc1}, {gotChoc2}, {gotChoc3}");
+
+   // Setup: Dispense returns true for any Dark chocolate request
+   sut.Mock.Setup.Dispense("Dark", It.IsAny<int>()).Returns(true);
+
+   // Act
+   bool success = sut.Dispense("Dark", 4);
+
+   // Verify
+   sut.Mock.Verify.Dispense("Dark", It.IsAny<int>()).Once();
    ```
+
+   For a richer walkthrough combining properties, indexers, events, and stateful setup,
+   see [A complete example](09-complete-example.md).
