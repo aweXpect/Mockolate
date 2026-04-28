@@ -194,14 +194,14 @@ public class MockGenerator : IIncrementalGenerator
 			int aLen = aAdds?.Length ?? 0;
 			int bLen = bAdds?.Length ?? 0;
 			cmp = aLen.CompareTo(bLen);
-			if (cmp != 0 || aAdds is null || bAdds is null)
+			if (cmp != 0)
 			{
 				return cmp;
 			}
 
 			for (int i = 0; i < aLen; i++)
 			{
-				cmp = StringComparer.Ordinal.Compare(aAdds[i].ClassFullName, bAdds[i].ClassFullName);
+				cmp = StringComparer.Ordinal.Compare(aAdds![i].ClassFullName, bAdds![i].ClassFullName);
 				if (cmp != 0)
 				{
 					return cmp;
@@ -406,18 +406,13 @@ public class MockGenerator : IIncrementalGenerator
 			}
 
 			NamedClass[] additionalNamed = mc.AdditionalImplementations
-				.Select(additional => new NamedClass(LookupName(baseClassNames, additional), additional))
+				.Select(additional => new NamedClass(baseClassNames[additional.ClassFullName], additional))
 				.ToArray();
 
-			result.Add(new NamedMock(actualName, LookupName(baseClassNames, mc), mc, new EquatableArray<NamedClass>(additionalNamed)));
+			result.Add(new NamedMock(actualName, baseClassNames[mc.ClassFullName], mc, new EquatableArray<NamedClass>(additionalNamed)));
 		}
 
 		return new EquatableArray<NamedMock>(result.ToArray());
-
-		static string LookupName(Dictionary<string, string> map, Class @class)
-		{
-			return map.TryGetValue(@class.ClassFullName, out string? v) ? v : "";
-		}
 	}
 
 	private static EquatableArray<MockAsExtensionPair> CollectAsExtensionPairs(EquatableArray<NamedMock> mocks)
@@ -432,12 +427,7 @@ public class MockGenerator : IIncrementalGenerator
 				continue;
 			}
 
-			NamedClass[] additionalArr = additional.AsArray() ?? [];
-			if (additionalArr.Length == 0)
-			{
-				continue;
-			}
-
+			NamedClass[] additionalArr = additional.AsArray()!;
 			NamedClass last = additionalArr[additionalArr.Length - 1];
 
 			AddIfNew(seen, ordered, MockAsExtensionPair.Create(nm.ParentName, nm.Mock.ClassFullName, last.Name, last.Class.ClassFullName));
@@ -488,7 +478,7 @@ public class MockGenerator : IIncrementalGenerator
 			return;
 		}
 
-		NamedClass[] additionalNamed = additional.AsArray() ?? [];
+		NamedClass[] additionalNamed = additional.AsArray()!;
 		(string Name, Class Class)[] additionalArr = new (string Name, Class Class)[additionalNamed.Length];
 		for (int i = 0; i < additionalNamed.Length; i++)
 		{

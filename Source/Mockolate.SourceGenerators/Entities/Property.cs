@@ -82,13 +82,24 @@ internal record Property
 	private sealed class PropertyEqualityComparer : IEqualityComparer<Property>
 	{
 		public bool Equals(Property? x, Property? y)
-			=> (x is null && y is null) ||
-			   (x is not null && y is not null &&
-			    (x.IsIndexer
-				    ? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
-				      x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value) &&
-				      x.ContainingType.Equals(y.ContainingType)
-				    : !y.IsIndexer && x.Name.Equals(y.Name) && x.ContainingType.Equals(y.ContainingType)));
+		{
+			if (x is null)
+			{
+				return y is null;
+			}
+
+			if (y is null || x.IsIndexer != y.IsIndexer || !x.ContainingType.Equals(y.ContainingType))
+			{
+				return false;
+			}
+
+			if (x.IsIndexer)
+			{
+				return x.IndexerParameters!.Value.Equals(y.IndexerParameters!.Value);
+			}
+
+			return x.Name.Equals(y.Name);
+		}
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();
 	}
@@ -96,12 +107,24 @@ internal record Property
 	private sealed class ContainingTypeIndependentPropertyEqualityComparer : IEqualityComparer<Property>
 	{
 		public bool Equals(Property? x, Property? y)
-			=> (x is null && y is null) ||
-			   (x is not null && y is not null &&
-			    (x.IsIndexer
-				    ? y.IsIndexer && x.IndexerParameters?.Count == y.IndexerParameters?.Count &&
-				      x.IndexerParameters!.Value.SequenceEqual(y.IndexerParameters!.Value)
-				    : !y.IsIndexer && x.Name.Equals(y.Name)));
+		{
+			if (x is null)
+			{
+				return y is null;
+			}
+
+			if (y is null || x.IsIndexer != y.IsIndexer)
+			{
+				return false;
+			}
+
+			if (x.IsIndexer)
+			{
+				return x.IndexerParameters!.Value.Equals(y.IndexerParameters!.Value);
+			}
+
+			return x.Name.Equals(y.Name);
+		}
 
 		public int GetHashCode(Property obj) => obj.Name.GetHashCode();
 	}
