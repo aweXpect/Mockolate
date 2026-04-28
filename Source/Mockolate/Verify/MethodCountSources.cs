@@ -6,7 +6,7 @@ namespace Mockolate.Verify;
 /// <summary>
 ///     Allocation-free count source backed by a parameterless method buffer.
 /// </summary>
-internal sealed class Method0CountSource : IFastCountSource
+internal sealed class Method0CountSource : IFastMethodCountSource
 {
 	private readonly FastMethod0Buffer _buffer;
 
@@ -22,7 +22,7 @@ internal sealed class Method0CountSource : IFastCountSource
 /// <summary>
 ///     Allocation-free count source backed by a 1-parameter method buffer and a typed matcher.
 /// </summary>
-internal sealed class Method1CountSource<T1> : IFastCountSource
+internal sealed class Method1CountSource<T1> : IFastMethodCountSource
 {
 	private readonly FastMethod1Buffer<T1> _buffer;
 	private readonly IParameterMatch<T1> _match1;
@@ -40,7 +40,7 @@ internal sealed class Method1CountSource<T1> : IFastCountSource
 /// <summary>
 ///     Allocation-free count source backed by a 2-parameter method buffer.
 /// </summary>
-internal sealed class Method2CountSource<T1, T2> : IFastCountSource
+internal sealed class Method2CountSource<T1, T2> : IFastMethodCountSource
 {
 	private readonly FastMethod2Buffer<T1, T2> _buffer;
 	private readonly IParameterMatch<T1> _match1;
@@ -61,7 +61,7 @@ internal sealed class Method2CountSource<T1, T2> : IFastCountSource
 /// <summary>
 ///     Allocation-free count source backed by a 3-parameter method buffer.
 /// </summary>
-internal sealed class Method3CountSource<T1, T2, T3> : IFastCountSource
+internal sealed class Method3CountSource<T1, T2, T3> : IFastMethodCountSource
 {
 	private readonly FastMethod3Buffer<T1, T2, T3> _buffer;
 	private readonly IParameterMatch<T1> _match1;
@@ -84,7 +84,7 @@ internal sealed class Method3CountSource<T1, T2, T3> : IFastCountSource
 /// <summary>
 ///     Allocation-free count source backed by a 4-parameter method buffer.
 /// </summary>
-internal sealed class Method4CountSource<T1, T2, T3, T4> : IFastCountSource
+internal sealed class Method4CountSource<T1, T2, T3, T4> : IFastMethodCountSource
 {
 	private readonly FastMethod4Buffer<T1, T2, T3, T4> _buffer;
 	private readonly IParameterMatch<T1> _match1;
@@ -120,7 +120,6 @@ internal sealed class PropertyGetterCountSource : IFastCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching();
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -138,7 +137,6 @@ internal sealed class PropertySetterCountSource<T> : IFastCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -156,7 +154,6 @@ internal sealed class IndexerGetter1CountSource<T1> : IFastCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -177,7 +174,6 @@ internal sealed class IndexerGetter2CountSource<T1, T2> : IFastCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -200,7 +196,6 @@ internal sealed class IndexerGetter3CountSource<T1, T2, T3> : IFastCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _match3);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -226,7 +221,6 @@ internal sealed class IndexerGetter4CountSource<T1, T2, T3, T4> : IFastCountSour
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _match3, _match4);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -247,7 +241,6 @@ internal sealed class IndexerSetter1CountSource<T1, TValue> : IFastCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _matchValue);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -270,7 +263,6 @@ internal sealed class IndexerSetter2CountSource<T1, T2, TValue> : IFastCountSour
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _matchValue);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -296,7 +288,6 @@ internal sealed class IndexerSetter3CountSource<T1, T2, T3, TValue> : IFastCount
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _match3, _matchValue);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -326,7 +317,6 @@ internal sealed class IndexerSetter4CountSource<T1, T2, T3, T4, TValue> : IFastC
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _match3, _match4, _matchValue);
-	public int CountAll() => _buffer.Count;
 }
 
 /// <summary>
@@ -342,5 +332,4 @@ internal sealed class EventCountSource : IFastCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching();
-	public int CountAll() => _buffer.Count;
 }

@@ -12,7 +12,15 @@ internal interface IFastCountSource
 	///     Counts recorded interactions whose parameters satisfy the source's captured matchers.
 	/// </summary>
 	int Count();
+}
 
+/// <summary>
+///     Method-only extension to <see cref="IFastCountSource" />. The <c>AnyParameters()</c> widener is
+///     exposed by <see cref="VerificationResult{TVerify}.IgnoreParameters" />, which is only produced by
+///     <c>VerifyMethod*</c> overloads — so only method count sources need an unmatched-count path.
+/// </summary>
+internal interface IFastMethodCountSource : IFastCountSource
+{
 	/// <summary>
 	///     Counts every recorded interaction, ignoring captured matchers.
 	///     Used when <c>AnyParameters()</c> widens the verification to any argument list.
