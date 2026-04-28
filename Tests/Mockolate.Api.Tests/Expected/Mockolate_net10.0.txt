@@ -2856,9 +2856,37 @@ namespace Mockolate.Verify
     {
         public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TParameter>, bool> setPredicate, System.Func<string> parametersDescription) { }
         public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TParameter>, bool> setPredicate, System.Func<string> parametersDescription) { }
-        public Mockolate.Verify.VerificationResult<TSubject> Got() { }
-        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
-        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+        public virtual Mockolate.Verify.VerificationResult<TSubject> Got() { }
+        public virtual Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public virtual Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public sealed class VerificationIndexerResult<TSubject, T1, TParameter> : Mockolate.Verify.VerificationIndexerResult<TSubject, TParameter>
+    {
+        public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, System.Func<string> parametersDescription) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Got() { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public sealed class VerificationIndexerResult<TSubject, T1, T2, TParameter> : Mockolate.Verify.VerificationIndexerResult<TSubject, TParameter>
+    {
+        public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, System.Func<string> parametersDescription) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Got() { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public sealed class VerificationIndexerResult<TSubject, T1, T2, T3, TParameter> : Mockolate.Verify.VerificationIndexerResult<TSubject, TParameter>
+    {
+        public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, System.Func<string> parametersDescription) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Got() { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public sealed class VerificationIndexerResult<TSubject, T1, T2, T3, T4, TParameter> : Mockolate.Verify.VerificationIndexerResult<TSubject, TParameter>
+    {
+        public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, System.Func<string> parametersDescription) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Got() { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public override Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }
     public class VerificationPropertyResult<TSubject, TParameter>
     {

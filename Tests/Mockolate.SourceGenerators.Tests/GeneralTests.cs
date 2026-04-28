@@ -900,7 +900,7 @@ public class GeneralTests
 			          			string wrappedResult = default!;
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
-			          				((global::Mockolate.Interactions.FastMethod1Buffer<string>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_MyMethod]!).Append("global::MyCode.IMyService.MyMethod", message);
+			          				this.MockolateBuffer_MyMethod.Append("global::MyCode.IMyService.MyMethod", message);
 			          			}
 			          			try
 			          			{

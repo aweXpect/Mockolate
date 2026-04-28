@@ -100,10 +100,9 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new(index);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerGetterBuffer<int>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_int_Get]!).Append(access);
+					          					this.MockolateBuffer_Indexer_int_Get.Append(index);
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, int>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -113,7 +112,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(index))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -121,6 +120,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new(index);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int>>(access);
 					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
 					          				{
@@ -133,10 +133,9 @@ public sealed partial class MockTests
 					          			}
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new(index, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerSetterBuffer<int, int>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_int_Set]!).Append(access);
+					          					this.MockolateBuffer_Indexer_int_Set.Append(index, value);
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, int>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -146,7 +145,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(index, value))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -154,6 +153,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new(index, value);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int>>(access);
 					          				this.MockRegistry.ApplyIndexerSetter(access, setup, value, 0);
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
@@ -169,10 +169,9 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool?> access = new(index, isReadOnly);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerGetterBuffer<int, bool?>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_int_bool__Get]!).Append(access);
+					          					this.MockolateBuffer_Indexer_int_bool__Get.Append(index, isReadOnly);
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, int, bool?>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -182,7 +181,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, bool?> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, bool?> s_setup && s_setup.Matches(index, isReadOnly))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -190,6 +189,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool?> access = new(index, isReadOnly);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int, bool?>>(access);
 					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
 					          				{
@@ -208,10 +208,9 @@ public sealed partial class MockTests
 					          		{
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new(index, isWriteOnly, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string, int>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_int_string_Set]!).Append(access);
+					          					this.MockolateBuffer_Indexer_int_string_Set.Append(index, isWriteOnly, value);
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, int, string>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -221,7 +220,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, string> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, string> s_setup && s_setup.Matches(index, isWriteOnly, value))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -229,6 +228,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new(index, isWriteOnly, value);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int, string>>(access);
 					          				this.MockRegistry.ApplyIndexerSetter(access, setup, value, 2);
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
@@ -428,7 +428,7 @@ public sealed partial class MockTests
 					          				global::Mockolate.Interactions.IndexerGetterAccess<global::Mockolate.Setup.SpanWrapper<char>> access = new(new global::Mockolate.Setup.SpanWrapper<char>(buffer));
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerGetterBuffer<global::Mockolate.Setup.SpanWrapper<char>>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_global__System_Span_char__Get]!).Append(access);
+					          					this.MockolateBuffer_Indexer_global__System_Span_char__Get.Append(new global::Mockolate.Setup.SpanWrapper<char>(buffer));
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -438,7 +438,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && s_setup.Matches(access.Parameter1))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -461,7 +461,7 @@ public sealed partial class MockTests
 					          				global::Mockolate.Interactions.IndexerSetterAccess<global::Mockolate.Setup.SpanWrapper<char>, int> access = new(new global::Mockolate.Setup.SpanWrapper<char>(buffer), value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerSetterBuffer<global::Mockolate.Setup.SpanWrapper<char>, int>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_global__System_Span_char__Set]!).Append(access);
+					          					this.MockolateBuffer_Indexer_global__System_Span_char__Set.Append(new global::Mockolate.Setup.SpanWrapper<char>(buffer), value);
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -471,7 +471,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.SpanWrapper<char>> s_setup && s_setup.Matches(access.Parameter1, access.TypedValue))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -497,7 +497,7 @@ public sealed partial class MockTests
 					          				global::Mockolate.Interactions.IndexerGetterAccess<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> access = new(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values));
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerGetterBuffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_global__System_ReadOnlySpan_int__Get]!).Append(access);
+					          					this.MockolateBuffer_Indexer_global__System_ReadOnlySpan_int__Get.Append(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values));
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -507,7 +507,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && s_setup.Matches(access.Parameter1))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -530,7 +530,7 @@ public sealed partial class MockTests
 					          				global::Mockolate.Interactions.IndexerSetterAccess<global::Mockolate.Setup.ReadOnlySpanWrapper<int>, int> access = new(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values), value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
-					          					((global::Mockolate.Interactions.FastIndexerSetterBuffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>, int>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_Indexer_global__System_ReadOnlySpan_int__Set]!).Append(access);
+					          					this.MockolateBuffer_Indexer_global__System_ReadOnlySpan_int__Set.Append(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(values), value);
 					          				}
 					          				global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>>? setup = null;
 					          				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
@@ -540,7 +540,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && ((global::Mockolate.Setup.IInteractiveIndexerSetup)s_setup).Matches(access))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_setup && s_setup.Matches(access.Parameter1, access.TypedValue))
 					          							{
 					          								setup = s_setup;
 					          								break;

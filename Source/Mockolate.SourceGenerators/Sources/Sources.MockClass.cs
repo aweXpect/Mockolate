@@ -705,6 +705,8 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine();
+		AppendCachedFieldDeclarations(sb, "\t\t", @class, memberIds, memberIdPrefix, mockRegistryName);
+		sb.AppendLine();
 		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents,
 			hasStaticMembers, hasStaticEvents);
 
@@ -1382,6 +1384,115 @@ internal static partial class Sources
 
 		sb.Append(indent).Append("\treturn fast;").AppendLine();
 		sb.Append(indent).Append("}").AppendLine();
+	}
+
+	/// <summary>
+	///     Emits the declarations of the cached <c>MockolateSkipRecording</c> flag and per-member typed
+	///     buffer fields. These mirror values that <c>AppendCreateFastInteractions</c> writes into the
+	///     <c>FastMockInteractions.Buffers</c> array so the body emitters can read them as plain field
+	///     accesses instead of paying the cast / array-index / property-chain on every invocation. Static
+	///     members stay on the legacy path because the cached field would not flow through
+	///     <c>AsyncLocal</c>-resolved registries.
+	/// </summary>
+	/// <summary>
+	///     <see langword="true" /> when the class has at least one fast-eligible non-static indexer or
+	///     method, in which case the generator emits cached typed-buffer fields and a
+	///     <c>MockolateSkipRecording</c> flag that the recording hot paths read instead of paying the
+	///     per-call cast / array-index / property-chain.
+	/// </summary>
+	private static bool HasCachedBufferFields(Class @class)
+	{
+		foreach (Property property in @class.AllProperties())
+		{
+			if (property.IsIndexer && IsFastBufferEligibleIndexer(property))
+			{
+				return true;
+			}
+		}
+
+		foreach (Method method in @class.AllMethods())
+		{
+			if (!method.IsStatic && IsFastBufferEligibleMethod(method))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static void AppendCachedFieldDeclarations(StringBuilder sb, string indent, Class @class,
+		MemberIdTable memberIds, string memberIdPrefix, string mockRegistryName)
+	{
+		if (!HasCachedBufferFields(@class))
+		{
+			return;
+		}
+
+		string mockRegistryRef = "this." + mockRegistryName;
+
+		foreach (Property indexer in @class.AllProperties().Where(p => p.IsIndexer))
+		{
+			if (!IsFastBufferEligibleIndexer(indexer))
+			{
+				continue;
+			}
+
+			string indexerKeyTypeArgs =
+				string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.ToTypeOrWrapper()));
+			string indexerValueType = indexer.Type.ToTypeOrWrapper();
+			string getMemberIdRef = memberIdPrefix + memberIds.GetIndexerGetIdentifier(indexer);
+			string setMemberIdRef = memberIdPrefix + memberIds.GetIndexerSetIdentifier(indexer);
+
+			sb.Append(indent)
+				.Append(
+					"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append(indent).Append("private global::Mockolate.Interactions.FastIndexerGetterBuffer<")
+				.Append(indexerKeyTypeArgs).Append("> ")
+				.Append(memberIds.GetIndexerGetterBufferFieldName(indexer)).AppendLine();
+			sb.Append(indent).Append("\t=> field ?? (field = (global::Mockolate.Interactions.FastIndexerGetterBuffer<")
+				.Append(indexerKeyTypeArgs).Append(">)((global::Mockolate.Interactions.FastMockInteractions)")
+				.Append(mockRegistryRef).Append(".Interactions).Buffers[").Append(getMemberIdRef).Append("]!);")
+				.AppendLine();
+
+			sb.Append(indent)
+				.Append(
+					"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append(indent).Append("private global::Mockolate.Interactions.FastIndexerSetterBuffer<")
+				.Append(indexerKeyTypeArgs).Append(", ").Append(indexerValueType).Append("> ")
+				.Append(memberIds.GetIndexerSetterBufferFieldName(indexer)).AppendLine();
+			sb.Append(indent).Append("\t=> field ?? (field = (global::Mockolate.Interactions.FastIndexerSetterBuffer<")
+				.Append(indexerKeyTypeArgs).Append(", ").Append(indexerValueType)
+				.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistryRef)
+				.Append(".Interactions).Buffers[").Append(setMemberIdRef).Append("]!);").AppendLine();
+		}
+
+		foreach (Method method in @class.AllMethods())
+		{
+			if (method.IsStatic || !IsFastBufferEligibleMethod(method))
+			{
+				continue;
+			}
+
+			int arity = method.Parameters.Count;
+			string typeArgs = arity == 0
+				? string.Empty
+				: "<" + string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper())) + ">";
+			string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(method);
+			sb.Append(indent)
+				.Append(
+					"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append(indent).Append("private global::Mockolate.Interactions.FastMethod").Append(arity)
+				.Append("Buffer").Append(typeArgs).Append(' ')
+				.Append(memberIds.GetMethodBufferFieldName(method)).AppendLine();
+			sb.Append(indent).Append("\t=> field ?? (field = (global::Mockolate.Interactions.FastMethod").Append(arity)
+				.Append("Buffer").Append(typeArgs).Append(")((global::Mockolate.Interactions.FastMockInteractions)")
+				.Append(mockRegistryRef).Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!);")
+				.AppendLine();
+		}
 	}
 
 	/// <summary>
@@ -2220,6 +2331,12 @@ internal static partial class Sources
 		string indexerSetIdRef = property.IsIndexer
 			? memberIdPrefix + memberIds.GetIndexerSetIdentifier(property)
 			: string.Empty;
+		string? indexerGetCachedBufferRef = useFastForIndexer
+			? "this." + memberIds.GetIndexerGetterBufferFieldName(property)
+			: null;
+		string? indexerSetCachedBufferRef = useFastForIndexer
+			? "this." + memberIds.GetIndexerSetterBufferFieldName(property)
+			: null;
 		string propertyGetMemberArg = useFastForProperty
 			? memberIdPrefix + memberIds.GetPropertyGetIdentifier(property) + ", "
 			: string.Empty;
@@ -2316,7 +2433,8 @@ internal static partial class Sources
 
 					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
-						useFastForIndexer ? indexerGetIdRef : null);
+						useFastForIndexer ? indexerGetIdRef : null,
+						cachedBufferRef: indexerGetCachedBufferRef);
 					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className)
 						.Append(' ').Append(wrapsVarName).Append(')').AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
@@ -2391,7 +2509,8 @@ internal static partial class Sources
 
 					EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
-						useFastForIndexer ? indexerGetIdRef : null);
+						useFastForIndexer ? indexerGetIdRef : null,
+						cachedBufferRef: indexerGetCachedBufferRef);
 					sb.Append("\t\t\t\tif (!(").Append(setupVarName).Append("?.SkipBaseClass() ?? ")
 						.Append(mockRegistry).Append(".Behavior.SkipBaseClass))").AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
@@ -2481,7 +2600,8 @@ internal static partial class Sources
 
 				EmitIndexerGetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 					property.Type, property.IndexerParameters.Value, useFastForIndexer,
-					useFastForIndexer ? indexerGetIdRef : null);
+					useFastForIndexer ? indexerGetIdRef : null,
+					cachedBufferRef: indexerGetCachedBufferRef);
 				sb.Append("\t\t\t\treturn ").Append(setupVarName).Append(" is null").AppendLine();
 				sb.Append("\t\t\t\t\t? ").Append(mockRegistry).Append(".GetIndexerFallback<")
 					.AppendTypeOrWrapper(property.Type).Append(">(").Append(accessVarName).Append(", ")
@@ -2549,7 +2669,8 @@ internal static partial class Sources
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
 						useFastForIndexer ? indexerSetIdRef : null,
-						useFastForIndexer ? indexerGetIdRef : null);
+						useFastForIndexer ? indexerGetIdRef : null,
+						cachedBufferRef: indexerSetCachedBufferRef);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append(");")
@@ -2605,7 +2726,8 @@ internal static partial class Sources
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
 						useFastForIndexer ? indexerSetIdRef : null,
-						useFastForIndexer ? indexerGetIdRef : null);
+						useFastForIndexer ? indexerGetIdRef : null,
+						cachedBufferRef: indexerSetCachedBufferRef);
 					sb.Append("\t\t\t\tif (!").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append("))").AppendLine();
@@ -2640,7 +2762,8 @@ internal static partial class Sources
 					EmitIndexerSetterAccessAndSetup(sb, "\t\t\t\t", mockRegistry, accessVarName, setupVarName,
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
 						useFastForIndexer ? indexerSetIdRef : null,
-						useFastForIndexer ? indexerGetIdRef : null);
+						useFastForIndexer ? indexerGetIdRef : null,
+						cachedBufferRef: indexerSetCachedBufferRef);
 					sb.Append("\t\t\t\t").Append(mockRegistry).Append(".ApplyIndexerSetter(")
 						.Append(accessVarName).Append(", ").Append(setupVarName).Append(", value, ")
 						.Append(signatureIndex).Append(");").AppendLine();
@@ -2891,10 +3014,22 @@ internal static partial class Sources
 			}
 		}
 
+		bool useCachedMethodBuffer = useFastBuffers && !method.IsStatic && IsFastBufferEligibleMethod(method);
 		sb.Append("\t\t\tif (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)")
 			.AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		if (useFastBuffers && IsFastBufferEligibleMethod(method))
+		if (useCachedMethodBuffer)
+		{
+			sb.Append("\t\t\t\tthis.").Append(memberIds.GetMethodBufferFieldName(method)).Append(".Append(")
+				.Append(method.GetUniqueNameString());
+			if (method.Parameters.Count > 0)
+			{
+				sb.Append(", ").Append(string.Join(", ", method.Parameters.Select(p => p.ToNameOrWrapper())));
+			}
+
+			sb.Append(");").AppendLine();
+		}
+		else if (useFastBuffers && IsFastBufferEligibleMethod(method))
 		{
 			int arity = method.Parameters.Count;
 			string typeArgs = arity == 0
@@ -4911,39 +5046,56 @@ internal static partial class Sources
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tget").AppendLine();
 		sb.Append("\t\t\t{").AppendLine();
-		sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName)
-			.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
-			.Append(", ").Append(indexerGetMemberId).Append(", ").Append(indexerSetMemberId).Append(",").AppendLine();
-
-		sb.Append("\t\t\t\t\tinteraction => interaction is global::Mockolate.Interactions.IndexerGetterAccess<");
-		int ti = 0;
-		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+		bool useTypedVerify = indexer.IndexerParameters.Value.Count is >= 1 and <= 4;
+		if (useTypedVerify)
 		{
-			if (ti > 0)
+			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName);
+			foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
 			{
-				sb.Append(", ");
+				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
 			}
 
-			sb.AppendTypeOrWrapper(parameter.Type);
-			ti++;
+			sb.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
+				.Append(", ").Append(indexerGetMemberId).Append(", ").Append(indexerSetMemberId).Append(",").AppendLine();
+
+			AppendIndexerVerifyTypedMatches(sb, indexer.IndexerParameters.Value, valueFlags);
 		}
-
-		sb.Append("> g");
-		AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "g");
-		sb.Append(",").AppendLine();
-
-		sb.Append(
-			"\t\t\t\t\t(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<");
-		ti = 0;
-		foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+		else
 		{
-			sb.AppendTypeOrWrapper(parameter.Type).Append(", ");
-			ti++;
-		}
+			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName)
+				.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
+				.Append(", ").Append(indexerGetMemberId).Append(", ").Append(indexerSetMemberId).Append(",").AppendLine();
 
-		sb.AppendTypeOrWrapper(indexer.Type).Append("> s");
-		AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "s");
-		sb.Append(" && value.Matches(s.TypedValue),").AppendLine();
+			sb.Append("\t\t\t\t\tinteraction => interaction is global::Mockolate.Interactions.IndexerGetterAccess<");
+			int ti = 0;
+			foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+			{
+				if (ti > 0)
+				{
+					sb.Append(", ");
+				}
+
+				sb.AppendTypeOrWrapper(parameter.Type);
+				ti++;
+			}
+
+			sb.Append("> g");
+			AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "g");
+			sb.Append(",").AppendLine();
+
+			sb.Append(
+				"\t\t\t\t\t(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<");
+			ti = 0;
+			foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+			{
+				sb.AppendTypeOrWrapper(parameter.Type).Append(", ");
+				ti++;
+			}
+
+			sb.AppendTypeOrWrapper(indexer.Type).Append("> s");
+			AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "s");
+			sb.Append(" && value.Matches(s.TypedValue),").AppendLine();
+		}
 
 		sb.Append("\t\t\t\t\t() => global::System.String.Format(\"[");
 
@@ -4979,6 +5131,44 @@ internal static partial class Sources
 		sb.Append("\t\t\t}").AppendLine();
 		sb.Append("\t\t}").AppendLine();
 		sb.AppendLine();
+	}
+
+	/// <summary>
+	///     Emits one comma-terminated <c>IParameterMatch&lt;T&gt;</c> argument per indexer key for the typed
+	///     <c>VerificationIndexerResult&lt;TSubject, T1, ..., TParameter&gt;</c> family. Each match is either
+	///     built via <c>CovariantParameterAdapter</c> (for the matcher overload) or via <c>It.Is</c> (for the
+	///     value overload).
+	/// </summary>
+	private static void AppendIndexerVerifyTypedMatches(StringBuilder sb,
+		EquatableArray<MethodParameter> parameters, bool[]? valueFlags)
+	{
+		int j = 0;
+		foreach (MethodParameter parameter in parameters)
+		{
+			sb.Append("\t\t\t\t\t");
+			bool isValueParam = valueFlags?[j] == true;
+			if (isValueParam)
+			{
+				sb.Append("(global::Mockolate.Parameters.IParameterMatch<").AppendTypeOrWrapper(parameter.Type)
+					.Append(">)global::Mockolate.It.Is<").AppendTypeOrWrapper(parameter.Type).Append(">(")
+					.Append(parameter.Name).Append(", \"").Append(parameter.Name).Append("\")");
+			}
+			else
+			{
+				sb.Append("CovariantParameterAdapter<").AppendTypeOrWrapper(parameter.Type)
+					.Append(">.Wrap(").Append(parameter.Name);
+				if (parameter.CanUseNullableParameterOverload())
+				{
+					sb.Append(" ?? global::Mockolate.It.IsNull<").Append(parameter.ToNullableType())
+						.Append(">(\"null\")");
+				}
+
+				sb.Append(")");
+			}
+
+			sb.Append(',').AppendLine();
+			j++;
+		}
 	}
 
 	private static void AppendIndexerVerifyParameterMatches(StringBuilder sb,

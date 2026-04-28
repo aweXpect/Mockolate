@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Mockolate.SourceGenerators.Tests;
@@ -716,7 +716,7 @@ public sealed partial class MockTests
 			          			bool hasWrappedResult = false;
 			          			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			          			{
-			          				((global::Mockolate.Interactions.FastMethod15Buffer<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IMyService.MemberId_MyMethod]!).Append("global::MyCode.IMyService.MyMethod", v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
+			          				this.MockolateBuffer_MyMethod.Append("global::MyCode.IMyService.MyMethod", v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
 			          			}
 			          			try
 			          			{
