@@ -120,8 +120,8 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
   comparer.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`, you can
-  provide a custom equality comparer.
+- `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`,
+  you can provide a custom equality comparer.
 - `It.IsNull<T>()`: Matches null.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the

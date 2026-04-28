@@ -8,7 +8,7 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value.
-- `It.IsOneOf<T>(params T[] values)`: Matches any of the given values.
+- `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values.
 - `It.IsNull<T>()`: Matches null.
 - `It.IsTrue()`/`It.IsFalse()`: Matches boolean true/false.
 - `It.IsInRange(min, max)`: Matches a number within the given range. You can append `.Exclusive()` to exclude the
