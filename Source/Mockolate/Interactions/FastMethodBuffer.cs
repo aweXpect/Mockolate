@@ -213,6 +213,20 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 		return matches;
 	}
 
+	internal int ConsumeAll()
+	{
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				_storage.VerifiedUnderLock(slot) = true;
+			}
+
+			return n;
+		}
+	}
+
 	internal struct Record
 	{
 		public long Seq;
@@ -322,6 +336,20 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 		}
 
 		return matches;
+	}
+
+	internal int ConsumeAll()
+	{
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				_storage.VerifiedUnderLock(slot) = true;
+			}
+
+			return n;
+		}
 	}
 
 	internal struct Record
@@ -436,6 +464,20 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 		return matches;
 	}
 
+	internal int ConsumeAll()
+	{
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				_storage.VerifiedUnderLock(slot) = true;
+			}
+
+			return n;
+		}
+	}
+
 	internal struct Record
 	{
 		public long Seq;
@@ -548,6 +590,20 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 		}
 
 		return matches;
+	}
+
+	internal int ConsumeAll()
+	{
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				_storage.VerifiedUnderLock(slot) = true;
+			}
+
+			return n;
+		}
 	}
 
 	internal struct Record

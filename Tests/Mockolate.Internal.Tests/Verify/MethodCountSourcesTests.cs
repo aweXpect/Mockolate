@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -248,6 +249,96 @@ public class MethodCountSourcesTests
 
 		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(2);
+	}
+
+	[Fact]
+	public async Task Method0CountSource_CountAll_ShouldMarkSlotsVerified()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod0Buffer buffer = store.InstallMethod(0);
+		buffer.Append("M");
+		buffer.Append("M");
+
+		Method0CountSource source = new(buffer);
+		await That(source.CountAll()).IsEqualTo(2);
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
+		await That(dest).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Method1CountSource_CountAll_ShouldMarkSlotsVerified()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		buffer.Append("M", 1);
+		buffer.Append("M", 2);
+
+		Method1CountSource<int> source = new(buffer, (IParameterMatch<int>)It.Is(1));
+		await That(source.CountAll()).IsEqualTo(2);
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
+		await That(dest).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Method2CountSource_CountAll_ShouldMarkSlotsVerified()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod2Buffer<int, string> buffer = store.InstallMethod<int, string>(0);
+		buffer.Append("M", 1, "a");
+		buffer.Append("M", 2, "b");
+
+		Method2CountSource<int, string> source = new(buffer,
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("a"));
+		await That(source.CountAll()).IsEqualTo(2);
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
+		await That(dest).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Method3CountSource_CountAll_ShouldMarkSlotsVerified()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod3Buffer<int, string, bool> buffer = store.InstallMethod<int, string, bool>(0);
+		buffer.Append("M", 1, "a", true);
+		buffer.Append("M", 2, "b", false);
+
+		Method3CountSource<int, string, bool> source = new(buffer,
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("a"),
+			(IParameterMatch<bool>)It.Is(true));
+		await That(source.CountAll()).IsEqualTo(2);
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
+		await That(dest).IsEmpty();
+	}
+
+	[Fact]
+	public async Task Method4CountSource_CountAll_ShouldMarkSlotsVerified()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod4Buffer<int, string, bool, double> buffer =
+			store.InstallMethod<int, string, bool, double>(0);
+		buffer.Append("M", 1, "a", true, 0.5);
+		buffer.Append("M", 2, "b", false, 1.5);
+
+		Method4CountSource<int, string, bool, double> source = new(buffer,
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("a"),
+			(IParameterMatch<bool>)It.Is(true),
+			(IParameterMatch<double>)It.Is(0.5));
+		await That(source.CountAll()).IsEqualTo(2);
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
+		await That(dest).IsEmpty();
 	}
 
 	[Fact]

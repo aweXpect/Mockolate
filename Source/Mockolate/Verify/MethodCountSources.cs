@@ -16,7 +16,7 @@ internal sealed class Method0CountSource : IFastMethodCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching();
-	public int CountAll() => _buffer.Count;
+	public int CountAll() => _buffer.ConsumeMatching();
 }
 
 /// <summary>
@@ -34,7 +34,7 @@ internal sealed class Method1CountSource<T1> : IFastMethodCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1);
-	public int CountAll() => _buffer.Count;
+	public int CountAll() => _buffer.ConsumeAll();
 }
 
 /// <summary>
@@ -55,7 +55,7 @@ internal sealed class Method2CountSource<T1, T2> : IFastMethodCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2);
-	public int CountAll() => _buffer.Count;
+	public int CountAll() => _buffer.ConsumeAll();
 }
 
 /// <summary>
@@ -78,7 +78,7 @@ internal sealed class Method3CountSource<T1, T2, T3> : IFastMethodCountSource
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _match3);
-	public int CountAll() => _buffer.Count;
+	public int CountAll() => _buffer.ConsumeAll();
 }
 
 /// <summary>
@@ -104,7 +104,7 @@ internal sealed class Method4CountSource<T1, T2, T3, T4> : IFastMethodCountSourc
 	}
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _match3, _match4);
-	public int CountAll() => _buffer.Count;
+	public int CountAll() => _buffer.ConsumeAll();
 }
 
 /// <summary>
