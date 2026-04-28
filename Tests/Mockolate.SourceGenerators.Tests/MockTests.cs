@@ -268,7 +268,8 @@ public sealed partial class MockTests
 			.DoesNotContain("CreateMock(object?[] constructorParameters)").And
 			.DoesNotContain("CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)").And
 			.DoesNotContain("object?[] constructorParameters)").And
-			.Contains("private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
+			.Contains(
+				"private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
 	}
 
 	[Fact]
@@ -296,7 +297,8 @@ public sealed partial class MockTests
 		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
 			.DoesNotContain("CreateMock(object?[] constructorParameters)").And
 			.DoesNotContain("object?[] constructorParameters)").And
-			.Contains("private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
+			.Contains(
+				"private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
 	}
 
 	[Fact]
@@ -710,7 +712,8 @@ public sealed partial class MockTests
 			          		{
 			          """)
 			.IgnoringNewlineStyle().And
-			.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>(\"global::MyCode.IMyService.MyMethod\"))")
+			.Contains(
+				"foreach (global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<object, bool, string, char, byte, sbyte, short, ushort, int, uint, long, ulong, float, double, decimal>>(\"global::MyCode.IMyService.MyMethod\"))")
 			.IgnoringNewlineStyle().And
 			.Contains("""
 			          			bool hasWrappedResult = false;

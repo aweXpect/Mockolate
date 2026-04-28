@@ -5,6 +5,47 @@ namespace Mockolate.SourceGenerators.Tests;
 public sealed class MockBehaviorExtensionsTests
 {
 	[Fact]
+	public async Task DefaultValueGenerator_ForValueTuples_ShouldEmitInlineExpressions()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode
+			     {
+			         public class Program
+			         {
+			             public static void Main(string[] args)
+			             {
+			     			_ = IMyInterface.CreateMock();
+			             }
+			         }
+
+			         public interface IMyInterface
+			         {
+			             (int V1, string V2) NamedValueTuple { get; }
+			             (int, string, int, string, int, string, int, string) ValueTuple8 { get; }
+			             (int, T1, T2) GenericValueTuple<T1, T2>();
+			         }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+			.Contains("(b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!))").And
+			.Contains(
+				"(b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!))")
+			.And
+			.Contains(
+				"(this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.MockRegistry.Behavior.DefaultValue.Generate(default(T1)!), this.MockRegistry.Behavior.DefaultValue.Generate(default(T2)!))");
+
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+			.DoesNotContain("Generate<T1, T2>((T1, T2)").And
+			.DoesNotContain("Generate<T1, T2, T3>((T1, T2, T3)").And
+			.DoesNotContain("Generate<T1, T2, T3, T4, T5, T6, T7, T8>");
+	}
+
+	[Fact]
 	public async Task DefaultValueGenerator_ShouldRegisterArrays()
 	{
 		GeneratorResult result = Generator
@@ -177,43 +218,5 @@ public sealed class MockBehaviorExtensionsTests
 			          		}
 			          """).IgnoringNewlineStyle().And
 			.DoesNotContain("global::System.Func<T>");
-	}
-
-	[Fact]
-	public async Task DefaultValueGenerator_ForValueTuples_ShouldEmitInlineExpressions()
-	{
-		GeneratorResult result = Generator
-			.Run("""
-			     using System;
-			     using Mockolate;
-
-			     namespace MyCode
-			     {
-			         public class Program
-			         {
-			             public static void Main(string[] args)
-			             {
-			     			_ = IMyInterface.CreateMock();
-			             }
-			         }
-
-			         public interface IMyInterface
-			         {
-			             (int V1, string V2) NamedValueTuple { get; }
-			             (int, string, int, string, int, string, int, string) ValueTuple8 { get; }
-			             (int, T1, T2) GenericValueTuple<T1, T2>();
-			         }
-			     }
-			     """);
-
-		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
-			.Contains("(b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!))").And
-			.Contains("(b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!))").And
-			.Contains("(this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.MockRegistry.Behavior.DefaultValue.Generate(default(T1)!), this.MockRegistry.Behavior.DefaultValue.Generate(default(T2)!))");
-
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
-			.DoesNotContain("Generate<T1, T2>((T1, T2)").And
-			.DoesNotContain("Generate<T1, T2, T3>((T1, T2, T3)").And
-			.DoesNotContain("Generate<T1, T2, T3, T4, T5, T6, T7, T8>");
 	}
 }
