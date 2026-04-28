@@ -72,12 +72,84 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
+	public async Task FastIndexerGetterBuffer1_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int> buffer = store.InstallIndexerGetter<int>(0);
+
+		buffer.Append(7);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerGetterBuffer1_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int> buffer = store.InstallIndexerGetter<int>(0);
+
+		buffer.Append(7);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
 	public async Task FastIndexerGetterBuffer2_Append_ShouldRaiseInteractionAdded()
 		=> await VerifyRaisesInteractionAdded(store =>
 		{
 			FastIndexerGetterBuffer<int, string> buffer = store.InstallIndexerGetter<int, string>(0);
 			return () => buffer.Append(1, "a");
 		});
+
+	[Fact]
+	public async Task FastIndexerGetterBuffer2_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string> buffer = store.InstallIndexerGetter<int, string>(0);
+
+		buffer.Append(7, "k");
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerGetterBuffer2_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string> buffer = store.InstallIndexerGetter<int, string>(0);
+
+		buffer.Append(7, "k");
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
 
 	[Fact]
 	public async Task FastIndexerGetterBuffer3_Append_ShouldRaiseInteractionAdded()
@@ -89,6 +161,44 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
+	public async Task FastIndexerGetterBuffer3_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string, bool> buffer =
+			store.InstallIndexerGetter<int, string, bool>(0);
+
+		buffer.Append(7, "k", true);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerGetterBuffer3_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string, bool> buffer =
+			store.InstallIndexerGetter<int, string, bool>(0);
+
+		buffer.Append(7, "k", true);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
 	public async Task FastIndexerGetterBuffer4_Append_ShouldRaiseInteractionAdded()
 		=> await VerifyRaisesInteractionAdded(store =>
 		{
@@ -98,12 +208,86 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
+	public async Task FastIndexerGetterBuffer4_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string, bool, double> buffer =
+			store.InstallIndexerGetter<int, string, bool, double>(0);
+
+		buffer.Append(7, "k", true, 3.14);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerGetterBuffer4_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int, string, bool, double> buffer =
+			store.InstallIndexerGetter<int, string, bool, double>(0);
+
+		buffer.Append(7, "k", true, 3.14);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
 	public async Task FastIndexerSetterBuffer1_Append_ShouldRaiseInteractionAdded()
 		=> await VerifyRaisesInteractionAdded(store =>
 		{
 			FastIndexerSetterBuffer<int, string> buffer = store.InstallIndexerSetter<int, string>(0);
 			return () => buffer.Append(1, "a");
 		});
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer1_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string> buffer = store.InstallIndexerSetter<int, string>(0);
+
+		buffer.Append(7, "k");
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer1_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string> buffer = store.InstallIndexerSetter<int, string>(0);
+
+		buffer.Append(7, "k");
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
 
 	[Fact]
 	public async Task FastIndexerSetterBuffer2_Append_ShouldRaiseInteractionAdded()
@@ -115,6 +299,44 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
+	public async Task FastIndexerSetterBuffer2_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool> buffer =
+			store.InstallIndexerSetter<int, string, bool>(0);
+
+		buffer.Append(7, "k", true);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer2_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool> buffer =
+			store.InstallIndexerSetter<int, string, bool>(0);
+
+		buffer.Append(7, "k", true);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
 	public async Task FastIndexerSetterBuffer3_Append_ShouldRaiseInteractionAdded()
 		=> await VerifyRaisesInteractionAdded(store =>
 		{
@@ -124,6 +346,44 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
+	public async Task FastIndexerSetterBuffer3_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool, double> buffer =
+			store.InstallIndexerSetter<int, string, bool, double>(0);
+
+		buffer.Append(7, "k", true, 3.14);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer3_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool, double> buffer =
+			store.InstallIndexerSetter<int, string, bool, double>(0);
+
+		buffer.Append(7, "k", true, 3.14);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
 	public async Task FastIndexerSetterBuffer4_Append_ShouldRaiseInteractionAdded()
 		=> await VerifyRaisesInteractionAdded(store =>
 		{
@@ -131,6 +391,44 @@ public class FastBufferBoxingAndUnverifiedTests
 				store.InstallIndexerSetter<int, string, bool, double, char>(0);
 			return () => buffer.Append(1, "a", true, 1.0, 'x');
 		});
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer4_AppendBoxed_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool, double, char> buffer =
+			store.InstallIndexerSetter<int, string, bool, double, char>(0);
+
+		buffer.Append(7, "k", true, 3.14, 'z');
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(first);
+		((IFastMemberBuffer)buffer).AppendBoxed(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastIndexerSetterBuffer4_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string, bool, double, char> buffer =
+			store.InstallIndexerSetter<int, string, bool, double, char>(0);
+
+		buffer.Append(7, "k", true, 3.14, 'z');
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
 
 	[Fact]
 	public async Task FastMethod1Buffer_Append_ShouldRaiseInteractionAdded()
@@ -238,6 +536,24 @@ public class FastBufferBoxingAndUnverifiedTests
 		});
 
 	[Fact]
+	public async Task FastPropertyGetterBuffer_Append_WithoutInstalledSingleton_ShouldIncludeFactoryGuidanceInMessage()
+	{
+		// Kills the `$"..."` -> `$""` string mutation on the InvalidOperationException message.
+		// The message points callers at the correct factory overload — without it, the failure
+		// is just an empty-string IOE, which is useless guidance.
+		FastMockInteractions store = new(1);
+		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+
+		void Act()
+		{
+			buffer.Append();
+		}
+
+		await That(Act).Throws<InvalidOperationException>()
+			.WithMessage("*InstallPropertyGetter*").AsWildcard();
+	}
+
+	[Fact]
 	public async Task FastPropertyGetterBuffer_Append_WithoutInstalledSingleton_ShouldThrow()
 	{
 		FastMockInteractions store = new(1);
@@ -292,6 +608,26 @@ public class FastBufferBoxingAndUnverifiedTests
 	}
 
 	[Fact]
+	public async Task FastPropertyGetterBuffer_AppendString_LazyInitsAccessOnce()
+	{
+		FastMockInteractions store = new(1);
+		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+
+		buffer.Append("P");
+		List<(long Seq, IInteraction Interaction)> firstSnapshot = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(firstSnapshot);
+
+		buffer.Append("P");
+		List<(long Seq, IInteraction Interaction)> secondSnapshot = [];
+		((IFastMemberBuffer)buffer).AppendBoxed(secondSnapshot);
+
+		await That(firstSnapshot).HasCount(1);
+		await That(secondSnapshot).HasCount(2);
+		await That(secondSnapshot[0].Interaction).IsSameAs(firstSnapshot[0].Interaction);
+		await That(secondSnapshot[1].Interaction).IsSameAs(firstSnapshot[0].Interaction);
+	}
+
+	[Fact]
 	public async Task FastPropertySetterBuffer_Append_ShouldRaiseInteractionAdded()
 		=> await VerifyRaisesInteractionAdded(store =>
 		{
@@ -315,6 +651,66 @@ public class FastBufferBoxingAndUnverifiedTests
 		await That(first).HasCount(1);
 		await That(second).HasCount(1);
 		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastPropertySetterBuffer_AppendBoxedUnverified_CachesAndReusesAlreadyBoxedRecord()
+	{
+		// Mirrors the AppendBoxed caching test for the Unverified path so the `r.Boxed ??= new
+		// PropertySetterAccess<T>(...)` mutation is killed there as well.
+		FastMockInteractions store = new(1);
+		FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+
+		buffer.Append("P", 5);
+
+		List<(long Seq, IInteraction Interaction)> first = [];
+		List<(long Seq, IInteraction Interaction)> second = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(first);
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(second);
+
+		await That(first).HasCount(1);
+		await That(second).HasCount(1);
+		await That(second[0].Interaction).IsSameAs(first[0].Interaction);
+	}
+
+	[Fact]
+	public async Task FastPropertySetterBuffer_AppendBoxedUnverified_ShouldSkipMatchedSlots()
+	{
+		// Covers the AppendBoxedUnverified branch on the setter buffer (NoCoverage cluster).
+		FastMockInteractions store = new(1);
+		FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+		buffer.Append("P", 1);
+		buffer.Append("P", 2);
+		buffer.Append("P", 3);
+
+		_ = buffer.ConsumeMatching((IParameterMatch<int>)It.Is(2));
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
+
+		await That(dest).HasCount(2);
+		await That(((PropertySetterAccess<int>)dest[0].Interaction).Value).IsEqualTo(1);
+		await That(((PropertySetterAccess<int>)dest[1].Interaction).Value).IsEqualTo(3);
+	}
+
+	[Fact]
+	public async Task FastPropertySetterBuffer_ConsumeMatching_ShouldMarkSlotsVerified()
+	{
+		// Pins the `_storage.VerifiedUnderLock(slot) = true` write. With the mutation flipped
+		// to `false`, ConsumeMatching would still report matches but the slots would never be
+		// marked verified — so a second ConsumeMatching call would re-count the same records.
+		FastMockInteractions store = new(1);
+		FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+		buffer.Append("P", 1);
+		buffer.Append("P", 1);
+
+		int firstPass = buffer.ConsumeMatching((IParameterMatch<int>)It.Is(1));
+		await That(firstPass).IsEqualTo(2);
+
+		List<(long Seq, IInteraction Interaction)> dest = [];
+		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
+
+		await That(dest).IsEmpty();
 	}
 
 	[Fact]
