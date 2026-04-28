@@ -74,7 +74,18 @@ This is especially useful when you need consistent mock setups across multiple t
 
 ## Setups
 
-Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to virtual interactions in the constructor.
+Specify setups during mock creation using the `CreateMock` overload with a setup callback. These setups also apply to
+virtual interactions in the constructor.
+
+```csharp
+IChocolateDispenser sut = IChocolateDispenser.CreateMock(setup =>
+{
+    setup.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(true);
+    setup.TotalDispensed.InitializeWith(0);
+});
+```
+
+You can combine the setup callback with a `MockBehavior` and constructor parameters in the same call.
 
 ## Implementing additional interfaces
 
@@ -88,6 +99,23 @@ MyChocolateDispenser sut = MyChocolateDispenser.CreateMock().Implementing<ILemon
 IChocolateDispenser sut2 = IChocolateDispenser.CreateMock()
     .Implementing<ILemonadeDispenser>(setup => setup.DispenseLemonade(It.IsAny<int>()).Returns(true));
 ```
+
+**Accessing the additional interface's mock surface**
+
+Use `Mock.As<T>()` to reach the `Setup` and `Verify` properties for an additional interface added via
+`.Implementing<T>()`:
+
+```csharp
+MyChocolateDispenser sut = MyChocolateDispenser.CreateMock()
+    .Implementing<ILemonadeDispenser>();
+
+// Set up and verify members of the additional interface
+sut.Mock.As<ILemonadeDispenser>().Setup.DispenseLemonade(It.IsAny<int>()).Returns(true);
+sut.Mock.As<ILemonadeDispenser>().Verify.DispenseLemonade(5).Once();
+```
+
+The returned mock shares the registry of the original - recorded interactions, scenario state, and setups apply
+across all faces of the same instance.
 
 **Notes:**
 

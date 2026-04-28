@@ -76,4 +76,9 @@ sut.Mock.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
 
 sut.Mock.Setup.TotalDispensed.OnGet
     .Do((count, value) => Console.WriteLine($"Read #{count}, value: {value}"));
+
+// Indexer setter - count, then the indexer key(s), then the new value
+sut.Mock.Setup[It.IsAny<string>()].OnSet
+    .Do((count, type, newValue) =>
+        Console.WriteLine($"Set #{count}: this[{type}] = {newValue}"));
 ```
