@@ -1,7 +1,7 @@
+#if NET8_0_OR_GREATER
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-#if NET8_0_OR_GREATER
 namespace Mockolate.Tests;
 
 public sealed partial class MockTests
@@ -14,7 +14,8 @@ public sealed partial class MockTests
 			List<int> receivedCalls = [];
 			IMyServiceWithAbstractStaticMembers sut = IMyServiceWithAbstractStaticMembers.CreateMock();
 
-			SubscribeAbstractStaticEvent<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>(Callback);
+			SubscribeAbstractStaticEvent<
+				Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>(Callback);
 
 			sut.Mock.RaiseStatic.AbstractStaticEvent(1);
 			sut.Mock.RaiseStatic.AbstractStaticEvent(3);
@@ -22,7 +23,8 @@ public sealed partial class MockTests
 			await That(receivedCalls).IsEqualTo([1, 3,]);
 			await That(sut.Mock.VerifyStatic.AbstractStaticEvent.Subscribed()).Once();
 			await That(sut.Mock.VerifyStatic.AbstractStaticEvent.Unsubscribed()).Never();
-			UnsubscribeAbstractStaticEvent<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>(Callback);
+			UnsubscribeAbstractStaticEvent<
+				Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>(Callback);
 			await That(sut.Mock.VerifyStatic.AbstractStaticEvent.Unsubscribed()).Once();
 
 			void Callback(int value)
@@ -55,7 +57,9 @@ public sealed partial class MockTests
 				{
 					IMyServiceWithAbstractStaticMembers sut = IMyServiceWithAbstractStaticMembers.CreateMock();
 
-					SubscribeAbstractStaticEvent<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>(v => Callback(taskId, v));
+					SubscribeAbstractStaticEvent<
+						Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>(v
+						=> Callback(taskId, v));
 
 					sut.Mock.RaiseStatic.AbstractStaticEvent(taskId + 100);
 					sut.Mock.RaiseStatic.AbstractStaticEvent(taskId + 300);
@@ -95,7 +99,9 @@ public sealed partial class MockTests
 
 			sut.Mock.SetupStatic.AbstractStaticMethod().Returns(4);
 
-			int? result = CallAbstractStaticMethod<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+			int? result =
+				CallAbstractStaticMethod<
+					Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 			await That(result).IsEqualTo(4);
 			await That(sut.Mock.VerifyStatic.AbstractStaticMethod()).Once();
@@ -120,7 +126,9 @@ public sealed partial class MockTests
 
 					sut1.Mock.SetupStatic.AbstractStaticMethod().Returns(j);
 
-					int? result = CallAbstractStaticMethod<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+					int? result =
+						CallAbstractStaticMethod<
+							Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 					await That(result).IsEqualTo(j);
 					await That(sut1.Mock.VerifyStatic.AbstractStaticMethod()).Once();
@@ -143,7 +151,9 @@ public sealed partial class MockTests
 
 			sut.Mock.SetupStatic.AbstractStaticProperty.Returns(4);
 
-			int? result = CallAbstractStaticProperty<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+			int? result =
+				CallAbstractStaticProperty<
+					Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 			await That(result).IsEqualTo(4);
 			await That(sut.Mock.VerifyStatic.AbstractStaticProperty.Got()).Once();
@@ -168,7 +178,9 @@ public sealed partial class MockTests
 
 					sut1.Mock.SetupStatic.AbstractStaticProperty.Returns(j);
 
-					int? result = CallAbstractStaticProperty<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+					int? result =
+						CallAbstractStaticProperty<
+							Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 					await That(result).IsEqualTo(j);
 					await That(sut1.Mock.VerifyStatic.AbstractStaticProperty.Got()).Once();
@@ -191,7 +203,9 @@ public sealed partial class MockTests
 
 			sut.Mock.SetupStatic.VirtualStaticMethod().Returns(4);
 
-			int? result = CallVirtualStaticMethod<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+			int? result =
+				CallVirtualStaticMethod<
+					Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 			await That(result).IsEqualTo(4);
 			await That(sut.Mock.VerifyStatic.VirtualStaticMethod()).Once();
@@ -216,7 +230,9 @@ public sealed partial class MockTests
 
 					sut1.Mock.SetupStatic.VirtualStaticMethod().Returns(j);
 
-					int? result = CallVirtualStaticMethod<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+					int? result =
+						CallVirtualStaticMethod<
+							Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 					await That(result).IsEqualTo(j);
 					await That(sut1.Mock.VerifyStatic.VirtualStaticMethod()).Once();
@@ -239,7 +255,9 @@ public sealed partial class MockTests
 
 			sut.Mock.SetupStatic.VirtualStaticProperty.Returns(4);
 
-			int? result = CallVirtualStaticProperty<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+			int? result =
+				CallVirtualStaticProperty<
+					Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 			await That(result).IsEqualTo(4);
 			await That(sut.Mock.VerifyStatic.VirtualStaticProperty.Got()).Once();
@@ -264,7 +282,9 @@ public sealed partial class MockTests
 
 					sut1.Mock.SetupStatic.VirtualStaticProperty.Returns(j);
 
-					int? result = CallVirtualStaticProperty<Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
+					int? result =
+						CallVirtualStaticProperty<
+							Mock.MockTests_StaticInterfaceMembersTests_IMyServiceWithAbstractStaticMembers>();
 
 					await That(result).IsEqualTo(j);
 					await That(sut1.Mock.VerifyStatic.VirtualStaticProperty.Got()).Once();
@@ -277,6 +297,97 @@ public sealed partial class MockTests
 				where T : IMyServiceWithAbstractStaticMembers
 			{
 				return T.VirtualStaticProperty;
+			}
+		}
+
+		public sealed class CombinationTests
+		{
+			[Fact]
+			public async Task StaticBase_WithExtraInterface_ShouldDispatchStaticEvent()
+			{
+				List<int> receivedCalls = [];
+				IServiceWithAllStaticAbstracts sut = IServiceWithAllStaticAbstracts.CreateMock()
+					.Implementing<IExtraServiceForStaticCombination>();
+
+				Subscribe<Mock.MockTests_StaticInterfaceMembersTests_CombinationTests_IServiceWithAllStaticAbstracts__MockTests_StaticInterfaceMembersTests_CombinationTests_IExtraServiceForStaticCombination>(Callback);
+
+				sut.Mock.RaiseStatic.StaticEvent(2);
+				sut.Mock.RaiseStatic.StaticEvent(5);
+
+				await That(receivedCalls).IsEqualTo([2, 5,]);
+				await That(sut.Mock.VerifyStatic.StaticEvent.Subscribed()).Once();
+
+				Unsubscribe<Mock.MockTests_StaticInterfaceMembersTests_CombinationTests_IServiceWithAllStaticAbstracts__MockTests_StaticInterfaceMembersTests_CombinationTests_IExtraServiceForStaticCombination>(Callback);
+
+				void Callback(int value)
+				{
+					receivedCalls.Add(value);
+				}
+
+				static void Subscribe<T>(Action<int> callback)
+					where T : IServiceWithAllStaticAbstracts
+				{
+					T.StaticEvent += callback;
+				}
+
+				static void Unsubscribe<T>(Action<int> callback)
+					where T : IServiceWithAllStaticAbstracts
+				{
+					T.StaticEvent -= callback;
+				}
+			}
+
+			[Fact]
+			public async Task StaticBase_WithExtraInterface_ShouldDispatchStaticMethod()
+			{
+				IServiceWithAllStaticAbstracts sut = IServiceWithAllStaticAbstracts.CreateMock()
+					.Implementing<IExtraServiceForStaticCombination>();
+				sut.Mock.SetupStatic.StaticMethod().Returns(7);
+
+				int result =
+					CallStaticMethod<Mock.MockTests_StaticInterfaceMembersTests_CombinationTests_IServiceWithAllStaticAbstracts__MockTests_StaticInterfaceMembersTests_CombinationTests_IExtraServiceForStaticCombination>();
+
+				await That(result).IsEqualTo(7);
+				await That(sut.Mock.VerifyStatic.StaticMethod()).Once();
+
+				static int CallStaticMethod<T>()
+					where T : IServiceWithAllStaticAbstracts
+				{
+					return T.StaticMethod();
+				}
+			}
+
+			[Fact]
+			public async Task StaticBase_WithExtraInterface_ShouldDispatchStaticProperty()
+			{
+				IServiceWithAllStaticAbstracts sut = IServiceWithAllStaticAbstracts.CreateMock()
+					.Implementing<IExtraServiceForStaticCombination>();
+				sut.Mock.SetupStatic.StaticProperty.Returns(11);
+
+				int result =
+					CallStaticProperty<Mock.MockTests_StaticInterfaceMembersTests_CombinationTests_IServiceWithAllStaticAbstracts__MockTests_StaticInterfaceMembersTests_CombinationTests_IExtraServiceForStaticCombination>();
+
+				await That(result).IsEqualTo(11);
+				await That(sut.Mock.VerifyStatic.StaticProperty.Got()).Once();
+
+				static int CallStaticProperty<T>()
+					where T : IServiceWithAllStaticAbstracts
+				{
+					return T.StaticProperty;
+				}
+			}
+
+			public interface IServiceWithAllStaticAbstracts
+			{
+				bool InstanceFlag { get; set; }
+				static abstract int StaticProperty { get; set; }
+				static abstract int StaticMethod();
+				static abstract event Action<int> StaticEvent;
+			}
+
+			public interface IExtraServiceForStaticCombination
+			{
+				void Run();
 			}
 		}
 
