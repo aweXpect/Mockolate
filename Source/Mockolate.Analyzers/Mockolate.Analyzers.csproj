@@ -41,4 +41,8 @@
 		</Compile>
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Remove="Nullable"/>
+	</ItemGroup>
+
 </Project>
