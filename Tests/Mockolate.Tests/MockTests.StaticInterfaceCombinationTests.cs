@@ -58,7 +58,7 @@ public sealed partial class MockTests
 				.Implementing<IExtraServiceForStaticCombination>();
 			sut.Mock.SetupStatic.StaticMethod().Returns(7);
 
-			int result = CallStaticMethod<Mock.MockTests_StaticInterfaceCombinationTests_IServiceWithAllStaticAbstracts>();
+			int result = CallStaticMethod<Mock.MockTests_StaticInterfaceCombinationTests_IServiceWithAllStaticAbstracts__MockTests_StaticInterfaceCombinationTests_IExtraServiceForStaticCombination>();
 
 			await That(result).IsEqualTo(7);
 			await That(sut.Mock.VerifyStatic.StaticMethod()).Once();
@@ -77,7 +77,7 @@ public sealed partial class MockTests
 				.Implementing<IExtraServiceForStaticCombination>();
 			sut.Mock.SetupStatic.StaticProperty.Returns(11);
 
-			int result = CallStaticProperty<Mock.MockTests_StaticInterfaceCombinationTests_IServiceWithAllStaticAbstracts>();
+			int result = CallStaticProperty<Mock.MockTests_StaticInterfaceCombinationTests_IServiceWithAllStaticAbstracts__MockTests_StaticInterfaceCombinationTests_IExtraServiceForStaticCombination>();
 
 			await That(result).IsEqualTo(11);
 			await That(sut.Mock.VerifyStatic.StaticProperty.Got()).Once();

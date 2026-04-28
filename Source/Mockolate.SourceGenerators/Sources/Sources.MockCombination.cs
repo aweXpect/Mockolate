@@ -68,7 +68,10 @@ internal static partial class Sources
 		sb.Append("\tpublic static ").Append(@class.ClassFullName).Append(" Implementing<TInterface>(this ").Append(@class.ClassFullName).Append(" sut, params global::System.Action<global::Mockolate.Mock.IMockSetupFor").Append(lastInterface.Name).Append(">[] setups)").AppendLine();
 		sb.Append("\t\twhere TInterface : ").Append(lastInterface.Class.ClassFullName).AppendLine();
 		sb.Append("\t{").AppendLine();
-		sb.Append("\t\tvar mock = sut as global::Mockolate.IMock;").AppendLine();
+		sb.Append("\t\tif (sut is not global::Mockolate.IMock mock)").AppendLine();
+		sb.Append("\t\t{").AppendLine();
+		sb.Append("\t\t\tthrow new global::Mockolate.Exceptions.MockException(\"The subject is no mock.\");").AppendLine();
+		sb.Append("\t\t}").AppendLine();
 		sb.Append("\t\tglobal::Mockolate.Mock.").Append(fileName).Append(" value;").AppendLine();
 
 		bool useTryCast = false;
