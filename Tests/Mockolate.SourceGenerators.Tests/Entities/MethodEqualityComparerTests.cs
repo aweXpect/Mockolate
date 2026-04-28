@@ -31,17 +31,6 @@ public class MethodEqualityComparerTests
 	}
 
 	[Fact]
-	public async Task WhenRightMethodIsNull_ShouldReturnFalse()
-	{
-		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
-		Method left = CreateMethod("public class C { public void Foo() {} }", "Foo");
-
-		bool result = comparer.Equals(left, null);
-
-		await That(result).IsFalse();
-	}
-
-	[Fact]
 	public async Task WhenMethodsHaveDifferentNames_ShouldReturnFalse()
 	{
 		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
@@ -65,6 +54,17 @@ public class MethodEqualityComparerTests
 		await That(result).IsFalse();
 	}
 
+	[Fact]
+	public async Task WhenRightMethodIsNull_ShouldReturnFalse()
+	{
+		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
+		Method left = CreateMethod("public class C { public void Foo() {} }", "Foo");
+
+		bool result = comparer.Equals(left, null);
+
+		await That(result).IsFalse();
+	}
+
 	private static Method CreateMethod(string source, string methodName)
 	{
 		SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
@@ -77,7 +77,7 @@ public class MethodEqualityComparerTests
 		MethodDeclarationSyntax declaration = tree.GetRoot().DescendantNodes()
 			.OfType<MethodDeclarationSyntax>()
 			.First(m => m.Identifier.Text == methodName);
-		IMethodSymbol symbol = (IMethodSymbol)model.GetDeclaredSymbol(declaration)!;
+		IMethodSymbol symbol = model.GetDeclaredSymbol(declaration)!;
 		return new Method(symbol, null);
 	}
 }

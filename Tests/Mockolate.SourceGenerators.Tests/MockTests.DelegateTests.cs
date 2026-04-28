@@ -82,7 +82,8 @@ public sealed partial class MockTests
 				          		{
 				          """)
 				.IgnoringNewlineStyle().And
-				.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int>>(\"global::MyCode.Program.DoSomething1.Invoke\"))")
+				.Contains(
+					"foreach (global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.SpanWrapper<char>, int>>(\"global::MyCode.Program.DoSomething1.Invoke\"))")
 				.IgnoringNewlineStyle().And
 				.Contains("""
 				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -105,7 +106,8 @@ public sealed partial class MockTests
 				          		{
 				          """)
 				.IgnoringNewlineStyle().And
-				.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int>>(\"global::MyCode.Program.DoSomething2.Invoke\"))")
+				.Contains(
+					"foreach (global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int>>(\"global::MyCode.Program.DoSomething2.Invoke\"))")
 				.IgnoringNewlineStyle().And
 				.Contains("""
 				          			if (MockRegistry.Behavior.SkipInteractionRecording == false)
@@ -216,7 +218,8 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Sources).ContainsKey("Mock.Func_int_bool.g.cs").WhoseValue
-				.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>(\"global::System.Func<int, bool>.Invoke\"))")
+				.Contains(
+					"foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>(\"global::System.Func<int, bool>.Invoke\"))")
 				.IgnoringNewlineStyle().And
 				.Contains("global::System.Func<int, bool> Object").IgnoringNewlineStyle();
 		}
@@ -247,7 +250,8 @@ public sealed partial class MockTests
 				.IgnoringNewlineStyle().And
 				.Contains("Verify(int a, int b, int c, int d, int e)")
 				.IgnoringNewlineStyle().And
-				.Contains("Setup(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<int>? c, global::Mockolate.Parameters.IParameter<int>? d, global::Mockolate.Parameters.IParameter<int>? e)")
+				.Contains(
+					"Setup(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<int>? c, global::Mockolate.Parameters.IParameter<int>? d, global::Mockolate.Parameters.IParameter<int>? e)")
 				.IgnoringNewlineStyle();
 		}
 
@@ -273,7 +277,8 @@ public sealed partial class MockTests
 
 			await That(result.Sources)
 				.ContainsKey("Mock.Program_ProcessAll.g.cs").WhoseValue
-				.Contains("Setup(global::Mockolate.Parameters.IOutParameter<int> a, global::Mockolate.Parameters.IOutParameter<int> b, global::Mockolate.Parameters.IOutParameter<int> c, global::Mockolate.Parameters.IOutParameter<int> d, global::Mockolate.Parameters.IOutParameter<int> e)")
+				.Contains(
+					"Setup(global::Mockolate.Parameters.IOutParameter<int> a, global::Mockolate.Parameters.IOutParameter<int> b, global::Mockolate.Parameters.IOutParameter<int> c, global::Mockolate.Parameters.IOutParameter<int> d, global::Mockolate.Parameters.IOutParameter<int> e)")
 				.IgnoringNewlineStyle().And
 				.DoesNotContain("Setup(int")
 				.IgnoringNewlineStyle();

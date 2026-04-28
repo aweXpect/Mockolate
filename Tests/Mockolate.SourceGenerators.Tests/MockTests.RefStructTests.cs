@@ -5,6 +5,187 @@ public sealed partial class MockTests
 	public sealed class RefStructTests
 	{
 		[Fact]
+		public async Task Arity16VoidMethod_EmitsGeneratedRefStructSetupAtArity16()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IBigSink16
+				     {
+				         void Consume(Packet p1, Packet p2, Packet p3, Packet p4, Packet p5, Packet p6, Packet p7, Packet p8, Packet p9, Packet p10, Packet p11, Packet p12, Packet p13, Packet p14, Packet p15, Packet p16);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IBigSink16.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>").And
+				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>").And
+				.Contains("where T16 : allows ref struct").And
+				.Contains("where T1 : allows ref struct");
+		}
+
+		[Fact]
+		public async Task Arity5IndexerGetAndSet_WithRefStructKey_EmitsCombinedSetup()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Key(int id) { public int Id { get; } = id; }
+
+				     public interface IRefStructStore5
+				     {
+				         string this[Key k1, int k2, Key k3, int k4, Key k5] { get; set; }
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IRefStructStore5.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructIndexerSetup<TValue, T1, T2, T3, T4, T5>").And
+				.Contains("public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4, T5>").And
+				// Combined facade exposes the inner Getter / Setter properties.
+				.Contains("Getter { get; }").And
+				.Contains("Setter { get; }").And
+				// Storage plumbing visible on the getter-only emission.
+				.Contains("TryResolveKey").And
+				.Contains("GetChildDispatch").And
+				.Contains("StoreValue").And
+				.Contains("BoundGetter");
+		}
+
+		[Fact]
+		public async Task Arity5IndexerGetterOnly_WithRefStructKey_EmitsGetterSetupOnly()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Key(int id) { public int Id { get; } = id; }
+
+				     public interface IRefStructLookup5
+				     {
+				         string this[Key k1, int k2, Key k3, int k4, Key k5] { get; }
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IRefStructLookup5.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>").And
+				.Contains("public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>").And
+				// Storage / projection plumbing must be present at arity 5.
+				.Contains("TryResolveKey").And
+				.Contains("GetChildDispatch").And
+				// Setter-only and combined surfaces must NOT be emitted for a getter-only indexer.
+				.DoesNotContain("public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>").And
+				.DoesNotContain("public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4, T5>");
+		}
+
+		[Fact]
+		public async Task Arity5IndexerSetterOnly_WithRefStructKey_EmitsSetterSetupOnly()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Key(int id) { public int Id { get; } = id; }
+
+				     public interface IRefStructWriter5
+				     {
+				         string this[Key k1, int k2, Key k3, int k4, Key k5] { set; }
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IRefStructWriter5.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>").And
+				.Contains("public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>").And
+				// BoundGetter property is emitted on the setter so combined setups can forward writes.
+				.Contains("BoundGetter").And
+				// No getter-only or combined surface for a setter-only indexer.
+				.DoesNotContain("public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>").And
+				.DoesNotContain("public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4, T5>");
+		}
+
+		[Fact]
+		public async Task Arity5ReturnMethod_EmitsGeneratedRefStructReturnSetup()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IBigParser5
+				     {
+				         int TryParse(Packet p1, int p2, Packet p3, Packet p4, string p5);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IBigParser5.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>").And
+				.Contains("public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>").And
+				.Contains("public bool HasReturnValue => _returnFactory is not null;").And
+				.Contains(".Returns(TReturn returnValue)").And
+				.Contains(".Returns(global::System.Func<TReturn> returnFactory)").And
+				// default! fallback when neither return factory nor defaultFactory is present.
+				.Contains("return defaultFactory is not null ? defaultFactory() : default!;");
+		}
+
+		[Fact]
 		public async Task Arity5VoidMethod_EmitsGeneratedRefStructSetup()
 		{
 			// Arity 5 exceeds the hand-written ceiling (1-4); the generator must emit
@@ -75,6 +256,109 @@ public sealed partial class MockTests
 				.Contains("public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
 				.Contains("public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
 				.Contains("public bool HasReturnValue");
+		}
+
+		[Fact]
+		public async Task Arity6VoidMethod_EmitsGeneratedRefStructSetupAtArity6()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IBigSink6
+				     {
+				         void Consume(Packet p1, Packet p2, Packet p3, Packet p4, Packet p5, Packet p6);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IBigSink6.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
+				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
+				.Contains("where T1 : allows ref struct").And
+				.Contains("where T6 : allows ref struct").And
+				// _returnAction body present (matches the emitted void-setup throw machinery).
+				.Contains("private global::System.Func<global::System.Exception?>? _returnAction;").And
+				.Contains("_returnAction = static () => new TException();");
+		}
+
+		[Fact]
+		public async Task Arity7ReturnMethod_MixedRefStructAndValueTypes_EmitsRefStructReturnSetup()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IBigParser7
+				     {
+				         int TryParse(Packet p1, Packet p2, int p3, Packet p4, Packet p5, string p6, double p7);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IBigParser7.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7>").And
+				.Contains("public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7>").And
+				.Contains("public bool HasReturnValue => _returnFactory is not null;").And
+				.Contains("return defaultFactory is not null ? defaultFactory() : default!;").And
+				.Contains("where T7 : allows ref struct");
+		}
+
+		[Fact]
+		public async Task Arity8VoidMethod_EmitsGeneratedRefStructSetupAtArity8()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IBigSink8
+				     {
+				         void Consume(Packet p1, Packet p2, Packet p3, Packet p4, Packet p5, Packet p6, Packet p7, Packet p8);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IBigSink8.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8>").And
+				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8>").And
+				.Contains("where T8 : allows ref struct").And
+				.Contains("_returnAction = exceptionFactory;");
 		}
 
 		[Fact]
@@ -246,6 +530,34 @@ public sealed partial class MockTests
 				// Must NOT use the ref-struct pipeline.
 				.DoesNotContain("RefStructMethodInvocation").And
 				.DoesNotContain("RefStructVoidMethodSetup");
+		}
+
+		[Fact]
+		public async Task NoRefStructSurface_ShouldNotEmitRefStructMethodSetupsFile()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public interface IPlainService
+				     {
+				         void DoWork(int v1, int v2, int v3, int v4, int v5, int v6);
+				         int Compute(int v1, int v2, int v3, int v4, int v5, int v6);
+				         int this[int v1, int v2, int v3, int v4, int v5] { get; set; }
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IPlainService.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).DoesNotContainKey("RefStructMethodSetups.g.cs");
 		}
 
 		[Fact]

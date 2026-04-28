@@ -106,7 +106,8 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle().And
 			.Contains("public static global::MyCode.MyService CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForMyService> setup, int value)")
 			.IgnoringNewlineStyle().And
-			.Contains("public static global::MyCode.MyService CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyService> setup, int value)")
+			.Contains(
+				"public static global::MyCode.MyService CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyService> setup, int value)")
 			.IgnoringNewlineStyle();
 	}
 

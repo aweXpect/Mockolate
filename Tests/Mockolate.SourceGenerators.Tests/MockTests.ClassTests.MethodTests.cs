@@ -201,11 +201,13 @@ public sealed partial class MockTests
 					     """);
 
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.ProcessData\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.ProcessData\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("methodSetup?.TriggerCallbacks(methodExecution);")
 					.IgnoringNewlineStyle().And
-					.Contains("return methodSetup?.TryGetReturnValue(methodExecution, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, methodExecution);")
+					.Contains(
+						"return methodSetup?.TryGetReturnValue(methodExecution, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, methodExecution);")
 					.IgnoringNewlineStyle();
 			}
 
@@ -266,7 +268,8 @@ public sealed partial class MockTests
 					     """);
 
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.ProcessResult\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.ProcessResult\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("methodSetup?.TriggerCallbacks(result);")
 					.IgnoringNewlineStyle().And
@@ -438,7 +441,8 @@ public sealed partial class MockTests
 					          		public bool MyMethod1(int index)
 					          		{
 					          """).IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>(\"global::MyCode.IMyService.MyMethod1\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>(\"global::MyCode.IMyService.MyMethod1\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -476,7 +480,8 @@ public sealed partial class MockTests
 					          		{
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int, bool>>(\"global::MyCode.IMyService.MyMethod2\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.VoidMethodSetup<int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int, bool>>(\"global::MyCode.IMyService.MyMethod2\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -549,7 +554,8 @@ public sealed partial class MockTests
 					          		{
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.MyDirectMethod\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.MyDirectMethod\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -587,7 +593,8 @@ public sealed partial class MockTests
 					          		{
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyServiceBase1.MyBaseMethod1\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyServiceBase1.MyBaseMethod1\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -625,7 +632,8 @@ public sealed partial class MockTests
 					          		{
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyServiceBase2.MyBaseMethod2\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyServiceBase2.MyBaseMethod2\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -663,7 +671,8 @@ public sealed partial class MockTests
 					          		{
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyServiceBase3.MyBaseMethod3\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyServiceBase3.MyBaseMethod3\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -750,7 +759,8 @@ public sealed partial class MockTests
 					          			var ref_value1 = value1;
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<int, int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int, int, bool>>(\"global::MyCode.MyService.MyMethod1\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.VoidMethodSetup<int, int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int, int, bool>>(\"global::MyCode.MyService.MyMethod1\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -807,7 +817,8 @@ public sealed partial class MockTests
 					          			var ref_value1 = value1;
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>>(\"global::MyCode.MyService.MyMethod2\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool, int, bool>>(\"global::MyCode.MyService.MyMethod2\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -865,7 +876,8 @@ public sealed partial class MockTests
 					          		{
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>(\"global::MyCode.IMyOtherService.SomeOtherMethod\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>(\"global::MyCode.IMyOtherService.SomeOtherMethod\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -1009,7 +1021,8 @@ public sealed partial class MockTests
 					          			var ref_index = index;
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int>>(\"global::MyCode.IMyService.MyMethod1\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.VoidMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int>>(\"global::MyCode.IMyService.MyMethod1\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -1054,7 +1067,8 @@ public sealed partial class MockTests
 					          		{
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool>>(\"global::MyCode.IMyService.MyMethod2\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int, bool>>(\"global::MyCode.IMyService.MyMethod2\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -1108,7 +1122,8 @@ public sealed partial class MockTests
 					          			var ref_p1 = p1;
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct>>(\"global::MyCode.IMyService.MyMethod3\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct>>(\"global::MyCode.IMyService.MyMethod3\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -1141,7 +1156,8 @@ public sealed partial class MockTests
 					          			var ref_p1 = p1;
 					          """)
 					.IgnoringNewlineStyle().And
-					.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct>>(\"global::MyCode.IMyService.MyMethod4\"))")
+					.Contains(
+						"foreach (global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::MyCode.MyReadonlyStruct>>(\"global::MyCode.IMyService.MyMethod4\"))")
 					.IgnoringNewlineStyle().And
 					.Contains("""
 					          			bool hasWrappedResult = false;
@@ -1255,7 +1271,8 @@ public sealed partial class MockTests
 					          		public override bool MyMethod<T>(T entity)
 					          		{
 					          """).IgnoringNewlineStyle().And
-					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :").IgnoringNewlineStyle().Because("CS0460: constraints on override methods are inherited from the base method");
+					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :").IgnoringNewlineStyle()
+					.Because("CS0460: constraints on override methods are inherited from the base method");
 			}
 		}
 	}
