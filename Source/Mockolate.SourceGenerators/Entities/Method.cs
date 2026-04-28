@@ -131,13 +131,8 @@ internal record Method
 			}
 
 			// Compare parameters ignoring nullability annotations
-			MethodParameter[]? xParams = x.Parameters.AsArray();
-			MethodParameter[]? yParams = y.Parameters.AsArray();
-
-			if (xParams is null || yParams is null)
-			{
-				return xParams is null && yParams is null;
-			}
+			MethodParameter[] xParams = x.Parameters.AsArray()!;
+			MethodParameter[] yParams = y.Parameters.AsArray()!;
 
 			for (int i = 0; i < xParams.Length; i++)
 			{
