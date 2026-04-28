@@ -145,7 +145,7 @@ public class MockGenerator : IIncrementalGenerator
 		// MockBehaviorExtensions: only depends on whether HttpClient appears as a mock target.
 		// Reduce to a bool so the aggregate cache holds across mock-set churn that doesn't toggle it.
 		IncrementalValueProvider<bool> includeHttpClient = collectedMocks
-			.Select(static (arr, _) => arr.AsArray()?.Any(m => m.ClassFullName == "global::System.Net.Http.HttpClient") ?? false);
+			.Select(static (arr, _) => arr.AsArray().Any(m => m.ClassFullName == "global::System.Net.Http.HttpClient"));
 
 		context.RegisterSourceOutput(includeHttpClient, static (spc, hasHttp) =>
 			spc.AddSource("MockBehaviorExtensions.g.cs",
@@ -189,19 +189,17 @@ public class MockGenerator : IIncrementalGenerator
 				return cmp;
 			}
 
-			Class[]? aAdds = a.AdditionalImplementations.AsArray();
-			Class[]? bAdds = b.AdditionalImplementations.AsArray();
-			int aLen = aAdds?.Length ?? 0;
-			int bLen = bAdds?.Length ?? 0;
-			cmp = aLen.CompareTo(bLen);
+			Class[] aAdds = a.AdditionalImplementations.AsArray();
+			Class[] bAdds = b.AdditionalImplementations.AsArray();
+			cmp = aAdds.Length.CompareTo(bAdds.Length);
 			if (cmp != 0)
 			{
 				return cmp;
 			}
 
-			for (int i = 0; i < aLen; i++)
+			for (int i = 0; i < aAdds.Length; i++)
 			{
-				cmp = StringComparer.Ordinal.Compare(aAdds![i].ClassFullName, bAdds![i].ClassFullName);
+				cmp = StringComparer.Ordinal.Compare(aAdds[i].ClassFullName, bAdds[i].ClassFullName);
 				if (cmp != 0)
 				{
 					return cmp;
@@ -216,7 +214,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static HashSet<int> ToHashSet(EquatableArray<int> arities)
 	{
-		int[] arr = arities.AsArray() ?? [];
+		int[] arr = arities.AsArray();
 		HashSet<int> set = new();
 		foreach (int item in arr)
 		{
@@ -228,7 +226,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static HashSet<(int, bool)> ToMethodSetupHashSet(EquatableArray<MethodSetupKey> keys)
 	{
-		MethodSetupKey[] arr = keys.AsArray() ?? [];
+		MethodSetupKey[] arr = keys.AsArray();
 		HashSet<(int, bool)> set = new();
 		foreach (MethodSetupKey item in arr)
 		{
@@ -240,7 +238,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<int> CollectIndexerSetupArities(EquatableArray<MockClass> mocks)
 	{
-		MockClass[] arr = mocks.AsArray() ?? [];
+		MockClass[] arr = mocks.AsArray();
 		HashSet<int> set = new();
 		foreach (MockClass mc in arr)
 		{
@@ -260,7 +258,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<MethodSetupKey> CollectMethodSetupKeys(EquatableArray<MockClass> mocks)
 	{
-		MockClass[] arr = mocks.AsArray() ?? [];
+		MockClass[] arr = mocks.AsArray();
 		HashSet<MethodSetupKey> set = new();
 		foreach (MockClass mc in arr)
 		{
@@ -289,7 +287,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static RefStructAggregate CollectRefStructAggregate(EquatableArray<MockClass> mocks)
 	{
-		MockClass[] arr = mocks.AsArray() ?? [];
+		MockClass[] arr = mocks.AsArray();
 		HashSet<MethodSetupKey> methods = new();
 		Dictionary<int, (bool HasGetter, bool HasSetter)> indexerMap = new();
 		foreach (MockClass mc in arr)
@@ -347,7 +345,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<NamedMock> CreateNamedMocks(EquatableArray<MockClass> mocks)
 	{
-		MockClass[] arr = mocks.AsArray() ?? [];
+		MockClass[] arr = mocks.AsArray();
 		if (arr.Length == 0)
 		{
 			return new EquatableArray<NamedMock>([]);
@@ -417,7 +415,7 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static EquatableArray<MockAsExtensionPair> CollectAsExtensionPairs(EquatableArray<NamedMock> mocks)
 	{
-		NamedMock[] arr = mocks.AsArray() ?? [];
+		NamedMock[] arr = mocks.AsArray();
 		HashSet<MockAsExtensionPair> seen = new();
 		List<MockAsExtensionPair> ordered = new();
 		foreach (NamedMock nm in arr)
@@ -427,7 +425,7 @@ public class MockGenerator : IIncrementalGenerator
 				continue;
 			}
 
-			NamedClass[] additionalArr = additional.AsArray()!;
+			NamedClass[] additionalArr = additional.AsArray();
 			NamedClass last = additionalArr[additionalArr.Length - 1];
 
 			AddIfNew(seen, ordered, MockAsExtensionPair.Create(nm.ParentName, nm.Mock.ClassFullName, last.Name, last.Class.ClassFullName));
@@ -478,7 +476,7 @@ public class MockGenerator : IIncrementalGenerator
 			return;
 		}
 
-		NamedClass[] additionalNamed = additional.AsArray()!;
+		NamedClass[] additionalNamed = additional.AsArray();
 		(string Name, Class Class)[] additionalArr = new (string Name, Class Class)[additionalNamed.Length];
 		for (int i = 0; i < additionalNamed.Length; i++)
 		{

@@ -343,7 +343,9 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 			ThrowIfRecordingDisabled(_interactions);
 			if (_fastCountSource is not null)
 			{
-				int count = _useCountAll ? _fastCountSource.CountAll() : _fastCountSource.Count();
+				int count = _useCountAll
+					? ((IFastMethodCountSource)_fastCountSource).CountAll()
+					: _fastCountSource.Count();
 				if (countPredicate(count))
 				{
 					return true;
@@ -393,7 +395,9 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 					_interactions.InteractionAdded += OnInteractionAdded;
 					do
 					{
-						int count = _useCountAll ? _fastCountSource!.CountAll() : _fastCountSource!.Count();
+						int count = _useCountAll
+							? ((IFastMethodCountSource)_fastCountSource!).CountAll()
+							: _fastCountSource!.Count();
 						if (countPredicate(count))
 						{
 							return true;
@@ -472,7 +476,9 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		ThrowIfRecordingDisabled(_interactions);
 		if (_fastCountSource is not null)
 		{
-			int count = _useCountAll ? _fastCountSource.CountAll() : _fastCountSource.Count();
+			int count = _useCountAll
+				? ((IFastMethodCountSource)_fastCountSource).CountAll()
+				: _fastCountSource.Count();
 			return countPredicate(count);
 		}
 

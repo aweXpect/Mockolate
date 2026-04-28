@@ -19,7 +19,6 @@ public class MethodCountSourcesTests
 
 		EventCountSource source = new(buffer);
 
-		await That(source.CountAll()).IsEqualTo(2);
 		await That(source.Count()).IsEqualTo(2);
 	}
 
@@ -34,7 +33,6 @@ public class MethodCountSourcesTests
 
 		IndexerGetter1CountSource<int> source = new(buffer, (IParameterMatch<int>)It.Is(1));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(2);
 	}
 
@@ -51,7 +49,6 @@ public class MethodCountSourcesTests
 			(IParameterMatch<int>)It.Is(1),
 			(IParameterMatch<string>)It.Is<string>("a"));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(1);
 	}
 
@@ -70,7 +67,6 @@ public class MethodCountSourcesTests
 			(IParameterMatch<string>)It.Is<string>("a"),
 			(IParameterMatch<bool>)It.Is(true));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(1);
 	}
 
@@ -90,7 +86,6 @@ public class MethodCountSourcesTests
 			(IParameterMatch<bool>)It.Is(true),
 			(IParameterMatch<double>)It.Is(0.5));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(1);
 	}
 
@@ -107,7 +102,6 @@ public class MethodCountSourcesTests
 			(IParameterMatch<int>)It.Is(1),
 			(IParameterMatch<string>)It.Is<string>("a"));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(1);
 	}
 
@@ -126,7 +120,6 @@ public class MethodCountSourcesTests
 			(IParameterMatch<string>)It.Is<string>("a"),
 			(IParameterMatch<bool>)It.Is(true));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(1);
 	}
 
@@ -146,7 +139,6 @@ public class MethodCountSourcesTests
 			(IParameterMatch<bool>)It.Is(true),
 			(IParameterMatch<double>)It.Is(0.5));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(1);
 	}
 
@@ -167,7 +159,6 @@ public class MethodCountSourcesTests
 			(IParameterMatch<double>)It.Is(0.5),
 			(IParameterMatch<char>)It.Is('x'));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(1);
 	}
 
@@ -270,7 +261,6 @@ public class MethodCountSourcesTests
 
 		PropertyGetterCountSource source = new(buffer);
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(3);
 	}
 
@@ -285,7 +275,6 @@ public class MethodCountSourcesTests
 
 		PropertySetterCountSource<int> source = new(buffer, (IParameterMatch<int>)It.Is(1));
 
-		await That(source.CountAll()).IsEqualTo(3);
 		await That(source.Count()).IsEqualTo(2);
 	}
 }

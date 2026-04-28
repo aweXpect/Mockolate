@@ -15,7 +15,7 @@ public class VerificationIndexerResult<TSubject, TParameter>
 {
 	/// <summary>
 	///     Sentinel value used by the typed-match subclasses to indicate that the legacy predicate-based
-	///     <see cref="MockRegistry.IndexerGot{T}(T, int, Func{IInteraction, bool}, Func{string})" /> path is not used.
+	///     <see cref="MockRegistry.IndexerGot{T}(T, int, System.Func{Mockolate.Interactions.IInteraction,bool}, Func{string})" /> path is not used.
 	/// </summary>
 	private protected const int NoMemberId = -1;
 
@@ -24,12 +24,16 @@ public class VerificationIndexerResult<TSubject, TParameter>
 
 	/// <summary>The mock registry holding the recorded interactions.</summary>
 	private protected readonly MockRegistry MockRegistry;
+
 	/// <summary>Factory producing the indexer-argument description used in failure messages.</summary>
 	private protected readonly Func<string> ParametersDescription;
+
 	/// <summary>The verification facade the result is bound to.</summary>
 	private protected readonly TSubject Subject;
+
 	/// <summary>Member id of the indexer getter, or <c>-1</c> when unknown.</summary>
 	private protected readonly int GetMemberId;
+
 	/// <summary>Member id of the indexer setter, or <c>-1</c> when unknown.</summary>
 	private protected readonly int SetMemberId;
 
@@ -136,18 +140,18 @@ public sealed class VerificationIndexerResult<TSubject, T1, TParameter>
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Got()
-		=> MockRegistry.IndexerGotTyped<TSubject, T1>(Subject, GetMemberId, _match1, ParametersDescription);
+		=> MockRegistry.IndexerGotTyped(Subject, GetMemberId, _match1, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(IParameter<TParameter> value)
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, (IParameterMatch<TParameter>)value, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(TParameter value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, (IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue), ParametersDescription);
 }
 
@@ -177,18 +181,18 @@ public sealed class VerificationIndexerResult<TSubject, T1, T2, TParameter>
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Got()
-		=> MockRegistry.IndexerGotTyped<TSubject, T1, T2>(Subject, GetMemberId, _match1, _match2, ParametersDescription);
+		=> MockRegistry.IndexerGotTyped(Subject, GetMemberId, _match1, _match2, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(IParameter<TParameter> value)
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, T2, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, _match2, (IParameterMatch<TParameter>)value, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(TParameter value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, T2, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, _match2, (IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue), ParametersDescription);
 }
 
@@ -220,19 +224,19 @@ public sealed class VerificationIndexerResult<TSubject, T1, T2, T3, TParameter>
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Got()
-		=> MockRegistry.IndexerGotTyped<TSubject, T1, T2, T3>(Subject, GetMemberId,
+		=> MockRegistry.IndexerGotTyped(Subject, GetMemberId,
 			_match1, _match2, _match3, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(IParameter<TParameter> value)
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, T2, T3, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, _match2, _match3, (IParameterMatch<TParameter>)value, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(TParameter value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, T2, T3, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, _match2, _match3, (IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue),
 			ParametersDescription);
 }
@@ -268,19 +272,19 @@ public sealed class VerificationIndexerResult<TSubject, T1, T2, T3, T4, TParamet
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Got()
-		=> MockRegistry.IndexerGotTyped<TSubject, T1, T2, T3, T4>(Subject, GetMemberId,
+		=> MockRegistry.IndexerGotTyped(Subject, GetMemberId,
 			_match1, _match2, _match3, _match4, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(IParameter<TParameter> value)
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, T2, T3, T4, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, _match2, _match3, _match4, (IParameterMatch<TParameter>)value, ParametersDescription);
 
 	/// <inheritdoc />
 	public override VerificationResult<TSubject> Set(TParameter value,
 		[CallerArgumentExpression(nameof(value))]
 		string doNotPopulateThisValue = "")
-		=> MockRegistry.IndexerSetTyped<TSubject, T1, T2, T3, T4, TParameter>(Subject, SetMemberId,
+		=> MockRegistry.IndexerSetTyped(Subject, SetMemberId,
 			_match1, _match2, _match3, _match4,
 			(IParameterMatch<TParameter>)It.Is(value, doNotPopulateThisValue), ParametersDescription);
 }

@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
-using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
@@ -131,8 +130,8 @@ internal record Method
 			}
 
 			// Compare parameters ignoring nullability annotations
-			MethodParameter[] xParams = x.Parameters.AsArray()!;
-			MethodParameter[] yParams = y.Parameters.AsArray()!;
+			MethodParameter[] xParams = x.Parameters.AsArray();
+			MethodParameter[] yParams = y.Parameters.AsArray();
 
 			for (int i = 0; i < xParams.Length; i++)
 			{
