@@ -13,7 +13,7 @@ namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the case of an interface mock with an indexer, setup the indexer and verify
-///     the getter was called exactly <see cref="N" /> times.
+///     that both the getter and the setter were called exactly <see cref="N" /> times.
 /// </summary>
 public class CompleteIndexerBenchmarks : BenchmarksBase
 {
@@ -32,9 +32,11 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = sut[42];
+			sut[42] = "bar";
 		}
 
 		sut.Mock.Verify[It.IsAny<int>()].Got().Exactly(N);
+		sut.Mock.Verify[It.IsAny<int>()].Set(It.IsAny<string>()).Exactly(N);
 	}
 
 	/// <summary>
@@ -50,9 +52,11 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = sut[42];
+			sut[42] = "bar";
 		}
 
 		mock.Verify(x => x[Moq.It.IsAny<int>()], Times.Exactly(N));
+		mock.VerifySet(x => x[Moq.It.IsAny<int>()] = Moq.It.IsAny<string>(), Times.Exactly(N));
 	}
 
 	/// <summary>
@@ -67,9 +71,11 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = mock[42];
+			mock[42] = "bar";
 		}
 
 		_ = mock.Received(N)[Arg.Any<int>()];
+		mock.Received(N)[Arg.Any<int>()] = Arg.Any<string>();
 	}
 
 	/// <summary>
@@ -84,9 +90,11 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = mock[42];
+			mock[42] = "bar";
 		}
 
 		A.CallTo(() => mock[A<int>.Ignored]).MustHaveHappened(N, FakeItEasy.Times.Exactly);
+		A.CallToSet(() => mock[A<int>.Ignored]).MustHaveHappened(N, FakeItEasy.Times.Exactly);
 	}
 
 	/// <summary>
@@ -102,9 +110,11 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = sut[42];
+			sut[42] = "bar";
 		}
 
 		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Called(Count.Exactly(N));
+		imposter[Imposter.Abstractions.Arg<int>.Any()].Setter().Called(Count.Exactly(N));
 	}
 
 	/* Indexers not supported on TUnit.Mocks
@@ -120,6 +130,7 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = mock.Object[42];
+			mock.Object[42] = "bar";
 		}
 
 		mock[Any<int>()].WasCalled(TUnit.Mocks.Times.Exactly(N));

@@ -12,7 +12,7 @@ namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
 /// <summary>
 ///     In this benchmark we check the case of an interface mock with a property, setup the property and verify
-///     the getter was called exactly <see cref="N" /> times.
+///     that both the getter and the setter were called exactly <see cref="N" /> times.
 /// </summary>
 public class CompletePropertyBenchmarks : BenchmarksBase
 {
@@ -31,9 +31,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = sut.Counter;
+			sut.Counter = i;
 		}
 
 		sut.Mock.Verify.Counter.Got().Exactly(N);
+		sut.Mock.Verify.Counter.Set(It.IsAny<int>()).Exactly(N);
 	}
 
 	/// <summary>
@@ -49,9 +51,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = sut.Counter;
+			sut.Counter = i;
 		}
 
 		mock.VerifyGet(x => x.Counter, Times.Exactly(N));
+		mock.VerifySet(x => x.Counter = Moq.It.IsAny<int>(), Times.Exactly(N));
 	}
 
 	/// <summary>
@@ -66,9 +70,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = mock.Counter;
+			mock.Counter = i;
 		}
 
 		_ = mock.Received(N).Counter;
+		mock.Received(N).Counter = NSubstitute.Arg.Any<int>();
 	}
 
 	/// <summary>
@@ -83,9 +89,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = mock.Counter;
+			mock.Counter = i;
 		}
 
 		A.CallTo(() => mock.Counter).MustHaveHappened(N, FakeItEasy.Times.Exactly);
+		A.CallToSet(() => mock.Counter).MustHaveHappened(N, FakeItEasy.Times.Exactly);
 	}
 
 	/// <summary>
@@ -101,9 +109,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = sut.Counter;
+			sut.Counter = i;
 		}
 
 		imposter.Counter.Getter().Called(Count.Exactly(N));
+		imposter.Counter.Setter(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Exactly(N));
 	}
 
 	/// <summary>
@@ -119,9 +129,11 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		for (int i = 0; i < N; i++)
 		{
 			_ = sut.Counter;
+			sut.Counter = i;
 		}
 
 		mock.Counter.WasCalled(TUnit.Mocks.Times.Exactly(N));
+		mock.Counter.Setter.WasCalled(TUnit.Mocks.Times.Exactly(N));
 	}
 
 	public interface IMyPropertyInterface
