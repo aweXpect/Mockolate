@@ -54,7 +54,7 @@ framework and/or `<LangVersion>` to resolve it.
 These fire on every compilation target, including .NET 9+ / C# 13+:
 
 - Parameters marked `out`, `ref`, or `ref readonly` whose type is a non-`Span<T>` /
-  non-`ReadOnlySpan<T>` ref struct — the mock can't round-trip the value through
+  non-`ReadOnlySpan<T>` ref struct - the mock can't round-trip the value through
   `IOutParameter<T>` / `IRefParameter<T>` when `T` is a ref struct.
 - Methods returning a non-`Span<T>` / non-`ReadOnlySpan<T>` ref struct.
 

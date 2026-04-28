@@ -148,7 +148,7 @@ or your own `ref struct Packet`) using these matchers:
   predicate can read the struct's fields at the time the call is made.
 - `It.IsRefStructBy<T, TKey>(projection)` / `It.IsRefStructBy<T, TKey>(projection, predicate)`:
   For ref-struct-keyed indexers, projects the key to an equatable value so writes and reads can
-  be correlated. Works at any arity — apply it to every ref-struct slot and non-ref-struct slots
+  be correlated. Works at any arity - apply it to every ref-struct slot and non-ref-struct slots
   contribute their raw value to the composite dispatch key (see *Indexer storage* in the remarks).
 
 ```csharp
@@ -196,7 +196,7 @@ generic delegates:
   `Callbacks<T>` builder (`InParallel`, `When`, `For`, `Only`, `TransitionTo`) are not offered
   for ref-struct parameters.
 - **Verify.** `Verify` counts calls to the method but cannot match on the parameter value after
-  the fact — the ref-struct value isn't retained past the call. Use a setup-time matcher to
+  the fact - the ref-struct value isn't retained past the call. Use a setup-time matcher to
   filter at call time.
 - **Indexer storage.** By default, values written through a ref-struct-keyed indexer setter are
   not read back by the getter. Apply `It.IsRefStructBy<T, TKey>(projection)` to every ref-struct
