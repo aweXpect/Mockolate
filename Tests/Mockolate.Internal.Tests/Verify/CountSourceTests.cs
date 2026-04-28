@@ -1,152 +1,43 @@
+using System.Reflection;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Verify;
 
 namespace Mockolate.Internal.Tests.Verify;
 
-/// <summary>
-///     Direct coverage for the count-source classes in <c>MethodCountSources.cs</c>. Each test takes a
-///     <see cref="MockRegistry" /> wired with a typed <c>FastMockInteractions</c> buffer, drives the
-///     allocation-free fast path via the registry's <c>Verify*Typed</c> helpers, and runs both the
-///     matching <c>Count()</c> path (via <c>.Once()</c>/<c>.Exactly(n)</c>) and, for method sources,
-///     the <c>CountAll()</c> path (via <c>.AnyParameters().Exactly(n)</c>).
-/// </summary>
 public class CountSourceTests
 {
 	[Fact]
-	public async Task Method0_FastPath_Count_AndCountAll_AreExercised()
+	public async Task EventCountSource_Subscribe_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastMethod0Buffer buffer = store.InstallMethod(0);
+		FastEventBuffer buffer = store.InstallEventSubscribe(0);
 		MockRegistry registry = new(MockBehavior.Default, store);
 
-		buffer.Append("Foo");
-		buffer.Append("Foo");
-		buffer.Append("Foo");
+		MethodInfo m = typeof(CountSourceTests).GetMethod(
+			nameof(EventCountSource_Subscribe_Count_IsExercised))!;
+		buffer.Append("OnFoo", null, m);
+		buffer.Append("OnFoo", null, m);
 
-		registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Exactly(3);
-		registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").AnyParameters().Exactly(3);
+		registry.SubscribedToTyped(new object(), 0, "OnFoo").Twice();
 
 		await That(true).IsTrue();
 	}
 
 	[Fact]
-	public async Task Method1_FastPath_Count_AndCountAll_AreExercised()
+	public async Task EventCountSource_Unsubscribe_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		FastEventBuffer buffer = store.InstallEventUnsubscribe(0);
 		MockRegistry registry = new(MockBehavior.Default, store);
 
-		buffer.Append("Foo", 1);
-		buffer.Append("Foo", 2);
+		MethodInfo m = typeof(CountSourceTests).GetMethod(
+			nameof(EventCountSource_Unsubscribe_Count_IsExercised))!;
+		buffer.Append("OnFoo", null, m);
+		buffer.Append("OnFoo", null, m);
+		buffer.Append("OnFoo", null, m);
 
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(1), () => "Foo(1)").Once();
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(99), () => "Foo(99)").AnyParameters().Exactly(2);
-
-		await That(true).IsTrue();
-	}
-
-	[Fact]
-	public async Task Method2_FastPath_Count_AndCountAll_AreExercised()
-	{
-		FastMockInteractions store = new(1);
-		FastMethod2Buffer<int, string> buffer = store.InstallMethod<int, string>(0);
-		MockRegistry registry = new(MockBehavior.Default, store);
-
-		buffer.Append("Foo", 1, "a");
-		buffer.Append("Foo", 2, "b");
-
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(1),
-			(IParameterMatch<string>)It.Is<string>("a"), () => "Foo(1, a)").Once();
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(99),
-			(IParameterMatch<string>)It.Is<string>("z"), () => "Foo(99, z)").AnyParameters().Exactly(2);
-
-		await That(true).IsTrue();
-	}
-
-	[Fact]
-	public async Task Method3_FastPath_Count_AndCountAll_AreExercised()
-	{
-		FastMockInteractions store = new(1);
-		FastMethod3Buffer<int, string, bool> buffer = store.InstallMethod<int, string, bool>(0);
-		MockRegistry registry = new(MockBehavior.Default, store);
-
-		buffer.Append("Foo", 1, "a", true);
-		buffer.Append("Foo", 2, "b", false);
-		buffer.Append("Foo", 1, "a", true);
-
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(1),
-			(IParameterMatch<string>)It.Is<string>("a"),
-			(IParameterMatch<bool>)It.Is(true),
-			() => "Foo(1, a, true)").Twice();
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(99),
-			(IParameterMatch<string>)It.Is<string>("z"),
-			(IParameterMatch<bool>)It.Is(false),
-			() => "Foo(99, z, false)").AnyParameters().Exactly(3);
-
-		await That(true).IsTrue();
-	}
-
-	[Fact]
-	public async Task Method4_FastPath_Count_AndCountAll_AreExercised()
-	{
-		FastMockInteractions store = new(1);
-		FastMethod4Buffer<int, string, bool, double> buffer =
-			store.InstallMethod<int, string, bool, double>(0);
-		MockRegistry registry = new(MockBehavior.Default, store);
-
-		buffer.Append("Foo", 1, "a", true, 1.5);
-		buffer.Append("Foo", 2, "b", false, 2.5);
-
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(1),
-			(IParameterMatch<string>)It.Is<string>("a"),
-			(IParameterMatch<bool>)It.Is(true),
-			(IParameterMatch<double>)It.Is(1.5),
-			() => "Foo(1, a, true, 1.5)").Once();
-		registry.VerifyMethod(new object(), 0, "Foo",
-			(IParameterMatch<int>)It.Is(99),
-			(IParameterMatch<string>)It.Is<string>("z"),
-			(IParameterMatch<bool>)It.Is(false),
-			(IParameterMatch<double>)It.Is(0.0),
-			() => "Foo(99, z, false, 0.0)").AnyParameters().Exactly(2);
-
-		await That(true).IsTrue();
-	}
-
-	[Fact]
-	public async Task PropertyGetter_FastPath_Count_IsExercised()
-	{
-		FastMockInteractions store = new(1);
-		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
-		MockRegistry registry = new(MockBehavior.Default, store);
-
-		buffer.Append("P");
-		buffer.Append("P");
-
-		registry.VerifyPropertyTyped(new object(), 0, "P").Twice();
-
-		await That(true).IsTrue();
-	}
-
-	[Fact]
-	public async Task PropertySetter_FastPath_Count_IsExercised()
-	{
-		FastMockInteractions store = new(1);
-		FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
-		MockRegistry registry = new(MockBehavior.Default, store);
-
-		buffer.Append("P", 1);
-		buffer.Append("P", 2);
-		buffer.Append("P", 1);
-
-		registry.VerifyPropertyTyped(new object(), 0, "P", (IParameterMatch<int>)It.Is(1)).Twice();
+		registry.UnsubscribedFromTyped(new object(), 0, "OnFoo").Exactly(3);
 
 		await That(true).IsTrue();
 	}
@@ -316,36 +207,139 @@ public class CountSourceTests
 	}
 
 	[Fact]
-	public async Task EventCountSource_Subscribe_Count_IsExercised()
+	public async Task Method0_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastEventBuffer buffer = store.InstallEventSubscribe(0);
+		FastMethod0Buffer buffer = store.InstallMethod(0);
 		MockRegistry registry = new(MockBehavior.Default, store);
 
-		System.Reflection.MethodInfo m = typeof(CountSourceTests).GetMethod(
-			nameof(EventCountSource_Subscribe_Count_IsExercised))!;
-		buffer.Append("OnFoo", null, m);
-		buffer.Append("OnFoo", null, m);
+		buffer.Append("Foo");
+		buffer.Append("Foo");
+		buffer.Append("Foo");
 
-		registry.SubscribedToTyped(new object(), 0, "OnFoo").Twice();
+		registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Exactly(3);
+		registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").AnyParameters().Exactly(3);
 
 		await That(true).IsTrue();
 	}
 
 	[Fact]
-	public async Task EventCountSource_Unsubscribe_Count_IsExercised()
+	public async Task Method1_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastEventBuffer buffer = store.InstallEventUnsubscribe(0);
+		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
 		MockRegistry registry = new(MockBehavior.Default, store);
 
-		System.Reflection.MethodInfo m = typeof(CountSourceTests).GetMethod(
-			nameof(EventCountSource_Unsubscribe_Count_IsExercised))!;
-		buffer.Append("OnFoo", null, m);
-		buffer.Append("OnFoo", null, m);
-		buffer.Append("OnFoo", null, m);
+		buffer.Append("Foo", 1);
+		buffer.Append("Foo", 2);
 
-		registry.UnsubscribedFromTyped(new object(), 0, "OnFoo").Exactly(3);
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(1), () => "Foo(1)").Once();
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(99), () => "Foo(99)").AnyParameters().Exactly(2);
+
+		await That(true).IsTrue();
+	}
+
+	[Fact]
+	public async Task Method2_FastPath_Count_AndCountAll_AreExercised()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod2Buffer<int, string> buffer = store.InstallMethod<int, string>(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+
+		buffer.Append("Foo", 1, "a");
+		buffer.Append("Foo", 2, "b");
+
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("a"), () => "Foo(1, a)").Once();
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(99),
+			(IParameterMatch<string>)It.Is<string>("z"), () => "Foo(99, z)").AnyParameters().Exactly(2);
+
+		await That(true).IsTrue();
+	}
+
+	[Fact]
+	public async Task Method3_FastPath_Count_AndCountAll_AreExercised()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod3Buffer<int, string, bool> buffer = store.InstallMethod<int, string, bool>(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+
+		buffer.Append("Foo", 1, "a", true);
+		buffer.Append("Foo", 2, "b", false);
+		buffer.Append("Foo", 1, "a", true);
+
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("a"),
+			(IParameterMatch<bool>)It.Is(true),
+			() => "Foo(1, a, true)").Twice();
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(99),
+			(IParameterMatch<string>)It.Is<string>("z"),
+			(IParameterMatch<bool>)It.Is(false),
+			() => "Foo(99, z, false)").AnyParameters().Exactly(3);
+
+		await That(true).IsTrue();
+	}
+
+	[Fact]
+	public async Task Method4_FastPath_Count_AndCountAll_AreExercised()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod4Buffer<int, string, bool, double> buffer =
+			store.InstallMethod<int, string, bool, double>(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+
+		buffer.Append("Foo", 1, "a", true, 1.5);
+		buffer.Append("Foo", 2, "b", false, 2.5);
+
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<string>)It.Is<string>("a"),
+			(IParameterMatch<bool>)It.Is(true),
+			(IParameterMatch<double>)It.Is(1.5),
+			() => "Foo(1, a, true, 1.5)").Once();
+		registry.VerifyMethod(new object(), 0, "Foo",
+			(IParameterMatch<int>)It.Is(99),
+			(IParameterMatch<string>)It.Is<string>("z"),
+			(IParameterMatch<bool>)It.Is(false),
+			(IParameterMatch<double>)It.Is(0.0),
+			() => "Foo(99, z, false, 0.0)").AnyParameters().Exactly(2);
+
+		await That(true).IsTrue();
+	}
+
+	[Fact]
+	public async Task PropertyGetter_FastPath_Count_IsExercised()
+	{
+		FastMockInteractions store = new(1);
+		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+
+		buffer.Append("P");
+		buffer.Append("P");
+
+		registry.VerifyPropertyTyped(new object(), 0, "P").Twice();
+
+		await That(true).IsTrue();
+	}
+
+	[Fact]
+	public async Task PropertySetter_FastPath_Count_IsExercised()
+	{
+		FastMockInteractions store = new(1);
+		FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+
+		buffer.Append("P", 1);
+		buffer.Append("P", 2);
+		buffer.Append("P", 1);
+
+		registry.VerifyPropertyTyped(new object(), 0, "P", (IParameterMatch<int>)It.Is(1)).Twice();
 
 		await That(true).IsTrue();
 	}

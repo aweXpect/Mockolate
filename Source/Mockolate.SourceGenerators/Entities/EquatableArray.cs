@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Mockolate.SourceGenerators.Internals;
+namespace Mockolate.SourceGenerators.Entities;
 
 /// <summary>
 ///     An immutable, equatable array. This is equivalent to <see cref="Array" /> but with value equality support.
@@ -61,7 +61,7 @@ public readonly struct EquatableArray<T> : IEquatable<EquatableArray<T>>, IEnume
 	/// <inheritdoc />
 	public override int GetHashCode()
 	{
-		if (_array is not T[] array)
+		if (_array is not { } array)
 		{
 			return 0;
 		}

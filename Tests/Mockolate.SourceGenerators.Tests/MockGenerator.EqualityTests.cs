@@ -16,32 +16,14 @@ public sealed class MockGeneratorEqualityTests
 	public sealed class RefStructAggregateTests
 	{
 		[Fact]
-		public async Task Equals_WithEqualMethodAndIndexerSetups_IsTrue()
+		public async Task Equals_WithDifferentType_IsFalse()
 		{
 			RefStructAggregate a = new(
-				new EquatableArray<MethodSetupKey>([new MethodSetupKey(5, false), new MethodSetupKey(6, true)]),
-				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, true, false)]));
-			RefStructAggregate b = new(
-				new EquatableArray<MethodSetupKey>([new MethodSetupKey(5, false), new MethodSetupKey(6, true)]),
-				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, true, false)]));
-
-			await That(a.Equals(b)).IsTrue();
-			await That(a.Equals((object)b)).IsTrue();
-			await That(a.GetHashCode()).IsEqualTo(b.GetHashCode());
-		}
-
-		[Fact]
-		public async Task Equals_WithDifferingMethodSetups_IsFalse()
-		{
-			RefStructAggregate a = new(
-				new EquatableArray<MethodSetupKey>([new MethodSetupKey(5, false)]),
-				new EquatableArray<RefStructIndexerSetup>([]));
-			RefStructAggregate b = new(
-				new EquatableArray<MethodSetupKey>([new MethodSetupKey(6, false)]),
+				new EquatableArray<MethodSetupKey>([]),
 				new EquatableArray<RefStructIndexerSetup>([]));
 
-			await That(a.Equals(b)).IsFalse();
-			await That(a.Equals((object)b)).IsFalse();
+			// ReSharper disable once SuspiciousTypeConversion.Global
+			await That(a.Equals("not an aggregate")).IsFalse();
 		}
 
 		[Fact]
@@ -49,12 +31,41 @@ public sealed class MockGeneratorEqualityTests
 		{
 			RefStructAggregate a = new(
 				new EquatableArray<MethodSetupKey>([]),
-				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, true, false)]));
+				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, true, false),]));
 			RefStructAggregate b = new(
 				new EquatableArray<MethodSetupKey>([]),
-				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, false, true)]));
+				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, false, true),]));
 
 			await That(a.Equals(b)).IsFalse();
+		}
+
+		[Fact]
+		public async Task Equals_WithDifferingMethodSetups_IsFalse()
+		{
+			RefStructAggregate a = new(
+				new EquatableArray<MethodSetupKey>([new MethodSetupKey(5, false),]),
+				new EquatableArray<RefStructIndexerSetup>([]));
+			RefStructAggregate b = new(
+				new EquatableArray<MethodSetupKey>([new MethodSetupKey(6, false),]),
+				new EquatableArray<RefStructIndexerSetup>([]));
+
+			await That(a.Equals(b)).IsFalse();
+			await That(a.Equals((object)b)).IsFalse();
+		}
+
+		[Fact]
+		public async Task Equals_WithEqualMethodAndIndexerSetups_IsTrue()
+		{
+			RefStructAggregate a = new(
+				new EquatableArray<MethodSetupKey>([new MethodSetupKey(5, false), new MethodSetupKey(6, true),]),
+				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, true, false),]));
+			RefStructAggregate b = new(
+				new EquatableArray<MethodSetupKey>([new MethodSetupKey(5, false), new MethodSetupKey(6, true),]),
+				new EquatableArray<RefStructIndexerSetup>([new RefStructIndexerSetup(5, true, false),]));
+
+			await That(a.Equals(b)).IsTrue();
+			await That(a.Equals((object)b)).IsTrue();
+			await That(a.GetHashCode()).IsEqualTo(b.GetHashCode());
 		}
 
 		[Fact]
@@ -65,31 +76,77 @@ public sealed class MockGeneratorEqualityTests
 				new EquatableArray<RefStructIndexerSetup>([]));
 
 			await That(a.Equals(null)).IsFalse();
-			await That(a.Equals((object?)null)).IsFalse();
-		}
-
-		[Fact]
-		public async Task Equals_WithDifferentType_IsFalse()
-		{
-			RefStructAggregate a = new(
-				new EquatableArray<MethodSetupKey>([]),
-				new EquatableArray<RefStructIndexerSetup>([]));
-
-			await That(a.Equals((object)"not an aggregate")).IsFalse();
+			await That(a!.Equals((object?)null)).IsFalse();
 		}
 	}
 
 	public sealed class NamedMockTests
 	{
-		private static MockClass CreateMockClass(string source = "public interface IFoo { void M(); }",
-			string typeName = "IFoo")
+		[Fact]
+		public async Task Equals_WhenAdditionalClassesDiffer_IsFalse()
 		{
-			SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
-			CSharpCompilation compilation = CSharpCompilation.Create("test",
-				[tree],
-				[MetadataReference.CreateFromFile(typeof(object).Assembly.Location)]);
-			INamedTypeSymbol symbol = compilation.GetTypeByMetadataName(typeName)!;
-			return new MockClass([symbol], compilation.Assembly);
+			MockClass mc = CreateMockClass();
+			NamedMock a = new("F", "P", mc,
+				new EquatableArray<NamedClass>([new NamedClass("A", mc),]));
+			NamedMock b = new("F", "P", mc,
+				new EquatableArray<NamedClass>([new NamedClass("B", mc),]));
+
+			await That(a.Equals(b)).IsFalse();
+		}
+
+		[Fact]
+		public async Task Equals_WhenAdditionalClassesPresentOnOneAndNullOnOther_IsFalse()
+		{
+			MockClass mc = CreateMockClass();
+			NamedMock withAdditional = new("F", "P", mc,
+				new EquatableArray<NamedClass>([new NamedClass("X", mc),]));
+			NamedMock withNull = new("F", "P", mc, null);
+
+			await That(withAdditional.Equals(withNull)).IsFalse();
+			await That(withNull.Equals(withAdditional)).IsFalse();
+		}
+
+		[Fact]
+		public async Task Equals_WhenBothAdditionalClassesNull_IsTrue()
+		{
+			MockClass mc = CreateMockClass();
+			NamedMock a = new("F", "P", mc, null);
+			NamedMock b = new("F", "P", mc, null);
+
+			await That(a.Equals(b)).IsTrue();
+		}
+
+		[Fact]
+		public async Task Equals_WithDifferentFileName_IsFalse()
+		{
+			MockClass mc = CreateMockClass();
+			NamedMock a = new("File1", "Parent", mc, null);
+			NamedMock b = new("File2", "Parent", mc, null);
+
+			await That(a.Equals(b)).IsFalse();
+		}
+
+		[Fact]
+		public async Task Equals_WithDifferentMockClass_IsFalse()
+		{
+			MockClass mcA = CreateMockClass();
+			MockClass mcB = CreateMockClass(
+				"public interface IBar { void M(); }",
+				"IBar");
+			NamedMock a = new("File", "Parent", mcA, null);
+			NamedMock b = new("File", "Parent", mcB, null);
+
+			await That(a.Equals(b)).IsFalse();
+		}
+
+		[Fact]
+		public async Task Equals_WithDifferentParentName_IsFalse()
+		{
+			MockClass mc = CreateMockClass();
+			NamedMock a = new("File", "Parent1", mc, null);
+			NamedMock b = new("File", "Parent2", mc, null);
+
+			await That(a.Equals(b)).IsFalse();
 		}
 
 		[Fact]
@@ -110,75 +167,8 @@ public sealed class MockGeneratorEqualityTests
 			MockClass mc = CreateMockClass();
 			NamedMock a = new("F", "P", mc, null);
 
-			await That(a.Equals((NamedMock?)null)).IsFalse();
-			await That(a.Equals((object?)null)).IsFalse();
-		}
-
-		[Fact]
-		public async Task Equals_WithDifferentFileName_IsFalse()
-		{
-			MockClass mc = CreateMockClass();
-			NamedMock a = new("File1", "Parent", mc, null);
-			NamedMock b = new("File2", "Parent", mc, null);
-
-			await That(a.Equals(b)).IsFalse();
-		}
-
-		[Fact]
-		public async Task Equals_WithDifferentParentName_IsFalse()
-		{
-			MockClass mc = CreateMockClass();
-			NamedMock a = new("File", "Parent1", mc, null);
-			NamedMock b = new("File", "Parent2", mc, null);
-
-			await That(a.Equals(b)).IsFalse();
-		}
-
-		[Fact]
-		public async Task Equals_WithDifferentMockClass_IsFalse()
-		{
-			MockClass mcA = CreateMockClass();
-			MockClass mcB = CreateMockClass(
-				"public interface IBar { void M(); }",
-				"IBar");
-			NamedMock a = new("File", "Parent", mcA, null);
-			NamedMock b = new("File", "Parent", mcB, null);
-
-			await That(a.Equals(b)).IsFalse();
-		}
-
-		[Fact]
-		public async Task Equals_WhenAdditionalClassesPresentOnOneAndNullOnOther_IsFalse()
-		{
-			MockClass mc = CreateMockClass();
-			NamedMock withAdditional = new("F", "P", mc,
-				new EquatableArray<NamedClass>([new NamedClass("X", mc)]));
-			NamedMock withNull = new("F", "P", mc, null);
-
-			await That(withAdditional.Equals(withNull)).IsFalse();
-			await That(withNull.Equals(withAdditional)).IsFalse();
-		}
-
-		[Fact]
-		public async Task Equals_WhenBothAdditionalClassesNull_IsTrue()
-		{
-			MockClass mc = CreateMockClass();
-			NamedMock a = new("F", "P", mc, null);
-			NamedMock b = new("F", "P", mc, null);
-
-			await That(a.Equals(b)).IsTrue();
-		}
-
-		[Fact]
-		public async Task Equals_WhenAdditionalClassesDiffer_IsFalse()
-		{
-			MockClass mc = CreateMockClass();
-			NamedMock a = new("F", "P", mc,
-				new EquatableArray<NamedClass>([new NamedClass("A", mc)]));
-			NamedMock b = new("F", "P", mc,
-				new EquatableArray<NamedClass>([new NamedClass("B", mc)]));
-
-			await That(a.Equals(b)).IsFalse();
+			await That(a.Equals(null)).IsFalse();
+			await That(a!.Equals((object?)null)).IsFalse();
 		}
 
 		[Fact]
@@ -186,7 +176,7 @@ public sealed class MockGeneratorEqualityTests
 		{
 			MockClass mc = CreateMockClass();
 			NamedMock withAdditional = new("F", "P", mc,
-				new EquatableArray<NamedClass>([new NamedClass("X", mc)]));
+				new EquatableArray<NamedClass>([new NamedClass("X", mc),]));
 			NamedMock withNull = new("F", "P", mc, null);
 
 			// Different additionalClasses should produce different hash codes — can't guarantee
@@ -194,6 +184,17 @@ public sealed class MockGeneratorEqualityTests
 			_ = withAdditional.GetHashCode();
 			_ = withNull.GetHashCode();
 			await That(true).IsTrue();
+		}
+
+		private static MockClass CreateMockClass(string source = "public interface IFoo { void M(); }",
+			string typeName = "IFoo")
+		{
+			SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
+			CSharpCompilation compilation = CSharpCompilation.Create("test",
+				[tree,],
+				[MetadataReference.CreateFromFile(typeof(object).Assembly.Location),]);
+			INamedTypeSymbol symbol = compilation.GetTypeByMetadataName(typeName)!;
+			return new MockClass([symbol,], compilation.Assembly);
 		}
 	}
 }

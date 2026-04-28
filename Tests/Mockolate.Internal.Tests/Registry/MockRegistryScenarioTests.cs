@@ -6,61 +6,21 @@ using Mockolate.Setup;
 
 namespace Mockolate.Internal.Tests.Registry;
 
-/// <summary>
-///     Coverage for the scenario-scoped branches in <c>MockRegistry.Interactions.cs</c> — the
-///     <c>!string.IsNullOrEmpty(Scenario) &amp;&amp; Setup.TryGetScenario(...)</c> guards on
-///     <c>GetMethodSetups</c>, <c>GetIndexerSetup</c>, and the lazy-default <c>ApplyIndexerGetter</c>
-///     overload's <c>setup is not null</c> path.
-/// </summary>
 public sealed class MockRegistryScenarioTests
 {
 	[Fact]
-	public async Task GetMethodSetups_WithActiveScenarioAndScopedSetup_YieldsScopedThenGlobal()
+	public async Task ApplyIndexerGetter_WithLazyDefault_AndNonNullSetup_DispatchesToSetup()
 	{
 		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-		FakeMethodSetup global = new();
-		FakeMethodSetup scoped = new();
-		registry.Setup.Methods.Add(global);
-		registry.Setup.GetOrCreateScenario("a").Methods.Add(scoped);
+		FakeIndexerSetup setup = new(true);
+		IndexerGetterAccess<int> access = new(1);
 
-		registry.TransitionTo("a");
+		int callCount = 0;
+		int result = registry.ApplyIndexerGetter(access, setup, () => ++callCount, 0);
 
-		List<MethodSetup> setups = registry.GetMethodSetups<MethodSetup>("foo").ToList();
-
-		await That(setups).HasCount(2);
-		await That(setups[0]).IsSameAs(scoped);
-		await That(setups[1]).IsSameAs(global);
-	}
-
-	[Fact]
-	public async Task GetMethodSetups_WithActiveScenarioButNoScopedBucket_FallsBackToGlobal()
-	{
-		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-		FakeMethodSetup global = new();
-		registry.Setup.Methods.Add(global);
-
-		registry.TransitionTo("never-registered");
-
-		List<MethodSetup> setups = registry.GetMethodSetups<MethodSetup>("foo").ToList();
-
-		await That(setups).HasCount(1);
-		await That(setups[0]).IsSameAs(global);
-	}
-
-	[Fact]
-	public async Task GetIndexerSetup_ByPredicate_WithActiveScenarioButPredicateRejectsScoped_FallsBackToGlobal()
-	{
-		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-		FakeIndexerSetup global = new(true);
-		FakeIndexerSetup scoped = new(true);
-		registry.Setup.Indexers.Add(global);
-		registry.Setup.GetOrCreateScenario("a").Indexers.Add(scoped);
-
-		registry.TransitionTo("a");
-
-		IndexerSetup? result = registry.GetIndexerSetup<IndexerSetup>(s => ReferenceEquals(s, global));
-
-		await That(result).IsSameAs(global);
+		// FakeIndexerSetup.GetResult<TResult>(access, behavior, defaultValueGenerator) returns the generator's value.
+		await That(result).IsEqualTo(1);
+		await That(callCount).IsEqualTo(1);
 	}
 
 	[Fact]
@@ -96,17 +56,51 @@ public sealed class MockRegistryScenarioTests
 	}
 
 	[Fact]
-	public async Task ApplyIndexerGetter_WithLazyDefault_AndNonNullSetup_DispatchesToSetup()
+	public async Task GetIndexerSetup_ByPredicate_WithActiveScenarioButPredicateRejectsScoped_FallsBackToGlobal()
 	{
 		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-		FakeIndexerSetup setup = new(true);
-		IndexerGetterAccess<int> access = new(1);
+		FakeIndexerSetup global = new(true);
+		FakeIndexerSetup scoped = new(true);
+		registry.Setup.Indexers.Add(global);
+		registry.Setup.GetOrCreateScenario("a").Indexers.Add(scoped);
 
-		int callCount = 0;
-		int result = registry.ApplyIndexerGetter(access, setup, () => ++callCount, 0);
+		registry.TransitionTo("a");
 
-		// FakeIndexerSetup.GetResult<TResult>(access, behavior, defaultValueGenerator) returns the generator's value.
-		await That(result).IsEqualTo(1);
-		await That(callCount).IsEqualTo(1);
+		IndexerSetup? result = registry.GetIndexerSetup<IndexerSetup>(s => ReferenceEquals(s, global));
+
+		await That(result).IsSameAs(global);
+	}
+
+	[Fact]
+	public async Task GetMethodSetups_WithActiveScenarioAndScopedSetup_YieldsScopedThenGlobal()
+	{
+		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+		FakeMethodSetup global = new();
+		FakeMethodSetup scoped = new();
+		registry.Setup.Methods.Add(global);
+		registry.Setup.GetOrCreateScenario("a").Methods.Add(scoped);
+
+		registry.TransitionTo("a");
+
+		List<MethodSetup> setups = registry.GetMethodSetups<MethodSetup>("foo").ToList();
+
+		await That(setups).HasCount(2);
+		await That(setups[0]).IsSameAs(scoped);
+		await That(setups[1]).IsSameAs(global);
+	}
+
+	[Fact]
+	public async Task GetMethodSetups_WithActiveScenarioButNoScopedBucket_FallsBackToGlobal()
+	{
+		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+		FakeMethodSetup global = new();
+		registry.Setup.Methods.Add(global);
+
+		registry.TransitionTo("never-registered");
+
+		List<MethodSetup> setups = registry.GetMethodSetups<MethodSetup>("foo").ToList();
+
+		await That(setups).HasCount(1);
+		await That(setups[0]).IsSameAs(global);
 	}
 }
