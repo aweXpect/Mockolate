@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Mockolate.Exceptions;
@@ -856,6 +858,67 @@ public sealed class MockRegistryTests
 			bool result = registry.SetProperty("P", 42);
 
 			await That(result).IsFalse();
+		}
+	}
+
+	public sealed class TryGetBufferTests
+	{
+		[Fact]
+		public async Task VerifyMethodTyped_WithNonFastInteractions_ShouldFallToSlowPath()
+		{
+			// Pins the `Interactions is FastMockInteractions` type-pattern guard at the top of
+			// TryGetBuffer. With a non-fast IMockInteractions implementation, the fast-path branch
+			// must short-circuit and the verification must succeed via the slow path. (Lives in the
+			// internal test project because the custom IMockInteractions implementation needs to
+			// satisfy the internal `Verified` contract.)
+			NonFastInteractions store = new();
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Never();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+
+		private sealed class NonFastInteractions : IMockInteractions
+		{
+			private readonly List<IInteraction> _items = new();
+
+			public bool SkipInteractionRecording => false;
+
+			public int Count => _items.Count;
+
+			public event EventHandler? InteractionAdded
+			{
+				add { }
+				remove { }
+			}
+
+			public event EventHandler? OnClearing
+			{
+				add { }
+				remove { }
+			}
+
+			public TInteraction RegisterInteraction<TInteraction>(TInteraction interaction)
+				where TInteraction : IInteraction
+			{
+				_items.Add(interaction);
+				return interaction;
+			}
+
+			public IReadOnlyCollection<IInteraction> GetUnverifiedInteractions()
+				=> _items;
+
+			void IMockInteractions.Verified(IEnumerable<IInteraction> interactions) { }
+
+			public void Clear() => _items.Clear();
+
+			public IEnumerator<IInteraction> GetEnumerator() => _items.GetEnumerator();
+
+			IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
 		}
 	}
 }
