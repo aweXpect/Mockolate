@@ -132,11 +132,12 @@ internal static partial class Sources
 		string? cachedBufferRef = null)
 #pragma warning restore S107
 	{
-		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerGetterAccess<");
-		AppendIndexerParameterTypes(sb, parameters);
-		sb.Append("> ").Append(accessVarName).Append(" = new(");
-		AppendIndexerParameterArguments(sb, parameters);
-		sb.Append(");").AppendLine();
+		bool deferAccess = CanDeferIndexerAccess(parameters, cachedBufferRef);
+
+		if (!deferAccess)
+		{
+			EmitIndexerGetterAccessDeclaration(sb, indent, accessVarName, parameters);
+		}
 
 		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)")
 			.AppendLine();
@@ -164,7 +165,47 @@ internal static partial class Sources
 		sb.Append(indent).Append("}").AppendLine();
 
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
-			setupMemberIdRef ?? memberIdRef, isSetter: false);
+			setupMemberIdRef ?? memberIdRef, isSetter: false, deferAccess: deferAccess,
+			emitAccessDeclaration: deferAccess
+				? sbInner => EmitIndexerGetterAccessDeclaration(sbInner, indent, accessVarName, parameters)
+				: null);
+	}
+
+	/// <summary>
+	///     Emits the <c>IndexerGetterAccess&lt;T...&gt; access = new(...)</c> declaration line.
+	/// </summary>
+	private static void EmitIndexerGetterAccessDeclaration(StringBuilder sb, string indent, string accessVarName,
+		EquatableArray<MethodParameter> parameters)
+	{
+		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerGetterAccess<");
+		AppendIndexerParameterTypes(sb, parameters);
+		sb.Append("> ").Append(accessVarName).Append(" = new(");
+		AppendIndexerParameterArguments(sb, parameters);
+		sb.Append(");").AppendLine();
+	}
+
+	/// <summary>
+	///     Determines whether the access-struct allocation can be deferred past the snapshot-scan loop.
+	///     Only applied when the cached typed buffer is in use (so the recording branch never references the
+	///     access object) and when no parameter is a Span/ReadOnlySpan (whose wrapper allocation would otherwise
+	///     repeat per loop iteration).
+	/// </summary>
+	private static bool CanDeferIndexerAccess(EquatableArray<MethodParameter> parameters, string? cachedBufferRef)
+	{
+		if (cachedBufferRef is null)
+		{
+			return false;
+		}
+
+		foreach (MethodParameter p in parameters)
+		{
+			if (p.Type.SpecialGenericType is SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/// <summary>
@@ -183,11 +224,12 @@ internal static partial class Sources
 		string? cachedBufferRef = null)
 #pragma warning restore S107
 	{
-		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerSetterAccess<");
-		AppendIndexerParameterTypes(sb, parameters);
-		sb.Append(", ").AppendTypeOrWrapper(propertyType).Append("> ").Append(accessVarName).Append(" = new(");
-		AppendIndexerParameterArguments(sb, parameters);
-		sb.Append(", value);").AppendLine();
+		bool deferAccess = CanDeferIndexerAccess(parameters, cachedBufferRef);
+
+		if (!deferAccess)
+		{
+			EmitIndexerSetterAccessDeclaration(sb, indent, accessVarName, propertyType, parameters);
+		}
 
 		sb.Append(indent).Append("if (").Append(mockRegistry).Append(".Behavior.SkipInteractionRecording == false)")
 			.AppendLine();
@@ -216,7 +258,23 @@ internal static partial class Sources
 		sb.Append(indent).Append("}").AppendLine();
 
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
-			setupMemberIdRef, isSetter: true);
+			setupMemberIdRef, isSetter: true, deferAccess: deferAccess,
+			emitAccessDeclaration: deferAccess
+				? sbInner => EmitIndexerSetterAccessDeclaration(sbInner, indent, accessVarName, propertyType, parameters)
+				: null);
+	}
+
+	/// <summary>
+	///     Emits the <c>IndexerSetterAccess&lt;T..., TValue&gt; access = new(..., value)</c> declaration line.
+	/// </summary>
+	private static void EmitIndexerSetterAccessDeclaration(StringBuilder sb, string indent, string accessVarName,
+		Type propertyType, EquatableArray<MethodParameter> parameters)
+	{
+		sb.Append(indent).Append("global::Mockolate.Interactions.IndexerSetterAccess<");
+		AppendIndexerParameterTypes(sb, parameters);
+		sb.Append(", ").AppendTypeOrWrapper(propertyType).Append("> ").Append(accessVarName).Append(" = new(");
+		AppendIndexerParameterArguments(sb, parameters);
+		sb.Append(", value);").AppendLine();
 	}
 
 	/// <summary>
@@ -227,12 +285,16 @@ internal static partial class Sources
 	///     for setters) on the concrete <c>IndexerSetup&lt;TValue, T1, ...&gt;</c> instead of dispatching through
 	///     <c>IInteractiveIndexerSetup.Matches(IndexerAccess)</c>, which avoids the interface-cast and the
 	///     getter/setter type test on every snapshot entry.
+	///     When <paramref name="deferAccess" /> is <see langword="true" />, the snapshot scan references parameter
+	///     locals directly and <paramref name="emitAccessDeclaration" /> is invoked just before the scenario
+	///     fallback (which still consumes the access object). This keeps the access-struct allocation off the
+	///     snapshot-only fast path entirely.
 	/// </summary>
 #pragma warning disable S107 // Methods should not have too many parameters
 	private static void EmitIndexerSetupLookup(StringBuilder sb, string indent,
 		string mockRegistry, string accessVarName, string setupVarName,
 		Type propertyType, EquatableArray<MethodParameter> parameters, string? memberIdRef,
-		bool isSetter)
+		bool isSetter, bool deferAccess = false, Action<StringBuilder>? emitAccessDeclaration = null)
 #pragma warning restore S107
 	{
 		StringBuilder typedSetup = new("global::Mockolate.Setup.IndexerSetup<");
@@ -247,6 +309,11 @@ internal static partial class Sources
 
 		if (memberIdRef is null)
 		{
+			if (deferAccess)
+			{
+				emitAccessDeclaration?.Invoke(sb);
+			}
+
 			sb.Append(indent).Append(typedSetupName).Append("? ").Append(setupVarName).Append(" = ")
 				.Append(mockRegistry).Append(".GetIndexerSetup<").Append(typedSetupName).Append(">(")
 				.Append(accessVarName).Append(");").AppendLine();
@@ -271,15 +338,25 @@ internal static partial class Sources
 			.Append("] is ").Append(typedSetupName).Append(' ').Append(itemVar)
 			.Append(" && ").Append(itemVar).Append(".Matches(");
 		bool firstArg = true;
-		for (int i = 1; i <= parameters.Count; i++)
+		int paramIndex = 1;
+		foreach (MethodParameter p in parameters)
 		{
 			if (!firstArg)
 			{
 				sb.Append(", ");
 			}
 
-			sb.Append(accessVarName).Append(".Parameter").Append(i);
+			if (deferAccess)
+			{
+				sb.Append(p.Name);
+			}
+			else
+			{
+				sb.Append(accessVarName).Append(".Parameter").Append(paramIndex);
+			}
+
 			firstArg = false;
+			paramIndex++;
 		}
 
 		if (isSetter)
@@ -289,7 +366,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append(accessVarName).Append(".TypedValue");
+			sb.Append(deferAccess ? "value" : accessVarName + ".TypedValue");
 		}
 
 		sb.Append("))").AppendLine();
@@ -301,6 +378,11 @@ internal static partial class Sources
 		sb.Append(indent).Append("\t\t}").AppendLine();
 		sb.Append(indent).Append("\t}").AppendLine();
 		sb.Append(indent).Append('}').AppendLine();
+		if (deferAccess)
+		{
+			emitAccessDeclaration?.Invoke(sb);
+		}
+
 		sb.Append(indent).Append(setupVarName).Append(" ??= ").Append(mockRegistry)
 			.Append(".GetIndexerSetup<").Append(typedSetupName).Append(">(").Append(accessVarName).Append(");")
 			.AppendLine();

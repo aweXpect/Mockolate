@@ -100,7 +100,6 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new(index);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockolateBuffer_Indexer_int_Get.Append(index);
@@ -113,7 +112,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(access.Parameter1))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(index))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -121,6 +120,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int> access = new(index);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int>>(access);
 					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
 					          				{
@@ -133,7 +133,6 @@ public sealed partial class MockTests
 					          			}
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new(index, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockolateBuffer_Indexer_int_Set.Append(index, value);
@@ -146,7 +145,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(access.Parameter1, access.TypedValue))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int> s_setup && s_setup.Matches(index, value))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -154,6 +153,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, int> access = new(index, value);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int>>(access);
 					          				this.MockRegistry.ApplyIndexerSetter(access, setup, value, 0);
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
@@ -169,7 +169,6 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool?> access = new(index, isReadOnly);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockolateBuffer_Indexer_int_bool__Get.Append(index, isReadOnly);
@@ -182,7 +181,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, bool?> s_setup && s_setup.Matches(access.Parameter1, access.Parameter2))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, bool?> s_setup && s_setup.Matches(index, isReadOnly))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -190,6 +189,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerGetterAccess<int, bool?> access = new(index, isReadOnly);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int, bool?>>(access);
 					          				if (this.MockRegistry.Wraps is not global::MyCode.IMyService wraps)
 					          				{
@@ -208,7 +208,6 @@ public sealed partial class MockTests
 					          		{
 					          			set
 					          			{
-					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new(index, isWriteOnly, value);
 					          				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 					          				{
 					          					this.MockolateBuffer_Indexer_int_string_Set.Append(index, isWriteOnly, value);
@@ -221,7 +220,7 @@ public sealed partial class MockTests
 					          					{
 					          						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
 					          						{
-					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, string> s_setup && s_setup.Matches(access.Parameter1, access.Parameter2, access.TypedValue))
+					          							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<int, int, string> s_setup && s_setup.Matches(index, isWriteOnly, value))
 					          							{
 					          								setup = s_setup;
 					          								break;
@@ -229,6 +228,7 @@ public sealed partial class MockTests
 					          						}
 					          					}
 					          				}
+					          				global::Mockolate.Interactions.IndexerSetterAccess<int, string, int> access = new(index, isWriteOnly, value);
 					          				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<int, int, string>>(access);
 					          				this.MockRegistry.ApplyIndexerSetter(access, setup, value, 2);
 					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
