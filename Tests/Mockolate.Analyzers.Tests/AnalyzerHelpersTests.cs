@@ -12,7 +12,7 @@ namespace Mockolate.Analyzers.Tests;
 public class AnalyzerHelpersTests
 {
 	[Fact]
-	public async Task GetSingleInvocationTypeArgumentOrNull_NonGenericMethod_ReturnsNull()
+	public async Task WhenInvokedMethodIsNotGeneric_ShouldNotReturnAnyTypeArgument()
 	{
 		const string source = """
 			public class C
@@ -29,7 +29,7 @@ public class AnalyzerHelpersTests
 	}
 
 	[Fact]
-	public async Task GetSingleInvocationTypeArgumentOrNull_GenericMethod_ReturnsFirstTypeArgument()
+	public async Task WhenInvokedMethodIsGeneric_ShouldReturnFirstTypeArgument()
 	{
 		const string source = """
 			public class C
@@ -47,7 +47,7 @@ public class AnalyzerHelpersTests
 	}
 
 	[Fact]
-	public async Task GetTypeArgumentLocation_NotInvocationExpression_ReturnsNull()
+	public async Task WhenSyntaxIsNotInvocationExpression_ShouldNotReturnAnyLocation()
 	{
 		const string source = """
 			public class C
@@ -69,7 +69,7 @@ public class AnalyzerHelpersTests
 	}
 
 	[Fact]
-	public async Task GetTypeArgumentLocation_MatchingShape_ReturnsLocation()
+	public async Task WhenInvocationHasGenericNameSyntax_ShouldReturnTypeArgumentLocation()
 	{
 		const string source = """
 			public static class S

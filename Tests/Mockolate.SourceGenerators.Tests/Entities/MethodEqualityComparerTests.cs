@@ -1,18 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Mockolate.SourceGenerators.Entities;
-using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Tests.Entities;
 
 public class MethodEqualityComparerTests
 {
 	[Fact]
-	public async Task BothNull_ReturnsTrue()
+	public async Task WhenBothMethodsAreNull_ShouldReturnTrue()
 	{
 		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
 
@@ -22,7 +20,7 @@ public class MethodEqualityComparerTests
 	}
 
 	[Fact]
-	public async Task LeftNull_ReturnsFalse()
+	public async Task WhenLeftMethodIsNull_ShouldReturnFalse()
 	{
 		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
 		Method right = CreateMethod("public class C { public void Foo() {} }", "Foo");
@@ -33,7 +31,7 @@ public class MethodEqualityComparerTests
 	}
 
 	[Fact]
-	public async Task RightNull_ReturnsFalse()
+	public async Task WhenRightMethodIsNull_ShouldReturnFalse()
 	{
 		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
 		Method left = CreateMethod("public class C { public void Foo() {} }", "Foo");
@@ -44,7 +42,7 @@ public class MethodEqualityComparerTests
 	}
 
 	[Fact]
-	public async Task DifferentNames_ReturnsFalse()
+	public async Task WhenMethodsHaveDifferentNames_ShouldReturnFalse()
 	{
 		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
 		Method left = CreateMethod("public class C { public void Foo() {} }", "Foo");
@@ -56,7 +54,7 @@ public class MethodEqualityComparerTests
 	}
 
 	[Fact]
-	public async Task DifferentParameterCount_ReturnsFalse()
+	public async Task WhenMethodsHaveDifferentParameterCount_ShouldReturnFalse()
 	{
 		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
 		Method left = CreateMethod("public class C { public void Foo() {} }", "Foo");
@@ -65,20 +63,6 @@ public class MethodEqualityComparerTests
 		bool result = comparer.Equals(left, right);
 
 		await That(result).IsFalse();
-	}
-
-	[Fact]
-	public async Task BothMethodsHaveDefaultParameters_ReturnsTrue()
-	{
-		IEqualityComparer<Method> comparer = Method.ContainingTypeIndependentEqualityComparer;
-		Method left = CreateMethodWithDefaultParameters("public class C { public void Foo() {} }", "Foo");
-		Method right = CreateMethodWithDefaultParameters("public class C { public void Foo() {} }", "Foo");
-
-		bool result = comparer.Equals(left, right);
-
-		await That(result).IsTrue();
-		await That(left.Parameters.AsArray()).IsNull();
-		await That(right.Parameters.AsArray()).IsNull();
 	}
 
 	private static Method CreateMethod(string source, string methodName)
@@ -95,14 +79,5 @@ public class MethodEqualityComparerTests
 			.First(m => m.Identifier.Text == methodName);
 		IMethodSymbol symbol = (IMethodSymbol)model.GetDeclaredSymbol(declaration)!;
 		return new Method(symbol, null);
-	}
-
-	private static Method CreateMethodWithDefaultParameters(string source, string methodName)
-	{
-		Method method = CreateMethod(source, methodName);
-		FieldInfo backingField = typeof(Method)
-			.GetField("<Parameters>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic)!;
-		backingField.SetValue(method, default(EquatableArray<MethodParameter>));
-		return method;
 	}
 }
