@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Mockolate.Exceptions;
@@ -18,7 +19,7 @@ namespace Mockolate.Verify;
 ///     interactions produced on a background thread.
 /// </remarks>
 #if !DEBUG
-[System.Diagnostics.DebuggerNonUserCode]
+[DebuggerNonUserCode]
 #endif
 public static class VerificationResultExtensions
 {
@@ -34,6 +35,21 @@ public static class VerificationResultExtensions
 			(2, _) => $"{verb} twice",
 			(_, _) => $"{verb} {amount} times",
 		};
+
+	extension(IVerificationResult result)
+	{
+		/// <summary>
+		///     Routes count terminators to the allocation-free fast path when the result implements
+		///     <see cref="IFastVerifyCountResult" />; otherwise falls back to materialising the matching
+		///     interactions through <see cref="IVerificationResult.Verify" /> and counting them. Lets
+		///     external implementers of <see cref="IVerificationResult" /> remain whole-interface
+		///     implementable while still letting the framework's own results take the fast path.
+		/// </summary>
+		internal bool VerifyCount(Func<int, bool> countPredicate)
+			=> result is IFastVerifyCountResult fast
+				? fast.VerifyCount(countPredicate)
+				: result.Verify(arr => countPredicate(arr.Length));
+	}
 
 	extension<TMock>(VerificationResult<TMock> verificationResult)
 	{
@@ -167,18 +183,21 @@ public static class VerificationResultExtensions
 		///     or when a <see cref="VerificationResult{TVerify}.Within(TimeSpan)" /> timeout elapses first.
 		/// </exception>
 		/// <exception cref="ArgumentOutOfRangeException">
-		///     Thrown when <paramref name="minimum" /> is negative or <paramref name="maximum" /> is less than <paramref name="minimum" />.
+		///     Thrown when <paramref name="minimum" /> is negative or <paramref name="maximum" /> is less than
+		///     <paramref name="minimum" />.
 		/// </exception>
 		public void Between(int minimum, int maximum)
 		{
 			if (minimum < 0)
 			{
+				// ReSharper disable once LocalizableElement
 				throw new ArgumentOutOfRangeException(nameof(minimum), "Minimum value must be non-negative.");
 			}
 
 			if (maximum < minimum)
 			{
 				throw new ArgumentOutOfRangeException(nameof(maximum),
+					// ReSharper disable once LocalizableElement
 					"Maximum value must be greater than or equal to minimum.");
 			}
 
@@ -387,7 +406,8 @@ public static class VerificationResultExtensions
 		///     Verifies that the mock was invoked according to the <paramref name="predicate" />.
 		/// </summary>
 		/// <param name="predicate">
-		///     Receives the actual number of matching interactions and returns <see langword="true" /> if that count is acceptable.
+		///     Receives the actual number of matching interactions and returns <see langword="true" /> if that count is
+		///     acceptable.
 		/// </param>
 		/// <param name="doNotPopulateThisValue">
 		///     Populated by the compiler via <see cref="System.Runtime.CompilerServices.CallerArgumentExpressionAttribute" />
