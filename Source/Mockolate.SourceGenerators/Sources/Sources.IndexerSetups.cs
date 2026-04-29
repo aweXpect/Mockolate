@@ -332,17 +332,17 @@ internal static partial class Sources
 		sb.AppendXmlSummary("Registers an <typeparamref name=\"TException\" /> to throw when the indexer is read.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
-		sb.Append("\t\t\twhere TException : Exception, new();").AppendLine();
+		sb.Append("\t\t\twhere TException : global::System.Exception, new();").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers an <paramref name=\"exception\" /> to throw when the indexer is read.");
-		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(Exception exception);")
+		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Exception exception);")
 			.AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append("> Throws(global::System.Func<Exception> callback);")
+			.Append("> Throws(global::System.Func<global::System.Exception> callback);")
 			.AppendLine();
 
 		sb.Append("\t}").AppendLine();
@@ -375,13 +375,13 @@ internal static partial class Sources
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
 			.Append(typeParams)
-			.Append(", Exception> callback);").AppendLine();
+			.Append(", global::System.Exception> callback);").AppendLine();
 		sb.AppendLine();
 
 		sb.AppendXmlSummary("Registers a <paramref name=\"callback\" /> that will calculate the exception to throw when the indexer is read.");
 		sb.AppendXmlRemarks("The callback receives the parameters of the indexer and the value of the indexer as last parameter.");
 		sb.Append("\t\tIIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
-			.Append(typeParams).Append(", TValue, Exception> callback);").AppendLine();
+			.Append(typeParams).Append(", TValue, global::System.Exception> callback);").AppendLine();
 
 		sb.Append("\t}").AppendLine();
 		sb.AppendLine();
@@ -751,7 +751,7 @@ internal static partial class Sources
 			.Append("}.Throws{TException}()\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws<TException>()")
 			.AppendLine();
-		sb.Append("\t\t\twhere TException : Exception, new()").AppendLine();
+		sb.Append("\t\t\twhere TException : global::System.Exception, new()").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(discards).Append(", _) => throw new TException());").AppendLine();
@@ -761,9 +761,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
-			.Append("}.Throws(Exception)\" />").AppendLine();
+			.Append("}.Throws(global::System.Exception)\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append("> Throws(Exception exception)")
+			.Append("> Throws(global::System.Exception exception)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
@@ -774,9 +774,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams)
-			.Append("}.Throws(global::System.Func{Exception})\" />").AppendLine();
+			.Append("}.Throws(global::System.Func{global::System.Exception})\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams)
-			.Append("> Throws(global::System.Func<Exception> callback)")
+			.Append("> Throws(global::System.Func<global::System.Exception> callback)")
 			.AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
@@ -787,10 +787,10 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Throws(global::System.Func{")
-			.Append(typeParams).Append(", Exception})\" />").AppendLine();
+			.Append(typeParams).Append(", global::System.Exception})\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
 			.Append(typeParams)
-			.Append(", Exception> callback)").AppendLine();
+			.Append(", global::System.Exception> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(parameters).Append(", _) => throw callback(").Append(parameters)
@@ -801,9 +801,9 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		sb.Append("\t\t/// <inheritdoc cref=\"IIndexerSetup{TValue, ").Append(typeParams).Append("}.Throws(global::System.Func{")
-			.Append(typeParams).Append(", TValue, Exception})\" />").AppendLine();
+			.Append(typeParams).Append(", TValue, global::System.Exception})\" />").AppendLine();
 		sb.Append("\t\tpublic IIndexerSetupReturnBuilder<TValue, ").Append(typeParams).Append("> Throws(global::System.Func<")
-			.Append(typeParams).Append(", TValue, Exception> callback)").AppendLine();
+			.Append(typeParams).Append(", TValue, global::System.Exception> callback)").AppendLine();
 		sb.Append("\t\t{").AppendLine();
 		sb.Append("\t\t\tvar currentCallback = new Callback<global::System.Func<int, ").Append(typeParams)
 			.Append(", TValue, TValue>>((_, ").Append(parameters).Append(", v) => throw callback(").Append(parameters)
