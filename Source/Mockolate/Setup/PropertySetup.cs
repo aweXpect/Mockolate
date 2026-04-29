@@ -300,14 +300,42 @@ public class PropertySetup<T> : PropertySetup,
 
 	/// <inheritdoc cref="PropertySetup.InvokeGetter{TResult}(MockBehavior, Func{TResult})" />
 	protected override TResult InvokeGetter<TResult>(MockBehavior behavior, Func<TResult> defaultValueGenerator)
-		=> InvokeGetterCore<TResult>();
+	{
+		RunGetterCallbacks();
+
+		if (typeof(TResult) == typeof(T))
+		{
+			return Unsafe.As<T, TResult>(ref _value);
+		}
+
+		if (_value is TResult typedValue)
+		{
+			return typedValue;
+		}
+
+		return defaultValueGenerator();
+	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeGetterFast{TResult}(MockBehavior, Func{MockBehavior, TResult})" />
 	internal override TResult InvokeGetterFast<TResult>(MockBehavior behavior,
 		Func<MockBehavior, TResult> defaultValueGenerator)
-		=> InvokeGetterCore<TResult>();
+	{
+		RunGetterCallbacks();
 
-	private TResult InvokeGetterCore<TResult>()
+		if (typeof(TResult) == typeof(T))
+		{
+			return Unsafe.As<T, TResult>(ref _value);
+		}
+
+		if (_value is TResult typedValue)
+		{
+			return typedValue;
+		}
+
+		return defaultValueGenerator(behavior);
+	}
+
+	private void RunGetterCallbacks()
 	{
 		if (_getterCallbacks is not null)
 		{
@@ -341,19 +369,6 @@ public class PropertySetup<T> : PropertySetup,
 				}
 			}
 		}
-
-		if (typeof(TResult) == typeof(T))
-		{
-			return Unsafe.As<T, TResult>(ref _value);
-		}
-
-		if (_value is null && default(TResult) is null)
-		{
-			return default!;
-		}
-
-		throw new MockException(
-			$"The property only supports '{typeof(T).FormatType()}' and not '{typeof(TResult).FormatType()}'.");
 	}
 
 	/// <inheritdoc cref="PropertySetup.InvokeSetter{TValue}(TValue, MockBehavior)" />

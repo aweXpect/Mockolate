@@ -6,19 +6,13 @@ namespace Mockolate.Tests.MockProperties;
 public sealed partial class SetupPropertyTests
 {
 	[Fact]
-	public async Task InvokeGetter_InvalidType_ShouldThrowMockException()
+	public async Task InvokeGetter_InvalidType_ShouldFallBackToDefaultValueGenerator()
 	{
 		MyPropertySetup<int> setup = new();
 
-		void Act()
-		{
-			setup.InvokeGetter<string>();
-		}
+		string? result = setup.InvokeGetter<string?>(() => "fallback");
 
-		await That(Act).Throws<MockException>()
-			.WithMessage("""
-			             The property only supports 'int' and not 'string'.
-			             """);
+		await That(result).IsEqualTo("fallback");
 	}
 
 	[Fact]
@@ -176,6 +170,9 @@ public sealed partial class SetupPropertyTests
 
 		public TResult InvokeGetter<TResult>()
 			=> InvokeGetter<TResult>(MockBehavior.Default, () => default!);
+
+		public TResult InvokeGetter<TResult>(Func<TResult> defaultValueGenerator)
+			=> InvokeGetter(MockBehavior.Default, defaultValueGenerator);
 
 		public void MyInitializeValue(object? value)
 			=> InitializeValue(value);
