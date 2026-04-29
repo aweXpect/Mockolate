@@ -87,6 +87,81 @@ internal record Method
 		return $"\"{ContainingType}.{Name}\"";
 	}
 
+	/// <summary>
+	///     A method has an unsupported <c>allows ref struct</c> type parameter when one of its
+	///     own generic parameters declares the anti-constraint <i>and</i> is referenced in the
+	///     return type or any parameter type. The standard setup pipeline parameterizes
+	///     <c>ReturnMethodSetup&lt;T&gt;</c> / <c>IReturnMethodSetup&lt;T&gt;</c> on <c>T</c>, but
+	///     those runtime types do not carry <c>allows ref struct</c>, so the generated source
+	///     would fail with CS9244. Methods that match this predicate get a NotSupportedException
+	///     stub instead — see the carve-out for unsupported ref-struct shapes for the same shape.
+	/// </summary>
+	public bool HasUnsupportedAllowsRefStructTypeParameter
+	{
+		get
+		{
+			if (GenericParameters is null || GenericParameters.Value.Count == 0)
+			{
+				return false;
+			}
+
+			GenericParameter[] refStructParameters = GenericParameters.Value
+				.Where(g => g.AllowsRefStruct).ToArray();
+			if (refStructParameters.Length == 0)
+			{
+				return false;
+			}
+
+			if (ReturnType != Type.Void && ContainsAnyTypeParameter(ReturnType.Fullname, refStructParameters))
+			{
+				return true;
+			}
+
+			foreach (MethodParameter parameter in Parameters)
+			{
+				if (ContainsAnyTypeParameter(parameter.Type.Fullname, refStructParameters))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	private static bool ContainsAnyTypeParameter(string text, GenericParameter[] genericParameters)
+	{
+		foreach (GenericParameter gp in genericParameters)
+		{
+			if (ContainsAsToken(text, gp.Name))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static bool ContainsAsToken(string text, string name)
+	{
+		int idx = 0;
+		while ((idx = text.IndexOf(name, idx, StringComparison.Ordinal)) >= 0)
+		{
+			bool startBoundary = idx == 0 || !IsIdentifierChar(text[idx - 1]);
+			bool endBoundary = idx + name.Length == text.Length || !IsIdentifierChar(text[idx + name.Length]);
+			if (startBoundary && endBoundary)
+			{
+				return true;
+			}
+
+			idx++;
+		}
+
+		return false;
+	}
+
+	private static bool IsIdentifierChar(char c) => char.IsLetterOrDigit(c) || c == '_';
+
 	public bool IsToString()
 		=> Name == "ToString" && Parameters.Count == 0;
 

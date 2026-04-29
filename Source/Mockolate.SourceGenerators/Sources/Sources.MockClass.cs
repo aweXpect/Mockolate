@@ -3002,6 +3002,20 @@ internal static partial class Sources
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
 
+		// Methods that use a generic type parameter declaring `allows ref struct` in their
+		// signature cannot route through the regular setup pipeline: ReturnMethodSetup<T> /
+		// IReturnMethodSetup<T> do not declare the same anti-constraint, so referencing them
+		// with such a T fails with CS9244. Mirroring the carve-out for unsupported ref-struct
+		// shapes, the body throws NotSupportedException so the rest of the type still compiles.
+		if (method.HasUnsupportedAllowsRefStructTypeParameter)
+		{
+			sb.Append(
+					"\t\t\tthrow new global::System.NotSupportedException(\"Mockolate: methods with a generic type parameter declaring 'allows ref struct' are not supported. Method '")
+				.Append(method.ContainingType).Append('.').Append(method.Name).Append("'.\");").AppendLine();
+			sb.AppendLine("\t\t}");
+			return;
+		}
+
 		// Methods with at least one ref-struct parameter (outside the Span/ReadOnlySpan wrapper
 		// carve-out) route through the ref-struct setup pipeline. The ref-struct value cannot
 		// be captured in a closure, so we emit a synchronous, stack-bound match/invoke loop.
@@ -3902,6 +3916,14 @@ internal static partial class Sources
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
 		bool hasOverloadResolutionPriority = false)
 	{
+		// Methods using a generic type parameter that declares `allows ref struct` cannot expose
+		// a setup surface: IReturnMethodSetup<T> / IVoidMethodSetup<T> do not carry the same
+		// anti-constraint. The override body throws NotSupportedException, so no setup is needed.
+		if (method.HasUnsupportedAllowsRefStructTypeParameter)
+		{
+			return;
+		}
+
 		// Ref-struct pipeline: emit only the narrow IRefStruct*Setup declaration. We skip the
 		// value-flag overloads entirely because an explicit ref-struct value cannot be captured
 		// via `It.Is<T>(value)` (the static value would need to live in a class field). We also
@@ -4236,6 +4258,14 @@ internal static partial class Sources
 		string? methodNameOverride = null, bool[]? valueFlags = null,
 		string? scopeExpression = null)
 	{
+		// Setup-side carve-out: methods using a generic type parameter that declares
+		// `allows ref struct` have no setup interface declaration (see
+		// AppendMethodSetupDefinition), so no explicit implementation is emitted either.
+		if (method.HasUnsupportedAllowsRefStructTypeParameter)
+		{
+			return;
+		}
+
 		if (method.Parameters.Any(p => p.NeedsRefStructPipeline()))
 		{
 			// Emit exactly once: skip the useParameters=true variant (IParameters collection

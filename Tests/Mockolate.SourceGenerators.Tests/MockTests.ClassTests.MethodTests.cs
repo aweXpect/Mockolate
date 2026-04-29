@@ -180,6 +180,35 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task GenericMethodWithAllowsRefStruct_ShouldCompile()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					              _ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         T G8<T>() where T : allows ref struct;
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
+					.Contains("throw new global::System.NotSupportedException(\"Mockolate: methods with a generic type parameter declaring 'allows ref struct' are not supported. Method 'global::MyCode.IMyService.G8<T>'.\");");
+			}
+
+			[Fact]
 			public async Task InterfaceMethodWithParameterNamedMethodExecution_ShouldGenerateUniqueLocalVariableName()
 			{
 				GeneratorResult result = Generator
