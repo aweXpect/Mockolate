@@ -4257,9 +4257,10 @@ internal static partial class Sources
 
 		sb.AppendLine();
 		sb.AppendLine("\t\t{");
+		string methodSetupVar = Helpers.GetUniqueLocalVariableName("methodSetup", method.Parameters);
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\t\tvar methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<")
+			sb.Append("\t\t\tvar ").Append(methodSetupVar).Append(" = new global::Mockolate.Setup.ReturnMethodSetup<")
 				.AppendTypeOrWrapper(method.ReturnType);
 
 			foreach (MethodParameter parameter in method.Parameters)
@@ -4271,7 +4272,7 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\tvar methodSetup = new global::Mockolate.Setup.VoidMethodSetup");
+			sb.Append("\t\t\tvar ").Append(methodSetupVar).Append(" = new global::Mockolate.Setup.VoidMethodSetup");
 
 			if (method.Parameters.Count > 0)
 			{
@@ -4305,8 +4306,8 @@ internal static partial class Sources
 
 			sb.Append(");").AppendLine();
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
-				.Append(memberIdRef).Append(", ").Append(scopePrefix).Append("methodSetup);").AppendLine();
-			sb.Append("\t\t\treturn methodSetup;").AppendLine();
+				.Append(memberIdRef).Append(", ").Append(scopePrefix).Append(methodSetupVar).Append(");").AppendLine();
+			sb.Append("\t\t\treturn ").Append(methodSetupVar).Append(';').AppendLine();
 		}
 		else
 		{
@@ -4330,8 +4331,8 @@ internal static partial class Sources
 
 			sb.Append(");").AppendLine();
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
-				.Append(memberIdRef).Append(", ").Append(scopePrefix).Append("methodSetup);").AppendLine();
-			sb.Append("\t\t\treturn methodSetup;").AppendLine();
+				.Append(memberIdRef).Append(", ").Append(scopePrefix).Append(methodSetupVar).Append(");").AppendLine();
+			sb.Append("\t\t\treturn ").Append(methodSetupVar).Append(';').AppendLine();
 		}
 
 		sb.AppendLine("\t\t}");

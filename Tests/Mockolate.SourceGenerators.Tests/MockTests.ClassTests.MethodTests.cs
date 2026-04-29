@@ -444,6 +444,32 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task ParameterNamedSetup_ShouldCompile()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         void Run(int setup, int methodSetup, int s_methodSetup);
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+			}
+
+			[Fact]
 			public async Task ShouldImplementAllMethodsFromInterfaces()
 			{
 				GeneratorResult result = Generator
