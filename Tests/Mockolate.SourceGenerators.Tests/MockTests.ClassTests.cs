@@ -27,7 +27,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+			await That(result.Sources["Mock.MyService.g.cs"])
 				.Contains(
 					"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.MyService.ProcessData\"))")
 				.IgnoringNewlineStyle().And
@@ -73,7 +74,8 @@ public sealed partial class MockTests
 			// One occurrence per generator-emitted public ctor: the (MockRegistry, ...) overload and
 			// the typed (MockBehavior, ...) overload that subclasses use. The base ctor already carries
 			// the attribute, and the dedup check still suppresses an injected duplicate on each.
-			await That(result.Sources).ContainsKey("Mock.AnnotatedShape.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.AnnotatedShape.g.cs");
+			await That(result.Sources["Mock.AnnotatedShape.g.cs"])
 				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Exactly(2);
 		}
 
@@ -106,7 +108,8 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Diagnostics).IsEmpty();
-			await That(result.Sources).ContainsKey("Mock.DerivedShape.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.DerivedShape.g.cs");
+			await That(result.Sources["Mock.DerivedShape.g.cs"])
 				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]");
 		}
 
@@ -135,7 +138,8 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Diagnostics).IsEmpty();
-			await That(result.Sources).ContainsKey("Mock.PlainShape.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.PlainShape.g.cs");
+			await That(result.Sources["Mock.PlainShape.g.cs"])
 				.DoesNotContain("SetsRequiredMembers");
 		}
 
@@ -164,7 +168,8 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Diagnostics).IsEmpty();
-			await That(result.Sources).ContainsKey("Mock.RequiredShape.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.RequiredShape.g.cs");
+			await That(result.Sources["Mock.RequiredShape.g.cs"])
 				.Contains("""
 				          		[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
 				          		public RequiredShape(global::Mockolate.MockRegistry mockRegistry)
@@ -202,7 +207,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+			await That(result.Sources["Mock.IMyService.g.cs"])
 				.Contains(
 					"Setup for the int property <see cref=\"global::MyCode.IMyBaseService.BaseProperty\">BaseProperty</see>.")
 				.And
@@ -250,7 +256,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IHasEvent.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IHasEvent.g.cs");
+			await That(result.Sources["Mock.IHasEvent.g.cs"])
 				.Contains("<c>Raise</c> - trigger events declared on the mocked type.").And
 				.Contains("<c>.Mock.Raise</c> triggers events declared on the mocked type.").And
 				.DoesNotContain("<c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c>").And
@@ -280,7 +287,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IPlain.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IPlain.g.cs");
+			await That(result.Sources["Mock.IPlain.g.cs"])
 				.DoesNotContain("<c>Raise</c> - trigger events declared on the mocked type.").And
 				.DoesNotContain("<c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c>").And
 				.DoesNotContain("<c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c>").And

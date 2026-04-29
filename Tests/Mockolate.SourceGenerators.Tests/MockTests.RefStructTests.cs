@@ -30,7 +30,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>").And
 				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>").And
 				.Contains("where T16 : allows ref struct").And
@@ -63,7 +64,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructIndexerSetup<TValue, T1, T2, T3, T4, T5>").And
 				.Contains("public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4, T5>").And
 				// Combined facade exposes the inner Getter / Setter properties.
@@ -102,7 +104,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>").And
 				.Contains("public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>").And
 				// Storage / projection plumbing must be present at arity 5.
@@ -139,7 +142,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>").And
 				.Contains("public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>").And
 				// BoundGetter property is emitted on the setter so combined setups can forward writes.
@@ -175,7 +179,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>").And
 				.Contains("public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>").And
 				.Contains("public bool HasReturnValue => _returnFactory is not null;").And
@@ -213,12 +218,14 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IBigSink.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IBigSink.g.cs");
+			await That(result.Sources["Mock.IBigSink.g.cs"])
 				.Contains("RefStructVoidMethodSetup<global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet, global::MyCode.Packet>").And
 				// The method body must not bail out to NotSupportedException for this arity.
 				.Contains("matched = true");
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("#if NET9_0_OR_GREATER").And
 				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5>").And
 				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5>").And
@@ -252,7 +259,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
 				.Contains("public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
 				.Contains("public bool HasReturnValue");
@@ -284,7 +292,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
 				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
 				.Contains("where T1 : allows ref struct").And
@@ -320,7 +329,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7>").And
 				.Contains("public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7>").And
 				.Contains("public bool HasReturnValue => _returnFactory is not null;").And
@@ -354,7 +364,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("RefStructMethodSetups.g.cs");
+			await That(result.Sources["RefStructMethodSetups.g.cs"])
 				.Contains("public interface IRefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8>").And
 				.Contains("public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8>").And
 				.Contains("where T8 : allows ref struct").And
@@ -388,7 +399,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IRefStructLookup.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IRefStructLookup.g.cs");
+			await That(result.Sources["Mock.IRefStructLookup.g.cs"])
 				// Body uses the ref-struct dispatch, not NotSupportedException.
 				.Contains("RefStructIndexerGetterSetup<string, global::MyCode.Key>").And
 				.Contains("RefStructMethodInvocation(\"global::MyCode.IRefStructLookup.get_Item\", \"key\")").And
@@ -424,7 +436,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IRefStructStore.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IRefStructStore.g.cs");
+			await That(result.Sources["Mock.IRefStructStore.g.cs"])
 				// Combined facade type is the public setup surface.
 				.Contains("IRefStructIndexerSetup<string, global::MyCode.Key>").And
 				// Both accessors now dispatch through the ref-struct pipeline, not NSE.
@@ -459,7 +472,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IRefStructWriter.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IRefStructWriter.g.cs");
+			await That(result.Sources["Mock.IRefStructWriter.g.cs"])
 				.Contains("IRefStructIndexerSetterSetup<string, global::MyCode.Key>").And
 				.Contains("RefStructMethodInvocation(\"global::MyCode.IRefStructWriter.set_Item\", \"key\", \"value\")");
 		}
@@ -490,7 +504,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IPacketWriter.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IPacketWriter.g.cs");
+			await That(result.Sources["Mock.IPacketWriter.g.cs"])
 				// Two-arg ref-struct setup with the int flowing through as T2 (allows ref struct
 				// is satisfied by any type, so int works).
 				.Contains("RefStructVoidMethodSetup<global::MyCode.Packet, int>").And
@@ -523,7 +538,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IBoringService.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IBoringService.g.cs");
+			await That(result.Sources["Mock.IBoringService.g.cs"])
 				// Regular pipeline markers.
 				.Contains("global::Mockolate.Interactions.MethodInvocation<int, string>").And
 				.Contains("global::Mockolate.Setup.VoidMethodSetup<int, string>").And
@@ -586,7 +602,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IPacketParser.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IPacketParser.g.cs");
+			await That(result.Sources["Mock.IPacketParser.g.cs"])
 				.Contains("RefStructReturnMethodSetup<int, global::MyCode.Packet>").And
 				.Contains("IRefStructReturnMethodSetup<int, global::MyCode.Packet>").And
 				// The return-side HasReturnValue gate is there so Throws-only setups still fall
@@ -620,7 +637,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IPacketSink.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IPacketSink.g.cs");
+			await That(result.Sources["Mock.IPacketSink.g.cs"])
 				.Contains("#if NET9_0_OR_GREATER").And
 				// Method body: records a RefStructMethodInvocation (names only, no value).
 				.Contains("RefStructMethodInvocation(\"global::MyCode.IPacketSink.Consume\", \"packet\")").And

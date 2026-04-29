@@ -1,4 +1,4 @@
-﻿namespace Mockolate.SourceGenerators.Tests;
+namespace Mockolate.SourceGenerators.Tests;
 
 public sealed partial class MockTests
 {
@@ -39,7 +39,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs");
+				await That(result.Sources["Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs"])
 					.Contains("public string Value").Once().And
 					.Contains("int global::MyCode.IMyServiceBase1.Value").Once().And
 					.Contains("long global::MyCode.IMyServiceBase2.Value").Once();
@@ -73,7 +74,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.SomeProperty" />
 					          		public int SomeProperty
@@ -210,7 +212,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyDirectProperty" />
 					          		public int MyDirectProperty
@@ -324,7 +327,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs");
+				await That(result.Sources["Mock.MyService__IMyOtherService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.MyService.SomeProperty1" />
 					          		public override int SomeProperty1

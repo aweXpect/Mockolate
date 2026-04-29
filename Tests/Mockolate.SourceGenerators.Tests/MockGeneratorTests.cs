@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
@@ -38,7 +38,8 @@ public partial class MockGeneratorTests
 
 		await That(result.Diagnostics).IsEmpty();
 
-		await That(result.Sources).ContainsKey("Mock.IInterface1__IInterface2.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IInterface1__IInterface2.g.cs");
+		await That(result.Sources["Mock.IInterface1__IInterface2.g.cs"])
 			.Contains("public void Method(string? value)").And
 			.Contains("void global::MyCode.IInterface2.Method(string value)");
 	}
@@ -97,7 +98,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("public static global::MyCode.MyService CreateMock(int value)")
 			.IgnoringNewlineStyle().And
 			.Contains("=> CreateMock(null, null, new object?[] { value });")
@@ -137,7 +139,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("public static global::MyCode.MyService CreateMock(string text)")
 			.IgnoringNewlineStyle().And
 			.Contains("public static global::MyCode.MyService CreateMock(int number, string text)")
@@ -167,7 +170,8 @@ public partial class MockGeneratorTests
 		await That(result.Diagnostics).IsEmpty();
 		// No typed overloads beyond the existing hand-written ones; the existing parameterless
 		// CreateMock() overload is still there and no typed overload is emitted for it.
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("public static global::MyCode.MyService CreateMock()")
 			.IgnoringNewlineStyle();
 	}
@@ -196,7 +200,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(char c = '\\n')")
 			.IgnoringNewlineStyle();
 	}
@@ -225,7 +230,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(decimal price = 19.95m)")
 			.IgnoringNewlineStyle();
 	}
@@ -256,7 +262,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(global::MyCode.MyKind kind = (global::MyCode.MyKind)1)")
 			.IgnoringNewlineStyle();
 	}
@@ -285,7 +292,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(float factor = 3.14f)")
 			.IgnoringNewlineStyle();
 	}
@@ -315,7 +323,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.DoesNotContain("CreateMock(in int value)")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("CreateMock(int value)")
@@ -346,7 +355,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(long big = 9999999999, double pi = 3.14)")
 			.IgnoringNewlineStyle();
 	}
@@ -376,7 +386,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(decimal? price = 19.95m)")
 			.IgnoringNewlineStyle();
 	}
@@ -406,7 +417,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(string? text = null)")
 			.IgnoringNewlineStyle();
 	}
@@ -435,7 +447,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.DoesNotContain("public static global::MyCode.MyService CreateMock(int[] values)")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("public static global::MyCode.MyService CreateMock(params int[] values)")
@@ -466,7 +479,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(string text = \"has \\\"quotes\\\"\")")
 			.IgnoringNewlineStyle();
 	}
@@ -497,7 +511,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(global::MyCode.MyToken token = default)")
 			.IgnoringNewlineStyle();
 	}
@@ -561,7 +576,8 @@ public partial class MockGeneratorTests
 		await That(result.Diagnostics).IsEmpty();
 		// Action<string> does not collide with the setup action type (Action<IMockSetupForMyService>),
 		// so the generator should emit the typed overload.
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(global::System.Action<string> callback)")
 			.IgnoringNewlineStyle();
 	}
@@ -593,7 +609,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("public static global::MyCode.MyService CreateMock(int value)")
 			.IgnoringNewlineStyle().And
 			.Contains("public static global::MyCode.MyService CreateMock(int? value)")
@@ -629,7 +646,8 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		await That(result.Sources).ContainsKey("Mock.DerivedService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.DerivedService.g.cs");
+		await That(result.Sources["Mock.DerivedService.g.cs"])
 			.Contains("public static global::MyCode.DerivedService CreateMock(string text)")
 			.IgnoringNewlineStyle();
 	}
@@ -736,7 +754,8 @@ public partial class MockGeneratorTests
 
 		await That(result.Diagnostics).IsEmpty();
 
-		await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs");
+		await That(result.Sources["Mock.MyService__IMyInterface.g.cs"])
 			.Contains("static bool TryCastWithDefaultValue<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)")
 			.IgnoringNewlineStyle().And
 			.Contains("mock.MockRegistry.ConstructorParameters.Length >= 0 && mock.MockRegistry.ConstructorParameters.Length <= 1")
@@ -773,7 +792,8 @@ public partial class MockGeneratorTests
 
 		await That(result.Diagnostics).IsEmpty();
 
-		await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs");
+		await That(result.Sources["Mock.MyService__IMyInterface.g.cs"])
 			.Contains("static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)")
 			.IgnoringNewlineStyle().And
 			.Contains("No parameterless constructor found for 'MyCode.MyService'")
@@ -811,7 +831,8 @@ public partial class MockGeneratorTests
 			     }
 			     """, typeof(DateTime), typeof(Task));
 
-		await That(result.Sources).ContainsKey("ActionFunc.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("ActionFunc.g.cs");
+		await That(result.Sources["ActionFunc.g.cs"])
 			.Contains(
 				"public delegate void Action<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in T10, in T11, in T12, in T13, in T14, in T15, in T16, in T17>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15, T16 arg16, T17 arg17);")
 			.And
@@ -1060,7 +1081,8 @@ public partial class MockGeneratorTests
 
 		await That(result.Diagnostics).IsEmpty();
 
-		await That(result.Sources).ContainsKey("Mock.IInterface1__IInterface2.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IInterface1__IInterface2.g.cs");
+		await That(result.Sources["Mock.IInterface1__IInterface2.g.cs"])
 			.Contains("public void Method(ref int value)").And
 			.Contains("void global::MyCode.IInterface2.Method(in int value)");
 	}
@@ -1164,7 +1186,8 @@ public partial class MockGeneratorTests
 			     }
 			     """, DocumentationMode.Diagnose);
 
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains($"to invoke the <see cref=\"{expectedCref}\">MyService(int, string)</see> constructor.")
 			.IgnoringNewlineStyle();
 
@@ -1195,7 +1218,8 @@ public partial class MockGeneratorTests
 			     }
 			     """, DocumentationMode.Diagnose, typeof(HttpClient));
 
-		await That(result.Sources).ContainsKey("Mock.HttpClient.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.HttpClient.g.cs");
+		await That(result.Sources["Mock.HttpClient.g.cs"])
 			.Contains("<see cref=\"global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)\">")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("HttpClient.HttpClient(")
@@ -1233,7 +1257,8 @@ public partial class MockGeneratorTests
 		// Closed-generic constructor crefs (e.g. MyService{int}.MyService(int)) aren't valid C#
 		// cref syntax, so the generator falls back to the unlinked phrasing for generic classes
 		// rather than emit something that would surface CS1584 on the consumer side.
-		await That(result.Sources).ContainsKey("Mock.MyService_int.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService_int.g.cs");
+		await That(result.Sources["Mock.MyService_int.g.cs"])
 			.Contains("to invoke the base-class constructor.")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("MyService.MyService(")

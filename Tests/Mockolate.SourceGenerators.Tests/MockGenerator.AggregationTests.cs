@@ -56,7 +56,8 @@ public sealed class MockGeneratorAggregationTests
 			     public interface IB { }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.AsExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.AsExtensions.g.cs");
+		await That(result.Sources["Mock.AsExtensions.g.cs"])
 			// (IBase ↔ IB): bridge from a typed-as-IBase mock to IMockForIB.
 			.Contains("internal static partial class MockExtensionsForIB").And
 			.Contains("extension(global::Mockolate.Mock.IMockForIBase mock)").And
@@ -86,7 +87,8 @@ public sealed class MockGeneratorAggregationTests
 			     }
 			     """, typeof(HttpClient));
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.Contains("HttpResponseMessageFactory").And
 			.Contains("new HttpResponseMessageFactory(global::System.Net.HttpStatusCode.NotImplemented)");
 	}
@@ -114,7 +116,8 @@ public sealed class MockGeneratorAggregationTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.DoesNotContain("HttpResponseMessageFactory");
 	}
 

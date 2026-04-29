@@ -38,7 +38,8 @@ public sealed partial class MockTests
 
 			await That(result.Diagnostics).IsEmpty();
 
-			await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs");
+			await That(result.Sources["Mock.MyService__IMyInterface.g.cs"])
 				.Contains("static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)").And
 				.Contains("static bool TryCastWithDefaultValue<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)").And
 				// Parameterless dispatch.
@@ -77,7 +78,8 @@ public sealed partial class MockTests
 
 			await That(result.Diagnostics).IsEmpty();
 
-			await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.MyService__IMyInterface.g.cs");
+			await That(result.Sources["Mock.MyService__IMyInterface.g.cs"])
 				.Contains("No parameterless constructor found for 'MyCode.MyService'").And
 				.Contains("static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)").And
 				.DoesNotContain("static bool TryCastWithDefaultValue<TValue>");
@@ -112,7 +114,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.MyService__IExtra.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.MyService__IExtra.g.cs");
+			await That(result.Sources["Mock.MyService__IExtra.g.cs"])
 				.Contains("IMockProtectedRaiseOnMyService").And
 				.Contains("#region IMockProtectedRaiseOnMyService");
 		}
@@ -146,7 +149,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.MyService__IExtra.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.MyService__IExtra.g.cs");
+			await That(result.Sources["Mock.MyService__IExtra.g.cs"])
 				// AppendMockSubject_BaseClassConstructor stamps SetsRequiredMembers on the generated
 				// constructor when the base class declares any `required` member.
 				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]");
@@ -181,7 +185,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IBase__IStaticEvents.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IBase__IStaticEvents.g.cs");
+			await That(result.Sources["Mock.IBase__IStaticEvents.g.cs"])
 				.Contains("IMockStaticRaiseOnIStaticEvents").And
 				.Contains("#region IMockStaticRaiseOnIStaticEvents").And
 				.Contains("internal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider");
@@ -216,7 +221,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.IBase__IStaticAware.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.IBase__IStaticAware.g.cs");
+			await That(result.Sources["Mock.IBase__IStaticAware.g.cs"])
 				.Contains("IMockStaticSetupForIStaticAware").And
 				.Contains("IMockStaticVerifyForIStaticAware").And
 				.Contains("#region IMockStaticSetupForIStaticAware").And

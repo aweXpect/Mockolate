@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 
 namespace Mockolate.SourceGenerators.Tests;
 
@@ -34,7 +34,8 @@ public sealed class MethodSetupsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).ContainsKey("MethodSetups.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MethodSetups.g.cs");
+		await That(result.Sources["MethodSetups.g.cs"])
 			.Contains(
 				"internal abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup")
 			.And
@@ -182,7 +183,8 @@ public sealed class MethodSetupsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).ContainsKey("MethodSetups.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MethodSetups.g.cs");
+		await That(result.Sources["MethodSetups.g.cs"])
 			.Contains("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
 			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
 			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5>").And
@@ -216,7 +218,8 @@ public sealed class MethodSetupsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).ContainsKey("MethodSetups.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MethodSetups.g.cs");
+		await That(result.Sources["MethodSetups.g.cs"])
 			.Contains("class VoidMethodSetup<T1, T2, T3, T4, T5, T6>").And
 			.DoesNotContain("class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6>").And
 			.DoesNotContain("class VoidMethodSetup<T1, T2, T3, T4, T5>").And

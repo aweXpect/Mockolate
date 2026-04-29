@@ -39,7 +39,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs");
+				await That(result.Sources["Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs"])
 					.Contains("public event global::System.EventHandler<string>? SomeEvent").Once().And
 					.Contains("event global::System.EventHandler<int>? global::MyCode.IMyServiceBase1.SomeEvent").Once().And
 					.Contains("event global::System.EventHandler<long>? global::MyCode.IMyServiceBase2.SomeEvent").Once();
@@ -68,7 +69,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <summary>
 					          		///     Setup for the event <see cref="global::MyCode.IMyService.SomeEvent">SomeEvent</see>.
@@ -114,7 +116,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_SomeEvent;
 					          		/// <inheritdoc cref="global::MyCode.IMyService.SomeEvent" />
@@ -217,7 +220,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_IMyService_MyDirectEvent;
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyDirectEvent" />
@@ -380,7 +384,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs");
+				await That(result.Sources["Mock.MyService__IMyOtherService.g.cs"])
 					.Contains("""
 					          		private global::System.EventHandler? _mockolateEvent_global__MyCode_MyService_SomeEvent;
 					          		/// <inheritdoc cref="global::MyCode.MyService.SomeEvent" />

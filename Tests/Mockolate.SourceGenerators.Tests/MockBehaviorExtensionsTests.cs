@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace Mockolate.SourceGenerators.Tests;
 
@@ -31,7 +31,8 @@ public sealed class MockBehaviorExtensionsTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
+		await That(result.Sources["Mock.IMyInterface.g.cs"])
 			.Contains("(b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!))").And
 			.Contains(
 				"(b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!), b.DefaultValue.Generate(default(int)!), b.DefaultValue.Generate(default(string)!))")
@@ -39,7 +40,8 @@ public sealed class MockBehaviorExtensionsTests
 			.Contains(
 				"(this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!), this.MockRegistry.Behavior.DefaultValue.Generate(default(T1)!), this.MockRegistry.Behavior.DefaultValue.Generate(default(T2)!))");
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.DoesNotContain("Generate<T1, T2>((T1, T2)").And
 			.DoesNotContain("Generate<T1, T2, T3>((T1, T2, T3)").And
 			.DoesNotContain("Generate<T1, T2, T3, T4, T5, T6, T7, T8>");
@@ -72,7 +74,8 @@ public sealed class MockBehaviorExtensionsTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.Contains("""
 			          		public T[] Generate<T>(T[] nullValue, params object?[] parameters)
 			          			=> global::System.Array.Empty<T>();
@@ -119,7 +122,8 @@ public sealed class MockBehaviorExtensionsTests
 			     }
 			     """, typeof(IEnumerable<>));
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.Contains("""
 			          		public global::System.Collections.Generic.IEnumerable<T> Generate<T>(global::System.Collections.Generic.IEnumerable<T> nullValue, params object?[] parameters)
 			          			=> global::System.Array.Empty<T>();
@@ -158,7 +162,8 @@ public sealed class MockBehaviorExtensionsTests
 			     }
 			     """, typeof(Task));
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.Contains("""
 			          		public global::System.Threading.Tasks.Task<T> Generate<T>(global::System.Threading.Tasks.Task<T> nullValue, T value, params object?[] parameters)
 			          		{
@@ -203,7 +208,8 @@ public sealed class MockBehaviorExtensionsTests
 			     }
 			     """, typeof(ValueTask));
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.Contains("""
 			          		public global::System.Threading.Tasks.ValueTask<T> Generate<T>(global::System.Threading.Tasks.ValueTask<T> nullValue, T value, params object?[] parameters)
 			          		{

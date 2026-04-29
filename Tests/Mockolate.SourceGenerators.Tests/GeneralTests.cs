@@ -176,35 +176,50 @@ public class GeneralTests
 
 			     """, typeof(IEnumerable<>));
 
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_object.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_object.g.cs");
+		await That(result.Sources["Mock.IMyInterface_object.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<object> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_bool.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_bool.g.cs");
+		await That(result.Sources["Mock.IMyInterface_bool.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<bool> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_string.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_string.g.cs");
+		await That(result.Sources["Mock.IMyInterface_string.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<string> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_char.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_char.g.cs");
+		await That(result.Sources["Mock.IMyInterface_char.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<char> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_byte.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_byte.g.cs");
+		await That(result.Sources["Mock.IMyInterface_byte.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<byte> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_sbyte.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_sbyte.g.cs");
+		await That(result.Sources["Mock.IMyInterface_sbyte.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<sbyte> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_short.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_short.g.cs");
+		await That(result.Sources["Mock.IMyInterface_short.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<short> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_ushort.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_ushort.g.cs");
+		await That(result.Sources["Mock.IMyInterface_ushort.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<ushort> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_int.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_int.g.cs");
+		await That(result.Sources["Mock.IMyInterface_int.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<int> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_uint.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_uint.g.cs");
+		await That(result.Sources["Mock.IMyInterface_uint.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<uint> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_long.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_long.g.cs");
+		await That(result.Sources["Mock.IMyInterface_long.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<long> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_ulong.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_ulong.g.cs");
+		await That(result.Sources["Mock.IMyInterface_ulong.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<ulong> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_float.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_float.g.cs");
+		await That(result.Sources["Mock.IMyInterface_float.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<float> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_double.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_double.g.cs");
+		await That(result.Sources["Mock.IMyInterface_double.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<double> MyEnumerable");
-		await That(result.Sources).ContainsKey("Mock.IMyInterface_decimal.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface_decimal.g.cs");
+		await That(result.Sources["Mock.IMyInterface_decimal.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<decimal> MyEnumerable");
 	}
 
@@ -229,7 +244,8 @@ public class GeneralTests
 			     }
 			     """, typeof(HttpMessageHandler));
 
-		await That(result.Sources).ContainsKey("Mock.HttpMessageHandler.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.HttpMessageHandler.g.cs");
+		await That(result.Sources["Mock.HttpMessageHandler.g.cs"])
 			.Contains("protected override void Dispose(bool disposing)").And
 			.DoesNotContain("void Dispose()");
 	}
@@ -255,7 +271,8 @@ public class GeneralTests
 
 			     """, typeof(IList<>));
 
-		await That(result.Sources).ContainsKey("Mock.IList_int.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IList_int.g.cs");
+		await That(result.Sources["Mock.IList_int.g.cs"])
 			.Contains("global::System.Collections.IEnumerator global::System.Collections.IEnumerable.GetEnumerator()").And
 			.Contains("public global::System.Collections.Generic.IEnumerator<int> GetEnumerator()");
 	}
@@ -286,7 +303,8 @@ public class GeneralTests
 
 			     """, typeof(IList<>));
 
-		await That(result.Sources).ContainsKey("Mock.IList_MyRecord.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IList_MyRecord.g.cs");
+		await That(result.Sources["Mock.IList_MyRecord.g.cs"])
 			.Contains("""
 			          internal class IList_MyRecord :
 			          		global::System.Collections.Generic.IList<global::MyOtherCode.MyRecord>
@@ -334,7 +352,8 @@ public class GeneralTests
 
 			     """, typeof(IEnumerable<>));
 
-		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
+		await That(result.Sources["Mock.IMyInterface.g.cs"])
 			.Contains("public global::System.Collections.Generic.IEnumerable<object> EnumerableOfObject").And
 			.Contains("public global::System.Collections.Generic.IEnumerable<bool> EnumerableOfBool").And
 			.Contains("public global::System.Collections.Generic.IEnumerable<string> EnumerableOfString").And
@@ -458,8 +477,8 @@ public class GeneralTests
 
 			     """, typeof(ObsoleteAttribute));
 
-		await That(result.Sources)
-			.ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs");
+		await That(result.Sources["Mock.MyBaseClass.g.cs"])
 			.Contains("""
 			          		[global::System.Obsolete]
 			          		public MyBaseClass(global::Mockolate.MockRegistry mockRegistry)
@@ -520,7 +539,8 @@ public class GeneralTests
 
 		await That(result.Diagnostics).IsEmpty();
 
-		await That(result.Sources).ContainsKey("Mock.IMyInterface1__IMyInterface2.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface1__IMyInterface2.g.cs");
+		await That(result.Sources["Mock.IMyInterface1__IMyInterface2.g.cs"])
 			.Contains("public void MyMethod(int v1)").And
 			.Contains("void global::MyCode.IMyInterface2.MyMethod(int v1)");
 	}
@@ -558,7 +578,8 @@ public class GeneralTests
 
 		await That(result.Diagnostics).IsEmpty();
 
-		await That(result.Sources).ContainsKey("Mock.IMyInterface1.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface1.g.cs");
+		await That(result.Sources["Mock.IMyInterface1.g.cs"])
 			.Contains("public void MyMethod(int v1)").And
 			.Contains("void global::MyCode.IMyInterface2.MyMethod(int v1)");
 	}
@@ -589,8 +610,8 @@ public class GeneralTests
 
 		// A mock subclass declaring a property `MockRegistry` would hide the inherited field
 		// (CS0108). The dedup pipeline must skip past the conflicting member name.
-		await That(result.Sources)
-			.ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("MockolateMockRegistry")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry { get; }")
@@ -621,8 +642,8 @@ public class GeneralTests
 			     }
 			     """);
 
-		await That(result.Sources)
-			.ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("MockolateMockRegistry")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry { get; }")
@@ -654,8 +675,8 @@ public class GeneralTests
 
 		// `Mock` is a method on the type, so the extension `Mock` property would shadow access.
 		// CreateUniquePropertyName must now skip past it to a Mockolate_-prefixed alternative.
-		await That(result.Sources)
-			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
+		await That(result.Sources["Mock.IMyInterface.g.cs"])
 			.Contains("Mockolate_Mock")
 			.IgnoringNewlineStyle();
 	}
@@ -684,8 +705,8 @@ public class GeneralTests
 			     }
 			     """);
 
-		await That(result.Sources)
-			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
+		await That(result.Sources["Mock.IMyInterface.g.cs"])
 			.Contains("Mockolate_Mock__1")
 			.IgnoringNewlineStyle();
 	}
@@ -715,8 +736,8 @@ public class GeneralTests
 			     }
 			     """);
 
-		await That(result.Sources)
-			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
+		await That(result.Sources["Mock.IMyInterface.g.cs"])
 			.Contains("Mockolate_Mock__2")
 			.IgnoringNewlineStyle();
 	}
@@ -747,8 +768,8 @@ public class GeneralTests
 			     }
 			     """, typeof(EventHandler));
 
-		await That(result.Sources)
-			.ContainsKey("Mock.IMyInterface.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
+		await That(result.Sources["Mock.IMyInterface.g.cs"])
 			.Contains("MockRegistry_2")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry_1 { get; }")
@@ -880,7 +901,8 @@ public class GeneralTests
 			     """, typeof(AllowNullAttribute), typeof(IDataParameter), typeof(LocalizableAttribute),
 				typeof(AttributeUsageAttribute));
 
-		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+		await That(result.Sources["Mock.IMyService.g.cs"])
 			.Contains("""
 			          		/// <inheritdoc cref="global::MyCode.IMyService.SomeProperty" />
 			          		[global::System.Diagnostics.CodeAnalysis.AllowNull]
