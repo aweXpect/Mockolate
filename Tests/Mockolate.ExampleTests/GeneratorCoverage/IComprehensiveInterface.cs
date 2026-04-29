@@ -79,10 +79,7 @@ public interface IComprehensiveInterface
 
 	T? G7<T>() where T : class?;
 
-	// `allows ref struct` constraint: IReturnMethodSetup<T> rejects ref-struct T (CS9244).
-	// Needs runtime-side `allows ref struct` on the setup interfaces or a generator carve-out.
-	// Tracking: see follow-up prompt for Bug 4.
-	// T G8<T>() where T : allows ref struct;
+	T G8<T>() where T : allows ref struct;
 
 	int Five(int a, int b, int c, int d, int e);
 
