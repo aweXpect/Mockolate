@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
-using Mockolate.Interactions;
 using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
 
@@ -8,6 +8,34 @@ namespace Mockolate.Tests;
 
 public sealed class MockRegistryTests
 {
+	[Fact]
+	public async Task AddEvent_WithoutMemberIdAndMatchingSetup_ShouldInvokeSubscribedCallback()
+	{
+		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+		int subscribed = 0;
+		EventSetup setup = new(registry, "OnFoo");
+		setup.OnSubscribed.Do(() => subscribed++);
+		registry.SetupEvent(setup);
+
+		registry.AddEvent("OnFoo", this, GetMethodInfo());
+
+		await That(subscribed).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task GetProperty_WhenBaseValueAccessorThrows_ShouldRethrowException()
+	{
+		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+		InvalidOperationException expected = new("base failed");
+
+		void Act()
+		{
+			registry.GetProperty("Foo", () => 0, () => throw expected);
+		}
+
+		await That(Act).Throws<InvalidOperationException>().WithMessage("base failed");
+	}
+
 	[Fact]
 	public async Task GetUnusedSetups_IndexerSetup_ShouldHaveCorrectString()
 	{
@@ -81,4 +109,44 @@ public sealed class MockRegistryTests
 
 		await That(sut.Interactions.Count).IsEqualTo(1000);
 	}
+
+	[Fact]
+	public async Task RemoveEvent_WithoutMemberIdAndMatchingSetup_ShouldInvokeUnsubscribedCallback()
+	{
+		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+		int unsubscribed = 0;
+		EventSetup setup = new(registry, "OnFoo");
+		setup.OnUnsubscribed.Do(() => unsubscribed++);
+		registry.SetupEvent(setup);
+
+		registry.RemoveEvent("OnFoo", this, GetMethodInfo());
+
+		await That(unsubscribed).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task SetProperty_WithMemberIdAndNoFastBuffer_ShouldRecordAndStore()
+	{
+		MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+
+		bool result = registry.SetProperty(7, "Foo", 42);
+
+		await That(result).IsFalse();
+		await That(registry.Interactions.Count).IsEqualTo(1);
+	}
+
+	[Fact]
+	public async Task SetProperty_WithoutMemberId_SkippingBaseClass_ShouldReturnTrue()
+	{
+		MockBehavior behavior = MockBehavior.Default.SkippingBaseClass();
+		MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
+
+		bool result = registry.SetProperty("Foo", 42);
+
+		await That(result).IsTrue();
+	}
+
+	private static MethodInfo GetMethodInfo()
+		=> typeof(MockRegistryTests).GetMethod(nameof(GetMethodInfo),
+			BindingFlags.Static | BindingFlags.NonPublic)!;
 }

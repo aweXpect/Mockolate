@@ -450,54 +450,7 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
-	///     Member-id-keyed overload of <see cref="GetProperty{TResult}(string, Func{TResult}, Func{TResult}?)" /> that
-	///     records via the typed <see cref="FastPropertyGetterBuffer" /> when the mock is wired to a
-	///     <see cref="FastMockInteractions" />, falling back to the legacy list otherwise.
-	/// </summary>
-	/// <typeparam name="TResult">The property's value type.</typeparam>
-	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
-	/// <param name="propertyName">The simple property name.</param>
-	/// <param name="defaultValueGenerator">Producer of the default value when no setup supplies one.</param>
-	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered.</param>
-	/// <returns>The resolved getter value.</returns>
-	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
-	public TResult GetProperty<TResult>(int memberId, string propertyName, Func<TResult> defaultValueGenerator,
-		Func<TResult>? baseValueAccessor)
-	{
-		if (!Behavior.SkipInteractionRecording)
-		{
-			RecordPropertyGetter(memberId, propertyName);
-		}
-
-		return ResolveGetterInternal(propertyName, defaultValueGenerator, baseValueAccessor, null);
-	}
-
-	/// <summary>
-	///     Singleton-aware overload of <see cref="GetProperty{TResult}(int, string, Func{TResult}, Func{TResult}?)" />
-	///     that records the supplied <paramref name="access" /> directly. The source generator emits one shared
-	///     <see cref="PropertyGetterAccess" /> per non-indexer property; reusing it keeps every recorded access
-	///     in the matching <see cref="FastPropertyGetterBuffer" /> pointing at the same singleton.
-	/// </summary>
-	/// <typeparam name="TResult">The property's value type.</typeparam>
-	/// <param name="memberId">The generator-emitted member id for the property getter.</param>
-	/// <param name="access">The shared <see cref="PropertyGetterAccess" /> singleton for the property.</param>
-	/// <param name="defaultValueGenerator">Producer of the default value when no setup supplies one.</param>
-	/// <param name="baseValueAccessor">Optional accessor for the base-class getter; when <see langword="null" /> only the default/initial value is considered.</param>
-	/// <returns>The resolved getter value.</returns>
-	/// <exception cref="MockNotSetupException">No setup exists for the property and <see cref="MockBehavior.ThrowWhenNotSetup" /> is <see langword="true" />.</exception>
-	public TResult GetProperty<TResult>(int memberId, PropertyGetterAccess access,
-		Func<TResult> defaultValueGenerator, Func<TResult>? baseValueAccessor)
-	{
-		if (!Behavior.SkipInteractionRecording)
-		{
-			RecordPropertyGetter(memberId, access);
-		}
-
-		return ResolveGetterInternal(access.Name, defaultValueGenerator, baseValueAccessor, null);
-	}
-
-	/// <summary>
-	///     Allocation-free fast-path overload of <see cref="GetProperty{TResult}(int, string, Func{TResult}, Func{TResult}?)" />.
+	///     Allocation-free fast-path overload of <see cref="GetProperty{TResult}(string, Func{TResult}, Func{TResult}?)" />.
 	///     Avoids the per-call closure allocation by accepting a static <see cref="Func{T, TResult}" /> that takes the
 	///     active <see cref="MockBehavior" /> as its argument — the source generator emits a <c>static</c> lambda so
 	///     the C# compiler caches the delegate in a static field.

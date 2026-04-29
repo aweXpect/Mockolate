@@ -13,6 +13,51 @@ public sealed partial class ItExtensionsTests
 	public sealed partial class IsHttpRequestMessageTests
 	{
 		[Fact]
+		public async Task NonGeneric_DispatchesHttpRequestMessageThroughCallback()
+		{
+			ItExtensions.IHttpRequestMessageParameter sut = It.IsHttpRequestMessage();
+			HttpRequestMessage? captured = null;
+			sut.Do(message => captured = message);
+
+			HttpRequestMessage target = new(HttpMethod.Get, "https://www.aweXpect.com");
+			sut.InvokeCallbacks(target);
+
+			await That(captured).IsSameAs(target);
+		}
+
+		[Fact]
+		public async Task NonGeneric_IgnoresUnrelatedTypes()
+		{
+			ItExtensions.IHttpRequestMessageParameter sut = It.IsHttpRequestMessage();
+			int invocations = 0;
+			sut.Do(_ => invocations++);
+
+			sut.InvokeCallbacks("not a request message");
+
+			await That(invocations).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task NonGenericMatches_ReturnsFalseForUnrelatedType()
+		{
+			ItExtensions.IHttpRequestMessageParameter sut = It.IsHttpRequestMessage();
+
+			bool result = sut.Matches("not a request message");
+
+			await That(result).IsFalse();
+		}
+
+		[Fact]
+		public async Task NonGenericMatches_ReturnsTrueForHttpRequestMessage()
+		{
+			ItExtensions.IHttpRequestMessageParameter sut = It.IsHttpRequestMessage();
+
+			bool result = sut.Matches(new HttpRequestMessage(HttpMethod.Get, "https://www.aweXpect.com"));
+
+			await That(result).IsTrue();
+		}
+
+		[Fact]
 		public async Task ShouldSupportMonitoring()
 		{
 			int callbackCount = 0;
@@ -39,6 +84,26 @@ public sealed partial class ItExtensionsTests
 				.IsEqualTo([0, 1, 3,]);
 #endif
 			await That(callbackCount).IsEqualTo(3);
+		}
+
+		[Fact]
+		public async Task WithHeaders_OnRequestWithoutContent_ShouldStillEvaluate()
+		{
+			ItExtensions.IHttpRequestMessageParameter sut = It.IsHttpRequestMessage()
+				.WithHeaders(("x-correlation", "abc"));
+			HttpRequestMessage withoutContent = new(HttpMethod.Get, "https://www.aweXpect.com");
+			withoutContent.Headers.Add("x-correlation", "abc");
+			HttpRequestMessage withContent = new(HttpMethod.Post, "https://www.aweXpect.com")
+			{
+				Content = new StringContent("body"),
+			};
+			withContent.Headers.Add("x-correlation", "abc");
+
+			bool matchesWithoutContent = ((IParameterMatch<HttpRequestMessage>)sut).Matches(withoutContent);
+			bool matchesWithContent = ((IParameterMatch<HttpRequestMessage>)sut).Matches(withContent);
+
+			await That(matchesWithoutContent).IsTrue();
+			await That(matchesWithContent).IsTrue();
 		}
 
 		[Theory]
