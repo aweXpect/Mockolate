@@ -7,6 +7,45 @@ public sealed partial class MockTests
 		public sealed class PropertiesTests
 		{
 			[Fact]
+			public async Task InitOnlyProperty_ShouldEmitInitAccessorAndCompile()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         string Name { get; init; }
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources["Mock.IMyService.g.cs"])
+					.Contains("""
+					          		public string Name
+					          		{
+					          			get
+					          			{
+					          				return this.MockRegistry.GetPropertyFast<string>(global::Mockolate.Mock.IMyService.MemberId_Name_Get, global::Mockolate.Mock.IMyService.PropertyAccess_Name_Get, static b => b.DefaultValue.Generate(default(string)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.Name);
+					          			}
+					          			init
+					          			{
+					          				this.MockRegistry.SetPropertyFast<string>(global::Mockolate.Mock.IMyService.MemberId_Name_Get, global::Mockolate.Mock.IMyService.MemberId_Name_Set, "global::MyCode.IMyService.Name", value);
+					          			}
+					          		}
+					          """).IgnoringNewlineStyle();
+			}
+
+			[Fact]
 			public async Task MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 			{
 				GeneratorResult result = Generator
