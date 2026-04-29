@@ -65,7 +65,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.OuterClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.OuterClass.g.cs");
+		await That(result.Sources["Mock.OuterClass.g.cs"])
 			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.OuterValue").And
 			.Contains("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.BaseClassValue").And
 			.DoesNotContain("global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForOuterClass.DirectValue").And
@@ -132,7 +133,8 @@ public sealed partial class MockTests
 			     }
 			     """, typeof(IEnumerator), typeof(IEnumerable<int>));
 
-		await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
 			.DoesNotContain("private global::System.Collections.IEnumerator GetEnumerator()");
 	}
 
@@ -161,7 +163,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs");
+		await That(result.Sources["Mock.MyBaseClass.g.cs"])
 			.DoesNotContain("No parameterless constructor found");
 	}
 
@@ -189,7 +192,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs");
+		await That(result.Sources["Mock.MyBaseClass.g.cs"])
 			.Contains("""
 			          			if (constructorParameters.Length == 1
 			          			    && TryCast(constructorParameters, 0, mockRegistry.Behavior, out int c1p1))
@@ -264,7 +268,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs");
+		await That(result.Sources["Mock.MyBaseClass.g.cs"])
 			.DoesNotContain("CreateMock(object?[] constructorParameters)").And
 			.DoesNotContain("CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)").And
 			.DoesNotContain("object?[] constructorParameters)").And
@@ -294,7 +299,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyBaseClass.g.cs");
+		await That(result.Sources["Mock.MyBaseClass.g.cs"])
 			.DoesNotContain("CreateMock(object?[] constructorParameters)").And
 			.DoesNotContain("object?[] constructorParameters)").And
 			.Contains(
@@ -356,7 +362,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedEvents.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedEvents.g.cs");
+		await That(result.Sources["Mock.MyClassWithSealedEvents.g.cs"])
 			.DoesNotContain("event System.EventHandler<long>? SomeEvent");
 	}
 
@@ -389,7 +396,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedIndexers.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedIndexers.g.cs");
+		await That(result.Sources["Mock.MyClassWithSealedIndexers.g.cs"])
 			.DoesNotContain("override int this[int index]");
 	}
 
@@ -423,7 +431,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedMethods.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedMethods.g.cs");
+		await That(result.Sources["Mock.MyClassWithSealedMethods.g.cs"])
 			.DoesNotContain("override void MyMethod(int value)");
 	}
 
@@ -456,7 +465,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedProperties.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyClassWithSealedProperties.g.cs");
+		await That(result.Sources["Mock.MyClassWithSealedProperties.g.cs"])
 			.DoesNotContain("override int MyProperty");
 	}
 
@@ -488,7 +498,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+		await That(result.Sources["Mock.IMyService.g.cs"])
 			.Contains("public int @class").And
 			.Contains("public string @return()").And
 			.Contains("public void @event(int @params)").And
@@ -524,7 +535,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+		await That(result.Sources["Mock.IMyService.g.cs"])
 			.Contains("""
 			          public string this[int @true]
 			          """).And
@@ -532,7 +544,8 @@ public sealed partial class MockTests
 			          public void DoSomething(int @event)
 			          """);
 
-		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+		await That(result.Sources["Mock.IMyService.g.cs"])
 			.Contains("""
 			          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIMyService.DoSomething(global::Mockolate.Parameters.IParameter<int>? @event)
 			          		{
@@ -597,7 +610,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyDerivedClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyDerivedClass.g.cs");
+		await That(result.Sources["Mock.MyDerivedClass.g.cs"])
 			.DoesNotContain("override void SealedMethod").And
 			.Contains("ProtectedInternalMethod").And
 			.Contains("InternalMethod").And
@@ -639,7 +653,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.MyDerivedClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyDerivedClass.g.cs");
+		await That(result.Sources["Mock.MyDerivedClass.g.cs"])
 			.DoesNotContain("override bool Equals").And
 			.DoesNotContain("override int GetHashCode").And
 			.DoesNotContain("override string ToString");
@@ -679,7 +694,8 @@ public sealed partial class MockTests
 
 		// Even though MyMiddleClass.Equals has non-nullable parameter (object),
 		// it should still match and filter out object.Equals with nullable parameter (object?)
-		await That(result.Sources).ContainsKey("Mock.MyDerivedClass.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.MyDerivedClass.g.cs");
+		await That(result.Sources["Mock.MyDerivedClass.g.cs"])
 			.DoesNotContain("override bool Equals");
 	}
 
@@ -706,7 +722,8 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+		await That(result.Sources["Mock.IMyService.g.cs"])
 			.Contains("""
 			          		public void MyMethod(object v1, bool v2, string v3, char v4, byte v5, sbyte v6, short v7, ushort v8, int v9, uint v10, long v11, ulong v12, float v13, double v14, decimal v15)
 			          		{

@@ -25,8 +25,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources)
-				.ContainsKey("Mock.Program_DoSomething.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_DoSomething.g.cs");
+			await That(result.Sources["Mock.Program_DoSomething.g.cs"])
 				.Contains("""
 				          		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, int, bool> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IParameter<int>? y, global::Mockolate.Parameters.IOutParameter<bool> success)
 				          		{
@@ -74,8 +74,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources)
-				.ContainsKey("Mock.Program_DoSomething1.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_DoSomething1.g.cs");
+			await That(result.Sources["Mock.Program_DoSomething1.g.cs"])
 				.Contains("""
 				          		public global::MyCode.Program.DoSomething1 Object => new(Invoke);
 				          		private global::System.Span<char> Invoke(int x)
@@ -98,8 +98,8 @@ public sealed partial class MockTests
 				          			return methodSetup?.TryGetReturnValue(x, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<char>)!);
 				          		}
 				          """).IgnoringNewlineStyle();
-			await That(result.Sources)
-				.ContainsKey("Mock.Program_DoSomething2.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_DoSomething2.g.cs");
+			await That(result.Sources["Mock.Program_DoSomething2.g.cs"])
 				.Contains("""
 				          		public global::MyCode.Program.DoSomething2 Object => new(Invoke);
 				          		private global::System.ReadOnlySpan<char> Invoke(int x)
@@ -145,8 +145,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources)
-				.ContainsKey("Mock.Program_DoSomething.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_DoSomething.g.cs");
+			await That(result.Sources["Mock.Program_DoSomething.g.cs"])
 				.Contains("""
 				          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, int> global::Mockolate.Mock.IMockSetupForProgram_DoSomething.Setup(global::Mockolate.Parameters.IParameter<int>? x, global::Mockolate.Parameters.IRefParameter<int> y, global::Mockolate.Parameters.IOutParameter<int> z)
 				          		{
@@ -192,7 +192,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.Program_DoSomething.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_DoSomething.g.cs");
+			await That(result.Sources["Mock.Program_DoSomething.g.cs"])
 				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"x\"/>, <paramref name=\"y\"/>.").And
 				.Contains("Verify invocations for the delegate <see cref=\"global::MyCode.Program.DoSomething\">DoSomething</see> with the given <paramref name=\"parameters\"/>.").And
 				.DoesNotContain("Verify invocations for the method <see cref=\"global::MyCode.Program.DoSomething.Verify(");
@@ -217,7 +218,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.Func_int_bool.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Func_int_bool.g.cs");
+			await That(result.Sources["Mock.Func_int_bool.g.cs"])
 				.Contains(
 					"foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, int>>(\"global::System.Func<int, bool>.Invoke\"))")
 				.IgnoringNewlineStyle().And
@@ -244,8 +246,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources)
-				.ContainsKey("Mock.Program_ProcessAll.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_ProcessAll.g.cs");
+			await That(result.Sources["Mock.Program_ProcessAll.g.cs"])
 				.Contains("Setup(int a, int b, int c, int d, int e)")
 				.IgnoringNewlineStyle().And
 				.Contains("Verify(int a, int b, int c, int d, int e)")
@@ -275,8 +277,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources)
-				.ContainsKey("Mock.Program_ProcessAll.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_ProcessAll.g.cs");
+			await That(result.Sources["Mock.Program_ProcessAll.g.cs"])
 				.Contains(
 					"Setup(global::Mockolate.Parameters.IOutParameter<int> a, global::Mockolate.Parameters.IOutParameter<int> b, global::Mockolate.Parameters.IOutParameter<int> c, global::Mockolate.Parameters.IOutParameter<int> d, global::Mockolate.Parameters.IOutParameter<int> e)")
 				.IgnoringNewlineStyle().And
@@ -305,7 +307,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs");
+			await That(result.Sources["Mock.Program_ProcessResult.g.cs"])
 				.Contains("foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup1 in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(")
 				.IgnoringNewlineStyle().And
 				.Contains("methodSetup1?.TriggerCallbacks(methodSetup);")
@@ -335,7 +338,8 @@ public sealed partial class MockTests
 				     }
 				     """);
 
-			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs").WhoseValue
+			await That(result.Sources).ContainsKey("Mock.Program_ProcessResult.g.cs");
+			await That(result.Sources["Mock.Program_ProcessResult.g.cs"])
 				.Contains("foreach (global::Mockolate.Setup.VoidMethodSetup<string, int> s_methodSetup1 in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<string, int>>(")
 				.IgnoringNewlineStyle().And
 				.Contains("methodSetup1?.TriggerCallbacks(methodSetup, value);")

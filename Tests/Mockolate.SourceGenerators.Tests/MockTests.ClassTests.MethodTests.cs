@@ -29,16 +29,16 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
-					// The pattern-match cast must not bind a local named `wraps` because the user's
-					// parameter already occupies that name.
+				await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+				await That(result.Sources["Mock.MyService.g.cs"])
 					.DoesNotContain("global::MyCode.MyService wraps)")
-					.IgnoringNewlineStyle().And
+					.IgnoringNewlineStyle()
+					.Because("the pattern-match cast must not bind a local named `wraps` while the user's parameter already occupies that name").And
 					.Contains("global::MyCode.MyService wraps1)")
 					.IgnoringNewlineStyle().And
-					// The forwarding call must use the deduped name, not the parameter.
 					.Contains("wraps1.Run(wraps);")
-					.IgnoringNewlineStyle();
+					.IgnoringNewlineStyle()
+					.Because("the forwarding call must use the deduped name, not the parameter");
 			}
 
 			[Fact]
@@ -69,7 +69,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService__IMyOtherService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService__IMyOtherService.g.cs");
+				await That(result.Sources["Mock.IMyService__IMyOtherService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyOtherService.DoSomethingAsync{T}()" />
 					          		global::System.Threading.Tasks.Task<T?> global::MyCode.IMyOtherService.DoSomethingAsync<T>()
@@ -126,7 +127,8 @@ public sealed partial class MockTests
 					       }
 					       """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains($$"""
 					            		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod1{T, U}(int)" />
 					            		public bool MyMethod1<T, U>(int index)
@@ -168,7 +170,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod1{T, U}(int)" />
 					          		public bool MyMethod1<T, U>(int index)
@@ -200,7 +203,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains(
 						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.ProcessData\"))")
 					.IgnoringNewlineStyle().And
@@ -234,12 +238,11 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-					// The numbered cast variable must not reuse the parameter name; the base is
-					// renamed so `outParam1`/`outParam2` (parameters) and `outParam_1` (cast)
-					// don't collide.
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("IOutParameter<int> outParam_11")
-					.IgnoringNewlineStyle().And
+					.IgnoringNewlineStyle()
+					.Because("the numbered cast variable must not reuse the parameter name (the base is renamed so `outParam1`/`outParam2` parameters and `outParam_1` cast don't collide)").And
 					.Contains("IOutParameter<int> outParam_12")
 					.IgnoringNewlineStyle();
 			}
@@ -267,7 +270,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains(
 						"foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>(\"global::MyCode.IMyService.ProcessResult\"))")
 					.IgnoringNewlineStyle().And
@@ -300,7 +304,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.DoesNotContain("out var returnValue)")
 					.IgnoringNewlineStyle().And
 					.Contains("out var returnValue1) == true ? returnValue1 :")
@@ -332,8 +337,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources)
-					.ContainsKey("Mock.IService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IService.g.cs");
+				await That(result.Sources["Mock.IService.g.cs"])
 					.Contains("(global::MyCode.Status)1")
 					.IgnoringNewlineStyle();
 			}
@@ -362,8 +367,8 @@ public sealed partial class MockTests
 					     }
 					     """, typeof(DateTime));
 
-				await That(result.Sources)
-					.ContainsKey("Mock.IService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IService.g.cs");
+				await That(result.Sources["Mock.IService.g.cs"])
 					.Contains("DateTime time = default")
 					.IgnoringNewlineStyle();
 			}
@@ -403,7 +408,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs");
+				await That(result.Sources["Mock.IMyService__IMyServiceBase1__IMyServiceBase2.g.cs"])
 					.Contains("public string Value()").Once().And
 					.Contains("public string Value(string p1)").Once().And
 					.Contains("int global::MyCode.IMyServiceBase1.Value()").Once().And
@@ -435,7 +441,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod1(int)" />
 					          		public bool MyMethod1(int index)
@@ -547,7 +554,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyDirectMethod(int)" />
 					          		public int MyDirectMethod(int value)
@@ -751,7 +759,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs");
+				await That(result.Sources["Mock.MyService__IMyOtherService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.MyService.MyMethod1(int, ref int, out bool)" />
 					          		public override void MyMethod1(int index, ref int value1, out bool flag)
@@ -923,11 +932,13 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          public void MyMethod1(int a, int b = 1, bool? c = null, string d = "default")
 					          """);
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, bool?, string> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<bool?>? c, global::Mockolate.Parameters.IParameter<string>? d)
 					          		{
@@ -964,11 +975,13 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          public void MyMethod1(int a, params int[] b)
 					          """);
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int[]> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int[]>? b)
 					          		{
@@ -1013,7 +1026,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.MyMethod1(ref int)" />
 					          		public void MyMethod1(ref int index)
@@ -1209,7 +1223,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<char>> global::Mockolate.Mock.IMockSetupForIMyService.MyMethod1(global::Mockolate.Parameters.ISpanParameter<char> buffer)
 					          		{
@@ -1265,7 +1280,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.MyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+				await That(result.Sources["Mock.MyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.MyService.MyMethod{T}(T)" />
 					          		public override bool MyMethod<T>(T entity)

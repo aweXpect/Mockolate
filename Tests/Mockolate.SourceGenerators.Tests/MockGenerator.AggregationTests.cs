@@ -56,14 +56,15 @@ public sealed class MockGeneratorAggregationTests
 			     public interface IB { }
 			     """);
 
-		await That(result.Sources).ContainsKey("Mock.AsExtensions.g.cs").WhoseValue
-			// (IBase ↔ IB): bridge from a typed-as-IBase mock to IMockForIB.
-			.Contains("internal static partial class MockExtensionsForIB").And
+		await That(result.Sources).ContainsKey("Mock.AsExtensions.g.cs");
+		await That(result.Sources["Mock.AsExtensions.g.cs"])
+			.Contains("internal static partial class MockExtensionsForIB")
+			.Because("the (IBase ↔ IB) bridge from a typed-as-IBase mock to IMockForIB must be emitted").And
 			.Contains("extension(global::Mockolate.Mock.IMockForIBase mock)").And
-			// (IA ↔ IB): bridge from a typed-as-IA mock to IMockForIB.
-			.Contains("extension(global::Mockolate.Mock.IMockForIA mock)").And
-			// Reverse direction is also emitted.
-			.Contains("internal static partial class MockExtensionsForIBase").And
+			.Contains("extension(global::Mockolate.Mock.IMockForIA mock)")
+			.Because("the (IA ↔ IB) bridge from a typed-as-IA mock to IMockForIB must be emitted").And
+			.Contains("internal static partial class MockExtensionsForIBase")
+			.Because("the reverse direction must also be emitted").And
 			.Contains("internal static partial class MockExtensionsForIA");
 	}
 
@@ -86,7 +87,8 @@ public sealed class MockGeneratorAggregationTests
 			     }
 			     """, typeof(HttpClient));
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.Contains("HttpResponseMessageFactory").And
 			.Contains("new HttpResponseMessageFactory(global::System.Net.HttpStatusCode.NotImplemented)");
 	}
@@ -114,7 +116,8 @@ public sealed class MockGeneratorAggregationTests
 			     }
 			     """);
 
-		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("MockBehaviorExtensions.g.cs");
+		await That(result.Sources["MockBehaviorExtensions.g.cs"])
 			.DoesNotContain("HttpResponseMessageFactory");
 	}
 

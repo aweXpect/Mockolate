@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 
 namespace Mockolate.SourceGenerators.Tests;
 
@@ -61,7 +61,8 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).ContainsKey("ReturnsThrowsAsyncExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("ReturnsThrowsAsyncExtensions.g.cs");
+		await That(result.Sources["ReturnsThrowsAsyncExtensions.g.cs"])
 			.Contains(
 				"public static global::Mockolate.Setup.IReturnMethodSetupReturnBuilder<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task<TReturn>, T1, T2, T3, T4, T5> setup, TReturn returnValue)")
 			.And
@@ -126,7 +127,8 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 			     }
 			     """, typeof(DateTime), typeof(Task), typeof(CancellationToken));
 
-		await That(result.Sources).ContainsKey("ReturnsThrowsAsyncExtensions.g.cs").WhoseValue
+		await That(result.Sources).ContainsKey("ReturnsThrowsAsyncExtensions.g.cs");
+		await That(result.Sources["ReturnsThrowsAsyncExtensions.g.cs"])
 			.Contains("ReturnsAsync<TReturn, T1, T2, T3, T4, T5, T6>(this").And
 			.Contains("ThrowsAsync<TReturn, T1, T2, T3, T4, T5, T6>(this").And
 			.DoesNotContain("ReturnsAsync<TReturn, T1, T2, T3, T4, T5>(this").And

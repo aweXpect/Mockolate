@@ -29,7 +29,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.DoesNotContain("global::Mockolate.Interactions.IndexerGetterAccess<int, int> access = new(\"access\",")
 					.IgnoringNewlineStyle();
 			}
@@ -57,11 +58,11 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
-					// The wrap-base pattern-match cast must not collide with the user's `wraps`
-					// indexer parameter.
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.DoesNotContain("global::MyCode.IMyService wraps)")
-					.IgnoringNewlineStyle().And
+					.IgnoringNewlineStyle()
+					.Because("the wrap-base pattern-match cast must not collide with the user's `wraps` indexer parameter").And
 					.DoesNotContain("global::MyCode.IMyService wraps ?")
 					.IgnoringNewlineStyle().And
 					.Contains("global::MyCode.IMyService wraps1")
@@ -93,7 +94,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.this[int]" />
 					          		public int this[int index]
@@ -277,7 +279,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.MyService__IMyOtherService.g.cs");
+				await That(result.Sources["Mock.MyService__IMyOtherService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.MyService.this[int]" />
 					          		public override int this[int index]
@@ -418,7 +421,8 @@ public sealed partial class MockTests
 					     }
 					     """);
 
-				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs").WhoseValue
+				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
+				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("""
 					          		/// <inheritdoc cref="global::MyCode.IMyService.this[global::System.Span{char}]" />
 					          		public int this[global::System.Span<char> buffer]
