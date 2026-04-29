@@ -450,6 +450,33 @@ public sealed partial class MockTests
 					          		}
 					          """).IgnoringNewlineStyle();
 			}
+
+			[Fact]
+			public async Task EventWithRefOutDelegate_ShouldPreserveModifiersOnRaise()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public delegate void MyEventDelegate(ref int value, out string message);
+
+					     public interface IMyService
+					     {
+					         event MyEventDelegate SomeEvent;
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+			}
 		}
 	}
 }
