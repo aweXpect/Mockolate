@@ -200,6 +200,46 @@ public sealed partial class ItExtensionsTests
 				.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 		}
 
+		[Fact]
+		public async Task Wrapper_NonGenericInvokeCallbacks_DelegatesToInnerParameter()
+		{
+			ItExtensions.IStringContentBodyMatchingParameter sut = It.IsHttpContent().WithStringMatching("foo*");
+			int invocations = 0;
+			HttpContent? captured = new MyHttpContent();
+			sut.Do(content =>
+			{
+				invocations++;
+				captured = content;
+			});
+
+			sut.InvokeCallbacks(null);
+
+			await That(invocations).IsEqualTo(1);
+			await That(captured).IsNull();
+		}
+
+		[Fact]
+		public async Task Wrapper_NonGenericMatches_DelegatesToInnerParameter()
+		{
+			ItExtensions.IStringContentBodyMatchingParameter sut = It.IsHttpContent().WithStringMatching("foo*");
+
+			bool resultForNull = sut.Matches(null);
+			bool resultForUnrelated = sut.Matches("not http content");
+
+			await That(resultForNull).IsFalse();
+			await That(resultForUnrelated).IsFalse();
+		}
+
+		[Fact]
+		public async Task Wrapper_TypedMatches_ReturnsFalseForNullValue()
+		{
+			ItExtensions.IStringContentBodyMatchingParameter sut = It.IsHttpContent().WithStringMatching("foo*");
+
+			bool result = ((IParameterMatch<HttpContent?>)sut).Matches(null);
+
+			await That(result).IsFalse();
+		}
+
 		private sealed class MyHttpContent : HttpContent
 		{
 			protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)

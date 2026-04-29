@@ -220,8 +220,6 @@ namespace Mockolate
             where T : Mockolate.Setup.MethodSetup { }
         public TResult GetProperty<TResult>(Mockolate.Interactions.PropertyGetterAccess access, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
-        public TResult GetProperty<TResult>(int memberId, Mockolate.Interactions.PropertyGetterAccess access, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
-        public TResult GetProperty<TResult>(int memberId, string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetPropertyFast<TResult>(int memberId, Mockolate.Interactions.PropertyGetterAccess access, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
         public TResult GetPropertyFast<TResult>(int memberId, string propertyName, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
         public Mockolate.Setup.PropertySetup? GetPropertySetupSnapshot(int memberId) { }
