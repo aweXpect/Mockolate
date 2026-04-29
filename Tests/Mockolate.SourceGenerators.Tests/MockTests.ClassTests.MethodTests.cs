@@ -418,6 +418,32 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task ParameterNamedI_ShouldNotCollideWithVerifyLambdaVariable()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         void Do(int i, string s);
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+			}
+
+			[Fact]
 			public async Task ShouldImplementAllMethodsFromInterfaces()
 			{
 				GeneratorResult result = Generator
@@ -1250,6 +1276,33 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task StaticAbstractEventOnly_ShouldCompile()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System;
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         static abstract event Action<int> AbstractStaticEvent;
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+			}
+
+			[Fact]
 			public async Task VirtualMethodOverride_WithConstrainedGeneric_ShouldNotRepeatConstraints()
 			{
 				GeneratorResult result = Generator
@@ -1289,32 +1342,6 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle().And
 					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :").IgnoringNewlineStyle()
 					.Because("CS0460: constraints on override methods are inherited from the base method");
-			}
-
-			[Fact]
-			public async Task ParameterNamedI_ShouldNotCollideWithVerifyLambdaVariable()
-			{
-				GeneratorResult result = Generator
-					.Run("""
-					     using Mockolate;
-
-					     namespace MyCode;
-
-					     public class Program
-					     {
-					         public static void Main(string[] args)
-					         {
-					     		_ = IMyService.CreateMock();
-					         }
-					     }
-
-					     public interface IMyService
-					     {
-					         void Do(int i, string s);
-					     }
-					     """);
-
-				await That(result.Diagnostics).IsEmpty();
 			}
 		}
 	}
