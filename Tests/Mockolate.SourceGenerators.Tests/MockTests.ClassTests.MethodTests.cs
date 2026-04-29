@@ -1369,6 +1369,33 @@ public sealed partial class MockTests
 
 				await That(result.Diagnostics).IsEmpty();
 			}
+
+			[Fact]
+			public async Task NullableGenericReturn_ShouldPreserveNullableAnnotation()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     #nullable enable
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					              _ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         T? GetMaybe<T>() where T : class?;
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+			}
 		}
 	}
 }

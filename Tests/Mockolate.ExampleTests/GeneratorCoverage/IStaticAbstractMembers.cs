@@ -4,10 +4,9 @@ using System;
 namespace Mockolate.ExampleTests.GeneratorCoverage;
 
 /// <summary>
-///     Isolated coverage for the C# 11 <c>static abstract</c> interface members.
-///     Kept in its own type because mixing static abstracts into the larger
-///     <see cref="IComprehensiveInterface" /> surface currently surfaces a
-///     CS8920 (interface cannot be used as type argument) downstream.
+///     Isolated coverage for the C# 11 <c>static abstract</c> interface members,
+///     including the <c>static abstract event</c> shape that previously surfaced
+///     CS8920 when paired with the standard mock-setup parent interface.
 /// </summary>
 public interface IStaticAbstractMembers
 {

@@ -13,7 +13,7 @@ public interface IKeywordEdgeCases
 {
 	int @class { get; }
 
-	string this[int @params, string @while] { get; set; }
+	string this[int @params, string @void] { get; set; }
 
 	string @return();
 

@@ -20,8 +20,6 @@ public class MyEventArgs : EventArgs
 	public int N;
 }
 
-public delegate void SimpleEventDelegate(int value);
-
 /// <summary>
 ///     Squeezes every interface-shaped generator branch we can fit into a single type:
 ///     property accessor combinations, indexers (single + arity-5), all three event flavors,
@@ -37,10 +35,7 @@ public interface IComprehensiveInterface
 	int GetOnly { get; }
 	int SetOnly { set; }
 	string? NullableProp { get; set; }
-
-	// Init-only properties: generator currently emits a `set` accessor instead of `init`,
-	// causing CS8854 on the generated mock. Re-enable once the generator preserves `init`.
-	// string InitOnly { get; init; }
+	string InitOnly { get; init; }
 
 	string this[int i] { get; set; }
 	string this[int a, int b, int c, int d, int e] { get; set; }
@@ -49,26 +44,13 @@ public interface IComprehensiveInterface
 
 	event EventHandler PlainEvent;
 	event EventHandler<MyEventArgs> TypedEvent;
-
-	// Custom-delegate event: when the delegate has ref/out parameters, the generator's
-	// raise method drops the ref/out keywords on the Invoke call (CS1620). Use a plain
-	// pass-by-value delegate here; ComprehensiveDelegate is mocked separately as a delegate.
-	event SimpleEventDelegate CustomEvent;
+	event ComprehensiveDelegate CustomEvent;
 	static abstract int StaticAbstractMethod();
 
-	// Parameter modifiers split per method: combining ref + out + in + params in one
-	// signature currently emits CS1620 (missing ref/out keyword) on the generated mock.
-	void WithRefOut(ref int a, out string b);
-	void WithIn(in long c);
-	void WithParams(params int[] tail);
+	void WithModifiers(ref int a, out string b, in long c, params int[] tail);
 
-	// Default values split per type-kind. Single-letter parameter names (i, e, etc.) collide
-	// with the generator's lambda variable named `i`, causing CS0176/CS1503 in the generated
-	// verify methods, so we use longer names here.
-	void WithDefaultIntEnum(int integerValue = 5, MyEnum enumValue = MyEnum.B);
-	void WithDefaultStructDecimal(MyStruct structValue = default, decimal decimalValue = 1.5m);
-	void WithDefaultFloatChar(float floatValue = 0.25f, char charValue = 'x');
-	void WithDefaultNullable(string? nullableValue = null);
+	void WithDefaults(int i = 5, MyEnum e = MyEnum.B, decimal d = 1.5m,
+		float f = 0.25f, char c = 'x', string? s = null, MyStruct st = default);
 
 	void WithCollidingNames(int wraps, int result, int outParam1,
 		int methodExecution, int returnValue);
@@ -85,10 +67,8 @@ public interface IComprehensiveInterface
 	Span<char> GetSpan(int n);
 	ReadOnlySpan<char> GetROSpan(int n);
 
-	// Ref returns: the mock currently returns by value, breaking the ref-return contract
-	// (CS8152). Re-enable once the generator emits ref-returning overrides.
-	// ref int GetByRef();
-	// ref readonly int GetByRefReadonly();
+	ref int GetByRef();
+	ref readonly int GetByRefReadonly();
 
 	T G1<T>() where T : class;
 	T G2<T>() where T : struct;
@@ -98,11 +78,13 @@ public interface IComprehensiveInterface
 	T G6<T>() where T : MyBase, IComparable<T>;
 
 	// Nullable-annotated generic return (`T?` with `T : class?`): generator drops the
-	// annotation in the override (CS9334/CS0738). Re-enable once preserved.
+	// annotation in the explicit setup-interface impl (CS9334/CS0738/CS0453/CS0266).
+	// Tracking: see follow-up prompt for Bug 3.
 	// T? G7<T>() where T : class?;
 
 	// `allows ref struct` constraint: IReturnMethodSetup<T> rejects ref-struct T (CS9244).
-	// Re-enable once the generator routes these through the ref-struct setup pipeline.
+	// Needs runtime-side `allows ref struct` on the setup interfaces or a generator carve-out.
+	// Tracking: see follow-up prompt for Bug 4.
 	// T G8<T>() where T : allows ref struct;
 
 	int Five(int a, int b, int c, int d, int e);
