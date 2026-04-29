@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Mockolate.Setup;
 
-namespace Mockolate.Internal.Tests.Setup;
+namespace Mockolate.Tests.Setup;
 
 public class CallbackTests
 {

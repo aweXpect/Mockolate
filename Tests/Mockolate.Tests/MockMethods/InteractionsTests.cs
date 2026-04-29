@@ -78,9 +78,9 @@ public sealed partial class InteractionsTests
 			new MethodInvocation<int, long?, TimeSpan>(
 				"global::Mockolate.InteractionsTests.SomeMethod",
 				1,
-				null,
+				2L,
 				90.Seconds()));
-		string expectedValue = "invoke method SomeMethod(1, null, 00:01:30)";
+		string expectedValue = "invoke method SomeMethod(1, 2, 00:01:30)";
 
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
