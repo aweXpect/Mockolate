@@ -7,8 +7,4 @@
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers.CodeFixers\Mockolate.Analyzers.CodeFixers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Remove="Nullable"/>
-	</ItemGroup>
-
 </Project>

@@ -293,7 +293,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static bool TryGetRefStructIssue(IMethodSymbol method, string? pipelineUnsupportedReason,
-		[NotNullWhen(true)] out string? issue)
+		out string? issue)
 	{
 		bool hasRefStructParam = false;
 		foreach (IParameterSymbol p in method.Parameters)
@@ -334,7 +334,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static bool TryGetRefStructIssueForIndexer(IPropertySymbol indexer, string? pipelineUnsupportedReason,
-		[NotNullWhen(true)] out string? issue)
+		out string? issue)
 	{
 		if (!indexer.Parameters.Any(p => NeedsRefStructPipeline(p.Type)))
 		{
@@ -422,7 +422,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static bool IsInMockolateNamespace(ISymbol symbol)
 		=> symbol.ContainingNamespace is { Name: "Mockolate", ContainingNamespace.IsGlobalNamespace: true, };
 
-	private static bool IsMockable(ITypeSymbol typeSymbol, [NotNullWhen(false)] out string? reason)
+	private static bool IsMockable(ITypeSymbol typeSymbol, out string? reason)
 	{
 		if (typeSymbol.TypeKind == TypeKind.Struct)
 		{

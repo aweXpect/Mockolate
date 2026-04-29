@@ -145,7 +145,7 @@ internal static class MockGeneratorHelpers
 
 				if (IsMockable(rootType))
 				{
-					yield return new MockClass([rootType, ..collectedTypes,], sourceAssembly);
+					yield return new MockClass([rootType!, ..collectedTypes,], sourceAssembly);
 				}
 			}
 		}
@@ -180,7 +180,7 @@ internal static class MockGeneratorHelpers
 		}
 	}
 
-	private static bool IsMockable([NotNullWhen(true)] ITypeSymbol? typeSymbol)
+	private static bool IsMockable(ITypeSymbol? typeSymbol)
 		=> typeSymbol is
 		   {
 			   DeclaredAccessibility: not Accessibility.Private and not Accessibility.ProtectedAndInternal and not Accessibility.ProtectedAndFriend,
