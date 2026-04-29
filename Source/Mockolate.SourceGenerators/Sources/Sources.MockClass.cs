@@ -5849,24 +5849,24 @@ internal static partial class Sources
 		sb.Append(">(this, ").Append(methodMemberId).Append(", ").Append(method.GetUniqueNameString());
 		if (useParameters)
 		{
-			sb.Append(", i => parameters switch").AppendLine();
+			sb.Append(", __i => parameters switch").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.IParametersMatch m => m.Matches([")
-				.Append(string.Join(", ", Enumerable.Range(1, method.Parameters.Count).Select(i => $"i.Parameter{i}")))
+				.Append(string.Join(", ", Enumerable.Range(1, method.Parameters.Count).Select(i => $"__i.Parameter{i}")))
 				.Append("]),").AppendLine();
 			sb.Append("\t\t\t\t\tglobal::Mockolate.Parameters.INamedParametersMatch m => m.Matches([")
-				.Append(string.Join(", ", method.Parameters.Select((p, i) => $"(\"{p.Name}\", i.Parameter{i + 1})")))
+				.Append(string.Join(", ", method.Parameters.Select((p, i) => $"(\"{p.Name}\", __i.Parameter{i + 1})")))
 				.Append("]),").AppendLine();
 			sb.Append("\t\t\t\t\t_ => true").AppendLine();
 			sb.Append("\t\t\t\t}");
 		}
 		else if (method.Parameters.Count == 0)
 		{
-			sb.Append(", i => true");
+			sb.Append(", __i => true");
 		}
 		else
 		{
-			sb.Append(", i => ");
+			sb.Append(", __i => ");
 
 			int i = 0;
 			foreach (MethodParameter parameter in method.Parameters)
@@ -5882,7 +5882,7 @@ internal static partial class Sources
 				if (isValueParam)
 				{
 					sb.Append(
-						$"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, i.Parameter{i + 1}))");
+						$"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, __i.Parameter{i + 1}))");
 				}
 				else if (parameter.RefKind == RefKind.Out || parameter.RefKind == RefKind.Ref ||
 				         parameter.RefKind == RefKind.RefReadOnlyParameter)
@@ -5890,12 +5890,12 @@ internal static partial class Sources
 					// out/ref verify parameters use IVerifyOutParameter<T> / IVerifyRefParameter<T>, which don't inherit
 					// from IParameter<T> — covariance isn't applicable, so keep the direct IParameterMatch<T> check.
 					sb.Append(
-						$"({parameter.Name} is global::Mockolate.Parameters.IParameterMatch<{parameter.ToTypeOrWrapper()}> {parameter.Name}Match ? {parameter.Name}Match.Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
+						$"({parameter.Name} is global::Mockolate.Parameters.IParameterMatch<{parameter.ToTypeOrWrapper()}> {parameter.Name}Match ? {parameter.Name}Match.Matches(__i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(__i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
 				}
 				else
 				{
 					sb.Append(
-						$"({parameter.Name} is not null ? CovariantParameterAdapter<{parameter.ToTypeOrWrapper()}>.Wrap({parameter.Name}).Matches(i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
+						$"({parameter.Name} is not null ? CovariantParameterAdapter<{parameter.ToTypeOrWrapper()}>.Wrap({parameter.Name}).Matches(__i.Parameter{i + 1}) : global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals(__i.Parameter{i + 1}, default({parameter.ToTypeOrWrapper()})))");
 				}
 
 				i++;
