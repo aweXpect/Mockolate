@@ -23,25 +23,6 @@ public partial class MockRegistry
 		=> Interactions.Clear();
 
 	/// <summary>
-	///     Optional pre-sizing hook for the mock's internal indexer value-storage array. When the total number
-	///     of distinct indexer signatures is known up front, calling this once avoids the lazy-grow allocation
-	///     on first access. Safe to skip — storage grows on demand otherwise.
-	/// </summary>
-	/// <param name="indexerCount">The number of distinct indexer signatures. Must be non-negative.</param>
-	/// <exception cref="ArgumentOutOfRangeException"><paramref name="indexerCount" /> is negative.</exception>
-	public void InitializeStorage(int indexerCount)
-	{
-		if (indexerCount < 0)
-		{
-			throw new ArgumentOutOfRangeException(nameof(indexerCount), indexerCount,
-				// ReSharper disable once LocalizableElement
-				"Indexer count must be non-negative.");
-		}
-
-		Setup.Indexers.InitializeStorageCount(indexerCount);
-	}
-
-	/// <summary>
 	///     Returns the current snapshot of default-scope method setups registered under the generator-emitted
 	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
 	/// </summary>
@@ -56,27 +37,6 @@ public partial class MockRegistry
 	public MethodSetup[]? GetMethodSetupSnapshot(int memberId)
 	{
 		MethodSetup[]?[]? table = Volatile.Read(ref _setupsByMemberId);
-		if (table is null || (uint)memberId >= (uint)table.Length)
-		{
-			return null;
-		}
-
-		return table[memberId];
-	}
-
-	/// <summary>
-	///     Returns the current default-scope property setup registered under the generator-emitted
-	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
-	/// </summary>
-	/// <remarks>
-	///     Reads are lock-free. Only sees setups registered via the <c>SetupProperty(int, ...)</c> overloads;
-	///     scenario-scoped registrations still go through the string-keyed fallback.
-	/// </remarks>
-	/// <param name="memberId">The generator-emitted member id.</param>
-	/// <returns>The property setup for the member, or <see langword="null" /> when none is registered.</returns>
-	public PropertySetup? GetPropertySetupSnapshot(int memberId)
-	{
-		PropertySetup?[]? table = Volatile.Read(ref _propertySetupsByMemberId);
 		if (table is null || (uint)memberId >= (uint)table.Length)
 		{
 			return null;
@@ -204,19 +164,6 @@ public partial class MockRegistry
 		}
 
 		return Setup.Indexers.GetMatching<T>(access);
-	}
-
-	/// <summary>
-	///     Stores <paramref name="value" /> in the indexer value slot identified by <paramref name="access" />.
-	/// </summary>
-	/// <typeparam name="TResult">The indexer's value type.</typeparam>
-	/// <param name="access">The indexer access whose arguments identify the slot.</param>
-	/// <param name="value">The value to store.</param>
-	/// <param name="signatureIndex">Index into the mock's indexer-signature table (emitted by the source generator).</param>
-	public void SetIndexerValue<TResult>(IndexerAccess access, TResult value, int signatureIndex)
-	{
-		access.AttachStorage(Setup.Indexers.GetOrCreateStorage<TResult>(signatureIndex));
-		access.StoreValue(value);
 	}
 
 	/// <summary>

@@ -107,76 +107,89 @@ public sealed class MockRegistrySetupSnapshotTests
 		public async Task PublishPropertyToMemberIdBucket_WithDefaultThenUserSetup_RetainsUserSetup()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			PropertySetup defaultSetup = new PropertySetup.Default<int>("P1", 0);
-			FakePropertySetup userSetup = new("P1");
+			PropertySetup<int> defaultSetup = new(registry, "P1");
+			defaultSetup.InitializeWith(0);
+			PropertySetup<int> userSetup = new(registry, "P1");
+			userSetup.InitializeWith(99);
 
-			registry.SetupProperty(1, defaultSetup);
+			registry.SetupProperty(1, new PropertySetup.Default<int>("P1", 0));
 			registry.SetupProperty(1, userSetup);
 
-			await That(registry.GetPropertySetupSnapshot(1)).IsSameAs(userSetup);
+			int observed = registry.GetPropertyFast(1, "P1", _ => -1);
+			await That(observed).IsEqualTo(99);
 		}
 
 		[Fact]
 		public async Task PublishPropertyToMemberIdBucket_WithUserThenDefaultSetup_RetainsUserSetup()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			FakePropertySetup userSetup = new("P1");
-			PropertySetup defaultSetup = new PropertySetup.Default<int>("P1", 0);
+			PropertySetup<int> userSetup = new(registry, "P1");
+			userSetup.InitializeWith(99);
 
 			registry.SetupProperty(1, userSetup);
-			registry.SetupProperty(1, defaultSetup);
+			registry.SetupProperty(1, new PropertySetup.Default<int>("P1", 0));
 
-			await That(registry.GetPropertySetupSnapshot(1)).IsSameAs(userSetup);
+			int observed = registry.GetPropertyFast(1, "P1", _ => -1);
+			await That(observed).IsEqualTo(99);
 		}
 
 		[Fact]
 		public async Task SetupProperty_WithIncreasingMemberIds_GrowsTableLazily()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			FakePropertySetup setup0 = new("P0");
-			FakePropertySetup setup7 = new("P7");
-			FakePropertySetup setup3 = new("P3");
+			PropertySetup<int> setup0 = new(registry, "P0");
+			setup0.InitializeWith(10);
+			PropertySetup<int> setup7 = new(registry, "P7");
+			setup7.InitializeWith(70);
+			PropertySetup<int> setup3 = new(registry, "P3");
+			setup3.InitializeWith(30);
 
 			registry.SetupProperty(0, setup0);
 			registry.SetupProperty(7, setup7);
 			registry.SetupProperty(3, setup3);
 
-			await That(registry.GetPropertySetupSnapshot(0)).IsSameAs(setup0);
-			await That(registry.GetPropertySetupSnapshot(7)).IsSameAs(setup7);
-			await That(registry.GetPropertySetupSnapshot(3)).IsSameAs(setup3);
+			await That(registry.GetPropertyFast(0, "P0", _ => -1)).IsEqualTo(10);
+			await That(registry.GetPropertyFast(7, "P7", _ => -1)).IsEqualTo(70);
+			await That(registry.GetPropertyFast(3, "P3", _ => -1)).IsEqualTo(30);
 		}
 
 		[Fact]
 		public async Task SetupProperty_WithMemberId_PublishesToSnapshot()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			FakePropertySetup setup = new("P5");
+			PropertySetup<int> setup = new(registry, "P5");
+			setup.InitializeWith(50);
 
 			registry.SetupProperty(5, setup);
 
-			await That(registry.GetPropertySetupSnapshot(5)).IsSameAs(setup);
+			int observed = registry.GetPropertyFast(5, "P5", _ => -1);
+			await That(observed).IsEqualTo(50);
 		}
 
 		[Fact]
 		public async Task SetupProperty_WithMemberIdAndDefaultScenario_PublishesToSnapshot()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			FakePropertySetup setup = new("P5");
+			PropertySetup<int> setup = new(registry, "P5");
+			setup.InitializeWith(50);
 
 			registry.SetupProperty(5, "", setup);
 
-			await That(registry.GetPropertySetupSnapshot(5)).IsSameAs(setup);
+			int observed = registry.GetPropertyFast(5, "P5", _ => -1);
+			await That(observed).IsEqualTo(50);
 		}
 
 		[Fact]
 		public async Task SetupProperty_WithMemberIdAndNamedScenario_DoesNotPublishToSnapshot()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			FakePropertySetup setup = new("P5");
+			PropertySetup<int> setup = new(registry, "P5");
+			setup.InitializeWith(50);
 
 			registry.SetupProperty(5, "s1", setup);
 
-			await That(registry.GetPropertySetupSnapshot(5)).IsNull();
+			int observed = registry.GetPropertyFast(5, "P5", _ => -1);
+			await That(observed).IsEqualTo(-1);
 		}
 
 		[Fact]
@@ -187,7 +200,6 @@ public sealed class MockRegistrySetupSnapshotTests
 
 			registry.SetupProperty(4, "s1", setup);
 
-			await That(registry.GetPropertySetupSnapshot(4)).IsNull();
 			await That(registry.Setup.TryGetScenario("s1", out MockScenarioSetup? scoped)).IsTrue();
 			await That(scoped!.Properties.TryGetValue("P4", out PropertySetup? scopedSetup)).IsTrue();
 			await That(scopedSetup).IsSameAs(setup);
@@ -197,13 +209,16 @@ public sealed class MockRegistrySetupSnapshotTests
 		public async Task SetupProperty_WithSameMemberIdTwice_RetainsLatestUserSetup()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			FakePropertySetup setupA = new("P2");
-			FakePropertySetup setupB = new("P2");
+			PropertySetup<int> setupA = new(registry, "P2");
+			setupA.InitializeWith(20);
+			PropertySetup<int> setupB = new(registry, "P2");
+			setupB.InitializeWith(99);
 
 			registry.SetupProperty(2, setupA);
 			registry.SetupProperty(2, setupB);
 
-			await That(registry.GetPropertySetupSnapshot(2)).IsSameAs(setupB);
+			int observed = registry.GetPropertyFast(2, "P2", _ => -1);
+			await That(observed).IsEqualTo(99);
 		}
 	}
 
