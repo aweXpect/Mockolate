@@ -395,16 +395,27 @@ internal static partial class Sources
 		=> string.Join(", ", parameters.Select(p => p.Name));
 
 	/// <summary>
-	///     Formats parameters with type and name (e.g., "int value, string name").
+	///     Formats parameters with type and name (e.g., "int value, ref string name"), preserving any
+	///     ref/out/in modifier so the generated declaration matches the original delegate signature.
 	/// </summary>
 	private static string FormatParametersWithTypeAndName(IEnumerable<MethodParameter> parameters)
-		=> string.Join(", ", parameters.Select(p => $"{p.Type.Fullname} {p.Name}"));
+		=> string.Join(", ", parameters.Select(p => $"{RefKindKeyword(p.RefKind)}{p.Type.Fullname} {p.Name}"));
 
 	/// <summary>
-	///     Formats parameters as names only (e.g., "value1, value2").
+	///     Formats parameters as names only (e.g., "ref value1, out value2"), preserving any
+	///     ref/out/in modifier so the generated invocation argument list matches the delegate signature.
 	/// </summary>
 	private static string FormatParametersAsNames(IEnumerable<MethodParameter> parameters)
-		=> string.Join(", ", parameters.Select(p => p.Name));
+		=> string.Join(", ", parameters.Select(p => $"{RefKindKeyword(p.RefKind)}{p.Name}"));
+
+	private static string RefKindKeyword(RefKind kind) => kind switch
+	{
+		RefKind.Ref => "ref ",
+		RefKind.Out => "out ",
+		RefKind.In => "in ",
+		RefKind.RefReadOnlyParameter => "ref readonly ",
+		_ => "",
+	};
 
 	/// <summary>
 	///     Appends a NamedParameter with nullable handling.
