@@ -1556,6 +1556,64 @@ internal static partial class Sources
 		return true;
 	}
 
+	/// <summary>
+	///     A <c>T?</c> return where <c>T</c> is one of the method's generic parameters and is
+	///     constrained to a reference type (or any other non-value-type constraint such as
+	///     <c>class</c>, <c>class?</c>, an interface, or <c>notnull</c>) cannot be expressed in
+	///     the explicit setup-interface implementation: CS0460 forbids restating the inherited
+	///     constraint, and <c>where T : default</c> (CS8822) conflicts with those constraints.
+	///     Without a constraint clause the compiler resolves the bare <c>T?</c> as
+	///     <c>Nullable&lt;T&gt;</c> and reports CS0453/CS9334/CS0738/CS0266.
+	///
+	///     The fix is to drop the trailing <c>?</c> from the setup-side return type
+	///     (<c>IReturnMethodSetup&lt;T&gt;</c> instead of <c>IReturnMethodSetup&lt;T?&gt;</c>) and from
+	///     the matching <c>ReturnMethodSetup&lt;T&gt;</c> construction. NRT annotations are erased at
+	///     runtime, so the underlying setup object is identical and the fluent API still composes.
+	///     The user-facing mock body keeps <c>T?</c> because the constraint is visible there.
+	/// </summary>
+	private static bool ShouldStripNullableGenericReturnAnnotation(Method method)
+	{
+		if (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
+		{
+			return false;
+		}
+
+		string fullname = method.ReturnType.Fullname;
+		if (fullname.Length < 2 || fullname[fullname.Length - 1] != '?')
+		{
+			return false;
+		}
+
+		string raw = fullname.Substring(0, fullname.Length - 1);
+		foreach (GenericParameter gp in method.GenericParameters.Value)
+		{
+			if (gp.Name == raw)
+			{
+				return !gp.IsStruct && !gp.IsUnmanaged;
+			}
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	///     Emits the method's return type as it should appear inside the setup-side surface
+	///     (the <c>IReturnMethodSetup&lt;...&gt;</c> wrapper on the setup interface, the explicit
+	///     impl, and the <c>new ReturnMethodSetup&lt;...&gt;</c> construction). Strips a trailing
+	///     <c>?</c> when <see cref="ShouldStripNullableGenericReturnAnnotation" /> applies.
+	/// </summary>
+	private static void AppendSetupReturnType(StringBuilder sb, Method method)
+	{
+		if (ShouldStripNullableGenericReturnAnnotation(method))
+		{
+			string fullname = method.ReturnType.Fullname;
+			sb.Append(fullname, 0, fullname.Length - 1);
+			return;
+		}
+
+		sb.AppendTypeOrWrapper(method.ReturnType);
+	}
+
 #pragma warning disable S107 // Methods should not have too many parameters
 	private static void ImplementMockForInterface(StringBuilder sb, string mockRegistryName, string name,
 		bool hasEvents, bool hasProtectedMembers, bool hasProtectedEvents, bool hasStaticMembers, bool hasStaticEvents)
@@ -3911,7 +3969,8 @@ internal static partial class Sources
 					: "\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
 			}
 
-			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
+			sb.Append('<');
+			AppendSetupReturnType(sb, method);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -4206,7 +4265,8 @@ internal static partial class Sources
 					: "\t\tglobal::Mockolate.Setup.IReturnMethodSetup");
 			}
 
-			sb.Append('<').AppendTypeOrWrapper(method.ReturnType);
+			sb.Append('<');
+			AppendSetupReturnType(sb, method);
 			foreach (MethodParameter parameter in method.Parameters)
 			{
 				sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
@@ -4297,8 +4357,8 @@ internal static partial class Sources
 		string methodSetupVar = Helpers.GetUniqueLocalVariableName("methodSetup", method.Parameters);
 		if (method.ReturnType != Type.Void)
 		{
-			sb.Append("\t\t\tvar ").Append(methodSetupVar).Append(" = new global::Mockolate.Setup.ReturnMethodSetup<")
-				.AppendTypeOrWrapper(method.ReturnType);
+			sb.Append("\t\t\tvar ").Append(methodSetupVar).Append(" = new global::Mockolate.Setup.ReturnMethodSetup<");
+			AppendSetupReturnType(sb, method);
 
 			foreach (MethodParameter parameter in method.Parameters)
 			{

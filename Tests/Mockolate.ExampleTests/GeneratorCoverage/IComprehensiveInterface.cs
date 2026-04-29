@@ -77,10 +77,7 @@ public interface IComprehensiveInterface
 	T G5<T>() where T : notnull;
 	T G6<T>() where T : MyBase, IComparable<T>;
 
-	// Nullable-annotated generic return (`T?` with `T : class?`): generator drops the
-	// annotation in the explicit setup-interface impl (CS9334/CS0738/CS0453/CS0266).
-	// Tracking: see follow-up prompt for Bug 3.
-	// T? G7<T>() where T : class?;
+	T? G7<T>() where T : class?;
 
 	// `allows ref struct` constraint: IReturnMethodSetup<T> rejects ref-struct T (CS9244).
 	// Needs runtime-side `allows ref struct` on the setup interfaces or a generator carve-out.
