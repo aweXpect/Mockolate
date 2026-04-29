@@ -5288,6 +5288,16 @@ internal static partial class Sources
 				.Append(FormatParametersWithTypeAndName(@event.Delegate.Parameters))
 				.Append(")").AppendLine();
 			sb.AppendLine("\t\t{");
+			// Pre-assign declared `out` parameters: when no subscriber exists the conditional
+			// Invoke is skipped, so the compiler-required definite assignment must come from us.
+			foreach (MethodParameter p in @event.Delegate.Parameters)
+			{
+				if (p.RefKind == RefKind.Out)
+				{
+					sb.Append("\t\t\t").Append(p.Name).Append(" = default!;").AppendLine();
+				}
+			}
+
 			sb.Append("\t\t\t").Append(backingFieldAccess).Append("?.Invoke(");
 			if (@event.Delegate.Parameters.Count > 0)
 			{
@@ -5316,13 +5326,36 @@ internal static partial class Sources
 			sb.AppendLine("\t\t{");
 			sb.Append("\t\t\tglobal::Mockolate.MockBehavior mockBehavior = ").Append(mockRegistry).Append(".Behavior;")
 				.AppendLine();
+			// ref/out delegate parameters can't accept arbitrary expressions — bind each generated
+			// default to a local so it has an addressable storage location for the Invoke call.
+			bool hasByRef = @event.Delegate.Parameters.Any(p
+				=> p.RefKind == RefKind.Ref || p.RefKind == RefKind.Out ||
+				   p.RefKind == RefKind.In || p.RefKind == RefKind.RefReadOnlyParameter);
+
+			List<string> argNames = new();
+			int idx = 0;
+			foreach (MethodParameter p in @event.Delegate.Parameters)
+			{
+				idx++;
+				string defaultExpr = $"mockBehavior.DefaultValue.Generate(default({p.Type.Fullname.TrimEnd('?')}))";
+				if (hasByRef)
+				{
+					string local = $"__arg{idx}";
+					sb.Append("\t\t\t").Append(p.Type.Fullname).Append(' ').Append(local).Append(" = ")
+						.Append(defaultExpr).Append(";").AppendLine();
+					argNames.Add($"{RefKindKeyword(p.RefKind)}{local}");
+				}
+				else
+				{
+					argNames.Add(defaultExpr);
+				}
+			}
+
 			sb.Append("\t\t\t").Append(backingFieldAccess).Append("?.Invoke(");
 
 			if (@event.Delegate.Parameters.Count > 0)
 			{
-				sb.Append(string.Join(", ",
-					@event.Delegate.Parameters.Select(p
-						=> $"mockBehavior.DefaultValue.Generate(default({p.Type.Fullname.TrimEnd('?')}))")));
+				sb.Append(string.Join(", ", argNames));
 			}
 
 			sb.Append(");").AppendLine();
