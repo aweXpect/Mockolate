@@ -188,7 +188,7 @@ public sealed class MockRegistryTests
 			IndexerSetterAccess<int, int> setterAccess = new(1, 7);
 			IndexerGetterAccess<int> getterAccess = new(1);
 
-			registry.SetIndexerValue(setterAccess, 7, 0);
+			registry.ApplyIndexerSetter(setterAccess, null, 7, 0);
 			int result = registry.ApplyIndexerGetter(getterAccess, null, () => 99, 0);
 
 			await That(result).IsEqualTo(7);
@@ -222,78 +222,11 @@ public sealed class MockRegistryTests
 			IndexerSetterAccess<int, int> setterAccess = new(1, 42);
 			IndexerGetterAccess<int> getterAccess = new(1);
 
-			registry.SetIndexerValue(setterAccess, 42, 0);
+			registry.ApplyIndexerSetter(setterAccess, null, 42, 0);
 			int result = registry.GetIndexerFallback<int>(getterAccess, 0);
 
 			await That(result).IsEqualTo(42);
 			await That(counter).IsEqualTo(0);
-		}
-	}
-
-	public sealed class SetIndexerValueTests
-	{
-		[Fact]
-		public async Task ShouldStoreValueRetrievableViaApplyIndexerGetter()
-		{
-			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			IndexerSetterAccess<int, string> setterAccess = new(7, "stored");
-			IndexerGetterAccess<int> getterAccess = new(7);
-
-			registry.SetIndexerValue(setterAccess, "stored", 0);
-			string result = registry.ApplyIndexerGetter<string>(getterAccess, null, () => "default", 0);
-
-			await That(result).IsEqualTo("stored");
-		}
-
-		[Fact]
-		public async Task WithMultiKeyAccess_ShouldStorePerKeyTuple()
-		{
-			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			IndexerSetterAccess<int, int, string> setA = new(1, 2, "a");
-			IndexerSetterAccess<int, int, string> setB = new(3, 4, "b");
-			IndexerGetterAccess<int, int> getA = new(1, 2);
-			IndexerGetterAccess<int, int> getB = new(3, 4);
-			IndexerGetterAccess<int, int> miss = new(5, 6);
-
-			registry.SetIndexerValue(setA, "a", 0);
-			registry.SetIndexerValue(setB, "b", 0);
-			string a = registry.ApplyIndexerGetter<string>(getA, null, () => "default", 0);
-			string b = registry.ApplyIndexerGetter<string>(getB, null, () => "default", 0);
-			string m = registry.ApplyIndexerGetter<string>(miss, null, () => "default", 0);
-
-			await That(a).IsEqualTo("a");
-			await That(b).IsEqualTo("b");
-			await That(m).IsEqualTo("default");
-		}
-	}
-
-	public sealed class InitializeStorageTests
-	{
-		[Fact]
-		public async Task WithNegative_ShouldThrowWithDescriptiveMessage()
-		{
-			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-
-			void Act()
-			{
-				registry.InitializeStorage(-1);
-			}
-
-			await That(Act).Throws<ArgumentOutOfRangeException>()
-				.WithMessage("*non-negative*").AsWildcard();
-		}
-
-		[Fact]
-		public async Task WithZero_ShouldNotThrow()
-		{
-			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-
-			void Act()
-			{
-				registry.InitializeStorage(0);
-			}
-
-			await That(Act).DoesNotThrow();
 		}
 	}
 
@@ -528,43 +461,6 @@ public sealed class MockRegistryTests
 			registry.SetupMethod(0, setup);
 
 			MethodSetup[]? result = registry.GetMethodSetupSnapshot(5);
-
-			await That(result).IsNull();
-		}
-	}
-
-	public sealed class GetPropertySetupSnapshotTests
-	{
-		[Fact]
-		public async Task WithEmptyTable_ShouldReturnNull()
-		{
-			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-
-			PropertySetup? result = registry.GetPropertySetupSnapshot(0);
-
-			await That(result).IsNull();
-		}
-
-		[Fact]
-		public async Task WithMemberIdAtBoundary_ShouldReturnTheSetup()
-		{
-			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			PropertySetup<int> setup = new(registry, "P");
-			registry.SetupProperty(5, setup);
-
-			PropertySetup? result = registry.GetPropertySetupSnapshot(5);
-
-			await That(result).IsSameAs(setup);
-		}
-
-		[Fact]
-		public async Task WithMemberIdBeyondTable_ShouldReturnNull()
-		{
-			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
-			PropertySetup<int> setup = new(registry, "P");
-			registry.SetupProperty(0, setup);
-
-			PropertySetup? result = registry.GetPropertySetupSnapshot(5);
 
 			await That(result).IsNull();
 		}

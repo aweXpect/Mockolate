@@ -215,7 +215,6 @@ namespace Mockolate
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetPropertyFast<TResult>(int memberId, Mockolate.Interactions.PropertyGetterAccess access, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
         public TResult GetPropertyFast<TResult>(int memberId, string propertyName, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
-        public Mockolate.Setup.PropertySetup? GetPropertySetupSnapshot(int memberId) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.IMockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, int memberId, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGotTyped<T, T1>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, System.Func<string> parametersDescription) { }
@@ -227,12 +226,10 @@ namespace Mockolate
         public Mockolate.Verify.VerificationResult<T> IndexerSetTyped<T, T1, T2, TValue>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSetTyped<T, T1, T2, T3, TValue>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerSetTyped<T, T1, T2, T3, T4, TValue>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, Mockolate.Parameters.IParameterMatch<TValue> value, System.Func<string> parametersDescription) { }
-        public void InitializeStorage(int indexerCount) { }
         public Mockolate.Verify.VerificationResult<T> Method<T>(T subject, Mockolate.Setup.IMethodSetup methodSetup) { }
         public void RegisterInteraction(Mockolate.Interactions.IInteraction interaction) { }
         public void RemoveEvent(string name, object? target, System.Reflection.MethodInfo? method) { }
         public void RemoveEvent(int memberId, string name, object? target, System.Reflection.MethodInfo? method) { }
-        public void SetIndexerValue<TResult>(Mockolate.Interactions.IndexerAccess access, TResult value, int signatureIndex) { }
         public bool SetProperty<T>(string propertyName, T value) { }
         public bool SetProperty<T>(int memberId, string propertyName, T value) { }
         public bool SetPropertyFast<T>(int memberId, int setterMemberId, string propertyName, T value) { }

@@ -519,36 +519,6 @@ public sealed partial class SetupIndexerTests
 				.WithParamName("signatureIndex");
 		}
 
-		[Fact]
-		public async Task InitializeStorage_WithNegativeCount_ShouldThrow()
-		{
-			IIndexerService sut = IIndexerService.CreateMock();
-			MockRegistry registry = ((IMock)sut).MockRegistry;
-
-			void Act()
-			{
-				registry.InitializeStorage(-1);
-			}
-
-			await That(Act).Throws<ArgumentOutOfRangeException>()
-				.WithParamName("indexerCount");
-		}
-
-		[Fact]
-		public async Task SetIndexerValue_WithNegativeSignatureIndex_ShouldThrow()
-		{
-			IIndexerService sut = IIndexerService.CreateMock();
-			MockRegistry registry = ((IMock)sut).MockRegistry;
-			IndexerGetterAccess<int> access = new(1);
-
-			void Act()
-			{
-				registry.SetIndexerValue(access, "foo", -1);
-			}
-
-			await That(Act).Throws<ArgumentOutOfRangeException>()
-				.WithParamName("signatureIndex");
-		}
 	}
 
 

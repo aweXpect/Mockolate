@@ -225,9 +225,9 @@ public partial class MockRegistry
 	/// </summary>
 	/// <remarks>
 	///     The <paramref name="memberId" /> is a compile-time constant emitted by the source generator, one per
-	///     mocked property accessor. Reads via <see cref="GetPropertySetupSnapshot(int)" /> are lock-free; writes
-	///     take an internal lock and publish via <see cref="Volatile.Write{T}(ref T, T)" />. A non-default setup
-	///     never overrides itself with a <see cref="PropertySetup.Default" /> placeholder — mirroring the rules in
+	///     mocked property accessor. Reads of the lock-free snapshot table are paired with writes that take an
+	///     internal lock and publish via <see cref="Volatile.Write{T}(ref T, T)" />. A non-default setup never
+	///     overrides itself with a <see cref="PropertySetup.Default" /> placeholder — mirroring the rules in
 	///     <see cref="MockSetups.PropertySetups.Add" />.
 	/// </remarks>
 	/// <param name="memberId">The generator-emitted member id for the setup's target property.</param>
