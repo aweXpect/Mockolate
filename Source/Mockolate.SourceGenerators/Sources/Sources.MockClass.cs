@@ -2843,6 +2843,21 @@ internal static partial class Sources
 #pragma warning restore S107
 	{
 		string mockRegistry = method.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
+		string returnRefPrefix = method.IsRefReturn
+			? "ref "
+			: method.IsRefReadonlyReturn
+				? "ref readonly "
+				: "";
+		string refReturnStorageField = method.IsRefReturn || method.IsRefReadonlyReturn
+			? "_refReturnStorage_" + new string((method.ContainingType + "_" + method.Name)
+				.Select(c => char.IsLetterOrDigit(c) ? c : '_').ToArray())
+			: "";
+		if (method.IsRefReturn || method.IsRefReadonlyReturn)
+		{
+			sb.Append("\t\tprivate ").Append(method.ReturnType.Fullname).Append(' ')
+				.Append(refReturnStorageField).Append(';').AppendLine();
+		}
+
 		sb.Append("\t\t/// <inheritdoc cref=\"").Append(method.ContainingType.EscapeForXmlDoc()).Append('.')
 			.Append(method.Name.EscapeForXmlDoc()).Append('(')
 			.Append(string.Join(", ", method.Parameters.Select(p => p.RefKind.GetString() + p.Type.Fullname))
@@ -2856,7 +2871,7 @@ internal static partial class Sources
 				sb.Append("static ");
 			}
 
-			sb.Append(method.ReturnType.Fullname).Append(' ').Append(className).Append('.').Append(method.Name)
+			sb.Append(returnRefPrefix).Append(method.ReturnType.Fullname).Append(' ').Append(className).Append('.').Append(method.Name)
 				.Append('(');
 		}
 		else
@@ -2876,7 +2891,7 @@ internal static partial class Sources
 					sb.Append("override ");
 				}
 
-				sb.Append(method.ReturnType.Fullname).Append(' ')
+				sb.Append(returnRefPrefix).Append(method.ReturnType.Fullname).Append(' ')
 					.Append(method.Name).Append('(');
 			}
 			else
@@ -2886,7 +2901,7 @@ internal static partial class Sources
 					sb.Append("static ");
 				}
 
-				sb.Append(method.ReturnType.Fullname).Append(' ')
+				sb.Append(returnRefPrefix).Append(method.ReturnType.Fullname).Append(' ')
 					.Append(method.ExplicitImplementation).Append('.').Append(method.Name).Append('(');
 			}
 		}
@@ -3217,13 +3232,31 @@ internal static partial class Sources
 
 		if (method.ReturnType != Type.Void)
 		{
+			bool isRefReturn = method.IsRefReturn || method.IsRefReadonlyReturn;
 			string returnValue = Helpers.GetUniqueLocalVariableName("returnValue", method.Parameters);
 			sb.Append("\t\t\tif (").Append(methodSetup).Append("?.HasReturnCallbacks != true && ")
 				.Append(hasWrappedResult).Append(")").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn ").Append(wrappedResult).Append(";").AppendLine();
+			if (isRefReturn)
+			{
+				sb.Append("\t\t\t\tthis.").Append(refReturnStorageField).Append(" = ")
+					.Append(wrappedResult).Append(";").AppendLine();
+				sb.Append("\t\t\t\treturn ref this.").Append(refReturnStorageField).Append(";").AppendLine();
+			}
+			else
+			{
+				sb.Append("\t\t\t\treturn ").Append(wrappedResult).Append(";").AppendLine();
+			}
 			sb.Append("\t\t\t}").AppendLine();
-			sb.Append("\t\t\treturn ").Append(methodSetup).Append("?.TryGetReturnValue(");
+			if (isRefReturn)
+			{
+				sb.Append("\t\t\tthis.").Append(refReturnStorageField).Append(" = ")
+					.Append(methodSetup).Append("?.TryGetReturnValue(");
+			}
+			else
+			{
+				sb.Append("\t\t\treturn ").Append(methodSetup).Append("?.TryGetReturnValue(");
+			}
 			string defaultValueGeneratorSuffix = "";
 			if (method.Parameters.Count > 0)
 			{
@@ -3235,6 +3268,10 @@ internal static partial class Sources
 				.AppendDefaultValueGeneratorFor(method.ReturnType, $"{mockRegistry}.Behavior.DefaultValue",
 					defaultValueGeneratorSuffix)
 				.Append(';').AppendLine();
+			if (isRefReturn)
+			{
+				sb.Append("\t\t\treturn ref this.").Append(refReturnStorageField).Append(";").AppendLine();
+			}
 		}
 
 		sb.AppendLine("\t\t}");

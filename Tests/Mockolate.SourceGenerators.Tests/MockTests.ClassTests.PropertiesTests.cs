@@ -411,6 +411,32 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task RefReturn_ShouldCompile()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         ref int GetByRef();
+					         ref readonly int GetByRefReadonly();
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+			}
+
+			[Fact]
 			public async Task InitOnlyProperty_ShouldEmitInitAccessorAndCompile()
 			{
 				GeneratorResult result = Generator
