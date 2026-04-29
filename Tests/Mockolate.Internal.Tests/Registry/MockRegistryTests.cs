@@ -817,4 +817,288 @@ public sealed class MockRegistryTests
 			IEnumerator IEnumerable.GetEnumerator() => _items.GetEnumerator();
 		}
 	}
+
+	public sealed class GetIndexerSetupSnapshotBoundaryTests
+	{
+		[Fact]
+		public async Task WithMemberIdEqualToTableLength_ShouldReturnNullWithoutThrowing()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			IndexerSetup<string, int> setup = new(registry, (IParameterMatch<int>)It.IsAny<int>());
+			registry.SetupIndexer(0, setup);
+
+			IndexerSetup[]? result = registry.GetIndexerSetupSnapshot(1);
+
+			await That(result).IsNull();
+		}
+	}
+
+	public sealed class GetPropertyFastInteractionRecordingTests
+	{
+		[Fact]
+		public async Task WithSharedAccessSingleton_AndMatchingFastBuffer_ShouldAppendToBuffer()
+		{
+			FastMockInteractions store = new(1);
+			PropertyGetterAccess access = new("P");
+			FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0, access);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			int result = registry.GetPropertyFast(0, access, _ => 7);
+
+			await That(buffer.Count).IsEqualTo(1);
+			await That(result).IsEqualTo(7);
+		}
+
+		[Fact]
+		public async Task WithSharedAccessSingleton_WithoutMatchingBuffer_ShouldRegisterTheSingleton()
+		{
+			FastMockInteractions store = new(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+			PropertyGetterAccess access = new("P");
+
+			registry.GetPropertyFast(0, access, _ => 7);
+
+			IInteraction recorded = registry.Interactions.Single();
+			await That(recorded).IsSameAs(access);
+		}
+
+		[Fact]
+		public async Task WithStringName_AndMatchingFastBuffer_ShouldAppendToBuffer()
+		{
+			FastMockInteractions store = new(1);
+			FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			int result = registry.GetPropertyFast(0, "P", _ => 7);
+
+			await That(buffer.Count).IsEqualTo(1);
+			await That(result).IsEqualTo(7);
+		}
+
+		[Fact]
+		public async Task WithStringName_AtBufferLengthBoundary_ShouldFallBackWithoutThrowing()
+		{
+			FastMockInteractions store = new(1);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			int result = registry.GetPropertyFast(1, "P", _ => 7);
+
+			await That(result).IsEqualTo(7);
+			await That(registry.Interactions.Count).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task WithStringName_AtTableLengthBoundary_ShouldFallToColdPathWithoutThrowing()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> snapshot = new(registry, "P");
+			snapshot.InitializeWith(42);
+			registry.SetupProperty(0, snapshot);
+
+			int result = registry.GetPropertyFast(1, "Q", _ => 7);
+
+			await That(result).IsEqualTo(7);
+		}
+
+		[Fact]
+		public async Task WithStringName_WhenBehaviorSkipsInteractionRecording_ShouldNotRecord()
+		{
+			MockBehavior behavior = MockBehavior.Default.SkippingInteractionRecording();
+			FastMockInteractions store = new(1, behavior.SkipInteractionRecording);
+			FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+			MockRegistry registry = new(behavior, store);
+
+			registry.GetPropertyFast(0, "P", _ => 7);
+
+			await That(buffer.Count).IsEqualTo(0);
+			await That(registry.Interactions.Count).IsEqualTo(0);
+		}
+
+		[Fact]
+		public async Task WithStringName_WithoutMatchingBuffer_ShouldFallBackToRegisterPropertyGetterAccess()
+		{
+			FastMockInteractions store = new(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			registry.GetPropertyFast(0, "P", _ => 7);
+
+			IInteraction recorded = registry.Interactions.Single();
+			await That(recorded).IsExactly<PropertyGetterAccess>()
+				.Whose(x => x.Name, x => x.IsEqualTo("P"));
+		}
+	}
+
+	public sealed class SetPropertyMemberIdTests
+	{
+		[Fact]
+		public async Task SetProperty_WithMemberId_AndSetupOverridesSkipBaseClass_ShouldReturnSetupOverride()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> setup = new(registry, "P");
+			setup.InitializeWith(0);
+			((IPropertySetup<int>)setup).SkippingBaseClass();
+			registry.SetupProperty(setup);
+
+			bool skipBase = registry.SetProperty(7, "P", 42);
+
+			await That(skipBase).IsTrue();
+		}
+
+		[Fact]
+		public async Task SetProperty_WithMemberId_AtBufferLengthBoundary_ShouldFallBackWithoutThrowing()
+		{
+			FastMockInteractions store = new(1);
+			MockRegistry registry = new(MockBehavior.Default, store);
+			PropertySetup<int> setup = new(registry, "P");
+			setup.InitializeWith(0);
+			registry.SetupProperty(setup);
+
+			registry.SetProperty(1, "P", 42);
+
+			IInteraction recorded = registry.Interactions.Single();
+			await That(recorded).IsExactly<PropertySetterAccess<int>>();
+		}
+
+		[Fact]
+		public async Task SetProperty_WithMemberId_ShouldInvokeSetterAndStoreValue()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> setup = new(registry, "P");
+			setup.InitializeWith(0);
+			registry.SetupProperty(setup);
+
+			registry.SetProperty(7, "P", 42);
+
+			int after = registry.GetProperty("P", () => -1, null);
+			await That(after).IsEqualTo(42);
+		}
+
+		[Fact]
+		public async Task SetProperty_WithoutMemberId_AndSetupOverridesSkipBaseClass_ShouldReturnSetupOverride()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> setup = new(registry, "P");
+			setup.InitializeWith(0);
+			((IPropertySetup<int>)setup).SkippingBaseClass();
+			registry.SetupProperty(setup);
+
+			bool skipBase = registry.SetProperty("P", 42);
+
+			await That(skipBase).IsTrue();
+		}
+	}
+
+	public sealed class SetPropertyFastTableBoundaryTests
+	{
+		[Fact]
+		public async Task SetPropertyFast_AtTableLengthBoundary_ShouldFallToColdPathWithoutThrowing()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> snapshot = new(registry, "P");
+			snapshot.InitializeWith(0);
+			registry.SetupProperty(0, snapshot);
+
+			bool skipBase = registry.SetPropertyFast(1, 2, "P", 42);
+
+			await That(skipBase).IsFalse();
+		}
+	}
+
+	public sealed class AddRemoveEventErrorMessageTests
+	{
+		[Fact]
+		public async Task AddEvent_WithMemberId_AndNullMethod_ShouldThrowSubscriptionMessage()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+
+			void Act()
+			{
+				registry.AddEvent(0, "OnFoo", this, null);
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method of an event subscription may not be null.");
+		}
+
+		[Fact]
+		public async Task AddEvent_WithStringName_AndNullMethod_ShouldThrowSubscriptionMessage()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+
+			void Act()
+			{
+				registry.AddEvent("OnFoo", this, null);
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method of an event subscription may not be null.");
+		}
+
+		[Fact]
+		public async Task RemoveEvent_WithMemberId_AndNullMethod_ShouldThrowUnsubscriptionMessage()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+
+			void Act()
+			{
+				registry.RemoveEvent(0, "OnFoo", this, null);
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method of an event unsubscription may not be null.");
+		}
+
+		[Fact]
+		public async Task RemoveEvent_WithStringName_AndNullMethod_ShouldThrowUnsubscriptionMessage()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+
+			void Act()
+			{
+				registry.RemoveEvent("OnFoo", this, null);
+			}
+
+			await That(Act).Throws<MockException>()
+				.WithMessage("The method of an event unsubscription may not be null.");
+		}
+	}
+
+	public sealed class RemoveEventScenarioRoutingTests
+	{
+		[Fact]
+		public async Task AddEvent_WithMemberId_AndActiveScenario_ShouldRouteToScenarioSetup()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			EventSetup defaultSetup = new(registry, "OnFoo");
+			registry.SetupEvent(7, defaultSetup);
+
+			int scenarioCallbackCount = 0;
+			EventSetup scenarioSetup = new(registry, "OnFoo");
+			scenarioSetup.OnSubscribed.Do(() => scenarioCallbackCount++);
+			registry.SetupEvent(7, "myScenario", scenarioSetup);
+
+			registry.TransitionTo("myScenario");
+			registry.AddEvent(7, "OnFoo", this, GetMethodInfo());
+
+			await That(scenarioCallbackCount).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task RemoveEvent_WithMemberId_AndActiveScenario_ShouldRouteToScenarioSetup()
+		{
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			EventSetup defaultSetup = new(registry, "OnFoo");
+			registry.SetupEvent(7, defaultSetup);
+
+			int scenarioCallbackCount = 0;
+			EventSetup scenarioSetup = new(registry, "OnFoo");
+			scenarioSetup.OnUnsubscribed.Do(() => scenarioCallbackCount++);
+			registry.SetupEvent(7, "myScenario", scenarioSetup);
+
+			registry.TransitionTo("myScenario");
+			registry.RemoveEvent(7, "OnFoo", this, GetMethodInfo());
+
+			await That(scenarioCallbackCount).IsEqualTo(1);
+		}
+	}
 }

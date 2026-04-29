@@ -8,6 +8,25 @@ namespace Mockolate.Internal.Tests.Verify;
 public class TypedVerifyFastPathTests
 {
 	[Fact]
+	public async Task IndexerGot_WithMemberIdAndInstalledBuffer_OnlyWalksBuffer()
+	{
+		FastMockInteractions store = new(1);
+		store.InstallPropertyGetter(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+
+		interactions.RegisterInteraction(new IndexerGetterAccess<int>(5));
+		interactions.RegisterInteraction(new IndexerGetterAccess<int>(5));
+
+		VerificationResult<object> result = registry.IndexerGot(
+			new object(), 0,
+			static i => i is IndexerGetterAccess<int> g && g.Parameter1 == 5,
+			() => "[5]");
+
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 0)).IsTrue();
+	}
+
+	[Fact]
 	public async Task IndexerGot_WithoutBuffer_ProducesParametersDescriptionInExpectation()
 	{
 		FastMockInteractions store = new(0);
@@ -34,6 +53,27 @@ public class TypedVerifyFastPathTests
 			() => "(5)");
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer (5)");
+	}
+
+	[Fact]
+	public async Task IndexerSet_WithMemberIdAndInstalledBuffer_OnlyWalksBuffer()
+	{
+		FastMockInteractions store = new(1);
+		store.InstallPropertyGetter(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+
+		interactions.RegisterInteraction(new IndexerSetterAccess<int, string>(5, "v"));
+		interactions.RegisterInteraction(new IndexerSetterAccess<int, string>(5, "v"));
+
+		IParameterMatch<string> value = (IParameterMatch<string>)It.IsAny<string>();
+		VerificationResult<object> result = registry.IndexerSet(
+			new object(), 0,
+			static (i, v) => i is IndexerSetterAccess<int, string> s && s.Parameter1 == 5 && v.Matches(s.TypedValue),
+			value,
+			() => "[5]");
+
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 0)).IsTrue();
 	}
 
 	[Fact]
@@ -92,6 +132,24 @@ public class TypedVerifyFastPathTests
 		VerificationResult<object> result = registry.SubscribedToTyped(new object(), 5, "OnFoo");
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event OnFoo");
+	}
+
+	[Fact]
+	public async Task TryGetBuffer_WhenBufferReturned_TypedFastPathIgnoresOtherInteractions()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod0Buffer buffer = store.InstallMethod(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+
+		buffer.Append("Foo");
+
+		interactions.RegisterInteraction(new MethodInvocation("Foo"));
+		interactions.RegisterInteraction(new MethodInvocation("Foo"));
+
+		registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Once();
+
+		await That(true).IsTrue();
 	}
 
 	[Fact]
@@ -208,6 +266,68 @@ public class TypedVerifyFastPathTests
 	}
 
 	[Fact]
+	public async Task VerifyMethod3_FallbackPath_RequiresAllParametersToMatch()
+	{
+		FastMockInteractions store = new(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int>("M", 1, 2, 3));
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int>("M", 1, 2, 99));
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int>("M", 1, 99, 3));
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int>("M", 99, 2, 3));
+
+		VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod(
+			new object(), 0, "M",
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<int>)It.Is(2),
+			(IParameterMatch<int>)It.Is(3),
+			() => "M(1, 2, 3)");
+
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 1)).IsTrue();
+	}
+
+	[Fact]
+	public async Task VerifyMethod4_FallbackPath_RequiresAllParametersToMatch()
+	{
+		FastMockInteractions store = new(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int, int>("M", 1, 2, 3, 4));
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int, int>("M", 1, 2, 3, 99));
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int, int>("M", 1, 2, 99, 4));
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int, int>("M", 1, 99, 3, 4));
+		interactions.RegisterInteraction(new MethodInvocation<int, int, int, int>("M", 99, 2, 3, 4));
+
+		VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod(
+			new object(), 0, "M",
+			(IParameterMatch<int>)It.Is(1),
+			(IParameterMatch<int>)It.Is(2),
+			(IParameterMatch<int>)It.Is(3),
+			(IParameterMatch<int>)It.Is(4),
+			() => "M(1, 2, 3, 4)");
+
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 1)).IsTrue();
+	}
+
+	[Fact]
+	public async Task VerifyProperty_WithMemberIdButNoBuffer_FallbackPredicateFiltersByName()
+	{
+		FastMockInteractions store = new(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+
+		interactions.RegisterInteraction(new PropertyGetterAccess("P"));
+		interactions.RegisterInteraction(new PropertyGetterAccess("P"));
+		interactions.RegisterInteraction(new PropertyGetterAccess("Q"));
+
+		VerificationResult<object> result = registry.VerifyProperty(new object(), 5, "P");
+
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
+	}
+
+	[Fact]
 	public async Task VerifyProperty_WithMemberIdButNoBuffer_FallsBackToStringKeyedPath()
 	{
 		FastMockInteractions store = new(0);
@@ -221,6 +341,23 @@ public class TypedVerifyFastPathTests
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property P");
 		((IVerificationResult)result).Verify(arr => arr.Length == 2);
+	}
+
+	[Fact]
+	public async Task VerifyPropertySetter_WithMemberIdButNoBuffer_FallbackPredicateFiltersByName()
+	{
+		FastMockInteractions store = new(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+
+		interactions.RegisterInteraction(new PropertySetterAccess<int>("P", 1));
+		interactions.RegisterInteraction(new PropertySetterAccess<int>("P", 2));
+		interactions.RegisterInteraction(new PropertySetterAccess<int>("Q", 3));
+
+		VerificationResult<object> result = registry.VerifyProperty(
+			new object(), 5, "P", (IParameterMatch<int>)It.IsAny<int>());
+
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
 	}
 
 	[Fact]
