@@ -1153,7 +1153,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Set up the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockSetupFor").Append(name);
-		if (!hasStaticMembers)
+		if (!hasStaticMembers && !hasStaticEvents)
 		{
 			sb.Append(" : global::Mockolate.Setup.IMockSetup<").Append(@class.ClassFullName).Append(">").AppendLine();
 		}
@@ -1235,7 +1235,7 @@ internal static partial class Sources
 
 		sb.AppendXmlSummary($"Verify interactions with the mock of <see cref=\"{escapedClassName}\" />.", "\t");
 		sb.Append("\tinternal interface IMockVerifyFor").Append(name);
-		if (!hasStaticMembers)
+		if (!hasStaticMembers && !hasStaticEvents)
 		{
 			sb.Append(" : global::Mockolate.Verify.IMockVerify<").Append(@class.ClassFullName).Append(">").AppendLine();
 		}

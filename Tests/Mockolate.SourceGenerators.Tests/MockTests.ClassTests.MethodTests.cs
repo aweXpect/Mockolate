@@ -1292,6 +1292,33 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task StaticAbstractEventOnly_ShouldCompile()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using System;
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         static abstract event Action<int> AbstractStaticEvent;
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+			}
+
+			[Fact]
 			public async Task ParameterNamedI_ShouldNotCollideWithVerifyLambdaVariable()
 			{
 				GeneratorResult result = Generator
