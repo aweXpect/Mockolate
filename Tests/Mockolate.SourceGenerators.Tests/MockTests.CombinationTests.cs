@@ -42,10 +42,10 @@ public sealed partial class MockTests
 			await That(result.Sources["Mock.MyService__IMyInterface.g.cs"])
 				.Contains("static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)").And
 				.Contains("static bool TryCastWithDefaultValue<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)").And
-				// Parameterless dispatch.
-				.Contains("if (mock.MockRegistry.ConstructorParameters is null || mock.MockRegistry.ConstructorParameters.Length == 0)").And
-				// 'else if' arity dispatch chain (mixed-required + defaulted ctor produces the optional-range branch).
-				.Contains("else if (mock.MockRegistry.ConstructorParameters.Length >= 1 && mock.MockRegistry.ConstructorParameters.Length <= 2");
+				.Contains("if (mock.MockRegistry.ConstructorParameters is null || mock.MockRegistry.ConstructorParameters.Length == 0)")
+				.Because("the parameterless dispatch branch must be emitted").And
+				.Contains("else if (mock.MockRegistry.ConstructorParameters.Length >= 1 && mock.MockRegistry.ConstructorParameters.Length <= 2")
+				.Because("the 'else if' arity dispatch chain must include the optional-range branch for a mixed-required + defaulted ctor");
 		}
 
 		[Fact]
@@ -151,9 +151,8 @@ public sealed partial class MockTests
 
 			await That(result.Sources).ContainsKey("Mock.MyService__IExtra.g.cs");
 			await That(result.Sources["Mock.MyService__IExtra.g.cs"])
-				// AppendMockSubject_BaseClassConstructor stamps SetsRequiredMembers on the generated
-				// constructor when the base class declares any `required` member.
-				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]");
+				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]")
+				.Because("AppendMockSubject_BaseClassConstructor must stamp SetsRequiredMembers on the generated constructor when the base class declares any `required` member");
 		}
 
 		[Fact]
@@ -227,8 +226,8 @@ public sealed partial class MockTests
 				.Contains("IMockStaticVerifyForIStaticAware").And
 				.Contains("#region IMockStaticSetupForIStaticAware").And
 				.Contains("#region IMockStaticVerifyForIStaticAware").And
-				// AsyncLocal field is required so static accessors can find the registry.
-				.Contains("internal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider");
+				.Contains("internal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider")
+				.Because("the AsyncLocal field is required so static accessors can find the registry");
 		}
 	}
 }

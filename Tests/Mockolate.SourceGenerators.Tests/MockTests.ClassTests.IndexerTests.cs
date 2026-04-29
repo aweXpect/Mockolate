@@ -60,10 +60,9 @@ public sealed partial class MockTests
 
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
 				await That(result.Sources["Mock.IMyService.g.cs"])
-					// The wrap-base pattern-match cast must not collide with the user's `wraps`
-					// indexer parameter.
 					.DoesNotContain("global::MyCode.IMyService wraps)")
-					.IgnoringNewlineStyle().And
+					.IgnoringNewlineStyle()
+					.Because("the wrap-base pattern-match cast must not collide with the user's `wraps` indexer parameter").And
 					.DoesNotContain("global::MyCode.IMyService wraps ?")
 					.IgnoringNewlineStyle().And
 					.Contains("global::MyCode.IMyService wraps1")

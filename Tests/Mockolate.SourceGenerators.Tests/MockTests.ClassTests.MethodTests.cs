@@ -31,15 +31,14 @@ public sealed partial class MockTests
 
 				await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
 				await That(result.Sources["Mock.MyService.g.cs"])
-					// The pattern-match cast must not bind a local named `wraps` because the user's
-					// parameter already occupies that name.
 					.DoesNotContain("global::MyCode.MyService wraps)")
-					.IgnoringNewlineStyle().And
+					.IgnoringNewlineStyle()
+					.Because("the pattern-match cast must not bind a local named `wraps` while the user's parameter already occupies that name").And
 					.Contains("global::MyCode.MyService wraps1)")
 					.IgnoringNewlineStyle().And
-					// The forwarding call must use the deduped name, not the parameter.
 					.Contains("wraps1.Run(wraps);")
-					.IgnoringNewlineStyle();
+					.IgnoringNewlineStyle()
+					.Because("the forwarding call must use the deduped name, not the parameter");
 			}
 
 			[Fact]
@@ -241,11 +240,9 @@ public sealed partial class MockTests
 
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
 				await That(result.Sources["Mock.IMyService.g.cs"])
-					// The numbered cast variable must not reuse the parameter name; the base is
-					// renamed so `outParam1`/`outParam2` (parameters) and `outParam_1` (cast)
-					// don't collide.
 					.Contains("IOutParameter<int> outParam_11")
-					.IgnoringNewlineStyle().And
+					.IgnoringNewlineStyle()
+					.Because("the numbered cast variable must not reuse the parameter name (the base is renamed so `outParam1`/`outParam2` parameters and `outParam_1` cast don't collide)").And
 					.Contains("IOutParameter<int> outParam_12")
 					.IgnoringNewlineStyle();
 			}

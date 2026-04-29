@@ -58,13 +58,13 @@ public sealed class MockGeneratorAggregationTests
 
 		await That(result.Sources).ContainsKey("Mock.AsExtensions.g.cs");
 		await That(result.Sources["Mock.AsExtensions.g.cs"])
-			// (IBase ↔ IB): bridge from a typed-as-IBase mock to IMockForIB.
-			.Contains("internal static partial class MockExtensionsForIB").And
+			.Contains("internal static partial class MockExtensionsForIB")
+			.Because("the (IBase ↔ IB) bridge from a typed-as-IBase mock to IMockForIB must be emitted").And
 			.Contains("extension(global::Mockolate.Mock.IMockForIBase mock)").And
-			// (IA ↔ IB): bridge from a typed-as-IA mock to IMockForIB.
-			.Contains("extension(global::Mockolate.Mock.IMockForIA mock)").And
-			// Reverse direction is also emitted.
-			.Contains("internal static partial class MockExtensionsForIBase").And
+			.Contains("extension(global::Mockolate.Mock.IMockForIA mock)")
+			.Because("the (IA ↔ IB) bridge from a typed-as-IA mock to IMockForIB must be emitted").And
+			.Contains("internal static partial class MockExtensionsForIBase")
+			.Because("the reverse direction must also be emitted").And
 			.Contains("internal static partial class MockExtensionsForIA");
 	}
 
