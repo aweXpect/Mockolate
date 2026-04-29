@@ -160,7 +160,7 @@ public class VerificationResult<TVerify> : IVerificationResult<TVerify>, IVerifi
 		{
 			throw new MockException(
 				"""
-				Cannot verify interactions because interaction recording is disabled. To re-enable verifications, set MockBehavior.SkipInteractionRecording to false."
+				Cannot verify interactions because interaction recording is disabled. To re-enable verifications, set MockBehavior.SkipInteractionRecording to false.
 				"""
 			);
 		}
