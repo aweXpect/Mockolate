@@ -111,6 +111,21 @@ public sealed partial class MockBehaviorTests
 		await That(result).IsEqualTo("Default with 2 constructor parameter registrations");
 	}
 
+	[Fact]
+	public async Task WithMultipleFlags_ShouldKeepAllPartsInOutput()
+	{
+		MockBehavior behavior = MockBehavior.Default
+			.ThrowingWhenNotSetup()
+			.SkippingBaseClass()
+			.SkippingInteractionRecording();
+
+		string result = behavior.ToString();
+
+		await That(result).Contains("ThrowingWhenNotSetup");
+		await That(result).Contains("SkippingBaseClass");
+		await That(result).Contains("SkippingInteractionRecording");
+	}
+
 	private sealed class MyDefaultValueGenerator : IDefaultValueGenerator
 	{
 		/// <inheritdoc cref="IDefaultValueGenerator.GenerateValue(Type, object?[])" />
