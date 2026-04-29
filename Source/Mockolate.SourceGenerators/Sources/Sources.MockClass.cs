@@ -2646,7 +2646,7 @@ internal static partial class Sources
 				sb.Append(property.Setter.Accessibility.ToVisibilityString()).Append(' ');
 			}
 
-			sb.AppendLine("set");
+			sb.AppendLine(property.Setter.IsInitOnly ? "init" : "set");
 			sb.AppendLine("\t\t\t{");
 
 			// Ref-struct-keyed indexer setter: dispatches through
@@ -2702,7 +2702,7 @@ internal static partial class Sources
 							.Append(", value);").AppendLine();
 					}
 
-					if (!property.IsStatic)
+					if (!property.IsStatic && !property.Setter.IsInitOnly)
 					{
 						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
 							.Append(" wraps)").AppendLine();

@@ -409,6 +409,34 @@ public sealed partial class MockTests
 					          		}
 					          """).IgnoringNewlineStyle();
 			}
+
+			[Fact]
+			public async Task InitOnlyProperty_ShouldEmitInitAccessorAndCompile()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IMyService.CreateMock();
+					         }
+					     }
+
+					     public interface IMyService
+					     {
+					         string Name { get; init; }
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources["Mock.IMyService.g.cs"])
+					.Contains("init")
+					.And.DoesNotContain("public string Name\n\t\t{\n\t\t\tget");
+			}
 		}
 	}
 }

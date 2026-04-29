@@ -12,6 +12,7 @@ internal record Method
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
 		IsAbstract = methodSymbol.IsAbstract;
 		IsStatic = methodSymbol.IsStatic;
+		IsInitOnly = methodSymbol.IsInitOnly;
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : Type.From(methodSymbol.ReturnType);
 		Name = Helpers.EscapeIfKeyword(methodSymbol.ExplicitInterfaceImplementations.Length > 0 ? methodSymbol.ExplicitInterfaceImplementations[0].Name : methodSymbol.Name);
 		ContainingType = methodSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
@@ -51,6 +52,7 @@ internal record Method
 	public bool UseOverride { get; }
 	public bool IsAbstract { get; }
 	public bool IsStatic { get; }
+	public bool IsInitOnly { get; }
 	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal;
 
 	public MemberType MemberType => (IsStatic, IsProtected) switch
