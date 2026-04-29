@@ -232,7 +232,7 @@ internal class Class : IEquatable<Class>
 
 			if (TryExtractSpecialName(namedType, out string? name))
 			{
-				return name;
+				return name!;
 			}
 		}
 
@@ -265,14 +265,14 @@ internal class Class : IEquatable<Class>
 
 			if (TryExtractSpecialName(namedType, out string? name))
 			{
-				return name;
+				return name!;
 			}
 		}
 
 		return GetPrefix(type) + type.Name;
 	}
 
-	private static bool TryExtractSpecialName(INamedTypeSymbol namedType, [NotNullWhen(true)] out string? specialName)
+	private static bool TryExtractSpecialName(INamedTypeSymbol namedType, out string? specialName)
 	{
 		(specialName, bool hasSpecialType) = namedType.SpecialType switch
 		{
