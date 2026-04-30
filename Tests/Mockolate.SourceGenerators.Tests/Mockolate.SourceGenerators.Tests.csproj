@@ -11,4 +11,14 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all"/>
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Remove="xunit"/>
+		<PackageReference Include="xunit.v3"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Remove="Snapshot\Expected\**"/>
+		<None Include="Snapshot\Expected\**"/>
+	</ItemGroup>
+
 </Project>

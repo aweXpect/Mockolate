@@ -50,14 +50,21 @@ public static class Generator
 
 	public static GeneratorResult Run([StringSyntax("c#-test")] string source,
 		DocumentationMode documentationMode, params Type[] assemblyTypes)
+		=> Run([source,], documentationMode, [], assemblyTypes);
+
+	public static GeneratorResult Run(string[] sources, DocumentationMode documentationMode,
+		string[] preprocessorSymbols, params Type[] assemblyTypes)
 	{
 		MockGenerator generator = new();
-		CSharpParseOptions parseOptions = new(LanguageVersion.Latest, documentationMode);
-		SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, parseOptions);
+		CSharpParseOptions parseOptions = new CSharpParseOptions(LanguageVersion.Latest, documentationMode)
+			.WithPreprocessorSymbols(preprocessorSymbols);
+		SyntaxTree[] syntaxTrees = sources
+			.Select(s => CSharpSyntaxTree.ParseText(s, parseOptions))
+			.ToArray();
 
 		CSharpCompilation compilation = CSharpCompilation.Create(
 			"TestAssembly",
-			[syntaxTree,],
+			syntaxTrees,
 			GetReferences(assemblyTypes),
 			new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
