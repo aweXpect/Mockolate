@@ -15,14 +15,14 @@ internal static partial class MockExtensionsForICombinationMockA
 	extension(global::Mockolate.Mock.IMockForComprehensiveAbstractClass mock)
 	{
 		/// <summary>
-		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> to reach its Setup/Verify/Raise surface.
+		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> to reach its Setup/Verify/Raise surface.
 		/// </summary>
 		/// <remarks>
 		///     The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.
 		/// </remarks>
-		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</exception>
-		public global::Mockolate.Mock.IMockForICombinationMockA As<T>() where T : global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA
+		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</exception>
+		public global::Mockolate.Mock.IMockForICombinationMockA As<T>() where T : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA
 		{
 			if (mock is global::Mockolate.Mock.IMockForICombinationMockA typed)
 			{
@@ -38,14 +38,14 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 	extension(global::Mockolate.Mock.IMockForICombinationMockA mock)
 	{
 		/// <summary>
-		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> to reach its Setup/Verify/Raise surface.
+		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> to reach its Setup/Verify/Raise surface.
 		/// </summary>
 		/// <remarks>
 		///     The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.
 		/// </remarks>
-		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</exception>
-		public global::Mockolate.Mock.IMockForComprehensiveAbstractClass As<T>() where T : global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass
+		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</exception>
+		public global::Mockolate.Mock.IMockForComprehensiveAbstractClass As<T>() where T : global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass
 		{
 			if (mock is global::Mockolate.Mock.IMockForComprehensiveAbstractClass typed)
 			{
@@ -61,14 +61,14 @@ internal static partial class MockExtensionsForICombinationMockB
 	extension(global::Mockolate.Mock.IMockForComprehensiveAbstractClass mock)
 	{
 		/// <summary>
-		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> to reach its Setup/Verify/Raise surface.
+		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> to reach its Setup/Verify/Raise surface.
 		/// </summary>
 		/// <remarks>
 		///     The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.
 		/// </remarks>
-		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</exception>
-		public global::Mockolate.Mock.IMockForICombinationMockB As<T>() where T : global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB
+		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</exception>
+		public global::Mockolate.Mock.IMockForICombinationMockB As<T>() where T : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB
 		{
 			if (mock is global::Mockolate.Mock.IMockForICombinationMockB typed)
 			{
@@ -84,14 +84,14 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 	extension(global::Mockolate.Mock.IMockForICombinationMockB mock)
 	{
 		/// <summary>
-		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> to reach its Setup/Verify/Raise surface.
+		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> to reach its Setup/Verify/Raise surface.
 		/// </summary>
 		/// <remarks>
 		///     The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.
 		/// </remarks>
-		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</exception>
-		public global::Mockolate.Mock.IMockForComprehensiveAbstractClass As<T>() where T : global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass
+		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</exception>
+		public global::Mockolate.Mock.IMockForComprehensiveAbstractClass As<T>() where T : global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass
 		{
 			if (mock is global::Mockolate.Mock.IMockForComprehensiveAbstractClass typed)
 			{
@@ -107,14 +107,14 @@ internal static partial class MockExtensionsForICombinationMockB
 	extension(global::Mockolate.Mock.IMockForICombinationMockA mock)
 	{
 		/// <summary>
-		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> to reach its Setup/Verify/Raise surface.
+		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> to reach its Setup/Verify/Raise surface.
 		/// </summary>
 		/// <remarks>
 		///     The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.
 		/// </remarks>
-		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</exception>
-		public global::Mockolate.Mock.IMockForICombinationMockB As<T>() where T : global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB
+		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</exception>
+		public global::Mockolate.Mock.IMockForICombinationMockB As<T>() where T : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB
 		{
 			if (mock is global::Mockolate.Mock.IMockForICombinationMockB typed)
 			{
@@ -130,14 +130,14 @@ internal static partial class MockExtensionsForICombinationMockA
 	extension(global::Mockolate.Mock.IMockForICombinationMockB mock)
 	{
 		/// <summary>
-		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> to reach its Setup/Verify/Raise surface.
+		///     Reinterprets this mock as a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> to reach its Setup/Verify/Raise surface.
 		/// </summary>
 		/// <remarks>
 		///     The returned accessor shares the same mock registry as this one - setups and verifications act on the same mocked instance. Use this when the mock implements multiple interfaces via <c>Implementing&lt;T&gt;()</c> and you need to configure or verify members of a different interface than the one the instance is currently typed as.
 		/// </remarks>
-		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</exception>
-		public global::Mockolate.Mock.IMockForICombinationMockA As<T>() where T : global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockA
+		/// <returns>An <c>IMockFor...</c> accessor targeting <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The subject does not implement <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</exception>
+		public global::Mockolate.Mock.IMockForICombinationMockA As<T>() where T : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA
 		{
 			if (mock is global::Mockolate.Mock.IMockForICombinationMockA typed)
 			{

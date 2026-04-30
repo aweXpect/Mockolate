@@ -334,7 +334,6 @@ namespace Mockolate.Setup
 	/// <summary>
 	///     Sets up a <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class IndexerSetup<TValue, T1, T2, T3, T4, T5>(global::Mockolate.MockRegistry mockRegistry, global::Mockolate.Parameters.IParameterMatch<T1> parameter1, global::Mockolate.Parameters.IParameterMatch<T2> parameter2, global::Mockolate.Parameters.IParameterMatch<T3> parameter3, global::Mockolate.Parameters.IParameterMatch<T4> parameter4, global::Mockolate.Parameters.IParameterMatch<T5> parameter5) : global::Mockolate.Setup.IndexerSetup(mockRegistry),
 		global::Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3, T4, T5>,
@@ -848,8 +847,7 @@ namespace Mockolate.Setup
 }
 
 namespace Mockolate
-{[global::System.Diagnostics.DebuggerNonUserCode]
-	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+{	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal static class IndexerSetupExtensions
 	{
 
@@ -904,7 +902,6 @@ namespace Mockolate.Interactions
 	///     An access of an indexer getter with 5 typed parameters.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{ToString()}")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal class IndexerGetterAccess<T1, T2, T3, T4, T5>(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5)
 		: global::Mockolate.Interactions.IndexerAccess
 	{
@@ -979,7 +976,6 @@ namespace Mockolate.Interactions
 	///     An access of an indexer setter with 5 typed parameters.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{ToString()}")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal class IndexerSetterAccess<T1, T2, T3, T4, T5, TValue>(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, TValue value)
 		: global::Mockolate.Interactions.IndexerAccess
 	{

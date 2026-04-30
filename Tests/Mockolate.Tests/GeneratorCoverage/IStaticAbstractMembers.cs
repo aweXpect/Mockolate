@@ -1,7 +1,7 @@
 #if NET10_0_OR_GREATER
 using System;
 
-namespace Mockolate.ExampleTests.GeneratorCoverage;
+namespace Mockolate.Tests.GeneratorCoverage;
 
 /// <summary>
 ///     Isolated coverage for the C# 11 <c>static abstract</c> interface members,

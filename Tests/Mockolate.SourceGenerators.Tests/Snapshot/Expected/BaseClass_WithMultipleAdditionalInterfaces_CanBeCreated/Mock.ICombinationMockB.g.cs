@@ -11,20 +11,19 @@
 namespace Mockolate;
 
 /// <summary>
-///     Mock extensions for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class MockExtensionsForICombinationMockB
 {
 	/// <inheritdoc cref="MockExtensionsForICombinationMockB" />
-	extension(global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB mock)
+	extension(global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB mock)
 	{
 		/// <summary>
-		///     Gets the mock accessor for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> - the entry point for configuring setups, verifying interactions and raising events.
+		///     Gets the mock accessor for <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> - the entry point for configuring setups, verifying interactions and raising events.
 		/// </summary>
 		/// <remarks>
-		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
+		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
 		///     Through it you can:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
@@ -34,7 +33,7 @@ internal static partial class MockExtensionsForICombinationMockB
 		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
 		///     </list>
 		/// </remarks>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</exception>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</exception>
 		public global::Mockolate.Mock.IMockForICombinationMockB Mock
 		{
 			get
@@ -48,10 +47,10 @@ internal static partial class MockExtensionsForICombinationMockB
 		}
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
 		/// </summary>
 		/// <remarks>
-		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
+		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
 		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
@@ -59,43 +58,43 @@ internal static partial class MockExtensionsForICombinationMockB
 		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
 		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
 		/// </remarks>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB CreateMock()
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB CreateMock()
 			=> CreateMock(null, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB> setup)
 			=> CreateMock(null, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the given <paramref name="mockBehavior" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the given <paramref name="mockBehavior" />.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB CreateMock(global::Mockolate.MockBehavior mockBehavior)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB CreateMock(global::Mockolate.MockBehavior mockBehavior)
 			=> CreateMock(mockBehavior, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB> setup)
 			=> CreateMock(mockBehavior, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -103,8 +102,8 @@ internal static partial class MockExtensionsForICombinationMockB
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB>? setup, object?[]? constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.</returns>
+		private static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB>? setup, object?[]? constructorParameters)
 		{
 			if (mockBehavior is not null)
 			{
@@ -128,7 +127,7 @@ internal static partial class MockExtensionsForICombinationMockB
 			return CreateMockInstance(mockRegistry, constructorParameters, setup);
 		}
 
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB>? setup)
+		private static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB>? setup)
 		{
 			var value = new global::Mockolate.Mock.ICombinationMockB(mockRegistry);
 			if (setup is not null)
@@ -144,8 +143,8 @@ internal static partial class MockExtensionsForICombinationMockB
 		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
 		/// </remarks>
 		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
-		/// <returns>A new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> that delegates to <paramref name="instance" />.</returns>
-		public global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB Wrapping(global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB instance)
+		/// <returns>A new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> that delegates to <paramref name="instance" />.</returns>
+		public global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB Wrapping(global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB instance)
 		{
 			if (mock is global::Mockolate.IMock mockInterface)
 			{
@@ -167,11 +166,11 @@ internal static partial class MockExtensionsForICombinationMockB
 		/// <remarks>
 		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
 		/// </remarks>
-		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> that this setup should apply to.</typeparam>
+		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> that this setup should apply to.</typeparam>
 		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
 		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
 		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockB> setup)
-			where T : global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB
+			where T : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB
 		{
 			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
 			return behaviorAccess.Set(setup);
@@ -195,20 +194,19 @@ internal static partial class MockExtensionsForICombinationMockB
 internal static partial class Mock
 {
 	/// <summary>
-	///     A mock implementation for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
+	///     A mock implementation for <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
 	/// </summary>
 	[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class ICombinationMockB :
-		global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB, IMockForICombinationMockB, IMockSetupForICombinationMockB, IMockVerifyForICombinationMockB,
+		global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB, IMockForICombinationMockB, IMockSetupForICombinationMockB, IMockVerifyForICombinationMockB,
 		global::Mockolate.IMock
 	{
 		internal const int MemberId_Value_Get = 0;
 		internal const int MemberId_Value_Set = 1;
 		internal const int MemberId_Run = 2;
 		internal const int MemberCount = 3;
-		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_Value_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value");
+		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_Value_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value");
 
 		/// <summary>
 		///     Creates a <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> sized to <see cref="MemberCount">MemberCount</see> for use as the mock's interaction store.
@@ -283,7 +281,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		string global::Mockolate.IMock.ToString()
-			=> "Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB mock";
+			=> "Mockolate.Tests.GeneratorCoverage.ICombinationMockB mock";
 
 		/// <inheritdoc cref="ICombinationMockB" />
 		public ICombinationMockB(global::Mockolate.MockRegistry mockRegistry)
@@ -297,18 +295,18 @@ internal static partial class Mock
 		{
 		}
 
-		#region Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB
+		#region Mockolate.Tests.GeneratorCoverage.ICombinationMockB
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value" />
 		public int Value
 		{
 			get
 			{
-				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, global::Mockolate.Mock.ICombinationMockB.PropertyAccess_Value_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB wraps ? null : () => wraps.Value);
+				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, global::Mockolate.Mock.ICombinationMockB.PropertyAccess_Value_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB wraps ? null : () => wraps.Value);
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run()" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run()" />
 		public void Run()
 		{
 			global::Mockolate.Setup.VoidMethodSetup? methodSetup = null;
@@ -329,7 +327,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.VoidMethodSetup s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup>("global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run"))
+				foreach (global::Mockolate.Setup.VoidMethodSetup s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup>("global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run"))
 				{
 					if (s_methodSetup.Matches())
 					{
@@ -341,11 +339,11 @@ internal static partial class Mock
 			bool hasWrappedResult = false;
 			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			{
-				this.MockolateBuffer_Run.Append("global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run");
+				this.MockolateBuffer_Run.Append("global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run");
 			}
 			try
 			{
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB wraps)
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB wraps)
 				{
 					wraps.Run();
 					hasWrappedResult = true;
@@ -357,11 +355,11 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run()' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run()' was invoked without prior setup.");
 			}
 		}
 
-		#endregion Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB
+		#endregion Mockolate.Tests.GeneratorCoverage.ICombinationMockB
 
 		#region IMockSetupForICombinationMockB
 
@@ -371,7 +369,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, propertySetup);
 				return propertySetup;
 			}
@@ -380,7 +378,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetup global::Mockolate.Mock.IMockSetupForICombinationMockB.Run()
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run");
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ICombinationMockB.MemberId_Run, methodSetup);
 			return methodSetup;
 		}
@@ -395,17 +393,16 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForICombinationMockB, int>(this, this.MockRegistry, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Set, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForICombinationMockB, int>(this, this.MockRegistry, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Set, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value");
 			}
 		}
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForICombinationMockB>.IgnoreParameters IMockVerifyForICombinationMockB.Run()
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForICombinationMockB>(this, global::Mockolate.Mock.ICombinationMockB.MemberId_Run, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run", () => $"Run()");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForICombinationMockB>(this, global::Mockolate.Mock.ICombinationMockB.MemberId_Run, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run", () => $"Run()");
 		#endregion IMockVerifyForICombinationMockB
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class VerifyMonitorICombinationMockB(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyForICombinationMockB
 	{
@@ -419,17 +416,16 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForICombinationMockB, int>(this, this.MockRegistry, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Set, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForICombinationMockB, int>(this, this.MockRegistry, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Set, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value");
 			}
 		}
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForICombinationMockB>.IgnoreParameters IMockVerifyForICombinationMockB.Run()
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForICombinationMockB>(this, global::Mockolate.Mock.ICombinationMockB.MemberId_Run, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run", () => $"Run()");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForICombinationMockB>(this, global::Mockolate.Mock.ICombinationMockB.MemberId_Run, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run", () => $"Run()");
 		#endregion IMockVerifyForICombinationMockB
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class MockInScenarioForICombinationMockB : global::Mockolate.Mock.IMockInScenarioForICombinationMockB, global::Mockolate.Mock.IMockSetupForICombinationMockB
 	{
@@ -454,7 +450,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.ICombinationMockB.MemberId_Value_Get, _scenarioName, propertySetup);
 				return propertySetup;
 			}
@@ -463,7 +459,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetup global::Mockolate.Mock.IMockSetupForICombinationMockB.Run()
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run");
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ICombinationMockB.MemberId_Run, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -472,7 +468,7 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>, reached through <c>.Mock</c> on the mocked instance.
+	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>, reached through <c>.Mock</c> on the mocked instance.
 	/// </summary>
 	/// <remarks>
 	///     Groups every operation that acts on the mock rather than on the mocked subject: setups, verifications, event raising, scenarios and monitoring.
@@ -480,7 +476,7 @@ internal static partial class Mock
 	internal interface IMockForICombinationMockB
 	{
 		/// <summary>
-		///     Configures how members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> respond when invoked.
+		///     Configures how members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> respond when invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.<br />
@@ -489,7 +485,7 @@ internal static partial class Mock
 		IMockSetupForICombinationMockB Setup { get; }
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> so that additional setups can be registered for that scenario.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> so that additional setups can be registered for that scenario.
 		/// </summary>
 		/// <remarks>
 		///     Scenarios let you define per-state behavior. Setups registered inside the returned <c>IMockInScenarioFor...</c> scope only apply while the mock's current scenario matches <paramref name="scenario" />; switch scenarios with <see cref="TransitionTo">TransitionTo</see>.
@@ -499,7 +495,7 @@ internal static partial class Mock
 		IMockInScenarioForICombinationMockB InScenario(string scenario);
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
 		/// </summary>
 		/// <remarks>
 		///     Equivalent to <c>InScenario(scenario)</c> followed by the setup callback, but returns the original <c>IMockFor...</c> accessor so it chains nicely at mock-creation time.
@@ -510,7 +506,7 @@ internal static partial class Mock
 		IMockForICombinationMockB InScenario(string scenario, global::System.Action<IMockInScenarioForICombinationMockB> setup);
 
 		/// <summary>
-		///     Switches the active scenario of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> to <paramref name="scenario" />.
+		///     Switches the active scenario of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> to <paramref name="scenario" />.
 		/// </summary>
 		/// <remarks>
 		///     After the transition, setups registered via <see cref="InScenario(string)">InScenario(string)</see> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.
@@ -520,7 +516,7 @@ internal static partial class Mock
 		IMockForICombinationMockB TransitionTo(string scenario);
 
 		/// <summary>
-		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> were invoked.
+		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> were invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never()</c>, <c>Once()</c>, <c>Twice()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce()</c>/<c>AtLeastTwice()</c>, <c>AtMost(n)</c>/<c>AtMostOnce()</c>/<c>AtMostTwice()</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.<br />
@@ -576,28 +572,28 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
+	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
 	/// </summary>
 	internal interface IMockInScenarioForICombinationMockB
 	{
 		/// <summary>
-		///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> within the scenario scope.
+		///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see> within the scenario scope.
 		/// </summary>
 		IMockSetupForICombinationMockB Setup { get; }
 	}
 
 	/// <summary>
-	///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
+	///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
 	/// </summary>
-	internal interface IMockSetupForICombinationMockB : global::Mockolate.Setup.IMockSetup<global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB>
+	internal interface IMockSetupForICombinationMockB : global::Mockolate.Setup.IMockSetup<global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB>
 	{
 		/// <summary>
-		///     Setup for the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value">Value</see>.
+		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value">Value</see>.
 		/// </summary>
 		global::Mockolate.Setup.PropertySetup<int> Value { get; }
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run()">Run()</see>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run()">Run()</see>.
 		/// </summary>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IVoidMethodSetup Run();
@@ -605,17 +601,17 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Verify interactions with the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
+	///     Verify interactions with the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB">ICombinationMockB</see>.
 	/// </summary>
-	internal interface IMockVerifyForICombinationMockB : global::Mockolate.Verify.IMockVerify<global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB>
+	internal interface IMockVerifyForICombinationMockB : global::Mockolate.Verify.IMockVerify<global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB>
 	{
 		/// <summary>
-		///     Verify interactions with the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Value">Value</see>.
+		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Value">Value</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForICombinationMockB, int> Value { get; }
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ICombinationMockB.Run()">Run()</see>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockB.Run()">Run()</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForICombinationMockB>.IgnoreParameters Run();
 

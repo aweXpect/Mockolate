@@ -13,7 +13,6 @@ namespace Mockolate;
 /// <summary>
 ///     Mock extensions for <see cref="global::System.Net.Http.HttpMessageHandler">HttpMessageHandler</see>.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class MockExtensionsForHttpMessageHandler
 {
@@ -210,7 +209,6 @@ internal static partial class MockExtensionsForHttpMessageHandler
 		global::Mockolate.Mock.IMockProtectedSetupForHttpMessageHandler Protected { get; }
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupForHttpMessageHandler, global::Mockolate.Mock.IMockProtectedSetupForHttpMessageHandler, IMockSetupInitializationForHttpMessageHandler
 	{
@@ -351,7 +349,6 @@ internal static partial class Mock
 	///     A mock implementation for <see cref="global::System.Net.Http.HttpMessageHandler">HttpMessageHandler</see>.
 	/// </summary>
 	[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class HttpMessageHandler :
 		global::System.Net.Http.HttpMessageHandler, IMockForHttpMessageHandler, IMockSetupForHttpMessageHandler, IMockProtectedSetupForHttpMessageHandler, global::Mockolate.MockExtensionsForHttpMessageHandler.IMockSetupInitializationForHttpMessageHandler, IMockVerifyForHttpMessageHandler, IMockProtectedVerifyForHttpMessageHandler,
@@ -833,7 +830,6 @@ internal static partial class Mock
 		#endregion IMockProtectedVerifyForHttpMessageHandler
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class VerifyMonitorHttpMessageHandler(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyForHttpMessageHandler
 	{
@@ -844,7 +840,6 @@ internal static partial class Mock
 		#endregion IMockVerifyForHttpMessageHandler
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class MockInScenarioForHttpMessageHandler : global::Mockolate.Mock.IMockInScenarioForHttpMessageHandler, global::Mockolate.Mock.IMockSetupForHttpMessageHandler, global::Mockolate.Mock.IMockProtectedSetupForHttpMessageHandler
 	{

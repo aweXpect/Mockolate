@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Mockolate.ExampleTests.GeneratorCoverage;
+namespace Mockolate.Tests.GeneratorCoverage;
 
 public class MyBase
 {

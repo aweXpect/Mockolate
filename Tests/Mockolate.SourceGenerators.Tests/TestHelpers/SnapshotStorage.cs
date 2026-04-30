@@ -9,7 +9,7 @@ public static class SnapshotStorage
 {
 	public static string ReadCoverageFile(string coverageFileName)
 	{
-		string path = CombinedPaths("Tests", "Mockolate.ExampleTests", "GeneratorCoverage",
+		string path = CombinedPaths("Tests", "Mockolate.Tests", "GeneratorCoverage",
 			coverageFileName);
 		return File.ReadAllText(path);
 	}

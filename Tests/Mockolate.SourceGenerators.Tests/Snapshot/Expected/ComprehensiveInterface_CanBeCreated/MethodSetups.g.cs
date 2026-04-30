@@ -184,7 +184,6 @@ namespace Mockolate.Setup
 	/// <summary>
 	///     Sets up a method with 5 parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" /> returning <typeparamref name="TReturn" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup,
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4, T5>,
@@ -700,7 +699,6 @@ namespace Mockolate.Setup
 	/// <summary>
 	///     Sets up a method with 5 parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" /> returning <see langword="void" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal abstract class VoidMethodSetup<T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup,
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3, T4, T5>,
@@ -1204,7 +1202,6 @@ namespace Mockolate.Setup
 	/// <summary>
 	///     Sets up a method with 7 parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" /> and <typeparamref name="T7" /> returning <see langword="void" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal abstract class VoidMethodSetup<T1, T2, T3, T4, T5, T6, T7> : global::Mockolate.Setup.MethodSetup,
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3, T4, T5, T6, T7>,
@@ -1734,7 +1731,6 @@ namespace Mockolate.Setup
 	/// <summary>
 	///     Sets up a method with 17 parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />, <typeparamref name="T7" />, <typeparamref name="T8" />, <typeparamref name="T9" />, <typeparamref name="T10" />, <typeparamref name="T11" />, <typeparamref name="T12" />, <typeparamref name="T13" />, <typeparamref name="T14" />, <typeparamref name="T15" />, <typeparamref name="T16" /> and <typeparamref name="T17" /> returning <typeparamref name="TReturn" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal abstract class ReturnMethodSetup<TReturn, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> : global::Mockolate.Setup.MethodSetup,
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<TReturn, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>,
@@ -2346,7 +2342,6 @@ namespace Mockolate.Setup
 	/// <summary>
 	///     Sets up a method with 17 parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" />, <typeparamref name="T5" />, <typeparamref name="T6" />, <typeparamref name="T7" />, <typeparamref name="T8" />, <typeparamref name="T9" />, <typeparamref name="T10" />, <typeparamref name="T11" />, <typeparamref name="T12" />, <typeparamref name="T13" />, <typeparamref name="T14" />, <typeparamref name="T15" />, <typeparamref name="T16" /> and <typeparamref name="T17" /> returning <see langword="void" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal abstract class VoidMethodSetup<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> : global::Mockolate.Setup.MethodSetup,
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>,
@@ -2785,8 +2780,7 @@ namespace Mockolate.Setup
 }
 
 namespace Mockolate
-{[global::System.Diagnostics.DebuggerNonUserCode]
-	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+{	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal static class MethodSetupExtensions
 	{
 
@@ -2953,7 +2947,6 @@ namespace Mockolate.Interactions
 	///     An invocation of a method with 5 parameters <paramref name="parameter1"/>, <paramref name="parameter2"/>, <paramref name="parameter3"/>, <paramref name="parameter4"/> and <paramref name="parameter5"/>.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{ToString()}")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal class MethodInvocation<T1, T2, T3, T4, T5>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5) : IMethodInteraction
 	{
 		/// <summary>
@@ -2995,7 +2988,6 @@ namespace Mockolate.Interactions
 	///     Per-member buffer for 5-parameter methods, synthesized for arity 5 use sites.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{Count} method calls")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal sealed class FastMethod5Buffer<T1, T2, T3, T4, T5> : IFastMemberBuffer
 	{
 		private readonly FastMockInteractions _owner;
@@ -3130,7 +3122,6 @@ namespace Mockolate.Interactions
 	///     An invocation of a method with 7 parameters <paramref name="parameter1"/>, <paramref name="parameter2"/>, <paramref name="parameter3"/>, <paramref name="parameter4"/>, <paramref name="parameter5"/>, <paramref name="parameter6"/> and <paramref name="parameter7"/>.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{ToString()}")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal class MethodInvocation<T1, T2, T3, T4, T5, T6, T7>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6, T7 parameter7) : IMethodInteraction
 	{
 		/// <summary>
@@ -3180,7 +3171,6 @@ namespace Mockolate.Interactions
 	///     Per-member buffer for 7-parameter methods, synthesized for arity 7 use sites.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{Count} method calls")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal sealed class FastMethod7Buffer<T1, T2, T3, T4, T5, T6, T7> : IFastMemberBuffer
 	{
 		private readonly FastMockInteractions _owner;
@@ -3319,7 +3309,6 @@ namespace Mockolate.Interactions
 	///     An invocation of a method with 17 parameters <paramref name="parameter1"/>, <paramref name="parameter2"/>, <paramref name="parameter3"/>, <paramref name="parameter4"/>, <paramref name="parameter5"/>, <paramref name="parameter6"/>, <paramref name="parameter7"/>, <paramref name="parameter8"/>, <paramref name="parameter9"/>, <paramref name="parameter10"/>, <paramref name="parameter11"/>, <paramref name="parameter12"/>, <paramref name="parameter13"/>, <paramref name="parameter14"/>, <paramref name="parameter15"/>, <paramref name="parameter16"/> and <paramref name="parameter17"/>.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{ToString()}")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal class MethodInvocation<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5, T6 parameter6, T7 parameter7, T8 parameter8, T9 parameter9, T10 parameter10, T11 parameter11, T12 parameter12, T13 parameter13, T14 parameter14, T15 parameter15, T16 parameter16, T17 parameter17) : IMethodInteraction
 	{
 		/// <summary>
@@ -3409,7 +3398,6 @@ namespace Mockolate.Interactions
 	///     Per-member buffer for 17-parameter methods, synthesized for arity 17 use sites.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{Count} method calls")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal sealed class FastMethod17Buffer<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> : IFastMemberBuffer
 	{
 		private readonly FastMockInteractions _owner;

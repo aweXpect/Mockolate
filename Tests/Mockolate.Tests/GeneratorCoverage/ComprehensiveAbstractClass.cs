@@ -1,7 +1,7 @@
 #if NET10_0_OR_GREATER
 using System.Diagnostics.CodeAnalysis;
 
-namespace Mockolate.ExampleTests.GeneratorCoverage;
+namespace Mockolate.Tests.GeneratorCoverage;
 
 /// <summary>
 ///     Base class without a parameterless constructor — forces the mock to chain a

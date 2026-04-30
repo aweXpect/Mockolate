@@ -1,5 +1,5 @@
 #if NET10_0_OR_GREATER
-namespace Mockolate.ExampleTests.GeneratorCoverage;
+namespace Mockolate.Tests.GeneratorCoverage;
 
 /// <summary>
 ///     Parts of an <c>Implementing&lt;&gt;().Implementing&lt;&gt;()</c> chain.

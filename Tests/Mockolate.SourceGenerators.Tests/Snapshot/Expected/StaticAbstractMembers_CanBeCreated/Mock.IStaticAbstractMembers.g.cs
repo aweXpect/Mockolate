@@ -11,20 +11,19 @@
 namespace Mockolate;
 
 /// <summary>
-///     Mock extensions for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class MockExtensionsForIStaticAbstractMembers
 {
 	/// <inheritdoc cref="MockExtensionsForIStaticAbstractMembers" />
-	extension(global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers mock)
+	extension(global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers mock)
 	{
 		/// <summary>
-		///     Gets the mock accessor for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> - the entry point for configuring setups, verifying interactions and raising events.
+		///     Gets the mock accessor for <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> - the entry point for configuring setups, verifying interactions and raising events.
 		/// </summary>
 		/// <remarks>
-		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
+		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
 		///     Through it you can:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
@@ -35,7 +34,7 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
 		///     </list>
 		/// </remarks>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</exception>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</exception>
 		public global::Mockolate.Mock.IMockForIStaticAbstractMembers Mock
 		{
 			get
@@ -49,10 +48,10 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 		}
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
 		/// </summary>
 		/// <remarks>
-		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
+		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
 		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
@@ -60,43 +59,43 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
 		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
 		/// </remarks>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers CreateMock()
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers CreateMock()
 			=> CreateMock(null, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers> setup)
 			=> CreateMock(null, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the given <paramref name="mockBehavior" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the given <paramref name="mockBehavior" />.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::Mockolate.MockBehavior mockBehavior)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::Mockolate.MockBehavior mockBehavior)
 			=> CreateMock(mockBehavior, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers> setup)
 			=> CreateMock(mockBehavior, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -104,8 +103,8 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers>? setup, object?[]? constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.</returns>
+		private static global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers>? setup, object?[]? constructorParameters)
 		{
 			if (mockBehavior is not null)
 			{
@@ -129,7 +128,7 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 			return CreateMockInstance(mockRegistry, constructorParameters, setup);
 		}
 
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers>? setup)
+		private static global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers>? setup)
 		{
 			var value = new global::Mockolate.Mock.IStaticAbstractMembers(mockRegistry);
 			if (setup is not null)
@@ -145,8 +144,8 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
 		/// </remarks>
 		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
-		/// <returns>A new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> that delegates to <paramref name="instance" />.</returns>
-		public global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers Wrapping(global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers instance)
+		/// <returns>A new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> that delegates to <paramref name="instance" />.</returns>
+		public global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers Wrapping(global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers instance)
 		{
 			if (mock is global::Mockolate.IMock mockInterface)
 			{
@@ -168,11 +167,11 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 		/// <remarks>
 		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
 		/// </remarks>
-		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> that this setup should apply to.</typeparam>
+		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> that this setup should apply to.</typeparam>
 		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
 		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
 		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers> setup)
-			where T : global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers
+			where T : global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers
 		{
 			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
 			return behaviorAccess.Set(setup);
@@ -196,13 +195,12 @@ internal static partial class MockExtensionsForIStaticAbstractMembers
 internal static partial class Mock
 {
 	/// <summary>
-	///     A mock implementation for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+	///     A mock implementation for <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 	/// </summary>
 	[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class IStaticAbstractMembers :
-		global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers, IMockForIStaticAbstractMembers, IMockSetupForIStaticAbstractMembers, IMockStaticSetupForIStaticAbstractMembers, IMockStaticRaiseOnIStaticAbstractMembers, IMockVerifyForIStaticAbstractMembers, IMockStaticVerifyForIStaticAbstractMembers,
+		global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers, IMockForIStaticAbstractMembers, IMockSetupForIStaticAbstractMembers, IMockStaticSetupForIStaticAbstractMembers, IMockStaticRaiseOnIStaticAbstractMembers, IMockVerifyForIStaticAbstractMembers, IMockStaticVerifyForIStaticAbstractMembers,
 		global::Mockolate.IMock
 	{
 		internal const int MemberId_AbstractStaticProperty_Get = 0;
@@ -214,8 +212,8 @@ internal static partial class Mock
 		internal const int MemberId_AbstractStaticMethod = 6;
 		internal const int MemberId_VirtualStaticMethod = 7;
 		internal const int MemberCount = 8;
-		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_AbstractStaticProperty_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty");
-		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_VirtualStaticProperty_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
+		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_AbstractStaticProperty_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty");
+		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_VirtualStaticProperty_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
 
 		/// <summary>
 		///     Creates a <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> sized to <see cref="MemberCount">MemberCount</see> for use as the mock's interaction store.
@@ -301,7 +299,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		string global::Mockolate.IMock.ToString()
-			=> "Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers mock";
+			=> "Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers mock";
 
 		/// <inheritdoc cref="IStaticAbstractMembers" />
 		public IStaticAbstractMembers(global::Mockolate.MockRegistry mockRegistry)
@@ -316,31 +314,31 @@ internal static partial class Mock
 		{
 		}
 
-		#region Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers
+		#region Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers
 
-		private static readonly global::System.Threading.AsyncLocal<global::System.Action<int>?> _mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent = new global::System.Threading.AsyncLocal<global::System.Action<int>?>();
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent" />
+		private static readonly global::System.Threading.AsyncLocal<global::System.Action<int>?> _mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent = new global::System.Threading.AsyncLocal<global::System.Action<int>?>();
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent" />
 		public static event global::System.Action<int> AbstractStaticEvent
 		{
 			add
 			{
 				if (value is not null)
 				{
-					MockRegistryProvider.Value.AddEvent("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent", value.Target, value.Method);
+					MockRegistryProvider.Value.AddEvent("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent", value.Target, value.Method);
 				}
-				_mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value += value;
+				_mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value += value;
 			}
 			remove
 			{
 				if (value is not null)
 				{
-					MockRegistryProvider.Value.RemoveEvent("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent", value.Target, value.Method);
+					MockRegistryProvider.Value.RemoveEvent("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent", value.Target, value.Method);
 				}
-				_mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value -= value;
+				_mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value -= value;
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty" />
 		public static int AbstractStaticProperty
 		{
 			get
@@ -349,11 +347,11 @@ internal static partial class Mock
 			}
 			set
 			{
-				MockRegistryProvider.Value.SetProperty<int>("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty", value);
+				MockRegistryProvider.Value.SetProperty<int>("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty", value);
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty" />
 		public static int VirtualStaticProperty
 		{
 			get
@@ -362,7 +360,7 @@ internal static partial class Mock
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()" />
 		public static int AbstractStaticMethod()
 		{
 			global::Mockolate.Setup.ReturnMethodSetup<int>? methodSetup = null;
@@ -383,7 +381,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in MockRegistryProvider.Value.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod"))
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in MockRegistryProvider.Value.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod"))
 				{
 					if (s_methodSetup.Matches())
 					{
@@ -396,7 +394,7 @@ internal static partial class Mock
 			int wrappedResult = default!;
 			if (MockRegistryProvider.Value.Behavior.SkipInteractionRecording == false)
 			{
-				((global::Mockolate.Interactions.FastMethod0Buffer)((global::Mockolate.Interactions.FastMockInteractions)MockRegistryProvider.Value.Interactions).Buffers[global::Mockolate.Mock.IStaticAbstractMembers.MemberId_AbstractStaticMethod]!).Append("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod");
+				((global::Mockolate.Interactions.FastMethod0Buffer)((global::Mockolate.Interactions.FastMockInteractions)MockRegistryProvider.Value.Interactions).Buffers[global::Mockolate.Mock.IStaticAbstractMembers.MemberId_AbstractStaticMethod]!).Append("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod");
 			}
 			try
 			{
@@ -407,7 +405,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && MockRegistryProvider.Value.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()' was invoked without prior setup.");
 			}
 			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 			{
@@ -416,7 +414,7 @@ internal static partial class Mock
 			return methodSetup?.TryGetReturnValue(out var returnValue) == true ? returnValue : MockRegistryProvider.Value.Behavior.DefaultValue.Generate(default(int)!);
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()" />
 		public static int VirtualStaticMethod()
 		{
 			global::Mockolate.Setup.ReturnMethodSetup<int>? methodSetup = null;
@@ -437,7 +435,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in MockRegistryProvider.Value.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod"))
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in MockRegistryProvider.Value.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod"))
 				{
 					if (s_methodSetup.Matches())
 					{
@@ -450,7 +448,7 @@ internal static partial class Mock
 			int wrappedResult = default!;
 			if (MockRegistryProvider.Value.Behavior.SkipInteractionRecording == false)
 			{
-				((global::Mockolate.Interactions.FastMethod0Buffer)((global::Mockolate.Interactions.FastMockInteractions)MockRegistryProvider.Value.Interactions).Buffers[global::Mockolate.Mock.IStaticAbstractMembers.MemberId_VirtualStaticMethod]!).Append("global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod");
+				((global::Mockolate.Interactions.FastMethod0Buffer)((global::Mockolate.Interactions.FastMockInteractions)MockRegistryProvider.Value.Interactions).Buffers[global::Mockolate.Mock.IStaticAbstractMembers.MemberId_VirtualStaticMethod]!).Append("global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod");
 			}
 			try
 			{
@@ -461,7 +459,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && MockRegistryProvider.Value.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()' was invoked without prior setup.");
 			}
 			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 			{
@@ -470,7 +468,7 @@ internal static partial class Mock
 			return methodSetup?.TryGetReturnValue(out var returnValue) == true ? returnValue : MockRegistryProvider.Value.Behavior.DefaultValue.Generate(default(int)!);
 		}
 
-		#endregion Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers
+		#endregion Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers
 
 		#region IMockSetupForIStaticAbstractMembers
 
@@ -484,7 +482,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.IStaticAbstractMembers.MemberId_AbstractStaticProperty_Get, propertySetup);
 				return propertySetup;
 			}
@@ -496,7 +494,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.IStaticAbstractMembers.MemberId_VirtualStaticProperty_Get, propertySetup);
 				return propertySetup;
 			}
@@ -508,7 +506,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent");
+				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent");
 				this.MockRegistry.SetupEvent(global::Mockolate.Mock.IStaticAbstractMembers.MemberId_AbstractStaticEvent_Subscribe, eventSetup);
 				return eventSetup;
 			}
@@ -517,7 +515,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockStaticSetupForIStaticAbstractMembers.AbstractStaticMethod()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IStaticAbstractMembers.MemberId_AbstractStaticMethod, methodSetup);
 			return methodSetup;
 		}
@@ -525,7 +523,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockStaticSetupForIStaticAbstractMembers.VirtualStaticMethod()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IStaticAbstractMembers.MemberId_VirtualStaticMethod, methodSetup);
 			return methodSetup;
 		}
@@ -537,14 +535,14 @@ internal static partial class Mock
 		/// <inheritdoc />
 		void IMockStaticRaiseOnIStaticAbstractMembers.AbstractStaticEvent(int obj)
 		{
-			_mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value?.Invoke(obj);
+			_mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value?.Invoke(obj);
 		}
 
 		/// <inheritdoc />
 		void IMockStaticRaiseOnIStaticAbstractMembers.AbstractStaticEvent(global::Mockolate.Parameters.IDefaultEventParameters parameters)
 		{
 			global::Mockolate.MockBehavior mockBehavior = MockRegistryProvider.Value.Behavior;
-			_mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value?.Invoke(mockBehavior.DefaultValue.Generate(default(int)));
+			_mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IStaticAbstractMembers_AbstractStaticEvent.Value?.Invoke(mockBehavior.DefaultValue.Generate(default(int)));
 		}
 
 		#endregion IMockStaticRaiseOnIStaticAbstractMembers
@@ -561,7 +559,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int>(this, this.MockRegistry, -1, -1, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int>(this, this.MockRegistry, -1, -1, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty");
 			}
 		}
 
@@ -571,32 +569,31 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int>(this, this.MockRegistry, -1, -1, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int>(this, this.MockRegistry, -1, -1, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
 			}
 		}
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockStaticVerifyForIStaticAbstractMembers>.IgnoreParameters IMockStaticVerifyForIStaticAbstractMembers.AbstractStaticMethod()
-			=> this.MockRegistry.VerifyMethod<IMockStaticVerifyForIStaticAbstractMembers>(this, global::Mockolate.Mock.IStaticAbstractMembers.MemberId_AbstractStaticMethod, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod", () => $"AbstractStaticMethod()");
+			=> this.MockRegistry.VerifyMethod<IMockStaticVerifyForIStaticAbstractMembers>(this, global::Mockolate.Mock.IStaticAbstractMembers.MemberId_AbstractStaticMethod, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod", () => $"AbstractStaticMethod()");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockStaticVerifyForIStaticAbstractMembers>.IgnoreParameters IMockStaticVerifyForIStaticAbstractMembers.VirtualStaticMethod()
-			=> this.MockRegistry.VerifyMethod<IMockStaticVerifyForIStaticAbstractMembers>(this, global::Mockolate.Mock.IStaticAbstractMembers.MemberId_VirtualStaticMethod, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod", () => $"VirtualStaticMethod()");
+			=> this.MockRegistry.VerifyMethod<IMockStaticVerifyForIStaticAbstractMembers>(this, global::Mockolate.Mock.IStaticAbstractMembers.MemberId_VirtualStaticMethod, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod", () => $"VirtualStaticMethod()");
 		/// <summary>
-		///     Verify subscriptions on the AbstractStaticEvent event <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see>.
+		///     Verify subscriptions on the AbstractStaticEvent event <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see>.
 		/// </summary>
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		global::Mockolate.Verify.VerificationEventResult<IMockStaticVerifyForIStaticAbstractMembers> IMockStaticVerifyForIStaticAbstractMembers.AbstractStaticEvent
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationEventResult<IMockStaticVerifyForIStaticAbstractMembers>(this, this.MockRegistry, -1, -1, "global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent");
+				return new global::Mockolate.Verify.VerificationEventResult<IMockStaticVerifyForIStaticAbstractMembers>(this, this.MockRegistry, -1, -1, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent");
 			}
 		}
 
 		#endregion IMockStaticVerifyForIStaticAbstractMembers
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class VerifyMonitorIStaticAbstractMembers(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyForIStaticAbstractMembers
 	{
@@ -607,7 +604,6 @@ internal static partial class Mock
 		#endregion IMockVerifyForIStaticAbstractMembers
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class MockInScenarioForIStaticAbstractMembers : global::Mockolate.Mock.IMockInScenarioForIStaticAbstractMembers, global::Mockolate.Mock.IMockSetupForIStaticAbstractMembers
 	{
@@ -630,7 +626,7 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>, reached through <c>.Mock</c> on the mocked instance.
+	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>, reached through <c>.Mock</c> on the mocked instance.
 	/// </summary>
 	/// <remarks>
 	///     Groups every operation that acts on the mock rather than on the mocked subject: setups, verifications, event raising, scenarios and monitoring.
@@ -638,7 +634,7 @@ internal static partial class Mock
 	internal interface IMockForIStaticAbstractMembers
 	{
 		/// <summary>
-		///     Configures how members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> respond when invoked.
+		///     Configures how members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> respond when invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.<br />
@@ -647,7 +643,7 @@ internal static partial class Mock
 		IMockSetupForIStaticAbstractMembers Setup { get; }
 
 		/// <summary>
-		///     Configures how <see langword="static" /> members declared on <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> respond when invoked.
+		///     Configures how <see langword="static" /> members declared on <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> respond when invoked.
 		/// </summary>
 		/// <remarks>
 		///     Static members are scoped per async/execution flow while the mock is alive; invocations from other flows are not intercepted.
@@ -655,7 +651,7 @@ internal static partial class Mock
 		IMockStaticSetupForIStaticAbstractMembers SetupStatic { get; }
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> so that additional setups can be registered for that scenario.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> so that additional setups can be registered for that scenario.
 		/// </summary>
 		/// <remarks>
 		///     Scenarios let you define per-state behavior. Setups registered inside the returned <c>IMockInScenarioFor...</c> scope only apply while the mock's current scenario matches <paramref name="scenario" />; switch scenarios with <see cref="TransitionTo">TransitionTo</see>.
@@ -665,7 +661,7 @@ internal static partial class Mock
 		IMockInScenarioForIStaticAbstractMembers InScenario(string scenario);
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
 		/// </summary>
 		/// <remarks>
 		///     Equivalent to <c>InScenario(scenario)</c> followed by the setup callback, but returns the original <c>IMockFor...</c> accessor so it chains nicely at mock-creation time.
@@ -676,7 +672,7 @@ internal static partial class Mock
 		IMockForIStaticAbstractMembers InScenario(string scenario, global::System.Action<IMockInScenarioForIStaticAbstractMembers> setup);
 
 		/// <summary>
-		///     Switches the active scenario of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> to <paramref name="scenario" />.
+		///     Switches the active scenario of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> to <paramref name="scenario" />.
 		/// </summary>
 		/// <remarks>
 		///     After the transition, setups registered via <see cref="InScenario(string)">InScenario(string)</see> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.
@@ -686,7 +682,7 @@ internal static partial class Mock
 		IMockForIStaticAbstractMembers TransitionTo(string scenario);
 
 		/// <summary>
-		///     Triggers <see langword="static" /> events declared on <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> so that currently subscribed handlers are invoked.
+		///     Triggers <see langword="static" /> events declared on <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> so that currently subscribed handlers are invoked.
 		/// </summary>
 		/// <remarks>
 		///     Static events are scoped per async/execution flow while the mock is alive.
@@ -694,7 +690,7 @@ internal static partial class Mock
 		IMockStaticRaiseOnIStaticAbstractMembers RaiseStatic { get; }
 
 		/// <summary>
-		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> were invoked.
+		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> were invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never()</c>, <c>Once()</c>, <c>Twice()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce()</c>/<c>AtLeastTwice()</c>, <c>AtMost(n)</c>/<c>AtMostOnce()</c>/<c>AtMostTwice()</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.<br />
@@ -704,7 +700,7 @@ internal static partial class Mock
 		IMockVerifyForIStaticAbstractMembers Verify { get; }
 
 		/// <summary>
-		///     Asserts how often, and in which order, <see langword="static" /> members declared on <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> were invoked.
+		///     Asserts how often, and in which order, <see langword="static" /> members declared on <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> were invoked.
 		/// </summary>
 		/// <remarks>
 		///     Same terminators and modifiers as <see cref="Verify">Verify</see>; scoped per async/execution flow in the same way as <see cref="SetupStatic">SetupStatic</see>.
@@ -758,51 +754,51 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 	/// </summary>
 	internal interface IMockInScenarioForIStaticAbstractMembers
 	{
 		/// <summary>
-		///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> within the scenario scope.
+		///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see> within the scenario scope.
 		/// </summary>
 		IMockSetupForIStaticAbstractMembers Setup { get; }
 	}
 
 	/// <summary>
-	///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+	///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 	/// </summary>
 	internal interface IMockSetupForIStaticAbstractMembers
 	{
 	}
 
 	/// <summary>
-	///     Set up static members for the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+	///     Set up static members for the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 	/// </summary>
 	internal interface IMockStaticSetupForIStaticAbstractMembers
 	{
 		/// <summary>
-		///     Setup for the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty">AbstractStaticProperty</see>.
+		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty">AbstractStaticProperty</see>.
 		/// </summary>
 		global::Mockolate.Setup.PropertySetup<int> AbstractStaticProperty { get; }
 
 		/// <summary>
-		///     Setup for the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty">VirtualStaticProperty</see>.
+		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty">VirtualStaticProperty</see>.
 		/// </summary>
 		global::Mockolate.Setup.PropertySetup<int> VirtualStaticProperty { get; }
 
 		/// <summary>
-		///     Setup for the event <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see>.
+		///     Setup for the event <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see>.
 		/// </summary>
 		global::Mockolate.Setup.EventSetup AbstractStaticEvent { get; }
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()">AbstractStaticMethod()</see>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()">AbstractStaticMethod()</see>.
 		/// </summary>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetup<int> AbstractStaticMethod();
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()">VirtualStaticMethod()</see>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()">VirtualStaticMethod()</see>.
 		/// </summary>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetup<int> VirtualStaticMethod();
@@ -810,56 +806,56 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Raise static events on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+	///     Raise static events on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 	/// </summary>
 	internal interface IMockStaticRaiseOnIStaticAbstractMembers
 	{
 		/// <summary>
-		///     Raise the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see> event.
+		///     Raise the <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see> event.
 		/// </summary>
 		void AbstractStaticEvent(int obj);
 
 		/// <summary>
-		///     Raise the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see> event.
+		///     Raise the <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see> event.
 		/// </summary>
 		void AbstractStaticEvent(global::Mockolate.Parameters.IDefaultEventParameters parameters);
 
 	}
 
 	/// <summary>
-	///     Verify interactions with the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+	///     Verify interactions with the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 	/// </summary>
 	internal interface IMockVerifyForIStaticAbstractMembers
 	{
 	}
 
 	/// <summary>
-	///     Verify static interactions with the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
+	///     Verify static interactions with the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers">IStaticAbstractMembers</see>.
 	/// </summary>
 	internal interface IMockStaticVerifyForIStaticAbstractMembers
 	{
 		/// <summary>
-		///     Verify interactions with the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty">AbstractStaticProperty</see>.
+		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticProperty">AbstractStaticProperty</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int> AbstractStaticProperty { get; }
 
 		/// <summary>
-		///     Verify interactions with the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty">VirtualStaticProperty</see>.
+		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty">VirtualStaticProperty</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int> VirtualStaticProperty { get; }
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()">AbstractStaticMethod()</see>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()">AbstractStaticMethod()</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationResult<IMockStaticVerifyForIStaticAbstractMembers>.IgnoreParameters AbstractStaticMethod();
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()">VirtualStaticMethod()</see>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticMethod()">VirtualStaticMethod()</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationResult<IMockStaticVerifyForIStaticAbstractMembers>.IgnoreParameters VirtualStaticMethod();
 
 		/// <summary>
-		///     Verify subscriptions on the AbstractStaticEvent event of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see>.
+		///     Verify subscriptions on the AbstractStaticEvent event of <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationEventResult<IMockStaticVerifyForIStaticAbstractMembers> AbstractStaticEvent { get; }
 

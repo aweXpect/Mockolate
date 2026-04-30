@@ -12,7 +12,7 @@ public class TypeIsFormattableTests
 	public async Task WhenSymbolIsObject_ShouldNotReportFormattable()
 	{
 		const string source = "public class Holder { public object Value; }";
-		SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
+		SyntaxTree tree = CSharpSyntaxTree.ParseText(source, cancellationToken: TestContext.Current.CancellationToken);
 		CSharpCompilation compilation = CSharpCompilation.Create(
 			"TestAssembly",
 			[tree,],

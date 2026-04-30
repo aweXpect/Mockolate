@@ -1,7 +1,7 @@
 #if NET10_0_OR_GREATER
 using System;
 
-namespace Mockolate.ExampleTests.GeneratorCoverage;
+namespace Mockolate.Tests.GeneratorCoverage;
 
 /// <summary>
 ///     Custom delegate exercising the delegate-mock generator path with ref/out/in

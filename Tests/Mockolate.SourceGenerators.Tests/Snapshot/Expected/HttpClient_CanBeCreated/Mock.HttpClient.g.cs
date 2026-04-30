@@ -13,7 +13,6 @@ namespace Mockolate;
 /// <summary>
 ///     Mock extensions for <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class MockExtensionsForHttpClient
 {
@@ -378,7 +377,6 @@ internal static partial class MockExtensionsForHttpClient
 		global::Mockolate.Mock.IMockProtectedSetupForHttpClient Protected { get; }
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupForHttpClient, global::Mockolate.Mock.IMockProtectedSetupForHttpClient, IMockSetupInitializationForHttpClient
 	{
@@ -519,7 +517,6 @@ internal static partial class Mock
 	///     A mock implementation for <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.
 	/// </summary>
 	[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class HttpClient :
 		global::System.Net.Http.HttpClient, IMockForHttpClient, IMockSetupForHttpClient, IMockProtectedSetupForHttpClient, global::Mockolate.MockExtensionsForHttpClient.IMockSetupInitializationForHttpClient, IMockVerifyForHttpClient, IMockProtectedVerifyForHttpClient,
@@ -1067,7 +1064,6 @@ internal static partial class Mock
 		#endregion IMockProtectedVerifyForHttpClient
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class VerifyMonitorHttpClient(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyForHttpClient
 	{
@@ -1130,7 +1126,6 @@ internal static partial class Mock
 		#endregion IMockVerifyForHttpClient
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class MockInScenarioForHttpClient : global::Mockolate.Mock.IMockInScenarioForHttpClient, global::Mockolate.Mock.IMockSetupForHttpClient, global::Mockolate.Mock.IMockProtectedSetupForHttpClient
 	{
