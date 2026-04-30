@@ -18,7 +18,7 @@ namespace Mockolate.SourceGenerators.Tests.Snapshot;
 ///     When a scenario fails because the change was intentional, run
 ///     <see cref="MockGenerationSnapshotAcceptance.AcceptSnapshotChanges" />.
 /// </summary>
-public sealed class MockGenerationSnapshotTests
+public sealed partial class MockGenerationSnapshotTests
 {
 	[Fact]
 	public async Task BaseClass_WithMultipleAdditionalInterfaces_CanBeCreated()
@@ -116,20 +116,20 @@ public sealed class MockGenerationSnapshotTests
 			? "using Mockolate.ExampleTests.GeneratorCoverage;\n"
 			: string.Empty;
 		string program = $$"""
-			#nullable enable
-			using System;
-			using Mockolate;
-			{{usingDirective}}
-			namespace Mockolate.SourceGenerators.Tests.SnapshotDriver;
+		                   #nullable enable
+		                   using System;
+		                   using Mockolate;
+		                   {{usingDirective}}
+		                   namespace Mockolate.SourceGenerators.Tests.SnapshotDriver;
 
-			public class Program
-			{
-				public static void Main(string[] args)
-				{
-					{{mainBody}}
-				}
-			}
-			""";
+		                   public class Program
+		                   {
+		                   	public static void Main(string[] args)
+		                   	{
+		                   		{{mainBody}}
+		                   	}
+		                   }
+		                   """;
 		sources.Add(program);
 
 		return Generator.Run(
@@ -143,7 +143,7 @@ public sealed class MockGenerationSnapshotTests
 	{
 		Dictionary<string, string> normalized = new();
 		foreach (KeyValuePair<string, string> source in result.Sources
-			.OrderBy(s => s.Key, System.StringComparer.Ordinal))
+			         .OrderBy(s => s.Key, StringComparer.Ordinal))
 		{
 			normalized[source.Key] = source.Value.Replace("\r\n", "\n");
 		}
@@ -175,9 +175,8 @@ public sealed class MockGenerationSnapshotTests
 	// on both sides so the snapshot test passes regardless of the build configuration used to
 	// produce the generator. The attribute appears either on its own indented line or inline
 	// directly after an opening brace, so the pattern allows optional leading tabs/spaces.
-	private static readonly Regex DebuggerNonUserCodeRegex = new(
-		@"[ \t]*\[global::System\.Diagnostics\.DebuggerNonUserCode\]\r?\n?",
-		RegexOptions.Compiled);
+	[GeneratedRegex(@"[ \t]*\[global::System\.Diagnostics\.DebuggerNonUserCode\]\r?\n?", RegexOptions.Compiled)]
+	private static partial Regex DebuggerNonUserCodeRegex { get; }
 
 	private static string StripConfigSpecificLines(string content)
 		=> DebuggerNonUserCodeRegex.Replace(content, string.Empty);
