@@ -62,6 +62,28 @@ public partial class MockSetupsTests
 		await That(result).IsEqualTo(expected);
 	}
 
+	[Fact]
+	public async Task TryGetScenario_WithEmptyName_ShouldReturnTrueAndYieldRootBucket()
+	{
+		MockSetups setups = new();
+
+		bool result = setups.TryGetScenario("", out MockScenarioSetup? scenario);
+
+		await That(result).IsTrue();
+		await That(scenario).IsSameAs(setups);
+	}
+
+	[Fact]
+	public async Task TryGetScenario_WithNullName_ShouldReturnTrueAndYieldRootBucket()
+	{
+		MockSetups setups = new();
+
+		bool result = setups.TryGetScenario(null!, out MockScenarioSetup? scenario);
+
+		await That(result).IsTrue();
+		await That(scenario).IsSameAs(setups);
+	}
+
 	internal interface IMyService
 	{
 	}

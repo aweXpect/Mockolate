@@ -165,6 +165,32 @@ public sealed class IndexerSetupTests
 	}
 
 	[Fact]
+	public async Task MatchesAccess_WithUnknownAccessType_ShouldReturnFalse()
+	{
+		IndexerSetup<int, string> setup = new(
+			new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
+			(IParameterMatch<string>)It.IsAny<string>());
+		FakeIndexerAccess access = new();
+
+		bool matches = ((IInteractiveIndexerSetup)setup).Matches(access);
+
+		await That(matches).IsFalse();
+	}
+
+	[Fact]
+	public async Task SetResult_WhenValueDoesNotCastToTValue_ShouldNotInvokeSetterCallbacks()
+	{
+		MyIndexerSetup<int> setup = new();
+		int callCount = 0;
+		setup.OnSet.Do(() => callCount++);
+		IndexerSetterAccess<int, string> access = new(1, "stored");
+
+		setup.DoSetResult(access, 2L);
+
+		await That(callCount).IsEqualTo(0);
+	}
+
+	[Fact]
 	public async Task TryCast_WhenValueIsNotOfTargetTypeAndNotNull_ShouldReturnFalse()
 	{
 		bool success = FakeIndexerSetup.InvokeTryCast(42, out string _, MockBehavior.Default);
@@ -354,6 +380,20 @@ public sealed class IndexerSetupTests
 			await That(result).IsEqualTo("7-9");
 			await That(found).IsTrue();
 			await That(stored).IsEqualTo("7-9");
+		}
+
+		[Fact]
+		public async Task MatchesAccess_WithUnknownAccessType_ShouldReturnFalse()
+		{
+			IndexerSetup<string, int, int> setup = new(
+				new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
+			FakeIndexerAccess access = new();
+
+			bool matches = ((IInteractiveIndexerSetup)setup).Matches(access);
+
+			await That(matches).IsFalse();
 		}
 
 		private sealed class MyIndexerSetup<T1, T2>()
@@ -557,6 +597,21 @@ public sealed class IndexerSetupTests
 			await That(result).IsEqualTo("7-8-9");
 			await That(found).IsTrue();
 			await That(stored).IsEqualTo("7-8-9");
+		}
+
+		[Fact]
+		public async Task MatchesAccess_WithUnknownAccessType_ShouldReturnFalse()
+		{
+			IndexerSetup<string, int, int, int> setup = new(
+				new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
+			FakeIndexerAccess access = new();
+
+			bool matches = ((IInteractiveIndexerSetup)setup).Matches(access);
+
+			await That(matches).IsFalse();
 		}
 
 		private sealed class MyIndexerSetup<T1, T2, T3>()
@@ -771,6 +826,22 @@ public sealed class IndexerSetupTests
 			await That(result).IsEqualTo("6-7-8-9");
 			await That(found).IsTrue();
 			await That(stored).IsEqualTo("6-7-8-9");
+		}
+
+		[Fact]
+		public async Task MatchesAccess_WithUnknownAccessType_ShouldReturnFalse()
+		{
+			IndexerSetup<string, int, int, int, int> setup = new(
+				new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>(),
+				(IParameterMatch<int>)It.IsAny<int>());
+			FakeIndexerAccess access = new();
+
+			bool matches = ((IInteractiveIndexerSetup)setup).Matches(access);
+
+			await That(matches).IsFalse();
 		}
 
 		private sealed class MyIndexerSetup<T1, T2, T3, T4>()

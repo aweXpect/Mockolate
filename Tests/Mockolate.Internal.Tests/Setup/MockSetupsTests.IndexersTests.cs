@@ -1,3 +1,4 @@
+using System.Reflection;
 using Mockolate.Internal.Tests.TestHelpers;
 using Mockolate.Setup;
 
@@ -21,6 +22,43 @@ public partial class MockSetupsTests
 				setups.GetMatching<FakeIndexerSetup>(s => ((IInteractiveIndexerSetup)s).Matches(access));
 
 			await That(result).IsEqualTo(setup1);
+		}
+
+		[Fact]
+		public async Task GetMatching_OnEmptyStorage_ShouldReturnNullWithoutThrowing()
+		{
+			MockSetups.IndexerSetups setups = new();
+
+			IndexerSetup? result = setups.GetMatching<IndexerSetup>(_ => true);
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
+		public async Task InitializeStorageCount_OnFreshInstance_ShouldAllocateValueStoragesArrayWithRequestedLength()
+		{
+			MockSetups.IndexerSetups setups = new();
+
+			setups.InitializeStorageCount(5);
+
+			Array? storages = GetValueStoragesField(setups);
+			await That(storages).IsNotNull();
+			await That(storages!.Length).IsEqualTo(5);
+		}
+
+		[Fact]
+		public async Task InitializeStorageCount_WhenAlreadyAllocated_ShouldKeepFirstAllocation()
+		{
+			MockSetups.IndexerSetups setups = new();
+			setups.InitializeStorageCount(3);
+			Array? firstAllocation = GetValueStoragesField(setups);
+
+			setups.InitializeStorageCount(7);
+
+			Array? secondAllocation = GetValueStoragesField(setups);
+			await That(secondAllocation).IsNotNull();
+			await That(secondAllocation!.Length).IsEqualTo(3);
+			await That(secondAllocation).IsSameAs(firstAllocation);
 		}
 
 		[Fact]
@@ -68,6 +106,13 @@ public partial class MockSetupsTests
 			Parallel.For(0, 200, _ => setups.Add(new FakeIndexerSetup(false)));
 
 			await That(setups.Count).IsEqualTo(200);
+		}
+
+		private static Array? GetValueStoragesField(MockSetups.IndexerSetups setups)
+		{
+			FieldInfo field = typeof(MockSetups.IndexerSetups).GetField(
+				"_valueStorages", BindingFlags.Instance | BindingFlags.NonPublic)!;
+			return (Array?)field.GetValue(setups);
 		}
 	}
 }
