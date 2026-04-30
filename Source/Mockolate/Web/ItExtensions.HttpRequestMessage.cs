@@ -182,8 +182,7 @@ public static partial class ItExtensions
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
-			// Stryker disable once Collection : the Where(!string.IsNullOrEmpty) filter at the return strips any default null entry, so seeding the list with [default] produces the same output as the empty seed.
-			List<string?> parts = [];
+			List<string?> parts = new();
 			if (_uriParameter is not null)
 			{
 				parts.Add(_uriParameter.ToString());

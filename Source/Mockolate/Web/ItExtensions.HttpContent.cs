@@ -139,7 +139,7 @@ public static partial class ItExtensions
 
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		bool IParameter.Matches(object? value)
-			=> value is HttpContent content ? Matches(content) : value is null && Matches(null);
+			=> value is HttpContent content && Matches(content);
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		void IParameter.InvokeCallbacks(object? value)
