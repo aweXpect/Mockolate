@@ -123,12 +123,31 @@ public sealed class IndexerAccessTests
 	}
 
 	[Fact]
+	public async Task ToString_OnIndexerGetterAccess3_FormatsEachNullParameterAsNullLiteral()
+	{
+		// Pins the `?? "null"` literals in IndexerGetterAccess<T1, T2, T3>.ToString. With any of
+		// the three "null" → "" mutations applied, a null parameter would render as an empty
+		// slot like "[, ...]" instead of "[null, ...]".
+		IndexerGetterAccess<string?, string?, string?> access = new(null, null, null);
+
+		await That(access.ToString()).IsEqualTo("get indexer [null, null, null]");
+	}
+
+	[Fact]
 	public async Task ToString_OnIndexerGetterAccess4_FormatsEachNullParameterAsNullLiteral()
 	{
 		IndexerGetterAccess<string?, string?, string?, string?> access =
 			new(null, null, null, null);
 
 		await That(access.ToString()).IsEqualTo("get indexer [null, null, null, null]");
+	}
+
+	[Fact]
+	public async Task ToString_OnIndexerSetterAccess3_FormatsEachNullParameterAsNullLiteral()
+	{
+		IndexerSetterAccess<string?, string?, string?, string?> access = new(null, null, null, null);
+
+		await That(access.ToString()).IsEqualTo("set indexer [null, null, null] to null");
 	}
 
 	[Fact]
@@ -155,6 +174,19 @@ public sealed class IndexerAccessTests
 	}
 
 	[Fact]
+	public async Task TryFindStoredValue_OnIndexerGetterAccess1_WithoutStorage_ShouldReturnFalse()
+	{
+		// Pins the `if (s is null) { return null; }` first guard in
+		// IndexerGetterAccess<T1>.TraverseStorage. With the body removed, the next line would
+		// dereference null `s` to call GetChildDispatch and throw NRE.
+		IndexerGetterAccess<int> access = new(42);
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
 	public async Task TryFindStoredValue_OnIndexerGetterAccess2_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -169,6 +201,16 @@ public sealed class IndexerAccessTests
 	}
 
 	[Fact]
+	public async Task TryFindStoredValue_OnIndexerGetterAccess2_WithoutStorage_ShouldReturnFalse()
+	{
+		IndexerGetterAccess<int, int> access = new(1, 2);
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
 	public async Task TryFindStoredValue_OnIndexerGetterAccess3_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -180,6 +222,16 @@ public sealed class IndexerAccessTests
 		access.TryFindStoredValue(out string _);
 
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)", "Get(3)",]);
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerGetterAccess3_WithoutStorage_ShouldReturnFalse()
+	{
+		IndexerGetterAccess<int, int, int> access = new(1, 2, 3);
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
 	}
 
 	[Fact]
@@ -198,6 +250,16 @@ public sealed class IndexerAccessTests
 	}
 
 	[Fact]
+	public async Task TryFindStoredValue_OnIndexerGetterAccess4_WithoutStorage_ShouldReturnFalse()
+	{
+		IndexerGetterAccess<int, int, int, int> access = new(1, 2, 3, 4);
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
 	public async Task TryFindStoredValue_OnIndexerSetterAccess1_UsesGetChildDispatch()
 	{
 		RecordingStorage storage = new();
@@ -209,6 +271,16 @@ public sealed class IndexerAccessTests
 		access.TryFindStoredValue(out string _);
 
 		await That(storage.Calls).IsEqualTo(["Get(42)",]);
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess1_WithoutStorage_ShouldReturnFalse()
+	{
+		IndexerSetterAccess<int, string> access = new(42, "v");
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
 	}
 
 	[Fact]
@@ -227,6 +299,34 @@ public sealed class IndexerAccessTests
 	}
 
 	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess2_WhenFirstDispatchReturnsNull_ShouldReturnFalse()
+	{
+		// Pins the second `if (s is null) { return null; }` guard inside
+		// IndexerSetterAccess<T1, T2, TValue>.TraverseStorage — the one after Parameter1's
+		// GetChildDispatch returns null. With the body removed, the next line dereferences
+		// null `s` for Parameter2's dispatch and throws NRE.
+		NullAfterStorage storage = new(1);
+		IndexerSetterAccess<int, int, string> access = new(1, 2, "v")
+		{
+			Storage = storage,
+		};
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess2_WithoutStorage_ShouldReturnFalse()
+	{
+		IndexerSetterAccess<int, int, string> access = new(1, 2, "v");
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
 	public async Task TryFindStoredValue_OnIndexerSetterAccess3_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -239,6 +339,44 @@ public sealed class IndexerAccessTests
 		access.TryFindStoredValue(out string _);
 
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)", "Get(3)",]);
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess3_WhenFirstDispatchReturnsNull_ShouldReturnFalse()
+	{
+		NullAfterStorage storage = new(1);
+		IndexerSetterAccess<int, int, int, string> access = new(1, 2, 3, "v")
+		{
+			Storage = storage,
+		};
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess3_WhenSecondDispatchReturnsNull_ShouldReturnFalse()
+	{
+		NullAfterStorage storage = new(2);
+		IndexerSetterAccess<int, int, int, string> access = new(1, 2, 3, "v")
+		{
+			Storage = storage,
+		};
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess3_WithoutStorage_ShouldReturnFalse()
+	{
+		IndexerSetterAccess<int, int, int, string> access = new(1, 2, 3, "v");
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
 	}
 
 	[Fact]
@@ -256,6 +394,58 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)", "Get(3)", "Get(4)",]);
 	}
 
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess4_WhenFirstDispatchReturnsNull_ShouldReturnFalse()
+	{
+		NullAfterStorage storage = new(1);
+		IndexerSetterAccess<int, int, int, int, string> access = new(1, 2, 3, 4, "v")
+		{
+			Storage = storage,
+		};
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess4_WhenSecondDispatchReturnsNull_ShouldReturnFalse()
+	{
+		NullAfterStorage storage = new(2);
+		IndexerSetterAccess<int, int, int, int, string> access = new(1, 2, 3, 4, "v")
+		{
+			Storage = storage,
+		};
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess4_WhenThirdDispatchReturnsNull_ShouldReturnFalse()
+	{
+		NullAfterStorage storage = new(3);
+		IndexerSetterAccess<int, int, int, int, string> access = new(1, 2, 3, 4, "v")
+		{
+			Storage = storage,
+		};
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
+	[Fact]
+	public async Task TryFindStoredValue_OnIndexerSetterAccess4_WithoutStorage_ShouldReturnFalse()
+	{
+		IndexerSetterAccess<int, int, int, int, string> access = new(1, 2, 3, 4, "v");
+
+		bool found = access.TryFindStoredValue(out string _);
+
+		await That(found).IsFalse();
+	}
+
 	private sealed class RecordingStorage : IndexerValueStorage
 	{
 		public List<string> Calls { get; } = [];
@@ -271,5 +461,27 @@ public sealed class IndexerAccessTests
 			Calls.Add($"GetOrAdd({key?.ToString() ?? "<null>"})");
 			return this;
 		}
+	}
+
+	// Returns null on the Nth GetChildDispatch call, otherwise returns this.
+	// _nullAtCall = 1 means return null on the 1st call;
+	// _nullAtCall = 2 means return null on the 2nd call (and the 1st returns this); etc.
+	private sealed class NullAfterStorage : IndexerValueStorage
+	{
+		private readonly int _nullAtCall;
+		private int _calls;
+
+		public NullAfterStorage(int nullAtCall)
+		{
+			_nullAtCall = nullAtCall;
+		}
+
+		public override IndexerValueStorage? GetChildDispatch<TKey>(TKey key)
+		{
+			_calls++;
+			return _calls == _nullAtCall ? null : this;
+		}
+
+		public override IndexerValueStorage GetOrAddChildDispatch<TKey>(TKey key) => this;
 	}
 }

@@ -228,6 +228,20 @@ public class FastBufferConsumeMatchingTests
 	}
 
 	[Fact]
+	public async Task FastMethod1Buffer_ConsumeAll_OnEmptyBuffer_ShouldReturnZeroWithoutThrowing()
+	{
+		// Pins the `slot < n` loop bound in Method1 ConsumeAll. Mutated to `slot <= n`, an empty
+		// buffer (n == 0) would still enter the loop at slot=0 and call VerifiedUnderLock(0),
+		// which dereferences the not-yet-allocated VerifiedChunks[0] → NRE.
+		FastMockInteractions store = new(1);
+		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+
+		int consumed = buffer.ConsumeAll();
+
+		await That(consumed).IsEqualTo(0);
+	}
+
+	[Fact]
 	public async Task FastMethod1Buffer_ConsumeMatching_ShouldHonorMatcher()
 	{
 		FastMockInteractions store = new(1);
@@ -240,6 +254,17 @@ public class FastBufferConsumeMatchingTests
 		await That(buffer.ConsumeMatching((IParameterMatch<int>)It.IsAny<int>())).IsEqualTo(3);
 		await That(buffer.ConsumeMatching((IParameterMatch<int>)It.Is(2))).IsEqualTo(1);
 		await That(buffer.ConsumeMatching((IParameterMatch<int>)It.Is(99))).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task FastMethod2Buffer_ConsumeAll_OnEmptyBuffer_ShouldReturnZeroWithoutThrowing()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod2Buffer<int, string> buffer = store.InstallMethod<int, string>(0);
+
+		int consumed = buffer.ConsumeAll();
+
+		await That(consumed).IsEqualTo(0);
 	}
 
 	[Fact]
@@ -264,6 +289,17 @@ public class FastBufferConsumeMatchingTests
 		await That(buffer.ConsumeMatching(
 			(IParameterMatch<int>)It.Is(99),
 			(IParameterMatch<string>)It.IsAny<string>())).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task FastMethod3Buffer_ConsumeAll_OnEmptyBuffer_ShouldReturnZeroWithoutThrowing()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod3Buffer<int, string, bool> buffer = store.InstallMethod<int, string, bool>(0);
+
+		int consumed = buffer.ConsumeAll();
+
+		await That(consumed).IsEqualTo(0);
 	}
 
 	[Fact]
@@ -292,6 +328,18 @@ public class FastBufferConsumeMatchingTests
 			(IParameterMatch<int>)It.IsAny<int>(),
 			(IParameterMatch<string>)It.Is<string>("b"),
 			(IParameterMatch<bool>)It.Is(false))).IsEqualTo(0);
+	}
+
+	[Fact]
+	public async Task FastMethod4Buffer_ConsumeAll_OnEmptyBuffer_ShouldReturnZeroWithoutThrowing()
+	{
+		FastMockInteractions store = new(1);
+		FastMethod4Buffer<int, string, bool, double> buffer =
+			store.InstallMethod<int, string, bool, double>(0);
+
+		int consumed = buffer.ConsumeAll();
+
+		await That(consumed).IsEqualTo(0);
 	}
 
 	[Fact]

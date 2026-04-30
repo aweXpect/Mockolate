@@ -833,6 +833,87 @@ public sealed class MockRegistryTests
 		}
 	}
 
+	public sealed class GetPropertyFastSnapshotNullSlotTests
+	{
+		[Fact]
+		public async Task GetPropertyFast_WhenSnapshotTableHasNullEntryAtMemberId_ShouldFallToColdPath()
+		{
+			// Pins the `if (snapshot is not null)` guard inside ResolvePropertyFast. With the
+			// guard inverted to `is null`, the body would dereference a null `snapshot` and
+			// throw NullReferenceException. Forces the snapshot table to be non-null with
+			// length > queried memberId, but with `table[memberId]` itself null.
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> snapshotAtFive = new(registry, "P5");
+			snapshotAtFive.InitializeWith(50);
+			registry.SetupProperty(5, snapshotAtFive);
+
+			int result = registry.GetPropertyFast(2, "P", _ => 7);
+
+			await That(result).IsEqualTo(7);
+		}
+	}
+
+	public sealed class SetPropertyFastScenarioRoutingTests
+	{
+		[Fact]
+		public async Task SetPropertyFast_WithActiveScenario_ShouldUseColdPathAndWriteToScenarioSetup()
+		{
+			// Pins the `string.IsNullOrEmpty(Scenario)` scenario guard around the int-keyed
+			// snapshot lookup in SetPropertyFast. Negation, `Scenario != null`, and
+			// `Scenario != ""` mutations all flip whether the hot path runs when a scenario
+			// is active — and would write to the wrong (default-scope) PropertySetup. Verified
+			// by reading the value back through GetPropertyFast (which routes to the scenario
+			// setup via its cold path) and asserting the new value made it.
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> defaultSetup = new(registry, "P");
+			defaultSetup.InitializeWith(100);
+			registry.SetupProperty(2, defaultSetup);
+
+			PropertySetup<int> scenarioSetup = new(registry, "P");
+			scenarioSetup.InitializeWith(999);
+			registry.SetupProperty(2, "myScenario", scenarioSetup);
+
+			registry.TransitionTo("myScenario");
+			registry.SetPropertyFast(2, 3, "P", 42);
+
+			int result = registry.GetPropertyFast(2, "P", _ => -1);
+
+			await That(result).IsEqualTo(42);
+		}
+	}
+
+	public sealed class SetPropertyFastSnapshotInTableOnlyTests
+	{
+		[Fact]
+		public async Task SetPropertyFast_WithSnapshotOnlyInIntKeyedTable_ShouldHonorHotPath()
+		{
+			// Pins the `matchingSetup = table[memberId];` assignment inside SetPropertyFast's
+			// hot-path block. With the block emptied, matchingSetup stays null and the cold
+			// path runs ResolvePropertySetup, which only consults Setup.Properties. Force the
+			// snapshot into the int-keyed table without registering it in Setup.Properties via
+			// reflection, then prove the hot path was used: ThrowWhenNotSetup behavior makes
+			// the cold path throw, so the test passing means we stayed on the hot path.
+			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
+			MockRegistry registry = new(behavior, new FastMockInteractions(0, behavior.SkipInteractionRecording));
+
+			PropertySetup<int> snapshot = new(registry, "P");
+			snapshot.InitializeWith(0);
+
+			PropertySetup?[] table = new PropertySetup?[6];
+			table[5] = snapshot;
+			typeof(MockRegistry).GetField(
+					"_propertySetupsByMemberId", BindingFlags.NonPublic | BindingFlags.Instance)!
+				.SetValue(registry, table);
+
+			void Act()
+			{
+				registry.SetPropertyFast(5, 6, "P", 42);
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+	}
+
 	public sealed class GetPropertyFastInteractionRecordingTests
 	{
 		[Fact]
