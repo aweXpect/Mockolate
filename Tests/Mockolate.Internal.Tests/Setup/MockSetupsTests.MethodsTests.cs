@@ -21,6 +21,16 @@ public partial class MockSetupsTests
 		}
 
 		[Fact]
+		public async Task GetLatestOrDefault_OnEmptyStorage_ShouldReturnNullWithoutThrowing()
+		{
+			MockSetups.MethodSetups setups = new();
+
+			MethodSetup? result = setups.GetLatestOrDefault(_ => true);
+
+			await That(result).IsNull();
+		}
+
+		[Fact]
 		public async Task GetLatestOrDefault_ShouldReturnLatestMatching()
 		{
 			MockSetups.MethodSetups setups = new();

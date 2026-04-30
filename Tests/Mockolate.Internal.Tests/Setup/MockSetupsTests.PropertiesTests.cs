@@ -8,6 +8,36 @@ public partial class MockSetupsTests
 	public class PropertiesTests
 	{
 		[Fact]
+		public async Task Add_DefaultPlaceholderAfterUserSetup_ShouldNotOverwriteUserSetup()
+		{
+			MockSetups.PropertySetups setups = new();
+			FakePropertySetup userSetup = new("p");
+			PropertySetup defaultSetup = new PropertySetup.Default<int>("p", 0);
+
+			setups.Add(userSetup);
+			setups.Add(defaultSetup);
+
+			setups.TryGetValue("p", out PropertySetup? found);
+			await That(found).IsSameAs(userSetup);
+			await That(setups.Count).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task Add_DefaultPlaceholderOverDefault_ShouldKeepDefaultEntry()
+		{
+			MockSetups.PropertySetups setups = new();
+			PropertySetup firstDefault = new PropertySetup.Default<int>("p", 0);
+			PropertySetup secondDefault = new PropertySetup.Default<int>("p", 0);
+
+			setups.Add(firstDefault);
+			setups.Add(secondDefault);
+
+			setups.TryGetValue("p", out PropertySetup? found);
+			await That(found).IsSameAs(secondDefault);
+			await That(setups.Count).IsEqualTo(0);
+		}
+
+		[Fact]
 		public async Task Add_ReplacingDefaultWithUserSetup_ShouldIncrementCountByOne()
 		{
 			MockSetups.PropertySetups setups = new();
