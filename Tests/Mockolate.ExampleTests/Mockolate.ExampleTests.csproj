@@ -6,12 +6,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="System.Net.Http"/>
 		<PackageReference Include="Testably.Abstractions"/>
 		<PackageReference Include="Azure.Data.Tables"/>
 		<PackageReference Include="Azure.Storage.Blobs"/>
-		<PackageReference Include="IsExternalInit">
+		<PackageReference Include="Polyfill">
 			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 

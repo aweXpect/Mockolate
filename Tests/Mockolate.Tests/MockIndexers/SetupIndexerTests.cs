@@ -7,7 +7,7 @@ namespace Mockolate.Tests.MockIndexers;
 
 public sealed partial class SetupIndexerTests
 {
-	[Fact]
+	[Test]
 	public async Task MultipleValues_ShouldAllStoreValues()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -30,7 +30,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2B).IsEqualTo("y");
 	}
 
-	[Fact]
+	[Test]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -46,7 +46,7 @@ public sealed partial class SetupIndexerTests
 		await That(result3).IsEqualTo("foo");
 	}
 
-	[Fact]
+	[Test]
 	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -62,7 +62,7 @@ public sealed partial class SetupIndexerTests
 		await That(result3).IsEqualTo("foo");
 	}
 
-	[Fact]
+	[Test]
 	public async Task Parameter_Do_ShouldExecuteCallback()
 	{
 		List<string> capturedValues = [];
@@ -76,7 +76,7 @@ public sealed partial class SetupIndexerTests
 		await That(capturedValues).IsEqualTo(["foo", "bar",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Parameter_Do_ShouldOnlyExecuteCallbackWhenAllParametersMatch()
 	{
 		List<string> capturedValues = [];
@@ -90,7 +90,7 @@ public sealed partial class SetupIndexerTests
 		await That(capturedValues).IsEqualTo(["foo",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SetOnDifferentLevel_ShouldNotBeUsed()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -103,7 +103,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldSupportNullAsParameter()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -116,7 +116,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldUseInitializedValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -129,7 +129,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoredNullValue_ShouldNotFallBackToDefault()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -142,7 +142,7 @@ public sealed partial class SetupIndexerTests
 		await That(resultAfter).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThreeLevels_ShouldUseInitializedValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -155,7 +155,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ThreeLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -174,7 +174,7 @@ public sealed partial class SetupIndexerTests
 		await That(result4).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task TwoLevels_ShouldUseInitializedValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -187,7 +187,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task TwoLevels_WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -202,7 +202,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenTypeOfGetIndexerDoesNotMatch_ShouldReturnDefaultValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -222,7 +222,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithoutSetup_ShouldStoreLastValue()
 	{
 		IIndexerService sut = IIndexerService.CreateMock();
@@ -237,7 +237,7 @@ public sealed partial class SetupIndexerTests
 		await That(result2).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithoutSetup_ThrowWhenNotSetup_ShouldThrowMockNotSetupException()
 	{
 		IIndexerService mock = IIndexerService.CreateMock(MockBehavior.Default with
@@ -255,7 +255,7 @@ public sealed partial class SetupIndexerTests
 	}
 
 #if NET8_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task WithReadOnlySpanIndexerParameters_ShouldCompile()
 	{
 		ReadOnlySpan<int> readOnlySpan123 = ((int[])[1, 2, 3,]).AsSpan();
@@ -275,7 +275,7 @@ public sealed partial class SetupIndexerTests
 #endif
 
 #if NET8_0_OR_GREATER
-	[Fact]
+	[Test]
 	public async Task WithSpanIndexerParameters_ShouldCompile()
 	{
 		Span<char> fooSpan = "foo".ToCharArray().AsSpan();
@@ -302,7 +302,7 @@ public sealed partial class SetupIndexerTests
 
 	public class IndexerWith1Parameter
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValue()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -315,7 +315,7 @@ public sealed partial class SetupIndexerTests
 			await That(setup.ToString()).IsEqualTo("string this[1]");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter_ShouldWork()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -331,7 +331,7 @@ public sealed partial class SetupIndexerTests
 
 	public class IndexerWith2Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -344,7 +344,7 @@ public sealed partial class SetupIndexerTests
 			await That(setup.ToString()).IsEqualTo("string this[1, 2]");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -357,7 +357,7 @@ public sealed partial class SetupIndexerTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter2_ShouldWork()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -370,7 +370,7 @@ public sealed partial class SetupIndexerTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters_ShouldWork()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -388,7 +388,7 @@ public sealed partial class SetupIndexerTests
 
 	public class IndexerWith3Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -404,7 +404,7 @@ public sealed partial class SetupIndexerTests
 
 	public class IndexerWith4Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -420,7 +420,7 @@ public sealed partial class SetupIndexerTests
 
 	public class IndexerWith5Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -437,7 +437,7 @@ public sealed partial class SetupIndexerTests
 
 	public class NegativeArgumentValidation
 	{
-		[Fact]
+		[Test]
 		public async Task ApplyIndexerGetter_WithBaseValue_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -453,7 +453,7 @@ public sealed partial class SetupIndexerTests
 				.WithParamName("signatureIndex");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ApplyIndexerGetter_WithGenerator_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -469,7 +469,7 @@ public sealed partial class SetupIndexerTests
 				.WithParamName("signatureIndex");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ApplyIndexerSetter_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -485,7 +485,7 @@ public sealed partial class SetupIndexerTests
 				.WithParamName("signatureIndex");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ApplyIndexerSetup_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();
@@ -503,7 +503,7 @@ public sealed partial class SetupIndexerTests
 				.WithParamName("signatureIndex");
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetIndexerFallback_WithNegativeSignatureIndex_ShouldThrow()
 		{
 			IIndexerService sut = IIndexerService.CreateMock();

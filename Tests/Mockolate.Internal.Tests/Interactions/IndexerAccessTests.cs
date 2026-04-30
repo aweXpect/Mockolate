@@ -6,7 +6,7 @@ namespace Mockolate.Internal.Tests.Interactions;
 
 public sealed class IndexerAccessTests
 {
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerGetterAccess1_UsesGetOrAddChildDispatch()
 	{
 		RecordingStorage storage = new();
@@ -20,7 +20,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(42)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerGetterAccess2_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -34,7 +34,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(1)", "GetOrAdd(2)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerGetterAccess3_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -48,7 +48,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(1)", "GetOrAdd(2)", "GetOrAdd(3)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerGetterAccess4_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -63,7 +63,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(1)", "GetOrAdd(2)", "GetOrAdd(3)", "GetOrAdd(4)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerSetterAccess1_UsesGetOrAddChildDispatch()
 	{
 		RecordingStorage storage = new();
@@ -77,7 +77,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(42)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerSetterAccess2_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -92,7 +92,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(1)", "GetOrAdd(2)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerSetterAccess3_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -107,7 +107,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(1)", "GetOrAdd(2)", "GetOrAdd(3)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task StoreValue_OnIndexerSetterAccess4_UsesGetOrAddChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -122,7 +122,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["GetOrAdd(1)", "GetOrAdd(2)", "GetOrAdd(3)", "GetOrAdd(4)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_OnIndexerGetterAccess4_FormatsEachNullParameterAsNullLiteral()
 	{
 		IndexerGetterAccess<string?, string?, string?, string?> access =
@@ -131,7 +131,7 @@ public sealed class IndexerAccessTests
 		await That(access.ToString()).IsEqualTo("get indexer [null, null, null, null]");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_OnIndexerSetterAccess4_FormatsEachNullParameterAsNullLiteral()
 	{
 		IndexerSetterAccess<string?, string?, string?, string?, string?> access =
@@ -140,7 +140,7 @@ public sealed class IndexerAccessTests
 		await That(access.ToString()).IsEqualTo("set indexer [null, null, null, null] to null");
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerGetterAccess1_UsesGetChildDispatch()
 	{
 		RecordingStorage storage = new();
@@ -154,7 +154,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(42)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerGetterAccess2_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -168,7 +168,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerGetterAccess3_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -182,7 +182,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)", "Get(3)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerGetterAccess4_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -197,7 +197,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)", "Get(3)", "Get(4)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerSetterAccess1_UsesGetChildDispatch()
 	{
 		RecordingStorage storage = new();
@@ -211,7 +211,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(42)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerSetterAccess2_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -226,7 +226,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerSetterAccess3_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();
@@ -241,7 +241,7 @@ public sealed class IndexerAccessTests
 		await That(storage.Calls).IsEqualTo(["Get(1)", "Get(2)", "Get(3)",]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryFindStoredValue_OnIndexerSetterAccess4_UsesGetChildDispatchForEachParameter()
 	{
 		RecordingStorage storage = new();

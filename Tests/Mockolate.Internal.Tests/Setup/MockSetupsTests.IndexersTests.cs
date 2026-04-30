@@ -7,7 +7,7 @@ public partial class MockSetupsTests
 {
 	public class IndexersTests
 	{
-		[Fact]
+		[Test]
 		public async Task AddAndGetLatestOrDefault_ShouldReturnLatestMatching()
 		{
 			MockSetups.IndexerSetups setups = new();
@@ -23,7 +23,7 @@ public partial class MockSetupsTests
 			await That(result).IsEqualTo(setup1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Stress_ShouldMaintainCountAfterManyAdds()
 		{
 			MockSetups.IndexerSetups setups = new();
@@ -36,7 +36,7 @@ public partial class MockSetupsTests
 			await That(setups.Count).IsEqualTo(1000);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ThreadSafety_ConcurrentAddsAndQueries_ShouldReturnConsistentMatches()
 		{
 			MockSetups.IndexerSetups setups = new();
@@ -60,7 +60,7 @@ public partial class MockSetupsTests
 			await That(result).IsEqualTo(finalMatch);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ThreadSafety_ShouldHandleParallelAdds()
 		{
 			MockSetups.IndexerSetups setups = new();

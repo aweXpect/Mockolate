@@ -8,7 +8,7 @@ public sealed partial class MockTests
 {
 	public sealed class ThreadSafetyTests
 	{
-		[Fact]
+		[Test]
 		public async Task Event_ShouldBeThreadSafe()
 		{
 			IMyThreadSafetyService sut = IMyThreadSafetyService.CreateMock();
@@ -37,7 +37,7 @@ public sealed partial class MockTests
 			await That(sut.Mock.Verify.MyEvent.Unsubscribed()).Exactly(taskCount * iterationsPerTask);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Event_SubscribeRaiseUnsubscribe_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 10; round++)
@@ -97,7 +97,7 @@ public sealed partial class MockTests
 			}
 		}
 
-		[Fact]
+		[Test]
 		public async Task Indexer_ManyKeys_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 5; round++)
@@ -179,7 +179,7 @@ public sealed partial class MockTests
 			}
 		}
 
-		[Fact]
+		[Test]
 		public async Task Indexer_ShouldBeThreadSafe()
 		{
 			IMyThreadSafetyService sut = IMyThreadSafetyService.CreateMock();
@@ -228,7 +228,7 @@ public sealed partial class MockTests
 			await That(values).Contains("hello").Exactly(readerCount * iterationsPerReader * 2);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Method_HighContention_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 10; round++)
@@ -261,7 +261,7 @@ public sealed partial class MockTests
 			}
 		}
 
-		[Fact]
+		[Test]
 		public async Task Method_ShouldBeThreadSafe()
 		{
 			IMyThreadSafetyService sut = IMyThreadSafetyService.CreateMock();
@@ -290,7 +290,7 @@ public sealed partial class MockTests
 			await That(values).Contains(42).Exactly(taskCount * iterationsPerTask);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Property_ConcurrentSetupAndRead_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 10; round++)
@@ -344,7 +344,7 @@ public sealed partial class MockTests
 			}
 		}
 
-		[Fact]
+		[Test]
 		public async Task Property_HighContention_ShouldBeThreadSafe()
 		{
 			for (int round = 0; round < 10; round++)
@@ -377,7 +377,7 @@ public sealed partial class MockTests
 			}
 		}
 
-		[Fact]
+		[Test]
 		public async Task Property_ShouldBeThreadSafe()
 		{
 			IMyThreadSafetyService sut = IMyThreadSafetyService.CreateMock();

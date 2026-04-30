@@ -11,7 +11,7 @@ public sealed partial class ItExtensionsTests
 	{
 		public sealed class WithBytesTests
 		{
-			[Fact]
+			[Test]
 			public async Task CalledTwice_ShouldUseFirstPredicate()
 			{
 				HttpClient httpClient = HttpClient.CreateMock();
@@ -33,25 +33,25 @@ public sealed partial class ItExtensionsTests
 					.Once();
 			}
 
-			[Theory]
-			[InlineData(new byte[0], 0x1, false)]
-			[InlineData(new byte[]
+			[Test]
+			[Arguments(new byte[0], 0x1, false)]
+			[Arguments(new byte[]
 			{
 				0x1,
 			}, 0x1, true)]
-			[InlineData(new byte[]
+			[Arguments(new byte[]
 			{
 				0x1,
 			}, 0x2, false)]
-			[InlineData(new byte[]
+			[Arguments(new byte[]
 			{
 				0x1, 0x2, 0x3,
 			}, 0x1, true)]
-			[InlineData(new byte[]
+			[Arguments(new byte[]
 			{
 				0x1, 0x2, 0x3,
 			}, 0x2, false)]
-			[InlineData(new byte[]
+			[Arguments(new byte[]
 			{
 				0x1, 0x2, 0x3,
 			}, 0x3, false)]
@@ -71,30 +71,30 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Theory]
-			[InlineData(new byte[0], new byte[0], true)]
-			[InlineData(new byte[]
+			[Test]
+			[Arguments(new byte[0], new byte[0], true)]
+			[Arguments(new byte[]
 			{
 				0x66,
 			}, new byte[]
 			{
 				0x66,
 			}, true)]
-			[InlineData(new byte[]
+			[Arguments(new byte[]
 			{
 				0x66,
 			}, new byte[]
 			{
 				0x67,
 			}, false)]
-			[InlineData(new byte[]
+			[Arguments(new byte[]
 			{
 				0x66, 0x67,
 			}, new byte[]
 			{
 				0x67,
 			}, false)]
-			[InlineData(new byte[]
+			[Arguments(new byte[]
 			{
 				0x66, 0x67,
 			}, new byte[]
@@ -116,7 +116,7 @@ public sealed partial class ItExtensionsTests
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
 			}
 
-			[Fact]
+			[Test]
 			public async Task WhenValidatedAndSetup_ShouldResetStreamPosition()
 			{
 				byte[] body = [0x66, 0x67,];

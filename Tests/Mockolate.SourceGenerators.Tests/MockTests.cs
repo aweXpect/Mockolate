@@ -5,7 +5,7 @@ namespace Mockolate.SourceGenerators.Tests;
 
 public sealed partial class MockTests
 {
-	[Fact]
+	[Test]
 	public async Task DeeplyNestedClass_ShouldSetupAndVerifyForAllInheritedTypesExceptExplicitInterfaceMembers()
 	{
 		GeneratorResult result = Generator
@@ -99,7 +99,7 @@ public sealed partial class MockTests
 			.DoesNotContain("global::Mockolate.Verify.VerificationEventResult<IMockVerifyForOuterClass> IMockVerifyForOuterClass.NestedEvent");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExplicitInterfaceImplementation_ShouldNotAddAccessibility()
 	{
 		GeneratorResult result = Generator
@@ -138,7 +138,7 @@ public sealed partial class MockTests
 			.DoesNotContain("private global::System.Collections.IEnumerator GetEnumerator()");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithAdditionalConstructorsWithParameters_ShouldWorkForAllNonPrivateConstructors()
 	{
 		GeneratorResult result = Generator
@@ -168,7 +168,7 @@ public sealed partial class MockTests
 			.DoesNotContain("No parameterless constructor found");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithConstructorWithParameters_ShouldWorkForAllNonPrivateConstructors()
 	{
 		GeneratorResult result = Generator
@@ -245,7 +245,7 @@ public sealed partial class MockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithOnlyParameterlessConstructor_ShouldOmitConstructorParametersOverloads()
 	{
 		GeneratorResult result = Generator
@@ -277,7 +277,7 @@ public sealed partial class MockTests
 				"private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithoutExplicitConstructor_ShouldOmitConstructorParametersOverloads()
 	{
 		GeneratorResult result = Generator
@@ -307,7 +307,7 @@ public sealed partial class MockTests
 				"private static global::MyCode.MyBaseClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForMyBaseClass>? setup, object?[]? constructorParameters)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithoutPublicOrProtectedConstructor_ShouldOnlyGenerateMockThatThrowsException()
 	{
 		GeneratorResult result = Generator
@@ -333,7 +333,7 @@ public sealed partial class MockTests
 		await That(result.Sources).DoesNotContainKey("Mock.MyBaseClass.g.cs");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideEvent_ShouldNotOverrideEvent()
 	{
 		GeneratorResult result = Generator
@@ -367,7 +367,7 @@ public sealed partial class MockTests
 			.DoesNotContain("event System.EventHandler<long>? SomeEvent");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideIndexer_ShouldNotOverrideIndexer()
 	{
 		GeneratorResult result = Generator
@@ -401,7 +401,7 @@ public sealed partial class MockTests
 			.DoesNotContain("override int this[int index]");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideMethod_ShouldNotOverrideMethod()
 	{
 		GeneratorResult result = Generator
@@ -436,7 +436,7 @@ public sealed partial class MockTests
 			.DoesNotContain("override void MyMethod(int value)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ForTypesWithSealedOverrideProperty_ShouldNotOverrideProperty()
 	{
 		GeneratorResult result = Generator
@@ -470,7 +470,7 @@ public sealed partial class MockTests
 			.DoesNotContain("override int MyProperty");
 	}
 
-	[Fact]
+	[Test]
 	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
 	{
 		GeneratorResult result = Generator
@@ -511,7 +511,7 @@ public sealed partial class MockTests
 		;
 	}
 
-	[Fact]
+	[Test]
 	public async Task MethodOrIndexerParametersWithReservedNames_ShouldPrefixAtSymbol()
 	{
 		GeneratorResult result = Generator
@@ -573,7 +573,7 @@ public sealed partial class MockTests
 			          """).IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldHandleComplexInheritanceWithSealedAndInternalMembers()
 	{
 		GeneratorResult result = Generator
@@ -619,7 +619,7 @@ public sealed partial class MockTests
 			.Contains("override void ProtectedMethod");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldNotIncludeSealedOverrideSpecialMethods()
 	{
 		GeneratorResult result = Generator
@@ -660,7 +660,7 @@ public sealed partial class MockTests
 			.DoesNotContain("override string ToString");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldNotIncludeSealedOverrideSpecialMethodsWithNonNullableParameters()
 	{
 		GeneratorResult result = Generator
@@ -699,7 +699,7 @@ public sealed partial class MockTests
 			.DoesNotContain("override bool Equals");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ShouldSupportSpecialTypes()
 	{
 		GeneratorResult result = Generator

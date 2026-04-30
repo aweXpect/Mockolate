@@ -10,7 +10,7 @@ namespace Mockolate.Tests.MockMethods;
 
 public sealed partial class SetupMethodTests
 {
-	[Fact]
+	[Test]
 	public async Task Equals_ShouldWork()
 	{
 		object obj = new();
@@ -22,7 +22,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(true);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GenericMethod_SetupShouldWork()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -36,7 +36,7 @@ public sealed partial class SetupMethodTests
 		await That(result2).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GenericMethods_ShouldConsiderGenericParameter()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -49,7 +49,7 @@ public sealed partial class SetupMethodTests
 		await That(notMatchingResult).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetHashCode_ShouldWork()
 	{
 		int expectedResult = Guid.NewGuid().GetHashCode();
@@ -61,7 +61,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task MultipleOnlyOnceCallbacks_ShouldExecuteInOrder()
 	{
 		List<int> receivedCalls = [];
@@ -83,7 +83,7 @@ public sealed partial class SetupMethodTests
 		await That(receivedCalls).IsEqualTo([1, 2, 3, 4, 5,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task OverlappingSetups_ShouldUseLatestMatchingSetup()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -99,7 +99,7 @@ public sealed partial class SetupMethodTests
 		await That(result3).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task OverlappingSetups_WhenGeneralSetupIsLater_ShouldOnlyUseGeneralSetup()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -115,7 +115,7 @@ public sealed partial class SetupMethodTests
 		await That(result3).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Parameter_Do_ShouldExecuteCallback()
 	{
 		List<int> capturedValues = [];
@@ -130,7 +130,7 @@ public sealed partial class SetupMethodTests
 		await That(capturedValues).IsEqualTo([1, 2, 3,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Parameter_Do_ShouldOnlyExecuteCallbackWhenAllParametersMatch()
 	{
 		List<int> capturedValues = [];
@@ -145,7 +145,7 @@ public sealed partial class SetupMethodTests
 		await That(capturedValues).IsEqualTo([1, 3,]);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ParameterExplicitMixWithNull_ShouldWork()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -158,7 +158,7 @@ public sealed partial class SetupMethodTests
 		await That(sut.Mock.Verify.Combine(value, null)).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ParameterMixWithNull_ShouldWork()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -171,7 +171,7 @@ public sealed partial class SetupMethodTests
 		await That(sut.Mock.Verify.Combine(It.IsAny<MyMethodServiceType>(), null)).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Register_AfterInvocation_ShouldBeAppliedForFutureUse()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -184,7 +184,7 @@ public sealed partial class SetupMethodTests
 		await That(result1).IsEqualTo(42);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ReturnMethod_Callback_ShouldExecuteWhenInvoked()
 	{
 		int callCount = 0;
@@ -200,7 +200,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo("foo");
 	}
 
-	[Fact]
+	[Test]
 	public async Task ReturnMethod_Verify_ShouldMatchAnyParameters()
 	{
 		int callCount = 0;
@@ -217,7 +217,7 @@ public sealed partial class SetupMethodTests
 		await That(sut.Mock.Verify.MethodWithoutOtherOverloads(Match.AnyParameters())).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task ReturnMethod_WhenSetupWithNull_ShouldReturnDefaultValue()
 	{
 		int callCount = 0;
@@ -233,7 +233,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsNull();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Setup_ShouldUseNewestMatchingSetup()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -246,7 +246,7 @@ public sealed partial class SetupMethodTests
 		await That(sut.MyIntMethodWithParameters(1, "")).IsEqualTo(20);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Setup_WithOutParameter_ShouldUseCallbackToSetValue()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -257,7 +257,7 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(4);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Setup_WithOutParameterWithoutCallback_ShouldUseDefaultValueSetValue()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -268,7 +268,7 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Setup_WithRefParameter_WithCallback_ShouldUseCallbackToSetValue()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -280,7 +280,7 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(4);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Setup_WithRefParameter_WithoutPredicateOrCallback_ShouldNotChangeValue()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -292,7 +292,7 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Setup_WithRefParameter_WithPredicate_ShouldUseCallbackToSetValue()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -304,7 +304,7 @@ public sealed partial class SetupMethodTests
 		await That(value).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Setup_WithRefParameter_WithPredicateAndCallback_ShouldUseCallbackToSetValueWhenPredicateMatches()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -319,7 +319,7 @@ public sealed partial class SetupMethodTests
 		await That(value2).IsEqualTo(4);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_OutParameter_ShouldReturnExpectedValue()
 	{
 		IVerifyOutParameter<int> sut = It.IsOut<int>();
@@ -330,7 +330,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_OutParameter_WithCallback_ShouldReturnExpectedValue()
 	{
 		IOutParameter<int> sut = It.IsOut(() => 4);
@@ -341,7 +341,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_RefParameter_ShouldReturnExpectedValue()
 	{
 		IVerifyRefParameter<int> sut = It.IsRef<int>();
@@ -352,7 +352,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_RefParameter_WithCallback_ShouldReturnExpectedValue()
 	{
 		IRefParameter<int> sut = It.IsRef<int>(_ => 4);
@@ -363,7 +363,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_RefParameter_WithPredicate_ShouldReturnExpectedValue()
 	{
 		IRefParameter<int> sut = It.IsRef<int>(v => v > 4);
@@ -374,7 +374,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_RefParameter_WithPredicateAndCallback_ShouldReturnExpectedValue()
 	{
 		IRefParameter<int> sut = It.IsRef<int>(v => v > 4, v => v * 5);
@@ -385,7 +385,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ToString_ShouldWork()
 	{
 		string expectedResult = Guid.NewGuid().ToString();
@@ -397,7 +397,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(expectedResult);
 	}
 
-	[Fact]
+	[Test]
 	public async Task VoidMethod_Callback_ShouldExecuteWhenInvoked()
 	{
 		int callCount = 0;
@@ -411,7 +411,7 @@ public sealed partial class SetupMethodTests
 		await That(callCount).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task VoidMethod_Verify_ShouldMatchAnyParameters()
 	{
 		int callCount = 0;
@@ -426,7 +426,7 @@ public sealed partial class SetupMethodTests
 		await That(sut.Mock.Verify.MethodWithoutOtherOverloads(Match.AnyParameters())).Once();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenNotSetup_ShouldReturnDefaultValue()
 	{
 		IMethodService sut = IMethodService.CreateMock();
@@ -438,7 +438,7 @@ public sealed partial class SetupMethodTests
 		await That(result2).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenNotSetup_ThrowWhenNotSetup_ShouldThrowMockNotSetupException()
 	{
 		IMethodService mock = IMethodService.CreateMock(MockBehavior.Default with
@@ -456,7 +456,7 @@ public sealed partial class SetupMethodTests
 				"The method 'global::Mockolate.Tests.MockMethods.SetupMethodTests.IMethodService.MyIntMethodWithoutParameters()' was invoked without prior setup.");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithInParameter_ShouldUseSetup()
 	{
 		IMethodSetupWithInAndRefReadonlyParameter sut = IMethodSetupWithInAndRefReadonlyParameter.CreateMock();
@@ -469,7 +469,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithOptionalParameters_ShouldUseOptionalValueWhenNotSet()
 	{
 		IMyService sut = IMyService.CreateMock();
@@ -484,7 +484,7 @@ public sealed partial class SetupMethodTests
 		await That(result3).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithParamsParameters_ExplicitArrayArgument_ShouldUseReferenceEquality()
 	{
 		IMyService sut = IMyService.CreateMock();
@@ -498,7 +498,7 @@ public sealed partial class SetupMethodTests
 		await That(result2).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithParamsParameters_ShouldSupportParams()
 	{
 		IMyService sut = IMyService.CreateMock();
@@ -515,7 +515,7 @@ public sealed partial class SetupMethodTests
 		await That(result4).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithRefReadonlyParameter_ShouldUseSetup()
 	{
 		IMethodSetupWithInAndRefReadonlyParameter sut = IMethodSetupWithInAndRefReadonlyParameter.CreateMock();
@@ -530,7 +530,7 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith0Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task Setup_ShouldBeVerifiable()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -541,7 +541,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Once();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo");
@@ -551,7 +551,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo()");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -570,7 +570,7 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith1Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -585,9 +585,9 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEqualTo("foo");
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -598,7 +598,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1");
@@ -608,7 +608,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -621,7 +621,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("string Method1(1)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", (IParameterMatch<string>)It.IsAny<string>());
@@ -631,7 +631,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(It.IsAny<string>())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -647,7 +647,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsNull();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -665,7 +665,7 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith2Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -680,9 +680,9 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEqualTo("foo");
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -694,7 +694,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2");
@@ -704,7 +704,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -717,7 +717,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("string Method2(1, 2)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -729,7 +729,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(It.IsAny<string>(), It.IsAny<long>())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -745,7 +745,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsNull();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -760,7 +760,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter2_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -775,7 +775,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -795,7 +795,7 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith3Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -810,9 +810,9 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEqualTo("foo");
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -824,7 +824,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3");
@@ -834,7 +834,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -847,7 +847,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("string Method3(1, 2, 3)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -860,7 +860,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -876,7 +876,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsNull();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -891,7 +891,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter2_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -906,7 +906,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter3_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -921,7 +921,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -940,7 +940,7 @@ public sealed partial class SetupMethodTests
 			await That(result4).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters1And2_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -957,7 +957,7 @@ public sealed partial class SetupMethodTests
 			await That(result3).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters1And3_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -974,7 +974,7 @@ public sealed partial class SetupMethodTests
 			await That(result3).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters2And3_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -994,7 +994,7 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith4Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1009,9 +1009,9 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEqualTo("foo");
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1023,7 +1023,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
@@ -1033,7 +1033,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1046,7 +1046,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("string Method4(1, 2, 3, 4)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -1062,7 +1062,7 @@ public sealed partial class SetupMethodTests
 					"int Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -1078,7 +1078,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsNull();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter1_2And3_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1097,7 +1097,7 @@ public sealed partial class SetupMethodTests
 			await That(result4).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter1_2And4_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1116,7 +1116,7 @@ public sealed partial class SetupMethodTests
 			await That(result4).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter1_3And4_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1135,7 +1135,7 @@ public sealed partial class SetupMethodTests
 			await That(result4).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter1_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1150,7 +1150,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter2_3And4_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1169,7 +1169,7 @@ public sealed partial class SetupMethodTests
 			await That(result4).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter2_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1184,7 +1184,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter3_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1199,7 +1199,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameter4_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1214,7 +1214,7 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1235,7 +1235,7 @@ public sealed partial class SetupMethodTests
 			await That(result5).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters1And2_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1252,7 +1252,7 @@ public sealed partial class SetupMethodTests
 			await That(result3).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters1And3_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1269,7 +1269,7 @@ public sealed partial class SetupMethodTests
 			await That(result3).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters1And4_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1286,7 +1286,7 @@ public sealed partial class SetupMethodTests
 			await That(result3).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters2And3_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1303,7 +1303,7 @@ public sealed partial class SetupMethodTests
 			await That(result3).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters2And4_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1320,7 +1320,7 @@ public sealed partial class SetupMethodTests
 			await That(result3).IsEmpty();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters3And4_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1340,7 +1340,7 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith5Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1355,9 +1355,9 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEqualTo("foo");
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1369,7 +1369,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
@@ -1379,7 +1379,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("int Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1392,7 +1392,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("string Method5(1, 2, 3, 4, 5)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			ReturnMethodSetup<int, string, long, int, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -1409,7 +1409,7 @@ public sealed partial class SetupMethodTests
 					"int Foo(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSetupWithNull_ShouldReturnDefaultValue()
 		{
 			int callCount = 0;
@@ -1426,7 +1426,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsNull();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithExplicitParameters_ShouldWork()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -1454,7 +1454,7 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith0Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task Setup_ShouldBeVerifiable()
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1465,7 +1465,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Once();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo");
@@ -1478,7 +1478,7 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith1Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			int callCount = 0;
@@ -1493,9 +1493,9 @@ public sealed partial class SetupMethodTests
 			await That(callCount).IsEqualTo(2);
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1506,7 +1506,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1");
@@ -1516,7 +1516,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1529,7 +1529,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("void Method1(1)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -1543,7 +1543,7 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith2Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			int callCount = 0;
@@ -1558,9 +1558,9 @@ public sealed partial class SetupMethodTests
 			await That(callCount).IsEqualTo(2);
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1572,7 +1572,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2");
@@ -1582,7 +1582,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1595,7 +1595,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("void Method2(1, 2)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -1610,7 +1610,7 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith3Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			int callCount = 0;
@@ -1625,9 +1625,9 @@ public sealed partial class SetupMethodTests
 			await That(callCount).IsEqualTo(2);
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1639,7 +1639,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3");
@@ -1649,7 +1649,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1662,7 +1662,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("void Method3(1, 2, 3)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -1678,7 +1678,7 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith4Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			int callCount = 0;
@@ -1693,9 +1693,9 @@ public sealed partial class SetupMethodTests
 			await That(callCount).IsEqualTo(2);
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1707,7 +1707,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4");
@@ -1717,7 +1717,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1730,7 +1730,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("void Method4(1, 2, 3, 4)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -1749,7 +1749,7 @@ public sealed partial class SetupMethodTests
 
 	public class VoidMethodWith5Parameters
 	{
-		[Fact]
+		[Test]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			int callCount = 0;
@@ -1764,9 +1764,9 @@ public sealed partial class SetupMethodTests
 			await That(callCount).IsEqualTo(2);
 		}
 
-		[Theory]
-		[InlineData(-1, 0)]
-		[InlineData(1, 1)]
+		[Test]
+		[Arguments(-1, 0)]
+		[Arguments(1, 1)]
 		public async Task Setup_ShouldBeVerifiable(int firstParameter, int expectedCallCount)
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1778,7 +1778,7 @@ public sealed partial class SetupMethodTests
 			await That(sut.Mock.VerifySetup(setup)).Exactly(expectedCallCount);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_AnyParameters_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int, int>.WithParameters setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo", Match.AnyParameters(), "p1", "p2", "p3", "p4", "p5");
@@ -1788,7 +1788,7 @@ public sealed partial class SetupMethodTests
 			await That(result).IsEqualTo("void Foo(Match.AnyParameters())");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldIncludeParameterValues()
 		{
 			IVoidMethodSetupTest sut = IVoidMethodSetupTest.CreateMock();
@@ -1801,7 +1801,7 @@ public sealed partial class SetupMethodTests
 			await That(setup.ToString()).IsEqualTo("void Method5(1, 2, 3, 4, 5)");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnMethodSignature()
 		{
 			VoidMethodSetup<string, long, int, int, int>.WithParameterCollection setup = new(new MockRegistry(MockBehavior.Default, new FastMockInteractions(0)), "Foo",
@@ -1821,7 +1821,7 @@ public sealed partial class SetupMethodTests
 
 	public class MethodWithDefaultParameter
 	{
-		[Fact]
+		[Test]
 		public async Task ParametersWithDefaultAsDefaultValue_ShouldNotHaveAnyErrors()
 		{
 			IMethodSetupWithDefaultParameter sut = IMethodSetupWithDefaultParameter.CreateMock();
@@ -1994,7 +1994,7 @@ public sealed partial class SetupMethodTests
 	}
 
 #if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
-	[Fact]
+	[Test]
 	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;
@@ -2016,7 +2016,7 @@ public sealed partial class SetupMethodTests
 		await That(result).IsEqualTo(153);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ReturnMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;
@@ -2040,7 +2040,7 @@ public sealed partial class SetupMethodTests
 #endif
 
 #if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
-	[Fact]
+	[Test]
 	public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;
@@ -2059,7 +2059,7 @@ public sealed partial class SetupMethodTests
 		await That(isCalled).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task VoidMethodWith18Parameters_ShouldStillAllowCallbackAndReturns()
 	{
 		int isCalled = 0;

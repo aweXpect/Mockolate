@@ -8,7 +8,7 @@ public sealed partial class ItTests
 {
 	public sealed class ContainsTests
 	{
-		[Fact]
+		[Test]
 		public async Task ShouldMatchArrayParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -21,7 +21,7 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldMatchEnumerableParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -34,7 +34,7 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldMatchHashSetParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -47,7 +47,7 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldMatchListParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -60,7 +60,7 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldMatchQueueParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -73,7 +73,7 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldMatchReadOnlyListParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -86,7 +86,7 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldMatchSetParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -109,7 +109,7 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldMatchStackParameter()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -122,12 +122,12 @@ public sealed partial class ItTests
 			await That(miss).IsEqualTo(0);
 		}
 
-		[Theory]
-		[InlineData(1, false)]
-		[InlineData(4, false)]
-		[InlineData(5, true)]
-		[InlineData(6, true)]
-		[InlineData(42, false)]
+		[Test]
+		[Arguments(1, false)]
+		[Arguments(4, false)]
+		[Arguments(5, true)]
+		[Arguments(6, true)]
+		[Arguments(42, false)]
 		public async Task ShouldMatchWhenEnumerableContainsItem(int item, bool expectMatch)
 		{
 			IParameter<IEnumerable<int>> sut = It.Contains(item);
@@ -137,7 +137,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectMatch);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldNotMatchWhenValueIsNotCollection()
 		{
 			IParameter<IEnumerable<int>> sut = It.Contains(5);
@@ -147,7 +147,7 @@ public sealed partial class ItTests
 			await That(result).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldNotMatchWhenValueIsNull()
 		{
 			IParameter<IEnumerable<int>> sut = It.Contains(5);
@@ -157,7 +157,7 @@ public sealed partial class ItTests
 			await That(result).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ShouldSupportVerify()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();
@@ -170,7 +170,7 @@ public sealed partial class ItTests
 			await That(sut.Mock.Verify.WithArray(It.Contains(99))).Never();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<int[]> sut = It.Contains(5);
@@ -181,7 +181,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ToString_Using_ShouldReturnExpectedValue()
 		{
 			IParameter<int[]> sut = It.Contains(5).Using(new AllEqualComparer());
@@ -192,7 +192,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithComparer_ShouldUseComparer()
 		{
 			IParameter<int[]> sut = It.Contains(42).Using(new AllEqualComparer());
@@ -204,7 +204,7 @@ public sealed partial class ItTests
 
 		public sealed class DoTests
 		{
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForArray()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -217,7 +217,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForHashSet()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -230,7 +230,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForICollection()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -243,7 +243,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForIEnumerable()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -256,7 +256,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForIList()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -269,7 +269,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForIReadOnlyCollection()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -282,7 +282,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForIReadOnlyList()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -295,7 +295,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForISet()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -308,7 +308,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForList()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -321,7 +321,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForQueue()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -335,7 +335,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task Do_RegistersCallbackForStack()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -349,7 +349,7 @@ public sealed partial class ItTests
 				await That(captured).IsSameAs(source);
 			}
 
-			[Fact]
+			[Test]
 			public async Task InvokeCallbacks_OnNonEnumerableValue_ShortCircuits()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);
@@ -361,7 +361,7 @@ public sealed partial class ItTests
 				await That(invocations).IsEqualTo(0);
 			}
 
-			[Fact]
+			[Test]
 			public async Task InvokeCallbacks_WithoutAnyRegistration_DoesNotThrow()
 			{
 				It.IContainsParameter<int> sut = It.Contains(1);

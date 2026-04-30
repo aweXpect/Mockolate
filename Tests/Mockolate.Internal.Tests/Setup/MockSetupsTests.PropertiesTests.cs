@@ -7,7 +7,7 @@ public partial class MockSetupsTests
 {
 	public class PropertiesTests
 	{
-		[Fact]
+		[Test]
 		public async Task Add_ReplacingDefaultWithUserSetup_ShouldIncrementCountByOne()
 		{
 			MockSetups.PropertySetups setups = new();
@@ -24,7 +24,7 @@ public partial class MockSetupsTests
 			await That(found).IsSameAs(userSetup);
 		}
 
-		[Fact]
+		[Test]
 		public async Task AddDuplicate_ShouldReplaceAndAdjustCount()
 		{
 			MockSetups.PropertySetups setups = new();
@@ -41,7 +41,7 @@ public partial class MockSetupsTests
 			await That(found).IsEqualTo(setup2);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Stress_ShouldMaintainCountAfterManyAddsAndReplacements()
 		{
 			MockSetups.PropertySetups setups = new();
@@ -54,7 +54,7 @@ public partial class MockSetupsTests
 			await That(setups.Count).IsEqualTo(100);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ThreadSafety_DuplicateKeyReplacements_ShouldPreserveSingleEntry()
 		{
 			MockSetups.PropertySetups setups = new();
@@ -68,7 +68,7 @@ public partial class MockSetupsTests
 			await That(setup).IsNotNull();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ThreadSafety_ShouldHandleParallelAdds()
 		{
 			MockSetups.PropertySetups setups = new();
@@ -78,7 +78,7 @@ public partial class MockSetupsTests
 			await That(setups.Count).IsEqualTo(200);
 		}
 
-		[Fact]
+		[Test]
 		public async Task TryGetValue_Nonexistent_ShouldReturnFalse()
 		{
 			MockSetups.PropertySetups setups = new();

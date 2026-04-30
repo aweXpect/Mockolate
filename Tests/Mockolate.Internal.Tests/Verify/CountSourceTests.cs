@@ -7,7 +7,7 @@ namespace Mockolate.Internal.Tests.Verify;
 
 public class CountSourceTests
 {
-	[Fact]
+	[Test]
 	public async Task EventCountSource_Subscribe_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -24,7 +24,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task EventCountSource_Unsubscribe_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -42,7 +42,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter1_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -59,7 +59,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter2_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -78,7 +78,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter3_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -99,7 +99,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter4_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -121,7 +121,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter1_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -140,7 +140,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter2_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -161,7 +161,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter3_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -183,7 +183,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter4_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -206,7 +206,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method0_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -223,7 +223,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method1_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -241,7 +241,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method2_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -261,7 +261,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method3_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -286,7 +286,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method4_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -313,7 +313,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertyGetter_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
@@ -328,7 +328,7 @@ public class CountSourceTests
 		await That(true).IsTrue();
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertySetter_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);

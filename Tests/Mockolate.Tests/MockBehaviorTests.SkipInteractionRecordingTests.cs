@@ -8,7 +8,7 @@ public sealed partial class MockBehaviorTests
 {
 	public sealed class SkipInteractionRecordingTests
 	{
-		[Fact]
+		[Test]
 		public async Task Default_ShouldBeFalse()
 		{
 			MockBehavior sut = MockBehavior.Default;
@@ -16,7 +16,7 @@ public sealed partial class MockBehaviorTests
 			await That(sut.SkipInteractionRecording).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task SkippingInteractionRecording_ShouldSupportFluentSyntax()
 		{
 			MockBehavior sut = MockBehavior.Default.SkippingInteractionRecording();
@@ -24,7 +24,7 @@ public sealed partial class MockBehaviorTests
 			await That(sut.SkipInteractionRecording).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task SkippingInteractionRecording_WithFalse_ShouldEnableRecording()
 		{
 			MockBehavior sut = MockBehavior.Default
@@ -34,7 +34,7 @@ public sealed partial class MockBehaviorTests
 			await That(sut.SkipInteractionRecording).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSkipping_Indexer_ShouldStillStoreAndReturnValue()
 		{
 			IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
@@ -45,7 +45,7 @@ public sealed partial class MockBehaviorTests
 			await That(result).IsEqualTo("hello");
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSkipping_Method_ShouldStillReturnSetupValue()
 		{
 			IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
@@ -56,7 +56,7 @@ public sealed partial class MockBehaviorTests
 			await That(result).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSkipping_NoInteractionsAreRecorded()
 		{
 			IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
@@ -71,7 +71,7 @@ public sealed partial class MockBehaviorTests
 			await That(interactions.Count).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSkipping_PropertyGetter_ShouldStillReturnSetupValue()
 		{
 			IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
@@ -82,7 +82,7 @@ public sealed partial class MockBehaviorTests
 			await That(result).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSkipping_PropertySetter_ShouldStillStoreValue()
 		{
 			IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
@@ -94,7 +94,7 @@ public sealed partial class MockBehaviorTests
 			await That(result).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task WhenSkipping_Verify_ShouldThrow()
 		{
 			IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());
@@ -116,7 +116,7 @@ public sealed partial class MockBehaviorTests
 				.And.For(e => e!.Message, m => m.Contains("SkipInteractionRecording"));
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithRecordingEnabled_ShouldRecordAsBefore()
 		{
 			IMyService sut = IMyService.CreateMock(MockBehavior.Default);

@@ -6,7 +6,7 @@ public sealed partial class MockTests
 	{
 		public sealed class IndexerTests
 		{
-			[Fact]
+			[Test]
 			public async Task InterfaceIndexerWithParameterNamedLikeLocal_ShouldGenerateUniqueLocalVariableName()
 			{
 				GeneratorResult result = Generator
@@ -35,7 +35,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task InterfaceIndexerWithParameterNamedWraps_ShouldRenameWrapsCastVariable()
 			{
 				GeneratorResult result = Generator
@@ -69,7 +69,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldImplementAllIndexersFromInterfaces()
 			{
 				GeneratorResult result = Generator
@@ -242,7 +242,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldImplementVirtualIndexersOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 			{
 				GeneratorResult result = Generator
@@ -397,7 +397,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldSupportSpanAndReadOnlySpanIndexerParameters()
 			{
 				GeneratorResult result = Generator

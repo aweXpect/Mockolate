@@ -6,7 +6,7 @@ namespace Mockolate.Internal.Tests.Interactions;
 
 public class ChunkedSlotStorageTests
 {
-	[Fact]
+	[Test]
 	public async Task Clear_AfterMultipleChunks_ResetsCountAndAllowsRefill()
 	{
 		const int total = (ChunkedSlotStorage<int>.ChunkSize * 2) + 5;
@@ -27,7 +27,7 @@ public class ChunkedSlotStorageTests
 		await That(((MethodInvocation<int>)store.Single()).Parameter1).IsEqualTo(99);
 	}
 
-	[Fact]
+	[Test]
 	public async Task SlotForWrite_AcrossMultipleChunks_PreservesAllRecords()
 	{
 		const int total = ChunkedSlotStorage<int>.ChunkSize * 3;
@@ -48,7 +48,7 @@ public class ChunkedSlotStorageTests
 		}
 	}
 
-	[Fact]
+	[Test]
 	public async Task SlotForWrite_BeyondInitialChunksArrayLength_ExpandsArrayUnderLock()
 	{
 		const int total = (ChunkedSlotStorage<int>.ChunkSize * 4) + 1;

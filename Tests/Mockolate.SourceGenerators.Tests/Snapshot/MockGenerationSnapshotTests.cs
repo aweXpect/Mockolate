@@ -81,22 +81,19 @@ public sealed partial class MockGenerationSnapshotTests
 			[]),
 	];
 
-	public static TheoryData<string> ScenarioNames
+	public static IEnumerable<string> ScenarioNames
 	{
 		get
 		{
-			TheoryData<string> data = new();
 			foreach (SnapshotScenario scenario in Scenarios)
 			{
-				data.Add(scenario.Name);
+				yield return scenario.Name;
 			}
-
-			return data;
 		}
 	}
 
-	[Theory]
-	[MemberData(nameof(ScenarioNames))]
+	[Test]
+	[MethodDataSource(nameof(ScenarioNames))]
 	public async Task GeneratorOutput_MatchesExpectedSnapshot(string scenarioName)
 	{
 		SnapshotScenario scenario = Scenarios.Single(s => s.Name == scenarioName);

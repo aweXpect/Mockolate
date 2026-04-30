@@ -4,7 +4,7 @@ public sealed partial class MockTests
 {
 	public sealed class CombinationTests
 	{
-		[Fact]
+		[Test]
 		public async Task AbstractBaseWithParameterlessAndMixedConstructor_ShouldEmitBothTryCastHelpers()
 		{
 			// A constructor with a required parameter sets useTryCast; a defaulted parameter sets
@@ -48,7 +48,7 @@ public sealed partial class MockTests
 				.Because("the 'else if' arity dispatch chain must include the optional-range branch for a mixed-required + defaulted ctor");
 		}
 
-		[Fact]
+		[Test]
 		public async Task AbstractBaseWithRequiredOnlyConstructor_ShouldThrowNoParameterlessConstructorMessage()
 		{
 			GeneratorResult result = Generator
@@ -85,7 +85,7 @@ public sealed partial class MockTests
 				.DoesNotContain("static bool TryCastWithDefaultValue<TValue>");
 		}
 
-		[Fact]
+		[Test]
 		public async Task CombinationWithProtectedEventOnBaseClass_ShouldEmitProtectedRaiseRegion()
 		{
 			GeneratorResult result = Generator
@@ -120,7 +120,7 @@ public sealed partial class MockTests
 				.Contains("#region IMockProtectedRaiseOnMyService");
 		}
 
-		[Fact]
+		[Test]
 		public async Task CombinationWithRequiredMemberOnBase_ShouldEmitSetsRequiredMembersAttribute()
 		{
 			GeneratorResult result = Generator
@@ -155,7 +155,7 @@ public sealed partial class MockTests
 				.Because("AppendMockSubject_BaseClassConstructor must stamp SetsRequiredMembers on the generated constructor when the base class declares any `required` member");
 		}
 
-		[Fact]
+		[Test]
 		public async Task CombinationWithStaticInterfaceEvents_ShouldEmitStaticRaiseRegion()
 		{
 			GeneratorResult result = Generator
@@ -191,7 +191,7 @@ public sealed partial class MockTests
 				.Contains("internal static readonly global::System.Threading.AsyncLocal<global::Mockolate.MockRegistry> MockRegistryProvider");
 		}
 
-		[Fact]
+		[Test]
 		public async Task CombinationWithStaticInterfaceMembers_ShouldEmitStaticSetupAndVerifyRegions()
 		{
 			GeneratorResult result = Generator
