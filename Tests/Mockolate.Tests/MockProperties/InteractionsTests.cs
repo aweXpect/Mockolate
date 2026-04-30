@@ -4,7 +4,7 @@ namespace Mockolate.Tests.MockProperties;
 
 public sealed partial class InteractionsTests
 {
-	[Fact]
+	[Test]
 	public async Task PropertyGetterAccess_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -15,7 +15,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertySetterAccess_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -26,7 +26,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertySetterAccess_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);

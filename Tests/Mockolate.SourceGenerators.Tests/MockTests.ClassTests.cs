@@ -4,7 +4,7 @@ public sealed partial class MockTests
 {
 	public sealed partial class ClassTests
 	{
-		[Fact]
+		[Test]
 		public async Task BaseClassMethodWithParameterNamedBaseResult_ShouldGenerateUniqueLocalVariableName()
 		{
 			GeneratorResult result = Generator
@@ -41,7 +41,7 @@ public sealed partial class MockTests
 				.IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task ClassWithBaseConstructorAlreadyAnnotatedSetsRequiredMembers_ShouldNotDuplicateAttribute()
 		{
 			GeneratorResult result = Generator
@@ -79,7 +79,7 @@ public sealed partial class MockTests
 				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Exactly(2);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ClassWithInheritedRequiredMember_ShouldEmitSetsRequiredMembersOnGeneratedConstructor()
 		{
 			GeneratorResult result = Generator
@@ -113,7 +113,7 @@ public sealed partial class MockTests
 				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ClassWithoutRequiredMember_ShouldNotEmitSetsRequiredMembers()
 		{
 			GeneratorResult result = Generator
@@ -143,7 +143,7 @@ public sealed partial class MockTests
 				.DoesNotContain("SetsRequiredMembers");
 		}
 
-		[Fact]
+		[Test]
 		public async Task ClassWithRequiredMember_ShouldEmitSetsRequiredMembersOnGeneratedConstructor()
 		{
 			GeneratorResult result = Generator
@@ -177,7 +177,7 @@ public sealed partial class MockTests
 				.IgnoringNewlineStyle();
 		}
 
-		[Fact]
+		[Test]
 		public async Task InheritedInterface_ShouldHaveCorrectReferenceInXMLDocumentation()
 		{
 			GeneratorResult result = Generator
@@ -232,7 +232,7 @@ public sealed partial class MockTests
 					"Verify subscriptions on the BaseEvent event of <see cref=\"global::MyCode.IMyBaseService.BaseEvent\">BaseEvent</see>.");
 		}
 
-		[Fact]
+		[Test]
 		public async Task InterfaceWithEvents_ShouldIncludeRaiseRemarkBullet()
 		{
 			GeneratorResult result = Generator
@@ -264,7 +264,7 @@ public sealed partial class MockTests
 				.DoesNotContain("<c>SetupStatic</c> / <c>VerifyStatic</c> / <c>RaiseStatic</c>");
 		}
 
-		[Fact]
+		[Test]
 		public async Task PlainInterface_ShouldOmitConditionalRemarkBullets()
 		{
 			GeneratorResult result = Generator

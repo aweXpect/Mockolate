@@ -6,7 +6,7 @@ public sealed partial class MockTests
 	{
 		public sealed class PropertiesTests
 		{
-			[Fact]
+			[Test]
 			public async Task InitOnlyProperty_ShouldEmitInitAccessorAndCompile()
 			{
 				GeneratorResult result = Generator
@@ -45,7 +45,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 			{
 				GeneratorResult result = Generator
@@ -85,7 +85,7 @@ public sealed partial class MockTests
 					.Contains("long global::MyCode.IMyServiceBase2.Value").Once();
 			}
 
-			[Fact]
+			[Test]
 			public async Task RefReturn_ShouldCompile()
 			{
 				GeneratorResult result = Generator
@@ -111,7 +111,7 @@ public sealed partial class MockTests
 				await That(result.Diagnostics).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldImplementAllPropertiesFromInterfaces()
 			{
 				GeneratorResult result = Generator
@@ -239,7 +239,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldImplementImplicitlyInheritedProperties()
 			{
 				GeneratorResult result = Generator
@@ -353,7 +353,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task
 				ShouldImplementVirtualPropertiesOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 			{

@@ -8,7 +8,7 @@ namespace Mockolate.SourceGenerators.Tests.Entities;
 
 public class TypeIsFormattableTests
 {
-	[Fact]
+	[Test]
 	public async Task WhenSymbolIsObject_ShouldNotReportFormattable()
 	{
 		const string source = "public class Holder { public object Value; }";
@@ -30,7 +30,7 @@ public class TypeIsFormattableTests
 		await That(type.IsFormattable).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenSymbolIsSystemIFormattableItself_ShouldReportFormattable()
 	{
 		// The IsFormattable self-check (Type.cs:87-94) handles the case where the symbol IS

@@ -5,7 +5,7 @@ namespace Mockolate.Tests.MockIndexers;
 
 public sealed partial class InteractionsTests
 {
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess1_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -18,7 +18,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess1_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -31,7 +31,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess2_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -45,7 +45,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess2_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -59,7 +59,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess3_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -74,7 +74,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess3_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -89,7 +89,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess4_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -105,7 +105,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess4_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -121,7 +121,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess5_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -138,7 +138,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetterAccess5_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -155,7 +155,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess1_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -169,7 +169,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess1_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -183,7 +183,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess2_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -198,7 +198,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess2_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -213,7 +213,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess3_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -229,7 +229,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess3_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -245,7 +245,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess4_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -262,7 +262,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess4_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -279,7 +279,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess5_ToString_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);
@@ -297,7 +297,7 @@ public sealed partial class InteractionsTests
 		await That(interaction.ToString()).IsEqualTo(expectedValue);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetterAccess5_ToString_WithNull_ShouldReturnExpectedValue()
 	{
 		FastMockInteractions interactions = new(0);

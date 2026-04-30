@@ -6,7 +6,7 @@ public sealed partial class MockTests
 	{
 		public sealed class MethodTests
 		{
-			[Fact]
+			[Test]
 			public async Task ClassMethodWithParameterNamedWraps_ShouldRenameWrapsCastVariable()
 			{
 				GeneratorResult result = Generator
@@ -41,7 +41,7 @@ public sealed partial class MockTests
 					.Because("the forwarding call must use the deduped name, not the parameter");
 			}
 
-			[Fact]
+			[Test]
 			public async Task ExplicitInterfaceImplementation_WithUnconstrainedGeneric_ShouldHaveDefaultConstraint()
 			{
 				GeneratorResult result = Generator
@@ -79,20 +79,20 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Theory]
-			[InlineData("class, T")]
-			[InlineData("struct")]
-			[InlineData("class")]
-			[InlineData("class, notnull")]
-			[InlineData("notnull")]
-			[InlineData("unmanaged")]
-			[InlineData("class?")]
-			[InlineData("global::MyCode.IMyInterface")]
-			[InlineData("new()")]
-			[InlineData("global::MyCode.IMyInterface?")]
-			[InlineData("allows ref struct")]
-			[InlineData("class, allows ref struct")]
-			[InlineData("global::MyCode.IMyInterface, new()")]
+			[Test]
+			[Arguments("class, T")]
+			[Arguments("struct")]
+			[Arguments("class")]
+			[Arguments("class, notnull")]
+			[Arguments("notnull")]
+			[Arguments("unmanaged")]
+			[Arguments("class?")]
+			[Arguments("global::MyCode.IMyInterface")]
+			[Arguments("new()")]
+			[Arguments("global::MyCode.IMyInterface?")]
+			[Arguments("allows ref struct")]
+			[Arguments("class, allows ref struct")]
+			[Arguments("global::MyCode.IMyInterface, new()")]
 			public async Task Generic_ShouldApplyAllConstraints(string constraint)
 			{
 				GeneratorResult result = Generator
@@ -137,7 +137,7 @@ public sealed partial class MockTests
 					            """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task Generic_WithoutConstraints_ShouldNotHaveWhereClause()
 			{
 				GeneratorResult result = Generator
@@ -179,7 +179,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task GenericMethodWithAllowsRefStruct_ShouldCompile()
 			{
 				GeneratorResult result = Generator
@@ -208,7 +208,7 @@ public sealed partial class MockTests
 					.Contains("throw new global::System.NotSupportedException(\"Mockolate: methods with a generic type parameter declaring 'allows ref struct' are not supported. Method 'global::MyCode.IMyService.G8<T>'.\");");
 			}
 
-			[Fact]
+			[Test]
 			public async Task InterfaceMethodWithParameterNamedMethodExecution_ShouldGenerateUniqueLocalVariableName()
 			{
 				GeneratorResult result = Generator
@@ -244,7 +244,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task InterfaceMethodWithParameterNamedOutParam1_ShouldRenameNumberedCastVariable()
 			{
 				GeneratorResult result = Generator
@@ -276,7 +276,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task InterfaceMethodWithParameterNamedResult_ShouldGenerateUniqueLocalVariableName()
 			{
 				GeneratorResult result = Generator
@@ -310,7 +310,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task InterfaceMethodWithParameterNamedReturnValue_ShouldRenameReturnValueOutVar()
 			{
 				GeneratorResult result = Generator
@@ -341,7 +341,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task MethodWithEnumDefaultValue_ShouldGenerateCastExpression()
 			{
 				GeneratorResult result = Generator
@@ -372,7 +372,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task MethodWithStructDefaultValue_ShouldGenerateDefaultKeyword()
 			{
 				GeneratorResult result = Generator
@@ -402,7 +402,7 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task MultipleImplementations_ShouldOnlyHaveOneExplicitImplementation()
 			{
 				GeneratorResult result = Generator
@@ -446,7 +446,7 @@ public sealed partial class MockTests
 					.Contains("long global::MyCode.IMyServiceBase2.Value()").Once();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ParameterNamedI_ShouldNotCollideWithVerifyLambdaVariable()
 			{
 				GeneratorResult result = Generator
@@ -472,7 +472,7 @@ public sealed partial class MockTests
 				await That(result.Diagnostics).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ParameterNamedSetup_ShouldCompile()
 			{
 				GeneratorResult result = Generator
@@ -498,7 +498,7 @@ public sealed partial class MockTests
 				await That(result.Diagnostics).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldImplementAllMethodsFromInterfaces()
 			{
 				GeneratorResult result = Generator
@@ -597,7 +597,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldImplementImplicitlyInheritedMethods()
 			{
 				GeneratorResult result = Generator
@@ -795,7 +795,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldImplementVirtualMethodsOfClassesAndAllExplicitlyFromAdditionalInterfaces()
 			{
 				GeneratorResult result = Generator
@@ -990,7 +990,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldSupportOptionalParameters()
 			{
 				GeneratorResult result = Generator
@@ -1033,7 +1033,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldSupportParamsParameters()
 			{
 				GeneratorResult result = Generator
@@ -1076,7 +1076,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldSupportRefInAndOutParameters()
 			{
 				GeneratorResult result = Generator
@@ -1280,7 +1280,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task ShouldSupportSpanParameters()
 			{
 				GeneratorResult result = Generator
@@ -1330,7 +1330,7 @@ public sealed partial class MockTests
 					          """).IgnoringNewlineStyle();
 			}
 
-			[Fact]
+			[Test]
 			public async Task StaticAbstractEventOnly_ShouldCompile()
 			{
 				GeneratorResult result = Generator
@@ -1357,7 +1357,7 @@ public sealed partial class MockTests
 				await That(result.Diagnostics).IsEmpty();
 			}
 
-			[Fact]
+			[Test]
 			public async Task VirtualMethodOverride_WithConstrainedGeneric_ShouldNotRepeatConstraints()
 			{
 				GeneratorResult result = Generator

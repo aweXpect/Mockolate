@@ -7,7 +7,7 @@ public sealed partial class MockTests
 {
 	public sealed class CreateTests
 	{
-		[Fact]
+		[Test]
 		public async Task TypedOverload_ConstructorWithDecimalDefault_ShouldForwardExplicitValue()
 		{
 			// This test exercises the generator's default-value emission end-to-end: if the
@@ -18,7 +18,7 @@ public sealed partial class MockTests
 			await That(sut.Price).IsEqualTo(42.50m);
 		}
 
-		[Fact]
+		[Test]
 		public async Task TypedOverload_ConstructorWithDefaultValue_ShouldApplyDefault()
 		{
 			MyBaseClassWithMultipleConstructors sut = MyBaseClassWithMultipleConstructors.CreateMock(42);
@@ -27,7 +27,7 @@ public sealed partial class MockTests
 			await That(sut.Number).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task TypedOverload_MultipleConstructors_ShouldDispatchToMatchingConstructor()
 		{
 			MyBaseClassWithMultipleConstructors sutFromString =
@@ -41,7 +41,7 @@ public sealed partial class MockTests
 			await That(sutFromIntAndString.Number).IsEqualTo(42);
 		}
 
-		[Fact]
+		[Test]
 		public async Task TypedOverload_SingleConstructor_ShouldForwardToBaseClass()
 		{
 			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock("foo");
@@ -49,7 +49,7 @@ public sealed partial class MockTests
 			await That(sut.Text).IsEqualTo("foo");
 		}
 
-		[Fact]
+		[Test]
 		public async Task TypedOverload_WithMockBehavior_ShouldUseBehavior()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -60,7 +60,7 @@ public sealed partial class MockTests
 			await That(sut.Text).IsEqualTo("foo");
 		}
 
-		[Fact]
+		[Test]
 		public async Task TypedOverload_WithMockBehaviorAndSetup_ShouldApplyBoth()
 		{
 			MockBehavior behavior = MockBehavior.Default;
@@ -74,7 +74,7 @@ public sealed partial class MockTests
 			await That(sut.VirtualMethod()).IsEqualTo("bar");
 		}
 
-		[Fact]
+		[Test]
 		public async Task TypedOverload_WithSetup_ShouldApplySetup()
 		{
 			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
@@ -84,7 +84,7 @@ public sealed partial class MockTests
 			await That(sut.VirtualMethod()).IsEqualTo("bar");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_OnlyFirstArgumentIsClass_ShouldForwardBehaviorToBaseClass()
 		{
 			MockBehavior behavior = MockBehavior.Default.ThrowingWhenNotSetup();
@@ -94,7 +94,7 @@ public sealed partial class MockTests
 			await That(((IMock)sut).MockRegistry.Behavior).IsSameAs(behavior);
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_WithConstructorParametersAndSetups_ShouldApplySetups()
 		{
 			MyBaseClassWithConstructor mock = MyBaseClassWithConstructor.CreateMock(
@@ -106,7 +106,7 @@ public sealed partial class MockTests
 			await That(result).IsEqualTo("bar");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_WithConstructorParametersMockBehaviorAndSetups_ShouldApplySetups()
 		{
 			MyBaseClassWithConstructor sut = MyBaseClassWithConstructor.CreateMock(
@@ -120,7 +120,7 @@ public sealed partial class MockTests
 			await That(result).IsEqualTo("bar");
 		}
 
-		[Fact]
+		[Test]
 		public async Task With2Arguments_WithSetups_ShouldApplySetups()
 		{
 			IMyService sut = IMyService.CreateMock(setup =>
@@ -139,7 +139,7 @@ public sealed partial class MockTests
 			await That(result3).IsEqualTo(8);
 		}
 
-		[Fact]
+		[Test]
 		public async Task WithAdditionalInterfacesFromDifferentNamespaces_ShouldHaveUniqueName()
 		{
 			int invocationCount1 = 0;

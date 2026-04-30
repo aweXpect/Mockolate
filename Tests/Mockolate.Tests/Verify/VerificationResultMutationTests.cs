@@ -8,7 +8,7 @@ namespace Mockolate.Tests.Verify;
 
 public sealed class VerificationResultMutationTests
 {
-	[Fact]
+	[Test]
 	public async Task AwaitableVerify_AfterMatching_ShouldMarkMatchingInteractionsAsVerified()
 	{
 		IMyService sut = IMyService.CreateMock();
@@ -21,7 +21,7 @@ public sealed class VerificationResultMutationTests
 		await That(interactions.GetUnverifiedInteractions()).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task AwaitableVerify_WithRecordingDisabled_ShouldThrowMockException()
 	{
 		IMyService sut = IMyService.CreateMock(MockBehavior.Default.SkippingInteractionRecording());

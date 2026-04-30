@@ -7,7 +7,7 @@ namespace Mockolate.SourceGenerators.Tests;
 
 public partial class MockGeneratorTests
 {
-	[Fact]
+	[Test]
 	public async Task SameMethodDifferingOnlyByNullability_ShouldUseExplicitImplementationForConflictingInterface()
 	{
 		GeneratorResult result = Generator
@@ -44,7 +44,7 @@ public partial class MockGeneratorTests
 			.Contains("void global::MyCode.IInterface2.Method(string value)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task SealedClass_ShouldNotBeIncluded()
 	{
 		GeneratorResult result = Generator
@@ -74,7 +74,7 @@ public partial class MockGeneratorTests
 		);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenClassHasConstructorWithParameters_ShouldGenerateTypedCreateMockOverload()
 	{
 		GeneratorResult result = Generator
@@ -113,7 +113,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenClassHasMultipleConstructors_ShouldGenerateTypedOverloadPerConstructor()
 	{
 		GeneratorResult result = Generator
@@ -147,7 +147,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenClassHasOnlyParameterlessConstructor_ShouldNotEmitAdditionalTypedOverloads()
 	{
 		GeneratorResult result = Generator
@@ -176,7 +176,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasCharDefault_ShouldEscapeInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -206,7 +206,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasDecimalDefault_ShouldAppendMSuffixInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -236,7 +236,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasEnumDefault_ShouldCastToFullyQualifiedEnumTypeInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -268,7 +268,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasFloatDefault_ShouldAppendFSuffixInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -298,7 +298,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasInParameter_ShouldNotEmitTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -331,7 +331,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasLongAndDoubleDefaults_ShouldPreserveLiteralsInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -361,7 +361,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasNullableDecimalDefault_ShouldAppendMSuffixInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -392,7 +392,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasNullableReferenceDefaultNull_ShouldEmitNullLiteralInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -423,7 +423,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasRefOrParamsParameter_ShouldNotEmitTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -455,7 +455,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasStringDefaultWithQuotes_ShouldEscapeInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -485,7 +485,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorHasValueTypeDefaultNull_ShouldEmitDefaultInTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -517,7 +517,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorParameterIsMockBehavior_ShouldNotEmitAmbiguousTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -548,7 +548,7 @@ public partial class MockGeneratorTests
 		await That(matches).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorParameterIsUnrelatedAction_ShouldEmitTypedOverload()
 	{
 		GeneratorResult result = Generator
@@ -582,7 +582,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenConstructorsDifferOnlyByNullableValueType_ShouldEmitBothTypedOverloads()
 	{
 		GeneratorResult result = Generator
@@ -617,7 +617,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenDerivedClassHasBaseClassConstructorParameters_ShouldEmitTypedOverloadForDerived()
 	{
 		GeneratorResult result = Generator
@@ -652,7 +652,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenGenericClassHasTypedConstructor_ShouldEmitTypedOverloadForClosedType()
 	{
 		GeneratorResult result = Generator
@@ -684,7 +684,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenImplementingAdditionalClass_ShouldCreateCombinationMock()
 	{
 		GeneratorResult result = Generator
@@ -724,7 +724,7 @@ public partial class MockGeneratorTests
 		]).InAnyOrder();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenImplementingAdditionalInterface_WithBaseClassHavingOptionalConstructorParameter_ShouldGenerateTryCastWithDefaultValue()
 	{
 		GeneratorResult result = Generator
@@ -762,7 +762,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenImplementingAdditionalInterface_WithBaseClassHavingRequiredConstructorParameter_ShouldGenerateTryCast()
 	{
 		GeneratorResult result = Generator
@@ -804,7 +804,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenMethodContainsMoreThan16Parameters_ShouldAddCustomAction()
 	{
 		GeneratorResult result = Generator
@@ -840,7 +840,7 @@ public partial class MockGeneratorTests
 				"public delegate TResult Func<in T1, in T2, in T3, in T4, in T5, in T6, in T7, in T8, in T9, in T10, in T11, in T12, in T13, in T14, in T15, in T16, in T17, out TResult>(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6, T7 arg7, T8 arg8, T9 arg9, T10 arg10, T11 arg11, T12 arg12, T13 arg13, T14 arg14, T15 arg15, T16 arg16, T17 arg17);");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenNamesConflict_ShouldBeDistinguishable()
 	{
 		GeneratorResult result = Generator
@@ -883,7 +883,7 @@ public partial class MockGeneratorTests
 		);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenNamesConflictForAdditionalClasses_ShouldBeDistinguishable()
 	{
 		GeneratorResult result = Generator
@@ -930,7 +930,7 @@ public partial class MockGeneratorTests
 		);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenNamesConflictForAdditionalClassesInDifferentNamespaces_ShouldBeDistinguishable()
 	{
 		GeneratorResult result = Generator
@@ -979,7 +979,7 @@ public partial class MockGeneratorTests
 		);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenOneCtorStartsWithMockBehaviorAndAnotherOmitsIt_ShouldNotEmitDuplicateTypedOverloads()
 	{
 		// Two constructors that could produce the same C# signature after the generator's
@@ -1014,7 +1014,7 @@ public partial class MockGeneratorTests
 		await That(matches).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenSameCombinationIsDeclaredTwice_ShouldDeduplicateToSingleEmittedFile()
 	{
 		// Same root mock with the same .Implementing<T>() chain in different call sites must
@@ -1047,7 +1047,7 @@ public partial class MockGeneratorTests
 		await That(combinationKeys).IsEqualTo(["Mock.IMyService__IMyExtra.g.cs",]).InAnyOrder();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenSameMethodInTwoInterfacesDiffersOnlyInRefKind_ShouldUseExplicitImplementation()
 	{
 		// Two interfaces declare a method with the same name and parameter type but different
@@ -1087,7 +1087,7 @@ public partial class MockGeneratorTests
 			.Contains("void global::MyCode.IInterface2.Method(in int value)");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenSameMockIsDeclaredTwice_ShouldDeduplicateToSingleEmittedFile()
 	{
 		// Two identical Mock.Create<IFoo>() declarations must collapse to a single emitted
@@ -1122,7 +1122,7 @@ public partial class MockGeneratorTests
 		await That(interfaceMockKeys).IsEqualTo(["Mock.IMyInterface.g.cs",]).InAnyOrder();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenSameTypeImplementsDifferentCombinationsOfSameInterface_ShouldGenerateAllCombinations()
 	{
 		GeneratorResult result = Generator
@@ -1161,7 +1161,7 @@ public partial class MockGeneratorTests
 			.ContainsKey("Mock.IBaseInterface__IAdditionalInterface1.g.cs");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenTypedCreateMockOverloadIsEmitted_ConstructorCrefShouldResolve()
 	{
 		const string expectedCref = "global::MyCode.MyService(int, string)";
@@ -1199,7 +1199,7 @@ public partial class MockGeneratorTests
 		await That(crefFailures).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenTypedCreateMockOverloadIsEmittedForExternalType_ConstructorCrefShouldResolve()
 	{
 		GeneratorResult result = Generator
@@ -1231,7 +1231,7 @@ public partial class MockGeneratorTests
 		await That(crefFailures).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenTypedCreateMockOverloadIsEmittedForGenericClass_ShouldNotEmitConstructorCref()
 	{
 		GeneratorResult result = Generator
@@ -1265,7 +1265,7 @@ public partial class MockGeneratorTests
 			.IgnoringNewlineStyle();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenUsingCreateMockFromNonMockolateNamespace_ShouldNotBeIncluded()
 	{
 		GeneratorResult result = Generator
@@ -1306,7 +1306,7 @@ public partial class MockGeneratorTests
 		);
 	}
 
-	[Fact]
+	[Test]
 	public async Task WhenUsingSetups_ShouldGenerateMocksAndExtensions()
 	{
 		GeneratorResult result = Generator
@@ -1336,7 +1336,7 @@ public partial class MockGeneratorTests
 		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithClassAsAdditionalImplementation_ShouldNotThrow()
 	{
 		GeneratorResult result = Generator
@@ -1373,7 +1373,7 @@ public partial class MockGeneratorTests
 		]).InAnyOrder();
 	}
 
-	[Fact]
+	[Test]
 	public async Task WithHttpClient_ShouldAlsoGenerateMockForHttpMessageHandler()
 	{
 		GeneratorResult result = Generator

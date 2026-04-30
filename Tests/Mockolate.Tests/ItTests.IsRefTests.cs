@@ -6,7 +6,7 @@ public sealed partial class ItTests
 {
 	public sealed class IsRefTests
 	{
-		[Fact]
+		[Test]
 		public async Task PredicateOnly_ShouldNotChangeValue()
 		{
 			IRefParameter<string> sut = It.IsRef<string>(_ => true);
@@ -16,9 +16,9 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo("foo");
 		}
 
-		[Theory]
-		[InlineData(true)]
-		[InlineData(false)]
+		[Test]
+		[Arguments(true)]
+		[Arguments(false)]
 		public async Task ShouldMatchForExpectedResult(bool predicateValue)
 		{
 			IRefParameter<string> sut = It.IsRef<string>(_ => predicateValue, _ => "");
@@ -28,7 +28,7 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(predicateValue);
 		}
 
-		[Fact]
+		[Test]
 		public async Task Verify_ShouldAlwaysMatch()
 		{
 			IVerifyRefParameter<int?> sut = It.IsRef<int?>();

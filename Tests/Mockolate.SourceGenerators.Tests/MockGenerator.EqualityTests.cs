@@ -15,7 +15,7 @@ public sealed class MockGeneratorEqualityTests
 {
 	public sealed class RefStructAggregateTests
 	{
-		[Fact]
+		[Test]
 		public async Task Equals_WithDifferentType_IsFalse()
 		{
 			RefStructAggregate a = new(
@@ -26,7 +26,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals("not an aggregate")).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithDifferingIndexerSetups_IsFalse()
 		{
 			RefStructAggregate a = new(
@@ -39,7 +39,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals(b)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithDifferingMethodSetups_IsFalse()
 		{
 			RefStructAggregate a = new(
@@ -53,7 +53,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals((object)b)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithEqualMethodAndIndexerSetups_IsTrue()
 		{
 			RefStructAggregate a = new(
@@ -68,7 +68,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.GetHashCode()).IsEqualTo(b.GetHashCode());
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithNull_IsFalse()
 		{
 			RefStructAggregate a = new(
@@ -82,7 +82,7 @@ public sealed class MockGeneratorEqualityTests
 
 	public sealed class NamedMockTests
 	{
-		[Fact]
+		[Test]
 		public async Task Equals_WhenAdditionalClassesDiffer_IsFalse()
 		{
 			MockClass mc = CreateMockClass();
@@ -94,7 +94,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals(b)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WhenAdditionalClassesPresentOnOneAndNullOnOther_IsFalse()
 		{
 			MockClass mc = CreateMockClass();
@@ -106,7 +106,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(withNull.Equals(withAdditional)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WhenBothAdditionalClassesNull_IsTrue()
 		{
 			MockClass mc = CreateMockClass();
@@ -116,7 +116,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals(b)).IsTrue();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithDifferentFileName_IsFalse()
 		{
 			MockClass mc = CreateMockClass();
@@ -126,7 +126,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals(b)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithDifferentMockClass_IsFalse()
 		{
 			MockClass mcA = CreateMockClass();
@@ -139,7 +139,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals(b)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithDifferentParentName_IsFalse()
 		{
 			MockClass mc = CreateMockClass();
@@ -149,7 +149,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.Equals(b)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithIdenticalNamedMock_IsTrue()
 		{
 			MockClass mc = CreateMockClass();
@@ -161,7 +161,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a.GetHashCode()).IsEqualTo(b.GetHashCode());
 		}
 
-		[Fact]
+		[Test]
 		public async Task Equals_WithNullOther_IsFalse()
 		{
 			MockClass mc = CreateMockClass();
@@ -171,7 +171,7 @@ public sealed class MockGeneratorEqualityTests
 			await That(a!.Equals((object?)null)).IsFalse();
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetHashCode_IncludesAdditionalClasses()
 		{
 			MockClass mc = CreateMockClass();

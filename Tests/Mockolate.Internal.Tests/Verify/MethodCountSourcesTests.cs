@@ -8,7 +8,7 @@ namespace Mockolate.Internal.Tests.Verify;
 
 public class MethodCountSourcesTests
 {
-	[Fact]
+	[Test]
 	public async Task EventCountSource_ShouldReturnSubscribeCount()
 	{
 		FastMockInteractions store = new(1);
@@ -23,7 +23,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter1CountSource_ShouldHonorKeyMatcher()
 	{
 		FastMockInteractions store = new(1);
@@ -37,7 +37,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter2CountSource_ShouldHonorBothMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -53,7 +53,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter3CountSource_ShouldHonorAllThreeMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -71,7 +71,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerGetter4CountSource_ShouldHonorAllFourMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -90,7 +90,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter1CountSource_ShouldHonorKeyAndValueMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -106,7 +106,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter2CountSource_ShouldHonorAllMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -124,7 +124,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter3CountSource_ShouldHonorAllMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -143,7 +143,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task IndexerSetter4CountSource_ShouldHonorAllMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -163,7 +163,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method0CountSource_ShouldRouteCountAndCountAllThroughBuffer()
 	{
 		FastMockInteractions store = new(1);
@@ -177,7 +177,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method1CountSource_ShouldHonorMatcher()
 	{
 		FastMockInteractions store = new(1);
@@ -196,7 +196,7 @@ public class MethodCountSourcesTests
 		await That(matchNone.Count()).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method2CountSource_ShouldHonorBothMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -213,7 +213,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method3CountSource_ShouldHonorAllThreeMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -231,7 +231,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method4CountSource_ShouldHonorAllFourMatchers()
 	{
 		FastMockInteractions store = new(1);
@@ -251,7 +251,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(2);
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method0CountSource_CountAll_ShouldMarkSlotsVerified()
 	{
 		FastMockInteractions store = new(1);
@@ -267,7 +267,7 @@ public class MethodCountSourcesTests
 		await That(dest).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method1CountSource_CountAll_ShouldMarkSlotsVerified()
 	{
 		FastMockInteractions store = new(1);
@@ -283,7 +283,7 @@ public class MethodCountSourcesTests
 		await That(dest).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method2CountSource_CountAll_ShouldMarkSlotsVerified()
 	{
 		FastMockInteractions store = new(1);
@@ -301,7 +301,7 @@ public class MethodCountSourcesTests
 		await That(dest).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method3CountSource_CountAll_ShouldMarkSlotsVerified()
 	{
 		FastMockInteractions store = new(1);
@@ -320,7 +320,7 @@ public class MethodCountSourcesTests
 		await That(dest).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task Method4CountSource_CountAll_ShouldMarkSlotsVerified()
 	{
 		FastMockInteractions store = new(1);
@@ -341,7 +341,7 @@ public class MethodCountSourcesTests
 		await That(dest).IsEmpty();
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertyGetterCountSource_ShouldReturnRecordedCount()
 	{
 		FastMockInteractions store = new(1);
@@ -355,7 +355,7 @@ public class MethodCountSourcesTests
 		await That(source.Count()).IsEqualTo(3);
 	}
 
-	[Fact]
+	[Test]
 	public async Task PropertySetterCountSource_ShouldHonorValueMatcher()
 	{
 		FastMockInteractions store = new(1);

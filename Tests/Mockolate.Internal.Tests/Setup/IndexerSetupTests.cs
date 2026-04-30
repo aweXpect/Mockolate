@@ -7,7 +7,7 @@ namespace Mockolate.Internal.Tests.Setup;
 
 public sealed class IndexerSetupTests
 {
-	[Fact]
+	[Test]
 	public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 	{
 		int callCount = 0;
@@ -21,7 +21,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 	{
 		int callCount = 0;
@@ -35,7 +35,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 	{
 		int callCount = 0;
@@ -49,7 +49,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 	{
 		int callCount = 0;
@@ -62,7 +62,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 	{
 		int callCount = 0;
@@ -75,7 +75,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 	{
 		int callCount = 0;
@@ -88,7 +88,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 	{
 		int callCount = 0;
@@ -101,7 +101,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(0);
 	}
 
-	[Fact]
+	[Test]
 	public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 	{
 		int callCount = 0;
@@ -114,7 +114,7 @@ public sealed class IndexerSetupTests
 		await That(callCount).IsEqualTo(1);
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetResult_WithBaseValue_StoresComputedValueForLaterLookup()
 	{
 		IndexerSetup<string, int> setup = new(
@@ -139,7 +139,7 @@ public sealed class IndexerSetupTests
 		await That(stored).IsEqualTo("base");
 	}
 
-	[Fact]
+	[Test]
 	public async Task GetResult_WithDefaultValueGenerator_StoresComputedValueForLaterLookup()
 	{
 		IndexerSetup<string, int> setup = new(
@@ -164,7 +164,7 @@ public sealed class IndexerSetupTests
 		await That(stored).IsEqualTo("generated");
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryCast_WhenValueIsNotOfTargetTypeAndNotNull_ShouldReturnFalse()
 	{
 		bool success = FakeIndexerSetup.InvokeTryCast(42, out string _, MockBehavior.Default);
@@ -172,7 +172,7 @@ public sealed class IndexerSetupTests
 		await That(success).IsFalse();
 	}
 
-	[Fact]
+	[Test]
 	public async Task TryCast_WhenValueIsNull_ShouldReturnTrue()
 	{
 		bool success = FakeIndexerSetup.InvokeTryCast(null, out string result, MockBehavior.Default);
@@ -183,7 +183,7 @@ public sealed class IndexerSetupTests
 
 	public sealed class With2Levels
 	{
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -197,7 +197,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -211,7 +211,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -225,7 +225,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;
@@ -238,7 +238,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenAssignedValueDoesNotCastToTValue_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -251,7 +251,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -264,7 +264,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -277,7 +277,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -290,7 +290,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;
@@ -303,7 +303,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetResult_WithBaseValue_StoresComputedValueForLaterLookup()
 		{
 			IndexerSetup<string, int, int> setup = new(
@@ -329,7 +329,7 @@ public sealed class IndexerSetupTests
 			await That(stored).IsEqualTo("base");
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
 		{
 			IndexerSetup<string, int, int> setup = new(
@@ -382,7 +382,7 @@ public sealed class IndexerSetupTests
 
 	public sealed class With3Levels
 	{
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -396,7 +396,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -410,7 +410,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -424,7 +424,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;
@@ -437,7 +437,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenAssignedValueDoesNotCastToTValue_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -450,7 +450,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -463,7 +463,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -476,7 +476,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -489,7 +489,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;
@@ -502,7 +502,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetResult_WithBaseValue_StoresComputedValueForLaterLookup()
 		{
 			IndexerSetup<string, int, int, int> setup = new(
@@ -531,7 +531,7 @@ public sealed class IndexerSetupTests
 			await That(stored).IsEqualTo("base");
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
 		{
 			IndexerSetup<string, int, int, int> setup = new(
@@ -586,7 +586,7 @@ public sealed class IndexerSetupTests
 
 	public sealed class With4Levels
 	{
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -601,7 +601,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -615,7 +615,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -630,7 +630,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;
@@ -644,7 +644,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenAssignedValueDoesNotCastToTValue_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -658,7 +658,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -672,7 +672,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -686,7 +686,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -700,7 +700,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;
@@ -714,7 +714,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetResult_WithBaseValue_StoresComputedValueForLaterLookup()
 		{
 			IndexerSetup<string, int, int, int, int> setup = new(
@@ -744,7 +744,7 @@ public sealed class IndexerSetupTests
 			await That(stored).IsEqualTo("base");
 		}
 
-		[Fact]
+		[Test]
 		public async Task GetResult_WithFuncGenerator_AndInitialization_ShouldUseInitializationValue()
 		{
 			IndexerSetup<string, int, int, int, int> setup = new(
@@ -801,7 +801,7 @@ public sealed class IndexerSetupTests
 
 	public sealed class With5Levels
 	{
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -816,7 +816,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -831,7 +831,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -846,7 +846,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteGetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;
@@ -860,7 +860,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(1);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenGenericTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -874,7 +874,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenNumberOfParametersDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -888,7 +888,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenParameterTypeDoesNotMatch_ShouldNotExecute()
 		{
 			int callCount = 0;
@@ -902,7 +902,7 @@ public sealed class IndexerSetupTests
 			await That(callCount).IsEqualTo(0);
 		}
 
-		[Fact]
+		[Test]
 		public async Task ExecuteSetterCallback_WhenTypesAndNumberMatch_ShouldExecute()
 		{
 			int callCount = 0;

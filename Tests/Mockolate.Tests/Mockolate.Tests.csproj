@@ -6,11 +6,12 @@
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers\Mockolate.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers.CodeFixers\Mockolate.Analyzers.CodeFixers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
 	</ItemGroup>
-	
+
 	<ItemGroup>
-		<PackageReference Include="Nullable">
+		<PackageReference Include="System.Net.Http"/>
+		<PackageReference Include="Polyfill">
 			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 

@@ -9,13 +9,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="IsExternalInit">
+		<PackageReference Include="Polyfill">
 			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Nullable">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
