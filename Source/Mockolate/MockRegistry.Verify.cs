@@ -249,19 +249,11 @@ public partial class MockRegistry
 	public VerificationResult<T> IndexerGot<T>(T subject, int memberId,
 		Func<IInteraction, bool> gotPredicate,
 		Func<string> parametersDescription)
-	{
-		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
-		if (buffer is null)
-		{
-			return IndexerGot(subject, gotPredicate, parametersDescription);
-		}
-
-		return new VerificationResult<T>(subject,
+		=> new(subject,
 			Interactions,
-			buffer,
+			TryGetBuffer(memberId),
 			gotPredicate,
 			() => $"got indexer {parametersDescription()}");
-	}
 
 	/// <summary>
 	///     Counts indexer setter accesses on <paramref name="subject" /> where the recorded interaction matches
@@ -308,15 +300,9 @@ public partial class MockRegistry
 		IParameterMatch<TValue> value,
 		Func<string> parametersDescription)
 	{
-		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
-		if (buffer is null)
-		{
-			return IndexerSet(subject, setPredicate, value, parametersDescription);
-		}
-
 		return new VerificationResult<T>(subject,
 			Interactions,
-			buffer,
+			TryGetBuffer(memberId),
 			Predicate,
 			() => $"set indexer {parametersDescription()} to {value}");
 
