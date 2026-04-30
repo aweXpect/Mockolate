@@ -5,7 +5,6 @@ using System.Text;
 using Mockolate.Internals;
 using Mockolate.Parameters;
 #if NETSTANDARD2_0
-using Mockolate.Internals.Polyfills;
 #endif
 
 namespace Mockolate.Web;
@@ -134,7 +133,7 @@ public static partial class ItExtensions
 
 		/// <inheritdoc cref="IParameter.Matches(object?)" />
 		bool IParameter.Matches(object? value)
-			=> value is Uri uri ? Matches(uri) : value is null && Matches(null);
+			=> value is Uri uri && Matches(uri);
 
 		/// <inheritdoc cref="IParameter.InvokeCallbacks(object?)" />
 		void IParameter.InvokeCallbacks(object? value)
@@ -215,15 +214,10 @@ public static partial class ItExtensions
 				return false;
 			}
 
-			if (pattern is not null)
+			if (pattern is not null &&
+			    !Wildcard.Pattern(pattern, true, false).Matches(uri.ToString()))
 			{
-				string requestUri1 = uri.ToString();
-				Wildcard wildcard = Wildcard.Pattern(pattern, true, false);
-				if (!wildcard.Matches(requestUri1) &&
-				    (!requestUri1.EndsWith('/') || !wildcard.Matches(requestUri1.TrimEnd('/'))))
-				{
-					return false;
-				}
+				return false;
 			}
 
 			if (_scheme is not null &&
