@@ -479,4 +479,306 @@ public class MockRegistryVerifyTests
 			await That(Act).Throws<MockVerificationException>();
 		}
 	}
+
+	public sealed class VerifyPropertyFastPathTests
+	{
+		[Fact]
+		public async Task Getter_FailureMessageIncludesGotPropertyPrefix()
+		{
+			// Pins the expectation factory `() => $"got property {propertyName...}"` against the
+			// string-removal mutation that would replace it with an empty interpolation.
+			FastMockInteractions store = new(1);
+			store.InstallPropertyGetter(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.VerifyProperty(new object(), 0, "X").Once();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage("*got property X*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task Getter_WithBufferAndRecord_PredicateMatchesEveryRecord()
+		{
+			// Pins `static _ => true` predicate in the public memberId-keyed VerifyProperty getter.
+			// Mutating it to `static _ => false` would skip every record and turn this Once() into a
+			// failed verification.
+			FastMockInteractions store = new(1);
+			FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+			buffer.Append("X");
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.VerifyProperty(new object(), 0, "X").Once();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task Setter_FailureMessageIncludesSetPropertyPrefix()
+		{
+			// Pins the expectation factory `() => $"set property {propertyName...} to {value}"`
+			// against the string-removal mutation.
+			FastMockInteractions store = new(1);
+			store.InstallPropertySetter<int>(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.VerifyProperty(new object(), 0, "X",
+					(IParameterMatch<int>)It.Is(7)).Once();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage("*set property X to *7*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task Setter_WithBufferAndMatchingRecord_PredicateMatchesByValue()
+		{
+			// Pins the local Predicate's body in the memberId-keyed property setter overload.
+			// Block-removal would turn the predicate into `return default;` (i.e. always false) and
+			// drop every recorded setter, failing this Once().
+			FastMockInteractions store = new(1);
+			FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+			buffer.Append("X", 7);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.VerifyProperty(new object(), 0, "X",
+					(IParameterMatch<int>)It.Is(7)).Once();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task Setter_WithNonMatchingValue_PredicateRejects()
+		{
+			// Same Predicate body — but exercises the negative branch so the `value.Matches(...)`
+			// term cannot be silently dropped.
+			FastMockInteractions store = new(1);
+			FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+			buffer.Append("X", 99);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.VerifyProperty(new object(), 0, "X",
+					(IParameterMatch<int>)It.Is(7)).Once();
+			}
+
+			await That(Act).Throws<MockVerificationException>();
+		}
+	}
+
+	public sealed class IndexerFastPathTests
+	{
+		[Fact]
+		public async Task Got_FailureMessageIncludesGotIndexerPrefix()
+		{
+			// Pins `() => $"got indexer {parametersDescription()}"` in the public memberId-keyed
+			// IndexerGot expression body against the string-removal mutation.
+			FastMockInteractions store = new(1);
+			store.InstallIndexerGetter<int>(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.IndexerGot(new object(), 0,
+					_ => true,
+					() => "[1]").Once();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage("*got indexer [1]*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task Set_FailureMessageIncludesSetIndexerPrefix()
+		{
+			// Pins `() => $"set indexer {parametersDescription()} to {value}"` against the
+			// string-removal mutation.
+			FastMockInteractions store = new(1);
+			store.InstallIndexerSetter<int, string>(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.IndexerSet(new object(), 0,
+					(_, _) => true,
+					(IParameterMatch<string>)It.Is<string>("x"),
+					() => "[1]").Once();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage("*set indexer [1] to *x*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task Set_WithBufferAndMatchingRecord_PredicateMatchesByValue()
+		{
+			// Pins the local Predicate body in the memberId-keyed IndexerSet overload — the
+			// block-removal mutant would turn it into `return default;` and skip every record.
+			FastMockInteractions store = new(1);
+			FastIndexerSetterBuffer<int, string> buffer = store.InstallIndexerSetter<int, string>(0);
+			buffer.Append(1, "x");
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.IndexerSet(new object(), 0,
+					(interaction, v) => interaction is IndexerSetterAccess<int, string> s &&
+					                    s.Parameter1 == 1 && v.Matches(s.TypedValue),
+					(IParameterMatch<string>)It.Is<string>("x"),
+					() => "[1]").Once();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+	}
+
+	public sealed class SubscribedToFastPathTests
+	{
+		[Fact]
+		public async Task FailureMessageIncludesSubscribedToEventPrefix()
+		{
+			// Pins the expectation factory `() => $"subscribed to event {eventName...}"`.
+			FastMockInteractions store = new(1);
+			store.InstallEventSubscribe(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.SubscribedTo(new object(), 0, "Tick").Once();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage("*subscribed to event Tick*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task WithBufferAndRecord_PredicateMatchesEveryRecord()
+		{
+			// Pins `static _ => true` in the memberId-keyed SubscribedTo. Mutating to `false`
+			// would drop every record and fail Once().
+			FastMockInteractions store = new(1);
+			FastEventBuffer buffer = store.InstallEventSubscribe(0);
+			buffer.Append("Tick", null, typeof(object).GetMethod(nameof(ToString))!);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.SubscribedTo(new object(), 0, "Tick").Once();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithoutBuffer_FallsBackToLegacyAndFiltersByEventName()
+		{
+			// Kills two coupled mutants on `if (buffer is null)`:
+			//   - equality flip `is not null` would fall through to the fast-path constructor with
+			//     a null buffer and `static _ => true`, which CollectMatching's null-buffer branch
+			//     turns into "match every recorded interaction";
+			//   - block removal `{}` does the same thing (drops the early `return SubscribedTo(...)`).
+			// Either way, the unrelated PropertyGetterAccess below would be counted as a Tick
+			// subscription and `.Never()` would throw.
+			FastMockInteractions store = new(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			IMockInteractions interactions = store;
+			interactions.RegisterInteraction(new PropertyGetterAccess("Other"));
+
+			void Act()
+			{
+				registry.SubscribedTo(new object(), 0, "Tick").Never();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+	}
+
+	public sealed class UnsubscribedFromFastPathTests
+	{
+		[Fact]
+		public async Task FailureMessageIncludesUnsubscribedFromEventPrefix()
+		{
+			FastMockInteractions store = new(1);
+			store.InstallEventUnsubscribe(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.UnsubscribedFrom(new object(), 0, "Tick").Once();
+			}
+
+			await That(Act).Throws<MockVerificationException>()
+				.WithMessage("*unsubscribed from event Tick*").AsWildcard();
+		}
+
+		[Fact]
+		public async Task WithBufferAndRecord_PredicateMatchesEveryRecord()
+		{
+			FastMockInteractions store = new(1);
+			FastEventBuffer buffer = store.InstallEventUnsubscribe(0);
+			buffer.Append("Tick", null, typeof(object).GetMethod(nameof(ToString))!);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			void Act()
+			{
+				registry.UnsubscribedFrom(new object(), 0, "Tick").Once();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WithoutBuffer_FallsBackToLegacyAndFiltersByEventName()
+		{
+			FastMockInteractions store = new(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			IMockInteractions interactions = store;
+			interactions.RegisterInteraction(new PropertyGetterAccess("Other"));
+
+			void Act()
+			{
+				registry.UnsubscribedFrom(new object(), 0, "Tick").Never();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+	}
+
+	public sealed class VerifyMethodFallbackTests
+	{
+		[Fact]
+		public async Task Parameterless_WithoutFastMethod0Buffer_PredicateMatchesAllMethodInvocations()
+		{
+			// Kills the `_ => true` → `_ => false` mutation in the slow-path fallback at the bottom
+			// of `VerifyMethod<T>(subject, memberId, methodName, expectation)`. We enter the
+			// fallback because no FastMethod0Buffer is installed at memberId 0; the registered
+			// MethodInvocation must still be counted.
+			FastMockInteractions store = new(0);
+			MockRegistry registry = new(MockBehavior.Default, store);
+
+			IMockInteractions interactions = store;
+			interactions.RegisterInteraction(new MethodInvocation("Foo"));
+
+			void Act()
+			{
+				registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Once();
+			}
+
+			await That(Act).DoesNotThrow();
+		}
+	}
 }
