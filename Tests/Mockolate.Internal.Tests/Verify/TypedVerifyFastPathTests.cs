@@ -1,3 +1,4 @@
+using System.Reflection;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
@@ -7,6 +8,25 @@ namespace Mockolate.Internal.Tests.Verify;
 
 public class TypedVerifyFastPathTests
 {
+	[Fact]
+	public async Task IndexerGot_WithMemberIdAndBuffer_CountsBufferEntriesAndProducesExpectation()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerGetterBuffer<int> buffer = store.InstallIndexerGetter<int>(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		buffer.Append(5);
+		buffer.Append(7);
+		buffer.Append(5);
+
+		VerificationResult<object> result = registry.IndexerGot(
+			new object(), 0,
+			static i => i is IndexerGetterAccess<int> g && g.Parameter1 == 5,
+			() => "[5]");
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer [5]");
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
+	}
+
 	[Fact]
 	public async Task IndexerGot_WithMemberIdAndInstalledBuffer_OnlyWalksBuffer()
 	{
@@ -53,6 +73,28 @@ public class TypedVerifyFastPathTests
 			() => "(5)");
 
 		await That(((IVerificationResult)result).Expectation).IsEqualTo("got indexer (5)");
+	}
+
+	[Fact]
+	public async Task IndexerSet_WithMemberIdAndBuffer_CountsMatchingValuesAndProducesExpectation()
+	{
+		FastMockInteractions store = new(1);
+		FastIndexerSetterBuffer<int, string> buffer = store.InstallIndexerSetter<int, string>(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		buffer.Append(5, "v");
+		buffer.Append(7, "v");
+		buffer.Append(5, "x");
+
+		IParameterMatch<string> value = (IParameterMatch<string>)It.Is("v");
+		VerificationResult<object> result = registry.IndexerSet(
+			new object(), 0,
+			static (i, v) => i is IndexerSetterAccess<int, string> s && s.Parameter1 == 5 && v.Matches(s.TypedValue),
+			value,
+			() => "[5]");
+
+		await That(((IVerificationResult)result).Expectation).Contains("set indexer [5]");
+		await That(((IVerificationResult)result).Expectation).Contains(value.ToString()!);
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 1)).IsTrue();
 	}
 
 	[Fact]
@@ -112,6 +154,41 @@ public class TypedVerifyFastPathTests
 	}
 
 	[Fact]
+	public async Task SubscribedTo_WithMemberIdAndBuffer_CountsBufferEntriesAndProducesExpectation()
+	{
+		FastMockInteractions store = new(1);
+		FastEventBuffer buffer = store.InstallEventSubscribe(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		MethodInfo method = typeof(TypedVerifyFastPathTests).GetMethod(
+			nameof(SubscribedTo_WithMemberIdAndBuffer_CountsBufferEntriesAndProducesExpectation))!;
+		buffer.Append("E", null, method);
+		buffer.Append("E", null, method);
+
+		VerificationResult<object> result = registry.SubscribedTo(new object(), 0, "E");
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event E");
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
+	}
+
+	[Fact]
+	public async Task SubscribedTo_WithMemberIdButNoBuffer_FallsBackAndFiltersByName()
+	{
+		FastMockInteractions store = new(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+		MethodInfo method = typeof(TypedVerifyFastPathTests).GetMethod(
+			nameof(SubscribedTo_WithMemberIdButNoBuffer_FallsBackAndFiltersByName))!;
+		interactions.RegisterInteraction(new EventSubscription("E", null, method));
+		interactions.RegisterInteraction(new EventSubscription("E", null, method));
+		interactions.RegisterInteraction(new EventSubscription("F", null, method));
+
+		VerificationResult<object> result = registry.SubscribedTo(new object(), 5, "E");
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("subscribed to event E");
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
+	}
+
+	[Fact]
 	public async Task SubscribedToTyped_WithBuffer_ProducesEventNameInExpectation()
 	{
 		FastMockInteractions store = new(1);
@@ -150,6 +227,41 @@ public class TypedVerifyFastPathTests
 		registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Once();
 
 		await That(true).IsTrue();
+	}
+
+	[Fact]
+	public async Task UnsubscribedFrom_WithMemberIdAndBuffer_CountsBufferEntriesAndProducesExpectation()
+	{
+		FastMockInteractions store = new(1);
+		FastEventBuffer buffer = store.InstallEventUnsubscribe(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		MethodInfo method = typeof(TypedVerifyFastPathTests).GetMethod(
+			nameof(UnsubscribedFrom_WithMemberIdAndBuffer_CountsBufferEntriesAndProducesExpectation))!;
+		buffer.Append("E", null, method);
+		buffer.Append("E", null, method);
+
+		VerificationResult<object> result = registry.UnsubscribedFrom(new object(), 0, "E");
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event E");
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
+	}
+
+	[Fact]
+	public async Task UnsubscribedFrom_WithMemberIdButNoBuffer_FallsBackAndFiltersByName()
+	{
+		FastMockInteractions store = new(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+		MethodInfo method = typeof(TypedVerifyFastPathTests).GetMethod(
+			nameof(UnsubscribedFrom_WithMemberIdButNoBuffer_FallsBackAndFiltersByName))!;
+		interactions.RegisterInteraction(new EventUnsubscription("E", null, method));
+		interactions.RegisterInteraction(new EventUnsubscription("E", null, method));
+		interactions.RegisterInteraction(new EventUnsubscription("F", null, method));
+
+		VerificationResult<object> result = registry.UnsubscribedFrom(new object(), 5, "E");
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("unsubscribed from event E");
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
 	}
 
 	[Fact]
@@ -202,6 +314,23 @@ public class TypedVerifyFastPathTests
 		registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Twice();
 
 		await That(true).IsTrue();
+	}
+
+	[Fact]
+	public async Task VerifyMethod0_WithMemberIdButNoMatchingBuffer_FallbackPredicateMatchesAllMethodInteractions()
+	{
+		FastMockInteractions store = new(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		IMockInteractions interactions = store;
+		interactions.RegisterInteraction(new MethodInvocation("Foo"));
+		interactions.RegisterInteraction(new MethodInvocation("Foo"));
+		interactions.RegisterInteraction(new MethodInvocation("Bar"));
+
+		VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod(
+			new object(), 5, "Foo", () => "Foo()");
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("invoked method Foo()");
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
 	}
 
 	[Fact]
@@ -309,6 +438,39 @@ public class TypedVerifyFastPathTests
 			() => "M(1, 2, 3, 4)");
 
 		await That(((IVerificationResult)result).Verify(arr => arr.Length == 1)).IsTrue();
+	}
+
+	[Fact]
+	public async Task VerifyProperty_GetterWithMemberIdAndBuffer_CountsBufferEntriesAndProducesExpectation()
+	{
+		FastMockInteractions store = new(1);
+		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		buffer.Append("P");
+		buffer.Append("P");
+
+		VerificationResult<object> result = registry.VerifyProperty(new object(), 0, "P");
+
+		await That(((IVerificationResult)result).Expectation).IsEqualTo("got property P");
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
+	}
+
+	[Fact]
+	public async Task VerifyProperty_SetterWithMemberIdAndBuffer_CountsMatchingValuesAndProducesExpectation()
+	{
+		FastMockInteractions store = new(1);
+		FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+		MockRegistry registry = new(MockBehavior.Default, store);
+		buffer.Append("P", 1);
+		buffer.Append("P", 2);
+		buffer.Append("P", 1);
+
+		IParameterMatch<int> value = (IParameterMatch<int>)It.Is(1);
+		VerificationResult<object> result = registry.VerifyProperty(new object(), 0, "P", value);
+
+		await That(((IVerificationResult)result).Expectation).Contains("set property P");
+		await That(((IVerificationResult)result).Expectation).Contains(value.ToString()!);
+		await That(((IVerificationResult)result).Verify(arr => arr.Length == 2)).IsTrue();
 	}
 
 	[Fact]
