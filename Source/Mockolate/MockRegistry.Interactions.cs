@@ -592,6 +592,7 @@ public partial class MockRegistry
 			RecordPropertySetter(memberId, propertyName, value);
 		}
 
+		// Stryker disable once Boolean : forceReinitWhenFound only has an observable effect when defaultValueGenerator is non-null. Here it is null, so the only side effect of flipping to true is an extra InitializeWith(null) call that early-returns under the _isUserInitialized || _isInitialized guard inside PropertySetup<T>.InitializeValue.
 		PropertySetup matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
 
 		((IInteractivePropertySetup)matchingSetup).InvokeSetter(null, value, Behavior);
@@ -638,6 +639,7 @@ public partial class MockRegistry
 		}
 		else
 		{
+			// Stryker disable once Boolean : same equivalence as the SetProperty(int, string, T) path — defaultValueGenerator is null here, so flipping forceReinit only triggers an InitializeWith(null) call that early-returns under the _isUserInitialized || _isInitialized guard.
 			matchingSetup = ResolvePropertySetup<T>(propertyName, null, null, false);
 		}
 

@@ -584,6 +584,22 @@ public sealed class MockRegistryTests
 		}
 
 		[Fact]
+		public async Task WithNullSnapshotAtMemberIdSlot_ShouldFallBackToColdPathWithoutThrowing()
+		{
+			// The member-id table is allocated to length 6 by registering at index 5, leaving indices
+			// 0..4 holding null entries. Reading from such a null slot must fall through to the cold
+			// path rather than dereferencing the null PropertySetup reference.
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+			PropertySetup<int> unrelatedSetup = new(registry, "Q");
+			unrelatedSetup.InitializeWith(99);
+			registry.SetupProperty(5, unrelatedSetup);
+
+			int result = registry.GetPropertyFast(0, "P", _ => 7);
+
+			await That(result).IsEqualTo(7);
+		}
+
+		[Fact]
 		public async Task WithoutSnapshotSetup_ShouldFallBackToColdPath()
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
@@ -620,6 +636,55 @@ public sealed class MockRegistryTests
 
 	public sealed class SetPropertyFastTests
 	{
+		[Fact]
+		public async Task WhenMemberIdSetupDiffersFromDictSetup_ShouldUseMemberIdSetupInDefaultScope()
+		{
+			// Pins the member-id-table lookup block inside SetPropertyFast. The first registration goes
+			// into both the member-id table[2] and the Properties dictionary; the second (without a
+			// memberId) replaces only the dictionary entry. With both entries in place but distinct
+			// SkippingBaseClass overrides, the hot path must surface the snapshot setup, not the dict.
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+
+			PropertySetup<int> snapshotSetup = new(registry, "P");
+			snapshotSetup.InitializeWith(0);
+			((IPropertySetup<int>)snapshotSetup).SkippingBaseClass();
+			registry.SetupProperty(2, snapshotSetup);
+
+			PropertySetup<int> dictSetup = new(registry, "P");
+			dictSetup.InitializeWith(0);
+			((IPropertySetup<int>)dictSetup).SkippingBaseClass(false);
+			registry.SetupProperty(dictSetup);
+
+			bool skipBase = registry.SetPropertyFast(2, 3, "P", 42);
+
+			await That(skipBase).IsTrue();
+		}
+
+		[Fact]
+		public async Task WithActiveScenario_ShouldRouteToScenarioSetupOverMemberIdTableSetup()
+		{
+			// Pins the IsNullOrEmpty(Scenario) guard at the top of SetPropertyFast: when a scenario is
+			// active, the member-id table (which only ever holds default-scope setups) must NOT be
+			// consulted. The scenario-scoped setup overrides via SkippingBaseClass(true) so we can tell
+			// which setup was invoked.
+			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
+
+			PropertySetup<int> defaultSetup = new(registry, "P");
+			defaultSetup.InitializeWith(0);
+			((IPropertySetup<int>)defaultSetup).SkippingBaseClass(false);
+			registry.SetupProperty(2, defaultSetup);
+
+			PropertySetup<int> scenarioSetup = new(registry, "P");
+			scenarioSetup.InitializeWith(0);
+			((IPropertySetup<int>)scenarioSetup).SkippingBaseClass();
+			registry.SetupProperty(2, "myScenario", scenarioSetup);
+
+			registry.TransitionTo("myScenario");
+			bool skipBase = registry.SetPropertyFast(2, 3, "P", 42);
+
+			await That(skipBase).IsTrue();
+		}
+
 		[Fact]
 		public async Task WithoutSnapshotSetup_ShouldFallBackToResolveSetup()
 		{
