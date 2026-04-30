@@ -19,11 +19,11 @@ public class TypeIsFormattableTests
 			[MetadataReference.CreateFromFile(typeof(object).Assembly.Location),],
 			new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 		SemanticModel model = compilation.GetSemanticModel(tree);
-		FieldDeclarationSyntax declaration = tree.GetRoot().DescendantNodes()
+		FieldDeclarationSyntax declaration = tree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes()
 			.OfType<FieldDeclarationSyntax>()
 			.First();
 		VariableDeclaratorSyntax variable = declaration.Declaration.Variables.Single();
-		IFieldSymbol fieldSymbol = (IFieldSymbol)model.GetDeclaredSymbol(variable)!;
+		IFieldSymbol fieldSymbol = (IFieldSymbol)model.GetDeclaredSymbol(variable, TestContext.Current.CancellationToken)!;
 
 		Type type = Type.From(fieldSymbol.Type);
 
@@ -43,7 +43,7 @@ public class TypeIsFormattableTests
 		                          public IFormattable Value;
 		                      }
 		                      """;
-		SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
+		SyntaxTree tree = CSharpSyntaxTree.ParseText(source, cancellationToken: TestContext.Current.CancellationToken);
 		CSharpCompilation compilation = CSharpCompilation.Create(
 			"TestAssembly",
 			[tree,],
@@ -53,11 +53,11 @@ public class TypeIsFormattableTests
 			],
 			new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 		SemanticModel model = compilation.GetSemanticModel(tree);
-		FieldDeclarationSyntax declaration = tree.GetRoot().DescendantNodes()
+		FieldDeclarationSyntax declaration = tree.GetRoot(TestContext.Current.CancellationToken).DescendantNodes()
 			.OfType<FieldDeclarationSyntax>()
 			.First();
 		VariableDeclaratorSyntax variable = declaration.Declaration.Variables.Single();
-		IFieldSymbol fieldSymbol = (IFieldSymbol)model.GetDeclaredSymbol(variable)!;
+		IFieldSymbol fieldSymbol = (IFieldSymbol)model.GetDeclaredSymbol(variable, TestContext.Current.CancellationToken)!;
 		ITypeSymbol typeSymbol = fieldSymbol.Type;
 
 		Type type = Type.From(typeSymbol);

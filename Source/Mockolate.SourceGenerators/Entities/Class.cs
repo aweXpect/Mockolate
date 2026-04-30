@@ -1,9 +1,7 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
@@ -17,6 +15,7 @@ internal class Class : IEquatable<Class>
 	private List<Property>? _allProperties;
 	private string? _classNameWithoutDots;
 
+#pragma warning disable S107 // Methods should not have too many parameters
 	public Class(ITypeSymbol type,
 		IAssemblySymbol sourceAssembly,
 		List<Method>? alreadyDefinedMethods = null,
@@ -25,6 +24,7 @@ internal class Class : IEquatable<Class>
 		List<Method>? exceptMethods = null,
 		List<Property>? exceptProperties = null,
 		List<Event>? exceptEvents = null)
+#pragma warning restore S107
 	{
 		_sourceAssembly = sourceAssembly;
 		ClassFullName = type.ToDisplayString(Helpers.TypeDisplayFormat);
@@ -34,11 +34,21 @@ internal class Class : IEquatable<Class>
 		INamedTypeSymbol? containingType = type.ContainingType;
 		if (containingType is not null)
 		{
+			List<string> ancestors = new();
 			while (containingType is not null)
 			{
-				ClassName = containingType.Name + "." + ClassName;
+				ancestors.Add(containingType.Name);
 				containingType = containingType.ContainingType;
 			}
+
+			StringBuilder nameBuilder = new();
+			for (int i = ancestors.Count - 1; i >= 0; i--)
+			{
+				nameBuilder.Append(ancestors[i]).Append('.');
+			}
+
+			nameBuilder.Append(ClassName);
+			ClassName = nameBuilder.ToString();
 		}
 
 		IsInterface = type.TypeKind == TypeKind.Interface;
@@ -151,6 +161,18 @@ internal class Class : IEquatable<Class>
 		}
 	}
 
+	public EquatableArray<Method> Methods { get; }
+	public EquatableArray<Class> InheritedTypes { get; }
+	public EquatableArray<Property> Properties { get; }
+	public EquatableArray<Event> Events { get; }
+	public EquatableArray<string> ReservedNames { get; }
+
+	public bool IsInterface { get; }
+	public bool HasRequiredMembers { get; }
+	public string ClassFullName { get; }
+	public string ClassName { get; }
+	public string DisplayString { get; }
+
 	/// <summary>
 	///     Folds the member surface (methods, properties, events, recursive base/interface chain,
 	///     reserved names, kind, required-member flag) into a single content-derived integer.
@@ -172,18 +194,6 @@ internal class Class : IEquatable<Class>
 		hash = unchecked((hash * 17) + (HasRequiredMembers ? 1 : 0));
 		return hash;
 	}
-
-	public EquatableArray<Method> Methods { get; }
-	public EquatableArray<Class> InheritedTypes { get; }
-	public EquatableArray<Property> Properties { get; }
-	public EquatableArray<Event> Events { get; }
-	public EquatableArray<string> ReservedNames { get; }
-
-	public bool IsInterface { get; }
-	public bool HasRequiredMembers { get; }
-	public string ClassFullName { get; }
-	public string ClassName { get; }
-	public string DisplayString { get; }
 
 	/// <summary>
 	///     Identifiers that the mock class shares its scope with but that aren't surfaced through
