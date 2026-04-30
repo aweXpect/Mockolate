@@ -9,8 +9,8 @@ namespace Mockolate.SourceGenerators.Tests.Snapshot;
 
 /// <summary>
 ///     Snapshot coverage for the source generator output. Each scenario mirrors a fact in
-///     <c>Mockolate.ExampleTests.MockCreationTests</c> and reuses the same
-///     <c>Tests/Mockolate.ExampleTests/GeneratorCoverage</c> source files as input, so the
+///     <c>Mockolate.Tests.MockCreationTests</c> and reuses the same
+///     <c>Tests/Mockolate.Tests/GeneratorCoverage</c> source files as input, so the
 ///     example types remain the single source of truth for "every special case in the
 ///     source generator". The full set of generated <c>.g.cs</c> files is diffed against
 ///     <c>Tests/Mockolate.SourceGenerators.Tests/Snapshot/Expected/&lt;scenario&gt;/</c>.
@@ -125,7 +125,7 @@ public sealed partial class MockGenerationSnapshotTests
 		}
 
 		string usingDirective = scenario.CoverageFiles.Length > 0
-			? "using Mockolate.ExampleTests.GeneratorCoverage;\n"
+			? "using Mockolate.Tests.GeneratorCoverage;\n"
 			: string.Empty;
 		string program = $$"""
 		                   #nullable enable

@@ -1,7 +1,7 @@
 #if NET10_0_OR_GREATER
 using System;
 
-namespace Mockolate.ExampleTests.GeneratorCoverage;
+namespace Mockolate.Tests.GeneratorCoverage;
 
 /// <summary>
 ///     Members, parameters, and a generic type parameter all named after C# keywords —

@@ -11,20 +11,19 @@
 namespace Mockolate;
 
 /// <summary>
-///     Mock extensions for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class MockExtensionsForComprehensiveAbstractClass
 {
 	/// <inheritdoc cref="MockExtensionsForComprehensiveAbstractClass" />
-	extension(global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass mock)
+	extension(global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass mock)
 	{
 		/// <summary>
-		///     Gets the mock accessor for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> - the entry point for configuring setups, verifying interactions and raising events.
+		///     Gets the mock accessor for <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> - the entry point for configuring setups, verifying interactions and raising events.
 		/// </summary>
 		/// <remarks>
-		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
+		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
 		///     Through it you can:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
@@ -35,7 +34,7 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
 		///     </list>
 		/// </remarks>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</exception>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</exception>
 		public global::Mockolate.Mock.IMockForComprehensiveAbstractClass Mock
 		{
 			get
@@ -49,10 +48,10 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		}
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
 		/// </summary>
 		/// <remarks>
-		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
+		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
 		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
@@ -60,91 +59,91 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
 		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
 		/// </remarks>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock()
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock()
 			=> CreateMock(null, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup)
 			=> CreateMock(null, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the given <paramref name="mockBehavior" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the given <paramref name="mockBehavior" />.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior)
 			=> CreateMock(mockBehavior, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup)
 			=> CreateMock(mockBehavior, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="constructorParameters" /> to invoke the base-class constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="constructorParameters" /> to invoke the base-class constructor.
 		/// </summary>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(object?[] constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(object?[] constructorParameters)
 			=> CreateMock(null, null, constructorParameters);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and <paramref name="constructorParameters" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and <paramref name="constructorParameters" />.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)
 			=> CreateMock(mockBehavior, null, constructorParameters);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, object?[] constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, object?[] constructorParameters)
 			=> CreateMock(null, setup, constructorParameters);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
 		/// </summary>
 		/// <param name="v">Value forwarded to the base-class constructor.</param>
 		/// <param name="text">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(int v, string text = "x")
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(int v, string text = "x")
 			=> CreateMock(null, null, new object?[] { v, text });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="v">Value forwarded to the base-class constructor.</param>
 		/// <param name="text">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, int v, string text = "x")
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, int v, string text = "x")
 			=> CreateMock(mockBehavior, null, new object?[] { v, text });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -152,12 +151,12 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
 		/// <param name="v">Value forwarded to the base-class constructor.</param>
 		/// <param name="text">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int v, string text = "x")
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int v, string text = "x")
 			=> CreateMock(null, setup, new object?[] { v, text });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, string)">ComprehensiveAbstractClass(int, string)</see> constructor.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -166,31 +165,31 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
 		/// <param name="v">Value forwarded to the base-class constructor.</param>
 		/// <param name="text">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int v, string text = "x")
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int v, string text = "x")
 			=> CreateMock(mockBehavior, setup, new object?[] { v, text });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
 		/// </summary>
 		/// <param name="mockRegistry">Value forwarded to the base-class constructor.</param>
 		/// <param name="_">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(int mockRegistry, bool _)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(int mockRegistry, bool _)
 			=> CreateMock(null, null, new object?[] { mockRegistry, _ });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="mockRegistry">Value forwarded to the base-class constructor.</param>
 		/// <param name="_">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, int mockRegistry, bool _)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, int mockRegistry, bool _)
 			=> CreateMock(mockBehavior, null, new object?[] { mockRegistry, _ });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -198,12 +197,12 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
 		/// <param name="mockRegistry">Value forwarded to the base-class constructor.</param>
 		/// <param name="_">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int mockRegistry, bool _)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int mockRegistry, bool _)
 			=> CreateMock(null, setup, new object?[] { mockRegistry, _ });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(int, bool)">ComprehensiveAbstractClass(int, bool)</see> constructor.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -212,41 +211,41 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
 		/// <param name="mockRegistry">Value forwarded to the base-class constructor.</param>
 		/// <param name="_">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int mockRegistry, bool _)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, int mockRegistry, bool _)
 			=> CreateMock(mockBehavior, setup, new object?[] { mockRegistry, _ });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
 		/// </summary>
 		/// <param name="name">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(string name)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(string name)
 			=> CreateMock(null, null, new object?[] { name });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="name">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, string name)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, string name)
 			=> CreateMock(mockBehavior, null, new object?[] { name });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
 		/// <param name="name">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, string name)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, string name)
 			=> CreateMock(null, setup, new object?[] { name });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass(string)">ComprehensiveAbstractClass(string)</see> constructor.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -254,12 +253,12 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
 		/// <param name="name">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, string name)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup, string name)
 			=> CreateMock(mockBehavior, setup, new object?[] { name });
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -267,8 +266,8 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass>? setup, object?[]? constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass>? setup, object?[]? constructorParameters)
 		{
 			if (mockBehavior is not null)
 			{
@@ -285,7 +284,7 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 						setup = s => { additionalSetup.Invoke(s); originalSetup.Invoke(s); };
 					}
 				}
-				if (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass>(out object?[]? parameters))
+				if (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass>(out object?[]? parameters))
 				{
 					constructorParameters = parameters;
 				}
@@ -296,7 +295,7 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 			return CreateMockInstance(mockRegistry, constructorParameters, setup);
 		}
 
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass>? setup)
+		private static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass>? setup)
 		{
 			if (constructorParameters is null || constructorParameters.Length == 0)
 			{
@@ -360,7 +359,7 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 			}
 			else
 			{
-				throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass' that matches the {constructorParameters.Length} given parameters ({string.Join(", ", constructorParameters)}).");
+				throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass' that matches the {constructorParameters.Length} given parameters ({string.Join(", ", constructorParameters)}).");
 			}
 			static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
 			{
@@ -393,8 +392,8 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
 		/// </remarks>
 		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
-		/// <returns>A new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> that delegates to <paramref name="instance" />.</returns>
-		public global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass Wrapping(global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass instance)
+		/// <returns>A new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> that delegates to <paramref name="instance" />.</returns>
+		public global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass Wrapping(global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass instance)
 		{
 			if (mock is global::Mockolate.IMock mockInterface)
 			{
@@ -416,11 +415,11 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <remarks>
 		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
 		/// </remarks>
-		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> that this setup should apply to.</typeparam>
+		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> that this setup should apply to.</typeparam>
 		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
 		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
 		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<IMockSetupInitializationForComprehensiveAbstractClass> setup)
-			where T : global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass
+			where T : global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass
 		{
 			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
 			return behaviorAccess.Set(setup);
@@ -434,7 +433,6 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		global::Mockolate.Mock.IMockProtectedSetupForComprehensiveAbstractClass Protected { get; }
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupForComprehensiveAbstractClass, global::Mockolate.Mock.IMockProtectedSetupForComprehensiveAbstractClass, IMockSetupInitializationForComprehensiveAbstractClass
 	{
@@ -450,7 +448,7 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, propertySetup);
 				return propertySetup;
 			}
@@ -459,7 +457,7 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForComprehensiveAbstractClass.A()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_A, methodSetup);
 			return methodSetup;
 		}
@@ -471,7 +469,7 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockProtectedSetupForComprehensiveAbstractClass.P()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_P, methodSetup);
 			return methodSetup;
 		}
@@ -496,13 +494,12 @@ internal static partial class MockExtensionsForComprehensiveAbstractClass
 internal static partial class Mock
 {
 	/// <summary>
-	///     A mock implementation for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
+	///     A mock implementation for <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
 	/// </summary>
 	[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class ComprehensiveAbstractClass :
-		global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass, IMockForComprehensiveAbstractClass, IMockSetupForComprehensiveAbstractClass, IMockProtectedSetupForComprehensiveAbstractClass, global::Mockolate.MockExtensionsForComprehensiveAbstractClass.IMockSetupInitializationForComprehensiveAbstractClass, IMockVerifyForComprehensiveAbstractClass, IMockProtectedVerifyForComprehensiveAbstractClass,
+		global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass, IMockForComprehensiveAbstractClass, IMockSetupForComprehensiveAbstractClass, IMockProtectedSetupForComprehensiveAbstractClass, global::Mockolate.MockExtensionsForComprehensiveAbstractClass.IMockSetupInitializationForComprehensiveAbstractClass, IMockVerifyForComprehensiveAbstractClass, IMockProtectedVerifyForComprehensiveAbstractClass,
 		global::Mockolate.IMock
 	{
 		internal const int MemberId_V_Get = 0;
@@ -510,7 +507,7 @@ internal static partial class Mock
 		internal const int MemberId_A = 2;
 		internal const int MemberId_P = 3;
 		internal const int MemberCount = 4;
-		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_V_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V");
+		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_V_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V");
 
 		/// <summary>
 		///     Creates a <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> sized to <see cref="MemberCount">MemberCount</see> for use as the mock's interaction store.
@@ -608,7 +605,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		string global::Mockolate.IMock.ToString()
-			=> "Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass mock";
+			=> "Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass mock";
 
 		/// <inheritdoc cref="ComprehensiveAbstractClass" />
 		[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
@@ -670,20 +667,20 @@ internal static partial class Mock
 		{
 		}
 
-		#region Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass
+		#region Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V" />
 		public override int V
 		{
 			get
 			{
-				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.PropertyAccess_V_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass wraps ? () => wraps.V : () => base.V);
+				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.PropertyAccess_V_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass wraps ? () => wraps.V : () => base.V);
 			}
 			set
 			{
-				if (!this.MockRegistry.SetPropertyFast<int>(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Set, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V", value))
+				if (!this.MockRegistry.SetPropertyFast<int>(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Set, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V", value))
 				{
-					if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass wraps)
+					if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass wraps)
 					{
 						wraps.V = value;
 					}
@@ -695,7 +692,7 @@ internal static partial class Mock
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A()" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A()" />
 		public override int A()
 		{
 			global::Mockolate.Setup.ReturnMethodSetup<int>? methodSetup = null;
@@ -716,7 +713,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A"))
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A"))
 				{
 					if (s_methodSetup.Matches())
 					{
@@ -729,11 +726,11 @@ internal static partial class Mock
 			int wrappedResult = default!;
 			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			{
-				this.MockolateBuffer_A.Append("global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A");
+				this.MockolateBuffer_A.Append("global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A");
 			}
 			try
 			{
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass wraps)
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass wraps)
 				{
 					wrappedResult = wraps.A();
 					hasWrappedResult = true;
@@ -745,7 +742,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A()' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A()' was invoked without prior setup.");
 			}
 			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 			{
@@ -754,7 +751,7 @@ internal static partial class Mock
 			return methodSetup?.TryGetReturnValue(out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!);
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P()" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P()" />
 		protected override int P()
 		{
 			global::Mockolate.Setup.ReturnMethodSetup<int>? methodSetup = null;
@@ -775,7 +772,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P"))
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int>>("global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P"))
 				{
 					if (s_methodSetup.Matches())
 					{
@@ -788,7 +785,7 @@ internal static partial class Mock
 			int wrappedResult = default!;
 			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			{
-				this.MockolateBuffer_P.Append("global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P");
+				this.MockolateBuffer_P.Append("global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P");
 			}
 			try
 			{
@@ -804,7 +801,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P()' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P()' was invoked without prior setup.");
 			}
 			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 			{
@@ -813,7 +810,7 @@ internal static partial class Mock
 			return methodSetup?.TryGetReturnValue(out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!);
 		}
 
-		#endregion Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass
+		#endregion Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass
 
 		#region IMockSetupForComprehensiveAbstractClass
 
@@ -823,7 +820,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, propertySetup);
 				return propertySetup;
 			}
@@ -832,7 +829,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForComprehensiveAbstractClass.A()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_A, methodSetup);
 			return methodSetup;
 		}
@@ -844,7 +841,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockProtectedSetupForComprehensiveAbstractClass.P()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_P, methodSetup);
 			return methodSetup;
 		}
@@ -859,24 +856,23 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForComprehensiveAbstractClass, int>(this, this.MockRegistry, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Set, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForComprehensiveAbstractClass, int>(this, this.MockRegistry, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Set, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V");
 			}
 		}
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForComprehensiveAbstractClass>.IgnoreParameters IMockVerifyForComprehensiveAbstractClass.A()
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForComprehensiveAbstractClass>(this, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_A, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A", () => $"A()");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForComprehensiveAbstractClass>(this, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_A, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A", () => $"A()");
 		#endregion IMockVerifyForComprehensiveAbstractClass
 
 		#region IMockProtectedVerifyForComprehensiveAbstractClass
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForComprehensiveAbstractClass>.IgnoreParameters IMockProtectedVerifyForComprehensiveAbstractClass.P()
-			=> this.MockRegistry.VerifyMethod<IMockProtectedVerifyForComprehensiveAbstractClass>(this, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_P, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P", () => $"P()");
+			=> this.MockRegistry.VerifyMethod<IMockProtectedVerifyForComprehensiveAbstractClass>(this, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_P, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P", () => $"P()");
 		#endregion IMockProtectedVerifyForComprehensiveAbstractClass
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class VerifyMonitorComprehensiveAbstractClass(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyForComprehensiveAbstractClass
 	{
@@ -890,17 +886,16 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForComprehensiveAbstractClass, int>(this, this.MockRegistry, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Set, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForComprehensiveAbstractClass, int>(this, this.MockRegistry, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Set, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V");
 			}
 		}
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForComprehensiveAbstractClass>.IgnoreParameters IMockVerifyForComprehensiveAbstractClass.A()
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForComprehensiveAbstractClass>(this, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_A, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A", () => $"A()");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForComprehensiveAbstractClass>(this, global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_A, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A", () => $"A()");
 		#endregion IMockVerifyForComprehensiveAbstractClass
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class MockInScenarioForComprehensiveAbstractClass : global::Mockolate.Mock.IMockInScenarioForComprehensiveAbstractClass, global::Mockolate.Mock.IMockSetupForComprehensiveAbstractClass, global::Mockolate.Mock.IMockProtectedSetupForComprehensiveAbstractClass
 	{
@@ -929,7 +924,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_V_Get, _scenarioName, propertySetup);
 				return propertySetup;
 			}
@@ -938,7 +933,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockSetupForComprehensiveAbstractClass.A()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_A, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -950,7 +945,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<int> global::Mockolate.Mock.IMockProtectedSetupForComprehensiveAbstractClass.P()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.ComprehensiveAbstractClass.MemberId_P, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -959,7 +954,7 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>, reached through <c>.Mock</c> on the mocked instance.
+	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>, reached through <c>.Mock</c> on the mocked instance.
 	/// </summary>
 	/// <remarks>
 	///     Groups every operation that acts on the mock rather than on the mocked subject: setups, verifications, event raising, scenarios and monitoring.
@@ -967,7 +962,7 @@ internal static partial class Mock
 	internal interface IMockForComprehensiveAbstractClass
 	{
 		/// <summary>
-		///     Configures how members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> respond when invoked.
+		///     Configures how members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> respond when invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.<br />
@@ -976,7 +971,7 @@ internal static partial class Mock
 		IMockSetupForComprehensiveAbstractClass Setup { get; }
 
 		/// <summary>
-		///     Configures how <see langword="protected" /> virtual members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> respond when invoked.
+		///     Configures how <see langword="protected" /> virtual members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> respond when invoked.
 		/// </summary>
 		/// <remarks>
 		///     Only members declared as <see langword="protected" /> (or <see langword="protected" /> <see langword="internal" />) on the mocked class appear here. All setup chain operators (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, sequences, <c>.For</c>/<c>.Only</c>/<c>.Forever</c>, ...) work identically to <see cref="Setup">Setup</see>.
@@ -984,7 +979,7 @@ internal static partial class Mock
 		IMockProtectedSetupForComprehensiveAbstractClass SetupProtected { get; }
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> so that additional setups can be registered for that scenario.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> so that additional setups can be registered for that scenario.
 		/// </summary>
 		/// <remarks>
 		///     Scenarios let you define per-state behavior. Setups registered inside the returned <c>IMockInScenarioFor...</c> scope only apply while the mock's current scenario matches <paramref name="scenario" />; switch scenarios with <see cref="TransitionTo">TransitionTo</see>.
@@ -994,7 +989,7 @@ internal static partial class Mock
 		IMockInScenarioForComprehensiveAbstractClass InScenario(string scenario);
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
 		/// </summary>
 		/// <remarks>
 		///     Equivalent to <c>InScenario(scenario)</c> followed by the setup callback, but returns the original <c>IMockFor...</c> accessor so it chains nicely at mock-creation time.
@@ -1005,7 +1000,7 @@ internal static partial class Mock
 		IMockForComprehensiveAbstractClass InScenario(string scenario, global::System.Action<IMockInScenarioForComprehensiveAbstractClass> setup);
 
 		/// <summary>
-		///     Switches the active scenario of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> to <paramref name="scenario" />.
+		///     Switches the active scenario of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> to <paramref name="scenario" />.
 		/// </summary>
 		/// <remarks>
 		///     After the transition, setups registered via <see cref="InScenario(string)">InScenario(string)</see> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.
@@ -1015,7 +1010,7 @@ internal static partial class Mock
 		IMockForComprehensiveAbstractClass TransitionTo(string scenario);
 
 		/// <summary>
-		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> were invoked.
+		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> were invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never()</c>, <c>Once()</c>, <c>Twice()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce()</c>/<c>AtLeastTwice()</c>, <c>AtMost(n)</c>/<c>AtMostOnce()</c>/<c>AtMostTwice()</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.<br />
@@ -1025,7 +1020,7 @@ internal static partial class Mock
 		IMockVerifyForComprehensiveAbstractClass Verify { get; }
 
 		/// <summary>
-		///     Asserts how often, and in which order, <see langword="protected" /> members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> were invoked.
+		///     Asserts how often, and in which order, <see langword="protected" /> members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> were invoked.
 		/// </summary>
 		/// <remarks>
 		///     Same terminators and modifiers as <see cref="Verify">Verify</see> (<c>Once()</c>, <c>Exactly(n)</c>, <c>Within(...)</c>, <c>Then(...)</c>, ...); applies to <see langword="protected" /> members and events instead of public ones.
@@ -1079,33 +1074,33 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
+	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
 	/// </summary>
 	internal interface IMockInScenarioForComprehensiveAbstractClass
 	{
 		/// <summary>
-		///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> within the scenario scope.
+		///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> within the scenario scope.
 		/// </summary>
 		IMockSetupForComprehensiveAbstractClass Setup { get; }
 
 		/// <summary>
-		///     Set up protected members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> within the scenario scope.
+		///     Set up protected members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> within the scenario scope.
 		/// </summary>
 		IMockProtectedSetupForComprehensiveAbstractClass SetupProtected { get; }
 	}
 
 	/// <summary>
-	///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
+	///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
 	/// </summary>
-	internal interface IMockSetupForComprehensiveAbstractClass : global::Mockolate.Setup.IMockSetup<global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass>
+	internal interface IMockSetupForComprehensiveAbstractClass : global::Mockolate.Setup.IMockSetup<global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass>
 	{
 		/// <summary>
-		///     Setup for the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V">V</see>.
+		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V">V</see>.
 		/// </summary>
 		global::Mockolate.Setup.PropertySetup<int> V { get; }
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A()">A()</see>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A()">A()</see>.
 		/// </summary>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetup<int> A();
@@ -1113,12 +1108,12 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Set up protected members for the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
+	///     Set up protected members for the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
 	/// </summary>
 	internal interface IMockProtectedSetupForComprehensiveAbstractClass
 	{
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P()">P()</see>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P()">P()</see>.
 		/// </summary>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetup<int> P();
@@ -1126,29 +1121,29 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Verify interactions with the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
+	///     Verify interactions with the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
 	/// </summary>
-	internal interface IMockVerifyForComprehensiveAbstractClass : global::Mockolate.Verify.IMockVerify<global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass>
+	internal interface IMockVerifyForComprehensiveAbstractClass : global::Mockolate.Verify.IMockVerify<global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass>
 	{
 		/// <summary>
-		///     Verify interactions with the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.V">V</see>.
+		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.V">V</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForComprehensiveAbstractClass, int> V { get; }
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.A()">A()</see>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.A()">A()</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForComprehensiveAbstractClass>.IgnoreParameters A();
 
 	}
 
 	/// <summary>
-	///     Verify protected interactions with the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
+	///     Verify protected interactions with the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see>.
 	/// </summary>
 	internal interface IMockProtectedVerifyForComprehensiveAbstractClass
 	{
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.ComprehensiveAbstractClass.P()">P()</see>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass.P()">P()</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForComprehensiveAbstractClass>.IgnoreParameters P();
 

@@ -1,5 +1,5 @@
 #if NET10_0_OR_GREATER
-namespace Mockolate.ExampleTests.GeneratorCoverage;
+namespace Mockolate.Tests.GeneratorCoverage;
 
 public readonly ref struct Packet(int id)
 {

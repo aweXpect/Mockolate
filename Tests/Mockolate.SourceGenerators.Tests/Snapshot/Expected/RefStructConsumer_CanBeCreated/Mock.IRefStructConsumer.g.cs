@@ -11,20 +11,19 @@
 namespace Mockolate;
 
 /// <summary>
-///     Mock extensions for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class MockExtensionsForIRefStructConsumer
 {
 	/// <inheritdoc cref="MockExtensionsForIRefStructConsumer" />
-	extension(global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer mock)
+	extension(global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer mock)
 	{
 		/// <summary>
-		///     Gets the mock accessor for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> - the entry point for configuring setups, verifying interactions and raising events.
+		///     Gets the mock accessor for <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> - the entry point for configuring setups, verifying interactions and raising events.
 		/// </summary>
 		/// <remarks>
-		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
+		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
 		///     Through it you can:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
@@ -34,7 +33,7 @@ internal static partial class MockExtensionsForIRefStructConsumer
 		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
 		///     </list>
 		/// </remarks>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</exception>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</exception>
 		public global::Mockolate.Mock.IMockForIRefStructConsumer Mock
 		{
 			get
@@ -48,10 +47,10 @@ internal static partial class MockExtensionsForIRefStructConsumer
 		}
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
 		/// </summary>
 		/// <remarks>
-		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
+		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
 		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
@@ -59,43 +58,43 @@ internal static partial class MockExtensionsForIRefStructConsumer
 		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
 		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
 		/// </remarks>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer CreateMock()
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer CreateMock()
 			=> CreateMock(null, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer> setup)
 			=> CreateMock(null, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the given <paramref name="mockBehavior" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the given <paramref name="mockBehavior" />.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer CreateMock(global::Mockolate.MockBehavior mockBehavior)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer CreateMock(global::Mockolate.MockBehavior mockBehavior)
 			=> CreateMock(mockBehavior, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer> setup)
 			=> CreateMock(mockBehavior, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -103,8 +102,8 @@ internal static partial class MockExtensionsForIRefStructConsumer
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer>? setup, object?[]? constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.</returns>
+		private static global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer>? setup, object?[]? constructorParameters)
 		{
 			if (mockBehavior is not null)
 			{
@@ -128,7 +127,7 @@ internal static partial class MockExtensionsForIRefStructConsumer
 			return CreateMockInstance(mockRegistry, constructorParameters, setup);
 		}
 
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer>? setup)
+		private static global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer>? setup)
 		{
 			var value = new global::Mockolate.Mock.IRefStructConsumer(mockRegistry);
 			if (setup is not null)
@@ -144,8 +143,8 @@ internal static partial class MockExtensionsForIRefStructConsumer
 		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
 		/// </remarks>
 		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
-		/// <returns>A new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> that delegates to <paramref name="instance" />.</returns>
-		public global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer Wrapping(global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer instance)
+		/// <returns>A new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> that delegates to <paramref name="instance" />.</returns>
+		public global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer Wrapping(global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer instance)
 		{
 			if (mock is global::Mockolate.IMock mockInterface)
 			{
@@ -167,11 +166,11 @@ internal static partial class MockExtensionsForIRefStructConsumer
 		/// <remarks>
 		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
 		/// </remarks>
-		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> that this setup should apply to.</typeparam>
+		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> that this setup should apply to.</typeparam>
 		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
 		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
 		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<global::Mockolate.Mock.IMockSetupForIRefStructConsumer> setup)
-			where T : global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer
+			where T : global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer
 		{
 			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
 			return behaviorAccess.Set(setup);
@@ -195,17 +194,16 @@ internal static partial class MockExtensionsForIRefStructConsumer
 internal static partial class Mock
 {
 	/// <summary>
-	///     A mock implementation for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
+	///     A mock implementation for <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
 	/// </summary>
 	[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class IRefStructConsumer :
-		global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer, IMockForIRefStructConsumer, IMockSetupForIRefStructConsumer, IMockVerifyForIRefStructConsumer,
+		global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer, IMockForIRefStructConsumer, IMockSetupForIRefStructConsumer, IMockVerifyForIRefStructConsumer,
 		global::Mockolate.IMock
 	{
-		internal const int MemberId_Indexer_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_Get = 0;
-		internal const int MemberId_Indexer_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_Set = 1;
+		internal const int MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Get = 0;
+		internal const int MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Set = 1;
 		internal const int MemberId_Consume5 = 2;
 		internal const int MemberCount = 3;
 
@@ -276,7 +274,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		string global::Mockolate.IMock.ToString()
-			=> "Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer mock";
+			=> "Mockolate.Tests.GeneratorCoverage.IRefStructConsumer mock";
 
 		/// <inheritdoc cref="IRefStructConsumer" />
 		public IRefStructConsumer(global::Mockolate.MockRegistry mockRegistry)
@@ -290,16 +288,16 @@ internal static partial class Mock
 		{
 		}
 
-		#region Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer
+		#region Mockolate.Tests.GeneratorCoverage.IRefStructConsumer
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.this[global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet]" />
-		public string this[global::Mockolate.ExampleTests.GeneratorCoverage.Packet k1, int k2, global::Mockolate.ExampleTests.GeneratorCoverage.Packet k3, int k4, global::Mockolate.ExampleTests.GeneratorCoverage.Packet k5]
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.this[global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet]" />
+		public string this[global::Mockolate.Tests.GeneratorCoverage.Packet k1, int k2, global::Mockolate.Tests.GeneratorCoverage.Packet k3, int k4, global::Mockolate.Tests.GeneratorCoverage.Packet k5]
 		{
 			get
 			{
 #if NET9_0_OR_GREATER
-				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.get_Item", "k1", "k2", "k3", "k4", "k5"));
-				foreach (global::Mockolate.Setup.RefStructIndexerGetterSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructIndexerGetterSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet>>("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.get_Item"))
+				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.get_Item", "k1", "k2", "k3", "k4", "k5"));
+				foreach (global::Mockolate.Setup.RefStructIndexerGetterSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructIndexerGetterSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.get_Item"))
 				{
 					if (!setup.Matches(k1, k2, k3, k4, k5))
 					{
@@ -316,7 +314,7 @@ internal static partial class Mock
 				}
 				if (this.MockRegistry.Behavior.ThrowWhenNotSetup)
 				{
-					throw new global::Mockolate.Exceptions.MockNotSetupException("The indexer 'global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.this[Packet, int, Packet, int, Packet]' was invoked without prior setup.");
+					throw new global::Mockolate.Exceptions.MockNotSetupException("The indexer 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.this[Packet, int, Packet, int, Packet]' was invoked without prior setup.");
 				}
 				return this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!);
 #else
@@ -327,8 +325,8 @@ internal static partial class Mock
 			set
 			{
 #if NET9_0_OR_GREATER
-				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.set_Item", "k1", "k2", "k3", "k4", "k5", "value"));
-				foreach (global::Mockolate.Setup.RefStructIndexerSetterSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructIndexerSetterSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet>>("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.set_Item"))
+				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.set_Item", "k1", "k2", "k3", "k4", "k5", "value"));
+				foreach (global::Mockolate.Setup.RefStructIndexerSetterSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructIndexerSetterSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.set_Item"))
 				{
 					if (!setup.Matches(k1, k2, k3, k4, k5))
 					{
@@ -345,13 +343,13 @@ internal static partial class Mock
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.Consume5(global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet)" />
-		public void Consume5(global::Mockolate.ExampleTests.GeneratorCoverage.Packet p1, global::Mockolate.ExampleTests.GeneratorCoverage.Packet p2, global::Mockolate.ExampleTests.GeneratorCoverage.Packet p3, global::Mockolate.ExampleTests.GeneratorCoverage.Packet p4, global::Mockolate.ExampleTests.GeneratorCoverage.Packet p5)
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5(global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet)" />
+		public void Consume5(global::Mockolate.Tests.GeneratorCoverage.Packet p1, global::Mockolate.Tests.GeneratorCoverage.Packet p2, global::Mockolate.Tests.GeneratorCoverage.Packet p3, global::Mockolate.Tests.GeneratorCoverage.Packet p4, global::Mockolate.Tests.GeneratorCoverage.Packet p5)
 		{
 #if NET9_0_OR_GREATER
-			this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.Consume5", "p1", "p2", "p3", "p4", "p5"));
+			this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5", "p1", "p2", "p3", "p4", "p5"));
 			bool matched = false;
-			foreach (global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet>>("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.Consume5"))
+			foreach (global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5"))
 			{
 				if (!setup.Matches(p1, p2, p3, p4, p5))
 				{
@@ -364,7 +362,7 @@ internal static partial class Mock
 			}
 			if (!matched && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.Consume5(Packet, Packet, Packet, Packet, Packet)' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5(Packet, Packet, Packet, Packet, Packet)' was invoked without prior setup.");
 			}
 #else
 #error Mockolate: methods with ref-struct parameters require .NET 9 or later (uses the 'allows ref struct' anti-constraint).
@@ -372,19 +370,19 @@ internal static partial class Mock
 #endif
 		}
 
-		#endregion Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer
+		#endregion Mockolate.Tests.GeneratorCoverage.IRefStructConsumer
 
 		#region IMockSetupForIRefStructConsumer
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructIndexerSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.this[global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter1, global::Mockolate.Parameters.IParameter<int>? parameter2, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter3, global::Mockolate.Parameters.IParameter<int>? parameter4, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter5]
+		global::Mockolate.Setup.IRefStructIndexerSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.this[global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter1, global::Mockolate.Parameters.IParameter<int>? parameter2, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter3, global::Mockolate.Parameters.IParameter<int>? parameter4, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter5]
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.RefStructIndexerSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet>("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.get_Item", "global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.set_Item", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)parameter1, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)parameter3, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)parameter5);
-				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_Get, indexerSetup.Getter);
-				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_Set, indexerSetup.Setter);
+				var indexerSetup = new global::Mockolate.Setup.RefStructIndexerSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.get_Item", "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.set_Item", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)parameter1, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)parameter3, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)parameter5);
+				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Get, indexerSetup.Getter);
+				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Set, indexerSetup.Setter);
 				return indexerSetup;
 			}
 		}
@@ -392,9 +390,9 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Consume5(global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p1, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p2, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p3, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p4, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p5)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Consume5(global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p1, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p2, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p3, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p4, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p5)
 		{
-			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet>("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.Consume5", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p1, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p3, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p5);
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p1, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p3, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p5);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Consume5, methodSetup);
 			return methodSetup;
 		}
@@ -407,7 +405,6 @@ internal static partial class Mock
 		#endregion IMockVerifyForIRefStructConsumer
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class VerifyMonitorIRefStructConsumer(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyForIRefStructConsumer
 	{
@@ -418,7 +415,6 @@ internal static partial class Mock
 		#endregion IMockVerifyForIRefStructConsumer
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class MockInScenarioForIRefStructConsumer : global::Mockolate.Mock.IMockInScenarioForIRefStructConsumer, global::Mockolate.Mock.IMockSetupForIRefStructConsumer
 	{
@@ -439,13 +435,13 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructIndexerSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.this[global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter1, global::Mockolate.Parameters.IParameter<int>? parameter2, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter3, global::Mockolate.Parameters.IParameter<int>? parameter4, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter5]
+		global::Mockolate.Setup.IRefStructIndexerSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.this[global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter1, global::Mockolate.Parameters.IParameter<int>? parameter2, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter3, global::Mockolate.Parameters.IParameter<int>? parameter4, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter5]
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.RefStructIndexerSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet>("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.get_Item", "global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.set_Item", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)parameter1, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)parameter3, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)parameter5);
-				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_Get, _scenarioName, indexerSetup.Getter);
-				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_int_global__Mockolate_ExampleTests_GeneratorCoverage_Packet_Set, _scenarioName, indexerSetup.Setter);
+				var indexerSetup = new global::Mockolate.Setup.RefStructIndexerSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.get_Item", "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.set_Item", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)parameter1, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)parameter3, (global::Mockolate.Parameters.IParameterMatch<int>?)parameter4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)parameter5);
+				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Get, _scenarioName, indexerSetup.Getter);
+				this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Set, _scenarioName, indexerSetup.Setter);
 				return indexerSetup;
 			}
 		}
@@ -453,9 +449,9 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Consume5(global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p1, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p2, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p3, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p4, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p5)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Consume5(global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p1, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p2, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p3, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p4, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p5)
 		{
-			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet>("global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.Consume5", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p1, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p3, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>?)p5);
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p1, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p3, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p5);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Consume5, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -465,7 +461,7 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>, reached through <c>.Mock</c> on the mocked instance.
+	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>, reached through <c>.Mock</c> on the mocked instance.
 	/// </summary>
 	/// <remarks>
 	///     Groups every operation that acts on the mock rather than on the mocked subject: setups, verifications, event raising, scenarios and monitoring.
@@ -473,7 +469,7 @@ internal static partial class Mock
 	internal interface IMockForIRefStructConsumer
 	{
 		/// <summary>
-		///     Configures how members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> respond when invoked.
+		///     Configures how members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> respond when invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.<br />
@@ -482,7 +478,7 @@ internal static partial class Mock
 		IMockSetupForIRefStructConsumer Setup { get; }
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> so that additional setups can be registered for that scenario.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> so that additional setups can be registered for that scenario.
 		/// </summary>
 		/// <remarks>
 		///     Scenarios let you define per-state behavior. Setups registered inside the returned <c>IMockInScenarioFor...</c> scope only apply while the mock's current scenario matches <paramref name="scenario" />; switch scenarios with <see cref="TransitionTo">TransitionTo</see>.
@@ -492,7 +488,7 @@ internal static partial class Mock
 		IMockInScenarioForIRefStructConsumer InScenario(string scenario);
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
 		/// </summary>
 		/// <remarks>
 		///     Equivalent to <c>InScenario(scenario)</c> followed by the setup callback, but returns the original <c>IMockFor...</c> accessor so it chains nicely at mock-creation time.
@@ -503,7 +499,7 @@ internal static partial class Mock
 		IMockForIRefStructConsumer InScenario(string scenario, global::System.Action<IMockInScenarioForIRefStructConsumer> setup);
 
 		/// <summary>
-		///     Switches the active scenario of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> to <paramref name="scenario" />.
+		///     Switches the active scenario of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> to <paramref name="scenario" />.
 		/// </summary>
 		/// <remarks>
 		///     After the transition, setups registered via <see cref="InScenario(string)">InScenario(string)</see> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.
@@ -513,7 +509,7 @@ internal static partial class Mock
 		IMockForIRefStructConsumer TransitionTo(string scenario);
 
 		/// <summary>
-		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> were invoked.
+		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> were invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never()</c>, <c>Once()</c>, <c>Twice()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce()</c>/<c>AtLeastTwice()</c>, <c>AtMost(n)</c>/<c>AtMostOnce()</c>/<c>AtMostTwice()</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.<br />
@@ -569,41 +565,41 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
+	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
 	/// </summary>
 	internal interface IMockInScenarioForIRefStructConsumer
 	{
 		/// <summary>
-		///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> within the scenario scope.
+		///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see> within the scenario scope.
 		/// </summary>
 		IMockSetupForIRefStructConsumer Setup { get; }
 	}
 
 	/// <summary>
-	///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
+	///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
 	/// </summary>
-	internal interface IMockSetupForIRefStructConsumer : global::Mockolate.Setup.IMockSetup<global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer>
+	internal interface IMockSetupForIRefStructConsumer : global::Mockolate.Setup.IMockSetup<global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer>
 	{
 #if NET9_0_OR_GREATER
 		/// <summary>
-		///     Setup for the ref-struct-keyed get+set indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.this[global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet]">Packet]</see> — combined getter/setter facade.
+		///     Setup for the ref-struct-keyed get+set indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.this[global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet]">Packet]</see> — combined getter/setter facade.
 		/// </summary>
-		global::Mockolate.Setup.IRefStructIndexerSetup<string, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, int, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> this[global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter1, global::Mockolate.Parameters.IParameter<int>? parameter2, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter3, global::Mockolate.Parameters.IParameter<int>? parameter4, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? parameter5] { get; }
+		global::Mockolate.Setup.IRefStructIndexerSetup<string, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet, int, global::Mockolate.Tests.GeneratorCoverage.Packet> this[global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter1, global::Mockolate.Parameters.IParameter<int>? parameter2, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter3, global::Mockolate.Parameters.IParameter<int>? parameter4, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? parameter5] { get; }
 #endif
 
 #if NET9_0_OR_GREATER
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer.Consume5(global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet)">Consume5(Packet, Packet, Packet, Packet, Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5(global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet)">Consume5(Packet, Packet, Packet, Packet, Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
 		/// </summary>
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet, global::Mockolate.ExampleTests.GeneratorCoverage.Packet> Consume5(global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p1, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p2, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p3, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p4, global::Mockolate.Parameters.IParameter<global::Mockolate.ExampleTests.GeneratorCoverage.Packet>? p5);
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet> Consume5(global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p1, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p2, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p3, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p4, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p5);
 #endif
 
 	}
 
 	/// <summary>
-	///     Verify interactions with the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
+	///     Verify interactions with the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer">IRefStructConsumer</see>.
 	/// </summary>
-	internal interface IMockVerifyForIRefStructConsumer : global::Mockolate.Verify.IMockVerify<global::Mockolate.ExampleTests.GeneratorCoverage.IRefStructConsumer>
+	internal interface IMockVerifyForIRefStructConsumer : global::Mockolate.Verify.IMockVerify<global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer>
 	{
 	}
 }

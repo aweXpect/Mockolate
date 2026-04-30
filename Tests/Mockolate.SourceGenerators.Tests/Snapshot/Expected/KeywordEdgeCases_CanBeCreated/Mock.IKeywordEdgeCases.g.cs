@@ -11,20 +11,19 @@
 namespace Mockolate;
 
 /// <summary>
-///     Mock extensions for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static partial class MockExtensionsForIKeywordEdgeCases
 {
 	/// <inheritdoc cref="MockExtensionsForIKeywordEdgeCases" />
-	extension(global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases mock)
+	extension(global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases mock)
 	{
 		/// <summary>
-		///     Gets the mock accessor for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> - the entry point for configuring setups, verifying interactions and raising events.
+		///     Gets the mock accessor for <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> - the entry point for configuring setups, verifying interactions and raising events.
 		/// </summary>
 		/// <remarks>
-		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
+		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
 		///     Through it you can:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
@@ -35,7 +34,7 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
 		///     </list>
 		/// </remarks>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</exception>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</exception>
 		public global::Mockolate.Mock.IMockForIKeywordEdgeCases Mock
 		{
 			get
@@ -49,10 +48,10 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 		}
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
 		/// </summary>
 		/// <remarks>
-		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
+		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
 		///     <list type="bullet"><br />
 		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
 		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
@@ -61,43 +60,43 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
 		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
 		/// </remarks>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases CreateMock()
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases CreateMock()
 			=> CreateMock(null, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases> setup)
 			=> CreateMock(null, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the given <paramref name="mockBehavior" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the given <paramref name="mockBehavior" />.
 		/// </summary>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::Mockolate.MockBehavior mockBehavior)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::Mockolate.MockBehavior mockBehavior)
 			=> CreateMock(mockBehavior, null, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
 		/// </remarks>
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
-		public static global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases> setup)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases> setup)
 			=> CreateMock(mockBehavior, setup, (object?[]?)null);
 
 		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
 		/// </summary>
 		/// <remarks>
 		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
@@ -105,8 +104,8 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
 		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
 		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases>? setup, object?[]? constructorParameters)
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.</returns>
+		private static global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases>? setup, object?[]? constructorParameters)
 		{
 			if (mockBehavior is not null)
 			{
@@ -130,7 +129,7 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 			return CreateMockInstance(mockRegistry, constructorParameters, setup);
 		}
 
-		private static global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases>? setup)
+		private static global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases>? setup)
 		{
 			var value = new global::Mockolate.Mock.IKeywordEdgeCases(mockRegistry);
 			if (setup is not null)
@@ -146,8 +145,8 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
 		/// </remarks>
 		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
-		/// <returns>A new mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> that delegates to <paramref name="instance" />.</returns>
-		public global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases Wrapping(global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases instance)
+		/// <returns>A new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> that delegates to <paramref name="instance" />.</returns>
+		public global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases Wrapping(global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases instance)
 		{
 			if (mock is global::Mockolate.IMock mockInterface)
 			{
@@ -169,11 +168,11 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 		/// <remarks>
 		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
 		/// </remarks>
-		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> that this setup should apply to.</typeparam>
+		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> that this setup should apply to.</typeparam>
 		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
 		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
 		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases> setup)
-			where T : global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases
+			where T : global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases
 		{
 			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
 			return behaviorAccess.Set(setup);
@@ -197,13 +196,12 @@ internal static partial class MockExtensionsForIKeywordEdgeCases
 internal static partial class Mock
 {
 	/// <summary>
-	///     A mock implementation for <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
+	///     A mock implementation for <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
 	/// </summary>
 	[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class IKeywordEdgeCases :
-		global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases, IMockForIKeywordEdgeCases, IMockSetupForIKeywordEdgeCases, IMockRaiseOnIKeywordEdgeCases, IMockVerifyForIKeywordEdgeCases,
+		global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases, IMockForIKeywordEdgeCases, IMockSetupForIKeywordEdgeCases, IMockRaiseOnIKeywordEdgeCases, IMockVerifyForIKeywordEdgeCases,
 		global::Mockolate.IMock
 	{
 		internal const int MemberId__class_Get = 0;
@@ -216,7 +214,7 @@ internal static partial class Mock
 		internal const int MemberId__if = 7;
 		internal const int MemberId__void__class_ = 8;
 		internal const int MemberCount = 9;
-		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess__class_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class");
+		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess__class_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
 
 		/// <summary>
 		///     Creates a <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> sized to <see cref="MemberCount">MemberCount</see> for use as the mock's interaction store.
@@ -309,7 +307,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		string global::Mockolate.IMock.ToString()
-			=> "Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases mock";
+			=> "Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases mock";
 
 		/// <inheritdoc cref="IKeywordEdgeCases" />
 		public IKeywordEdgeCases(global::Mockolate.MockRegistry mockRegistry)
@@ -323,20 +321,20 @@ internal static partial class Mock
 		{
 		}
 
-		#region Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases
+		#region Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases
 
-		private global::System.EventHandler? _mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IKeywordEdgeCases_event;
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event" />
+		private global::System.EventHandler? _mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IKeywordEdgeCases_event;
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event" />
 		public event global::System.EventHandler @event
 		{
 			add
 			{
 				if (value is not null)
 				{
-					this.MockRegistry.AddEvent(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event", value.Target, value.Method);
+					this.MockRegistry.AddEvent(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event", value.Target, value.Method);
 				}
-				this._mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IKeywordEdgeCases_event += value;
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps)
+				this._mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IKeywordEdgeCases_event += value;
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps)
 				{
 					wraps.@event += value;
 				}
@@ -345,26 +343,26 @@ internal static partial class Mock
 			{
 				if (value is not null)
 				{
-					this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Unsubscribe, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event", value.Target, value.Method);
+					this.MockRegistry.RemoveEvent(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Unsubscribe, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event", value.Target, value.Method);
 				}
-				this._mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IKeywordEdgeCases_event -= value;
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps)
+				this._mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IKeywordEdgeCases_event -= value;
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps)
 				{
 					wraps.@event -= value;
 				}
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class" />
 		public int @class
 		{
 			get
 			{
-				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.PropertyAccess__class_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps ? null : () => wraps.@class);
+				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.PropertyAccess__class_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps ? null : () => wraps.@class);
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]" />
 		public string this[int @params, string @void]
 		{
 			get
@@ -391,7 +389,7 @@ internal static partial class Mock
 				}
 				global::Mockolate.Interactions.IndexerGetterAccess<int, string> access = new(@params, @void);
 				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<string, int, string>>(access);
-				if (this.MockRegistry.Wraps is not global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps)
+				if (this.MockRegistry.Wraps is not global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps)
 				{
 					return setup is null
 						? this.MockRegistry.GetIndexerFallback<string>(access, 0)
@@ -425,14 +423,14 @@ internal static partial class Mock
 				global::Mockolate.Interactions.IndexerSetterAccess<int, string, string> access = new(@params, @void, value);
 				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<string, int, string>>(access);
 				this.MockRegistry.ApplyIndexerSetter(access, setup, value, 0);
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps)
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps)
 				{
 					wraps[@params, @void] = value;
 				}
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return()" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return()" />
 		public string @return()
 		{
 			global::Mockolate.Setup.ReturnMethodSetup<string>? methodSetup = null;
@@ -453,7 +451,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.ReturnMethodSetup<string> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<string>>("global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return"))
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<string> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<string>>("global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return"))
 				{
 					if (s_methodSetup.Matches())
 					{
@@ -466,11 +464,11 @@ internal static partial class Mock
 			string wrappedResult = default!;
 			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			{
-				this.MockolateBuffer__return.Append("global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return");
+				this.MockolateBuffer__return.Append("global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return");
 			}
 			try
 			{
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps)
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps)
 				{
 					wrappedResult = wraps.@return();
 					hasWrappedResult = true;
@@ -482,7 +480,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return()' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return()' was invoked without prior setup.");
 			}
 			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 			{
@@ -491,7 +489,7 @@ internal static partial class Mock
 			return methodSetup?.TryGetReturnValue(out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(string)!);
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)" />
 		public void @if(int @params)
 		{
 			global::Mockolate.Setup.VoidMethodSetup<int>? methodSetup = null;
@@ -512,7 +510,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.VoidMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int>>("global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if"))
+				foreach (global::Mockolate.Setup.VoidMethodSetup<int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<int>>("global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if"))
 				{
 					if (s_methodSetup.Matches(@params))
 					{
@@ -524,11 +522,11 @@ internal static partial class Mock
 			bool hasWrappedResult = false;
 			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			{
-				this.MockolateBuffer__if.Append("global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", @params);
+				this.MockolateBuffer__if.Append("global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", @params);
 			}
 			try
 			{
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps)
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps)
 				{
 					wraps.@if(@params);
 					hasWrappedResult = true;
@@ -540,18 +538,18 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)' was invoked without prior setup.");
 			}
 		}
 
-		/// <inheritdoc cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)" />
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)" />
 		public int @void<@class>(int @ref)
 		{
 			global::Mockolate.Setup.ReturnMethodSetup<int, int>? methodSetup = null;
 			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
 			{
 				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_);
-				string name_methodSetup = $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>";
+				string name_methodSetup = $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>";
 				if (snapshot_methodSetup is not null)
 				{
 					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
@@ -566,7 +564,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null)
 			{
-				foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>($"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>"))
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int>>($"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>"))
 				{
 					if (s_methodSetup.Matches(@ref))
 					{
@@ -579,11 +577,11 @@ internal static partial class Mock
 			int wrappedResult = default!;
 			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
 			{
-				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>($"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", @ref));
+				this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.MethodInvocation<int>($"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", @ref));
 			}
 			try
 			{
-				if (this.MockRegistry.Wraps is global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases wraps)
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases wraps)
 				{
 					wrappedResult = wraps.@void<@class>(@ref);
 					hasWrappedResult = true;
@@ -595,7 +593,7 @@ internal static partial class Mock
 			}
 			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
 			{
-				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<@class>(int)' was invoked without prior setup.");
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<@class>(int)' was invoked without prior setup.");
 			}
 			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
 			{
@@ -604,7 +602,7 @@ internal static partial class Mock
 			return methodSetup?.TryGetReturnValue(@ref, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, @ref);
 		}
 
-		#endregion Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases
+		#endregion Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases
 
 		#region IMockSetupForIKeywordEdgeCases
 
@@ -614,7 +612,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, propertySetup);
 				return propertySetup;
 			}
@@ -626,7 +624,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event");
+				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event");
 				this.MockRegistry.SetupEvent(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, eventSetup);
 				return eventSetup;
 			}
@@ -683,7 +681,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<string> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@return()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<string>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<string>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return, methodSetup);
 			return methodSetup;
 		}
@@ -691,7 +689,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameters parameters)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameters(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", parameters, "@params");
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", parameters, "@params");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, methodSetup);
 			return methodSetup;
 		}
@@ -699,7 +697,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameter<int>? @params)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", CovariantParameterAdapter<int>.Wrap(@params ?? global::Mockolate.It.IsNull<int>("null")));
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", CovariantParameterAdapter<int>.Wrap(@params ?? global::Mockolate.It.IsNull<int>("null")));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, methodSetup);
 			return methodSetup;
 		}
@@ -707,7 +705,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(int @params)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@params, ((global::System.IFormattable)@params).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@params, ((global::System.IFormattable)@params).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, methodSetup);
 			return methodSetup;
 		}
@@ -716,7 +714,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameters parameters)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameters(MockRegistry, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", parameters, "@ref");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameters(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", parameters, "@ref");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, methodSetup);
 			return methodSetup;
 		}
@@ -725,7 +723,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameter<int>? @ref)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", CovariantParameterAdapter<int>.Wrap(@ref ?? global::Mockolate.It.IsNull<int>("null")));
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", CovariantParameterAdapter<int>.Wrap(@ref ?? global::Mockolate.It.IsNull<int>("null")));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, methodSetup);
 			return methodSetup;
 		}
@@ -734,7 +732,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(int @ref)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@ref, ((global::System.IFormattable)@ref).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@ref, ((global::System.IFormattable)@ref).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, methodSetup);
 			return methodSetup;
 		}
@@ -746,14 +744,14 @@ internal static partial class Mock
 		/// <inheritdoc />
 		void IMockRaiseOnIKeywordEdgeCases.@event(object? sender, global::System.EventArgs e)
 		{
-			this._mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IKeywordEdgeCases_event?.Invoke(sender, e);
+			this._mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IKeywordEdgeCases_event?.Invoke(sender, e);
 		}
 
 		/// <inheritdoc />
 		void IMockRaiseOnIKeywordEdgeCases.@event(global::Mockolate.Parameters.IDefaultEventParameters parameters)
 		{
 			global::Mockolate.MockBehavior mockBehavior = this.MockRegistry.Behavior;
-			this._mockolateEvent_global__Mockolate_ExampleTests_GeneratorCoverage_IKeywordEdgeCases_event?.Invoke(mockBehavior.DefaultValue.Generate(default(object)), mockBehavior.DefaultValue.Generate(default(global::System.EventArgs)));
+			this._mockolateEvent_global__Mockolate_Tests_GeneratorCoverage_IKeywordEdgeCases_event?.Invoke(mockBehavior.DefaultValue.Generate(default(object)), mockBehavior.DefaultValue.Generate(default(global::System.EventArgs)));
 		}
 
 		#endregion IMockRaiseOnIKeywordEdgeCases
@@ -766,7 +764,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Set, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Set, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
 			}
 		}
 
@@ -824,10 +822,10 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters IMockVerifyForIKeywordEdgeCases.@return()
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return", () => $"@return()");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return", () => $"@return()");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameters parameters)
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => parameters switch
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => parameters switch
 				{
 					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
 					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("@params", __i.Parameter1)]),
@@ -835,15 +833,15 @@ internal static partial class Mock
 				}, () => $"@if({parameters})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameter<int>? @params)
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, int>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", @params is null ? (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(default!) : CovariantParameterAdapter<int>.Wrap(@params), () => $"@if({@params})");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, int>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", @params is null ? (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(default!) : CovariantParameterAdapter<int>.Wrap(@params), () => $"@if({@params})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters IMockVerifyForIKeywordEdgeCases.@if(int @params)
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => 
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => 
 				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(@params, __i.Parameter1)), () => $"@if({@params})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameters parameters)
 			where @class : default
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => parameters switch
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => parameters switch
 				{
 					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
 					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("@ref", __i.Parameter1)]),
@@ -852,29 +850,28 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameter<int>? @ref)
 			where @class : default
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
 				(@ref is not null ? CovariantParameterAdapter<int>.Wrap(@ref).Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(__i.Parameter1, default(int))), () => $"@void<@class>({@ref})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters IMockVerifyForIKeywordEdgeCases.@void<@class>(int @ref)
 			where @class : default
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
 				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(@ref, __i.Parameter1)), () => $"@void<@class>({@ref})");
 		/// <summary>
-		///     Verify subscriptions on the @event event <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
+		///     Verify subscriptions on the @event event <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
 		/// </summary>
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		global::Mockolate.Verify.VerificationEventResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@event
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationEventResult<IMockVerifyForIKeywordEdgeCases>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Unsubscribe, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event");
+				return new global::Mockolate.Verify.VerificationEventResult<IMockVerifyForIKeywordEdgeCases>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Unsubscribe, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event");
 			}
 		}
 
 		#endregion IMockVerifyForIKeywordEdgeCases
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class VerifyMonitorIKeywordEdgeCases(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockVerifyForIKeywordEdgeCases
 	{
@@ -888,7 +885,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Set, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class");
+				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Set, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
 			}
 		}
 
@@ -946,10 +943,10 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters IMockVerifyForIKeywordEdgeCases.@return()
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return", () => $"@return()");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return", () => $"@return()");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameters parameters)
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => parameters switch
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => parameters switch
 				{
 					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
 					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("@params", __i.Parameter1)]),
@@ -957,15 +954,15 @@ internal static partial class Mock
 				}, () => $"@if({parameters})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameter<int>? @params)
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, int>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", @params is null ? (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(default!) : CovariantParameterAdapter<int>.Wrap(@params), () => $"@if({@params})");
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, int>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", @params is null ? (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(default!) : CovariantParameterAdapter<int>.Wrap(@params), () => $"@if({@params})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters IMockVerifyForIKeywordEdgeCases.@if(int @params)
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => 
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", __i => 
 				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(@params, __i.Parameter1)), () => $"@if({@params})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameters parameters)
 			where @class : default
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => parameters switch
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => parameters switch
 				{
 					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
 					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("@ref", __i.Parameter1)]),
@@ -974,29 +971,28 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameter<int>? @ref)
 			where @class : default
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
 				(@ref is not null ? CovariantParameterAdapter<int>.Wrap(@ref).Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(__i.Parameter1, default(int))), () => $"@void<@class>({@ref})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters IMockVerifyForIKeywordEdgeCases.@void<@class>(int @ref)
 			where @class : default
-			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIKeywordEdgeCases, global::Mockolate.Interactions.MethodInvocation<int>>(this, -1, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", __i => 
 				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(@ref, __i.Parameter1)), () => $"@void<@class>({@ref})");
 		/// <summary>
-		///     Verify subscriptions on the @event event <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
+		///     Verify subscriptions on the @event event <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
 		/// </summary>
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		global::Mockolate.Verify.VerificationEventResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@event
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationEventResult<IMockVerifyForIKeywordEdgeCases>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Unsubscribe, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event");
+				return new global::Mockolate.Verify.VerificationEventResult<IMockVerifyForIKeywordEdgeCases>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Unsubscribe, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event");
 			}
 		}
 
 		#endregion IMockVerifyForIKeywordEdgeCases
 	}
 
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class MockInScenarioForIKeywordEdgeCases : global::Mockolate.Mock.IMockInScenarioForIKeywordEdgeCases, global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases
 	{
@@ -1021,7 +1017,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class");
+				var propertySetup = new global::Mockolate.Setup.PropertySetup<int>(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
 				this.MockRegistry.SetupProperty(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, _scenarioName, propertySetup);
 				return propertySetup;
 			}
@@ -1033,7 +1029,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event");
+				global::Mockolate.Setup.EventSetup eventSetup = new global::Mockolate.Setup.EventSetup(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event");
 				this.MockRegistry.SetupEvent(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe, _scenarioName, eventSetup);
 				return eventSetup;
 			}
@@ -1090,7 +1086,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<string> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@return()
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<string>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<string>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1098,7 +1094,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameters parameters)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameters(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", parameters, "@params");
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", parameters, "@params");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1106,7 +1102,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(global::Mockolate.Parameters.IParameter<int>? @params)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", CovariantParameterAdapter<int>.Wrap(@params ?? global::Mockolate.It.IsNull<int>("null")));
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", CovariantParameterAdapter<int>.Wrap(@params ?? global::Mockolate.It.IsNull<int>("null")));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1114,7 +1110,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(int @params)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@params, ((global::System.IFormattable)@params).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@params, ((global::System.IFormattable)@params).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1123,7 +1119,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameters parameters)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameters(MockRegistry, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", parameters, "@ref");
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameters(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", parameters, "@ref");
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1132,7 +1128,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(global::Mockolate.Parameters.IParameter<int>? @ref)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", CovariantParameterAdapter<int>.Wrap(@ref ?? global::Mockolate.It.IsNull<int>("null")));
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", CovariantParameterAdapter<int>.Wrap(@ref ?? global::Mockolate.It.IsNull<int>("null")));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1141,7 +1137,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(int @ref)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@ref, ((global::System.IFormattable)@ref).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@ref, ((global::System.IFormattable)@ref).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1150,7 +1146,7 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>, reached through <c>.Mock</c> on the mocked instance.
+	///     The Mockolate accessor for a mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>, reached through <c>.Mock</c> on the mocked instance.
 	/// </summary>
 	/// <remarks>
 	///     Groups every operation that acts on the mock rather than on the mocked subject: setups, verifications, event raising, scenarios and monitoring.
@@ -1158,7 +1154,7 @@ internal static partial class Mock
 	internal interface IMockForIKeywordEdgeCases
 	{
 		/// <summary>
-		///     Configures how members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> respond when invoked.
+		///     Configures how members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> respond when invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each mocked member is available as a strongly-typed entry on this surface. Chain <c>Returns</c>, <c>ReturnsAsync</c>, <c>Throws</c>, <c>ThrowsAsync</c> or <c>Do</c> to control the response; chain <c>InitializeWith</c>/<c>Register</c> to initialize properties and indexers; chain multiple returns/throws to define a sequence; use <c>.For(n)</c>, <c>.Only(n)</c>, <c>.Forever()</c>, <c>.When(predicate)</c> to control when a callback runs.<br />
@@ -1167,7 +1163,7 @@ internal static partial class Mock
 		IMockSetupForIKeywordEdgeCases Setup { get; }
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> so that additional setups can be registered for that scenario.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> so that additional setups can be registered for that scenario.
 		/// </summary>
 		/// <remarks>
 		///     Scenarios let you define per-state behavior. Setups registered inside the returned <c>IMockInScenarioFor...</c> scope only apply while the mock's current scenario matches <paramref name="scenario" />; switch scenarios with <see cref="TransitionTo">TransitionTo</see>.
@@ -1177,7 +1173,7 @@ internal static partial class Mock
 		IMockInScenarioForIKeywordEdgeCases InScenario(string scenario);
 
 		/// <summary>
-		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
+		///     Opens a named scenario scope on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> and immediately invokes <paramref name="setup" /> to register scenario-specific setups.
 		/// </summary>
 		/// <remarks>
 		///     Equivalent to <c>InScenario(scenario)</c> followed by the setup callback, but returns the original <c>IMockFor...</c> accessor so it chains nicely at mock-creation time.
@@ -1188,7 +1184,7 @@ internal static partial class Mock
 		IMockForIKeywordEdgeCases InScenario(string scenario, global::System.Action<IMockInScenarioForIKeywordEdgeCases> setup);
 
 		/// <summary>
-		///     Switches the active scenario of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> to <paramref name="scenario" />.
+		///     Switches the active scenario of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> to <paramref name="scenario" />.
 		/// </summary>
 		/// <remarks>
 		///     After the transition, setups registered via <see cref="InScenario(string)">InScenario(string)</see> under that scenario take effect. Scenarios that have no matching setup for a given member fall back to the default (un-scoped) setups.
@@ -1198,7 +1194,7 @@ internal static partial class Mock
 		IMockForIKeywordEdgeCases TransitionTo(string scenario);
 
 		/// <summary>
-		///     Triggers events declared on <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> so that currently subscribed handlers are invoked.
+		///     Triggers events declared on <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> so that currently subscribed handlers are invoked.
 		/// </summary>
 		/// <remarks>
 		///     One entry per event is generated; the signature matches the event's delegate. Only handlers that are subscribed at the moment of the <c>Raise</c> call are invoked - handlers subscribed later (or already removed) are skipped.
@@ -1206,7 +1202,7 @@ internal static partial class Mock
 		IMockRaiseOnIKeywordEdgeCases Raise { get; }
 
 		/// <summary>
-		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> were invoked.
+		///     Asserts how often, and in which order, members of the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> were invoked.
 		/// </summary>
 		/// <remarks>
 		///     Each call to a member here returns a <c>VerificationResult</c> that you terminate with a count assertion: <c>Never()</c>, <c>Once()</c>, <c>Twice()</c>, <c>Exactly(n)</c>, <c>AtLeast(n)</c>/<c>AtLeastOnce()</c>/<c>AtLeastTwice()</c>, <c>AtMost(n)</c>/<c>AtMostOnce()</c>/<c>AtMostTwice()</c>, <c>Between(min, max)</c> or <c>Times(predicate)</c>.<br />
@@ -1262,33 +1258,33 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
+	///     Scoped access to setups for a scenario on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
 	/// </summary>
 	internal interface IMockInScenarioForIKeywordEdgeCases
 	{
 		/// <summary>
-		///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> within the scenario scope.
+		///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see> within the scenario scope.
 		/// </summary>
 		IMockSetupForIKeywordEdgeCases Setup { get; }
 	}
 
 	/// <summary>
-	///     Set up the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
+	///     Set up the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
 	/// </summary>
-	internal interface IMockSetupForIKeywordEdgeCases : global::Mockolate.Setup.IMockSetup<global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases>
+	internal interface IMockSetupForIKeywordEdgeCases : global::Mockolate.Setup.IMockSetup<global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases>
 	{
 		/// <summary>
-		///     Setup for the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class">@class</see>.
+		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class">@class</see>.
 		/// </summary>
 		global::Mockolate.Setup.PropertySetup<int> @class { get; }
 
 		/// <summary>
-		///     Setup for the event <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
+		///     Setup for the event <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
 		/// </summary>
 		global::Mockolate.Setup.EventSetup @event { get; }
 
 		/// <summary>
-		///     Setup for the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
 		/// </summary>
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
@@ -1297,7 +1293,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IndexerSetup<string, int, string> this[global::Mockolate.Parameters.IParameter<int>? parameter1, global::Mockolate.Parameters.IParameter<string>? parameter2] { get; }
 
 		/// <summary>
-		///     Setup for the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts a direct value for <paramref name="parameter1" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="parameter2" />.
@@ -1306,7 +1302,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IndexerSetup<string, int, string> this[int parameter1, global::Mockolate.Parameters.IParameter<string>? parameter2] { get; }
 
 		/// <summary>
-		///     Setup for the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts a direct value for <paramref name="parameter2" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="parameter1" />.
@@ -1315,7 +1311,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IndexerSetup<string, int, string> this[global::Mockolate.Parameters.IParameter<int>? parameter1, string parameter2] { get; }
 
 		/// <summary>
-		///     Setup for the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
@@ -1324,13 +1320,13 @@ internal static partial class Mock
 		global::Mockolate.Setup.IndexerSetup<string, int, string> this[int parameter1, string parameter2] { get; }
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return()">@return()</see>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return()">@return()</see>.
 		/// </summary>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetup<string> @return();
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="parameters" />.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="parameters" />.
 		/// </summary>
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
@@ -1339,7 +1335,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> @if(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
@@ -1348,7 +1344,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int> @if(global::Mockolate.Parameters.IParameter<int>? @params);
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
@@ -1356,7 +1352,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int> @if(int @params);
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="parameters" />.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="parameters" />.
 		/// </summary>
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
@@ -1365,7 +1361,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int> @void<@class>(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
@@ -1374,7 +1370,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int> @void<@class>(global::Mockolate.Parameters.IParameter<int>? @ref);
 
 		/// <summary>
-		///     Setup for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
@@ -1384,34 +1380,34 @@ internal static partial class Mock
 	}
 
 	/// <summary>
-	///     Raise events on the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
+	///     Raise events on the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
 	/// </summary>
 	internal interface IMockRaiseOnIKeywordEdgeCases
 	{
 		/// <summary>
-		///     Raise the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see> event.
+		///     Raise the <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see> event.
 		/// </summary>
 		void @event(object? sender, global::System.EventArgs e);
 
 		/// <summary>
-		///     Raise the <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see> event.
+		///     Raise the <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see> event.
 		/// </summary>
 		void @event(global::Mockolate.Parameters.IDefaultEventParameters parameters);
 
 	}
 
 	/// <summary>
-	///     Verify interactions with the mock of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
+	///     Verify interactions with the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases">IKeywordEdgeCases</see>.
 	/// </summary>
-	internal interface IMockVerifyForIKeywordEdgeCases : global::Mockolate.Verify.IMockVerify<global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases>
+	internal interface IMockVerifyForIKeywordEdgeCases : global::Mockolate.Verify.IMockVerify<global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases>
 	{
 		/// <summary>
-		///     Verify interactions with the int property <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@class">@class</see>.
+		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class">@class</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int> @class { get; }
 
 		/// <summary>
-		///     Verify interactions with the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
 		/// </summary>
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
@@ -1420,7 +1416,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIKeywordEdgeCases, string> this[global::Mockolate.Parameters.IParameter<int>? @params, global::Mockolate.Parameters.IParameter<string>? @void] { get; }
 
 		/// <summary>
-		///     Verify interactions with the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts a direct value for <paramref name="@params" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="@void" />.
@@ -1429,7 +1425,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIKeywordEdgeCases, string> this[int @params, global::Mockolate.Parameters.IParameter<string>? @void] { get; }
 
 		/// <summary>
-		///     Verify interactions with the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts a direct value for <paramref name="@void" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="@params" />.
@@ -1438,7 +1434,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIKeywordEdgeCases, string> this[global::Mockolate.Parameters.IParameter<int>? @params, string @void] { get; }
 
 		/// <summary>
-		///     Verify interactions with the string indexer <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
@@ -1447,12 +1443,12 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIKeywordEdgeCases, string> this[int @params, string @void] { get; }
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@return()">@return()</see>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@return()">@return()</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters @return();
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="parameters"/>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="parameters"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
@@ -1461,7 +1457,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> @if(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
@@ -1470,7 +1466,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> @if(global::Mockolate.Parameters.IParameter<int>? @params);
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if(int)">@if(int)</see> with the given <paramref name="@params"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
@@ -1478,7 +1474,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters @if(int @params);
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="parameters"/>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="parameters"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
@@ -1487,7 +1483,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> @void<@class>(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
@@ -1496,7 +1492,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases> @void<@class>(global::Mockolate.Parameters.IParameter<int>? @ref);
 
 		/// <summary>
-		///     Verify invocations for the method <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void{@class}(int)">@void&lt;@class&gt;(int)</see> with the given <paramref name="@ref"/>.
 		/// </summary>
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
@@ -1504,7 +1500,7 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIKeywordEdgeCases>.IgnoreParameters @void<@class>(int @ref);
 
 		/// <summary>
-		///     Verify subscriptions on the @event event of <see cref="global::Mockolate.ExampleTests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
+		///     Verify subscriptions on the @event event of <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
 		/// </summary>
 		global::Mockolate.Verify.VerificationEventResult<IMockVerifyForIKeywordEdgeCases> @event { get; }
 

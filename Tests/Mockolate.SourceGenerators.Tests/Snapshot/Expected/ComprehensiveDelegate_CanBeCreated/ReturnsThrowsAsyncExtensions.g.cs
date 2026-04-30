@@ -14,7 +14,6 @@ namespace Mockolate;
 /// <summary>
 ///     Extensions for setting up return values and throwing exceptions for <see langword="async" /> methods.
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class ReturnsThrowsAsyncExtensions2
 {

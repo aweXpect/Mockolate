@@ -174,7 +174,6 @@ namespace Mockolate.Setup
 	/// <summary>
 	///     Sets up a method with 5 parameters <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" /> returning <see langword="void" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal abstract class VoidMethodSetup<T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup,
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<T1, T2, T3, T4, T5>,
@@ -517,8 +516,7 @@ namespace Mockolate.Setup
 }
 
 namespace Mockolate
-{[global::System.Diagnostics.DebuggerNonUserCode]
-	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+{	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal static class MethodSetupExtensions
 	{
 
@@ -561,7 +559,6 @@ namespace Mockolate.Interactions
 	///     An invocation of a method with 5 parameters <paramref name="parameter1"/>, <paramref name="parameter2"/>, <paramref name="parameter3"/>, <paramref name="parameter4"/> and <paramref name="parameter5"/>.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{ToString()}")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal class MethodInvocation<T1, T2, T3, T4, T5>(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, T5 parameter5) : IMethodInteraction
 	{
 		/// <summary>
@@ -603,7 +600,6 @@ namespace Mockolate.Interactions
 	///     Per-member buffer for 5-parameter methods, synthesized for arity 5 use sites.
 	/// </summary>
 	[global::System.Diagnostics.DebuggerDisplay("{Count} method calls")]
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	internal sealed class FastMethod5Buffer<T1, T2, T3, T4, T5> : IFastMemberBuffer
 	{
 		private readonly FastMockInteractions _owner;
