@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 
@@ -20,99 +19,112 @@ namespace Mockolate.SourceGenerators.Tests.Snapshot;
 /// </summary>
 public sealed partial class MockGenerationSnapshotTests
 {
-	[Fact]
-	public async Task BaseClass_WithMultipleAdditionalInterfaces_CanBeCreated()
-		=> await VerifySnapshot(
-			[
-				"ComprehensiveAbstractClass.cs",
-				"ICombinationParts.cs",
-			],
+	internal static readonly IReadOnlyList<SnapshotScenario> Scenarios =
+	[
+		new(
+			"BaseClass_WithMultipleAdditionalInterfaces_CanBeCreated",
+			["ComprehensiveAbstractClass.cs", "ICombinationParts.cs",],
 			"""
 			ComprehensiveAbstractClass sut = ComprehensiveAbstractClass.CreateMock()
 				.Implementing<ICombinationMockA>()
 				.Implementing<ICombinationMockB>();
-			""");
-
-	[Fact]
-	public async Task ComprehensiveAbstractClass_CanBeCreated()
-		=> await VerifySnapshot(
-			[
-				"ComprehensiveAbstractClass.cs",
-			],
+			""",
+			[]),
+		new(
+			"ComprehensiveAbstractClass_CanBeCreated",
+			["ComprehensiveAbstractClass.cs",],
 			"""
 			ComprehensiveAbstractClass sut = ComprehensiveAbstractClass.CreateMock();
-			""");
-
-	[Fact]
-	public async Task ComprehensiveDelegate_CanBeCreated()
-		=> await VerifySnapshot(
-			[
-				"ComprehensiveDelegate.cs",
-			],
+			""",
+			[]),
+		new(
+			"ComprehensiveDelegate_CanBeCreated",
+			["ComprehensiveDelegate.cs",],
 			"""
 			ComprehensiveDelegate sut = ComprehensiveDelegate.CreateMock();
-			""");
-
-	[Fact]
-	public async Task ComprehensiveInterface_CanBeCreated()
-		=> await VerifySnapshot(
-			[
-				"ComprehensiveDelegate.cs",
-				"IComprehensiveInterface.cs",
-			],
+			""",
+			[]),
+		new(
+			"ComprehensiveInterface_CanBeCreated",
+			["ComprehensiveDelegate.cs", "IComprehensiveInterface.cs",],
 			"""
 			IComprehensiveInterface sut = IComprehensiveInterface.CreateMock();
-			""");
-
-	[Fact]
-	public async Task HttpClient_CanBeCreated()
-		=> await VerifySnapshot(
+			""",
+			[]),
+		new(
+			"HttpClient_CanBeCreated",
 			[],
 			"""
 			System.Net.Http.HttpClient sut = System.Net.Http.HttpClient.CreateMock();
 			""",
-			[typeof(HttpClient), typeof(HttpStatusCode),]);
-
-	[Fact]
-	public async Task KeywordEdgeCases_CanBeCreated()
-		=> await VerifySnapshot(
-			[
-				"KeywordEdgeCases.cs",
-			],
+			[typeof(HttpClient), typeof(HttpStatusCode),]),
+		new(
+			"KeywordEdgeCases_CanBeCreated",
+			["KeywordEdgeCases.cs",],
 			"""
 			IKeywordEdgeCases sut = IKeywordEdgeCases.CreateMock();
-			""");
-
-	[Fact]
-	public async Task RefStructConsumer_CanBeCreated()
-		=> await VerifySnapshot(
-			[
-				"IRefStructConsumer.cs",
-			],
+			""",
+			[]),
+		new(
+			"RefStructConsumer_CanBeCreated",
+			["IRefStructConsumer.cs",],
 			"""
 			IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-			""");
-
-	[Fact]
-	public async Task StaticAbstractMembers_CanBeCreated()
-		=> await VerifySnapshot(
-			[
-				"IStaticAbstractMembers.cs",
-			],
+			""",
+			[]),
+		new(
+			"StaticAbstractMembers_CanBeCreated",
+			["IStaticAbstractMembers.cs",],
 			"""
 			IStaticAbstractMembers sut = IStaticAbstractMembers.CreateMock();
-			""");
+			""",
+			[]),
+	];
 
-	internal static GeneratorResult RunGenerator(string[] coverageFiles, string mainBody,
-		params Type[] assemblyTypes)
+	public static TheoryData<string> ScenarioNames
+	{
+		get
+		{
+			TheoryData<string> data = new();
+			foreach (SnapshotScenario scenario in Scenarios)
+			{
+				data.Add(scenario.Name);
+			}
+
+			return data;
+		}
+	}
+
+	[Theory]
+	[MemberData(nameof(ScenarioNames))]
+	public async Task GeneratorOutput_MatchesExpectedSnapshot(string scenarioName)
+	{
+		SnapshotScenario scenario = Scenarios.Single(s => s.Name == scenarioName);
+		GeneratorResult result = RunGenerator(scenario);
+		await That(result.Diagnostics).IsEmpty();
+
+		IReadOnlyDictionary<string, string> generated = NormalizeSources(result);
+		IReadOnlyDictionary<string, string> expected = SnapshotStorage.GetExpected(scenarioName);
+
+		await That(generated.Keys).IsEqualTo(expected.Keys).InAnyOrder();
+
+		foreach (string fileName in expected.Keys)
+		{
+			await That(StripConfigSpecificLines(generated[fileName]))
+				.IsEqualTo(StripConfigSpecificLines(expected[fileName]))
+				.IgnoringNewlineStyle();
+		}
+	}
+
+	internal static GeneratorResult RunGenerator(SnapshotScenario scenario)
 	{
 		List<string> sources = new();
-		foreach (string coverageFile in coverageFiles)
+		foreach (string coverageFile in scenario.CoverageFiles)
 		{
 			sources.Add("#nullable enable\n" + SnapshotStorage.ReadCoverageFile(coverageFile));
 		}
 
-		string usingDirective = coverageFiles.Length > 0
+		string usingDirective = scenario.CoverageFiles.Length > 0
 			? "using Mockolate.ExampleTests.GeneratorCoverage;\n"
 			: string.Empty;
 		string program = $$"""
@@ -126,7 +138,7 @@ public sealed partial class MockGenerationSnapshotTests
 		                   {
 		                   	public static void Main(string[] args)
 		                   	{
-		                   		{{mainBody}}
+		                   		{{scenario.MainBody}}
 		                   	}
 		                   }
 		                   """;
@@ -136,7 +148,7 @@ public sealed partial class MockGenerationSnapshotTests
 			sources.ToArray(),
 			DocumentationMode.Parse,
 			["NET9_0_OR_GREATER", "NET10_0_OR_GREATER",],
-			assemblyTypes);
+			scenario.AssemblyTypes);
 	}
 
 	internal static IReadOnlyDictionary<string, string> NormalizeSources(GeneratorResult result)
@@ -149,25 +161,6 @@ public sealed partial class MockGenerationSnapshotTests
 		}
 
 		return normalized;
-	}
-
-	private static async Task VerifySnapshot(string[] coverageFiles, string mainBody,
-		Type[]? assemblyTypes = null, [CallerMemberName] string scenario = "")
-	{
-		GeneratorResult result = RunGenerator(coverageFiles, mainBody, assemblyTypes ?? []);
-		await That(result.Diagnostics).IsEmpty();
-
-		IReadOnlyDictionary<string, string> generated = NormalizeSources(result);
-		IReadOnlyDictionary<string, string> expected = SnapshotStorage.GetExpected(scenario);
-
-		await That(generated.Keys).IsEqualTo(expected.Keys).InAnyOrder();
-
-		foreach (string fileName in expected.Keys)
-		{
-			await That(StripConfigSpecificLines(generated[fileName]))
-				.IsEqualTo(StripConfigSpecificLines(expected[fileName]))
-				.IgnoringNewlineStyle();
-		}
 	}
 
 	// The source generator gates `[DebuggerNonUserCode]` behind `#if !DEBUG`, so its output

@@ -41,6 +41,8 @@ public sealed class MockCreationTests
 	public void ComprehensiveInterface_CanBeCreated()
 	{
 		IComprehensiveInterface sut = IComprehensiveInterface.CreateMock();
+		// Uses Assert.NotNull instead of `await That(sut)` because CS8920 forbids interfaces
+		// with unimplemented static abstract members as generic type arguments.
 		Assert.NotNull(sut);
 	}
 
@@ -69,6 +71,8 @@ public sealed class MockCreationTests
 	public void StaticAbstractMembers_CanBeCreated()
 	{
 		IStaticAbstractMembers sut = IStaticAbstractMembers.CreateMock();
+		// Uses Assert.NotNull instead of `await That(sut)` because CS8920 forbids interfaces
+		// with unimplemented static abstract members as generic type arguments.
 		Assert.NotNull(sut);
 	}
 }

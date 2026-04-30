@@ -11,7 +11,7 @@ public static class SnapshotStorage
 	{
 		string path = CombinedPaths("Tests", "Mockolate.ExampleTests", "GeneratorCoverage",
 			coverageFileName);
-		return StripConditionalCompilation(File.ReadAllText(path));
+		return File.ReadAllText(path);
 	}
 
 	public static IReadOnlyDictionary<string, string> GetExpected(string scenario)
@@ -58,17 +58,4 @@ public static class SnapshotStorage
 
 	private static string GetSolutionDirectory([CallerFilePath] string path = "") =>
 		Path.Combine(Path.GetDirectoryName(path)!, "..", "..", "..");
-
-	private static string StripConditionalCompilation(string content)
-	{
-		IEnumerable<string> lines = content
-			.Split('\n')
-			.Select(line => line.TrimEnd('\r'))
-			.Where(line =>
-			{
-				string trimmed = line.TrimStart();
-				return trimmed != "#if NET10_0_OR_GREATER" && trimmed != "#endif";
-			});
-		return string.Join("\n", lines);
-	}
 }
