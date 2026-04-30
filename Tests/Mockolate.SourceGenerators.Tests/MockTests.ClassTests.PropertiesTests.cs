@@ -86,6 +86,41 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task
+				MultipleStaticAbstractProperties_WithCollidingName_ShouldEmitStaticKeywordOnExplicitImplementation()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IDerived.CreateMock();
+					         }
+					     }
+
+					     public interface IBase
+					     {
+					         static abstract int Counter { get; }
+					     }
+
+					     public interface IDerived : IBase
+					     {
+					         new static abstract int Counter { get; }
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IDerived.g.cs");
+				await That(result.Sources["Mock.IDerived.g.cs"])
+					.Contains("static int global::MyCode.IBase.Counter")
+					.Because(
+						"a colliding static abstract property on a base interface must be emitted as an explicit static implementation, with the static keyword preserved");
+			}
+
+			[Fact]
 			public async Task RefReturn_ShouldCompile()
 			{
 				GeneratorResult result = Generator

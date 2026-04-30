@@ -479,6 +479,78 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task MethodReturningNonSpanRefStruct_WithRefStructParameter_ShouldEmitNotSupportedExceptionAndSkipSetupSurface()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IPacketTransformer
+				     {
+				         Packet Wrap(Packet input);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IPacketTransformer.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.IPacketTransformer.g.cs");
+			await That(result.Sources["Mock.IPacketTransformer.g.cs"])
+				.Contains("Mockolate: methods returning a non-span ref struct are not supported. Method 'global::MyCode.IPacketTransformer.Wrap'.")
+				.Because("the method body must throw NotSupportedException because non-Span ref-struct return types cannot flow through the setup pipeline").And
+				.DoesNotContain("IRefStructReturnMethodSetup<global::MyCode.Packet, global::MyCode.Packet>")
+				.Because("the setup-interface declaration must be skipped for unsupported ref-struct return types").And
+				.DoesNotContain("new global::Mockolate.Setup.RefStructReturnMethodSetup<global::MyCode.Packet, global::MyCode.Packet>")
+				.Because("the setup-interface implementation must be skipped for unsupported ref-struct return types");
+		}
+
+		[Fact]
+		public async Task MethodWithOutRefStructParameter_ShouldEmitNotSupportedExceptionAndSkipSetupSurface()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using System;
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public readonly ref struct Packet(int id) { public int Id { get; } = id; }
+
+				     public interface IPacketBag
+				     {
+				         void Take(out Packet packet);
+				     }
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				             _ = IPacketBag.CreateMock();
+				         }
+				     }
+				     """);
+
+			await That(result.Sources).ContainsKey("Mock.IPacketBag.g.cs");
+			await That(result.Sources["Mock.IPacketBag.g.cs"])
+				.Contains("Mockolate: out/ref ref-struct parameters are not supported. Method 'global::MyCode.IPacketBag.Take'.")
+				.Because("the method body must throw NotSupportedException because the ref-struct out parameter cannot flow through the setup pipeline").And
+				.DoesNotContain("IRefStructVoidMethodSetup<global::MyCode.Packet>")
+				.Because("the setup-interface declaration must be skipped for unsupported ref-struct signatures").And
+				.DoesNotContain("new global::Mockolate.Setup.RefStructVoidMethodSetup<global::MyCode.Packet>")
+				.Because("the setup-interface implementation must be skipped for unsupported ref-struct signatures");
+		}
+
+		[Fact]
 		public async Task MixedParameters_RefStructPlusValueType_ShouldRouteThroughRefStructPipeline()
 		{
 			GeneratorResult result = Generator
