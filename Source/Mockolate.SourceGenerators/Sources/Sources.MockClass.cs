@@ -224,7 +224,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t=> CreateMock(null, setup, constructorParameters);").AppendLine();
 			sb.AppendLine();
 
-			AppendTypedCreateMockOverloads(sb, @class, constructors, setupType, escapedClassName, createMockReturns);
+			AppendTypedCreateMockOverloads(sb, @class, constructors!.Value, setupType, escapedClassName, createMockReturns);
 		}
 
 		sb.AppendXmlSummary(
@@ -738,16 +738,6 @@ internal static partial class Sources
 				AppendMockSubject_BehaviorBaseClassConstructor(sb, name, constructor,
 					@class.HasRequiredMembers);
 			}
-		}
-		else
-		{
-			sb.Append("\t\t/// <inheritdoc cref=\"").Append(name).Append("\" />").AppendLine();
-			sb.Append("\t\tpublic ").Append(name).Append("(global::Mockolate.MockRegistry mockRegistry)").AppendLine();
-			sb.Append("\t\t{").AppendLine();
-			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(" = mockRegistry;").AppendLine();
-			sb.Append("\t\t}").AppendLine();
-			sb.AppendLine();
-			AppendMockSubject_BehaviorConstructor(sb, name);
 		}
 
 		AppendMockSubject_ImplementClass(sb, @class, mockRegistryName, null, memberIds, memberIdPrefix);
@@ -1773,13 +1763,8 @@ internal static partial class Sources
 #pragma warning restore S107 // Methods should not have too many parameters
 
 	private static void AppendTypedCreateMockOverloads(StringBuilder sb, Class @class,
-		EquatableArray<Method>? constructors, string setupType, string escapedClassName, string createMockReturns)
+		EquatableArray<Method> constructors, string setupType, string escapedClassName, string createMockReturns)
 	{
-		if (constructors is null)
-		{
-			return;
-		}
-
 		// Seeded signatures track the hand-written CreateMock overloads so typed overloads that
 		// would collide with them are skipped. The key order mirrors the emitted C# signature:
 		// "mockBehavior? | setup? | ctor-param-types...".
@@ -1795,7 +1780,7 @@ internal static partial class Sources
 			$"global::Mockolate.MockBehavior|global::System.Action<{setupType}>|object?[]",
 		};
 
-		foreach (Method constructor in constructors.Value)
+		foreach (Method constructor in constructors)
 		{
 			if (constructor.Parameters.Count == 0)
 			{

@@ -33,7 +33,9 @@ public sealed partial class MockTests
 				await That(result.Sources["Mock.MyService.g.cs"])
 					.DoesNotContain("global::MyCode.MyService wraps)")
 					.IgnoringNewlineStyle()
-					.Because("the pattern-match cast must not bind a local named `wraps` while the user's parameter already occupies that name").And
+					.Because(
+						"the pattern-match cast must not bind a local named `wraps` while the user's parameter already occupies that name")
+					.And
 					.Contains("global::MyCode.MyService wraps1)")
 					.IgnoringNewlineStyle().And
 					.Contains("wraps1.Run(wraps);")
@@ -205,7 +207,8 @@ public sealed partial class MockTests
 				await That(result.Diagnostics).IsEmpty();
 				await That(result.Sources).ContainsKey("Mock.IMyService.g.cs");
 				await That(result.Sources["Mock.IMyService.g.cs"])
-					.Contains("throw new global::System.NotSupportedException(\"Mockolate: methods with a generic type parameter declaring 'allows ref struct' are not supported. Method 'global::MyCode.IMyService.G8<T>'.\");");
+					.Contains(
+						"throw new global::System.NotSupportedException(\"Mockolate: methods with a generic type parameter declaring 'allows ref struct' are not supported. Method 'global::MyCode.IMyService.G8<T>'.\");");
 			}
 
 			[Fact]
@@ -271,7 +274,9 @@ public sealed partial class MockTests
 				await That(result.Sources["Mock.IMyService.g.cs"])
 					.Contains("IOutParameter<int> outParam_11")
 					.IgnoringNewlineStyle()
-					.Because("the numbered cast variable must not reuse the parameter name (the base is renamed so `outParam1`/`outParam2` parameters and `outParam_1` cast don't collide)").And
+					.Because(
+						"the numbered cast variable must not reuse the parameter name (the base is renamed so `outParam1`/`outParam2` parameters and `outParam_1` cast don't collide)")
+					.And
 					.Contains("IOutParameter<int> outParam_12")
 					.IgnoringNewlineStyle();
 			}
@@ -306,7 +311,8 @@ public sealed partial class MockTests
 					.IgnoringNewlineStyle().And
 					.Contains("methodSetup?.TriggerCallbacks(result);")
 					.IgnoringNewlineStyle().And
-					.Contains("return methodSetup?.TryGetReturnValue(result, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, result);")
+					.Contains(
+						"return methodSetup?.TryGetReturnValue(result, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, result);")
 					.IgnoringNewlineStyle();
 			}
 
@@ -444,6 +450,41 @@ public sealed partial class MockTests
 					.Contains("int global::MyCode.IMyServiceBase1.Value()").Once().And
 					.Contains("public int Value(int p1)").Once().And
 					.Contains("long global::MyCode.IMyServiceBase2.Value()").Once();
+			}
+
+			[Fact]
+			public async Task
+				MultipleStaticAbstractMethods_WithCollidingSignature_ShouldEmitStaticKeywordOnExplicitImplementation()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IDerived.CreateMock();
+					         }
+					     }
+
+					     public interface IBase
+					     {
+					         static abstract int Compute();
+					     }
+
+					     public interface IDerived : IBase
+					     {
+					         new static abstract int Compute();
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IDerived.g.cs");
+				await That(result.Sources["Mock.IDerived.g.cs"])
+					.Contains("static int global::MyCode.IBase.Compute(")
+					.Because(
+						"a colliding static abstract method on a base interface must be emitted as an explicit static implementation, with the static keyword preserved");
 			}
 
 			[Fact]
@@ -1358,6 +1399,40 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task StaticAbstractMethodWithParameter_ShouldAppendArgumentToFastBuffer()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = IStaticOps.CreateMock();
+					         }
+					     }
+
+					     public interface IStaticOps
+					     {
+					         static abstract int DoIt(int value);
+					     }
+					     """);
+
+				await That(result.Sources).ContainsKey("Mock.IStaticOps.g.cs");
+				await That(result.Sources["Mock.IStaticOps.g.cs"])
+					.Contains("global::Mockolate.Interactions.FastMethod1Buffer<int>").And
+					.Contains("MockRegistryProvider.Value.Interactions).Buffers[")
+					.Because(
+						"static methods record interactions via the typed FastMethodBuffer accessed through the AsyncLocal-backed registry")
+					.And
+					.Contains("Append(\"global::MyCode.IStaticOps.DoIt\", value)")
+					.Because("the static-method fast-buffer branch must include the call argument when arity > 0");
+			}
+
+			[Fact]
 			public async Task VirtualMethodOverride_WithConstrainedGeneric_ShouldNotRepeatConstraints()
 			{
 				GeneratorResult result = Generator
@@ -1395,7 +1470,8 @@ public sealed partial class MockTests
 					          		public override bool MyMethod<T>(T entity)
 					          		{
 					          """).IgnoringNewlineStyle().And
-					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :").IgnoringNewlineStyle()
+					.DoesNotContain("public override bool MyMethod<T>(T entity)\n\t\t\twhere T :")
+					.IgnoringNewlineStyle()
 					.Because("CS0460: constraints on override methods are inherited from the base method");
 			}
 		}
