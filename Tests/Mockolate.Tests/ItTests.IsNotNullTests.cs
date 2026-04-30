@@ -31,6 +31,15 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
+		public async Task ShouldReturnSharedInstance_WhenToStringIsOmitted()
+		{
+			IParameter<string> first = It.IsNotNull<string>();
+			IParameter<string> second = It.IsNotNull<string>();
+
+			await That(first).IsSameAs(second);
+		}
+
+		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
 			IParameter<string> sut = It.IsNotNull<string>();

@@ -162,6 +162,17 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
+		public async Task ToString_WithNullElement_ShouldRenderNullToken()
+		{
+			IParameter<object?[]> sut = It.SequenceEquals<object?>("foo", null, 3);
+			string expectedValue = "It.SequenceEquals(\"foo\", null, 3)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
 		public async Task ToString_WithStringValues_ShouldReturnExpectedValue()
 		{
 			IParameter<string[]> sut = It.SequenceEquals("foo", "bar");
@@ -184,6 +195,22 @@ public sealed partial class ItTests
 
 		public sealed class DoTests
 		{
+			[Fact]
+			public async Task Do_MultipleRegistrations_ShouldAllInvoke()
+			{
+				It.ISequenceEqualsParameter<int> sut = It.SequenceEquals(1, 2, 3);
+				int firstCount = 0;
+				int secondCount = 0;
+				((IParameterWithCallback<int[]>)sut).Do(_ => firstCount++);
+				((IParameterWithCallback<int[]>)sut).Do(_ => secondCount++);
+
+				int[] source = [1, 2, 3,];
+				((IParameterMatch<int[]>)sut).InvokeCallbacks(source);
+
+				await That(firstCount).IsEqualTo(1);
+				await That(secondCount).IsEqualTo(1);
+			}
+
 			[Fact]
 			public async Task Do_RegistersCallbackForArray()
 			{
