@@ -284,11 +284,17 @@ public class FastMockInteractionsTests
 			}, TaskCreationOptions.LongRunning);
 		}
 
+#if NET48
+		CancellationToken cancellationToken = TestContext.Current.CancellationToken;
+#else
+		CancellationToken cancellationToken = CancellationToken.None;
+#endif
+
 		for (int round = 0; round < rounds; round++)
 		{
 			fallbackField.SetValue(sut, null);
-			barrier.SignalAndWait();
-			barrier.SignalAndWait();
+			barrier.SignalAndWait(cancellationToken);
+			barrier.SignalAndWait(cancellationToken);
 
 			object? installed = fallbackField.GetValue(sut);
 			await That(installed).IsNotNull();
