@@ -77,8 +77,10 @@ public partial class MockRegistry
 		{
 			IndexerSetup[]?[]? oldTable = _indexerSetupsByMemberId;
 			int requiredLen = memberId + 1;
+			// Stryker disable once Conditional : when oldTable is not null and requiredLen <= oldTable.Length, the resize-condition below is false either way and the else-branch reuses oldTable; newLen is unread, so collapsing the ternary to requiredLen is observationally identical.
 			int newLen = oldTable is null ? requiredLen : Math.Max(oldTable.Length, requiredLen);
 			IndexerSetup[]?[] newTable;
+			// Stryker disable once Equality : flipping > to >= only fires the realloc-and-copy path when newLen == oldTable.Length, producing a fresh table with identical contents — externally indistinguishable from reusing oldTable.
 			if (oldTable is null || newLen > oldTable.Length)
 			{
 				newTable = new IndexerSetup[newLen][];
@@ -168,8 +170,10 @@ public partial class MockRegistry
 		{
 			MethodSetup[]?[]? oldTable = _setupsByMemberId;
 			int requiredLen = memberId + 1;
+			// Stryker disable once Conditional : when oldTable is not null and requiredLen <= oldTable.Length, the resize-condition below is false either way and the else-branch reuses oldTable; newLen is unread, so collapsing the ternary to requiredLen is observationally identical.
 			int newLen = oldTable is null ? requiredLen : Math.Max(oldTable.Length, requiredLen);
 			MethodSetup[]?[] newTable;
+			// Stryker disable once Equality : flipping > to >= only fires the realloc-and-copy path when newLen == oldTable.Length, producing a fresh table with identical contents — externally indistinguishable from reusing oldTable.
 			if (oldTable is null || newLen > oldTable.Length)
 			{
 				newTable = new MethodSetup[newLen][];
@@ -261,8 +265,10 @@ public partial class MockRegistry
 		{
 			PropertySetup?[]? oldTable = _propertySetupsByMemberId;
 			int requiredLen = memberId + 1;
+			// Stryker disable once Conditional : when oldTable is not null and requiredLen <= oldTable.Length, the resize-condition below is false either way and the else-branch reuses oldTable; newLen is unread, so collapsing the ternary to requiredLen is observationally identical.
 			int newLen = oldTable is null ? requiredLen : Math.Max(oldTable.Length, requiredLen);
 			PropertySetup?[] newTable;
+			// Stryker disable once Equality : flipping > to >= only fires the realloc-and-copy path when newLen == oldTable.Length, producing a fresh table with identical contents — externally indistinguishable from reusing oldTable.
 			if (oldTable is null || newLen > oldTable.Length)
 			{
 				newTable = new PropertySetup?[newLen];
@@ -344,8 +350,10 @@ public partial class MockRegistry
 		{
 			EventSetup[]?[]? oldTable = _eventSetupsByMemberId;
 			int requiredLen = memberId + 1;
+			// Stryker disable once Conditional : when oldTable is not null and requiredLen <= oldTable.Length, the resize-condition below is false either way and the else-branch reuses oldTable; newLen is unread, so collapsing the ternary to requiredLen is observationally identical.
 			int newLen = oldTable is null ? requiredLen : Math.Max(oldTable.Length, requiredLen);
 			EventSetup[]?[] newTable;
+			// Stryker disable once Equality : flipping > to >= only fires the realloc-and-copy path when newLen == oldTable.Length, producing a fresh table with identical contents — externally indistinguishable from reusing oldTable.
 			if (oldTable is null || newLen > oldTable.Length)
 			{
 				newTable = new EventSetup[newLen][];

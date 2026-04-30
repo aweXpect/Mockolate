@@ -90,6 +90,28 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Returns the current default-scope property setup registered under the generator-emitted
+	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
+	/// </summary>
+	/// <remarks>
+	///     Property dispatch reads the snapshot via <see cref="GetPropertyFast{TResult}(int, string, Func{MockBehavior, TResult}, Func{TResult}?)" />
+	///     and falls back to the cold path when the snapshot is empty, so this accessor is intended for
+	///     diagnostics and tests that need to verify the fast-path table directly.
+	/// </remarks>
+	/// <param name="memberId">The generator-emitted member id for the property accessor.</param>
+	/// <returns>The setup for the property, or <see langword="null" /> when none is registered.</returns>
+	internal PropertySetup? GetPropertySetupSnapshot(int memberId)
+	{
+		PropertySetup?[]? table = Volatile.Read(ref _propertySetupsByMemberId);
+		if (table is null || (uint)memberId >= (uint)table.Length)
+		{
+			return null;
+		}
+
+		return table[memberId];
+	}
+
+	/// <summary>
 	///     Enumerates method setups of type <typeparamref name="T" /> matching <paramref name="methodName" />
 	///     in latest-registered-first order, scenario-scoped setups before default-scope setups.
 	/// </summary>
