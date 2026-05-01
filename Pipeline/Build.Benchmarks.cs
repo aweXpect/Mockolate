@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tools.DotNet;
@@ -85,8 +87,11 @@ partial class Build
 				return;
 			}
 
+			AbsolutePath baselineDirectory = ArtifactsDirectory / "Baseline";
+			string baselineResultsDirectory = await DownloadBaselineBenchmarks(baselineDirectory);
+
 			string prNumber = File.ReadAllText(ArtifactsDirectory / "PR.txt");
-			string body = CreateBenchmarkCommentBody(files);
+			string body = CreateBenchmarkCommentBody(files, baselineResultsDirectory);
 			Log.Debug("Pull request number: {PullRequestId}", prNumber);
 			if (int.TryParse(prNumber, out int prId))
 			{
@@ -123,19 +128,51 @@ partial class Build
 		.DependsOn(BenchmarkDotNet)
 		.DependsOn(BenchmarkResult);
 
-	string CreateBenchmarkCommentBody(string[] files)
+	async Task<string> DownloadBaselineBenchmarks(AbsolutePath baselineDirectory)
+	{
+		long? runId = await BuildExtensions.FindLatestSuccessfulRun("build.yml", "main", GithubToken);
+		if (runId == null)
+		{
+			Log.Information("No successful main 'Build' run found - skipping baseline column.");
+			return null;
+		}
+
+		baselineDirectory.CreateOrCleanDirectory();
+		await BuildExtensions.DownloadArtifactsFromRunStartingWith(runId.Value, "Benchmarks-",
+			baselineDirectory, GithubToken);
+
+		string resultsDirectory = baselineDirectory / "Benchmarks" / "results";
+		if (!Directory.Exists(resultsDirectory))
+		{
+			Log.Information("Baseline run #{RunId} did not contain benchmark results - skipping baseline column.",
+				runId.Value);
+			return null;
+		}
+
+		Log.Information("Loaded baseline benchmark results from main run #{RunId}.", runId.Value);
+		return resultsDirectory;
+	}
+
+	string CreateBenchmarkCommentBody(string[] files, string baselineResultsDirectory)
 	{
 		StringBuilder sb = new();
 		sb.AppendLine("## :rocket: Benchmark Results");
 		string[] columnsToRemove = ["RatioSD", "Gen0", "Gen1", "Gen2",];
+		bool anyBaselineInjected = false;
 		foreach (string file in files)
 		{
+			Dictionary<string, string[]> baselineRows = LoadBaselineRows(
+				baselineResultsDirectory == null ? null : Path.Combine(baselineResultsDirectory, Path.GetFileName(file)),
+				columnsToRemove);
+			bool injectBaseline = baselineRows.Count > 0;
 			int count = 0;
 			string[] lines = File.ReadAllLines(file);
 			sb.AppendLine();
 			sb.AppendLine("<details>");
 			sb.AppendLine("<summary>Details</summary>");
 			int[] droppedColumnIndices = null;
+			int meanIndex = -1;
+			int tableRowIndex = 0;
 			foreach (string line in lines)
 			{
 				if (line.StartsWith("```"))
@@ -153,6 +190,8 @@ partial class Build
 					}
 
 					droppedColumnIndices = null;
+					meanIndex = -1;
+					tableRowIndex = 0;
 					continue;
 				}
 
@@ -160,7 +199,37 @@ partial class Build
 				{
 					droppedColumnIndices ??= DetermineDroppedColumnIndices(line, columnsToRemove);
 					string filteredLine = RemoveColumns(line, droppedColumnIndices);
-					if (filteredLine.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase))
+					string[] filteredTokens = filteredLine.Split('|',
+						StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+					if (tableRowIndex == 0)
+					{
+						meanIndex = Array.FindIndex(filteredTokens,
+							t => string.Equals(t, "Mean", StringComparison.OrdinalIgnoreCase));
+					}
+
+					tableRowIndex++;
+
+					bool isMockolateRow = filteredLine.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase);
+
+					if (isMockolateRow && injectBaseline && meanIndex > 0)
+					{
+						string key = string.Join("|", filteredTokens.Take(meanIndex));
+						if (baselineRows.TryGetValue(key, out string[] baselineTokens) && baselineTokens.Length > 0)
+						{
+							string[] modifiedBaseline = new string[baselineTokens.Length];
+							for (int i = 0; i < baselineTokens.Length; i++)
+							{
+								string content = i == 0 ? "baseline*" : baselineTokens[i];
+								modifiedBaseline[i] = string.IsNullOrWhiteSpace(content) ? content : $"_{content}_";
+							}
+
+							sb.AppendLine(JoinTokens(modifiedBaseline));
+							anyBaselineInjected = true;
+						}
+					}
+
+					if (isMockolateRow)
 					{
 						MakeLineBold(sb, filteredLine);
 						continue;
@@ -174,8 +243,74 @@ partial class Build
 			}
 		}
 
+		if (anyBaselineInjected)
+		{
+			sb.AppendLine();
+			sb.AppendLine(
+				"> `baseline*` rows show the corresponding Mockolate benchmark from the latest successful main branch build, for regression comparison.");
+		}
+
 		string body = sb.ToString();
 		return body;
+	}
+
+	static Dictionary<string, string[]> LoadBaselineRows(string baselineFile, string[] columnsToRemove)
+	{
+		Dictionary<string, string[]> result = new();
+		if (baselineFile == null || !File.Exists(baselineFile))
+		{
+			return result;
+		}
+
+		int[] droppedColumnIndices = null;
+		int meanIndex = -1;
+		int tableRowIndex = 0;
+		foreach (string line in File.ReadAllLines(baselineFile))
+		{
+			if (!line.StartsWith('|') || !line.EndsWith('|'))
+			{
+				if (tableRowIndex > 0)
+				{
+					droppedColumnIndices = null;
+					meanIndex = -1;
+					tableRowIndex = 0;
+				}
+
+				continue;
+			}
+
+			droppedColumnIndices ??= DetermineDroppedColumnIndices(line, columnsToRemove);
+			string filtered = RemoveColumns(line, droppedColumnIndices);
+			string[] tokens = filtered.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+			if (tableRowIndex == 0)
+			{
+				meanIndex = Array.FindIndex(tokens,
+					t => string.Equals(t, "Mean", StringComparison.OrdinalIgnoreCase));
+			}
+			else if (tableRowIndex >= 2 && meanIndex > 0 && meanIndex <= tokens.Length)
+			{
+				string key = string.Join("|", tokens.Take(meanIndex));
+				result[key] = tokens;
+			}
+
+			tableRowIndex++;
+		}
+
+		return result;
+	}
+
+	static string JoinTokens(string[] tokens)
+	{
+		StringBuilder sb = new();
+		sb.Append('|');
+		foreach (string token in tokens)
+		{
+			sb.Append(' ');
+			sb.Append(token);
+			sb.Append(" |");
+		}
+
+		return sb.ToString();
 	}
 
 	static int[] DetermineDroppedColumnIndices(string headerLine, string[] columnsToRemove)

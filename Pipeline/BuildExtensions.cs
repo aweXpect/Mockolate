@@ -49,16 +49,64 @@ public static class BuildExtensions
 		=> DownloadArtifactsWhere(name => name.StartsWith(artifactNamePrefix, StringComparison.OrdinalIgnoreCase),
 			artifactsDirectory, githubToken);
 
-	private static async Task DownloadArtifactsWhere(Func<string, bool> namePredicate, string artifactsDirectory,
+	public static async Task<long?> FindLatestSuccessfulRun(string workflowFileName, string branch, string githubToken)
+	{
+		using HttpClient client = new();
+		client.DefaultRequestHeaders.UserAgent.ParseAdd("Mockolate");
+		if (!string.IsNullOrEmpty(githubToken))
+		{
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
+		}
+
+		HttpResponseMessage response = await client.GetAsync(
+			$"https://api.github.com/repos/aweXpect/Mockolate/actions/workflows/{workflowFileName}/runs?status=success&branch={branch}&per_page=1");
+		string responseContent = await response.Content.ReadAsStringAsync();
+		if (!response.IsSuccessStatusCode)
+		{
+			Log.Warning($"Could not find latest run for workflow '{workflowFileName}' on branch '{branch}': {responseContent}");
+			return null;
+		}
+
+		try
+		{
+			JsonDocument jsonDocument = JsonDocument.Parse(responseContent);
+			JsonElement runs = jsonDocument.RootElement.GetProperty("workflow_runs");
+			if (runs.GetArrayLength() == 0)
+			{
+				return null;
+			}
+
+			return runs[0].GetProperty("id").GetInt64();
+		}
+		catch (JsonException e)
+		{
+			Log.Error($"Could not parse JSON: {e.Message}\n{responseContent}");
+			return null;
+		}
+	}
+
+	public static Task DownloadArtifactsFromRunStartingWith(long runId, string artifactNamePrefix,
+		string artifactsDirectory, string githubToken)
+		=> DownloadArtifactsFromRun(runId.ToString(),
+			name => name.StartsWith(artifactNamePrefix, StringComparison.OrdinalIgnoreCase),
+			artifactsDirectory, githubToken);
+
+	private static Task DownloadArtifactsWhere(Func<string, bool> namePredicate, string artifactsDirectory,
 		string githubToken)
 	{
 		string runId = Environment.GetEnvironmentVariable("WorkflowRunId");
 		if (string.IsNullOrEmpty(runId))
 		{
 			Log.Information("Skip downloading artifacts, because no 'WorkflowRunId' environment variable is set.");
-			return;
+			return Task.CompletedTask;
 		}
 
+		return DownloadArtifactsFromRun(runId, namePredicate, artifactsDirectory, githubToken);
+	}
+
+	private static async Task DownloadArtifactsFromRun(string runId, Func<string, bool> namePredicate,
+		string artifactsDirectory, string githubToken)
+	{
 		using HttpClient client = new();
 		client.DefaultRequestHeaders.UserAgent.ParseAdd("Mockolate");
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
@@ -86,7 +134,7 @@ public static class BuildExtensions
 					if (fileResponse.IsSuccessStatusCode)
 					{
 						using ZipArchive archive = new(await fileResponse.Content.ReadAsStreamAsync());
-						archive.ExtractToDirectory(artifactsDirectory, overwriteFiles: true);
+						archive.ExtractToDirectory(artifactsDirectory, true);
 						Log.Information(
 							$"Extracted artifact '{name}' (#{artifactId}) with {archive.Entries.Count} entries to {artifactsDirectory}:\n - {string.Join("\n - ", archive.Entries.Select(entry => $"{entry.Name} ({entry.Length})"))}");
 					}
