@@ -1,4 +1,7 @@
 #if NET10_0_OR_GREATER
+using System;
+using System.Threading.Tasks;
+
 namespace Mockolate.Tests.GeneratorCoverage;
 
 public class MyBase
