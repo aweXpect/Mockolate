@@ -661,7 +661,7 @@ internal static partial class Sources
 		memberIds.Emit(sb, "\t\t");
 		sb.AppendLine();
 
-		AppendCreateFastInteractions(sb, "\t\t", @class, memberIds, memberIdPrefix);
+		AppendCreateFastInteractions(sb, "\t\t");
 		sb.AppendLine();
 
 		bool hasMockRegistryProvider = constructors?.Count > 0 || (@class.IsInterface && hasStaticMembers);
@@ -1269,8 +1269,7 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static void AppendCreateFastInteractions(StringBuilder sb, string indent, Class @class,
-		MemberIdTable memberIds, string memberIdPrefix)
+	private static void AppendCreateFastInteractions(StringBuilder sb, string indent)
 	{
 		sb.Append(indent).Append("/// <summary>").AppendLine();
 		sb.Append(indent)
