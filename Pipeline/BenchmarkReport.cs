@@ -12,6 +12,8 @@ namespace Build;
 /// </summary>
 internal static class BenchmarkReport
 {
+	public static readonly string[] DefaultColumnsToRemove = ["RatioSD", "Gen0", "Gen1", "Gen2",];
+
 	public static string BuildBody(IReadOnlyList<BenchmarkReportFile> files, string[] columnsToRemove)
 	{
 		StringBuilder sb = new();
