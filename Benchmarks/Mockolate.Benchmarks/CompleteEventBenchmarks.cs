@@ -34,6 +34,36 @@ public class CompleteEventBenchmarks : BenchmarksBase
 	}
 
 	/// <summary>
+	///     <see href="https://github.com/themidnightgospel/Imposter" />
+	/// </summary>
+	[Benchmark]
+	public void Event_Imposter()
+	{
+		IMyEventInterfaceImposter imposter = IMyEventInterface.Imposter();
+		EventHandler handler = (_, _) => { };
+
+		imposter.Instance().SomeEvent += handler;
+		imposter.SomeEvent.Raise(null!, EventArgs.Empty);
+
+		imposter.SomeEvent.Subscribed(handler, Count.Once());
+	}
+
+	/// <summary>
+	///     <see href="https://github.com/thomhurst/TUnit/" />
+	/// </summary>
+	[Benchmark]
+	public void Event_TUnitMocks()
+	{
+		Mock<IMyEventInterface> mock = TUnit.Mocks.Mock.Of<IMyEventInterface>();
+		EventHandler handler = (_, _) => { };
+
+		mock.Object.SomeEvent += handler;
+		mock.RaiseSomeEvent(EventArgs.Empty);
+
+		_ = mock.Events.SomeEvent.SubscriberCount;
+	}
+
+	/// <summary>
 	///     <see href="https://github.com/devlooped/moq" />
 	/// </summary>
 	[Benchmark]
@@ -80,36 +110,6 @@ public class CompleteEventBenchmarks : BenchmarksBase
 			.Where(call => call.Method.Name == "add_SomeEvent")
 			// Expect 2, because raising an event in FakeItEasy is implemented as a call to the add accessor of the event.
 			.MustHaveHappened(2, FakeItEasy.Times.Exactly);
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/themidnightgospel/Imposter" />
-	/// </summary>
-	[Benchmark]
-	public void Event_Imposter()
-	{
-		IMyEventInterfaceImposter imposter = IMyEventInterface.Imposter();
-		EventHandler handler = (_, _) => { };
-
-		imposter.Instance().SomeEvent += handler;
-		imposter.SomeEvent.Raise(null!, EventArgs.Empty);
-
-		imposter.SomeEvent.Subscribed(handler, Count.Once());
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/thomhurst/TUnit/" />
-	/// </summary>
-	[Benchmark]
-	public void Event_TUnitMocks()
-	{
-		Mock<IMyEventInterface> mock = TUnit.Mocks.Mock.Of<IMyEventInterface>();
-		EventHandler handler = (_, _) => { };
-
-		mock.Object.SomeEvent += handler;
-		mock.RaiseSomeEvent(EventArgs.Empty);
-
-		_ = mock.Events.SomeEvent.SubscriberCount;
 	}
 
 	public interface IMyEventInterface

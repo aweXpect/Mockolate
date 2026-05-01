@@ -37,6 +37,42 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 	}
 
 	/// <summary>
+	///     <see href="https://github.com/themidnightgospel/Imposter" />
+	/// </summary>
+	[Benchmark]
+	public void Method_Imposter()
+	{
+		IMyMethodInterfaceImposter imposter = IMyMethodInterface.Imposter();
+		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Returns(true);
+		IMyMethodInterface sut = imposter.Instance();
+
+		for (int i = 0; i < N; i++)
+		{
+			sut.MyFunc(42);
+		}
+
+		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Exactly(N));
+	}
+
+	/// <summary>
+	///     <see href="https://github.com/thomhurst/TUnit/" />
+	/// </summary>
+	[Benchmark]
+	public void Method_TUnitMocks()
+	{
+		Mock<IMyMethodInterface> mock = TUnit.Mocks.Mock.Of<IMyMethodInterface>();
+		mock.MyFunc(Any<int>()).Returns(true);
+		IMyMethodInterface sut = mock.Object;
+
+		for (int i = 0; i < N; i++)
+		{
+			sut.MyFunc(42);
+		}
+
+		mock.MyFunc(Any<int>()).WasCalled(TUnit.Mocks.Times.Exactly(N));
+	}
+
+	/// <summary>
 	///     <see href="https://github.com/devlooped/moq" />
 	/// </summary>
 	[Benchmark]
@@ -86,42 +122,6 @@ public class CompleteMethodBenchmarks : BenchmarksBase
 		}
 
 		A.CallTo(() => mock.MyFunc(A<int>.Ignored)).MustHaveHappened(N, FakeItEasy.Times.Exactly);
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/themidnightgospel/Imposter" />
-	/// </summary>
-	[Benchmark]
-	public void Method_Imposter()
-	{
-		IMyMethodInterfaceImposter imposter = IMyMethodInterface.Imposter();
-		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Returns(true);
-		IMyMethodInterface sut = imposter.Instance();
-
-		for (int i = 0; i < N; i++)
-		{
-			sut.MyFunc(42);
-		}
-
-		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Exactly(N));
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/thomhurst/TUnit/" />
-	/// </summary>
-	[Benchmark]
-	public void Method_TUnitMocks()
-	{
-		Mock<IMyMethodInterface> mock = TUnit.Mocks.Mock.Of<IMyMethodInterface>();
-		mock.MyFunc(Any<int>()).Returns(true);
-		IMyMethodInterface sut = mock.Object;
-
-		for (int i = 0; i < N; i++)
-		{
-			sut.MyFunc(42);
-		}
-
-		mock.MyFunc(Any<int>()).WasCalled(TUnit.Mocks.Times.Exactly(N));
 	}
 
 	public interface IMyMethodInterface

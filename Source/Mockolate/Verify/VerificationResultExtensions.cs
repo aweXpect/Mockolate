@@ -18,7 +18,7 @@ namespace Mockolate.Verify;
 ///     interactions produced on a background thread.
 /// </remarks>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public static class VerificationResultExtensions
 {

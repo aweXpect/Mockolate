@@ -39,6 +39,46 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 	}
 
 	/// <summary>
+	///     <see href="https://github.com/themidnightgospel/Imposter" />
+	/// </summary>
+	[Benchmark]
+	public void Property_Imposter()
+	{
+		IMyPropertyInterfaceImposter imposter = IMyPropertyInterface.Imposter();
+		imposter.Counter.Getter().Returns(42);
+		IMyPropertyInterface sut = imposter.Instance();
+
+		for (int i = 0; i < N; i++)
+		{
+			_ = sut.Counter;
+			sut.Counter = i;
+		}
+
+		imposter.Counter.Getter().Called(Count.Exactly(N));
+		imposter.Counter.Setter(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Exactly(N));
+	}
+
+	/// <summary>
+	///     <see href="https://github.com/thomhurst/TUnit/" />
+	/// </summary>
+	[Benchmark]
+	public void Property_TUnitMocks()
+	{
+		Mock<IMyPropertyInterface> mock = TUnit.Mocks.Mock.Of<IMyPropertyInterface>();
+		mock.Counter.Returns(42);
+		IMyPropertyInterface sut = mock.Object;
+
+		for (int i = 0; i < N; i++)
+		{
+			_ = sut.Counter;
+			sut.Counter = i;
+		}
+
+		mock.Counter.WasCalled(TUnit.Mocks.Times.Exactly(N));
+		mock.Counter.Setter.WasCalled(TUnit.Mocks.Times.Exactly(N));
+	}
+
+	/// <summary>
 	///     <see href="https://github.com/devlooped/moq" />
 	/// </summary>
 	[Benchmark]
@@ -94,46 +134,6 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 
 		A.CallTo(() => mock.Counter).MustHaveHappened(N, FakeItEasy.Times.Exactly);
 		A.CallToSet(() => mock.Counter).MustHaveHappened(N, FakeItEasy.Times.Exactly);
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/themidnightgospel/Imposter" />
-	/// </summary>
-	[Benchmark]
-	public void Property_Imposter()
-	{
-		IMyPropertyInterfaceImposter imposter = IMyPropertyInterface.Imposter();
-		imposter.Counter.Getter().Returns(42);
-		IMyPropertyInterface sut = imposter.Instance();
-
-		for (int i = 0; i < N; i++)
-		{
-			_ = sut.Counter;
-			sut.Counter = i;
-		}
-
-		imposter.Counter.Getter().Called(Count.Exactly(N));
-		imposter.Counter.Setter(Imposter.Abstractions.Arg<int>.Any()).Called(Count.Exactly(N));
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/thomhurst/TUnit/" />
-	/// </summary>
-	[Benchmark]
-	public void Property_TUnitMocks()
-	{
-		Mock<IMyPropertyInterface> mock = TUnit.Mocks.Mock.Of<IMyPropertyInterface>();
-		mock.Counter.Returns(42);
-		IMyPropertyInterface sut = mock.Object;
-
-		for (int i = 0; i < N; i++)
-		{
-			_ = sut.Counter;
-			sut.Counter = i;
-		}
-
-		mock.Counter.WasCalled(TUnit.Mocks.Times.Exactly(N));
-		mock.Counter.Setter.WasCalled(TUnit.Mocks.Times.Exactly(N));
 	}
 
 	public interface IMyPropertyInterface
