@@ -14,8 +14,7 @@ namespace Build;
 )]
 partial class Build : NukeBuild
 {
-	[Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-	readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+	[Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")] readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
 	[Parameter("Github Token")] readonly string GithubToken;
 

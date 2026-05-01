@@ -28,14 +28,14 @@ MyChocolateDispenser classMock = MyChocolateDispenser.CreateMock(behavior, "Dark
 
 **`MockBehavior` options**
 
-| Option | Default | Purpose |
-|---|---|---|
-| `SkipBaseClass` | `false` | When `true`, the mock does not call any base class implementations. Otherwise, the base class implementation is used as the default value when no explicit setup matches. |
-| `ThrowWhenNotSetup` | `false` | When `true`, the mock throws when no matching setup is found. Otherwise, it returns a default value (see `DefaultValue` below). |
-| `SkipInteractionRecording` | `false` | When `true`, interactions are not recorded - setups, returns, callbacks, and base-class delegation still work, but `.Verify.X()` throws a `MockException`. Useful in performance-sensitive scenarios. |
-| `DefaultValue` | sensible defaults | Customizes how default values are generated for unset methods and properties (see below). |
-| `Initialize<T>(...)` | - | Automatically applies the given setups to all mocks of type `T` when they are created. |
-| `UseConstructorParametersFor<T>(...)` | - | Configures default constructor parameters for mocks of type `T`, unless explicit parameters are supplied to `CreateMock([…])`. The `Func<object?[]>` overload defers parameter resolution until each mock is created. |
+| Option                                | Default           | Purpose                                                                                                                                                                                                               |
+|---------------------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SkipBaseClass`                       | `false`           | When `true`, the mock does not call any base class implementations. Otherwise, the base class implementation is used as the default value when no explicit setup matches.                                             |
+| `ThrowWhenNotSetup`                   | `false`           | When `true`, the mock throws when no matching setup is found. Otherwise, it returns a default value (see `DefaultValue` below).                                                                                       |
+| `SkipInteractionRecording`            | `false`           | When `true`, interactions are not recorded - setups, returns, callbacks, and base-class delegation still work, but `.Verify.X()` throws a `MockException`. Useful in performance-sensitive scenarios.                 |
+| `DefaultValue`                        | sensible defaults | Customizes how default values are generated for unset methods and properties (see below).                                                                                                                             |
+| `Initialize<T>(...)`                  | -                 | Automatically applies the given setups to all mocks of type `T` when they are created.                                                                                                                                |
+| `UseConstructorParametersFor<T>(...)` | -                 | Configures default constructor parameters for mocks of type `T`, unless explicit parameters are supplied to `CreateMock([…])`. The `Func<object?[]>` overload defers parameter resolution until each mock is created. |
 
 **Default value generation**
 

@@ -3,7 +3,6 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Mockolate.SourceGenerators.Entities;
-using Mockolate.SourceGenerators.Internals;
 using Attribute = Mockolate.SourceGenerators.Entities.Attribute;
 using Type = Mockolate.SourceGenerators.Entities.Type;
 

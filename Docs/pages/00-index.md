@@ -15,12 +15,12 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
 
 ## Why Mockolate
 
-|  | Reflection-based mocks (Moq, NSubstitute, …) | Mockolate |
-|---|---|---|
-| AOT / trimming | not supported | supported |
-| Validation | runtime exceptions | analyzers + compile errors |
-| Setup API | `Expression<Func<…>>` trees | regular method calls |
-| Hot path | dynamic-proxy dispatch | direct dispatch |
+|                | Reflection-based mocks (Moq, NSubstitute, …) | Mockolate                  |
+|----------------|----------------------------------------------|----------------------------|
+| AOT / trimming | not supported                                | supported                  |
+| Validation     | runtime exceptions                           | analyzers + compile errors |
+| Setup API      | `Expression<Func<…>>` trees                  | regular method calls       |
+| Hot path       | dynamic-proxy dispatch                       | direct dispatch            |
 
 For side-by-side setup, usage, and verification syntax against Moq, NSubstitute, and FakeItEasy, see the [full code comparison](08-comparison.md).
 

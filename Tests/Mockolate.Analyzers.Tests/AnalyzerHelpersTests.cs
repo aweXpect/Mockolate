@@ -12,76 +12,19 @@ namespace Mockolate.Analyzers.Tests;
 public class AnalyzerHelpersTests
 {
 	[Fact]
-	public async Task WhenInvokedMethodIsNotGeneric_ShouldNotReturnAnyTypeArgument()
-	{
-		const string source = """
-			public class C
-			{
-				public void Foo() { }
-				public void Bar() { Foo(); }
-			}
-			""";
-		IMethodSymbol method = GetInvokedMethod(source, "Foo");
-
-		ITypeSymbol? result = AnalyzerHelpers.GetSingleInvocationTypeArgumentOrNull(method);
-
-		await That(result).IsNull();
-	}
-
-	[Fact]
-	public async Task WhenInvokedMethodIsGeneric_ShouldReturnFirstTypeArgument()
-	{
-		const string source = """
-			public class C
-			{
-				public T Foo<T>() => default!;
-				public void Bar() { Foo<int>(); }
-			}
-			""";
-		IMethodSymbol method = GetInvokedMethod(source, "Foo");
-
-		ITypeSymbol? result = AnalyzerHelpers.GetSingleInvocationTypeArgumentOrNull(method);
-
-		await That(result).IsNotNull();
-		await That(result!.SpecialType).IsEqualTo(SpecialType.System_Int32);
-	}
-
-	[Fact]
-	public async Task WhenSyntaxIsNotInvocationExpression_ShouldNotReturnAnyLocation()
-	{
-		const string source = """
-			public class C
-			{
-				public int Foo() => 0;
-			}
-			""";
-		SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
-		CSharpCompilation compilation = CreateCompilation(tree);
-		SemanticModel model = compilation.GetSemanticModel(tree);
-		MethodDeclarationSyntax declaration = tree.GetRoot().DescendantNodes()
-			.OfType<MethodDeclarationSyntax>()
-			.Single();
-		IMethodSymbol symbol = (IMethodSymbol)model.GetDeclaredSymbol(declaration)!;
-
-		Location? result = AnalyzerHelpers.GetTypeArgumentLocation(declaration, symbol.ReturnType);
-
-		await That(result).IsNull();
-	}
-
-	[Fact]
 	public async Task WhenInvocationHasGenericNameSyntax_ShouldReturnTypeArgumentLocation()
 	{
 		const string source = """
-			public static class S
-			{
-				public static T Make<T>() => default!;
-			}
+		                      public static class S
+		                      {
+		                      	public static T Make<T>() => default!;
+		                      }
 
-			public class C
-			{
-				public void Foo() { S.Make<int>(); }
-			}
-			""";
+		                      public class C
+		                      {
+		                      	public void Foo() { S.Make<int>(); }
+		                      }
+		                      """;
 		SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
 		CSharpCompilation compilation = CreateCompilation(tree);
 		SemanticModel model = compilation.GetSemanticModel(tree);
@@ -94,6 +37,63 @@ public class AnalyzerHelpersTests
 		Location? result = AnalyzerHelpers.GetTypeArgumentLocation(invocation, typeArgument);
 
 		await That(result).IsNotNull();
+	}
+
+	[Fact]
+	public async Task WhenInvokedMethodIsGeneric_ShouldReturnFirstTypeArgument()
+	{
+		const string source = """
+		                      public class C
+		                      {
+		                      	public T Foo<T>() => default!;
+		                      	public void Bar() { Foo<int>(); }
+		                      }
+		                      """;
+		IMethodSymbol method = GetInvokedMethod(source, "Foo");
+
+		ITypeSymbol? result = AnalyzerHelpers.GetSingleInvocationTypeArgumentOrNull(method);
+
+		await That(result).IsNotNull();
+		await That(result!.SpecialType).IsEqualTo(SpecialType.System_Int32);
+	}
+
+	[Fact]
+	public async Task WhenInvokedMethodIsNotGeneric_ShouldNotReturnAnyTypeArgument()
+	{
+		const string source = """
+		                      public class C
+		                      {
+		                      	public void Foo() { }
+		                      	public void Bar() { Foo(); }
+		                      }
+		                      """;
+		IMethodSymbol method = GetInvokedMethod(source, "Foo");
+
+		ITypeSymbol? result = AnalyzerHelpers.GetSingleInvocationTypeArgumentOrNull(method);
+
+		await That(result).IsNull();
+	}
+
+	[Fact]
+	public async Task WhenSyntaxIsNotInvocationExpression_ShouldNotReturnAnyLocation()
+	{
+		const string source = """
+		                      public class C
+		                      {
+		                      	public int Foo() => 0;
+		                      }
+		                      """;
+		SyntaxTree tree = CSharpSyntaxTree.ParseText(source);
+		CSharpCompilation compilation = CreateCompilation(tree);
+		SemanticModel model = compilation.GetSemanticModel(tree);
+		MethodDeclarationSyntax declaration = tree.GetRoot().DescendantNodes()
+			.OfType<MethodDeclarationSyntax>()
+			.Single();
+		IMethodSymbol symbol = (IMethodSymbol)model.GetDeclaredSymbol(declaration)!;
+
+		Location? result = AnalyzerHelpers.GetTypeArgumentLocation(declaration, symbol.ReturnType);
+
+		await That(result).IsNull();
 	}
 
 	private static IMethodSymbol GetInvokedMethod(string source, string methodName)

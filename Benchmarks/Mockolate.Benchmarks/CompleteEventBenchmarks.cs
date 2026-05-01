@@ -5,6 +5,7 @@ using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
+using Raise = NSubstitute.Raise;
 using Times = Moq.Times;
 
 [assembly: GenerateImposter(typeof(CompleteEventBenchmarks.IMyEventInterface))]
@@ -58,7 +59,7 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		mock.SomeEvent += handler;
-		mock.SomeEvent += NSubstitute.Raise.EventWith(null, EventArgs.Empty);
+		mock.SomeEvent += Raise.EventWith(null, EventArgs.Empty);
 
 		mock.Received(1).SomeEvent += Arg.Any<EventHandler>();
 	}

@@ -1,6 +1,5 @@
 using System.Text;
 using Mockolate.SourceGenerators.Entities;
-using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Sources;
 

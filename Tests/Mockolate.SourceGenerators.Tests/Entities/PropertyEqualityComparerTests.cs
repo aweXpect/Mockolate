@@ -79,10 +79,10 @@ public class PropertyEqualityComparerTests
 	}
 
 	private static Property CreateProperty(string source, string propertyName)
-		=> new Property(ParsePropertySymbol(source, propertyName, false), null);
+		=> new(ParsePropertySymbol(source, propertyName, false), null);
 
 	private static Property CreateIndexer(string source)
-		=> new Property(ParsePropertySymbol(source, null, true), null);
+		=> new(ParsePropertySymbol(source, null, true), null);
 
 	private static IPropertySymbol ParsePropertySymbol(string source, string? propertyName, bool isIndexer)
 	{

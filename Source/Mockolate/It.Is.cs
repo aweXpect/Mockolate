@@ -47,7 +47,7 @@ public partial class It
 	/// <returns>A parameter matcher whose diagnostic string is computed lazily.</returns>
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public static IIsParameter<T> IsValue<T>(T value)
-		=> new ParameterEqualsMatch<T>(value, valueExpression: null);
+		=> new ParameterEqualsMatch<T>(value, null);
 
 	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison, with an opt-in custom comparer.
@@ -73,9 +73,9 @@ public partial class It
 	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
 	{
 		private readonly T _value;
-		private string? _valueExpression;
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
+		private string? _valueExpression;
 
 		/// <summary>
 		///     Constructs an equality matcher for <paramref name="value" />. When

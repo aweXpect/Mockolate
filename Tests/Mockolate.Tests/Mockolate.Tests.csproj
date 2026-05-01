@@ -6,7 +6,7 @@
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers\Mockolate.Analyzers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
 		<ProjectReference Include="..\..\Source\Mockolate.Analyzers.CodeFixers\Mockolate.Analyzers.CodeFixers.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<PackageReference Include="Nullable">
 			<PrivateAssets>all</PrivateAssets>

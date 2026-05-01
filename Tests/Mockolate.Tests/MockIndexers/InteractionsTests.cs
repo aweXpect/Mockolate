@@ -1,5 +1,4 @@
 using aweXpect.Chronology;
-using Mockolate.Interactions;
 
 namespace Mockolate.Tests.MockIndexers;
 

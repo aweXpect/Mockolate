@@ -136,4 +136,3 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 		public IInteraction? Boxed;
 	}
 }
-

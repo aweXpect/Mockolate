@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -299,9 +297,9 @@ internal static class BenchmarkReport
 		string unitPart = spaceIdx > 0 ? trimmed.Substring(spaceIdx + 1).Trim() : string.Empty;
 
 		if (!double.TryParse(numberPart,
-			NumberStyles.Float | NumberStyles.AllowThousands,
-			CultureInfo.InvariantCulture,
-			out double number))
+			    NumberStyles.Float | NumberStyles.AllowThousands,
+			    CultureInfo.InvariantCulture,
+			    out double number))
 		{
 			return false;
 		}

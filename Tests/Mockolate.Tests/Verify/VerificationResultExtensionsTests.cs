@@ -413,6 +413,18 @@ public class VerificationResultExtensionsTests
 	}
 
 	[Fact]
+	public void Then_RepeatedPropertyGetter_ShouldNotCollapseIntoOnePosition()
+	{
+		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
+		_ = sut.TotalDispensed;
+		sut.Dispense("Dark", 1);
+		_ = sut.TotalDispensed;
+
+		sut.Mock.Verify.TotalDispensed.Got()
+			.Then(m => m.TotalDispensed.Got());
+	}
+
+	[Fact]
 	public async Task Then_ShouldVerifyInOrder()
 	{
 		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
@@ -435,18 +447,6 @@ public class VerificationResultExtensionsTests
 				"Expected that mock invoked method Dispense(It.IsAny<string>(), 2), then invoked method Dispense(It.IsAny<string>(), 1) in order, but it invoked method Dispense(It.IsAny<string>(), 1) too early.");
 		sut.Mock.Verify.Dispense(It.IsAny<string>(), It.Is(1))
 			.Then(m => m.Dispense(It.IsAny<string>(), It.Is(2)));
-	}
-
-	[Fact]
-	public void Then_RepeatedPropertyGetter_ShouldNotCollapseIntoOnePosition()
-	{
-		IChocolateDispenser sut = IChocolateDispenser.CreateMock();
-		_ = sut.TotalDispensed;
-		sut.Dispense("Dark", 1);
-		_ = sut.TotalDispensed;
-
-		sut.Mock.Verify.TotalDispensed.Got()
-			.Then(m => m.TotalDispensed.Got());
 	}
 
 	[Theory]

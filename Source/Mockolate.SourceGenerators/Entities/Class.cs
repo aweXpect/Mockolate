@@ -174,6 +174,25 @@ internal class Class : IEquatable<Class>
 	public string DisplayString { get; }
 
 	/// <summary>
+	///     Equality is keyed on <see cref="ClassFullName" /> plus a content-derived hash of the
+	///     member surface (<see cref="ComputeSurfaceHash" />). The full name alone is necessary
+	///     but not sufficient as a Roslyn incremental cache key: across edits, a target type can
+	///     keep its name while its members change, and a name-only comparison would let Roslyn
+	///     skip downstream stages and persist stale generated source. Folding the surface into a
+	///     precomputed hash keeps the comparison O(1) on the cache hot path while still
+	///     invalidating on any change to the emitted member set. Hash collisions are theoretically
+	///     possible but the leaf entities (<see cref="Method" />, <see cref="Property" />, and
+	///     <see cref="Event" />) are records with content-based hashes that propagate through
+	///     <see cref="EquatableArray{T}" />, so different surfaces almost always hash apart.
+	/// </summary>
+	public virtual bool Equals(Class? other)
+		=> ReferenceEquals(this, other) ||
+		   (other is not null &&
+		    GetType() == other.GetType() &&
+		    _surfaceHash == other._surfaceHash &&
+		    ClassFullName == other.ClassFullName);
+
+	/// <summary>
 	///     Folds the member surface (methods, properties, events, recursive base/interface chain,
 	///     reserved names, kind, required-member flag) into a single content-derived integer.
 	///     Roslyn's incremental cache uses <see cref="Equals(Class?)" /> to decide whether a
@@ -501,25 +520,6 @@ internal class Class : IEquatable<Class>
 
 		return _classNameWithoutDots = sb.ToString();
 	}
-
-	/// <summary>
-	///     Equality is keyed on <see cref="ClassFullName" /> plus a content-derived hash of the
-	///     member surface (<see cref="ComputeSurfaceHash" />). The full name alone is necessary
-	///     but not sufficient as a Roslyn incremental cache key: across edits, a target type can
-	///     keep its name while its members change, and a name-only comparison would let Roslyn
-	///     skip downstream stages and persist stale generated source. Folding the surface into a
-	///     precomputed hash keeps the comparison O(1) on the cache hot path while still
-	///     invalidating on any change to the emitted member set. Hash collisions are theoretically
-	///     possible but the leaf entities (<see cref="Method" />, <see cref="Property" />, and
-	///     <see cref="Event" />) are records with content-based hashes that propagate through
-	///     <see cref="EquatableArray{T}" />, so different surfaces almost always hash apart.
-	/// </summary>
-	public virtual bool Equals(Class? other)
-		=> ReferenceEquals(this, other) ||
-		   (other is not null &&
-		    GetType() == other.GetType() &&
-		    _surfaceHash == other._surfaceHash &&
-		    ClassFullName == other.ClassFullName);
 
 	public override bool Equals(object? obj) => Equals(obj as Class);
 

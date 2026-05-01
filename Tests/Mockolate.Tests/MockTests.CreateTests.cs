@@ -176,9 +176,8 @@ public sealed partial class MockTests
 				.DoSomething(It.IsAny<int>())).Exactly(3);
 		}
 	}
-	
-	#if NET10_0_OR_GREATER
 
+#if NET10_0_OR_GREATER
 	/// <summary>
 	///     Compile-and-create coverage for every special case in
 	///     <c>Source/Mockolate.SourceGenerators</c>. The example types in this folder

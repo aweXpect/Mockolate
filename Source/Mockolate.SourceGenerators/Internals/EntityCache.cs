@@ -51,7 +51,7 @@ internal sealed class EntityCache
 	public readonly struct Scope : IDisposable
 	{
 		private static void ExitScope(EntityCache? previous) => Current = previous;
-		
+
 		private readonly EntityCache? _previous;
 
 		internal Scope(EntityCache? previous)

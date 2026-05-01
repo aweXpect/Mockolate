@@ -76,6 +76,18 @@ public sealed partial class InteractionsTests
 			await That(result.IsCanceled).IsTrue();
 		}
 
+		[Fact]
+		public async Task WithTupleContainingTask_ShouldCancelTaskElement()
+		{
+			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
+			CancellationToken canceledToken = new(true);
+
+			(Task task, string text) result = sut.TupleWithTaskMethod(canceledToken);
+
+			await That(result.task.IsCanceled).IsTrue();
+			await That(result.text).IsEqualTo(string.Empty);
+		}
+
 #if NET8_0_OR_GREATER
 		[Fact]
 		public async Task WithValueTask_ShouldReturnCanceledTask()
@@ -101,18 +113,6 @@ public sealed partial class InteractionsTests
 			await That(result.IsCanceled).IsTrue();
 		}
 #endif
-
-		[Fact]
-		public async Task WithTupleContainingTask_ShouldCancelTaskElement()
-		{
-			IMockWithCancellationToken sut = IMockWithCancellationToken.CreateMock();
-			CancellationToken canceledToken = new(true);
-
-			(Task task, string text) result = sut.TupleWithTaskMethod(canceledToken);
-
-			await That(result.task.IsCanceled).IsTrue();
-			await That(result.text).IsEqualTo(string.Empty);
-		}
 	}
 
 	public interface IMockWithCancellationToken

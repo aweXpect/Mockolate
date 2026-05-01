@@ -4,6 +4,7 @@ using Imposter.Abstractions;
 using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
+using Arg = NSubstitute.Arg;
 using Times = Moq.Times;
 
 [assembly: GenerateImposter(typeof(CompletePropertyBenchmarks.IMyPropertyInterface))]
@@ -16,8 +17,7 @@ namespace Mockolate.Benchmarks;
 /// </summary>
 public class CompletePropertyBenchmarks : BenchmarksBase
 {
-	[Params(1, 10)]
-	public int N { get; set; }
+	[Params(1, 10)] public int N { get; set; }
 
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
@@ -74,7 +74,7 @@ public class CompletePropertyBenchmarks : BenchmarksBase
 		}
 
 		_ = mock.Received(N).Counter;
-		mock.Received(N).Counter = NSubstitute.Arg.Any<int>();
+		mock.Received(N).Counter = Arg.Any<int>();
 	}
 
 	/// <summary>

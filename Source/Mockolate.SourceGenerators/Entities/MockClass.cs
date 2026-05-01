@@ -1,5 +1,4 @@
 using Microsoft.CodeAnalysis;
-using Mockolate.SourceGenerators.Internals;
 
 namespace Mockolate.SourceGenerators.Entities;
 
@@ -35,15 +34,6 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 
 	public EquatableArray<Class> AdditionalImplementations { get; }
 
-	public IEnumerable<Class> AllImplementations()
-	{
-		yield return this;
-		foreach (Class additionalImplementation in AdditionalImplementations)
-		{
-			yield return additionalImplementation;
-		}
-	}
-
 	/// <summary>
 	///     MockClass equality is keyed on <see cref="Class.ClassFullName" /> plus a content-derived
 	///     hash that folds the base surface together with the mock-only fields
@@ -57,6 +47,15 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 		   (other is not null &&
 		    _mockSurfaceHash == other._mockSurfaceHash &&
 		    ClassFullName == other.ClassFullName);
+
+	public IEnumerable<Class> AllImplementations()
+	{
+		yield return this;
+		foreach (Class additionalImplementation in AdditionalImplementations)
+		{
+			yield return additionalImplementation;
+		}
+	}
 
 	public override bool Equals(Class? other) => other is MockClass mc && Equals(mc);
 
