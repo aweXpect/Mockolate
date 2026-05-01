@@ -3,9 +3,7 @@
     <Project Path="Benchmarks/Mockolate.Benchmarks/Mockolate.Benchmarks.csproj" />
   </Folder>
   <Folder Name="/Pipeline/">
-    <Project Path="Pipeline/Build.csproj">
-      <Build Project="false" />
-    </Project>
+    <Project Path="Pipeline/Build.csproj" />
     <Project Path="Tests/Build.Tests/Build.Tests.csproj" />
   </Folder>
   <Folder Name="/Tests/">
