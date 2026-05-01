@@ -33,6 +33,20 @@ public sealed partial class VerificationResultTests
 	}
 
 	[Fact]
+	public async Task AnyParameters_OnUntypedDefaultArguments_ShouldBindToValuesOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.DoSomething(1);
+		sut.DoSomething(2);
+		sut.DoSomething(3, true);
+
+		await That(sut.Mock.Verify.DoSomething(default).AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.DoSomething(default, default).AnyParameters()).Once();
+		await That(sut.Mock.Verify.DoSomething(default!, default!).AnyParameters()).Once();
+	}
+
+	[Fact]
 	public async Task CustomVerificationResult_ShouldKeepExpectation()
 	{
 		IMockInteractions interactions = new FastMockInteractions(0);

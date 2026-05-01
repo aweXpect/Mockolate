@@ -585,6 +585,18 @@ public sealed partial class SetupMethodTests
 			await That(result2).IsEqualTo("foo");
 		}
 
+		[Fact]
+		public async Task AnyParameters_OnUntypedDefaultArgument_ShouldBindToValuesOverload()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method1(default).AnyParameters()
+				.Returns("foo");
+
+			await That(sut.Method1(0)).IsEqualTo("foo");
+			await That(sut.Method1(42)).IsEqualTo("foo");
+		}
+
 		[Theory]
 		[InlineData(-1, 0)]
 		[InlineData(1, 1)]
@@ -678,6 +690,18 @@ public sealed partial class SetupMethodTests
 
 			await That(result1).IsEqualTo("foo");
 			await That(result2).IsEqualTo("foo");
+		}
+
+		[Fact]
+		public async Task AnyParameters_OnUntypedDefaultArguments_ShouldBindToValuesOverload()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method2(default, default).AnyParameters()
+				.Returns("foo");
+
+			await That(sut.Method2(0, 0)).IsEqualTo("foo");
+			await That(sut.Method2(7, 9)).IsEqualTo("foo");
 		}
 
 		[Theory]

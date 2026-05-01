@@ -4404,7 +4404,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, string, long, int[]> WithModifiers(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4413,7 +4413,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(4)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, string, long, int[]> WithModifiers(global::Mockolate.Parameters.IRefParameter<int> a, global::Mockolate.Parameters.IOutParameter<string> b, global::Mockolate.Parameters.IParameter<long>? c, global::Mockolate.Parameters.IParameter<int[]>? tail);
 
 		/// <summary>
@@ -4449,7 +4449,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, global::Mockolate.Tests.GeneratorCoverage.MyEnum, decimal, float, char, string?, global::Mockolate.Tests.GeneratorCoverage.MyStruct> WithDefaults(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4458,7 +4458,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(7)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, global::Mockolate.Tests.GeneratorCoverage.MyEnum, decimal, float, char, string?, global::Mockolate.Tests.GeneratorCoverage.MyStruct> WithDefaults(global::Mockolate.Parameters.IParameter<int>? i = null, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.MyEnum>? e = null, global::Mockolate.Parameters.IParameter<decimal>? d = null, global::Mockolate.Parameters.IParameter<float>? f = null, global::Mockolate.Parameters.IParameter<char>? c = null, global::Mockolate.Parameters.IParameter<string?>? s = null, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.MyStruct>? st = null);
 
 		/// <summary>
@@ -4467,6 +4467,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int, global::Mockolate.Tests.GeneratorCoverage.MyEnum, decimal, float, char, string?, global::Mockolate.Tests.GeneratorCoverage.MyStruct> WithDefaults(int i, global::Mockolate.Tests.GeneratorCoverage.MyEnum e, decimal d, float f, char c, string? s, global::Mockolate.Tests.GeneratorCoverage.MyStruct st);
 
 		/// <summary>
@@ -4475,7 +4476,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, int, int, int> WithCollidingNames(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4484,7 +4485,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(5)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, int, int, int> WithCollidingNames(global::Mockolate.Parameters.IParameter<int>? wraps, global::Mockolate.Parameters.IParameter<int>? result, global::Mockolate.Parameters.IParameter<int>? outParam1, global::Mockolate.Parameters.IParameter<int>? methodExecution, global::Mockolate.Parameters.IParameter<int>? returnValue);
 
 		/// <summary>
@@ -4493,6 +4494,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int, int, int, int, int> WithCollidingNames(int wraps, int result, int outParam1, int methodExecution, int returnValue);
 
 		/// <summary>
@@ -4501,7 +4503,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<string?, string?> GetMaybeNull(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4510,7 +4512,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<string?, string?> GetMaybeNull(global::Mockolate.Parameters.IParameter<string?>? s);
 
 		/// <summary>
@@ -4519,6 +4521,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<string?, string?> GetMaybeNull(string? s);
 
 		/// <summary>
@@ -4563,7 +4566,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<char>, int> GetSpan(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4572,7 +4575,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<char>, int> GetSpan(global::Mockolate.Parameters.IParameter<int>? n);
 
 		/// <summary>
@@ -4581,6 +4584,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::Mockolate.Setup.SpanWrapper<char>, int> GetSpan(int n);
 
 		/// <summary>
@@ -4589,7 +4593,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int> GetROSpan(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4598,7 +4602,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int> GetROSpan(global::Mockolate.Parameters.IParameter<int>? n);
 
 		/// <summary>
@@ -4607,6 +4611,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::Mockolate.Setup.ReadOnlySpanWrapper<char>, int> GetROSpan(int n);
 
 		/// <summary>
@@ -4676,7 +4681,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, int, int, int, int> Five(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4685,7 +4690,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(5)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, int, int, int, int> Five(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<int>? c, global::Mockolate.Parameters.IParameter<int>? d, global::Mockolate.Parameters.IParameter<int>? e);
 
 		/// <summary>
@@ -4694,6 +4699,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int, int, int, int, int> Five(int a, int b, int c, int d, int e);
 
 		/// <summary>
@@ -4702,7 +4708,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int> Seventeen(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4711,7 +4717,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(17)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int> Seventeen(global::Mockolate.Parameters.IParameter<int>? a1, global::Mockolate.Parameters.IParameter<int>? a2, global::Mockolate.Parameters.IParameter<int>? a3, global::Mockolate.Parameters.IParameter<int>? a4, global::Mockolate.Parameters.IParameter<int>? a5, global::Mockolate.Parameters.IParameter<int>? a6, global::Mockolate.Parameters.IParameter<int>? a7, global::Mockolate.Parameters.IParameter<int>? a8, global::Mockolate.Parameters.IParameter<int>? a9, global::Mockolate.Parameters.IParameter<int>? a10, global::Mockolate.Parameters.IParameter<int>? a11, global::Mockolate.Parameters.IParameter<int>? a12, global::Mockolate.Parameters.IParameter<int>? a13, global::Mockolate.Parameters.IParameter<int>? a14, global::Mockolate.Parameters.IParameter<int>? a15, global::Mockolate.Parameters.IParameter<int>? a16, global::Mockolate.Parameters.IParameter<int>? a17);
 
 		/// <summary>
@@ -4720,6 +4726,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int> Seventeen(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17);
 
 		/// <summary>
@@ -4728,7 +4735,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int> SeventeenVoid(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4737,7 +4744,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(17)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int> SeventeenVoid(global::Mockolate.Parameters.IParameter<int>? a1, global::Mockolate.Parameters.IParameter<int>? a2, global::Mockolate.Parameters.IParameter<int>? a3, global::Mockolate.Parameters.IParameter<int>? a4, global::Mockolate.Parameters.IParameter<int>? a5, global::Mockolate.Parameters.IParameter<int>? a6, global::Mockolate.Parameters.IParameter<int>? a7, global::Mockolate.Parameters.IParameter<int>? a8, global::Mockolate.Parameters.IParameter<int>? a9, global::Mockolate.Parameters.IParameter<int>? a10, global::Mockolate.Parameters.IParameter<int>? a11, global::Mockolate.Parameters.IParameter<int>? a12, global::Mockolate.Parameters.IParameter<int>? a13, global::Mockolate.Parameters.IParameter<int>? a14, global::Mockolate.Parameters.IParameter<int>? a15, global::Mockolate.Parameters.IParameter<int>? a16, global::Mockolate.Parameters.IParameter<int>? a17);
 
 		/// <summary>
@@ -4746,6 +4753,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int, int> SeventeenVoid(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17);
 
 	}
@@ -4877,7 +4885,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> WithModifiers(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4886,7 +4894,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(4)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> WithModifiers(global::Mockolate.Parameters.IVerifyRefParameter<int> a, global::Mockolate.Parameters.IVerifyOutParameter<string> b, global::Mockolate.Parameters.IParameter<long>? c, global::Mockolate.Parameters.IParameter<int[]>? tail);
 
 		/// <summary>
@@ -4922,7 +4930,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> WithDefaults(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4931,7 +4939,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(7)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> WithDefaults(global::Mockolate.Parameters.IParameter<int>? i = null, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.MyEnum>? e = null, global::Mockolate.Parameters.IParameter<decimal>? d = null, global::Mockolate.Parameters.IParameter<float>? f = null, global::Mockolate.Parameters.IParameter<char>? c = null, global::Mockolate.Parameters.IParameter<string?>? s = null, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.MyStruct>? st = null);
 
 		/// <summary>
@@ -4940,6 +4948,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters WithDefaults(int i, global::Mockolate.Tests.GeneratorCoverage.MyEnum e, decimal d, float f, char c, string? s, global::Mockolate.Tests.GeneratorCoverage.MyStruct st);
 
 		/// <summary>
@@ -4948,7 +4957,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> WithCollidingNames(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4957,7 +4966,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(5)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> WithCollidingNames(global::Mockolate.Parameters.IParameter<int>? wraps, global::Mockolate.Parameters.IParameter<int>? result, global::Mockolate.Parameters.IParameter<int>? outParam1, global::Mockolate.Parameters.IParameter<int>? methodExecution, global::Mockolate.Parameters.IParameter<int>? returnValue);
 
 		/// <summary>
@@ -4966,6 +4975,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters WithCollidingNames(int wraps, int result, int outParam1, int methodExecution, int returnValue);
 
 		/// <summary>
@@ -4974,7 +4984,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> GetMaybeNull(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -4983,7 +4993,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> GetMaybeNull(global::Mockolate.Parameters.IParameter<string?>? s);
 
 		/// <summary>
@@ -4992,6 +5002,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters GetMaybeNull(string? s);
 
 		/// <summary>
@@ -5030,7 +5041,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> GetSpan(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -5039,7 +5050,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> GetSpan(global::Mockolate.Parameters.IParameter<int>? n);
 
 		/// <summary>
@@ -5048,6 +5059,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters GetSpan(int n);
 
 		/// <summary>
@@ -5056,7 +5068,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> GetROSpan(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -5065,7 +5077,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> GetROSpan(global::Mockolate.Parameters.IParameter<int>? n);
 
 		/// <summary>
@@ -5074,6 +5086,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters GetROSpan(int n);
 
 		/// <summary>
@@ -5140,7 +5153,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> Five(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -5149,7 +5162,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(5)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> Five(global::Mockolate.Parameters.IParameter<int>? a, global::Mockolate.Parameters.IParameter<int>? b, global::Mockolate.Parameters.IParameter<int>? c, global::Mockolate.Parameters.IParameter<int>? d, global::Mockolate.Parameters.IParameter<int>? e);
 
 		/// <summary>
@@ -5158,6 +5171,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters Five(int a, int b, int c, int d, int e);
 
 		/// <summary>
@@ -5166,7 +5180,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> Seventeen(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -5175,7 +5189,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(17)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> Seventeen(global::Mockolate.Parameters.IParameter<int>? a1, global::Mockolate.Parameters.IParameter<int>? a2, global::Mockolate.Parameters.IParameter<int>? a3, global::Mockolate.Parameters.IParameter<int>? a4, global::Mockolate.Parameters.IParameter<int>? a5, global::Mockolate.Parameters.IParameter<int>? a6, global::Mockolate.Parameters.IParameter<int>? a7, global::Mockolate.Parameters.IParameter<int>? a8, global::Mockolate.Parameters.IParameter<int>? a9, global::Mockolate.Parameters.IParameter<int>? a10, global::Mockolate.Parameters.IParameter<int>? a11, global::Mockolate.Parameters.IParameter<int>? a12, global::Mockolate.Parameters.IParameter<int>? a13, global::Mockolate.Parameters.IParameter<int>? a14, global::Mockolate.Parameters.IParameter<int>? a15, global::Mockolate.Parameters.IParameter<int>? a16, global::Mockolate.Parameters.IParameter<int>? a17);
 
 		/// <summary>
@@ -5184,6 +5198,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters Seventeen(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17);
 
 		/// <summary>
@@ -5192,7 +5207,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> SeventeenVoid(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -5201,7 +5216,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(17)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> SeventeenVoid(global::Mockolate.Parameters.IParameter<int>? a1, global::Mockolate.Parameters.IParameter<int>? a2, global::Mockolate.Parameters.IParameter<int>? a3, global::Mockolate.Parameters.IParameter<int>? a4, global::Mockolate.Parameters.IParameter<int>? a5, global::Mockolate.Parameters.IParameter<int>? a6, global::Mockolate.Parameters.IParameter<int>? a7, global::Mockolate.Parameters.IParameter<int>? a8, global::Mockolate.Parameters.IParameter<int>? a9, global::Mockolate.Parameters.IParameter<int>? a10, global::Mockolate.Parameters.IParameter<int>? a11, global::Mockolate.Parameters.IParameter<int>? a12, global::Mockolate.Parameters.IParameter<int>? a13, global::Mockolate.Parameters.IParameter<int>? a14, global::Mockolate.Parameters.IParameter<int>? a15, global::Mockolate.Parameters.IParameter<int>? a16, global::Mockolate.Parameters.IParameter<int>? a17);
 
 		/// <summary>
@@ -5210,6 +5225,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters SeventeenVoid(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9, int a10, int a11, int a12, int a13, int a14, int a15, int a16, int a17);
 
 		/// <summary>
