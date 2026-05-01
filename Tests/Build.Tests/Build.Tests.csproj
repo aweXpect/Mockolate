@@ -5,7 +5,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\Pipeline\Build.csproj"/>
+		<Compile Include="..\..\Pipeline\BenchmarkReport.cs" Link="BenchmarkReport.cs"/>
 	</ItemGroup>
 
 </Project>
