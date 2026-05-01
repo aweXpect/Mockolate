@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
@@ -785,6 +784,15 @@ public partial class MockRegistry
 			yield break;
 		}
 
+		List<IMethodInteraction> methodInteractions = [];
+		foreach (IInteraction interaction in interactions)
+		{
+			if (interaction is IMethodInteraction method)
+			{
+				methodInteractions.Add(method);
+			}
+		}
+
 		foreach (MethodSetup[]? bucket in table)
 		{
 			if (bucket is null)
@@ -795,7 +803,7 @@ public partial class MockRegistry
 			foreach (MethodSetup setup in bucket)
 			{
 				bool matched = false;
-				foreach (IMethodInteraction interaction in interactions.OfType<IMethodInteraction>())
+				foreach (IMethodInteraction interaction in methodInteractions)
 				{
 					if (((IVerifiableMethodSetup)setup).Matches(interaction))
 					{
@@ -820,6 +828,15 @@ public partial class MockRegistry
 			yield break;
 		}
 
+		List<IndexerAccess> indexerAccesses = [];
+		foreach (IInteraction interaction in interactions)
+		{
+			if (interaction is IndexerAccess access)
+			{
+				indexerAccesses.Add(access);
+			}
+		}
+
 		foreach (IndexerSetup[]? bucket in table)
 		{
 			if (bucket is null)
@@ -830,7 +847,7 @@ public partial class MockRegistry
 			foreach (IndexerSetup setup in bucket)
 			{
 				bool matched = false;
-				foreach (IndexerAccess access in interactions.OfType<IndexerAccess>())
+				foreach (IndexerAccess access in indexerAccesses)
 				{
 					if (((IInteractiveIndexerSetup)setup).Matches(access))
 					{

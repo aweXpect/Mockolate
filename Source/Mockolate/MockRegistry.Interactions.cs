@@ -119,9 +119,9 @@ public partial class MockRegistry
 	///     The caller iterates and evaluates each setup's matcher on the stack (passing ref-struct
 	///     values where applicable), so no predicate closure is captured.
 	///     Order: scenario-scoped dict (newest first), then default-scope memberId-keyed snapshot
-	///     entries (newest first per bucket, but bucket order is registration order), then default-scope
-	///     hand-written dict entries. The caller is expected to stop on the first match so scenarios
-	///     override the default scope.
+	///     entries (newest first within each bucket, with buckets visited in memberId/index order),
+	///     then default-scope hand-written dict entries. The caller is expected to stop on the first
+	///     match so scenarios override the default scope.
 	///     When the call stays entirely on the default scope and neither the snapshot table nor the
 	///     dict has any entries, the empty-storage fast path returns <see cref="Array.Empty{T}" />
 	///     directly so the dispatch hot path skips an iterator state-machine allocation per call.
@@ -191,8 +191,8 @@ public partial class MockRegistry
 	{
 		// Walk every memberId bucket: the snapshot is keyed by member id, but a name-based caller
 		// (scenario-active dispatch, ref-struct dispatch) doesn't know the id, so we filter by Name
-		// after the type-test. Bucket count grows linearly with registered setups, so the scan is
-		// proportional to setup count, not interaction count.
+		// after the type-test. The outer scan is proportional to snapshot.Length (the memberId table
+		// size / mocked member count), not interaction count; the table may be sparse for a method.
 		for (int b = 0; b < snapshot.Length; b++)
 		{
 			MethodSetup[]? bucket = snapshot[b];
@@ -279,8 +279,9 @@ public partial class MockRegistry
 		}
 
 		// Walk every memberId bucket: the snapshot is keyed by member id, but predicate-based callers
-		// don't know which id to consult, so we filter by type then by predicate. Within each bucket
-		// the latest registration wins (reverse iteration); buckets are walked in registration order.
+		// don't know which id to consult, so we filter by type then by predicate. Buckets are walked
+		// by ascending memberId/index order; within each bucket, reverse iteration means the latest
+		// registration wins.
 		for (int b = 0; b < table.Length; b++)
 		{
 			IndexerSetup[]? bucket = table[b];
