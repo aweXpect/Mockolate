@@ -16,7 +16,11 @@ public sealed class FastIndexerGetterBuffer<T1> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerGetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-getter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -146,7 +150,11 @@ public sealed class FastIndexerGetterBuffer<T1, T2> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerGetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-getter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -275,7 +283,11 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerGetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-getter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -407,7 +419,11 @@ public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerGetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-getter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -542,7 +558,11 @@ public sealed class FastIndexerSetterBuffer<T1, TValue> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerSetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-setter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -672,7 +692,11 @@ public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerSetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-setter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -805,7 +829,11 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : IFastMemberBuf
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerSetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-setter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -941,7 +969,11 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastIndexerSetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new indexer-setter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastIndexerSetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -1068,88 +1100,3 @@ public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : IFastMembe
 	}
 }
 
-/// <summary>
-///     Factory helpers for indexer buffers.
-/// </summary>
-public static class FastIndexerBufferFactory
-{
-	/// <summary>
-	///     Creates and installs an indexer getter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerGetterBuffer<T1> InstallIndexerGetter<T1>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerGetterBuffer<T1> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an indexer getter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerGetterBuffer<T1, T2> InstallIndexerGetter<T1, T2>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerGetterBuffer<T1, T2> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an indexer getter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerGetterBuffer<T1, T2, T3> InstallIndexerGetter<T1, T2, T3>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerGetterBuffer<T1, T2, T3> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an indexer getter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerGetterBuffer<T1, T2, T3, T4> InstallIndexerGetter<T1, T2, T3, T4>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerGetterBuffer<T1, T2, T3, T4> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an indexer setter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerSetterBuffer<T1, TValue> InstallIndexerSetter<T1, TValue>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerSetterBuffer<T1, TValue> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an indexer setter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerSetterBuffer<T1, T2, TValue> InstallIndexerSetter<T1, T2, TValue>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerSetterBuffer<T1, T2, TValue> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an indexer setter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerSetterBuffer<T1, T2, T3, TValue> InstallIndexerSetter<T1, T2, T3, TValue>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerSetterBuffer<T1, T2, T3, TValue> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an indexer setter buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> InstallIndexerSetter<T1, T2, T3, T4, TValue>(this FastMockInteractions interactions, int memberId)
-	{
-		FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-}

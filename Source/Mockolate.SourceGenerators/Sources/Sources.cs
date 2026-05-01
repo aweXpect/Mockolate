@@ -149,11 +149,14 @@ internal static partial class Sources
 		}
 		else if (useFastBuffers && memberIdRef is not null)
 		{
-			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastIndexerGetterBuffer<");
-			AppendIndexerParameterTypes(sb, parameters);
-			sb.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
-				.Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
-				.Append(accessVarName).Append(");").AppendLine();
+			StringBuilder bufferType = new("global::Mockolate.Interactions.FastIndexerGetterBuffer<");
+			AppendIndexerParameterTypes(bufferType, parameters);
+			bufferType.Append('>');
+			string bufferTypeName = bufferType.ToString();
+			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
+				.Append(".Interactions).GetOrCreateBuffer<").Append(bufferTypeName).Append(">(")
+				.Append(memberIdRef).Append(", static fast => new ").Append(bufferTypeName)
+				.Append("(fast)).Append(").Append(accessVarName).Append(");").AppendLine();
 		}
 		else
 		{
@@ -241,12 +244,14 @@ internal static partial class Sources
 		}
 		else if (useFastBuffers && memberIdRef is not null)
 		{
-			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastIndexerSetterBuffer<");
-			AppendIndexerParameterTypes(sb, parameters);
-			sb.Append(", ").AppendTypeOrWrapper(propertyType)
-				.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
-				.Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
-				.Append(accessVarName).Append(");").AppendLine();
+			StringBuilder bufferType = new("global::Mockolate.Interactions.FastIndexerSetterBuffer<");
+			AppendIndexerParameterTypes(bufferType, parameters);
+			bufferType.Append(", ").AppendTypeOrWrapper(propertyType).Append('>');
+			string bufferTypeName = bufferType.ToString();
+			sb.Append(indent).Append("\t((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistry)
+				.Append(".Interactions).GetOrCreateBuffer<").Append(bufferTypeName).Append(">(")
+				.Append(memberIdRef).Append(", static fast => new ").Append(bufferTypeName)
+				.Append("(fast)).Append(").Append(accessVarName).Append(");").AppendLine();
 		}
 		else
 		{

@@ -31,7 +31,12 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	private readonly FastEventBufferKind _kind;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
+	/// <summary>
+	///     Creates a new event buffer of the given <paramref name="kind" /> attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	/// <param name="kind">Distinguishes a subscribe-recording buffer from an unsubscribe-recording buffer.</param>
+	public FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
 	{
 		_owner = owner;
 		_kind = kind;
@@ -132,28 +137,3 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	}
 }
 
-/// <summary>
-///     Factory helpers for event buffers.
-/// </summary>
-public static class FastEventBufferFactory
-{
-	/// <summary>
-	///     Creates and installs an event subscribe buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastEventBuffer InstallEventSubscribe(this FastMockInteractions interactions, int memberId)
-	{
-		FastEventBuffer buffer = new(interactions, FastEventBufferKind.Subscribe);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an event unsubscribe buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastEventBuffer InstallEventUnsubscribe(this FastMockInteractions interactions, int memberId)
-	{
-		FastEventBuffer buffer = new(interactions, FastEventBufferKind.Unsubscribe);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-}

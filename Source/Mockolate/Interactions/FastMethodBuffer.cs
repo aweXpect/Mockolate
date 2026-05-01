@@ -16,7 +16,11 @@ public sealed class FastMethod0Buffer : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastMethod0Buffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new parameterless method buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastMethod0Buffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -122,7 +126,11 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastMethod1Buffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new 1-parameter method buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastMethod1Buffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -248,7 +256,11 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastMethod2Buffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new 2-parameter method buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastMethod2Buffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -374,7 +386,11 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastMethod3Buffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new 3-parameter method buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastMethod3Buffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -501,7 +517,11 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastMethod4Buffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new 4-parameter method buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastMethod4Buffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
@@ -618,59 +638,3 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 	}
 }
 
-/// <summary>
-///     Factory helpers that hide the per-arity buffer constructors behind the
-///     <see cref="FastMockInteractions" /> API.
-/// </summary>
-public static class FastMethodBufferFactory
-{
-	/// <summary>
-	///     Creates and installs a parameterless method buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastMethod0Buffer InstallMethod(this FastMockInteractions interactions, int memberId)
-	{
-		FastMethod0Buffer buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs a 1-parameter method buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastMethod1Buffer<T1> InstallMethod<T1>(this FastMockInteractions interactions, int memberId)
-	{
-		FastMethod1Buffer<T1> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs a 2-parameter method buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastMethod2Buffer<T1, T2> InstallMethod<T1, T2>(this FastMockInteractions interactions, int memberId)
-	{
-		FastMethod2Buffer<T1, T2> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs a 3-parameter method buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastMethod3Buffer<T1, T2, T3> InstallMethod<T1, T2, T3>(this FastMockInteractions interactions, int memberId)
-	{
-		FastMethod3Buffer<T1, T2, T3> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs a 4-parameter method buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastMethod4Buffer<T1, T2, T3, T4> InstallMethod<T1, T2, T3, T4>(this FastMockInteractions interactions, int memberId)
-	{
-		FastMethod4Buffer<T1, T2, T3, T4> buffer = new(interactions);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-}

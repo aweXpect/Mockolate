@@ -218,20 +218,10 @@ internal static partial class Mock
 
 		/// <summary>
 		///     Creates a <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> sized to <see cref="MemberCount">MemberCount</see> for use as the mock's interaction store.
+		///     Per-member buffers are not allocated up-front: the recording hot paths call <see cref="global::Mockolate.Interactions.FastMockInteractions.GetOrCreateBuffer{TBuffer}(int, global::System.Func{global::Mockolate.Interactions.FastMockInteractions, TBuffer})">GetOrCreateBuffer&lt;TBuffer&gt;(int, Func&lt;FastMockInteractions, TBuffer&gt;)</see> so a slot is materialized only when its member is first invoked.
 		/// </summary>
 		internal static global::Mockolate.Interactions.FastMockInteractions CreateFastInteractions(global::Mockolate.MockBehavior behavior)
-		{
-			global::Mockolate.Interactions.FastMockInteractions fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);
-			global::Mockolate.Interactions.FastMethodBufferFactory.InstallMethod(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return);
-			global::Mockolate.Interactions.FastMethodBufferFactory.InstallMethod<int>(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if);
-			global::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.PropertyAccess__class_Get);
-			global::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertySetter<int>(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Set);
-			global::Mockolate.Interactions.FastIndexerBufferFactory.InstallIndexerGetter<int, string>(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get);
-			global::Mockolate.Interactions.FastIndexerBufferFactory.InstallIndexerSetter<int, string, string>(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Set);
-			global::Mockolate.Interactions.FastEventBufferFactory.InstallEventSubscribe(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Subscribe);
-			global::Mockolate.Interactions.FastEventBufferFactory.InstallEventUnsubscribe(fast, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__event_Unsubscribe);
-			return fast;
-		}
+			=> new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);
 
 		/// <summary>
 		///     Builds a <see cref="global::Mockolate.MockRegistry">MockRegistry</see> backed by a typed-buffer-sized <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> from <paramref name="behavior" />.
@@ -249,16 +239,16 @@ internal static partial class Mock
 
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastIndexerGetterBuffer<int, string> MockolateBuffer_Indexer_int_string_Get
-			=> field ?? (field = (global::Mockolate.Interactions.FastIndexerGetterBuffer<int, string>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get]!);
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastIndexerGetterBuffer<int, string>>(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get, static fast => new global::Mockolate.Interactions.FastIndexerGetterBuffer<int, string>(fast)));
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string, string> MockolateBuffer_Indexer_int_string_Set
-			=> field ?? (field = (global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string, string>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Set]!);
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string, string>>(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Set, static fast => new global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string, string>(fast)));
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastMethod0Buffer MockolateBuffer__return
-			=> field ?? (field = (global::Mockolate.Interactions.FastMethod0Buffer)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return]!);
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod0Buffer>(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__return, static fast => new global::Mockolate.Interactions.FastMethod0Buffer(fast)));
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastMethod1Buffer<int> MockolateBuffer__if
-			=> field ?? (field = (global::Mockolate.Interactions.FastMethod1Buffer<int>)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if]!);
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod1Buffer<int>>(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, static fast => new global::Mockolate.Interactions.FastMethod1Buffer<int>(fast)));
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]

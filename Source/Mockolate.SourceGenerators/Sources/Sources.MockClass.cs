@@ -661,7 +661,7 @@ internal static partial class Sources
 		memberIds.Emit(sb, "\t\t");
 		sb.AppendLine();
 
-		AppendCreateFastInteractions(sb, "\t\t", @class, memberIds, memberIdPrefix);
+		AppendCreateFastInteractions(sb, "\t\t");
 		sb.AppendLine();
 
 		bool hasMockRegistryProvider = constructors?.Count > 0 || (@class.IsInterface && hasStaticMembers);
@@ -1269,110 +1269,25 @@ internal static partial class Sources
 		return sb.ToString();
 	}
 
-	private static void AppendCreateFastInteractions(StringBuilder sb, string indent, Class @class,
-		MemberIdTable memberIds, string memberIdPrefix)
+	private static void AppendCreateFastInteractions(StringBuilder sb, string indent)
 	{
 		sb.Append(indent).Append("/// <summary>").AppendLine();
 		sb.Append(indent)
 			.Append("///     Creates a <see cref=\"global::Mockolate.Interactions.FastMockInteractions\" /> sized to ")
 			.Append("<see cref=\"MemberCount\" /> for use as the mock's interaction store.").AppendLine();
+		sb.Append(indent)
+			.Append("///     Per-member buffers are not allocated up-front: the recording hot paths call ")
+			.Append("<see cref=\"global::Mockolate.Interactions.FastMockInteractions.GetOrCreateBuffer{TBuffer}(int, global::System.Func{global::Mockolate.Interactions.FastMockInteractions, TBuffer})\" />")
+			.Append(" so a slot is materialized only when its member is first invoked.").AppendLine();
 		sb.Append(indent).Append("/// </summary>").AppendLine();
 		sb.Append(indent)
 			.Append(
 				"internal static global::Mockolate.Interactions.FastMockInteractions CreateFastInteractions(global::Mockolate.MockBehavior behavior)")
 			.AppendLine();
-		sb.Append(indent).Append("{").AppendLine();
 		sb.Append(indent)
 			.Append(
-				"\tglobal::Mockolate.Interactions.FastMockInteractions fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);")
+				"\t=> new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);")
 			.AppendLine();
-
-		foreach (Method method in @class.AllMethods())
-		{
-			if (!IsFastBufferEligibleMethod(method))
-			{
-				continue;
-			}
-
-			string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(method);
-			int arity = method.Parameters.Count;
-			string typeArgs = arity == 0
-				? string.Empty
-				: "<" + string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper())) + ">";
-
-			if (arity <= 4)
-			{
-				sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastMethodBufferFactory.InstallMethod")
-					.Append(typeArgs).Append("(fast, ").Append(memberIdRef).Append(");").AppendLine();
-			}
-			else
-			{
-				sb.Append(indent)
-					.Append("\tfast.InstallBuffer(").Append(memberIdRef)
-					.Append(", new global::Mockolate.Interactions.FastMethod").Append(arity)
-					.Append("Buffer").Append(typeArgs).Append("(fast));").AppendLine();
-			}
-		}
-
-		foreach (Property property in @class.AllProperties().Where(p => !p.IsIndexer))
-		{
-			if (!IsFastBufferEligibleProperty(property))
-			{
-				continue;
-			}
-
-			string getMemberIdRef = memberIdPrefix + memberIds.GetPropertyGetIdentifier(property);
-			string accessFieldRef = memberIdPrefix + memberIds.GetPropertyGetterAccessFieldName(property);
-			sb.Append(indent)
-				.Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(fast, ")
-				.Append(getMemberIdRef).Append(", ").Append(accessFieldRef).Append(");").AppendLine();
-
-			string setMemberIdRef = memberIdPrefix + memberIds.GetPropertySetIdentifier(property);
-			string propertyType = property.Type.ToTypeOrWrapper();
-			sb.Append(indent)
-				.Append("\tglobal::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertySetter<")
-				.Append(propertyType).Append(">(fast, ").Append(setMemberIdRef).Append(");").AppendLine();
-		}
-
-		foreach (Property indexer in @class.AllProperties().Where(p => p.IsIndexer))
-		{
-			if (!IsFastBufferEligibleIndexer(indexer))
-			{
-				continue;
-			}
-
-			string getMemberIdRef = memberIdPrefix + memberIds.GetIndexerGetIdentifier(indexer);
-			string setMemberIdRef = memberIdPrefix + memberIds.GetIndexerSetIdentifier(indexer);
-			string indexerKeyTypeArgs =
-				string.Join(", ", indexer.IndexerParameters!.Value.Select(p => p.ToTypeOrWrapper()));
-			string indexerValueType = indexer.Type.ToTypeOrWrapper();
-
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastIndexerBufferFactory.InstallIndexerGetter<")
-				.Append(indexerKeyTypeArgs).Append(">(fast, ").Append(getMemberIdRef).Append(");").AppendLine();
-			sb.Append(indent).Append("\tglobal::Mockolate.Interactions.FastIndexerBufferFactory.InstallIndexerSetter<")
-				.Append(indexerKeyTypeArgs).Append(", ").Append(indexerValueType).Append(">(fast, ")
-				.Append(setMemberIdRef).Append(");").AppendLine();
-		}
-
-		foreach (Event @event in @class.AllEvents())
-		{
-			if (!IsFastBufferEligibleEvent(@event))
-			{
-				continue;
-			}
-
-			string subMemberIdRef = memberIdPrefix + memberIds.GetEventSubscribeIdentifier(@event);
-			string unsubMemberIdRef = memberIdPrefix + memberIds.GetEventUnsubscribeIdentifier(@event);
-			sb.Append(indent)
-				.Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventSubscribe(fast, ")
-				.Append(subMemberIdRef).Append(");").AppendLine();
-			sb.Append(indent)
-				.Append("\tglobal::Mockolate.Interactions.FastEventBufferFactory.InstallEventUnsubscribe(fast, ")
-				.Append(unsubMemberIdRef).Append(");").AppendLine();
-		}
-
-		sb.Append(indent).Append("\treturn fast;").AppendLine();
-		sb.Append(indent).Append("}").AppendLine();
 	}
 
 	/// <summary>
@@ -1432,30 +1347,32 @@ internal static partial class Sources
 			string indexerValueType = indexer.Type.ToTypeOrWrapper();
 			string getMemberIdRef = memberIdPrefix + memberIds.GetIndexerGetIdentifier(indexer);
 			string setMemberIdRef = memberIdPrefix + memberIds.GetIndexerSetIdentifier(indexer);
+			string getterBufferType = "global::Mockolate.Interactions.FastIndexerGetterBuffer<"
+			                          + indexerKeyTypeArgs + ">";
+			string setterBufferType = "global::Mockolate.Interactions.FastIndexerSetterBuffer<"
+			                          + indexerKeyTypeArgs + ", " + indexerValueType + ">";
 
 			sb.Append(indent)
 				.Append(
 					"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
 				.AppendLine();
-			sb.Append(indent).Append("private global::Mockolate.Interactions.FastIndexerGetterBuffer<")
-				.Append(indexerKeyTypeArgs).Append("> ")
+			sb.Append(indent).Append("private ").Append(getterBufferType).Append(' ')
 				.Append(memberIds.GetIndexerGetterBufferFieldName(indexer)).AppendLine();
-			sb.Append(indent).Append("\t=> field ?? (field = (global::Mockolate.Interactions.FastIndexerGetterBuffer<")
-				.Append(indexerKeyTypeArgs).Append(">)((global::Mockolate.Interactions.FastMockInteractions)")
-				.Append(mockRegistryRef).Append(".Interactions).Buffers[").Append(getMemberIdRef).Append("]!);")
-				.AppendLine();
+			sb.Append(indent).Append("\t=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)")
+				.Append(mockRegistryRef).Append(".Interactions).GetOrCreateBuffer<").Append(getterBufferType)
+				.Append(">(").Append(getMemberIdRef).Append(", static fast => new ").Append(getterBufferType)
+				.Append("(fast)));").AppendLine();
 
 			sb.Append(indent)
 				.Append(
 					"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
 				.AppendLine();
-			sb.Append(indent).Append("private global::Mockolate.Interactions.FastIndexerSetterBuffer<")
-				.Append(indexerKeyTypeArgs).Append(", ").Append(indexerValueType).Append("> ")
+			sb.Append(indent).Append("private ").Append(setterBufferType).Append(' ')
 				.Append(memberIds.GetIndexerSetterBufferFieldName(indexer)).AppendLine();
-			sb.Append(indent).Append("\t=> field ?? (field = (global::Mockolate.Interactions.FastIndexerSetterBuffer<")
-				.Append(indexerKeyTypeArgs).Append(", ").Append(indexerValueType)
-				.Append(">)((global::Mockolate.Interactions.FastMockInteractions)").Append(mockRegistryRef)
-				.Append(".Interactions).Buffers[").Append(setMemberIdRef).Append("]!);").AppendLine();
+			sb.Append(indent).Append("\t=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)")
+				.Append(mockRegistryRef).Append(".Interactions).GetOrCreateBuffer<").Append(setterBufferType)
+				.Append(">(").Append(setMemberIdRef).Append(", static fast => new ").Append(setterBufferType)
+				.Append("(fast)));").AppendLine();
 		}
 
 		foreach (Method method in @class.AllMethods())
@@ -1470,17 +1387,17 @@ internal static partial class Sources
 				? string.Empty
 				: "<" + string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper())) + ">";
 			string memberIdRef = memberIdPrefix + memberIds.GetMethodIdentifier(method);
+			string bufferType = "global::Mockolate.Interactions.FastMethod" + arity + "Buffer" + typeArgs;
 			sb.Append(indent)
 				.Append(
 					"[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
 				.AppendLine();
-			sb.Append(indent).Append("private global::Mockolate.Interactions.FastMethod").Append(arity)
-				.Append("Buffer").Append(typeArgs).Append(' ')
+			sb.Append(indent).Append("private ").Append(bufferType).Append(' ')
 				.Append(memberIds.GetMethodBufferFieldName(method)).AppendLine();
-			sb.Append(indent).Append("\t=> field ?? (field = (global::Mockolate.Interactions.FastMethod").Append(arity)
-				.Append("Buffer").Append(typeArgs).Append(")((global::Mockolate.Interactions.FastMockInteractions)")
-				.Append(mockRegistryRef).Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!);")
-				.AppendLine();
+			sb.Append(indent).Append("\t=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)")
+				.Append(mockRegistryRef).Append(".Interactions).GetOrCreateBuffer<").Append(bufferType)
+				.Append(">(").Append(memberIdRef).Append(", static fast => new ").Append(bufferType)
+				.Append("(fast)));").AppendLine();
 		}
 	}
 
@@ -1553,7 +1470,6 @@ internal static partial class Sources
 	///     constraint, and <c>where T : default</c> (CS8822) conflicts with those constraints.
 	///     Without a constraint clause the compiler resolves the bare <c>T?</c> as
 	///     <c>Nullable&lt;T&gt;</c> and reports CS0453/CS9334/CS0738/CS0266.
-	///
 	///     The fix is to drop the trailing <c>?</c> from the setup-side return type
 	///     (<c>IReturnMethodSetup&lt;T&gt;</c> instead of <c>IReturnMethodSetup&lt;T?&gt;</c>) and from
 	///     the matching <c>ReturnMethodSetup&lt;T&gt;</c> construction. NRT annotations are erased at
@@ -3109,8 +3025,10 @@ internal static partial class Sources
 				: "<" + string.Join(", ", method.Parameters.Select(p => p.ToTypeOrWrapper())) + ">";
 			string bufferType = $"global::Mockolate.Interactions.FastMethod{arity}Buffer{typeArgs}";
 
-			sb.Append("\t\t\t\t((").Append(bufferType).Append(")((global::Mockolate.Interactions.FastMockInteractions)")
-				.Append(mockRegistry).Append(".Interactions).Buffers[").Append(memberIdRef).Append("]!).Append(")
+			sb.Append("\t\t\t\t((global::Mockolate.Interactions.FastMockInteractions)")
+				.Append(mockRegistry).Append(".Interactions).GetOrCreateBuffer<").Append(bufferType)
+				.Append(">(").Append(memberIdRef).Append(", static fast => new ").Append(bufferType)
+				.Append("(fast)).Append(")
 				.Append(method.GetUniqueNameString());
 			if (arity > 0)
 			{

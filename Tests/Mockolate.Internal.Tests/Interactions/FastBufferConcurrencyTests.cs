@@ -13,7 +13,8 @@ public class FastBufferConcurrencyTests
 		const int appendsPerWriter = 1000;
 
 		FastMockInteractions store = new(1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		FastMethod1Buffer<int> buffer = store.GetOrCreateBuffer<FastMethod1Buffer<int>>(0,
+			static f => new FastMethod1Buffer<int>(f));
 #if NET48
 		CancellationToken cancellationToken = TestContext.Current.CancellationToken;
 #else
@@ -44,7 +45,8 @@ public class FastBufferConcurrencyTests
 	public async Task FastMethod1Buffer_InteractionAdded_ShouldFireWhenSubscribed()
 	{
 		FastMockInteractions store = new(1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		FastMethod1Buffer<int> buffer = store.GetOrCreateBuffer<FastMethod1Buffer<int>>(0,
+			static f => new FastMethod1Buffer<int>(f));
 
 		int invocations = 0;
 

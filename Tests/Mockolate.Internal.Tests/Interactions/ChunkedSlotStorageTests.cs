@@ -11,7 +11,8 @@ public class ChunkedSlotStorageTests
 	{
 		const int total = (ChunkedSlotStorage<int>.ChunkSize * 2) + 5;
 		FastMockInteractions store = new(1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		FastMethod1Buffer<int> buffer = store.GetOrCreateBuffer<FastMethod1Buffer<int>>(0,
+			static f => new FastMethod1Buffer<int>(f));
 
 		for (int i = 0; i < total; i++)
 		{
@@ -32,7 +33,8 @@ public class ChunkedSlotStorageTests
 	{
 		const int total = ChunkedSlotStorage<int>.ChunkSize * 3;
 		FastMockInteractions store = new(1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		FastMethod1Buffer<int> buffer = store.GetOrCreateBuffer<FastMethod1Buffer<int>>(0,
+			static f => new FastMethod1Buffer<int>(f));
 
 		for (int i = 0; i < total; i++)
 		{
@@ -53,7 +55,8 @@ public class ChunkedSlotStorageTests
 	{
 		const int total = (ChunkedSlotStorage<int>.ChunkSize * 4) + 1;
 		FastMockInteractions store = new(1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		FastMethod1Buffer<int> buffer = store.GetOrCreateBuffer<FastMethod1Buffer<int>>(0,
+			static f => new FastMethod1Buffer<int>(f));
 
 		for (int i = 0; i < total; i++)
 		{
