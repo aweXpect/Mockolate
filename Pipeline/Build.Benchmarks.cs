@@ -15,8 +15,7 @@ namespace Build;
 
 partial class Build
 {
-	[Parameter("Filter for BenchmarkDotNet - Default is '*'")]
-	readonly string BenchmarkFilter = "*";
+	[Parameter("Filter for BenchmarkDotNet - Default is '*'")] readonly string BenchmarkFilter = "*";
 
 	Target BenchmarkDotNet => _ => _
 		.Executes(() =>
@@ -128,6 +127,7 @@ partial class Build
 	{
 		StringBuilder sb = new();
 		sb.AppendLine("## :rocket: Benchmark Results");
+		string[] columnsToRemove = ["RatioSD", "Gen0", "Gen1",];
 		foreach (string file in files)
 		{
 			int count = 0;
@@ -135,6 +135,7 @@ partial class Build
 			sb.AppendLine();
 			sb.AppendLine("<details>");
 			sb.AppendLine("<summary>Details</summary>");
+			int[] droppedColumnIndices = null;
 			foreach (string line in lines)
 			{
 				if (line.StartsWith("```"))
@@ -151,12 +152,21 @@ partial class Build
 						sb.AppendLine();
 					}
 
+					droppedColumnIndices = null;
 					continue;
 				}
 
-				if (line.StartsWith('|') && line.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase) && line.EndsWith('|'))
+				if (line.StartsWith('|') && line.EndsWith('|'))
 				{
-					MakeLineBold(sb, line);
+					droppedColumnIndices ??= DetermineDroppedColumnIndices(line, columnsToRemove);
+					string filteredLine = RemoveColumns(line, droppedColumnIndices);
+					if (filteredLine.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase))
+					{
+						MakeLineBold(sb, filteredLine);
+						continue;
+					}
+
+					sb.AppendLine(filteredLine);
 					continue;
 				}
 
@@ -166,6 +176,50 @@ partial class Build
 
 		string body = sb.ToString();
 		return body;
+	}
+
+	static int[] DetermineDroppedColumnIndices(string headerLine, string[] columnsToRemove)
+	{
+		string[] tokens = headerLine.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+		List<int> indices = new();
+		for (int i = 0; i < tokens.Length; i++)
+		{
+			foreach (string columnName in columnsToRemove)
+			{
+				if (string.Equals(tokens[i], columnName, StringComparison.OrdinalIgnoreCase))
+				{
+					indices.Add(i);
+					break;
+				}
+			}
+		}
+
+		return indices.ToArray();
+	}
+
+	static string RemoveColumns(string line, int[] droppedColumnIndices)
+	{
+		if (droppedColumnIndices.Length == 0)
+		{
+			return line;
+		}
+
+		string[] tokens = line.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+		StringBuilder result = new();
+		result.Append('|');
+		for (int i = 0; i < tokens.Length; i++)
+		{
+			if (Array.IndexOf(droppedColumnIndices, i) >= 0)
+			{
+				continue;
+			}
+
+			result.Append(' ');
+			result.Append(tokens[i]);
+			result.Append(" |");
+		}
+
+		return result.ToString();
 	}
 
 	static void MakeLineBold(StringBuilder sb, string line)

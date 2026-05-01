@@ -76,6 +76,7 @@ jobs:
                     - CompleteIndexerBenchmarks
                     - CompleteMethodBenchmarks
                     - CompletePropertyBenchmarks
+                    - MockCreationBenchmarks
         runs-on: ubuntu-latest
         permissions:
             contents: write
