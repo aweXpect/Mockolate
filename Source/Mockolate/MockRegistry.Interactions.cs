@@ -118,8 +118,13 @@ public partial class MockRegistry
 	/// <remarks>
 	///     The caller iterates and evaluates each setup's matcher on the stack (passing ref-struct
 	///     values where applicable), so no predicate closure is captured.
-	///     Scenario-scoped results come first; the caller is expected to stop on the first match so
-	///     scenarios override the default scope.
+	///     Order: scenario-scoped dict (newest first), then default-scope memberId-keyed snapshot
+	///     entries (newest first per bucket, but bucket order is registration order), then default-scope
+	///     hand-written dict entries. The caller is expected to stop on the first match so scenarios
+	///     override the default scope.
+	///     When the call stays entirely on the default scope and neither the snapshot table nor the
+	///     dict has any entries, the empty-storage fast path returns <see cref="Array.Empty{T}" />
+	///     directly so the dispatch hot path skips an iterator state-machine allocation per call.
 	/// </remarks>
 	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
 	/// <param name="methodName">The simple method name.</param>
@@ -129,7 +134,30 @@ public partial class MockRegistry
 		if (!string.IsNullOrEmpty(Scenario) &&
 		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
-			foreach (T setup in scopedBucket.Methods.EnumerateByName<T>(methodName))
+			return EnumerateScopedAndGlobalMethodSetups<T>(methodName, scopedBucket);
+		}
+
+		MethodSetup[]?[]? snapshot = Volatile.Read(ref _setupsByMemberId);
+		if (snapshot is null)
+		{
+			return Setup.Methods.EnumerateByName<T>(methodName);
+		}
+
+		return EnumerateGlobalMethodSetups<T>(methodName, snapshot);
+	}
+
+	private IEnumerable<T> EnumerateScopedAndGlobalMethodSetups<T>(string methodName,
+		MockScenarioSetup scopedBucket) where T : MethodSetup
+	{
+		foreach (T setup in scopedBucket.Methods.EnumerateByName<T>(methodName))
+		{
+			yield return setup;
+		}
+
+		MethodSetup[]?[]? snapshot = Volatile.Read(ref _setupsByMemberId);
+		if (snapshot is not null)
+		{
+			foreach (T setup in EnumerateSnapshotByName<T>(methodName, snapshot))
 			{
 				yield return setup;
 			}
@@ -138,6 +166,48 @@ public partial class MockRegistry
 		foreach (T setup in Setup.Methods.EnumerateByName<T>(methodName))
 		{
 			yield return setup;
+		}
+	}
+
+	private IEnumerable<T> EnumerateGlobalMethodSetups<T>(string methodName,
+		MethodSetup[]?[] snapshot) where T : MethodSetup
+	{
+		foreach (T setup in EnumerateSnapshotByName<T>(methodName, snapshot))
+		{
+			yield return setup;
+		}
+
+		// Hand-written SetupMethod(MethodSetup) entries (e.g. the HttpClientExtensions pipeline) live
+		// only in the root dict; the empty-storage fast path returns Array.Empty<T> so the loop
+		// allocates nothing further when no such entry exists.
+		foreach (T setup in Setup.Methods.EnumerateByName<T>(methodName))
+		{
+			yield return setup;
+		}
+	}
+
+	private static IEnumerable<T> EnumerateSnapshotByName<T>(string methodName,
+		MethodSetup[]?[] snapshot) where T : MethodSetup
+	{
+		// Walk every memberId bucket: the snapshot is keyed by member id, but a name-based caller
+		// (scenario-active dispatch, ref-struct dispatch) doesn't know the id, so we filter by Name
+		// after the type-test. Bucket count grows linearly with registered setups, so the scan is
+		// proportional to setup count, not interaction count.
+		for (int b = 0; b < snapshot.Length; b++)
+		{
+			MethodSetup[]? bucket = snapshot[b];
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			for (int i = bucket.Length - 1; i >= 0; i--)
+			{
+				if (bucket[i] is T typed && typed.Name.Equals(methodName))
+				{
+					yield return typed;
+				}
+			}
 		}
 	}
 

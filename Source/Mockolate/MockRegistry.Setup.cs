@@ -131,36 +131,39 @@ public partial class MockRegistry
 		=> Setup.GetOrCreateScenario(scenario).Methods.Add(methodSetup);
 
 	/// <summary>
-	///     Registers <paramref name="methodSetup" /> for the default scenario and additionally indexes it by the
+	///     Registers <paramref name="methodSetup" /> for the default scenario by indexing it under the
 	///     generator-emitted <paramref name="memberId" /> for fast dispatch from the proxy method body.
 	/// </summary>
 	/// <remarks>
 	///     The <paramref name="memberId" /> is a compile-time constant emitted by the source generator, one per
 	///     mocked member. Reads via <see cref="GetMethodSetupSnapshot(int)" /> are lock-free; writes take an
 	///     internal lock and publish a new snapshot via <see cref="Volatile.Write{T}(ref T, T)" />.
+	///     The default-scope string-keyed list (<see cref="GetMethodSetups{T}(string)" />) is intentionally
+	///     bypassed — the snapshot is authoritative for default-scope dispatch from generator-emitted code.
 	/// </remarks>
 	/// <param name="memberId">The generator-emitted member id for the setup's target member.</param>
 	/// <param name="methodSetup">The method setup produced by the fluent <c>Setup.MethodName(...)</c> API.</param>
 	public void SetupMethod(int memberId, MethodSetup methodSetup)
-	{
-		SetupMethod(methodSetup);
-		AppendToMemberIdBucket(memberId, methodSetup);
-	}
+		=> AppendToMemberIdBucket(memberId, methodSetup);
 
 	/// <summary>
 	///     Registers <paramref name="methodSetup" /> for the given <paramref name="scenario" />. When
-	///     <paramref name="scenario" /> is the default scope, the setup is additionally indexed by
-	///     <paramref name="memberId" /> for fast dispatch.
+	///     <paramref name="scenario" /> is the default scope, the setup is indexed by <paramref name="memberId" />
+	///     for fast dispatch instead of the string-keyed list; scenario-scoped setups continue to land in the
+	///     scenario bucket only.
 	/// </summary>
 	/// <param name="memberId">The generator-emitted member id for the setup's target member.</param>
 	/// <param name="scenario">The scenario name the setup applies to.</param>
 	/// <param name="methodSetup">The method setup produced by the fluent <c>Setup.MethodName(...)</c> API.</param>
 	public void SetupMethod(int memberId, string scenario, MethodSetup methodSetup)
 	{
-		SetupMethod(scenario, methodSetup);
 		if (string.IsNullOrEmpty(scenario))
 		{
 			AppendToMemberIdBucket(memberId, methodSetup);
+		}
+		else
+		{
+			SetupMethod(scenario, methodSetup);
 		}
 	}
 

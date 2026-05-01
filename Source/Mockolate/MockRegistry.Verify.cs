@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -754,6 +756,11 @@ public partial class MockRegistry
 	///     Returns every registered setup (indexer, property, method) that was not hit by any of the given
 	///     <paramref name="interactions" />.
 	/// </summary>
+	/// <remarks>
+	///     The default-scope method snapshot table populated by the <see cref="SetupMethod(int, MethodSetup)" />
+	///     overloads is walked alongside the string-keyed list, so generator-emitted setups are visible to the
+	///     diagnostic enumeration even though they bypass the dictionary.
+	/// </remarks>
 	/// <param name="interactions">The interactions to check against.</param>
 	/// <returns>The unused setups; empty when every setup was exercised.</returns>
 	public IReadOnlyCollection<ISetup> GetUnusedSetups(IMockInteractions interactions)
@@ -763,7 +770,43 @@ public partial class MockRegistry
 			..Setup.Indexers.EnumerateUnusedSetupsBy(interactions),
 			..Setup.Properties.EnumerateUnusedSetupsBy(interactions),
 			..Setup.Methods.EnumerateUnusedSetupsBy(interactions),
+			..EnumerateUnusedMethodSnapshotSetups(interactions),
 		];
 		return unusedSetups;
+	}
+
+	private IEnumerable<MethodSetup> EnumerateUnusedMethodSnapshotSetups(IMockInteractions interactions)
+	{
+		MethodSetup[]?[]? table = Volatile.Read(ref _setupsByMemberId);
+		if (table is null)
+		{
+			yield break;
+		}
+
+		foreach (MethodSetup[]? bucket in table)
+		{
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			foreach (MethodSetup setup in bucket)
+			{
+				bool matched = false;
+				foreach (IMethodInteraction interaction in interactions.OfType<IMethodInteraction>())
+				{
+					if (((IVerifiableMethodSetup)setup).Matches(interaction))
+					{
+						matched = true;
+						break;
+					}
+				}
+
+				if (!matched)
+				{
+					yield return setup;
+				}
+			}
+		}
 	}
 }
