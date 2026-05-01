@@ -127,7 +127,7 @@ partial class Build
 	{
 		StringBuilder sb = new();
 		sb.AppendLine("## :rocket: Benchmark Results");
-		string[] columnsToRemove = ["RatioSD", "Gen0", "Gen1",];
+		string[] columnsToRemove = ["RatioSD", "Gen0", "Gen1", "Gen2",];
 		foreach (string file in files)
 		{
 			int count = 0;
