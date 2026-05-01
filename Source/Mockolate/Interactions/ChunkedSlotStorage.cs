@@ -13,9 +13,10 @@ namespace Mockolate.Interactions;
 ///     Slot N is stored at <c>chunks[N &gt;&gt; <see cref="ChunkShift" />][N &amp; <see cref="ChunkMask" />]</c>.
 ///     A writer reserves a unique slot via <see cref="Reserve" />, obtains its destination via
 ///     <see cref="SlotForWrite" />, writes its fields, then calls <see cref="Publish" />.
-///     The chunks array itself doubles when a new chunk index is past its end; that grow only copies
-///     chunk references (which are stable once installed), so a concurrent writer to an existing
-///     chunk cannot lose its data.
+///     The chunks array itself is allocated lazily on the first <see cref="SlotForWrite" /> and
+///     doubles when a new chunk index is past its end; that grow only copies chunk references
+///     (which are stable once installed), so a concurrent writer to an existing chunk cannot lose
+///     its data. A buffer that is never written into stays allocation-free past its own header.
 /// </remarks>
 #if !DEBUG
 [System.Diagnostics.DebuggerNonUserCode]
@@ -27,8 +28,8 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 	internal const int ChunkMask = ChunkSize - 1;
 
 	internal readonly MockolateLock Lock = new();
-	internal TRecord[]?[] Chunks = new TRecord[1][];
-	internal bool[]?[] VerifiedChunks = new bool[1][];
+	internal TRecord[]?[]? Chunks;
+	internal bool[]?[]? VerifiedChunks;
 	private int _reserved;
 	private int _published;
 
@@ -52,8 +53,10 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 	{
 		int chunkIdx = slot >> ChunkShift;
 		int offset = slot & ChunkMask;
-		TRecord[]?[] chunks = Volatile.Read(ref Chunks);
-		TRecord[]? chunk = chunkIdx < chunks.Length ? Volatile.Read(ref chunks[chunkIdx]) : null;
+		TRecord[]?[]? chunks = Volatile.Read(ref Chunks);
+		TRecord[]? chunk = chunks is not null && chunkIdx < chunks.Length
+			? Volatile.Read(ref chunks[chunkIdx])
+			: null;
 		if (chunk is null)
 		{
 			chunk = EnsureChunk(chunkIdx);
@@ -71,7 +74,7 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 	{
 		int chunkIdx = slot >> ChunkShift;
 		int offset = slot & ChunkMask;
-		return ref Chunks[chunkIdx]![offset];
+		return ref Chunks![chunkIdx]![offset];
 	}
 
 	/// <summary>
@@ -81,7 +84,7 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 	{
 		int chunkIdx = slot >> ChunkShift;
 		int offset = slot & ChunkMask;
-		return ref VerifiedChunks[chunkIdx]![offset];
+		return ref VerifiedChunks![chunkIdx]![offset];
 	}
 
 	/// <summary>
@@ -92,14 +95,17 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 		lock (Lock)
 		{
 			int n = _published;
-			TRecord[]?[] chunks = Chunks;
-			bool[]?[] verified = VerifiedChunks;
-			for (int slot = 0; slot < n; slot++)
+			if (n > 0)
 			{
-				int chunkIdx = slot >> ChunkShift;
-				int offset = slot & ChunkMask;
-				chunks[chunkIdx]![offset] = default;
-				verified[chunkIdx]![offset] = false;
+				TRecord[]?[] chunks = Chunks!;
+				bool[]?[] verified = VerifiedChunks!;
+				for (int slot = 0; slot < n; slot++)
+				{
+					int chunkIdx = slot >> ChunkShift;
+					int offset = slot & ChunkMask;
+					chunks[chunkIdx]![offset] = default;
+					verified[chunkIdx]![offset] = false;
+				}
 			}
 
 			_reserved = 0;
@@ -111,8 +117,20 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 	{
 		lock (Lock)
 		{
-			TRecord[]?[] chunks = Chunks;
-			if (chunkIdx >= chunks.Length)
+			TRecord[]?[]? chunks = Chunks;
+			if (chunks is null)
+			{
+				int initialLen = 1;
+				while (chunkIdx >= initialLen)
+				{
+					initialLen *= 2;
+				}
+
+				chunks = new TRecord[initialLen][];
+				VerifiedChunks = new bool[initialLen][];
+				Volatile.Write(ref Chunks, chunks);
+			}
+			else if (chunkIdx >= chunks.Length)
 			{
 				int newLen = chunks.Length;
 				while (chunkIdx >= newLen)
@@ -123,7 +141,7 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 				TRecord[]?[] biggerChunks = new TRecord[newLen][];
 				Array.Copy(chunks, biggerChunks, chunks.Length);
 				bool[]?[] biggerVerified = new bool[newLen][];
-				Array.Copy(VerifiedChunks, biggerVerified, VerifiedChunks.Length);
+				Array.Copy(VerifiedChunks!, biggerVerified, VerifiedChunks!.Length);
 				chunks = biggerChunks;
 				VerifiedChunks = biggerVerified;
 				Volatile.Write(ref Chunks, chunks);
@@ -133,7 +151,7 @@ internal sealed class ChunkedSlotStorage<TRecord> where TRecord : struct
 			if (chunk is null)
 			{
 				chunk = new TRecord[ChunkSize];
-				VerifiedChunks[chunkIdx] = new bool[ChunkSize];
+				VerifiedChunks![chunkIdx] = new bool[ChunkSize];
 				Volatile.Write(ref chunks[chunkIdx], chunk);
 			}
 

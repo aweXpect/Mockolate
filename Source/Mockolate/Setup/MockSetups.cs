@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Threading;
 
 namespace Mockolate.Setup;
 
@@ -52,35 +53,87 @@ internal partial class MockSetups : MockScenarioSetup
 
 internal class MockScenarioSetup
 {
-	internal MockSetups.EventSetups Events { get; } = new();
-	internal MockSetups.IndexerSetups Indexers { get; } = new();
-	internal MockSetups.MethodSetups Methods { get; } = new();
-	internal MockSetups.PropertySetups Properties { get; } = new();
+	private MockSetups.EventSetups? _events;
+	private MockSetups.IndexerSetups? _indexers;
+	private MockSetups.MethodSetups? _methods;
+	private MockSetups.PropertySetups? _properties;
+
+	internal MockSetups.EventSetups Events
+	{
+		get
+		{
+			if (_events is null)
+			{
+				Interlocked.CompareExchange(ref _events, new MockSetups.EventSetups(), null);
+			}
+
+			return _events!;
+		}
+	}
+
+	internal MockSetups.IndexerSetups Indexers
+	{
+		get
+		{
+			if (_indexers is null)
+			{
+				Interlocked.CompareExchange(ref _indexers, new MockSetups.IndexerSetups(), null);
+			}
+
+			return _indexers!;
+		}
+	}
+
+	internal MockSetups.MethodSetups Methods
+	{
+		get
+		{
+			if (_methods is null)
+			{
+				Interlocked.CompareExchange(ref _methods, new MockSetups.MethodSetups(), null);
+			}
+
+			return _methods!;
+		}
+	}
+
+	internal MockSetups.PropertySetups Properties
+	{
+		get
+		{
+			if (_properties is null)
+			{
+				Interlocked.CompareExchange(ref _properties, new MockSetups.PropertySetups(), null);
+			}
+
+			return _properties!;
+		}
+	}
 
 	/// <inheritdoc cref="object.ToString()" />
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	public override string ToString()
 	{
 		StringBuilder sb = new();
-		int methodCount = Methods.Count;
+		int methodCount = _methods?.Count ?? 0;
 		if (methodCount > 0)
 		{
 			sb.Append(methodCount).Append(methodCount == 1 ? " method, " : " methods, ");
 		}
 
-		int propertyCount = Properties.Count;
+		int propertyCount = _properties?.Count ?? 0;
 		if (propertyCount > 0)
 		{
 			sb.Append(propertyCount).Append(propertyCount == 1 ? " property, " : " properties, ");
 		}
 
-		int indexerCount = Indexers.Count;
+		int indexerCount = _indexers?.Count ?? 0;
 		if (indexerCount > 0)
 		{
 			sb.Append(indexerCount).Append(indexerCount == 1 ? " indexer, " : " indexers, ");
 		}
 
-		int eventCount = Events.Count;
+		int eventCount = _events?.Count ?? 0;
 		if (eventCount > 0)
 		{
 			sb.Append(eventCount).Append(eventCount == 1 ? " event, " : " events, ");
