@@ -487,50 +487,64 @@ public partial class MockRegistry
 
 	private IEnumerable<EventSetup> GetEventSetupsByName(string name)
 	{
+		// Scenario-scoped setups override default scope when at least one matches the name. The
+		// underlying GetByName already returns a materialized List, so a Count check is cheaper than
+		// the lazy "did we yield anything?" flag pattern this used to track.
 		if (!string.IsNullOrEmpty(Scenario) &&
 		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
-			bool hasScoped = false;
-			foreach (EventSetup setup in scopedBucket.Events.GetByName(name))
+			List<EventSetup> scoped = scopedBucket.Events.GetByName(name);
+			if (scoped.Count > 0)
 			{
-				hasScoped = true;
-				yield return setup;
-			}
-
-			if (hasScoped)
-			{
-				yield break;
+				return scoped;
 			}
 		}
 
-		// Default-scope: walk the memberId-keyed snapshot table for generator-emitted setups (the
-		// SetupEvent(int, ...) overloads bypass the dict). The unsubscribe-side dispatch always falls
-		// here because the snapshot is keyed by subscribe id only — the bucket walk reunites it with
-		// its setup. Then walk the dict for legacy SetupEvent(EventSetup) entries.
-		EventSetup[]?[]? table = Volatile.Read(ref _eventSetupsByMemberId);
-		if (table is not null)
-		{
-			for (int b = 0; b < table.Length; b++)
-			{
-				EventSetup[]? bucket = table[b];
-				if (bucket is null)
-				{
-					continue;
-				}
+		return EnumerateDefaultScopeEventSetupsByName(name);
+	}
 
-				for (int i = 0; i < bucket.Length; i++)
-				{
-					if (bucket[i].Name.Equals(name))
-					{
-						yield return bucket[i];
-					}
-				}
-			}
+	/// <summary>
+	///     Walks the memberId-keyed snapshot table for generator-emitted setups (the
+	///     <c>SetupEvent(int, ...)</c> overloads bypass the dict), then the root dict for legacy
+	///     <c>SetupEvent(EventSetup)</c> entries. The unsubscribe-side dispatch always lands here
+	///     because the snapshot is keyed by subscribe id only — the bucket walk reunites it with its
+	///     setup.
+	/// </summary>
+	private IEnumerable<EventSetup> EnumerateDefaultScopeEventSetupsByName(string name)
+	{
+		foreach (EventSetup setup in EnumerateEventSnapshotByName(name))
+		{
+			yield return setup;
 		}
 
 		foreach (EventSetup setup in Setup.Events.GetByName(name))
 		{
 			yield return setup;
+		}
+	}
+
+	private IEnumerable<EventSetup> EnumerateEventSnapshotByName(string name)
+	{
+		EventSetup[]?[]? table = Volatile.Read(ref _eventSetupsByMemberId);
+		if (table is null)
+		{
+			yield break;
+		}
+
+		foreach (EventSetup[]? bucket in table)
+		{
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			foreach (EventSetup setup in bucket)
+			{
+				if (setup.Name.Equals(name))
+				{
+					yield return setup;
+				}
+			}
 		}
 	}
 
