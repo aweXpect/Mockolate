@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net10.0</TargetFrameworks>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Include="..\..\Pipeline\BenchmarkReport.cs" Link="BenchmarkReport.cs"/>
+	</ItemGroup>
+
+</Project>
