@@ -94,7 +94,7 @@ public partial class MockRegistry
 	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
 	/// </summary>
 	/// <remarks>
-	///     Property dispatch reads the snapshot via <see cref="GetPropertyFast{TResult}(int, string, Func{MockBehavior, TResult}, Func{TResult}?)" />
+	///     Property dispatch reads the snapshot via <see cref="GetPropertyFast{TResult}(int, string, System.Func{Mockolate.MockBehavior,TResult}, Func{TResult}?)" />
 	///     and falls back to the cold path when the snapshot is empty, so this accessor is intended for
 	///     diagnostics and tests that need to verify the fast-path table directly.
 	/// </remarks>
@@ -118,8 +118,13 @@ public partial class MockRegistry
 	/// <remarks>
 	///     The caller iterates and evaluates each setup's matcher on the stack (passing ref-struct
 	///     values where applicable), so no predicate closure is captured.
-	///     Scenario-scoped results come first; the caller is expected to stop on the first match so
-	///     scenarios override the default scope.
+	///     Order: scenario-scoped dict (newest first), then default-scope memberId-keyed snapshot
+	///     entries (newest first within each bucket, with buckets visited in memberId/index order),
+	///     then default-scope hand-written dict entries. The caller is expected to stop on the first
+	///     match so scenarios override the default scope.
+	///     When the call stays entirely on the default scope and neither the snapshot table nor the
+	///     dict has any entries, the empty-storage fast path returns <see cref="Array.Empty{T}" />
+	///     directly so the dispatch hot path skips an iterator state-machine allocation per call.
 	/// </remarks>
 	/// <typeparam name="T">The concrete <see cref="MethodSetup" /> subtype to return.</typeparam>
 	/// <param name="methodName">The simple method name.</param>
@@ -129,7 +134,30 @@ public partial class MockRegistry
 		if (!string.IsNullOrEmpty(Scenario) &&
 		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
-			foreach (T setup in scopedBucket.Methods.EnumerateByName<T>(methodName))
+			return EnumerateScopedAndGlobalMethodSetups<T>(methodName, scopedBucket);
+		}
+
+		MethodSetup[]?[]? snapshot = Volatile.Read(ref _setupsByMemberId);
+		if (snapshot is null)
+		{
+			return Setup.Methods.EnumerateByName<T>(methodName);
+		}
+
+		return EnumerateGlobalMethodSetups<T>(methodName, snapshot);
+	}
+
+	private IEnumerable<T> EnumerateScopedAndGlobalMethodSetups<T>(string methodName,
+		MockScenarioSetup scopedBucket) where T : MethodSetup
+	{
+		foreach (T setup in scopedBucket.Methods.EnumerateByName<T>(methodName))
+		{
+			yield return setup;
+		}
+
+		MethodSetup[]?[]? snapshot = Volatile.Read(ref _setupsByMemberId);
+		if (snapshot is not null)
+		{
+			foreach (T setup in EnumerateSnapshotByName<T>(methodName, snapshot))
 			{
 				yield return setup;
 			}
@@ -138,6 +166,48 @@ public partial class MockRegistry
 		foreach (T setup in Setup.Methods.EnumerateByName<T>(methodName))
 		{
 			yield return setup;
+		}
+	}
+
+	private IEnumerable<T> EnumerateGlobalMethodSetups<T>(string methodName,
+		MethodSetup[]?[] snapshot) where T : MethodSetup
+	{
+		foreach (T setup in EnumerateSnapshotByName<T>(methodName, snapshot))
+		{
+			yield return setup;
+		}
+
+		// Hand-written SetupMethod(MethodSetup) entries (e.g. the HttpClientExtensions pipeline) live
+		// only in the root dict; the empty-storage fast path returns Array.Empty<T> so the loop
+		// allocates nothing further when no such entry exists.
+		foreach (T setup in Setup.Methods.EnumerateByName<T>(methodName))
+		{
+			yield return setup;
+		}
+	}
+
+	private static IEnumerable<T> EnumerateSnapshotByName<T>(string methodName,
+		MethodSetup[]?[] snapshot) where T : MethodSetup
+	{
+		// Walk every memberId bucket: the snapshot is keyed by member id, but a name-based caller
+		// (scenario-active dispatch, ref-struct dispatch) doesn't know the id, so we filter by Name
+		// after the type-test. The outer scan is proportional to snapshot.Length (the memberId table
+		// size / mocked member count), not interaction count; the table may be sparse for a method.
+		for (int b = 0; b < snapshot.Length; b++)
+		{
+			MethodSetup[]? bucket = snapshot[b];
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			for (int i = bucket.Length - 1; i >= 0; i--)
+			{
+				if (bucket[i] is T typed && typed.Name.Equals(methodName))
+				{
+					yield return typed;
+				}
+			}
 		}
 	}
 
@@ -160,6 +230,12 @@ public partial class MockRegistry
 			{
 				return scoped;
 			}
+		}
+
+		T? snapshot = GetMatchingIndexerSetupFromSnapshot(predicate);
+		if (snapshot is not null)
+		{
+			return snapshot;
 		}
 
 		return Setup.Indexers.GetMatching(predicate);
@@ -185,7 +261,74 @@ public partial class MockRegistry
 			}
 		}
 
+		T? snapshot = GetMatchingIndexerSetupFromSnapshot<T>(access);
+		if (snapshot is not null)
+		{
+			return snapshot;
+		}
+
 		return Setup.Indexers.GetMatching<T>(access);
+	}
+
+	private T? GetMatchingIndexerSetupFromSnapshot<T>(Func<T, bool> predicate) where T : IndexerSetup
+	{
+		IndexerSetup[]?[]? table = Volatile.Read(ref _indexerSetupsByMemberId);
+		if (table is null)
+		{
+			return null;
+		}
+
+		// Walk every memberId bucket: the snapshot is keyed by member id, but predicate-based callers
+		// don't know which id to consult, so we filter by type then by predicate. Buckets are walked
+		// by ascending memberId/index order; within each bucket, reverse iteration means the latest
+		// registration wins.
+		for (int b = 0; b < table.Length; b++)
+		{
+			IndexerSetup[]? bucket = table[b];
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			for (int i = bucket.Length - 1; i >= 0; i--)
+			{
+				if (bucket[i] is T typed && predicate(typed))
+				{
+					return typed;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private T? GetMatchingIndexerSetupFromSnapshot<T>(IndexerAccess access) where T : IndexerSetup
+	{
+		IndexerSetup[]?[]? table = Volatile.Read(ref _indexerSetupsByMemberId);
+		if (table is null)
+		{
+			return null;
+		}
+
+		for (int b = 0; b < table.Length; b++)
+		{
+			IndexerSetup[]? bucket = table[b];
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			for (int i = bucket.Length - 1; i >= 0; i--)
+			{
+				if (bucket[i] is T typed &&
+				    ((IInteractiveIndexerSetup)typed).Matches(access))
+				{
+					return typed;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/// <summary>
@@ -345,25 +488,64 @@ public partial class MockRegistry
 
 	private IEnumerable<EventSetup> GetEventSetupsByName(string name)
 	{
+		// Scenario-scoped setups override default scope when at least one matches the name. The
+		// underlying GetByName already returns a materialized List, so a Count check is cheaper than
+		// the lazy "did we yield anything?" flag pattern this used to track.
 		if (!string.IsNullOrEmpty(Scenario) &&
 		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
-			bool hasScoped = false;
-			foreach (EventSetup setup in scopedBucket.Events.GetByName(name))
+			List<EventSetup> scoped = scopedBucket.Events.GetByName(name);
+			if (scoped.Count > 0)
 			{
-				hasScoped = true;
-				yield return setup;
+				return scoped;
 			}
+		}
 
-			if (hasScoped)
-			{
-				yield break;
-			}
+		return EnumerateDefaultScopeEventSetupsByName(name);
+	}
+
+	/// <summary>
+	///     Walks the memberId-keyed snapshot table for generator-emitted setups (the
+	///     <c>SetupEvent(int, ...)</c> overloads bypass the dict), then the root dict for legacy
+	///     <c>SetupEvent(EventSetup)</c> entries. The unsubscribe-side dispatch always lands here
+	///     because the snapshot is keyed by subscribe id only — the bucket walk reunites it with its
+	///     setup.
+	/// </summary>
+	private IEnumerable<EventSetup> EnumerateDefaultScopeEventSetupsByName(string name)
+	{
+		foreach (EventSetup setup in EnumerateEventSnapshotByName(name))
+		{
+			yield return setup;
 		}
 
 		foreach (EventSetup setup in Setup.Events.GetByName(name))
 		{
 			yield return setup;
+		}
+	}
+
+	private IEnumerable<EventSetup> EnumerateEventSnapshotByName(string name)
+	{
+		EventSetup[]?[]? table = Volatile.Read(ref _eventSetupsByMemberId);
+		if (table is null)
+		{
+			yield break;
+		}
+
+		foreach (EventSetup[]? bucket in table)
+		{
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			foreach (EventSetup setup in bucket)
+			{
+				if (setup.Name.Equals(name))
+				{
+					yield return setup;
+				}
+			}
 		}
 	}
 
