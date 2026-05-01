@@ -11,7 +11,8 @@ public class CountSourceTests
 	public async Task EventCountSource_Subscribe_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastEventBuffer buffer = store.InstallEventSubscribe(0);
+		FastEventBuffer buffer = store.GetOrCreateBuffer<FastEventBuffer>(0,
+			static f => new FastEventBuffer(f, FastEventBufferKind.Subscribe));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		MethodInfo m = typeof(CountSourceTests).GetMethod(
@@ -28,7 +29,8 @@ public class CountSourceTests
 	public async Task EventCountSource_Unsubscribe_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastEventBuffer buffer = store.InstallEventUnsubscribe(0);
+		FastEventBuffer buffer = store.GetOrCreateBuffer<FastEventBuffer>(0,
+			static f => new FastEventBuffer(f, FastEventBufferKind.Unsubscribe));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		MethodInfo m = typeof(CountSourceTests).GetMethod(
@@ -46,7 +48,8 @@ public class CountSourceTests
 	public async Task IndexerGetter1_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastIndexerGetterBuffer<int> buffer = store.InstallIndexerGetter<int>(0);
+		FastIndexerGetterBuffer<int> buffer = store.GetOrCreateBuffer<FastIndexerGetterBuffer<int>>(0,
+			static f => new FastIndexerGetterBuffer<int>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5);
@@ -63,7 +66,8 @@ public class CountSourceTests
 	public async Task IndexerGetter2_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastIndexerGetterBuffer<int, string> buffer = store.InstallIndexerGetter<int, string>(0);
+		FastIndexerGetterBuffer<int, string> buffer = store.GetOrCreateBuffer<FastIndexerGetterBuffer<int, string>>(0,
+			static f => new FastIndexerGetterBuffer<int, string>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5, "a");
@@ -83,7 +87,8 @@ public class CountSourceTests
 	{
 		FastMockInteractions store = new(1);
 		FastIndexerGetterBuffer<int, string, bool> buffer =
-			store.InstallIndexerGetter<int, string, bool>(0);
+			store.GetOrCreateBuffer<FastIndexerGetterBuffer<int, string, bool>>(0,
+				static f => new FastIndexerGetterBuffer<int, string, bool>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5, "a", true);
@@ -104,7 +109,8 @@ public class CountSourceTests
 	{
 		FastMockInteractions store = new(1);
 		FastIndexerGetterBuffer<int, string, bool, double> buffer =
-			store.InstallIndexerGetter<int, string, bool, double>(0);
+			store.GetOrCreateBuffer<FastIndexerGetterBuffer<int, string, bool, double>>(0,
+				static f => new FastIndexerGetterBuffer<int, string, bool, double>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5, "a", true, 1.5);
@@ -125,7 +131,8 @@ public class CountSourceTests
 	public async Task IndexerSetter1_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastIndexerSetterBuffer<int, string> buffer = store.InstallIndexerSetter<int, string>(0);
+		FastIndexerSetterBuffer<int, string> buffer = store.GetOrCreateBuffer<FastIndexerSetterBuffer<int, string>>(0,
+			static f => new FastIndexerSetterBuffer<int, string>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5, "v");
@@ -145,7 +152,8 @@ public class CountSourceTests
 	{
 		FastMockInteractions store = new(1);
 		FastIndexerSetterBuffer<int, string, double> buffer =
-			store.InstallIndexerSetter<int, string, double>(0);
+			store.GetOrCreateBuffer<FastIndexerSetterBuffer<int, string, double>>(0,
+				static f => new FastIndexerSetterBuffer<int, string, double>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5, "a", 1.5);
@@ -166,7 +174,8 @@ public class CountSourceTests
 	{
 		FastMockInteractions store = new(1);
 		FastIndexerSetterBuffer<int, string, bool, double> buffer =
-			store.InstallIndexerSetter<int, string, bool, double>(0);
+			store.GetOrCreateBuffer<FastIndexerSetterBuffer<int, string, bool, double>>(0,
+				static f => new FastIndexerSetterBuffer<int, string, bool, double>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5, "a", true, 1.5);
@@ -188,7 +197,8 @@ public class CountSourceTests
 	{
 		FastMockInteractions store = new(1);
 		FastIndexerSetterBuffer<int, string, bool, double, long> buffer =
-			store.InstallIndexerSetter<int, string, bool, double, long>(0);
+			store.GetOrCreateBuffer<FastIndexerSetterBuffer<int, string, bool, double, long>>(0,
+				static f => new FastIndexerSetterBuffer<int, string, bool, double, long>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append(5, "a", true, 1.5, 100L);
@@ -210,7 +220,8 @@ public class CountSourceTests
 	public async Task Method0_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastMethod0Buffer buffer = store.InstallMethod(0);
+		FastMethod0Buffer buffer = store.GetOrCreateBuffer<FastMethod0Buffer>(0,
+			static f => new FastMethod0Buffer(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append("Foo");
@@ -227,7 +238,8 @@ public class CountSourceTests
 	public async Task Method1_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+		FastMethod1Buffer<int> buffer = store.GetOrCreateBuffer<FastMethod1Buffer<int>>(0,
+			static f => new FastMethod1Buffer<int>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append("Foo", 1);
@@ -245,7 +257,8 @@ public class CountSourceTests
 	public async Task Method2_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastMethod2Buffer<int, string> buffer = store.InstallMethod<int, string>(0);
+		FastMethod2Buffer<int, string> buffer = store.GetOrCreateBuffer<FastMethod2Buffer<int, string>>(0,
+			static f => new FastMethod2Buffer<int, string>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append("Foo", 1, "a");
@@ -265,7 +278,8 @@ public class CountSourceTests
 	public async Task Method3_FastPath_Count_AndCountAll_AreExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastMethod3Buffer<int, string, bool> buffer = store.InstallMethod<int, string, bool>(0);
+		FastMethod3Buffer<int, string, bool> buffer = store.GetOrCreateBuffer<FastMethod3Buffer<int, string, bool>>(0,
+			static f => new FastMethod3Buffer<int, string, bool>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append("Foo", 1, "a", true);
@@ -291,7 +305,8 @@ public class CountSourceTests
 	{
 		FastMockInteractions store = new(1);
 		FastMethod4Buffer<int, string, bool, double> buffer =
-			store.InstallMethod<int, string, bool, double>(0);
+			store.GetOrCreateBuffer<FastMethod4Buffer<int, string, bool, double>>(0,
+				static f => new FastMethod4Buffer<int, string, bool, double>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append("Foo", 1, "a", true, 1.5);
@@ -317,11 +332,12 @@ public class CountSourceTests
 	public async Task PropertyGetter_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+		FastPropertyGetterBuffer buffer = store.GetOrCreateBuffer<FastPropertyGetterBuffer>(0,
+			static f => new FastPropertyGetterBuffer(f, new PropertyGetterAccess("P")));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
-		buffer.Append("P");
-		buffer.Append("P");
+		buffer.Append();
+		buffer.Append();
 
 		registry.VerifyPropertyTyped(new object(), 0, "P").Twice();
 
@@ -332,7 +348,8 @@ public class CountSourceTests
 	public async Task PropertySetter_FastPath_Count_IsExercised()
 	{
 		FastMockInteractions store = new(1);
-		FastPropertySetterBuffer<int> buffer = store.InstallPropertySetter<int>(0);
+		FastPropertySetterBuffer<int> buffer = store.GetOrCreateBuffer<FastPropertySetterBuffer<int>>(0,
+			static f => new FastPropertySetterBuffer<int>(f));
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		buffer.Append("P", 1);

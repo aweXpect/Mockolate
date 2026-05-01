@@ -202,7 +202,6 @@ namespace Mockolate
         public TResult GetProperty<TResult>(Mockolate.Interactions.PropertyGetterAccess access, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetProperty<TResult>(string propertyName, System.Func<TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor) { }
         public TResult GetPropertyFast<TResult>(int memberId, Mockolate.Interactions.PropertyGetterAccess access, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
-        public TResult GetPropertyFast<TResult>(int memberId, string propertyName, System.Func<Mockolate.MockBehavior, TResult> defaultValueGenerator, System.Func<TResult>? baseValueAccessor = null) { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Setup.ISetup> GetUnusedSetups(Mockolate.Interactions.IMockInteractions interactions) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGot<T>(T subject, int memberId, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<string> parametersDescription) { }
         public Mockolate.Verify.VerificationResult<T> IndexerGotTyped<T, T1>(T subject, int memberId, Mockolate.Parameters.IParameterMatch<T1> match1, System.Func<string> parametersDescription) { }
@@ -609,26 +608,10 @@ namespace Mockolate.Interactions
         public void Clear() { }
         public int ConsumeMatching() { }
     }
-    public static class FastEventBufferFactory
-    {
-        public static Mockolate.Interactions.FastEventBuffer InstallEventSubscribe(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastEventBuffer InstallEventUnsubscribe(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-    }
     public enum FastEventBufferKind
     {
         Subscribe = 0,
         Unsubscribe = 1,
-    }
-    public static class FastIndexerBufferFactory
-    {
-        public static Mockolate.Interactions.FastIndexerGetterBuffer<T1> InstallIndexerGetter<T1>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastIndexerGetterBuffer<T1, T2> InstallIndexerGetter<T1, T2>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastIndexerGetterBuffer<T1, T2, T3> InstallIndexerGetter<T1, T2, T3>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastIndexerGetterBuffer<T1, T2, T3, T4> InstallIndexerGetter<T1, T2, T3, T4>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastIndexerSetterBuffer<T1, TValue> InstallIndexerSetter<T1, TValue>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastIndexerSetterBuffer<T1, T2, TValue> InstallIndexerSetter<T1, T2, TValue>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastIndexerSetterBuffer<T1, T2, T3, TValue> InstallIndexerSetter<T1, T2, T3, TValue>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> InstallIndexerSetter<T1, T2, T3, T4, TValue>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1> : Mockolate.Interactions.IFastMemberBuffer
@@ -755,14 +738,6 @@ namespace Mockolate.Interactions
         public void Clear() { }
         public int ConsumeMatching(Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4) { }
     }
-    public static class FastMethodBufferFactory
-    {
-        public static Mockolate.Interactions.FastMethod0Buffer InstallMethod(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastMethod1Buffer<T1> InstallMethod<T1>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastMethod2Buffer<T1, T2> InstallMethod<T1, T2>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastMethod3Buffer<T1, T2, T3> InstallMethod<T1, T2, T3>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastMethod4Buffer<T1, T2, T3, T4> InstallMethod<T1, T2, T3, T4>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-    }
     [System.Diagnostics.DebuggerDisplay("{Count} interactions")]
     public class FastMockInteractions : Mockolate.Interactions.IMockInteractions, System.Collections.Generic.IEnumerable<Mockolate.Interactions.IInteraction>, System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction>, System.Collections.IEnumerable
     {
@@ -780,24 +755,15 @@ namespace Mockolate.Interactions
         public TBuffer GetOrCreateBuffer<TBuffer, TState>(int memberId, System.Func<Mockolate.Interactions.FastMockInteractions, TState, TBuffer> factory, TState state)
             where TBuffer :  class, Mockolate.Interactions.IFastMemberBuffer { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
-        public void InstallBuffer(int memberId, Mockolate.Interactions.IFastMemberBuffer buffer) { }
         public long NextSequence() { }
         public void RaiseAdded() { }
-    }
-    public static class FastPropertyBufferFactory
-    {
-        public static Mockolate.Interactions.FastPropertyGetterBuffer InstallPropertyGetter(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
-        public static Mockolate.Interactions.FastPropertyGetterBuffer InstallPropertyGetter(this Mockolate.Interactions.FastMockInteractions interactions, int memberId, Mockolate.Interactions.PropertyGetterAccess access) { }
-        public static Mockolate.Interactions.FastPropertySetterBuffer<T> InstallPropertySetter<T>(this Mockolate.Interactions.FastMockInteractions interactions, int memberId) { }
     }
     [System.Diagnostics.DebuggerDisplay("{Count} property gets")]
     public sealed class FastPropertyGetterBuffer : Mockolate.Interactions.IFastMemberBuffer
     {
-        public FastPropertyGetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public FastPropertyGetterBuffer(Mockolate.Interactions.FastMockInteractions owner, Mockolate.Interactions.PropertyGetterAccess access) { }
         public int Count { get; }
         public void Append() { }
-        public void Append(string name) { }
         public void Clear() { }
         public int ConsumeMatching() { }
     }

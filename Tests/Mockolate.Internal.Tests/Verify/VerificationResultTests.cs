@@ -11,6 +11,12 @@ namespace Mockolate.Internal.Tests.Verify;
 
 public class VerificationResultTests
 {
+	private static FastMethod0Buffer InstallMethod(FastMockInteractions store, int memberId)
+		=> store.GetOrCreateBuffer<FastMethod0Buffer>(memberId, static f => new FastMethod0Buffer(f));
+
+	private static FastMethod1Buffer<T> InstallMethod<T>(FastMockInteractions store, int memberId)
+		=> store.GetOrCreateBuffer<FastMethod1Buffer<T>>(memberId, static f => new FastMethod1Buffer<T>(f));
+
 	public sealed class AwaitableTests
 	{
 		[Fact]
@@ -37,12 +43,12 @@ public class VerificationResultTests
 		public async Task VerifyCount_WhenPredicateNeverSatisfies_ShouldTimeOut()
 		{
 			FastMockInteractions store = new(1);
-			store.InstallMethod(0);
+			InstallMethod(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			void Act()
 			{
-				registry.VerifyMethod<object>(new object(), 0, "Foo", () => "Foo()")
+				registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()")
 					.Within(50.Milliseconds()).AtLeast(2);
 			}
 
@@ -60,7 +66,7 @@ public class VerificationResultTests
 			// (Count()) of the mutated conditional satisfies it synchronously, then short-circuits
 			// before the async loop can re-evaluate via the unmutated CountAll().
 			FastMockInteractions store = new(1);
-			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			FastMethod1Buffer<int> buffer = InstallMethod<int>(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo", 1);
@@ -86,7 +92,7 @@ public class VerificationResultTests
 		public async Task WithCancellation_PreservesUseCountAllFlag()
 		{
 			FastMockInteractions store = new(1);
-			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			FastMethod1Buffer<int> buffer = InstallMethod<int>(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo", 1);
@@ -112,7 +118,7 @@ public class VerificationResultTests
 		public async Task Within_PreservesUseCountAllFlag()
 		{
 			FastMockInteractions store = new(1);
-			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			FastMethod1Buffer<int> buffer = InstallMethod<int>(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo", 1);
@@ -167,8 +173,8 @@ public class VerificationResultTests
 			// CollectMatching falls back to a global Where over _interactions, which would pick up
 			// records from OTHER buffers that satisfy the (un-name-filtered) predicate.
 			FastMockInteractions store = new(2);
-			FastMethod1Buffer<int> bufA = store.InstallMethod<int>(0);
-			FastMethod1Buffer<int> bufB = store.InstallMethod<int>(1);
+			FastMethod1Buffer<int> bufA = InstallMethod<int>(store, 0);
+			FastMethod1Buffer<int> bufB = InstallMethod<int>(store, 1);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			bufA.Append("Foo", 1);
@@ -196,14 +202,14 @@ public class VerificationResultTests
 		public async Task Map_WithBuffer_PreservesFastPathSource()
 		{
 			FastMockInteractions store = new(1);
-			FastMethod0Buffer buffer = store.InstallMethod(0);
+			FastMethod0Buffer buffer = InstallMethod(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo");
 			buffer.Append("Foo");
 
 			object original = new();
-			VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod<object>(
+			VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod(
 				original, 0, "Foo", () => "Foo()");
 
 			string newSubject = "newMock";
@@ -245,7 +251,7 @@ public class VerificationResultTests
 			// with the existing N=1 / N=3 / N=0 cases, this pins the boundary so flipping `> 1` to
 			// `>= 1` is no longer a silent rewrite of the sort path.
 			FastMockInteractions store = new(1);
-			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			FastMethod1Buffer<int> buffer = InstallMethod<int>(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo", 10);
@@ -274,7 +280,7 @@ public class VerificationResultTests
 		public async Task WithBufferAndMultipleRecords_PreservesSequenceOrder()
 		{
 			FastMockInteractions store = new(1);
-			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			FastMethod1Buffer<int> buffer = InstallMethod<int>(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo", 10);
@@ -303,7 +309,7 @@ public class VerificationResultTests
 		public async Task WithBufferAndNoMatchingRecord_ReturnsEmpty()
 		{
 			FastMockInteractions store = new(1);
-			FastMethod1Buffer<int> buffer = store.InstallMethod<int>(0);
+			FastMethod1Buffer<int> buffer = InstallMethod<int>(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo", 1);
@@ -326,7 +332,7 @@ public class VerificationResultTests
 		public async Task WithBufferAndSingleRecord_ReturnsRecord()
 		{
 			FastMockInteractions store = new(1);
-			FastMethod0Buffer buffer = store.InstallMethod(0);
+			FastMethod0Buffer buffer = InstallMethod(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			buffer.Append("Foo");
@@ -349,7 +355,7 @@ public class VerificationResultTests
 		public async Task WithEmptyBuffer_ReturnsEmpty()
 		{
 			FastMockInteractions store = new(1);
-			store.InstallMethod(0);
+			InstallMethod(store, 0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			VerificationResult<object>.IgnoreParameters result = registry.VerifyMethod<object, IMethodInteraction>(
@@ -394,7 +400,7 @@ public class VerificationResultTests
 		{
 			// Same guard, Awaitable path (via Within). Distinct mutation site.
 			FastMockInteractions store = new(1, true);
-			store.InstallMethod(0);
+			InstallMethod(store, 0);
 			MockRegistry registry = new(MockBehavior.Default with
 			{
 				SkipInteractionRecording = true,
@@ -402,7 +408,7 @@ public class VerificationResultTests
 
 			void Act()
 			{
-				registry.VerifyMethod<object>(new object(), 0, "Foo", () => "Foo()")
+				registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()")
 					.Within(50.Milliseconds()).Once();
 			}
 
@@ -417,7 +423,7 @@ public class VerificationResultTests
 			// IFastVerifyCountResult.VerifyCount path. Without the guard, Once() would silently
 			// report a (probably false) count and never throw.
 			FastMockInteractions store = new(1, true);
-			store.InstallMethod(0);
+			InstallMethod(store, 0);
 			MockRegistry registry = new(MockBehavior.Default with
 			{
 				SkipInteractionRecording = true,
@@ -425,7 +431,7 @@ public class VerificationResultTests
 
 			void Act()
 			{
-				registry.VerifyMethod<object>(new object(), 0, "Foo", () => "Foo()").Once();
+				registry.VerifyMethod(new object(), 0, "Foo", () => "Foo()").Once();
 			}
 
 			await That(Act).Throws<MockException>()

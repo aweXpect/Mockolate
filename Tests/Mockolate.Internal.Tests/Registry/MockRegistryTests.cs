@@ -557,7 +557,7 @@ public sealed class MockRegistryTests
 			registry.SetupProperty(2, "myScenario", scenarioSetup);
 
 			registry.TransitionTo("myScenario");
-			int result = registry.GetPropertyFast(2, "P", _ => 0);
+			int result = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), _ => 0);
 
 			await That(result).IsEqualTo(99);
 		}
@@ -577,7 +577,7 @@ public sealed class MockRegistryTests
 				return 99;
 			}
 
-			int result = registry.GetPropertyFast(2, "P", _ => 7, Base);
+			int result = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), _ => 7, Base);
 
 			await That(baseInvocations).IsEqualTo(1);
 			await That(result).IsEqualTo(99);
@@ -594,7 +594,7 @@ public sealed class MockRegistryTests
 			unrelatedSetup.InitializeWith(99);
 			registry.SetupProperty(5, unrelatedSetup);
 
-			int result = registry.GetPropertyFast(0, "P", _ => 7);
+			int result = registry.GetPropertyFast(0, new PropertyGetterAccess("P"), _ => 7);
 
 			await That(result).IsEqualTo(7);
 		}
@@ -604,7 +604,7 @@ public sealed class MockRegistryTests
 		{
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 
-			int result = registry.GetPropertyFast(0, "P", _ => 7);
+			int result = registry.GetPropertyFast(0, new PropertyGetterAccess("P"), _ => 7);
 
 			await That(result).IsEqualTo(7);
 		}
@@ -625,8 +625,8 @@ public sealed class MockRegistryTests
 				return -1;
 			}
 
-			int first = registry.GetPropertyFast(2, "P", Generator);
-			int second = registry.GetPropertyFast(2, "P", Generator);
+			int first = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), Generator);
+			int second = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), Generator);
 
 			await That(first).IsEqualTo(42);
 			await That(second).IsEqualTo(42);
@@ -711,7 +711,7 @@ public sealed class MockRegistryTests
 			bool skipBase = registry.SetPropertyFast(2, 3, "P", 42);
 
 			await That(skipBase).IsFalse();
-			int after = registry.GetPropertyFast(2, "P", _ => -1);
+			int after = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), _ => -1);
 			await That(after).IsEqualTo(42);
 		}
 	}
@@ -912,7 +912,7 @@ public sealed class MockRegistryTests
 			snapshotAtFive.InitializeWith(50);
 			registry.SetupProperty(5, snapshotAtFive);
 
-			int result = registry.GetPropertyFast(2, "P", _ => 7);
+			int result = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), _ => 7);
 
 			await That(result).IsEqualTo(7);
 		}
@@ -941,7 +941,7 @@ public sealed class MockRegistryTests
 			registry.TransitionTo("myScenario");
 			registry.SetPropertyFast(2, 3, "P", 42);
 
-			int result = registry.GetPropertyFast(2, "P", _ => -1);
+			int result = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), _ => -1);
 
 			await That(result).IsEqualTo(42);
 		}
@@ -986,7 +986,8 @@ public sealed class MockRegistryTests
 		{
 			FastMockInteractions store = new(1);
 			PropertyGetterAccess access = new("P");
-			FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0, access);
+			FastPropertyGetterBuffer buffer = store.GetOrCreateBuffer<FastPropertyGetterBuffer, PropertyGetterAccess>(
+				0, static (f, a) => new FastPropertyGetterBuffer(f, a), access);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
 			int result = registry.GetPropertyFast(0, access, _ => 7);
@@ -1012,10 +1013,11 @@ public sealed class MockRegistryTests
 		public async Task WithStringName_AndMatchingFastBuffer_ShouldAppendToBuffer()
 		{
 			FastMockInteractions store = new(1);
-			FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+			FastPropertyGetterBuffer buffer = store.GetOrCreateBuffer<FastPropertyGetterBuffer>(0,
+				static f => new FastPropertyGetterBuffer(f, new PropertyGetterAccess(string.Empty)));
 			MockRegistry registry = new(MockBehavior.Default, store);
 
-			int result = registry.GetPropertyFast(0, "P", _ => 7);
+			int result = registry.GetPropertyFast(0, new PropertyGetterAccess("P"), _ => 7);
 
 			await That(buffer.Count).IsEqualTo(1);
 			await That(result).IsEqualTo(7);
@@ -1027,7 +1029,7 @@ public sealed class MockRegistryTests
 			FastMockInteractions store = new(1);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
-			int result = registry.GetPropertyFast(1, "P", _ => 7);
+			int result = registry.GetPropertyFast(1, new PropertyGetterAccess("P"), _ => 7);
 
 			await That(result).IsEqualTo(7);
 			await That(registry.Interactions.Count).IsEqualTo(1);
@@ -1041,7 +1043,7 @@ public sealed class MockRegistryTests
 			snapshot.InitializeWith(42);
 			registry.SetupProperty(0, snapshot);
 
-			int result = registry.GetPropertyFast(1, "Q", _ => 7);
+			int result = registry.GetPropertyFast(1, new PropertyGetterAccess("Q"), _ => 7);
 
 			await That(result).IsEqualTo(7);
 		}
@@ -1051,10 +1053,11 @@ public sealed class MockRegistryTests
 		{
 			MockBehavior behavior = MockBehavior.Default.SkippingInteractionRecording();
 			FastMockInteractions store = new(1, behavior.SkipInteractionRecording);
-			FastPropertyGetterBuffer buffer = store.InstallPropertyGetter(0);
+			FastPropertyGetterBuffer buffer = store.GetOrCreateBuffer<FastPropertyGetterBuffer>(0,
+				static f => new FastPropertyGetterBuffer(f, new PropertyGetterAccess(string.Empty)));
 			MockRegistry registry = new(behavior, store);
 
-			registry.GetPropertyFast(0, "P", _ => 7);
+			registry.GetPropertyFast(0, new PropertyGetterAccess("P"), _ => 7);
 
 			await That(buffer.Count).IsEqualTo(0);
 			await That(registry.Interactions.Count).IsEqualTo(0);
@@ -1066,7 +1069,7 @@ public sealed class MockRegistryTests
 			FastMockInteractions store = new(0);
 			MockRegistry registry = new(MockBehavior.Default, store);
 
-			registry.GetPropertyFast(0, "P", _ => 7);
+			registry.GetPropertyFast(0, new PropertyGetterAccess("P"), _ => 7);
 
 			IInteraction recorded = registry.Interactions.Single();
 			await That(recorded).IsExactly<PropertyGetterAccess>()

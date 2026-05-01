@@ -137,28 +137,3 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	}
 }
 
-/// <summary>
-///     Factory helpers for event buffers.
-/// </summary>
-public static class FastEventBufferFactory
-{
-	/// <summary>
-	///     Creates and installs an event subscribe buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastEventBuffer InstallEventSubscribe(this FastMockInteractions interactions, int memberId)
-	{
-		FastEventBuffer buffer = new(interactions, FastEventBufferKind.Subscribe);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-
-	/// <summary>
-	///     Creates and installs an event unsubscribe buffer at the given <paramref name="memberId" />.
-	/// </summary>
-	public static FastEventBuffer InstallEventUnsubscribe(this FastMockInteractions interactions, int memberId)
-	{
-		FastEventBuffer buffer = new(interactions, FastEventBufferKind.Unsubscribe);
-		interactions.InstallBuffer(memberId, buffer);
-		return buffer;
-	}
-}

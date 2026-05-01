@@ -65,7 +65,8 @@ public sealed class VerificationResultMutationTests
 		// IndexerGot(memberId, ...) returns a VerificationResult with a buffer but no fast-count
 		// source, so wrapping it with .Within(...) walks exactly that branch.
 		FastMockInteractions store = new(1);
-		FastIndexerGetterBuffer<int> buffer = store.InstallIndexerGetter<int>(0);
+		FastIndexerGetterBuffer<int> buffer = store.GetOrCreateBuffer<FastIndexerGetterBuffer<int>>(0,
+			static f => new FastIndexerGetterBuffer<int>(f));
 		buffer.Append(1);
 		MockRegistry registry = new(MockBehavior.Default, store);
 
@@ -95,7 +96,7 @@ public sealed class VerificationResultMutationTests
 			(1L, rec1),
 			(3L, rec3),
 		]);
-		store.InstallBuffer(0, buffer);
+		store.Buffers[0] = buffer;
 		MockRegistry registry = new(MockBehavior.Default, store);
 
 		VerificationResult<object>.IgnoreParameters result =
@@ -123,7 +124,8 @@ public sealed class VerificationResultMutationTests
 		// Pins the `_interactions.Verified(matchingInteractions);` call inside the non-Awaitable
 		// IFastVerifyCountResult.VerifyCount second branch (when `_fastCountSource is null`).
 		FastMockInteractions store = new(1);
-		FastIndexerGetterBuffer<int> buffer = store.InstallIndexerGetter<int>(0);
+		FastIndexerGetterBuffer<int> buffer = store.GetOrCreateBuffer<FastIndexerGetterBuffer<int>>(0,
+			static f => new FastIndexerGetterBuffer<int>(f));
 		buffer.Append(1);
 		MockRegistry registry = new(MockBehavior.Default, store);
 

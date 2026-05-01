@@ -29,8 +29,8 @@ public class FastMockInteractions : IMockInteractions
 
 	/// <summary>
 	///     Creates a new <see cref="FastMockInteractions" /> sized to <paramref name="memberCount" />.
-	///     Each mockable member is later assigned its own per-member buffer at the matching index via
-	///     <see cref="InstallBuffer(int, IFastMemberBuffer)" />.
+	///     Each mockable member's buffer slot starts empty and is materialized lazily on first access via
+	///     <see cref="GetOrCreateBuffer{TBuffer}(int, Func{FastMockInteractions, TBuffer})" />.
 	/// </summary>
 	/// <param name="memberCount">The number of distinct mockable members the buffer array should hold.</param>
 	/// <param name="skipInteractionRecording">Mirrors <see cref="MockBehavior.SkipInteractionRecording" />.</param>
@@ -68,17 +68,6 @@ public class FastMockInteractions : IMockInteractions
 	///     The number of interactions contained in the collection across all per-member buffers.
 	/// </summary>
 	public int Count => (int)Interlocked.Read(ref _globalSequence);
-
-	/// <summary>
-	///     Installs <paramref name="buffer" /> at the slot matching <paramref name="memberId" />.
-	///     Retained for backward compatibility; the source generator now uses
-	///     <see cref="GetOrCreateBuffer{TBuffer}(int, Func{FastMockInteractions, TBuffer})" /> so per-member
-	///     buffers are only allocated on first record.
-	/// </summary>
-	/// <param name="memberId">The generator-emitted member id for the buffer's target member.</param>
-	/// <param name="buffer">The per-member buffer to install.</param>
-	public void InstallBuffer(int memberId, IFastMemberBuffer buffer)
-		=> Buffers[memberId] = buffer;
 
 	/// <summary>
 	///     Returns the buffer at <paramref name="memberId" />, materializing it via <paramref name="factory" />

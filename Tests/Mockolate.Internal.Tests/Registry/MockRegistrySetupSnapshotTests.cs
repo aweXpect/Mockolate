@@ -153,7 +153,7 @@ public sealed class MockRegistrySetupSnapshotTests
 			registry.SetupProperty(1, new PropertySetup.Default<int>("P1", 0));
 			registry.SetupProperty(1, userSetup);
 
-			int observed = registry.GetPropertyFast(1, "P1", _ => -1);
+			int observed = registry.GetPropertyFast(1, new PropertyGetterAccess("P1"), _ => -1);
 			await That(observed).IsEqualTo(99);
 		}
 
@@ -181,7 +181,7 @@ public sealed class MockRegistrySetupSnapshotTests
 			registry.SetupProperty(1, userSetup);
 			registry.SetupProperty(1, new PropertySetup.Default<int>("P1", 0));
 
-			int observed = registry.GetPropertyFast(1, "P1", _ => -1);
+			int observed = registry.GetPropertyFast(1, new PropertyGetterAccess("P1"), _ => -1);
 			await That(observed).IsEqualTo(99);
 		}
 
@@ -250,9 +250,9 @@ public sealed class MockRegistrySetupSnapshotTests
 			registry.SetupProperty(7, setup7);
 			registry.SetupProperty(3, setup3);
 
-			await That(registry.GetPropertyFast(0, "P0", _ => -1)).IsEqualTo(10);
-			await That(registry.GetPropertyFast(7, "P7", _ => -1)).IsEqualTo(70);
-			await That(registry.GetPropertyFast(3, "P3", _ => -1)).IsEqualTo(30);
+			await That(registry.GetPropertyFast(0, new PropertyGetterAccess("P0"), _ => -1)).IsEqualTo(10);
+			await That(registry.GetPropertyFast(7, new PropertyGetterAccess("P7"), _ => -1)).IsEqualTo(70);
+			await That(registry.GetPropertyFast(3, new PropertyGetterAccess("P3"), _ => -1)).IsEqualTo(30);
 		}
 
 		[Fact]
@@ -279,7 +279,7 @@ public sealed class MockRegistrySetupSnapshotTests
 
 			registry.SetupProperty(5, setup);
 
-			int observed = registry.GetPropertyFast(5, "P5", _ => -1);
+			int observed = registry.GetPropertyFast(5, new PropertyGetterAccess("P5"), _ => -1);
 			await That(observed).IsEqualTo(50);
 		}
 
@@ -319,7 +319,7 @@ public sealed class MockRegistrySetupSnapshotTests
 
 			registry.SetupProperty(5, "", setup);
 
-			int observed = registry.GetPropertyFast(5, "P5", _ => -1);
+			int observed = registry.GetPropertyFast(5, new PropertyGetterAccess("P5"), _ => -1);
 			await That(observed).IsEqualTo(50);
 		}
 
@@ -345,7 +345,7 @@ public sealed class MockRegistrySetupSnapshotTests
 
 			registry.SetupProperty(5, "s1", setup);
 
-			int observed = registry.GetPropertyFast(5, "P5", _ => -1);
+			int observed = registry.GetPropertyFast(5, new PropertyGetterAccess("P5"), _ => -1);
 			await That(observed).IsEqualTo(-1);
 		}
 
@@ -387,7 +387,7 @@ public sealed class MockRegistrySetupSnapshotTests
 			registry.SetupProperty(2, setupA);
 			registry.SetupProperty(2, setupB);
 
-			int observed = registry.GetPropertyFast(2, "P2", _ => -1);
+			int observed = registry.GetPropertyFast(2, new PropertyGetterAccess("P2"), _ => -1);
 			await That(observed).IsEqualTo(99);
 		}
 	}
