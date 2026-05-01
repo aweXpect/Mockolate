@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using Mockolate.Exceptions;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -754,6 +755,12 @@ public partial class MockRegistry
 	///     Returns every registered setup (indexer, property, method) that was not hit by any of the given
 	///     <paramref name="interactions" />.
 	/// </summary>
+	/// <remarks>
+	///     The default-scope method and indexer snapshot tables populated by the
+	///     <see cref="SetupMethod(int, MethodSetup)" /> / <see cref="SetupIndexer(int, IndexerSetup)" /> overloads
+	///     are walked alongside the string-keyed lists, so generator-emitted setups are visible to the
+	///     diagnostic enumeration even though they bypass the dictionary.
+	/// </remarks>
 	/// <param name="interactions">The interactions to check against.</param>
 	/// <returns>The unused setups; empty when every setup was exercised.</returns>
 	public IReadOnlyCollection<ISetup> GetUnusedSetups(IMockInteractions interactions)
@@ -763,7 +770,97 @@ public partial class MockRegistry
 			..Setup.Indexers.EnumerateUnusedSetupsBy(interactions),
 			..Setup.Properties.EnumerateUnusedSetupsBy(interactions),
 			..Setup.Methods.EnumerateUnusedSetupsBy(interactions),
+			..EnumerateUnusedMethodSnapshotSetups(interactions),
+			..EnumerateUnusedIndexerSnapshotSetups(interactions),
 		];
 		return unusedSetups;
+	}
+
+	private IEnumerable<MethodSetup> EnumerateUnusedMethodSnapshotSetups(IMockInteractions interactions)
+	{
+		MethodSetup[]?[]? table = Volatile.Read(ref _setupsByMemberId);
+		if (table is null)
+		{
+			yield break;
+		}
+
+		List<IMethodInteraction> methodInteractions = [];
+		foreach (IInteraction interaction in interactions)
+		{
+			if (interaction is IMethodInteraction method)
+			{
+				methodInteractions.Add(method);
+			}
+		}
+
+		foreach (MethodSetup[]? bucket in table)
+		{
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			foreach (MethodSetup setup in bucket)
+			{
+				bool matched = false;
+				foreach (IMethodInteraction interaction in methodInteractions)
+				{
+					if (((IVerifiableMethodSetup)setup).Matches(interaction))
+					{
+						matched = true;
+						break;
+					}
+				}
+
+				if (!matched)
+				{
+					yield return setup;
+				}
+			}
+		}
+	}
+
+	private IEnumerable<IndexerSetup> EnumerateUnusedIndexerSnapshotSetups(IMockInteractions interactions)
+	{
+		IndexerSetup[]?[]? table = Volatile.Read(ref _indexerSetupsByMemberId);
+		if (table is null)
+		{
+			yield break;
+		}
+
+		List<IndexerAccess> indexerAccesses = [];
+		foreach (IInteraction interaction in interactions)
+		{
+			if (interaction is IndexerAccess access)
+			{
+				indexerAccesses.Add(access);
+			}
+		}
+
+		foreach (IndexerSetup[]? bucket in table)
+		{
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			foreach (IndexerSetup setup in bucket)
+			{
+				bool matched = false;
+				foreach (IndexerAccess access in indexerAccesses)
+				{
+					if (((IInteractiveIndexerSetup)setup).Matches(access))
+					{
+						matched = true;
+						break;
+					}
+				}
+
+				if (!matched)
+				{
+					yield return setup;
+				}
+			}
+		}
 	}
 }
