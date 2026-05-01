@@ -71,12 +71,69 @@ public class FastMockInteractions : IMockInteractions
 
 	/// <summary>
 	///     Installs <paramref name="buffer" /> at the slot matching <paramref name="memberId" />.
-	///     Called once at mock construction by the source generator.
+	///     Retained for backward compatibility; the source generator now uses
+	///     <see cref="GetOrCreateBuffer{TBuffer}(int, Func{FastMockInteractions, TBuffer})" /> so per-member
+	///     buffers are only allocated on first record.
 	/// </summary>
 	/// <param name="memberId">The generator-emitted member id for the buffer's target member.</param>
 	/// <param name="buffer">The per-member buffer to install.</param>
 	public void InstallBuffer(int memberId, IFastMemberBuffer buffer)
 		=> Buffers[memberId] = buffer;
+
+	/// <summary>
+	///     Returns the buffer at <paramref name="memberId" />, materializing it via <paramref name="factory" />
+	///     under a lock-free CAS on first touch. The factory must be a static lambda so the runtime never
+	///     allocates a closure on the lazy path.
+	/// </summary>
+	/// <typeparam name="TBuffer">The concrete buffer type at the slot.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the buffer's target member.</param>
+	/// <param name="factory">
+	///     Builds a new buffer when the slot is still empty. Invoked at most once per slot in the absence
+	///     of a race; under contention the loser's allocation is discarded and the winner is returned.
+	/// </param>
+	public TBuffer GetOrCreateBuffer<TBuffer>(int memberId, Func<FastMockInteractions, TBuffer> factory)
+		where TBuffer : class, IFastMemberBuffer
+	{
+		IFastMemberBuffer?[] buffers = Buffers;
+		IFastMemberBuffer? existing = Volatile.Read(ref buffers[memberId]);
+		if (existing is TBuffer typed)
+		{
+			return typed;
+		}
+
+		TBuffer created = factory(this);
+		IFastMemberBuffer? prev = Interlocked.CompareExchange(ref buffers[memberId], created, null);
+		return prev is TBuffer winner ? winner : created;
+	}
+
+	/// <summary>
+	///     <typeparamref name="TState" />-passing variant of
+	///     <see cref="GetOrCreateBuffer{TBuffer}(int, Func{FastMockInteractions, TBuffer})" /> that lets
+	///     callers supply the buffer's construction parameter without allocating a closure.
+	/// </summary>
+	/// <typeparam name="TBuffer">The concrete buffer type at the slot.</typeparam>
+	/// <typeparam name="TState">Type of the construction parameter forwarded to <paramref name="factory" />.</typeparam>
+	/// <param name="memberId">The generator-emitted member id for the buffer's target member.</param>
+	/// <param name="factory">
+	///     Builds a new buffer from <paramref name="state" /> when the slot is still empty. Must be a
+	///     static lambda; <paramref name="state" /> is the only flow path so closures are unnecessary.
+	/// </param>
+	/// <param name="state">Forwarded to <paramref name="factory" /> on construction.</param>
+	public TBuffer GetOrCreateBuffer<TBuffer, TState>(int memberId,
+		Func<FastMockInteractions, TState, TBuffer> factory, TState state)
+		where TBuffer : class, IFastMemberBuffer
+	{
+		IFastMemberBuffer?[] buffers = Buffers;
+		IFastMemberBuffer? existing = Volatile.Read(ref buffers[memberId]);
+		if (existing is TBuffer typed)
+		{
+			return typed;
+		}
+
+		TBuffer created = factory(this, state);
+		IFastMemberBuffer? prev = Interlocked.CompareExchange(ref buffers[memberId], created, null);
+		return prev is TBuffer winner ? winner : created;
+	}
 
 	/// <summary>
 	///     Reserves the next sequence number for a recording. Buffer implementations call this once

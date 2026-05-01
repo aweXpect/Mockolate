@@ -653,6 +653,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} event {_kind}s")]
     public sealed class FastEventBuffer : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastEventBuffer(Mockolate.Interactions.FastMockInteractions owner, Mockolate.Interactions.FastEventBufferKind kind) { }
         public int Count { get; }
         public void Append(string name, object? target, System.Reflection.MethodInfo method) { }
         public void Clear() { }
@@ -682,6 +683,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerGetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1> access) { }
         public void Append(T1 parameter1) { }
@@ -691,6 +693,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1, T2> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerGetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1, T2> access) { }
         public void Append(T1 parameter1, T2 parameter2) { }
@@ -700,6 +703,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1, T2, T3> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerGetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1, T2, T3> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3) { }
@@ -709,6 +713,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer gets")]
     public sealed class FastIndexerGetterBuffer<T1, T2, T3, T4> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerGetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerGetterAccess<T1, T2, T3, T4> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
@@ -718,6 +723,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, TValue> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerSetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, TValue> access) { }
         public void Append(T1 parameter1, TValue value) { }
@@ -727,6 +733,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, T2, TValue> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerSetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, T2, TValue> access) { }
         public void Append(T1 parameter1, T2 parameter2, TValue value) { }
@@ -736,6 +743,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, T2, T3, TValue> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerSetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, T2, T3, TValue> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3, TValue value) { }
@@ -745,6 +753,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} indexer sets")]
     public sealed class FastIndexerSetterBuffer<T1, T2, T3, T4, TValue> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastIndexerSetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(Mockolate.Interactions.IndexerSetterAccess<T1, T2, T3, T4, TValue> access) { }
         public void Append(T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4, TValue value) { }
@@ -754,6 +763,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod0Buffer : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastMethod0Buffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(string name) { }
         public void Clear() { }
@@ -762,6 +772,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod1Buffer<T1> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastMethod1Buffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(string name, T1 parameter1) { }
         public void Clear() { }
@@ -770,6 +781,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod2Buffer<T1, T2> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastMethod2Buffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(string name, T1 parameter1, T2 parameter2) { }
         public void Clear() { }
@@ -778,6 +790,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod3Buffer<T1, T2, T3> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastMethod3Buffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(string name, T1 parameter1, T2 parameter2, T3 parameter3) { }
         public void Clear() { }
@@ -786,6 +799,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} method calls")]
     public sealed class FastMethod4Buffer<T1, T2, T3, T4> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastMethod4Buffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(string name, T1 parameter1, T2 parameter2, T3 parameter3, T4 parameter4) { }
         public void Clear() { }
@@ -811,6 +825,10 @@ namespace Mockolate.Interactions
         public event System.EventHandler? OnClearing;
         public void Clear() { }
         public System.Collections.Generic.IEnumerator<Mockolate.Interactions.IInteraction> GetEnumerator() { }
+        public TBuffer GetOrCreateBuffer<TBuffer>(int memberId, System.Func<Mockolate.Interactions.FastMockInteractions, TBuffer> factory)
+            where TBuffer :  class, Mockolate.Interactions.IFastMemberBuffer { }
+        public TBuffer GetOrCreateBuffer<TBuffer, TState>(int memberId, System.Func<Mockolate.Interactions.FastMockInteractions, TState, TBuffer> factory, TState state)
+            where TBuffer :  class, Mockolate.Interactions.IFastMemberBuffer { }
         public System.Collections.Generic.IReadOnlyCollection<Mockolate.Interactions.IInteraction> GetUnverifiedInteractions() { }
         public void InstallBuffer(int memberId, Mockolate.Interactions.IFastMemberBuffer buffer) { }
         public long NextSequence() { }
@@ -825,6 +843,8 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} property gets")]
     public sealed class FastPropertyGetterBuffer : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastPropertyGetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
+        public FastPropertyGetterBuffer(Mockolate.Interactions.FastMockInteractions owner, Mockolate.Interactions.PropertyGetterAccess access) { }
         public int Count { get; }
         public void Append() { }
         public void Append(string name) { }
@@ -834,6 +854,7 @@ namespace Mockolate.Interactions
     [System.Diagnostics.DebuggerDisplay("{Count} property sets")]
     public sealed class FastPropertySetterBuffer<T> : Mockolate.Interactions.IFastMemberBuffer
     {
+        public FastPropertySetterBuffer(Mockolate.Interactions.FastMockInteractions owner) { }
         public int Count { get; }
         public void Append(string name, T value) { }
         public void Clear() { }

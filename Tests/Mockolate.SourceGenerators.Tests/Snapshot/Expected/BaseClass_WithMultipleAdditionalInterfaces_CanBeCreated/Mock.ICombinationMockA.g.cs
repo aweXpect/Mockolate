@@ -210,15 +210,10 @@ internal static partial class Mock
 
 		/// <summary>
 		///     Creates a <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> sized to <see cref="MemberCount">MemberCount</see> for use as the mock's interaction store.
+		///     Per-member buffers are not allocated up-front: the recording hot paths call <see cref="global::Mockolate.Interactions.FastMockInteractions.GetOrCreateBuffer{TBuffer}(int, global::System.Func{global::Mockolate.Interactions.FastMockInteractions, TBuffer})">GetOrCreateBuffer&lt;TBuffer&gt;(int, Func&lt;FastMockInteractions, TBuffer&gt;)</see> so a slot is materialized only when its member is first invoked.
 		/// </summary>
 		internal static global::Mockolate.Interactions.FastMockInteractions CreateFastInteractions(global::Mockolate.MockBehavior behavior)
-		{
-			global::Mockolate.Interactions.FastMockInteractions fast = new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);
-			global::Mockolate.Interactions.FastMethodBufferFactory.InstallMethod(fast, global::Mockolate.Mock.ICombinationMockA.MemberId_Run);
-			global::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertyGetter(fast, global::Mockolate.Mock.ICombinationMockA.MemberId_Value_Get, global::Mockolate.Mock.ICombinationMockA.PropertyAccess_Value_Get);
-			global::Mockolate.Interactions.FastPropertyBufferFactory.InstallPropertySetter<int>(fast, global::Mockolate.Mock.ICombinationMockA.MemberId_Value_Set);
-			return fast;
-		}
+			=> new global::Mockolate.Interactions.FastMockInteractions(MemberCount, behavior.SkipInteractionRecording);
 
 		/// <summary>
 		///     Builds a <see cref="global::Mockolate.MockRegistry">MockRegistry</see> backed by a typed-buffer-sized <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> from <paramref name="behavior" />.
@@ -236,7 +231,7 @@ internal static partial class Mock
 
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastMethod0Buffer MockolateBuffer_Run
-			=> field ?? (field = (global::Mockolate.Interactions.FastMethod0Buffer)((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).Buffers[global::Mockolate.Mock.ICombinationMockA.MemberId_Run]!);
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod0Buffer>(global::Mockolate.Mock.ICombinationMockA.MemberId_Run, static fast => new global::Mockolate.Interactions.FastMethod0Buffer(fast)));
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]

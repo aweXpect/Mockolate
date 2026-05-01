@@ -26,12 +26,24 @@ public sealed class FastPropertyGetterBuffer : IFastMemberBuffer
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 	private PropertyGetterAccess? _access;
 
-	internal FastPropertyGetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new property-getter buffer attached to <paramref name="owner" />. The buffer's
+	///     <see cref="PropertyGetterAccess" /> singleton is created lazily on the first call to
+	///     <see cref="Append(string)" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastPropertyGetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}
 
-	internal FastPropertyGetterBuffer(FastMockInteractions owner, PropertyGetterAccess access)
+	/// <summary>
+	///     Creates a new property-getter buffer pre-seeded with the shared
+	///     <see cref="PropertyGetterAccess" /> <paramref name="access" /> singleton.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	/// <param name="access">The shared <see cref="PropertyGetterAccess" /> singleton emitted by the source generator.</param>
+	public FastPropertyGetterBuffer(FastMockInteractions owner, PropertyGetterAccess access)
 	{
 		_owner = owner;
 		_access = access;
@@ -167,7 +179,11 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 	private readonly FastMockInteractions _owner;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastPropertySetterBuffer(FastMockInteractions owner)
+	/// <summary>
+	///     Creates a new property-setter buffer attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	public FastPropertySetterBuffer(FastMockInteractions owner)
 	{
 		_owner = owner;
 	}

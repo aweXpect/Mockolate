@@ -31,7 +31,12 @@ public sealed class FastEventBuffer : IFastMemberBuffer
 	private readonly FastEventBufferKind _kind;
 	private readonly ChunkedSlotStorage<Record> _storage = new();
 
-	internal FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
+	/// <summary>
+	///     Creates a new event buffer of the given <paramref name="kind" /> attached to <paramref name="owner" />.
+	/// </summary>
+	/// <param name="owner">The mock-wide <see cref="FastMockInteractions" /> the buffer publishes records into.</param>
+	/// <param name="kind">Distinguishes a subscribe-recording buffer from an unsubscribe-recording buffer.</param>
+	public FastEventBuffer(FastMockInteractions owner, FastEventBufferKind kind)
 	{
 		_owner = owner;
 		_kind = kind;

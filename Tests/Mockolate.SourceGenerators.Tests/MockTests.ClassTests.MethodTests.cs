@@ -1424,9 +1424,9 @@ public sealed partial class MockTests
 				await That(result.Sources).ContainsKey("Mock.IStaticOps.g.cs");
 				await That(result.Sources["Mock.IStaticOps.g.cs"])
 					.Contains("global::Mockolate.Interactions.FastMethod1Buffer<int>").And
-					.Contains("MockRegistryProvider.Value.Interactions).Buffers[")
+					.Contains("MockRegistryProvider.Value.Interactions).GetOrCreateBuffer<")
 					.Because(
-						"static methods record interactions via the typed FastMethodBuffer accessed through the AsyncLocal-backed registry")
+						"static methods record interactions via the typed FastMethodBuffer accessed through the AsyncLocal-backed registry; the buffer is now lazily materialized on first touch via GetOrCreateBuffer")
 					.And
 					.Contains("Append(\"global::MyCode.IStaticOps.DoIt\", value)")
 					.Because("the static-method fast-buffer branch must include the call argument when arity > 0");

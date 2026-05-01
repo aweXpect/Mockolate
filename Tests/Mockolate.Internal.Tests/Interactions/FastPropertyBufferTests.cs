@@ -70,9 +70,7 @@ public class FastPropertyBufferTests
 
 		FastMockInteractions fast = (FastMockInteractions)((IMock)sut).MockRegistry.Interactions;
 		int getterId = Mock.FastPropertyBufferTests_IFastPropertyService.MemberId_Counter_Get;
-		FastPropertyGetterBuffer? buffer = fast.Buffers[getterId] as FastPropertyGetterBuffer;
-		await That(buffer).IsNotNull();
-		await That(buffer!.Count).IsEqualTo(0);
+		await That(fast.Buffers[getterId]).IsNull();
 		await That(fast.Count).IsEqualTo(0);
 	}
 
