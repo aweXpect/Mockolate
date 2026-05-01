@@ -94,7 +94,7 @@ public partial class MockRegistry
 	///     <paramref name="memberId" />, or <see langword="null" /> when no setup has been registered.
 	/// </summary>
 	/// <remarks>
-	///     Property dispatch reads the snapshot via <see cref="GetPropertyFast{TResult}(int, string, Func{MockBehavior, TResult}, Func{TResult}?)" />
+	///     Property dispatch reads the snapshot via <see cref="GetPropertyFast{TResult}(int, string, System.Func{Mockolate.MockBehavior,TResult}, Func{TResult}?)" />
 	///     and falls back to the cold path when the snapshot is empty, so this accessor is intended for
 	///     diagnostics and tests that need to verify the fast-path table directly.
 	/// </remarks>
@@ -232,6 +232,12 @@ public partial class MockRegistry
 			}
 		}
 
+		T? snapshot = GetMatchingIndexerSetupFromSnapshot(predicate);
+		if (snapshot is not null)
+		{
+			return snapshot;
+		}
+
 		return Setup.Indexers.GetMatching(predicate);
 	}
 
@@ -255,7 +261,73 @@ public partial class MockRegistry
 			}
 		}
 
+		T? snapshot = GetMatchingIndexerSetupFromSnapshot<T>(access);
+		if (snapshot is not null)
+		{
+			return snapshot;
+		}
+
 		return Setup.Indexers.GetMatching<T>(access);
+	}
+
+	private T? GetMatchingIndexerSetupFromSnapshot<T>(Func<T, bool> predicate) where T : IndexerSetup
+	{
+		IndexerSetup[]?[]? table = Volatile.Read(ref _indexerSetupsByMemberId);
+		if (table is null)
+		{
+			return null;
+		}
+
+		// Walk every memberId bucket: the snapshot is keyed by member id, but predicate-based callers
+		// don't know which id to consult, so we filter by type then by predicate. Within each bucket
+		// the latest registration wins (reverse iteration); buckets are walked in registration order.
+		for (int b = 0; b < table.Length; b++)
+		{
+			IndexerSetup[]? bucket = table[b];
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			for (int i = bucket.Length - 1; i >= 0; i--)
+			{
+				if (bucket[i] is T typed && predicate(typed))
+				{
+					return typed;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private T? GetMatchingIndexerSetupFromSnapshot<T>(IndexerAccess access) where T : IndexerSetup
+	{
+		IndexerSetup[]?[]? table = Volatile.Read(ref _indexerSetupsByMemberId);
+		if (table is null)
+		{
+			return null;
+		}
+
+		for (int b = 0; b < table.Length; b++)
+		{
+			IndexerSetup[]? bucket = table[b];
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			for (int i = bucket.Length - 1; i >= 0; i--)
+			{
+				if (bucket[i] is T typed &&
+				    ((IInteractiveIndexerSetup)typed).Matches(access))
+				{
+					return typed;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	/// <summary>
@@ -428,6 +500,31 @@ public partial class MockRegistry
 			if (hasScoped)
 			{
 				yield break;
+			}
+		}
+
+		// Default-scope: walk the memberId-keyed snapshot table for generator-emitted setups (the
+		// SetupEvent(int, ...) overloads bypass the dict). The unsubscribe-side dispatch always falls
+		// here because the snapshot is keyed by subscribe id only — the bucket walk reunites it with
+		// its setup. Then walk the dict for legacy SetupEvent(EventSetup) entries.
+		EventSetup[]?[]? table = Volatile.Read(ref _eventSetupsByMemberId);
+		if (table is not null)
+		{
+			for (int b = 0; b < table.Length; b++)
+			{
+				EventSetup[]? bucket = table[b];
+				if (bucket is null)
+				{
+					continue;
+				}
+
+				for (int i = 0; i < bucket.Length; i++)
+				{
+					if (bucket[i].Name.Equals(name))
+					{
+						yield return bucket[i];
+					}
+				}
 			}
 		}
 

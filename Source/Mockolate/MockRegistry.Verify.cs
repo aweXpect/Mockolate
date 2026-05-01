@@ -757,8 +757,9 @@ public partial class MockRegistry
 	///     <paramref name="interactions" />.
 	/// </summary>
 	/// <remarks>
-	///     The default-scope method snapshot table populated by the <see cref="SetupMethod(int, MethodSetup)" />
-	///     overloads is walked alongside the string-keyed list, so generator-emitted setups are visible to the
+	///     The default-scope method and indexer snapshot tables populated by the
+	///     <see cref="SetupMethod(int, MethodSetup)" /> / <see cref="SetupIndexer(int, IndexerSetup)" /> overloads
+	///     are walked alongside the string-keyed lists, so generator-emitted setups are visible to the
 	///     diagnostic enumeration even though they bypass the dictionary.
 	/// </remarks>
 	/// <param name="interactions">The interactions to check against.</param>
@@ -771,6 +772,7 @@ public partial class MockRegistry
 			..Setup.Properties.EnumerateUnusedSetupsBy(interactions),
 			..Setup.Methods.EnumerateUnusedSetupsBy(interactions),
 			..EnumerateUnusedMethodSnapshotSetups(interactions),
+			..EnumerateUnusedIndexerSnapshotSetups(interactions),
 		];
 		return unusedSetups;
 	}
@@ -796,6 +798,41 @@ public partial class MockRegistry
 				foreach (IMethodInteraction interaction in interactions.OfType<IMethodInteraction>())
 				{
 					if (((IVerifiableMethodSetup)setup).Matches(interaction))
+					{
+						matched = true;
+						break;
+					}
+				}
+
+				if (!matched)
+				{
+					yield return setup;
+				}
+			}
+		}
+	}
+
+	private IEnumerable<IndexerSetup> EnumerateUnusedIndexerSnapshotSetups(IMockInteractions interactions)
+	{
+		IndexerSetup[]?[]? table = Volatile.Read(ref _indexerSetupsByMemberId);
+		if (table is null)
+		{
+			yield break;
+		}
+
+		foreach (IndexerSetup[]? bucket in table)
+		{
+			if (bucket is null)
+			{
+				continue;
+			}
+
+			foreach (IndexerSetup setup in bucket)
+			{
+				bool matched = false;
+				foreach (IndexerAccess access in interactions.OfType<IndexerAccess>())
+				{
+					if (((IInteractiveIndexerSetup)setup).Matches(access))
 					{
 						matched = true;
 						break;

@@ -43,31 +43,37 @@ public partial class MockRegistry
 		=> Setup.GetOrCreateScenario(scenario).Indexers.Add(indexerSetup);
 
 	/// <summary>
-	///     Registers <paramref name="indexerSetup" /> for the default scenario and additionally indexes it by the
+	///     Registers <paramref name="indexerSetup" /> for the default scenario by indexing it under the
 	///     generator-emitted <paramref name="memberId" /> for fast dispatch from the proxy indexer body.
 	/// </summary>
+	/// <remarks>
+	///     The default-scope string-keyed list is intentionally bypassed — the snapshot is authoritative
+	///     for default-scope dispatch from generator-emitted code, and <see cref="GetIndexerSetup{T}(Mockolate.Interactions.IndexerAccess)" />
+	///     consults the snapshot table directly for scenario-active fallback callers.
+	/// </remarks>
 	/// <param name="memberId">The generator-emitted member id for the setup's target indexer accessor.</param>
 	/// <param name="indexerSetup">The indexer setup produced by the fluent <c>Setup[...]</c> API.</param>
 	public void SetupIndexer(int memberId, IndexerSetup indexerSetup)
-	{
-		SetupIndexer(indexerSetup);
-		AppendToIndexerMemberIdBucket(memberId, indexerSetup);
-	}
+		=> AppendToIndexerMemberIdBucket(memberId, indexerSetup);
 
 	/// <summary>
 	///     Registers <paramref name="indexerSetup" /> for the given <paramref name="scenario" />. When
-	///     <paramref name="scenario" /> is the default scope, the setup is additionally indexed by
-	///     <paramref name="memberId" /> for fast dispatch.
+	///     <paramref name="scenario" /> is the default scope, the setup is indexed by <paramref name="memberId" />
+	///     for fast dispatch instead of the string-keyed list; scenario-scoped setups continue to land in the
+	///     scenario bucket only.
 	/// </summary>
 	/// <param name="memberId">The generator-emitted member id for the setup's target indexer accessor.</param>
 	/// <param name="scenario">The scenario name the setup applies to.</param>
 	/// <param name="indexerSetup">The indexer setup produced by the fluent <c>Setup[...]</c> API.</param>
 	public void SetupIndexer(int memberId, string scenario, IndexerSetup indexerSetup)
 	{
-		SetupIndexer(scenario, indexerSetup);
 		if (string.IsNullOrEmpty(scenario))
 		{
 			AppendToIndexerMemberIdBucket(memberId, indexerSetup);
+		}
+		else
+		{
+			SetupIndexer(scenario, indexerSetup);
 		}
 	}
 
@@ -313,37 +319,42 @@ public partial class MockRegistry
 		=> Setup.GetOrCreateScenario(scenario).Events.Add(eventSetup);
 
 	/// <summary>
-	///     Registers <paramref name="eventSetup" /> for the default scenario and additionally indexes it by the
-	///     generator-emitted <paramref name="memberId" /> for fast dispatch from the proxy event subscribe/unsubscribe body.
+	///     Registers <paramref name="eventSetup" /> for the default scenario by indexing it under the
+	///     generator-emitted subscribe-side <paramref name="memberId" /> for fast dispatch from the proxy event
+	///     subscribe/unsubscribe body.
 	/// </summary>
 	/// <remarks>
 	///     The <paramref name="memberId" /> is the subscribe-side member id emitted by the source generator. A
 	///     single <see cref="EventSetup" /> typically wires both subscribe and unsubscribe behavior, so the bucket
 	///     is keyed off the subscribe id. Reads via <see cref="GetEventSetupSnapshot(int)" /> are lock-free; writes
 	///     take an internal lock and publish a new snapshot via <see cref="Volatile.Write{T}(ref T, T)" />.
+	///     The default-scope string-keyed list is intentionally bypassed — the snapshot is authoritative for
+	///     default-scope subscribe dispatch. The unsubscribe path falls through to a name-filtered scan of the
+	///     snapshot table inside <c>GetEventSetupsByName</c> (see <see cref="RemoveEvent(int, string, object?, System.Reflection.MethodInfo?)" />).
 	/// </remarks>
 	/// <param name="memberId">The generator-emitted subscribe-side member id for the setup's target event.</param>
 	/// <param name="eventSetup">The event setup produced by the fluent <c>Setup.EventName</c> API.</param>
 	public void SetupEvent(int memberId, EventSetup eventSetup)
-	{
-		SetupEvent(eventSetup);
-		AppendToEventMemberIdBucket(memberId, eventSetup);
-	}
+		=> AppendToEventMemberIdBucket(memberId, eventSetup);
 
 	/// <summary>
 	///     Registers <paramref name="eventSetup" /> for the given <paramref name="scenario" />. When
-	///     <paramref name="scenario" /> is the default scope, the setup is additionally indexed by
-	///     <paramref name="memberId" /> for fast dispatch.
+	///     <paramref name="scenario" /> is the default scope, the setup is indexed by <paramref name="memberId" />
+	///     for fast dispatch instead of the string-keyed list; scenario-scoped setups continue to land in the
+	///     scenario bucket only.
 	/// </summary>
 	/// <param name="memberId">The generator-emitted subscribe-side member id for the setup's target event.</param>
 	/// <param name="scenario">The scenario name the setup applies to.</param>
 	/// <param name="eventSetup">The event setup produced by the fluent <c>Setup.EventName</c> API.</param>
 	public void SetupEvent(int memberId, string scenario, EventSetup eventSetup)
 	{
-		SetupEvent(scenario, eventSetup);
 		if (string.IsNullOrEmpty(scenario))
 		{
 			AppendToEventMemberIdBucket(memberId, eventSetup);
+		}
+		else
+		{
+			SetupEvent(scenario, eventSetup);
 		}
 	}
 
