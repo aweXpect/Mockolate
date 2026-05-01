@@ -8,43 +8,42 @@ using NSubstitute;
 
 namespace Mockolate.Benchmarks;
 #pragma warning disable CA1822 // Mark members as static
-
 /// <summary>
 ///     Measures the cost of creating an empty mock — no setup, no invocations, no verification.
 /// </summary>
 public class MockCreationBenchmarks : BenchmarksBase
 {
-	[Benchmark(Baseline = true, Description = "Mockolate")]
-	public object Mockolate_CreateMock()
+	[Benchmark(Baseline = true)]
+	public object CreateMock_Mockolate()
 		=> ICalculatorService.CreateMock();
 
-	[Benchmark(Description = "Imposter")]
-	public object Imposter_CreateMock()
+	[Benchmark]
+	public object CreateMock_Imposter()
 	{
 		ICalculatorServiceImposter imposter = ICalculatorService.Imposter();
 		return imposter.Instance();
 	}
 
-	[Benchmark(Description = "TUnit.Mocks")]
-	public object TUnitMocks_CreateMock()
+	[Benchmark]
+	public object CreateMock_TUnitMocks()
 	{
-		TUnit.Mocks.Mock<ICalculatorService> mock = TUnit.Mocks.Mock.Of<ICalculatorService>();
+		Mock<ICalculatorService> mock = TUnit.Mocks.Mock.Of<ICalculatorService>();
 		return mock.Object;
 	}
 
-	[Benchmark(Description = "Moq")]
-	public object Moq_CreateMock()
+	[Benchmark]
+	public object CreateMock_Moq()
 	{
 		Moq.Mock<ICalculatorService> mock = new();
 		return mock.Object;
 	}
 
-	[Benchmark(Description = "NSubstitute")]
-	public object NSubstitute_CreateMock()
+	[Benchmark]
+	public object CreateMock_NSubstitute()
 		=> Substitute.For<ICalculatorService>();
 
-	[Benchmark(Description = "FakeItEasy")]
-	public object FakeItEasy_CreateMock()
+	[Benchmark]
+	public object CreateMock_FakeItEasy()
 		=> A.Fake<ICalculatorService>();
 
 	public interface ICalculatorService
