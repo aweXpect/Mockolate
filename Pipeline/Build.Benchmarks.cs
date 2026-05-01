@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tools.DotNet;
@@ -85,8 +87,11 @@ partial class Build
 				return;
 			}
 
+			AbsolutePath baselineDirectory = ArtifactsDirectory / "Baseline";
+			string baselineResultsDirectory = await DownloadBaselineBenchmarks(baselineDirectory);
+
 			string prNumber = File.ReadAllText(ArtifactsDirectory / "PR.txt");
-			string body = CreateBenchmarkCommentBody(files);
+			string body = CreateBenchmarkCommentBody(files, baselineResultsDirectory);
 			Log.Debug("Pull request number: {PullRequestId}", prNumber);
 			if (int.TryParse(prNumber, out int prId))
 			{
@@ -123,19 +128,63 @@ partial class Build
 		.DependsOn(BenchmarkDotNet)
 		.DependsOn(BenchmarkResult);
 
-	string CreateBenchmarkCommentBody(string[] files)
+	async Task<string> DownloadBaselineBenchmarks(AbsolutePath baselineDirectory)
+	{
+		long[] candidateRunIds = await BuildExtensions.FindRecentSuccessfulRunIds("build.yml", "main", 10, GithubToken);
+		if (candidateRunIds.Length == 0)
+		{
+			Log.Information("No successful main 'Build' run found - skipping baseline column.");
+			return null;
+		}
+
+		AbsolutePath resultsDirectory = baselineDirectory / "Benchmarks" / "results";
+		foreach (long runId in candidateRunIds)
+		{
+			baselineDirectory.CreateOrCleanDirectory();
+			try
+			{
+				await BuildExtensions.DownloadArtifactsFromRunStartingWith(runId, "Benchmarks-",
+					baselineDirectory, GithubToken);
+			}
+			catch (Exception ex)
+			{
+				Log.Warning(ex, "Failed to download artifacts from main run #{RunId}, trying older run.", runId);
+				continue;
+			}
+
+			if (Directory.Exists(resultsDirectory))
+			{
+				Log.Information("Loaded baseline benchmark results from main run #{RunId}.", runId);
+				return resultsDirectory;
+			}
+
+			Log.Information("Main run #{RunId} did not contain benchmark results, trying older run.", runId);
+		}
+
+		Log.Information(
+			"No baseline benchmark results found in the last {Count} successful main runs - skipping baseline column.",
+			candidateRunIds.Length);
+		return null;
+	}
+
+	string CreateBenchmarkCommentBody(string[] files, string baselineResultsDirectory)
 	{
 		StringBuilder sb = new();
 		sb.AppendLine("## :rocket: Benchmark Results");
 		string[] columnsToRemove = ["RatioSD", "Gen0", "Gen1", "Gen2",];
+		bool anyBaselineInjected = false;
 		foreach (string file in files)
 		{
+			Dictionary<string, string[]> baselineRows = LoadBaselineRows(
+				baselineResultsDirectory == null ? null : Path.Combine(baselineResultsDirectory, Path.GetFileName(file)),
+				columnsToRemove);
+			bool injectBaseline = baselineRows.Count > 0;
 			int count = 0;
 			string[] lines = File.ReadAllLines(file);
 			sb.AppendLine();
 			sb.AppendLine("<details>");
 			sb.AppendLine("<summary>Details</summary>");
-			int[] droppedColumnIndices = null;
+			BenchmarkTableParser parser = new(columnsToRemove);
 			foreach (string line in lines)
 			{
 				if (line.StartsWith("```"))
@@ -152,30 +201,96 @@ partial class Build
 						sb.AppendLine();
 					}
 
-					droppedColumnIndices = null;
+					parser.Reset();
 					continue;
 				}
 
-				if (line.StartsWith('|') && line.EndsWith('|'))
+				if (!parser.TryConsume(line, out _, out string filteredLine, out string[] filteredTokens))
 				{
-					droppedColumnIndices ??= DetermineDroppedColumnIndices(line, columnsToRemove);
-					string filteredLine = RemoveColumns(line, droppedColumnIndices);
-					if (filteredLine.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase))
-					{
-						MakeLineBold(sb, filteredLine);
-						continue;
-					}
-
-					sb.AppendLine(filteredLine);
+					sb.AppendLine(line);
 					continue;
 				}
 
-				sb.AppendLine(line);
+				bool isMockolateRow = filteredLine.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase);
+
+				if (isMockolateRow && injectBaseline && parser.MeanIndex > 0)
+				{
+					string key = string.Join("|", filteredTokens.Take(parser.MeanIndex));
+					if (baselineRows.TryGetValue(key, out string[] baselineTokens) && baselineTokens.Length > 0)
+					{
+						string[] modifiedBaseline = new string[baselineTokens.Length];
+						for (int i = 0; i < baselineTokens.Length; i++)
+						{
+							string content = i == 0 ? "baseline*" : baselineTokens[i];
+							modifiedBaseline[i] = string.IsNullOrWhiteSpace(content) ? content : $"_{content}_";
+						}
+
+						sb.AppendLine(JoinTokens(modifiedBaseline));
+						anyBaselineInjected = true;
+					}
+				}
+
+				if (isMockolateRow)
+				{
+					MakeLineBold(sb, filteredLine);
+					continue;
+				}
+
+				sb.AppendLine(filteredLine);
 			}
+		}
+
+		if (anyBaselineInjected)
+		{
+			sb.AppendLine();
+			sb.AppendLine(
+				"> `baseline*` rows show the corresponding Mockolate benchmark from the most recent successful main branch build with results, for regression comparison.");
 		}
 
 		string body = sb.ToString();
 		return body;
+	}
+
+	static Dictionary<string, string[]> LoadBaselineRows(string baselineFile, string[] columnsToRemove)
+	{
+		Dictionary<string, string[]> result = new();
+		if (baselineFile == null || !File.Exists(baselineFile))
+		{
+			return result;
+		}
+
+		BenchmarkTableParser parser = new(columnsToRemove);
+		foreach (string line in File.ReadAllLines(baselineFile))
+		{
+			if (!parser.TryConsume(line, out int rowIndex, out _, out string[] tokens))
+			{
+				continue;
+			}
+
+			if (rowIndex >= BenchmarkTableParser.DataRowStartIndex
+			    && parser.MeanIndex > 0
+			    && tokens.Length > parser.MeanIndex)
+			{
+				string key = string.Join("|", tokens.Take(parser.MeanIndex));
+				result[key] = tokens;
+			}
+		}
+
+		return result;
+	}
+
+	static string JoinTokens(string[] tokens)
+	{
+		StringBuilder sb = new();
+		sb.Append('|');
+		foreach (string token in tokens)
+		{
+			sb.Append(' ');
+			sb.Append(token);
+			sb.Append(" |");
+		}
+
+		return sb.ToString();
 	}
 
 	static int[] DetermineDroppedColumnIndices(string headerLine, string[] columnsToRemove)
@@ -247,5 +362,63 @@ partial class Build
 		}
 
 		sb.AppendLine();
+	}
+
+	/// <summary>
+	///     Parses the markdown tables produced by BenchmarkDotNet's GitHub exporter.
+	///     Tables are framed by a header row (index 0), a separator row like <c>|---|---|</c> (index 1), and one or more
+	///     data rows (index >= <see cref="DataRowStartIndex" />). The parser auto-resets on the first non-table line that
+	///     follows a table, so a single instance can walk a document that contains multiple tables.
+	/// </summary>
+	sealed class BenchmarkTableParser
+	{
+		public const int DataRowStartIndex = 2;
+
+		readonly string[] _columnsToRemove;
+		int[] _droppedColumnIndices;
+		int _nextRowIndex;
+
+		public BenchmarkTableParser(string[] columnsToRemove)
+		{
+			_columnsToRemove = columnsToRemove;
+		}
+
+		public int MeanIndex { get; private set; } = -1;
+
+		public bool TryConsume(string line, out int rowIndex, out string filteredLine, out string[] tokens)
+		{
+			rowIndex = -1;
+			filteredLine = null;
+			tokens = null;
+			if (!line.StartsWith('|') || !line.EndsWith('|'))
+			{
+				if (_nextRowIndex > 0)
+				{
+					Reset();
+				}
+
+				return false;
+			}
+
+			_droppedColumnIndices ??= DetermineDroppedColumnIndices(line, _columnsToRemove);
+			filteredLine = RemoveColumns(line, _droppedColumnIndices);
+			tokens = filteredLine.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+			if (_nextRowIndex == 0)
+			{
+				MeanIndex = Array.FindIndex(tokens,
+					t => string.Equals(t, "Mean", StringComparison.OrdinalIgnoreCase));
+			}
+
+			rowIndex = _nextRowIndex;
+			_nextRowIndex++;
+			return true;
+		}
+
+		public void Reset()
+		{
+			_droppedColumnIndices = null;
+			MeanIndex = -1;
+			_nextRowIndex = 0;
+		}
 	}
 }

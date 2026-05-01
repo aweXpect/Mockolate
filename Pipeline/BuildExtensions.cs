@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
@@ -14,6 +15,8 @@ namespace Build;
 
 public static class BuildExtensions
 {
+	private const string RepositoryApiBaseUrl = "https://api.github.com/repos/aweXpect/Mockolate";
+
 	public static SonarScannerBeginSettings SetPullRequestOrBranchName(
 		this SonarScannerBeginSettings settings,
 		GitHubActions gitHubActions,
@@ -49,21 +52,75 @@ public static class BuildExtensions
 		=> DownloadArtifactsWhere(name => name.StartsWith(artifactNamePrefix, StringComparison.OrdinalIgnoreCase),
 			artifactsDirectory, githubToken);
 
-	private static async Task DownloadArtifactsWhere(Func<string, bool> namePredicate, string artifactsDirectory,
+	public static async Task<long[]> FindRecentSuccessfulRunIds(string workflowFileName, string branch, int count,
+		string githubToken)
+	{
+		if (string.IsNullOrEmpty(githubToken))
+		{
+			throw new ArgumentException("A GitHub token is required.", nameof(githubToken));
+		}
+
+		using HttpClient client = new();
+		client.DefaultRequestHeaders.UserAgent.ParseAdd("Mockolate");
+		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
+
+		string url = $"{RepositoryApiBaseUrl}/actions/workflows/{Uri.EscapeDataString(workflowFileName)}/runs" +
+		             $"?status=success&branch={Uri.EscapeDataString(branch)}&per_page={count}";
+		HttpResponseMessage response = await client.GetAsync(url);
+		string responseContent = await response.Content.ReadAsStringAsync();
+		if (!response.IsSuccessStatusCode)
+		{
+			Log.Warning(
+				$"Could not find recent runs for workflow '{workflowFileName}' on branch '{branch}': {responseContent}");
+			return [];
+		}
+
+		try
+		{
+			using JsonDocument jsonDocument = JsonDocument.Parse(responseContent);
+			JsonElement runs = jsonDocument.RootElement.GetProperty("workflow_runs");
+			long[] ids = new long[runs.GetArrayLength()];
+			for (int i = 0; i < ids.Length; i++)
+			{
+				ids[i] = runs[i].GetProperty("id").GetInt64();
+			}
+
+			return ids;
+		}
+		catch (Exception e) when (e is JsonException or KeyNotFoundException or InvalidOperationException)
+		{
+			Log.Error($"Could not parse workflow runs response: {e.Message}\n{responseContent}");
+			return [];
+		}
+	}
+
+	public static Task DownloadArtifactsFromRunStartingWith(long runId, string artifactNamePrefix,
+		string artifactsDirectory, string githubToken)
+		=> DownloadArtifactsFromRun(runId.ToString(),
+			name => name.StartsWith(artifactNamePrefix, StringComparison.OrdinalIgnoreCase),
+			artifactsDirectory, githubToken);
+
+	private static Task DownloadArtifactsWhere(Func<string, bool> namePredicate, string artifactsDirectory,
 		string githubToken)
 	{
 		string runId = Environment.GetEnvironmentVariable("WorkflowRunId");
 		if (string.IsNullOrEmpty(runId))
 		{
 			Log.Information("Skip downloading artifacts, because no 'WorkflowRunId' environment variable is set.");
-			return;
+			return Task.CompletedTask;
 		}
 
+		return DownloadArtifactsFromRun(runId, namePredicate, artifactsDirectory, githubToken);
+	}
+
+	private static async Task DownloadArtifactsFromRun(string runId, Func<string, bool> namePredicate,
+		string artifactsDirectory, string githubToken)
+	{
 		using HttpClient client = new();
 		client.DefaultRequestHeaders.UserAgent.ParseAdd("Mockolate");
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
 		HttpResponseMessage response = await client.GetAsync(
-			$"https://api.github.com/repos/aweXpect/Mockolate/actions/runs/{runId}/artifacts");
+			$"{RepositoryApiBaseUrl}/actions/runs/{runId}/artifacts");
 
 		string responseContent = await response.Content.ReadAsStringAsync();
 		if (!response.IsSuccessStatusCode)
@@ -74,7 +131,7 @@ public static class BuildExtensions
 
 		try
 		{
-			JsonDocument jsonDocument = JsonDocument.Parse(responseContent);
+			using JsonDocument jsonDocument = JsonDocument.Parse(responseContent);
 			foreach (JsonElement artifact in jsonDocument.RootElement.GetProperty("artifacts").EnumerateArray())
 			{
 				string name = artifact.GetProperty("name").GetString()!;
@@ -82,11 +139,11 @@ public static class BuildExtensions
 				{
 					long artifactId = artifact.GetProperty("id").GetInt64();
 					HttpResponseMessage fileResponse = await client.GetAsync(
-						$"https://api.github.com/repos/aweXpect/Mockolate/actions/artifacts/{artifactId}/zip");
+						$"{RepositoryApiBaseUrl}/actions/artifacts/{artifactId}/zip");
 					if (fileResponse.IsSuccessStatusCode)
 					{
 						using ZipArchive archive = new(await fileResponse.Content.ReadAsStreamAsync());
-						archive.ExtractToDirectory(artifactsDirectory, overwriteFiles: true);
+						archive.ExtractToDirectory(artifactsDirectory, true);
 						Log.Information(
 							$"Extracted artifact '{name}' (#{artifactId}) with {archive.Entries.Count} entries to {artifactsDirectory}:\n - {string.Join("\n - ", archive.Entries.Select(entry => $"{entry.Name} ({entry.Length})"))}");
 					}
