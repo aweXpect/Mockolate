@@ -185,10 +185,16 @@ partial class Build
 			sb.AppendLine("<details>");
 			sb.AppendLine("<summary>Details</summary>");
 			BenchmarkTableParser parser = new(columnsToRemove);
+			List<TableRow> tableBuffer = new();
+			int tableMeanIndex = -1;
 			foreach (string line in lines)
 			{
 				if (line.StartsWith("```"))
 				{
+					FlushTableBuffer(sb, tableBuffer, tableMeanIndex, baselineRows, injectBaseline,
+						ref anyBaselineInjected);
+					tableMeanIndex = -1;
+
 					count++;
 					if (count == 1)
 					{
@@ -205,39 +211,24 @@ partial class Build
 					continue;
 				}
 
-				if (!parser.TryConsume(line, out _, out string filteredLine, out string[] filteredTokens))
+				if (!parser.TryConsume(line, out int rowIndex, out _, out string[] filteredTokens))
 				{
+					FlushTableBuffer(sb, tableBuffer, tableMeanIndex, baselineRows, injectBaseline,
+						ref anyBaselineInjected);
+					tableMeanIndex = -1;
 					sb.AppendLine(line);
 					continue;
 				}
 
-				bool isMockolateRow = filteredLine.Contains("_Mockolate", StringComparison.OrdinalIgnoreCase);
-
-				if (isMockolateRow && injectBaseline && parser.MeanIndex > 0)
+				if (rowIndex == 0)
 				{
-					string key = string.Join("|", filteredTokens.Take(parser.MeanIndex));
-					if (baselineRows.TryGetValue(key, out string[] baselineTokens) && baselineTokens.Length > 0)
-					{
-						string[] modifiedBaseline = new string[baselineTokens.Length];
-						for (int i = 0; i < baselineTokens.Length; i++)
-						{
-							string content = i == 0 ? "baseline*" : baselineTokens[i];
-							modifiedBaseline[i] = string.IsNullOrWhiteSpace(content) ? content : $"_{content}_";
-						}
-
-						sb.AppendLine(JoinTokens(modifiedBaseline));
-						anyBaselineInjected = true;
-					}
+					tableMeanIndex = parser.MeanIndex;
 				}
 
-				if (isMockolateRow)
-				{
-					MakeLineBold(sb, filteredLine);
-					continue;
-				}
-
-				sb.AppendLine(filteredLine);
+				tableBuffer.Add(new TableRow(rowIndex, filteredTokens));
 			}
+
+			FlushTableBuffer(sb, tableBuffer, tableMeanIndex, baselineRows, injectBaseline, ref anyBaselineInjected);
 		}
 
 		if (anyBaselineInjected)
@@ -249,6 +240,112 @@ partial class Build
 
 		string body = sb.ToString();
 		return body;
+	}
+
+	static void FlushTableBuffer(StringBuilder sb, List<TableRow> tableBuffer, int meanIndex,
+		Dictionary<string, string[]> baselineRows, bool injectBaseline, ref bool anyBaselineInjected)
+	{
+		if (tableBuffer.Count == 0)
+		{
+			return;
+		}
+
+		string commonPrefix = FindCommonRowPrefix(tableBuffer);
+
+		foreach (TableRow row in tableBuffer)
+		{
+			string[] displayTokens = ApplyHeaderAndPrefixStripping(row, commonPrefix);
+			string displayLine = JoinTokens(displayTokens);
+
+			bool isMockolateRow = row.RowIndex >= BenchmarkTableParser.DataRowStartIndex
+			                      && row.Tokens.Length > 0
+			                      && row.Tokens[0].Contains("_Mockolate", StringComparison.OrdinalIgnoreCase);
+
+			if (isMockolateRow && injectBaseline && meanIndex > 0)
+			{
+				string key = string.Join("|", row.Tokens.Take(meanIndex));
+				if (baselineRows.TryGetValue(key, out string[] baselineTokens) && baselineTokens.Length > 0)
+				{
+					string[] modifiedBaseline = new string[baselineTokens.Length];
+					for (int i = 0; i < baselineTokens.Length; i++)
+					{
+						string content = i == 0 ? "baseline*" : baselineTokens[i];
+						modifiedBaseline[i] = string.IsNullOrWhiteSpace(content) ? content : $"_{content}_";
+					}
+
+					sb.AppendLine(JoinTokens(modifiedBaseline));
+					anyBaselineInjected = true;
+				}
+			}
+
+			if (isMockolateRow)
+			{
+				MakeLineBold(sb, displayLine);
+			}
+			else
+			{
+				sb.AppendLine(displayLine);
+			}
+		}
+
+		tableBuffer.Clear();
+	}
+
+	static string[] ApplyHeaderAndPrefixStripping(TableRow row, string commonPrefix)
+	{
+		if (commonPrefix == null || row.Tokens.Length == 0)
+		{
+			return row.Tokens;
+		}
+
+		string[] result = (string[])row.Tokens.Clone();
+		if (row.RowIndex == 0)
+		{
+			result[0] = commonPrefix.TrimEnd('_');
+		}
+		else if (row.RowIndex >= BenchmarkTableParser.DataRowStartIndex
+		         && result[0].StartsWith(commonPrefix, StringComparison.Ordinal))
+		{
+			result[0] = result[0].Substring(commonPrefix.Length);
+		}
+
+		return result;
+	}
+
+	static string FindCommonRowPrefix(List<TableRow> rows)
+	{
+		string prefix = null;
+		foreach (TableRow row in rows)
+		{
+			if (row.RowIndex < BenchmarkTableParser.DataRowStartIndex)
+			{
+				continue;
+			}
+
+			if (row.Tokens.Length == 0)
+			{
+				return null;
+			}
+
+			string name = row.Tokens[0];
+			int underscoreIdx = name.IndexOf('_');
+			if (underscoreIdx <= 0)
+			{
+				return null;
+			}
+
+			string thisPrefix = name.Substring(0, underscoreIdx + 1);
+			if (prefix == null)
+			{
+				prefix = thisPrefix;
+			}
+			else if (!string.Equals(prefix, thisPrefix, StringComparison.Ordinal))
+			{
+				return null;
+			}
+		}
+
+		return prefix;
 	}
 
 	static Dictionary<string, string[]> LoadBaselineRows(string baselineFile, string[] columnsToRemove)
@@ -363,6 +460,8 @@ partial class Build
 
 		sb.AppendLine();
 	}
+
+	sealed record TableRow(int RowIndex, string[] Tokens);
 
 	/// <summary>
 	///     Parses the markdown tables produced by BenchmarkDotNet's GitHub exporter.
