@@ -123,6 +123,7 @@ namespace Mockolate
             where TProjected :  notnull { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsSpan<T>(System.Func<T[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IParameterWithCallback<bool> IsTrue() { }
+        public static Mockolate.It.IIsParameter<T> IsValue<T>(T value) { }
         public static Mockolate.It.IParameterMatches Matches(string pattern) { }
         public static Mockolate.Parameters.IParameterWithCallback<T> Satisfies<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.It.ISequenceEqualsParameter<T> SequenceEquals<T>(System.Collections.Generic.IEnumerable<T> values) { }
