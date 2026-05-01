@@ -1,4 +1,3 @@
-using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
 using Mockolate.Verify;
 
@@ -30,6 +29,20 @@ public sealed partial class VerificationResultTests
 
 		await That(sut.Mock.Verify.DoSomething(0).AnyParameters()).Exactly(2);
 		await That(sut.Mock.Verify.DoSomething(0, false).AnyParameters()).Once();
+	}
+
+	[Fact]
+	public async Task AnyParameters_OnUntypedDefaultArguments_ShouldBindToValuesOverload()
+	{
+		IOverloadedMethodService sut = IOverloadedMethodService.CreateMock();
+
+		sut.DoSomething(1);
+		sut.DoSomething(2);
+		sut.DoSomething(3, true);
+
+		await That(sut.Mock.Verify.DoSomething(default).AnyParameters()).Exactly(2);
+		await That(sut.Mock.Verify.DoSomething(default, default).AnyParameters()).Once();
+		await That(sut.Mock.Verify.DoSomething(default!, default!).AnyParameters()).Once();
 	}
 
 	[Fact]

@@ -17,8 +17,7 @@ namespace Mockolate.Benchmarks;
 /// </summary>
 public class CompleteIndexerBenchmarks : BenchmarksBase
 {
-	[Params(1, 10)]
-	public int N { get; set; }
+	[Params(1, 10)] public int N { get; set; }
 
 	/// <summary>
 	///     <see href="https://awexpect.com/Mockolate" />
@@ -38,6 +37,46 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		sut.Mock.Verify[It.IsAny<int>()].Got().Exactly(N);
 		sut.Mock.Verify[It.IsAny<int>()].Set(It.IsAny<string>()).Exactly(N);
 	}
+
+	/// <summary>
+	///     <see href="https://github.com/themidnightgospel/Imposter" />
+	/// </summary>
+	[Benchmark]
+	public void Indexer_Imposter()
+	{
+		IMyIndexerInterfaceImposter imposter = IMyIndexerInterface.Imposter();
+		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Returns("foo");
+		IMyIndexerInterface sut = imposter.Instance();
+
+		for (int i = 0; i < N; i++)
+		{
+			_ = sut[42];
+			sut[42] = "bar";
+		}
+
+		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Called(Count.Exactly(N));
+		imposter[Imposter.Abstractions.Arg<int>.Any()].Setter().Called(Count.Exactly(N));
+	}
+
+	/* Indexers not supported on TUnit.Mocks
+	/// <summary>
+	///     <see href="https://github.com/thomhurst/TUnit/" />
+	/// </summary>
+	[Benchmark]
+	public void Indexer_TUnitMocks()
+	{
+		TUnit.Mocks.Mock<IMyIndexerInterface> mock = TUnit.Mocks.Mock.Of<IMyIndexerInterface>();
+		mock[Any<int>()].Returns("foo");
+
+		for (int i = 0; i < N; i++)
+		{
+			_ = mock.Object[42];
+			mock.Object[42] = "bar";
+		}
+
+		mock[Any<int>()].WasCalled(TUnit.Mocks.Times.Exactly(N));
+	}
+	*/
 
 	/// <summary>
 	///     <see href="https://github.com/devlooped/moq" />
@@ -96,46 +135,6 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 		A.CallTo(() => mock[A<int>.Ignored]).MustHaveHappened(N, FakeItEasy.Times.Exactly);
 		A.CallToSet(() => mock[A<int>.Ignored]).MustHaveHappened(N, FakeItEasy.Times.Exactly);
 	}
-
-	/// <summary>
-	///     <see href="https://github.com/themidnightgospel/Imposter" />
-	/// </summary>
-	[Benchmark]
-	public void Indexer_Imposter()
-	{
-		IMyIndexerInterfaceImposter imposter = IMyIndexerInterface.Imposter();
-		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Returns("foo");
-		IMyIndexerInterface sut = imposter.Instance();
-
-		for (int i = 0; i < N; i++)
-		{
-			_ = sut[42];
-			sut[42] = "bar";
-		}
-
-		imposter[Imposter.Abstractions.Arg<int>.Any()].Getter().Called(Count.Exactly(N));
-		imposter[Imposter.Abstractions.Arg<int>.Any()].Setter().Called(Count.Exactly(N));
-	}
-
-	/* Indexers not supported on TUnit.Mocks
-	/// <summary>
-	///     <see href="https://github.com/thomhurst/TUnit/" />
-	/// </summary>
-	[Benchmark]
-	public void Indexer_TUnitMocks()
-	{
-		TUnit.Mocks.Mock<IMyIndexerInterface> mock = TUnit.Mocks.Mock.Of<IMyIndexerInterface>();
-		mock[Any<int>()].Returns("foo");
-
-		for (int i = 0; i < N; i++)
-		{
-			_ = mock.Object[42];
-			mock.Object[42] = "bar";
-		}
-
-		mock[Any<int>()].WasCalled(TUnit.Mocks.Times.Exactly(N));
-	}
-	*/
 
 	public interface IMyIndexerInterface
 	{

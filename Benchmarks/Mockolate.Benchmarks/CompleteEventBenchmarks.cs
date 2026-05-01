@@ -5,6 +5,7 @@ using Mockolate.Benchmarks;
 using Mockolate.Verify;
 using NSubstitute;
 using Arg = NSubstitute.Arg;
+using Raise = NSubstitute.Raise;
 using Times = Moq.Times;
 
 [assembly: GenerateImposter(typeof(CompleteEventBenchmarks.IMyEventInterface))]
@@ -30,55 +31,6 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		sut.Mock.Raise.SomeEvent(null, EventArgs.Empty);
 
 		sut.Mock.Verify.SomeEvent.Subscribed().Once();
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/devlooped/moq" />
-	/// </summary>
-	[Benchmark]
-	public void Event_Moq()
-	{
-		Moq.Mock<IMyEventInterface> mock = new();
-		mock.SetupAdd(m => m.SomeEvent += Moq.It.IsAny<EventHandler>());
-		EventHandler handler = (_, _) => { };
-
-		mock.Object.SomeEvent += handler;
-		mock.Raise(m => m.SomeEvent += null, null!, EventArgs.Empty);
-
-		mock.VerifyAdd(m => m.SomeEvent += Moq.It.IsAny<EventHandler>(), Times.Once());
-	}
-
-	/// <summary>
-	///     <see href="https://nsubstitute.github.io/" />
-	/// </summary>
-	[Benchmark]
-	public void Event_NSubstitute()
-	{
-		IMyEventInterface mock = Substitute.For<IMyEventInterface>();
-		EventHandler handler = (_, _) => { };
-
-		mock.SomeEvent += handler;
-		mock.SomeEvent += NSubstitute.Raise.EventWith(null, EventArgs.Empty);
-
-		mock.Received(1).SomeEvent += Arg.Any<EventHandler>();
-	}
-
-	/// <summary>
-	///     <see href="https://fakeiteasy.github.io/" />
-	/// </summary>
-	[Benchmark]
-	public void Event_FakeItEasy()
-	{
-		IMyEventInterface mock = A.Fake<IMyEventInterface>();
-		EventHandler handler = (_, _) => { };
-
-		mock.SomeEvent += handler;
-		mock.SomeEvent += FakeItEasy.Raise.FreeForm.With(null, EventArgs.Empty);
-
-		A.CallTo(mock)
-			.Where(call => call.Method.Name == "add_SomeEvent")
-			// Expect 2, because raising an event in FakeItEasy is implemented as a call to the add accessor of the event.
-			.MustHaveHappened(2, FakeItEasy.Times.Exactly);
 	}
 
 	/// <summary>
@@ -109,6 +61,55 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		mock.RaiseSomeEvent(EventArgs.Empty);
 
 		_ = mock.Events.SomeEvent.SubscriberCount;
+	}
+
+	/// <summary>
+	///     <see href="https://github.com/devlooped/moq" />
+	/// </summary>
+	[Benchmark]
+	public void Event_Moq()
+	{
+		Moq.Mock<IMyEventInterface> mock = new();
+		mock.SetupAdd(m => m.SomeEvent += Moq.It.IsAny<EventHandler>());
+		EventHandler handler = (_, _) => { };
+
+		mock.Object.SomeEvent += handler;
+		mock.Raise(m => m.SomeEvent += null, null!, EventArgs.Empty);
+
+		mock.VerifyAdd(m => m.SomeEvent += Moq.It.IsAny<EventHandler>(), Times.Once());
+	}
+
+	/// <summary>
+	///     <see href="https://nsubstitute.github.io/" />
+	/// </summary>
+	[Benchmark]
+	public void Event_NSubstitute()
+	{
+		IMyEventInterface mock = Substitute.For<IMyEventInterface>();
+		EventHandler handler = (_, _) => { };
+
+		mock.SomeEvent += handler;
+		mock.SomeEvent += Raise.EventWith(null, EventArgs.Empty);
+
+		mock.Received(1).SomeEvent += Arg.Any<EventHandler>();
+	}
+
+	/// <summary>
+	///     <see href="https://fakeiteasy.github.io/" />
+	/// </summary>
+	[Benchmark]
+	public void Event_FakeItEasy()
+	{
+		IMyEventInterface mock = A.Fake<IMyEventInterface>();
+		EventHandler handler = (_, _) => { };
+
+		mock.SomeEvent += handler;
+		mock.SomeEvent += FakeItEasy.Raise.FreeForm.With(null, EventArgs.Empty);
+
+		A.CallTo(mock)
+			.Where(call => call.Method.Name == "add_SomeEvent")
+			// Expect 2, because raising an event in FakeItEasy is implemented as a call to the add accessor of the event.
+			.MustHaveHappened(2, FakeItEasy.Times.Exactly);
 	}
 
 	public interface IMyEventInterface

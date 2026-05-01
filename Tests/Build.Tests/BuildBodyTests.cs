@@ -129,26 +129,6 @@ public sealed class BuildBodyTests
 	}
 
 	[Fact]
-	public async Task BuildBody_WhenTableHasEmptyRowSeparatingParameterGroups_ShouldNotEmitBareSeparator()
-	{
-		string[] report =
-		[
-			"| Method | N | Mean | Allocated |",
-			"|--------|---|-----:|----------:|",
-			"| Indexer_Mockolate | 1 | 100 ns | 1 KB |",
-			"| Indexer_Moq | 1 | 200 ns | 2 KB |",
-			"|         |   |      |          |",
-			"| Indexer_Mockolate | 10 | 1000 ns | 10 KB |",
-			"| Indexer_Moq | 10 | 2000 ns | 20 KB |",
-		];
-		BenchmarkReportFile file = new(report, null);
-
-		string body = BenchmarkReport.BuildBody([file,], _columnsToRemove);
-
-		await That(body).DoesNotContain($"{Environment.NewLine}|{Environment.NewLine}");
-	}
-
-	[Fact]
 	public async Task BuildBody_WhenTableHasEmptyRowSeparatingParameterGroups_ShouldEmitEmptyRowMatchingHeaderColumnCount()
 	{
 		string[] report =
@@ -171,6 +151,26 @@ public sealed class BuildBodyTests
 		await That(firstGroupLast).IsGreaterThan(-1);
 		await That(secondGroupFirst).IsGreaterThan(firstGroupLast);
 		await That(lines[firstGroupLast + 1]).IsEqualTo("|  |  |  |  |");
+	}
+
+	[Fact]
+	public async Task BuildBody_WhenTableHasEmptyRowSeparatingParameterGroups_ShouldNotEmitBareSeparator()
+	{
+		string[] report =
+		[
+			"| Method | N | Mean | Allocated |",
+			"|--------|---|-----:|----------:|",
+			"| Indexer_Mockolate | 1 | 100 ns | 1 KB |",
+			"| Indexer_Moq | 1 | 200 ns | 2 KB |",
+			"|         |   |      |          |",
+			"| Indexer_Mockolate | 10 | 1000 ns | 10 KB |",
+			"| Indexer_Moq | 10 | 2000 ns | 20 KB |",
+		];
+		BenchmarkReportFile file = new(report, null);
+
+		string body = BenchmarkReport.BuildBody([file,], _columnsToRemove);
+
+		await That(body).DoesNotContain($"{Environment.NewLine}|{Environment.NewLine}");
 	}
 
 	[Fact]

@@ -74,19 +74,6 @@ internal record Method
 	public string? ExplicitImplementation { get; }
 	public EquatableArray<Attribute>? Attributes { get; }
 
-	internal string GetUniqueNameString()
-	{
-		if (GenericParameters != null)
-		{
-			string name = Name.Substring(0, Name.IndexOf('<'));
-			string parameters = string.Join(", ",
-				GenericParameters.Value.Select(genericParameter => $"{{typeof({genericParameter.Name})}}"));
-			return $"$\"{ContainingType}.{name}<{parameters}>\"";
-		}
-
-		return $"\"{ContainingType}.{Name}\"";
-	}
-
 	/// <summary>
 	///     A method has an unsupported <c>allows ref struct</c> type parameter when one of its
 	///     own generic parameters declares the anti-constraint <i>and</i> is referenced in the
@@ -127,6 +114,19 @@ internal record Method
 
 			return false;
 		}
+	}
+
+	internal string GetUniqueNameString()
+	{
+		if (GenericParameters != null)
+		{
+			string name = Name.Substring(0, Name.IndexOf('<'));
+			string parameters = string.Join(", ",
+				GenericParameters.Value.Select(genericParameter => $"{{typeof({genericParameter.Name})}}"));
+			return $"$\"{ContainingType}.{name}<{parameters}>\"";
+		}
+
+		return $"\"{ContainingType}.{Name}\"";
 	}
 
 	private static bool ContainsAnyTypeParameter(string text, GenericParameter[] genericParameters)

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Mockolate.Interactions;
 using Mockolate.Tests.TestHelpers;
 
 namespace Mockolate.Tests;

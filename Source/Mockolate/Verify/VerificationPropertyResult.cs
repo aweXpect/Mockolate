@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -8,7 +7,7 @@ namespace Mockolate.Verify;
 ///     Verifications on a property of type <typeparamref name="TParameter" />.
 /// </summary>
 #if !DEBUG
-[DebuggerNonUserCode]
+[System.Diagnostics.DebuggerNonUserCode]
 #endif
 public class VerificationPropertyResult<TSubject, TParameter>
 {
@@ -61,7 +60,8 @@ public class VerificationPropertyResult<TSubject, TParameter>
 	/// </summary>
 	[OverloadResolutionPriority(1)]
 	public VerificationResult<TSubject> Set(TParameter value,
-		[CallerArgumentExpression(nameof(value))] string doNotPopulateThisValue = "")
+		[CallerArgumentExpression(nameof(value))]
+		string doNotPopulateThisValue = "")
 		=> _mockRegistry.VerifyPropertyTyped(_subject, _setMemberId, _propertyName,
 			It.Is(value, doNotPopulateThisValue).AsParameterMatch());
 }

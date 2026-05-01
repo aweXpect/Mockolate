@@ -19,6 +19,27 @@ namespace Mockolate.SourceGenerators.Tests.Snapshot;
 /// </summary>
 public sealed partial class MockGenerationSnapshotTests
 {
+	[Theory]
+	[MemberData(nameof(ScenarioNames))]
+	public async Task GeneratorOutput_MatchesExpectedSnapshot(string scenarioName)
+	{
+		SnapshotScenario scenario = Scenarios.Single(s => s.Name == scenarioName);
+		GeneratorResult result = RunGenerator(scenario);
+		await That(result.Diagnostics).IsEmpty();
+
+		IReadOnlyDictionary<string, string> generated = NormalizeSources(result);
+		IReadOnlyDictionary<string, string> expected = SnapshotStorage.GetExpected(scenarioName);
+
+		await That(generated.Keys).IsEqualTo(expected.Keys).InAnyOrder();
+
+		foreach (string fileName in expected.Keys)
+		{
+			await That(StripConfigSpecificLines(generated[fileName]))
+				.IsEqualTo(StripConfigSpecificLines(expected[fileName]))
+				.IgnoringNewlineStyle();
+		}
+	}
+
 	internal static readonly IReadOnlyList<SnapshotScenario> Scenarios =
 	[
 		new(
@@ -92,27 +113,6 @@ public sealed partial class MockGenerationSnapshotTests
 			}
 
 			return data;
-		}
-	}
-
-	[Theory]
-	[MemberData(nameof(ScenarioNames))]
-	public async Task GeneratorOutput_MatchesExpectedSnapshot(string scenarioName)
-	{
-		SnapshotScenario scenario = Scenarios.Single(s => s.Name == scenarioName);
-		GeneratorResult result = RunGenerator(scenario);
-		await That(result.Diagnostics).IsEmpty();
-
-		IReadOnlyDictionary<string, string> generated = NormalizeSources(result);
-		IReadOnlyDictionary<string, string> expected = SnapshotStorage.GetExpected(scenarioName);
-
-		await That(generated.Keys).IsEqualTo(expected.Keys).InAnyOrder();
-
-		foreach (string fileName in expected.Keys)
-		{
-			await That(StripConfigSpecificLines(generated[fileName]))
-				.IsEqualTo(StripConfigSpecificLines(expected[fileName]))
-				.IgnoringNewlineStyle();
 		}
 	}
 

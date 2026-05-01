@@ -31,6 +31,39 @@ public class CallbackBenchmarks : BenchmarksBase
 	}
 
 	/// <summary>
+	///     <see href="https://github.com/themidnightgospel/Imposter" />
+	/// </summary>
+	[Benchmark]
+	public int Callback_Imposter()
+	{
+		int count = 0;
+		IMyCallbackInterfaceImposter imposter = IMyCallbackInterface.Imposter();
+		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Callback(_ => count++);
+
+		IMyCallbackInterface instance = imposter.Instance();
+		instance.MyFunc(1);
+		instance.MyFunc(2);
+		return count;
+	}
+
+	/// <summary>
+	///     <see href="https://github.com/thomhurst/TUnit/" />
+	/// </summary>
+	[Benchmark]
+	public int Callback_TUnitMocks()
+	{
+		int count = 0;
+		Mock<IMyCallbackInterface> mock = TUnit.Mocks.Mock.Of<IMyCallbackInterface>();
+		mock.MyFunc(Any<int>())
+			.Callback(() => count++);
+
+		IMyCallbackInterface svc = mock.Object;
+		svc.MyFunc(1);
+		svc.MyFunc(2);
+		return count;
+	}
+
+	/// <summary>
 	///     <see href="https://github.com/devlooped/moq" />
 	/// </summary>
 	[Benchmark]
@@ -73,39 +106,6 @@ public class CallbackBenchmarks : BenchmarksBase
 
 		mock.MyFunc(1);
 		mock.MyFunc(2);
-		return count;
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/themidnightgospel/Imposter" />
-	/// </summary>
-	[Benchmark]
-	public int Callback_Imposter()
-	{
-		int count = 0;
-		IMyCallbackInterfaceImposter imposter = IMyCallbackInterface.Imposter();
-		imposter.MyFunc(Imposter.Abstractions.Arg<int>.Any()).Callback(_ => count++);
-
-		IMyCallbackInterface instance = imposter.Instance();
-		instance.MyFunc(1);
-		instance.MyFunc(2);
-		return count;
-	}
-
-	/// <summary>
-	///     <see href="https://github.com/thomhurst/TUnit/" />
-	/// </summary>
-	[Benchmark]
-	public int Callback_TUnitMocks()
-	{
-		int count = 0;
-		Mock<IMyCallbackInterface> mock = TUnit.Mocks.Mock.Of<IMyCallbackInterface>();
-		mock.MyFunc(Any<int>())
-			.Callback(() => count++);
-
-		IMyCallbackInterface svc = mock.Object;
-		svc.MyFunc(1);
-		svc.MyFunc(2);
 		return count;
 	}
 

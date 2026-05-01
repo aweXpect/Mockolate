@@ -30,7 +30,7 @@ public class FastMockInteractions : IMockInteractions
 	/// <summary>
 	///     Creates a new <see cref="FastMockInteractions" /> sized to <paramref name="memberCount" />.
 	///     Each mockable member's buffer slot starts empty and is materialized lazily on first access via
-	///     <see cref="GetOrCreateBuffer{TBuffer}(int, Func{FastMockInteractions, TBuffer})" />.
+	///     <see cref="GetOrCreateBuffer{TBuffer}(int, System.Func{Mockolate.Interactions.FastMockInteractions,TBuffer})" />.
 	/// </summary>
 	/// <param name="memberCount">The number of distinct mockable members the buffer array should hold.</param>
 	/// <param name="skipInteractionRecording">Mirrors <see cref="MockBehavior.SkipInteractionRecording" />.</param>

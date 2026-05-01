@@ -214,7 +214,6 @@ The following cases are rejected at compile time with diagnostic `Mockolate0003`
 - `out` / `ref` / `ref readonly` parameters of a ref-struct type.
 - Methods that return a custom ref struct. (`Span<T>` / `ReadOnlySpan<T>` returns are supported.)
 
-
 ## Parameter Predicates
 
 When the method name is unique (no overloads), you can use argument matchers from the `Match` class for more flexible parameters matching:

@@ -57,6 +57,10 @@ public interface IComprehensiveInterface
 
 	string? GetMaybeNull(string? s);
 
+	bool TakeObject(object? obj);
+	int TakeTwoObjects(object? first, object? second);
+	int TakeIntAndObject(int n, object? obj);
+
 	Task DoTask();
 	Task<int> DoTaskOf();
 	ValueTask DoVT();

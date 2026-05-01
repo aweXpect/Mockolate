@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using Mockolate.SourceGenerators.Entities;
 using Event = Mockolate.SourceGenerators.Entities.Event;
@@ -132,8 +131,8 @@ internal static partial class Sources
 	internal sealed class MemberIdTable
 	{
 		private readonly List<string> _declarations = new();
-		private readonly Dictionary<string, int> _usedIdentifiers = new();
 		private readonly List<(Property Property, string FieldName)> _propertyGetterAccessFields = new();
+		private readonly Dictionary<string, int> _usedIdentifiers = new();
 
 		internal Dictionary<Method, int> MethodIds { get; } = new();
 		internal Dictionary<Property, int> PropertyGetIds { get; } = new();

@@ -1122,7 +1122,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> Send(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -1131,7 +1131,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> Send(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken);
 
 		/// <summary>
@@ -1158,6 +1158,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> Send(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken);
 
 		/// <summary>
@@ -1166,7 +1167,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> SendAsync(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -1175,7 +1176,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
 		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> SendAsync(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken);
 
 		/// <summary>
@@ -1202,6 +1203,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> SendAsync(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken);
 
 		/// <summary>
@@ -1210,7 +1212,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<bool> Dispose(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -1219,7 +1221,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<bool> Dispose(global::Mockolate.Parameters.IParameter<bool>? disposing);
 
 		/// <summary>
@@ -1228,6 +1230,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<bool> Dispose(bool disposing);
 
 	}
@@ -1250,7 +1253,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler> Send(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -1259,7 +1262,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler> Send(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken);
 
 		/// <summary>
@@ -1286,6 +1289,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler>.IgnoreParameters Send(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken);
 
 		/// <summary>
@@ -1294,7 +1298,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler> SendAsync(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -1303,7 +1307,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler> SendAsync(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken);
 
 		/// <summary>
@@ -1330,6 +1334,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler>.IgnoreParameters SendAsync(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken);
 
 		/// <summary>
@@ -1338,7 +1343,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler> Dispose(global::Mockolate.Parameters.IParameters parameters);
 
 		/// <summary>
@@ -1347,7 +1352,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
 		/// </remarks>
-		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler> Dispose(global::Mockolate.Parameters.IParameter<bool>? disposing);
 
 		/// <summary>
@@ -1356,6 +1361,7 @@ internal static partial class Mock
 		/// <remarks>
 		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
 		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpMessageHandler>.IgnoreParameters Dispose(bool disposing);
 
 	}

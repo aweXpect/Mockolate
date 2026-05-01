@@ -1,5 +1,3 @@
-using Mockolate.Interactions;
-
 namespace Mockolate.Tests.MockProperties;
 
 public sealed partial class InteractionsTests

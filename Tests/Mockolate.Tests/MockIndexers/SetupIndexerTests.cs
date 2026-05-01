@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Mockolate.Exceptions;
-using Mockolate.Interactions;
 using Mockolate.Setup;
 
 namespace Mockolate.Tests.MockIndexers;
@@ -518,7 +517,6 @@ public sealed partial class SetupIndexerTests
 			await That(Act).Throws<ArgumentOutOfRangeException>()
 				.WithParamName("signatureIndex");
 		}
-
 	}
 
 

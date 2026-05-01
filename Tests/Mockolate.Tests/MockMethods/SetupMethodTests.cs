@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using Mockolate.Exceptions;
-using Mockolate.Interactions;
 using Mockolate.Parameters;
 using Mockolate.Setup;
 using Mockolate.Tests.TestHelpers;
@@ -150,12 +149,12 @@ public sealed partial class SetupMethodTests
 	{
 		IMethodService sut = IMethodService.CreateMock();
 		MyMethodServiceType value = new(5);
-		sut.Mock.Setup.Combine(value, null).Returns(4);
+		sut.Mock.Setup.Combine(value, null!).Returns(4);
 
 		int result = sut.Combine(value, null!);
 
 		await That(result).IsEqualTo(4);
-		await That(sut.Mock.Verify.Combine(value, null)).Once();
+		await That(sut.Mock.Verify.Combine(value, null!)).Once();
 	}
 
 	[Fact]
@@ -571,6 +570,18 @@ public sealed partial class SetupMethodTests
 	public class ReturnMethodWith1Parameters
 	{
 		[Fact]
+		public async Task AnyParameters_OnUntypedDefaultArgument_ShouldBindToValuesOverload()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method1(default).AnyParameters()
+				.Returns("foo");
+
+			await That(sut.Method1(0)).IsEqualTo("foo");
+			await That(sut.Method1(42)).IsEqualTo("foo");
+		}
+
+		[Fact]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{
 			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
@@ -665,6 +676,18 @@ public sealed partial class SetupMethodTests
 
 	public class ReturnMethodWith2Parameters
 	{
+		[Fact]
+		public async Task AnyParameters_OnUntypedDefaultArguments_ShouldBindToValuesOverload()
+		{
+			IReturnMethodSetupTest sut = IReturnMethodSetupTest.CreateMock();
+
+			sut.Mock.Setup.Method2(default, default).AnyParameters()
+				.Returns("foo");
+
+			await That(sut.Method2(0, 0)).IsEqualTo("foo");
+			await That(sut.Method2(7, 9)).IsEqualTo("foo");
+		}
+
 		[Fact]
 		public async Task AnyParameters_ShouldIgnoreExplicitParameters()
 		{

@@ -245,4 +245,3 @@ public sealed class FastPropertySetterBuffer<T> : IFastMemberBuffer
 		public IInteraction? Boxed;
 	}
 }
-

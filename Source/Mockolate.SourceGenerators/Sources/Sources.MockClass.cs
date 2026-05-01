@@ -3645,6 +3645,51 @@ internal static partial class Sources
 		return result;
 	}
 
+	// Priority hierarchy among same-arity overloads emitted for one method:
+	//   all-values            : int.MaxValue       (so `Method(default, …)` binds here and exposes `.AnyParameters()`)
+	//   IParameters           : int.MaxValue - 1
+	//   pure IParameter<T>?   : parameterCount     (just below all-values, above any mixed combo)
+	//   mixed                 : count of non-value (matcher) params, in [1, parameterCount - 1]
+	// parameterCount == 0 returns int.MaxValue so the lone zero-arg overload keeps its historical priority.
+	private static string ComputeMethodOverloadPriority(bool useParameters, bool[]? valueFlags, int parameterCount)
+	{
+		if (parameterCount == 0)
+		{
+			return "int.MaxValue";
+		}
+
+		if (useParameters)
+		{
+			return "int.MaxValue - 1";
+		}
+
+		if (valueFlags is null)
+		{
+			return parameterCount.ToString();
+		}
+
+		return valueFlags.Count(x => !x).ToString();
+	}
+
+	// Object-typed parameters defeat the all-values bump: every reference type — including the
+	// IParameter<T>? matcher itself — implicitly converts to object, so promoting `Method(object?)` over
+	// `Method(IParameter<object?>?)` would silently capture matcher instances as raw values. Detect that case
+	// here and skip the priority bump so callers keep using Match.AnyParameters() / It.IsAny<object?>().
+	private static bool ParametersBlockAllValuesPromotion(EquatableArray<MethodParameter> parameters,
+		bool[] valueFlags)
+	{
+		ReadOnlySpan<MethodParameter> span = parameters.AsSpan();
+		for (int i = 0; i < span.Length; i++)
+		{
+			if (valueFlags[i] && span[i].Type.SpecialType == SpecialType.System_Object)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private static void DefineSetupInterface(StringBuilder sb, Class @class, MemberType memberType,
 		bool hasOverloadResolutionPriority)
 	{
@@ -3881,6 +3926,14 @@ internal static partial class Sources
 		{
 			if (valueFlags?.All(x => x) == true)
 			{
+				if (hasOverloadResolutionPriority &&
+				    !ParametersBlockAllValuesPromotion(method.Parameters, valueFlags))
+				{
+					sb.Append(
+							"\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]")
+						.AppendLine();
+				}
+
 				sb.Append("\t\tglobal::Mockolate.Setup.IReturnMethodSetupParameterIgnorer");
 			}
 			else
@@ -3888,7 +3941,8 @@ internal static partial class Sources
 				if (hasOverloadResolutionPriority)
 				{
 					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
-						.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+						.Append(ComputeMethodOverloadPriority(useParameters, valueFlags, method.Parameters.Count))
+						.Append(")]").AppendLine();
 				}
 
 				sb.Append(method.Parameters.Count > 0
@@ -3910,6 +3964,14 @@ internal static partial class Sources
 		{
 			if (valueFlags?.All(x => x) == true)
 			{
+				if (hasOverloadResolutionPriority &&
+				    !ParametersBlockAllValuesPromotion(method.Parameters, valueFlags))
+				{
+					sb.Append(
+							"\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]")
+						.AppendLine();
+				}
+
 				sb.Append("\t\tglobal::Mockolate.Setup.IVoidMethodSetupParameterIgnorer");
 			}
 			else
@@ -3917,7 +3979,8 @@ internal static partial class Sources
 				if (hasOverloadResolutionPriority)
 				{
 					sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
-						.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+						.Append(ComputeMethodOverloadPriority(useParameters, valueFlags, method.Parameters.Count))
+						.Append(")]").AppendLine();
 				}
 
 				sb.Append(method.Parameters.Count > 0
@@ -5532,6 +5595,13 @@ internal static partial class Sources
 			valueFlags, true);
 		if (valueFlags?.All(x => x) == true || (method.Parameters.Count == 0 && !useParameters))
 		{
+			if (hasOverloadResolutionPriority && method.Parameters.Count > 0 && valueFlags is not null &&
+			    !ParametersBlockAllValuesPromotion(method.Parameters, valueFlags))
+			{
+				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]")
+					.AppendLine();
+			}
+
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName)
 				.Append(">.IgnoreParameters ").Append(methodName).Append("(");
 		}
@@ -5540,7 +5610,8 @@ internal static partial class Sources
 			if (hasOverloadResolutionPriority)
 			{
 				sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(")
-					.Append(valueFlags?.Count(x => !x).ToString() ?? "int.MaxValue").Append(")]").AppendLine();
+					.Append(ComputeMethodOverloadPriority(useParameters, valueFlags, method.Parameters.Count))
+					.Append(")]").AppendLine();
 			}
 
 			sb.Append("\t\tglobal::Mockolate.Verify.VerificationResult<").Append(verifyName).Append("> ")
