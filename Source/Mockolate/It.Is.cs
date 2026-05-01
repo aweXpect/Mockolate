@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
@@ -32,6 +35,21 @@ public partial class It
 		=> new ParameterEqualsMatch<T>(value, doNotPopulateThisValue);
 
 	/// <summary>
+	///     Generator-emitted by-value matcher that defers diagnostic formatting until the matcher's
+	///     <see cref="object.ToString" /> is called. Public because the source generator emits this
+	///     call from consumer assemblies that cannot see <see langword="internal" /> members; not
+	///     intended for direct use — prefer <see cref="Is{T}(T, string)" /> at user call sites
+	///     because <see cref="CallerArgumentExpressionAttribute" /> captures the literal source text
+	///     for free.
+	/// </summary>
+	/// <typeparam name="T">The declared type of the parameter.</typeparam>
+	/// <param name="value">The expected value.</param>
+	/// <returns>A parameter matcher whose diagnostic string is computed lazily.</returns>
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	public static IIsParameter<T> IsValue<T>(T value)
+		=> new ParameterEqualsMatch<T>(value, valueExpression: null);
+
+	/// <summary>
 	///     An <see cref="IParameter{T}" /> used for equality comparison, with an opt-in custom comparer.
 	/// </summary>
 	public interface IIsParameter<out T> : IParameterWithCallback<T>
@@ -52,10 +70,26 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class ParameterEqualsMatch<T>(T value, string valueExpression) : TypedMatch<T>, IIsParameter<T>
+	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
 	{
+		private readonly T _value;
+		private string? _valueExpression;
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
+
+		/// <summary>
+		///     Constructs an equality matcher for <paramref name="value" />. When
+		///     <paramref name="valueExpression" /> is non-<see langword="null" /> it is used verbatim in
+		///     <see cref="ToString" />; pass <see langword="null" /> to defer formatting until the
+		///     diagnostic is actually rendered (the path used by <see cref="It.IsValue{T}" /> and
+		///     generator-emitted by-value matchers, which skips the per-setup string allocation on the
+		///     success path).
+		/// </summary>
+		public ParameterEqualsMatch(T value, string? valueExpression)
+		{
+			_value = value;
+			_valueExpression = valueExpression;
+		}
 
 		/// <inheritdoc cref="IIsParameter{T}.Using(IEqualityComparer{T}, string)" />
 		IIsParameter<T> IIsParameter<T>.Using(IEqualityComparer<T> comparer, string doNotPopulateThisValue)
@@ -70,21 +104,42 @@ public partial class It
 		{
 			if (_comparer is not null)
 			{
-				return _comparer.Equals(value1, value);
+				return _comparer.Equals(value1, _value);
 			}
 
-			return EqualityComparer<T>.Default.Equals(value1, value);
+			return EqualityComparer<T>.Default.Equals(value1, _value);
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 		{
+			string expression = _valueExpression ??= FormatValueLazily(_value);
 			if (_comparer is not null)
 			{
-				return $"It.Is({valueExpression}).Using({_comparerExpression})";
+				return $"It.Is({expression}).Using({_comparerExpression})";
 			}
 
-			return valueExpression;
+			return expression;
+		}
+
+		private static string FormatValueLazily(T value)
+		{
+			if (value is null)
+			{
+				return "null";
+			}
+
+			if (value is string s)
+			{
+				return $"\"{s}\"";
+			}
+
+			if (value is IFormattable formattable)
+			{
+				return formattable.ToString(null, CultureInfo.InvariantCulture);
+			}
+
+			return value.ToString() ?? "null";
 		}
 	}
 }

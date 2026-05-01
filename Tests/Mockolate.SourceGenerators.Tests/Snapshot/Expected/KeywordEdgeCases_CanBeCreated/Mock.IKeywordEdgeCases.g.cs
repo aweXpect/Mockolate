@@ -648,7 +648,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(parameter1, ((global::System.IFormattable)parameter1).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)), CovariantParameterAdapter<string>.Wrap(parameter2 ?? global::Mockolate.It.IsNull<string>("null")));
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter1), CovariantParameterAdapter<string>.Wrap(parameter2 ?? global::Mockolate.It.IsNull<string>("null")));
 				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get, indexerSetup);
 				return indexerSetup;
 			}
@@ -660,7 +660,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.Is<string>(parameter2, $"\"{parameter2}\""));
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.IsValue<string>(parameter2));
 				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get, indexerSetup);
 				return indexerSetup;
 			}
@@ -672,7 +672,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(parameter1, ((global::System.IFormattable)parameter1).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.Is<string>(parameter2, $"\"{parameter2}\""));
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter1), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.IsValue<string>(parameter2));
 				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get, indexerSetup);
 				return indexerSetup;
 			}
@@ -705,7 +705,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(int @params)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@params, ((global::System.IFormattable)@params).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(@params));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, methodSetup);
 			return methodSetup;
 		}
@@ -732,7 +732,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(int @ref)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@ref, ((global::System.IFormattable)@ref).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(@ref));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, methodSetup);
 			return methodSetup;
 		}
@@ -1053,7 +1053,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(parameter1, ((global::System.IFormattable)parameter1).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)), CovariantParameterAdapter<string>.Wrap(parameter2 ?? global::Mockolate.It.IsNull<string>("null")));
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter1), CovariantParameterAdapter<string>.Wrap(parameter2 ?? global::Mockolate.It.IsNull<string>("null")));
 				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get, _scenarioName, indexerSetup);
 				return indexerSetup;
 			}
@@ -1065,7 +1065,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.Is<string>(parameter2, $"\"{parameter2}\""));
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, CovariantParameterAdapter<int>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.IsValue<string>(parameter2));
 				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get, _scenarioName, indexerSetup);
 				return indexerSetup;
 			}
@@ -1077,7 +1077,7 @@ internal static partial class Mock
 		{
 			get
 			{
-				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(parameter1, ((global::System.IFormattable)parameter1).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.Is<string>(parameter2, $"\"{parameter2}\""));
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, string>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter1), (global::Mockolate.Parameters.IParameterMatch<string>)global::Mockolate.It.IsValue<string>(parameter2));
 				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IKeywordEdgeCases.MemberId_Indexer_int_string_Get, _scenarioName, indexerSetup);
 				return indexerSetup;
 			}
@@ -1110,7 +1110,7 @@ internal static partial class Mock
 		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@if(int @params)
 		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@params, ((global::System.IFormattable)@params).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@if", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(@params));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__if, _scenarioName, methodSetup);
 			return methodSetup;
 		}
@@ -1137,7 +1137,7 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@void<@class>(int @ref)
 			where @class : default
 		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(@ref, ((global::System.IFormattable)@ref).ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)));
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int>.WithParameterCollection(MockRegistry, $"global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@void<{typeof(@class)}>", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(@ref));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IKeywordEdgeCases.MemberId__void__class_, _scenarioName, methodSetup);
 			return methodSetup;
 		}

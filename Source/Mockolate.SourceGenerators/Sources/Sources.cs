@@ -1,7 +1,6 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Mockolate.SourceGenerators.Entities;
-using Mockolate.SourceGenerators.Internals;
 using Type = Mockolate.SourceGenerators.Entities.Type;
 
 namespace Mockolate.SourceGenerators.Sources;
@@ -165,8 +164,8 @@ internal static partial class Sources
 		sb.Append(indent).Append("}").AppendLine();
 
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
-			setupMemberIdRef ?? memberIdRef, isSetter: false, deferAccess: deferAccess,
-			emitAccessDeclaration: deferAccess
+			setupMemberIdRef ?? memberIdRef, false, deferAccess,
+			deferAccess
 				? sbInner => EmitIndexerGetterAccessDeclaration(sbInner, indent, accessVarName, parameters)
 				: null);
 	}
@@ -258,8 +257,8 @@ internal static partial class Sources
 		sb.Append(indent).Append("}").AppendLine();
 
 		EmitIndexerSetupLookup(sb, indent, mockRegistry, accessVarName, setupVarName, propertyType, parameters,
-			setupMemberIdRef, isSetter: true, deferAccess: deferAccess,
-			emitAccessDeclaration: deferAccess
+			setupMemberIdRef, true, deferAccess,
+			deferAccess
 				? sbInner => EmitIndexerSetterAccessDeclaration(sbInner, indent, accessVarName, propertyType, parameters)
 				: null);
 	}
@@ -464,42 +463,17 @@ internal static partial class Sources
 		=> AppendNamedValueParameter(sb, parameter, parameter.Name);
 
 	/// <summary>
-	///     Appends a NamedParameter wrapping an explicit value with <c>It.Is&lt;T&gt;</c>, using the given variable reference
-	///     name.
+	///     Appends a NamedParameter wrapping an explicit value with <c>It.IsValue&lt;T&gt;</c>, using
+	///     the given variable reference name. The diagnostic representation is computed lazily by the
+	///     matcher's <c>ToString</c> on demand, so the per-setup string allocation is paid only when
+	///     a verification message is actually rendered (the failure path).
 	/// </summary>
 	private static void AppendNamedValueParameter(StringBuilder sb, MethodParameter parameter, string paramRef)
 	{
 		sb.Append("(global::Mockolate.Parameters.IParameterMatch<");
 		sb.AppendTypeOrWrapper(parameter.Type);
-		sb.Append(">)global::Mockolate.It.Is<")
-			.Append(parameter.ToNullableType()).Append(">(").Append(paramRef).Append(", ");
-		if (parameter.Type.SpecialType == SpecialType.System_String)
-		{
-			sb.Append("$\"\\\"{").Append(paramRef).Append("}\\\"\"");
-		}
-		else if (parameter.Type.CanBeNullable)
-		{
-			sb.Append(paramRef).Append(" is null ? \"null\" : ");
-			if (parameter.Type.IsFormattable)
-			{
-				sb.Append("((global::System.IFormattable)").Append(paramRef).Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
-			}
-			else
-			{
-				sb.Append(paramRef).Append(".ToString()");
-			}
-		}
-		else if (parameter.Type.IsFormattable)
-		{
-			sb.Append("((global::System.IFormattable)").Append(paramRef)
-				.Append(").ToString(null, global::System.Globalization.CultureInfo.InvariantCulture)");
-		}
-		else
-		{
-			sb.Append(paramRef).Append(".ToString()");
-		}
-
-		sb.Append(")");
+		sb.Append(">)global::Mockolate.It.IsValue<")
+			.Append(parameter.ToNullableType()).Append(">(").Append(paramRef).Append(")");
 	}
 
 	private static string CreateUniqueParameterName(EquatableArray<MethodParameter> parameters, string name)
