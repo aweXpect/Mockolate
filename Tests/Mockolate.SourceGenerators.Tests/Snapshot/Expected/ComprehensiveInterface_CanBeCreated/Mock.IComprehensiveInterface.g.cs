@@ -232,28 +232,31 @@ internal static partial class Mock
 		internal const int MemberId_WithDefaults = 24;
 		internal const int MemberId_WithCollidingNames = 25;
 		internal const int MemberId_GetMaybeNull = 26;
-		internal const int MemberId_DoTask = 27;
-		internal const int MemberId_DoTaskOf = 28;
-		internal const int MemberId_DoVT = 29;
-		internal const int MemberId_DoVTOf = 30;
-		internal const int MemberId_GetTuple = 31;
-		internal const int MemberId_GetNullable = 32;
-		internal const int MemberId_GetSpan = 33;
-		internal const int MemberId_GetROSpan = 34;
-		internal const int MemberId_GetByRef = 35;
-		internal const int MemberId_GetByRefReadonly = 36;
-		internal const int MemberId_G1_T_ = 37;
-		internal const int MemberId_G2_T_ = 38;
-		internal const int MemberId_G3_T_ = 39;
-		internal const int MemberId_G4_T_ = 40;
-		internal const int MemberId_G5_T_ = 41;
-		internal const int MemberId_G6_T_ = 42;
-		internal const int MemberId_G7_T_ = 43;
-		internal const int MemberId_G8_T_ = 44;
-		internal const int MemberId_Five = 45;
-		internal const int MemberId_Seventeen = 46;
-		internal const int MemberId_SeventeenVoid = 47;
-		internal const int MemberCount = 48;
+		internal const int MemberId_TakeObject = 27;
+		internal const int MemberId_TakeTwoObjects = 28;
+		internal const int MemberId_TakeIntAndObject = 29;
+		internal const int MemberId_DoTask = 30;
+		internal const int MemberId_DoTaskOf = 31;
+		internal const int MemberId_DoVT = 32;
+		internal const int MemberId_DoVTOf = 33;
+		internal const int MemberId_GetTuple = 34;
+		internal const int MemberId_GetNullable = 35;
+		internal const int MemberId_GetSpan = 36;
+		internal const int MemberId_GetROSpan = 37;
+		internal const int MemberId_GetByRef = 38;
+		internal const int MemberId_GetByRefReadonly = 39;
+		internal const int MemberId_G1_T_ = 40;
+		internal const int MemberId_G2_T_ = 41;
+		internal const int MemberId_G3_T_ = 42;
+		internal const int MemberId_G4_T_ = 43;
+		internal const int MemberId_G5_T_ = 44;
+		internal const int MemberId_G6_T_ = 45;
+		internal const int MemberId_G7_T_ = 46;
+		internal const int MemberId_G8_T_ = 47;
+		internal const int MemberId_Five = 48;
+		internal const int MemberId_Seventeen = 49;
+		internal const int MemberId_SeventeenVoid = 50;
+		internal const int MemberCount = 51;
 		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_GetSet_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetSet");
 		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_GetOnly_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly");
 		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_SetOnly_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly");
@@ -303,6 +306,15 @@ internal static partial class Mock
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastMethod1Buffer<string?> MockolateBuffer_GetMaybeNull
 			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod1Buffer<string?>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetMaybeNull, static fast => new global::Mockolate.Interactions.FastMethod1Buffer<string?>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastMethod1Buffer<object?> MockolateBuffer_TakeObject
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod1Buffer<object?>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, static fast => new global::Mockolate.Interactions.FastMethod1Buffer<object?>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastMethod2Buffer<object?, object?> MockolateBuffer_TakeTwoObjects
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod2Buffer<object?, object?>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, static fast => new global::Mockolate.Interactions.FastMethod2Buffer<object?, object?>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastMethod2Buffer<int, object?> MockolateBuffer_TakeIntAndObject
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod2Buffer<int, object?>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, static fast => new global::Mockolate.Interactions.FastMethod2Buffer<int, object?>(fast)));
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastMethod0Buffer MockolateBuffer_DoTask
 			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod0Buffer>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_DoTask, static fast => new global::Mockolate.Interactions.FastMethod0Buffer(fast)));
@@ -978,6 +990,183 @@ internal static partial class Mock
 				return wrappedResult;
 			}
 			return methodSetup?.TryGetReturnValue(s, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(string?)!, s);
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)" />
+		public bool TakeObject(object? obj)
+		{
+			global::Mockolate.Setup.ReturnMethodSetup<bool, object?>? methodSetup = null;
+			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+			{
+				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject);
+				if (snapshot_methodSetup is not null)
+				{
+					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
+					{
+						if (snapshot_methodSetup[i_methodSetup] is global::Mockolate.Setup.ReturnMethodSetup<bool, object?> s_methodSetup && s_methodSetup.Matches(obj))
+						{
+							methodSetup = s_methodSetup;
+							break;
+						}
+					}
+				}
+			}
+			if (methodSetup is null)
+			{
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<bool, object?> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<bool, object?>>("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject"))
+				{
+					if (s_methodSetup.Matches(obj))
+					{
+						methodSetup = s_methodSetup;
+						break;
+					}
+				}
+			}
+			bool hasWrappedResult = false;
+			bool wrappedResult = default!;
+			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+			{
+				this.MockolateBuffer_TakeObject.Append("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", obj);
+			}
+			try
+			{
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface wraps)
+				{
+					wrappedResult = wraps.TakeObject(obj);
+					hasWrappedResult = true;
+				}
+			}
+			finally
+			{
+				methodSetup?.TriggerCallbacks(obj);
+			}
+			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)' was invoked without prior setup.");
+			}
+			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
+			{
+				return wrappedResult;
+			}
+			return methodSetup?.TryGetReturnValue(obj, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(bool)!, obj);
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)" />
+		public int TakeTwoObjects(object? first, object? second)
+		{
+			global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>? methodSetup = null;
+			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+			{
+				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects);
+				if (snapshot_methodSetup is not null)
+				{
+					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
+					{
+						if (snapshot_methodSetup[i_methodSetup] is global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?> s_methodSetup && s_methodSetup.Matches(first, second))
+						{
+							methodSetup = s_methodSetup;
+							break;
+						}
+					}
+				}
+			}
+			if (methodSetup is null)
+			{
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>>("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects"))
+				{
+					if (s_methodSetup.Matches(first, second))
+					{
+						methodSetup = s_methodSetup;
+						break;
+					}
+				}
+			}
+			bool hasWrappedResult = false;
+			int wrappedResult = default!;
+			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+			{
+				this.MockolateBuffer_TakeTwoObjects.Append("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", first, second);
+			}
+			try
+			{
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface wraps)
+				{
+					wrappedResult = wraps.TakeTwoObjects(first, second);
+					hasWrappedResult = true;
+				}
+			}
+			finally
+			{
+				methodSetup?.TriggerCallbacks(first, second);
+			}
+			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)' was invoked without prior setup.");
+			}
+			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
+			{
+				return wrappedResult;
+			}
+			return methodSetup?.TryGetReturnValue(first, second, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, first, second);
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)" />
+		public int TakeIntAndObject(int n, object? obj)
+		{
+			global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>? methodSetup = null;
+			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+			{
+				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject);
+				if (snapshot_methodSetup is not null)
+				{
+					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
+					{
+						if (snapshot_methodSetup[i_methodSetup] is global::Mockolate.Setup.ReturnMethodSetup<int, int, object?> s_methodSetup && s_methodSetup.Matches(n, obj))
+						{
+							methodSetup = s_methodSetup;
+							break;
+						}
+					}
+				}
+			}
+			if (methodSetup is null)
+			{
+				foreach (global::Mockolate.Setup.ReturnMethodSetup<int, int, object?> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>>("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject"))
+				{
+					if (s_methodSetup.Matches(n, obj))
+					{
+						methodSetup = s_methodSetup;
+						break;
+					}
+				}
+			}
+			bool hasWrappedResult = false;
+			int wrappedResult = default!;
+			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+			{
+				this.MockolateBuffer_TakeIntAndObject.Append("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", n, obj);
+			}
+			try
+			{
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface wraps)
+				{
+					wrappedResult = wraps.TakeIntAndObject(n, obj);
+					hasWrappedResult = true;
+				}
+			}
+			finally
+			{
+				methodSetup?.TriggerCallbacks(n, obj);
+			}
+			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)' was invoked without prior setup.");
+			}
+			if (methodSetup?.HasReturnCallbacks != true && hasWrappedResult)
+			{
+				return wrappedResult;
+			}
+			return methodSetup?.TryGetReturnValue(n, obj, out var returnValue) == true ? returnValue : this.MockRegistry.Behavior.DefaultValue.Generate(default(int)!, n, obj);
 		}
 
 		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.DoTask()" />
@@ -2442,6 +2631,110 @@ internal static partial class Mock
 		}
 
 		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<bool, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, object?>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", parameters, "obj");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<bool, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameter<object?>? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", CovariantParameterAdapter<object?>.Wrap(obj ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<bool, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeObject(object? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(obj));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", parameters, "first", "second");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, global::Mockolate.Parameters.IParameter<object?>? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", CovariantParameterAdapter<object?>.Wrap(first ?? global::Mockolate.It.IsNull<object?>("null")), CovariantParameterAdapter<object?>.Wrap(second ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(object? first, global::Mockolate.Parameters.IParameter<object?>? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(first), CovariantParameterAdapter<object?>.Wrap(second ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, object? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", CovariantParameterAdapter<object?>.Wrap(first ?? global::Mockolate.It.IsNull<object?>("null")), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(second));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(object? first, object? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(first), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(second));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", parameters, "n", "obj");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, global::Mockolate.Parameters.IParameter<object?>? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", CovariantParameterAdapter<int>.Wrap(n ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<object?>.Wrap(obj ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(int n, global::Mockolate.Parameters.IParameter<object?>? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(n), CovariantParameterAdapter<object?>.Wrap(obj ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, object? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", CovariantParameterAdapter<int>.Wrap(n ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(obj));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(int n, object? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(n), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(obj));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
 		global::Mockolate.Setup.IReturnMethodSetup<global::System.Threading.Tasks.Task> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.DoTask()
 		{
 			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.DoTask");
@@ -2961,6 +3254,73 @@ internal static partial class Mock
 			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<string?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetMaybeNull, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetMaybeNull", __i => 
 				(global::System.Collections.Generic.EqualityComparer<string?>.Default.Equals(s, __i.Parameter1)), () => $"GetMaybeNull({s})");
 		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("obj", __i.Parameter1)]),
+					_ => true
+				}, () => $"TakeObject({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameter<object?>? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, object?>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", obj is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(obj), () => $"TakeObject({obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.TakeObject(object? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", __i => 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(obj, __i.Parameter1)), () => $"TakeObject({obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1, __i.Parameter2]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("first", __i.Parameter1), ("second", __i.Parameter2)]),
+					_ => true
+				}, () => $"TakeTwoObjects({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, global::Mockolate.Parameters.IParameter<object?>? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, object?, object?>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", first is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(first), second is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(second), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(object? first, global::Mockolate.Parameters.IParameter<object?>? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(first, __i.Parameter1)) && 
+				(second is not null ? CovariantParameterAdapter<object?>.Wrap(second).Matches(__i.Parameter2) : global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(__i.Parameter2, default(object?))), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, object? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => 
+				(first is not null ? CovariantParameterAdapter<object?>.Wrap(first).Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(__i.Parameter1, default(object?))) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(second, __i.Parameter2)), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.TakeTwoObjects(object? first, object? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(first, __i.Parameter1)) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(second, __i.Parameter2)), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1, __i.Parameter2]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("n", __i.Parameter1), ("obj", __i.Parameter2)]),
+					_ => true
+				}, () => $"TakeIntAndObject({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, global::Mockolate.Parameters.IParameter<object?>? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, int, object?>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", n is null ? (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(default!) : CovariantParameterAdapter<int>.Wrap(n), obj is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(obj), () => $"TakeIntAndObject({n}, {obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(int n, global::Mockolate.Parameters.IParameter<object?>? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => 
+				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(n, __i.Parameter1)) && 
+				(obj is not null ? CovariantParameterAdapter<object?>.Wrap(obj).Matches(__i.Parameter2) : global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(__i.Parameter2, default(object?))), () => $"TakeIntAndObject({n}, {obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, object? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => 
+				(n is not null ? CovariantParameterAdapter<int>.Wrap(n).Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(__i.Parameter1, default(int))) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(obj, __i.Parameter2)), () => $"TakeIntAndObject({n}, {obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.TakeIntAndObject(int n, object? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => 
+				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(n, __i.Parameter1)) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(obj, __i.Parameter2)), () => $"TakeIntAndObject({n}, {obj})");
+		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.DoTask()
 			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_DoTask, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.DoTask", () => $"DoTask()");
 		/// <inheritdoc />
@@ -3424,6 +3784,73 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.GetMaybeNull(string? s)
 			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<string?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetMaybeNull, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetMaybeNull", __i => 
 				(global::System.Collections.Generic.EqualityComparer<string?>.Default.Equals(s, __i.Parameter1)), () => $"GetMaybeNull({s})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("obj", __i.Parameter1)]),
+					_ => true
+				}, () => $"TakeObject({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameter<object?>? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, object?>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", obj is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(obj), () => $"TakeObject({obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.TakeObject(object? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", __i => 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(obj, __i.Parameter1)), () => $"TakeObject({obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1, __i.Parameter2]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("first", __i.Parameter1), ("second", __i.Parameter2)]),
+					_ => true
+				}, () => $"TakeTwoObjects({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, global::Mockolate.Parameters.IParameter<object?>? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, object?, object?>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", first is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(first), second is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(second), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(object? first, global::Mockolate.Parameters.IParameter<object?>? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(first, __i.Parameter1)) && 
+				(second is not null ? CovariantParameterAdapter<object?>.Wrap(second).Matches(__i.Parameter2) : global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(__i.Parameter2, default(object?))), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, object? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => 
+				(first is not null ? CovariantParameterAdapter<object?>.Wrap(first).Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(__i.Parameter1, default(object?))) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(second, __i.Parameter2)), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.TakeTwoObjects(object? first, object? second)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<object?, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", __i => 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(first, __i.Parameter1)) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(second, __i.Parameter2)), () => $"TakeTwoObjects({first}, {second})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1, __i.Parameter2]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("n", __i.Parameter1), ("obj", __i.Parameter2)]),
+					_ => true
+				}, () => $"TakeIntAndObject({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, global::Mockolate.Parameters.IParameter<object?>? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, int, object?>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", n is null ? (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.Is<int>(default!) : CovariantParameterAdapter<int>.Wrap(n), obj is null ? (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.Is<object?>(default!) : CovariantParameterAdapter<object?>.Wrap(obj), () => $"TakeIntAndObject({n}, {obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(int n, global::Mockolate.Parameters.IParameter<object?>? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => 
+				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(n, __i.Parameter1)) && 
+				(obj is not null ? CovariantParameterAdapter<object?>.Wrap(obj).Matches(__i.Parameter2) : global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(__i.Parameter2, default(object?))), () => $"TakeIntAndObject({n}, {obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, object? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => 
+				(n is not null ? CovariantParameterAdapter<int>.Wrap(n).Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(__i.Parameter1, default(int))) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(obj, __i.Parameter2)), () => $"TakeIntAndObject({n}, {obj})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.TakeIntAndObject(int n, object? obj)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, object?>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", __i => 
+				(global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(n, __i.Parameter1)) && 
+				(global::System.Collections.Generic.EqualityComparer<object?>.Default.Equals(obj, __i.Parameter2)), () => $"TakeIntAndObject({n}, {obj})");
 		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters IMockVerifyForIComprehensiveInterface.DoTask()
 			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_DoTask, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.DoTask", () => $"DoTask()");
@@ -3932,6 +4359,110 @@ internal static partial class Mock
 		{
 			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<string?, string?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetMaybeNull", (global::Mockolate.Parameters.IParameterMatch<string?>)global::Mockolate.It.IsValue<string?>(s));
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetMaybeNull, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<bool, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, object?>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", parameters, "obj");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<bool, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeObject(global::Mockolate.Parameters.IParameter<object?>? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", CovariantParameterAdapter<object?>.Wrap(obj ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<bool, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeObject(object? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<bool, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject", (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(obj));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeObject, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", parameters, "first", "second");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, global::Mockolate.Parameters.IParameter<object?>? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", CovariantParameterAdapter<object?>.Wrap(first ?? global::Mockolate.It.IsNull<object?>("null")), CovariantParameterAdapter<object?>.Wrap(second ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(object? first, global::Mockolate.Parameters.IParameter<object?>? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(first), CovariantParameterAdapter<object?>.Wrap(second ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, object? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", CovariantParameterAdapter<object?>.Wrap(first ?? global::Mockolate.It.IsNull<object?>("null")), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(second));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, object?, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeTwoObjects(object? first, object? second)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, object?, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects", (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(first), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(second));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeTwoObjects, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", parameters, "n", "obj");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, global::Mockolate.Parameters.IParameter<object?>? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", CovariantParameterAdapter<int>.Wrap(n ?? global::Mockolate.It.IsNull<int>("null")), CovariantParameterAdapter<object?>.Wrap(obj ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(int n, global::Mockolate.Parameters.IParameter<object?>? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(n), CovariantParameterAdapter<object?>.Wrap(obj ?? global::Mockolate.It.IsNull<object?>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, object? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", CovariantParameterAdapter<int>.Wrap(n ?? global::Mockolate.It.IsNull<int>("null")), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(obj));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int, object?> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.TakeIntAndObject(int n, object? obj)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<int, int, object?>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject", (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(n), (global::Mockolate.Parameters.IParameterMatch<object?>)global::Mockolate.It.IsValue<object?>(obj));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IComprehensiveInterface.MemberId_TakeIntAndObject, _scenarioName, methodSetup);
 			return methodSetup;
 		}
 
@@ -4525,6 +5056,120 @@ internal static partial class Mock
 		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<string?, string?> GetMaybeNull(string? s);
 
 		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)">TakeObject(object?)</see> with the given <paramref name="parameters" />.
+		/// </summary>
+		/// <remarks>
+		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<bool, object?> TakeObject(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)">TakeObject(object?)</see> with the given <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<bool, object?> TakeObject(global::Mockolate.Parameters.IParameter<object?>? obj);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)">TakeObject(object?)</see> with the given <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
+		/// </remarks>
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<bool, object?> TakeObject(object? obj);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="parameters" />.
+		/// </summary>
+		/// <remarks>
+		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> TakeTwoObjects(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, global::Mockolate.Parameters.IParameter<object?>? second);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="first" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="second" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> TakeTwoObjects(object? first, global::Mockolate.Parameters.IParameter<object?>? second);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="second" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="first" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, object?, object?> TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, object? second);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
+		/// </remarks>
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, object?, object?> TakeTwoObjects(object? first, object? second);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="parameters" />.
+		/// </summary>
+		/// <remarks>
+		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> TakeIntAndObject(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, global::Mockolate.Parameters.IParameter<object?>? obj);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="n" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="obj" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> TakeIntAndObject(int n, global::Mockolate.Parameters.IParameter<object?>? obj);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="obj" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="n" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<int, int, object?> TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, object? obj);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
+		/// </remarks>
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<int, int, object?> TakeIntAndObject(int n, object? obj);
+
+		/// <summary>
 		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.DoTask()">DoTask()</see>.
 		/// </summary>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
@@ -5004,6 +5649,120 @@ internal static partial class Mock
 		/// </remarks>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters GetMaybeNull(string? s);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)">TakeObject(object?)</see> with the given <paramref name="parameters"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeObject(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)">TakeObject(object?)</see> with the given <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeObject(global::Mockolate.Parameters.IParameter<object?>? obj);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeObject(object?)">TakeObject(object?)</see> with the given <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
+		/// </remarks>
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters TakeObject(object? obj);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="parameters"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeTwoObjects(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, global::Mockolate.Parameters.IParameter<object?>? second);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="first" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="second" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeTwoObjects(object? first, global::Mockolate.Parameters.IParameter<object?>? second);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="second" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="first" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeTwoObjects(global::Mockolate.Parameters.IParameter<object?>? first, object? second);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeTwoObjects(object?, object?)">TakeTwoObjects(object?, object?)</see> with the given <paramref name="first"/>, <paramref name="second"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
+		/// </remarks>
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters TakeTwoObjects(object? first, object? second);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="parameters"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeIntAndObject(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(2)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, global::Mockolate.Parameters.IParameter<object?>? obj);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="n" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="obj" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeIntAndObject(int n, global::Mockolate.Parameters.IParameter<object?>? obj);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts a direct value for <paramref name="obj" /> (equivalent to <c>It.Is&lt;T&gt;(value)</c>) and an <see cref="global::Mockolate.It">It</see> matcher for <paramref name="n" />.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> TakeIntAndObject(global::Mockolate.Parameters.IParameter<int>? n, object? obj);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.TakeIntAndObject(int, object?)">TakeIntAndObject(int, object?)</see> with the given <paramref name="n"/>, <paramref name="obj"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
+		/// </remarks>
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface>.IgnoreParameters TakeIntAndObject(int n, object? obj);
 
 		/// <summary>
 		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.DoTask()">DoTask()</see>.

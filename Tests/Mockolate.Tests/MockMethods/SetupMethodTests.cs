@@ -149,12 +149,12 @@ public sealed partial class SetupMethodTests
 	{
 		IMethodService sut = IMethodService.CreateMock();
 		MyMethodServiceType value = new(5);
-		sut.Mock.Setup.Combine(value, null).Returns(4);
+		sut.Mock.Setup.Combine(value, null!).Returns(4);
 
 		int result = sut.Combine(value, null!);
 
 		await That(result).IsEqualTo(4);
-		await That(sut.Mock.Verify.Combine(value, null)).Once();
+		await That(sut.Mock.Verify.Combine(value, null!)).Once();
 	}
 
 	[Fact]
