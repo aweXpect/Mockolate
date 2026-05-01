@@ -180,7 +180,7 @@ partial class Build
 
 	static int[] DetermineDroppedColumnIndices(string headerLine, string[] columnsToRemove)
 	{
-		string[] tokens = headerLine.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+		string[] tokens = SplitTableRow(headerLine);
 		List<int> indices = new();
 		for (int i = 0; i < tokens.Length; i++)
 		{
@@ -204,7 +204,7 @@ partial class Build
 			return line;
 		}
 
-		string[] tokens = line.Split('|', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+		string[] tokens = SplitTableRow(line);
 		StringBuilder result = new();
 		result.Append('|');
 		for (int i = 0; i < tokens.Length; i++)
@@ -220,6 +220,19 @@ partial class Build
 		}
 
 		return result.ToString();
+	}
+
+	static string[] SplitTableRow(string line)
+	{
+		string[] parts = line.Split('|', StringSplitOptions.TrimEntries);
+		if (parts.Length < 2)
+		{
+			return [];
+		}
+
+		string[] tokens = new string[parts.Length - 2];
+		Array.Copy(parts, 1, tokens, 0, tokens.Length);
+		return tokens;
 	}
 
 	static void MakeLineBold(StringBuilder sb, string line)
