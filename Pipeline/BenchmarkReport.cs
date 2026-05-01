@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -11,8 +12,6 @@ namespace Build;
 /// </summary>
 internal static class BenchmarkReport
 {
-	public static readonly string[] DefaultColumnsToRemove = ["RatioSD", "Gen0", "Gen1", "Gen2",];
-
 	public static string BuildBody(IReadOnlyList<BenchmarkReportFile> files, string[] columnsToRemove)
 	{
 		StringBuilder sb = new();
@@ -121,10 +120,22 @@ internal static class BenchmarkReport
 
 		string commonPrefix = FindCommonRowPrefix(tableBuffer);
 
+		TableRow headerRow = tableBuffer[0].RowIndex == 0 ? tableBuffer[0] : null;
+		int allocatedIndex = headerRow != null ? FindColumnIndex(headerRow.Tokens, "Allocated") : -1;
+		int ratioIndex = headerRow != null ? FindColumnIndex(headerRow.Tokens, "Ratio") : -1;
+		int allocRatioIndex = headerRow != null ? FindColumnIndex(headerRow.Tokens, "Alloc Ratio") : -1;
+
 		foreach (TableRow row in tableBuffer)
 		{
 			if (row.RowIndex >= BenchmarkTableParser.DataRowStartIndex && row.Tokens.Length == 0)
 			{
+				if (headerRow != null && headerRow.Tokens.Length > 0)
+				{
+					string[] empty = new string[headerRow.Tokens.Length];
+					Array.Fill(empty, string.Empty);
+					sb.AppendLine(JoinTokens(empty));
+				}
+
 				continue;
 			}
 
@@ -140,14 +151,18 @@ internal static class BenchmarkReport
 				string key = string.Join("|", row.Tokens.Take(meanIndex));
 				if (baselineRows.TryGetValue(key, out string[] baselineTokens) && baselineTokens.Length > 0)
 				{
-					string[] modifiedBaseline = new string[baselineTokens.Length];
-					for (int i = 0; i < baselineTokens.Length; i++)
+					string[] modifiedBaseline = (string[])baselineTokens.Clone();
+					RecomputeBaselineRatio(modifiedBaseline, row.Tokens, meanIndex, ratioIndex);
+					RecomputeBaselineRatio(modifiedBaseline, row.Tokens, allocatedIndex, allocRatioIndex);
+
+					string[] italicized = new string[modifiedBaseline.Length];
+					for (int i = 0; i < modifiedBaseline.Length; i++)
 					{
-						string content = i == 0 ? "baseline*" : baselineTokens[i];
-						modifiedBaseline[i] = string.IsNullOrWhiteSpace(content) ? content : $"_{content}_";
+						string content = i == 0 ? "baseline*" : modifiedBaseline[i];
+						italicized[i] = string.IsNullOrWhiteSpace(content) ? content : $"_{content}_";
 					}
 
-					sb.AppendLine(JoinTokens(modifiedBaseline));
+					sb.AppendLine(JoinTokens(italicized));
 					anyBaselineInjected = true;
 				}
 			}
@@ -163,6 +178,30 @@ internal static class BenchmarkReport
 		}
 
 		tableBuffer.Clear();
+	}
+
+	internal static void RecomputeBaselineRatio(string[] baselineTokens, string[] mockolateTokens,
+		int valueIndex, int ratioIndex)
+	{
+		if (valueIndex <= 0 || ratioIndex <= 0)
+		{
+			return;
+		}
+
+		if (valueIndex >= baselineTokens.Length || valueIndex >= mockolateTokens.Length
+		                                        || ratioIndex >= baselineTokens.Length)
+		{
+			return;
+		}
+
+		if (!TryParseQuantity(baselineTokens[valueIndex], out double baselineValue)
+		    || !TryParseQuantity(mockolateTokens[valueIndex], out double mockolateValue)
+		    || mockolateValue <= 0)
+		{
+			return;
+		}
+
+		baselineTokens[ratioIndex] = (baselineValue / mockolateValue).ToString("F2", CultureInfo.InvariantCulture);
 	}
 
 	internal static string[] ApplyHeaderAndPrefixStripping(TableRow row, string commonPrefix)
@@ -239,6 +278,55 @@ internal static class BenchmarkReport
 		}
 
 		return sb.ToString();
+	}
+
+	internal static int FindColumnIndex(string[] tokens, string columnName) =>
+		Array.FindIndex(tokens, t => string.Equals(t, columnName, StringComparison.OrdinalIgnoreCase));
+
+	internal static bool TryParseQuantity(string value, out double normalized)
+	{
+		normalized = 0;
+		if (string.IsNullOrWhiteSpace(value))
+		{
+			return false;
+		}
+
+		string trimmed = value.Trim();
+		int spaceIdx = trimmed.LastIndexOf(' ');
+		string numberPart = spaceIdx > 0 ? trimmed.Substring(0, spaceIdx).Trim() : trimmed;
+		string unitPart = spaceIdx > 0 ? trimmed.Substring(spaceIdx + 1).Trim() : string.Empty;
+
+		if (!double.TryParse(numberPart,
+			NumberStyles.Float | NumberStyles.AllowThousands,
+			CultureInfo.InvariantCulture,
+			out double number))
+		{
+			return false;
+		}
+
+		double multiplier = unitPart switch
+		{
+			"" => 1,
+			"ps" => 0.001,
+			"ns" => 1,
+			"μs" => 1000,
+			"us" => 1000,
+			"ms" => 1_000_000,
+			"s" => 1_000_000_000,
+			"B" => 1,
+			"KB" => 1024,
+			"MB" => 1024d * 1024,
+			"GB" => 1024d * 1024 * 1024,
+			_ => double.NaN,
+		};
+
+		if (double.IsNaN(multiplier))
+		{
+			return false;
+		}
+
+		normalized = number * multiplier;
+		return true;
 	}
 
 	internal static int[] DetermineDroppedColumnIndices(string headerLine, string[] columnsToRemove)

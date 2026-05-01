@@ -149,6 +149,31 @@ public sealed class BuildBodyTests
 	}
 
 	[Fact]
+	public async Task BuildBody_WhenTableHasEmptyRowSeparatingParameterGroups_ShouldEmitEmptyRowMatchingHeaderColumnCount()
+	{
+		string[] report =
+		[
+			"| Method | N | Mean | Allocated |",
+			"|--------|---|-----:|----------:|",
+			"| Indexer_Mockolate | 1 | 100 ns | 1 KB |",
+			"| Indexer_Moq | 1 | 200 ns | 2 KB |",
+			"|         |   |      |          |",
+			"| Indexer_Mockolate | 10 | 1000 ns | 10 KB |",
+			"| Indexer_Moq | 10 | 2000 ns | 20 KB |",
+		];
+		BenchmarkReportFile file = new(report, null);
+
+		string body = BenchmarkReport.BuildBody([file,], _columnsToRemove);
+
+		string[] lines = body.Split(Environment.NewLine);
+		int firstGroupLast = Array.IndexOf(lines, "| Moq | 1 | 200 ns | 2 KB |");
+		int secondGroupFirst = Array.IndexOf(lines, "| **Mockolate** | **10** | **1000 ns** | **10 KB** |");
+		await That(firstGroupLast).IsGreaterThan(-1);
+		await That(secondGroupFirst).IsGreaterThan(firstGroupLast);
+		await That(lines[firstGroupLast + 1]).IsEqualTo("|  |  |  |  |");
+	}
+
+	[Fact]
 	public async Task BuildBody_WhenTableHasEmptyRowSeparatingParameterGroups_ShouldStillStripCommonPrefix()
 	{
 		string[] report =
@@ -193,6 +218,73 @@ public sealed class BuildBodyTests
 		await That(mockolateIdx).IsGreaterThan(baselineIdx);
 		await That(body).Contains(
 			"`baseline*` rows show the corresponding Mockolate benchmark");
+	}
+
+	[Fact]
+	public async Task BuildBody_WithBaseline_ShouldNormalizeUnitDifferencesWhenComputingRatio()
+	{
+		string[] report =
+		[
+			"| Method | Mean | Ratio | Allocated | Alloc Ratio |",
+			"|--------|-----:|------:|----------:|------------:|",
+			"| Foo_Mockolate | 500 ns | 1.00 | 1 KB | 1.00 |",
+		];
+		string[] baseline =
+		[
+			"| Method | Mean | Ratio | Allocated | Alloc Ratio |",
+			"|--------|-----:|------:|----------:|------------:|",
+			"| Foo_Mockolate | 1.00 μs | 1.00 | 2048 B | 1.00 |",
+		];
+		BenchmarkReportFile file = new(report, baseline);
+
+		string body = BenchmarkReport.BuildBody([file,], _columnsToRemove);
+
+		await That(body).Contains("| _baseline*_ | _1.00 μs_ | _2.00_ | _2048 B_ | _2.00_ |");
+	}
+
+	[Fact]
+	public async Task BuildBody_WithBaseline_ShouldRecomputeAllocRatioRelativeToCurrentMockolate()
+	{
+		string[] report =
+		[
+			"| Method | Mean | Ratio | Allocated | Alloc Ratio |",
+			"|--------|-----:|------:|----------:|------------:|",
+			"| Foo_Mockolate | 100 ns | 1.00 | 2 KB | 1.00 |",
+		];
+		string[] baseline =
+		[
+			"| Method | Mean | Ratio | Allocated | Alloc Ratio |",
+			"|--------|-----:|------:|----------:|------------:|",
+			"| Foo_Mockolate | 100 ns | 1.00 | 1024 B | 1.00 |",
+		];
+		BenchmarkReportFile file = new(report, baseline);
+
+		string body = BenchmarkReport.BuildBody([file,], _columnsToRemove);
+
+		await That(body).Contains("| _baseline*_ | _100 ns_ | _1.00_ | _1024 B_ | _0.50_ |");
+	}
+
+	[Fact]
+	public async Task BuildBody_WithBaseline_ShouldRecomputeRatioRelativeToCurrentMockolate()
+	{
+		string[] report =
+		[
+			"| Method | Mean | Ratio | Allocated | Alloc Ratio |",
+			"|--------|-----:|------:|----------:|------------:|",
+			"| Foo_Mockolate | 216.85 ns | 1.00 | 1048 B | 1.00 |",
+			"| Foo_Moq | 1377.70 ns | 6.36 | 2096 B | 2.00 |",
+		];
+		string[] baseline =
+		[
+			"| Method | Mean | Ratio | Allocated | Alloc Ratio |",
+			"|--------|-----:|------:|----------:|------------:|",
+			"| Foo_Mockolate | 206.44 ns | 1.00 | 1048 B | 1.00 |",
+		];
+		BenchmarkReportFile file = new(report, baseline);
+
+		string body = BenchmarkReport.BuildBody([file,], _columnsToRemove);
+
+		await That(body).Contains("| _baseline*_ | _206.44 ns_ | _0.95_ | _1048 B_ | _1.00_ |");
 	}
 
 	[Fact]
