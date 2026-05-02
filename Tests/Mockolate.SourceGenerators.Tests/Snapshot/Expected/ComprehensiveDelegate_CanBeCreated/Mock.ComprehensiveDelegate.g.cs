@@ -10,68 +10,6 @@
 #nullable enable annotations
 namespace Mockolate;
 
-/// <summary>
-///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see>.
-/// </summary>
-[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-internal static partial class MockExtensionsForComprehensiveDelegate
-{
-	/// <inheritdoc cref="MockExtensionsForComprehensiveDelegate" />
-	extension(global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate mock)
-	{
-		/// <summary>
-		///     Get access to the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see>.
-		/// </summary>
-		public global::Mockolate.Mock.IMockForComprehensiveDelegate Mock
-		{
-			get
-			{
-				if (mock.Target is global::Mockolate.Mock.IMockForComprehensiveDelegate mockInterface)
-				{
-					return mockInterface;
-				}
-				throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
-			}
-		}
-
-		/// <summary>
-		///     Create a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
-		/// </summary>
-		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate CreateMock()
-			=> CreateMock(null, []);
-
-		/// <summary>
-		///     Create a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
-		/// </summary>
-		/// <remarks>
-		///     All provided <paramref name="setups" /> are immediately applied to the mock.
-		/// </remarks>
-		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate CreateMock(params global::System.Action<global::Mockolate.Mock.IMockSetupForComprehensiveDelegate>[] setups)
-			=> CreateMock(null, setups);
-
-		/// <summary>
-		///     Create a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see> with the given <paramref name="mockBehavior" />.
-		/// </summary>
-		/// <remarks>
-		///     All provided <paramref name="setups" /> are immediately applied to the mock.
-		/// </remarks>
-		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate CreateMock(global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Mock.IMockSetupForComprehensiveDelegate>[] setups)
-		{
-			mockBehavior ??= global::Mockolate.MockBehavior.Default;
-			var mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, new global::Mockolate.Interactions.FastMockInteractions(0, mockBehavior.SkipInteractionRecording));
-			global::Mockolate.Mock.ComprehensiveDelegate mockTarget = new global::Mockolate.Mock.ComprehensiveDelegate(mockRegistry);
-			if (setups.Length > 0)
-			{
-				foreach (var setup in setups)
-				{
-					setup.Invoke(mockTarget);
-				}
-			}
-			return mockTarget.Object;
-		}
-	}
-}
-
 internal static partial class Mock
 {
 	/// <summary>
@@ -426,6 +364,68 @@ internal static partial class Mock
 		/// </remarks>
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForComprehensiveDelegate> Verify(int x, global::Mockolate.Parameters.IVerifyRefParameter<int> y, global::Mockolate.Parameters.IVerifyOutParameter<string> z, long w);
 
+	}
+}
+
+/// <summary>
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see>.
+/// </summary>
+[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+internal static partial class MockExtensionsForComprehensiveDelegate
+{
+	/// <inheritdoc cref="MockExtensionsForComprehensiveDelegate" />
+	extension(global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate mock)
+	{
+		/// <summary>
+		///     Get access to the mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see>.
+		/// </summary>
+		public global::Mockolate.Mock.IMockForComprehensiveDelegate Mock
+		{
+			get
+			{
+				if (mock.Target is global::Mockolate.Mock.IMockForComprehensiveDelegate mockInterface)
+				{
+					return mockInterface;
+				}
+				throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
+			}
+		}
+
+		/// <summary>
+		///     Create a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		/// </summary>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate CreateMock()
+			=> CreateMock(null, []);
+
+		/// <summary>
+		///     Create a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		/// </summary>
+		/// <remarks>
+		///     All provided <paramref name="setups" /> are immediately applied to the mock.
+		/// </remarks>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate CreateMock(params global::System.Action<global::Mockolate.Mock.IMockSetupForComprehensiveDelegate>[] setups)
+			=> CreateMock(null, setups);
+
+		/// <summary>
+		///     Create a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate">ComprehensiveDelegate</see> with the given <paramref name="mockBehavior" />.
+		/// </summary>
+		/// <remarks>
+		///     All provided <paramref name="setups" /> are immediately applied to the mock.
+		/// </remarks>
+		public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveDelegate CreateMock(global::Mockolate.MockBehavior? mockBehavior = null, params global::System.Action<global::Mockolate.Mock.IMockSetupForComprehensiveDelegate>[] setups)
+		{
+			mockBehavior ??= global::Mockolate.MockBehavior.Default;
+			var mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, new global::Mockolate.Interactions.FastMockInteractions(0, mockBehavior.SkipInteractionRecording));
+			global::Mockolate.Mock.ComprehensiveDelegate mockTarget = new global::Mockolate.Mock.ComprehensiveDelegate(mockRegistry);
+			if (setups.Length > 0)
+			{
+				foreach (var setup in setups)
+				{
+					setup.Invoke(mockTarget);
+				}
+			}
+			return mockTarget.Object;
+		}
 	}
 }
 #nullable disable annotations

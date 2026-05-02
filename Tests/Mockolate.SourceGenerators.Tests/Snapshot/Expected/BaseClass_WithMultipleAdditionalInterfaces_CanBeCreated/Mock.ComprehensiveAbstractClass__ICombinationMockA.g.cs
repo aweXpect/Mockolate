@@ -10,108 +10,6 @@
 #nullable enable annotations
 namespace Mockolate;
 
-/// <summary>
-///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> that also implements<br />
-///      - <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.
-/// </summary>
-[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-internal static partial class MockExtensionsForComprehensiveAbstractClass__ICombinationMockA
-{
-		/// <summary>
-		///     Extends this mock so the returned instance also implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.
-		/// </summary>
-		/// <remarks>
-		///     The returned instance is a brand-new mock that shares the mock registry (recorded interactions, scenario state, setups) of this one. Cast it to <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> to exercise the extra surface or use <c>.Mock.As&lt;ICombinationMockA&gt;()</c> to reach the Setup/Verify surface of the additional interface.
-		/// </remarks>
-		/// <param name="sut">The mock instance to extend.</param>
-		/// <param name="setups">Optional setup callbacks registered on the additional interface before the mock is returned.</param>
-		/// <returns>A mock of the original type that additionally implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-	public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass Implementing<TInterface>(this global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass sut, params global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>[] setups)
-		where TInterface : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA
-	{
-		if (sut is not global::Mockolate.IMock mock)
-		{
-			throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
-		}
-		global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA value;
-		if (mock.MockRegistry.ConstructorParameters is null || mock.MockRegistry.ConstructorParameters.Length == 0)
-		{
-			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry);
-		}
-		else if (mock.MockRegistry.ConstructorParameters.Length == 0)
-		{
-			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry);
-		}
-		else if (mock.MockRegistry.ConstructorParameters.Length >= 1 && mock.MockRegistry.ConstructorParameters.Length <= 2
-		    && TryCast(mock.MockRegistry.ConstructorParameters, 0, mock.MockRegistry.Behavior, out int c2p1)
-		    && TryCastWithDefaultValue(mock.MockRegistry.ConstructorParameters, 1, "x", mock.MockRegistry.Behavior, out string c2p2))
-		{
-			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry, c2p1, c2p2);
-		}
-		else if (mock.MockRegistry.ConstructorParameters.Length == 2
-		    && TryCast(mock.MockRegistry.ConstructorParameters, 0, mock.MockRegistry.Behavior, out int c3p1)
-		    && TryCast(mock.MockRegistry.ConstructorParameters, 1, mock.MockRegistry.Behavior, out bool c3p2))
-		{
-			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry, c3p1, c3p2);
-		}
-		else if (mock.MockRegistry.ConstructorParameters.Length == 1
-		    && TryCast(mock.MockRegistry.ConstructorParameters, 0, mock.MockRegistry.Behavior, out string c4p1))
-		{
-			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry, c4p1);
-		}
-		else
-		{
-			throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass' that matches the {mock.MockRegistry.ConstructorParameters.Length} given parameters ({string.Join(", ", mock.MockRegistry.ConstructorParameters)}).");
-		}
-		IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mock.MockRegistry.Behavior;
-		if (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>[]?>(out var additionalSetups))
-		{
-			if (setups.Length > 0)
-			{
-				var concatenatedSetups = new global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>[additionalSetups.Length + setups.Length];
-				additionalSetups.CopyTo(concatenatedSetups, 0);
-				setups.CopyTo(concatenatedSetups, additionalSetups.Length);
-				setups = concatenatedSetups;
-			}
-			else
-			{
-				setups = additionalSetups;
-			}
-		}
-		if (setups.Length > 0)
-		{
-			foreach (var setup in setups)
-			{
-				setup.Invoke(value);
-			}
-		}
-		return value;
-		static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
-		{
-		    var value = values[index];
-			if (value is TValue typedValue)
-			{
-				result = typedValue;
-				return true;
-			}
-
-			result = default!;
-			return value is null;
-		}
-		static bool TryCastWithDefaultValue<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)
-		{
-			if (values.Length > index && values[index] is TValue typedValue)
-			{
-				result = typedValue;
-				return true;
-			}
-
-			result = defaultValue;
-			return true;
-		}
-	}
-}
-
 internal static partial class Mock
 {
 	/// <summary>
@@ -577,6 +475,108 @@ internal static partial class Mock
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForICombinationMockA>.IgnoreParameters IMockVerifyForICombinationMockA.Run()
 			=> this.MockRegistry.VerifyMethod<IMockVerifyForICombinationMockA, global::Mockolate.Interactions.MethodInvocation>(this, -1, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA.Run", __i => true, () => $"Run()");
 		#endregion IMockVerifyForICombinationMockA
+	}
+}
+
+/// <summary>
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass">ComprehensiveAbstractClass</see> that also implements<br />
+///      - <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.
+/// </summary>
+[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+internal static partial class MockExtensionsForComprehensiveAbstractClass__ICombinationMockA
+{
+		/// <summary>
+		///     Extends this mock so the returned instance also implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.
+		/// </summary>
+		/// <remarks>
+		///     The returned instance is a brand-new mock that shares the mock registry (recorded interactions, scenario state, setups) of this one. Cast it to <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> to exercise the extra surface or use <c>.Mock.As&lt;ICombinationMockA&gt;()</c> to reach the Setup/Verify surface of the additional interface.
+		/// </remarks>
+		/// <param name="sut">The mock instance to extend.</param>
+		/// <param name="setups">Optional setup callbacks registered on the additional interface before the mock is returned.</param>
+		/// <returns>A mock of the original type that additionally implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+	public static global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass Implementing<TInterface>(this global::Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass sut, params global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>[] setups)
+		where TInterface : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA
+	{
+		if (sut is not global::Mockolate.IMock mock)
+		{
+			throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
+		}
+		global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA value;
+		if (mock.MockRegistry.ConstructorParameters is null || mock.MockRegistry.ConstructorParameters.Length == 0)
+		{
+			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry);
+		}
+		else if (mock.MockRegistry.ConstructorParameters.Length == 0)
+		{
+			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry);
+		}
+		else if (mock.MockRegistry.ConstructorParameters.Length >= 1 && mock.MockRegistry.ConstructorParameters.Length <= 2
+		    && TryCast(mock.MockRegistry.ConstructorParameters, 0, mock.MockRegistry.Behavior, out int c2p1)
+		    && TryCastWithDefaultValue(mock.MockRegistry.ConstructorParameters, 1, "x", mock.MockRegistry.Behavior, out string c2p2))
+		{
+			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry, c2p1, c2p2);
+		}
+		else if (mock.MockRegistry.ConstructorParameters.Length == 2
+		    && TryCast(mock.MockRegistry.ConstructorParameters, 0, mock.MockRegistry.Behavior, out int c3p1)
+		    && TryCast(mock.MockRegistry.ConstructorParameters, 1, mock.MockRegistry.Behavior, out bool c3p2))
+		{
+			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry, c3p1, c3p2);
+		}
+		else if (mock.MockRegistry.ConstructorParameters.Length == 1
+		    && TryCast(mock.MockRegistry.ConstructorParameters, 0, mock.MockRegistry.Behavior, out string c4p1))
+		{
+			value = new global::Mockolate.Mock.ComprehensiveAbstractClass__ICombinationMockA(mock.MockRegistry, c4p1);
+		}
+		else
+		{
+			throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'Mockolate.Tests.GeneratorCoverage.ComprehensiveAbstractClass' that matches the {mock.MockRegistry.ConstructorParameters.Length} given parameters ({string.Join(", ", mock.MockRegistry.ConstructorParameters)}).");
+		}
+		IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mock.MockRegistry.Behavior;
+		if (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>[]?>(out var additionalSetups))
+		{
+			if (setups.Length > 0)
+			{
+				var concatenatedSetups = new global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>[additionalSetups.Length + setups.Length];
+				additionalSetups.CopyTo(concatenatedSetups, 0);
+				setups.CopyTo(concatenatedSetups, additionalSetups.Length);
+				setups = concatenatedSetups;
+			}
+			else
+			{
+				setups = additionalSetups;
+			}
+		}
+		if (setups.Length > 0)
+		{
+			foreach (var setup in setups)
+			{
+				setup.Invoke(value);
+			}
+		}
+		return value;
+		static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
+		{
+		    var value = values[index];
+			if (value is TValue typedValue)
+			{
+				result = typedValue;
+				return true;
+			}
+
+			result = default!;
+			return value is null;
+		}
+		static bool TryCastWithDefaultValue<TValue>(object?[] values, int index, TValue defaultValue, global::Mockolate.MockBehavior behavior, out TValue result)
+		{
+			if (values.Length > index && values[index] is TValue typedValue)
+			{
+				result = typedValue;
+				return true;
+			}
+
+			result = defaultValue;
+			return true;
+		}
 	}
 }
 

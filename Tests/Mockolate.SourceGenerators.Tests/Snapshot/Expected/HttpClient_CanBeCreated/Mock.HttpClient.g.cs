@@ -10,507 +10,6 @@
 #nullable enable annotations
 namespace Mockolate;
 
-/// <summary>
-///     Mock extensions for <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.
-/// </summary>
-[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-internal static partial class MockExtensionsForHttpClient
-{
-	/// <inheritdoc cref="MockExtensionsForHttpClient" />
-	extension(global::System.Net.Http.HttpClient mock)
-	{
-		/// <summary>
-		///     Gets the mock accessor for <see cref="global::System.Net.Http.HttpClient">HttpClient</see> - the entry point for configuring setups, verifying interactions and raising events.
-		/// </summary>
-		/// <remarks>
-		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
-		///     Through it you can:<br />
-		///     <list type="bullet"><br />
-		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
-		///       <item><description><c>Verify</c> - assert how often (and in which order) members were invoked.</description></item><br />
-		///       <item><description><c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c> - target <see langword="protected" /> members on class mocks.</description></item><br />
-		///       <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item><br />
-		///       <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item><br />
-		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
-		///     </list>
-		/// </remarks>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</exception>
-		public global::Mockolate.Mock.IMockForHttpClient Mock
-		{
-			get
-			{
-				if (mock is global::Mockolate.Mock.IMockForHttpClient mockInterface)
-				{
-					return mockInterface;
-				}
-				throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
-			}
-		}
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
-		/// </summary>
-		/// <remarks>
-		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::System.Net.Http.HttpClient">HttpClient</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
-		///     <list type="bullet"><br />
-		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
-		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
-		///     </list><br />
-		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
-		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
-		/// </remarks>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock()
-			=> CreateMock(null, null, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup)
-			=> CreateMock(null, setup, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the given <paramref name="mockBehavior" />.
-		/// </summary>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior)
-			=> CreateMock(mockBehavior, null, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient> setup)
-			=> CreateMock(mockBehavior, setup, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="constructorParameters" /> to invoke the base-class constructor.
-		/// </summary>
-		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(object?[] constructorParameters)
-			=> CreateMock(null, null, constructorParameters);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" /> and <paramref name="constructorParameters" />.
-		/// </summary>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)
-			=> CreateMock(mockBehavior, null, constructorParameters);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup, object?[] constructorParameters)
-			=> CreateMock(null, setup, constructorParameters);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
-		/// </summary>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::System.Net.Http.HttpMessageHandler handler)
-			=> CreateMock(null, null, new object?[] { handler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
-		/// </summary>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Net.Http.HttpMessageHandler handler)
-			=> CreateMock(mockBehavior, null, new object?[] { handler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler)
-			=> CreateMock(null, setup, new object?[] { handler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler)
-			=> CreateMock(mockBehavior, setup, new object?[] { handler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
-		/// </summary>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
-			=> CreateMock(null, null, new object?[] { handler, disposeHandler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
-		/// </summary>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
-			=> CreateMock(mockBehavior, null, new object?[] { handler, disposeHandler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
-			=> CreateMock(null, setup, new object?[] { handler, disposeHandler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <param name="handler">Value forwarded to the base-class constructor.</param>
-		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
-			=> CreateMock(mockBehavior, setup, new object?[] { handler, disposeHandler });
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
-		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
-		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient>? setup, object?[]? constructorParameters)
-		{
-			if (mockBehavior is not null)
-			{
-				IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;
-				if (mockBehaviorAccess.TryGet<global::System.Action<IMockSetupInitializationForHttpClient>?>(out var additionalSetup))
-				{
-					if (setup is null)
-					{
-						setup = additionalSetup;
-					}
-					else
-					{
-						var originalSetup = setup;
-						setup = s => { additionalSetup.Invoke(s); originalSetup.Invoke(s); };
-					}
-				}
-				if (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<global::System.Net.Http.HttpClient>(out object?[]? parameters))
-				{
-					constructorParameters = parameters;
-				}
-			}
-
-			global::Mockolate.MockBehavior effectiveBehavior = mockBehavior ?? global::Mockolate.MockBehavior.Default;
-			global::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(effectiveBehavior, global::Mockolate.Mock.HttpClient.CreateFastInteractions(effectiveBehavior), constructorParameters);
-			if (constructorParameters is null)
-			{
-				constructorParameters = [new global::Mockolate.Mock.HttpMessageHandler(mockRegistry),];
-				mockRegistry = new global::Mockolate.MockRegistry(mockRegistry, constructorParameters);
-			}
-			else if (constructorParameters.Length > 0 && constructorParameters[0] is global::Mockolate.Mock.HttpMessageHandler && constructorParameters[0] is global::Mockolate.IMock httpMessageHandlerMock)
-			{
-				if (mockBehavior is not null && httpMessageHandlerMock.MockRegistry.Behavior != mockBehavior)
-				{
-					throw new global::Mockolate.Exceptions.MockException($"Mock of type 'System.Net.Http.HttpClient' cannot be created with behavior '{mockBehavior}' because it shares its mock registry with a mock of type 'System.Net.Http.HttpMessageHandler' that has behavior '{httpMessageHandlerMock.MockRegistry.Behavior}'.");
-				}
-				mockRegistry = new global::Mockolate.MockRegistry(httpMessageHandlerMock.MockRegistry, constructorParameters);
-			}
-			mockBehavior ??= global::Mockolate.MockBehavior.Default;
-			return CreateMockInstance(mockRegistry, constructorParameters, setup);
-		}
-
-		private static global::System.Net.Http.HttpClient CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<IMockSetupInitializationForHttpClient>? setup)
-		{
-			if (constructorParameters is null || constructorParameters.Length == 0)
-			{
-				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
-				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
-				if (setup is not null)
-				{
-					setupTarget ??= new(mockRegistry);
-					setup.Invoke(setupTarget);
-				}
-				return new global::Mockolate.Mock.HttpClient(mockRegistry);
-			}
-			else if (constructorParameters.Length == 0)
-			{
-				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
-				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
-				if (setup is not null)
-				{
-					setupTarget ??= new(mockRegistry);
-					setup.Invoke(setupTarget);
-				}
-				return new global::Mockolate.Mock.HttpClient(mockRegistry);
-			}
-			else if (constructorParameters.Length == 1
-			    && TryCast(constructorParameters, 0, mockRegistry.Behavior, out global::System.Net.Http.HttpMessageHandler c2p1))
-			{
-				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
-				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
-				if (setup is not null)
-				{
-					setupTarget ??= new(mockRegistry);
-					setup.Invoke(setupTarget);
-				}
-				return new global::Mockolate.Mock.HttpClient(mockRegistry, c2p1);
-			}
-			else if (constructorParameters.Length == 2
-			    && TryCast(constructorParameters, 0, mockRegistry.Behavior, out global::System.Net.Http.HttpMessageHandler c3p1)
-			    && TryCast(constructorParameters, 1, mockRegistry.Behavior, out bool c3p2))
-			{
-				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
-				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
-				if (setup is not null)
-				{
-					setupTarget ??= new(mockRegistry);
-					setup.Invoke(setupTarget);
-				}
-				return new global::Mockolate.Mock.HttpClient(mockRegistry, c3p1, c3p2);
-			}
-			else
-			{
-				throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'System.Net.Http.HttpClient' that matches the {constructorParameters.Length} given parameters ({string.Join(", ", constructorParameters)}).");
-			}
-			static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
-			{
-			    var value = values[index];
-				if (value is TValue typedValue)
-				{
-					result = typedValue;
-					return true;
-				}
-				
-				result = default!;
-				return value is null;
-			}
-		}
-		/// <summary>
-		///     Creates a mock that wraps the given <paramref name="instance" />.
-		/// </summary>
-		/// <remarks>
-		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
-		/// </remarks>
-		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
-		/// <returns>A new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> that delegates to <paramref name="instance" />.</returns>
-		public global::System.Net.Http.HttpClient Wrapping(global::System.Net.Http.HttpClient instance)
-		{
-			if (mock is global::Mockolate.IMock mockInterface)
-			{
-				global::Mockolate.MockRegistry wrappingRegistry = new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance);
-				wrappingRegistry = new global::Mockolate.MockRegistry(wrappingRegistry, global::Mockolate.Mock.HttpClient.CreateFastInteractions(wrappingRegistry.Behavior));
-				return CreateMockInstance(wrappingRegistry, mockInterface.MockRegistry.ConstructorParameters, null);
-			}
-			throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
-		}
-
-	}
-
-	/// <inheritdoc cref="MockExtensionsForHttpClient" />
-	extension(global::Mockolate.MockBehavior behavior)
-	{
-		/// <summary>
-		///     Initializes mocks of type <typeparamref name="T" /> with the given <paramref name="setup" />.
-		/// </summary>
-		/// <remarks>
-		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
-		/// </remarks>
-		/// <typeparam name="T">The mockable type derived from <see cref="global::System.Net.Http.HttpClient">HttpClient</see> that this setup should apply to.</typeparam>
-		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
-		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
-		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<IMockSetupInitializationForHttpClient> setup)
-			where T : global::System.Net.Http.HttpClient
-		{
-			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
-			return behaviorAccess.Set(setup);
-		}
-	}
-	internal interface IMockSetupInitializationForHttpClient : global::Mockolate.Mock.IMockSetupForHttpClient
-	{
-		/// <summary>
-		///     Setup protected members
-		/// </summary>
-		global::Mockolate.Mock.IMockProtectedSetupForHttpClient Protected { get; }
-	}
-
-	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	internal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupForHttpClient, global::Mockolate.Mock.IMockProtectedSetupForHttpClient, IMockSetupInitializationForHttpClient
-	{
-		/// <inheritdoc />
-		global::Mockolate.Mock.IMockProtectedSetupForHttpClient IMockSetupInitializationForHttpClient.Protected => this;
-		private global::Mockolate.MockRegistry MockRegistry { get; } = mockRegistry;
-
-		#region IMockSetupForHttpClient
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::Mockolate.Parameters.IParameters parameters)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameters(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", parameters, "request", "cancellationToken");
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::System.Net.Http.HttpRequestMessage request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::System.Threading.CancellationToken cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::Mockolate.Parameters.IParameters parameters)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameters(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", parameters, "request", "cancellationToken");
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::System.Net.Http.HttpRequestMessage request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::System.Threading.CancellationToken cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken)
-		{
-			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
-			return methodSetup;
-		}
-
-		#endregion IMockSetupForHttpClient
-
-		#region IMockProtectedSetupForHttpClient
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IVoidMethodSetupWithCallback<bool> global::Mockolate.Mock.IMockProtectedSetupForHttpClient.Dispose(global::Mockolate.Parameters.IParameters parameters)
-		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<bool>.WithParameters(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Dispose", parameters, "disposing");
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Dispose, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IVoidMethodSetupWithCallback<bool> global::Mockolate.Mock.IMockProtectedSetupForHttpClient.Dispose(global::Mockolate.Parameters.IParameter<bool>? disposing)
-		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<bool>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Dispose", CovariantParameterAdapter<bool>.Wrap(disposing ?? global::Mockolate.It.IsNull<bool>("null")));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Dispose, methodSetup);
-			return methodSetup;
-		}
-
-		/// <inheritdoc />
-		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<bool> global::Mockolate.Mock.IMockProtectedSetupForHttpClient.Dispose(bool disposing)
-		{
-			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<bool>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Dispose", (global::Mockolate.Parameters.IParameterMatch<bool>)global::Mockolate.It.IsValue<bool>(disposing));
-			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Dispose, methodSetup);
-			return methodSetup;
-		}
-
-		#endregion IMockProtectedSetupForHttpClient
-	}
-
-	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	private sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>
-	{
-		public bool Matches(T value) => inner.Matches(value);
-		public void InvokeCallbacks(T value) => inner.InvokeCallbacks(value);
-		public override string? ToString() => inner.ToString();
-
-		public static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)
-			=> parameter is global::Mockolate.Parameters.IParameterMatch<T> direct
-				? direct
-				: new CovariantParameterAdapter<T>(parameter);
-	}
-}
-
 internal static partial class Mock
 {
 	/// <summary>
@@ -1650,6 +1149,506 @@ internal static partial class Mock
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
 		global::Mockolate.Verify.VerificationResult<IMockProtectedVerifyForHttpClient>.IgnoreParameters Dispose(bool disposing);
 
+	}
+}
+/// <summary>
+///     Mock extensions for <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.
+/// </summary>
+[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+internal static partial class MockExtensionsForHttpClient
+{
+	/// <inheritdoc cref="MockExtensionsForHttpClient" />
+	extension(global::System.Net.Http.HttpClient mock)
+	{
+		/// <summary>
+		///     Gets the mock accessor for <see cref="global::System.Net.Http.HttpClient">HttpClient</see> - the entry point for configuring setups, verifying interactions and raising events.
+		/// </summary>
+		/// <remarks>
+		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
+		///     Through it you can:<br />
+		///     <list type="bullet"><br />
+		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
+		///       <item><description><c>Verify</c> - assert how often (and in which order) members were invoked.</description></item><br />
+		///       <item><description><c>SetupProtected</c> / <c>VerifyProtected</c> / <c>RaiseProtected</c> - target <see langword="protected" /> members on class mocks.</description></item><br />
+		///       <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item><br />
+		///       <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item><br />
+		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
+		///     </list>
+		/// </remarks>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</exception>
+		public global::Mockolate.Mock.IMockForHttpClient Mock
+		{
+			get
+			{
+				if (mock is global::Mockolate.Mock.IMockForHttpClient mockInterface)
+				{
+					return mockInterface;
+				}
+				throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
+			}
+		}
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		/// </summary>
+		/// <remarks>
+		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::System.Net.Http.HttpClient">HttpClient</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
+		///     <list type="bullet"><br />
+		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
+		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
+		///     </list><br />
+		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
+		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
+		/// </remarks>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock()
+			=> CreateMock(null, null, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup)
+			=> CreateMock(null, setup, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the given <paramref name="mockBehavior" />.
+		/// </summary>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior)
+			=> CreateMock(mockBehavior, null, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient> setup)
+			=> CreateMock(mockBehavior, setup, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="constructorParameters" /> to invoke the base-class constructor.
+		/// </summary>
+		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(object?[] constructorParameters)
+			=> CreateMock(null, null, constructorParameters);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" /> and <paramref name="constructorParameters" />.
+		/// </summary>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, object?[] constructorParameters)
+			=> CreateMock(mockBehavior, null, constructorParameters);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor. Required when no parameterless constructor exists.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup, object?[] constructorParameters)
+			=> CreateMock(null, setup, constructorParameters);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
+		/// </summary>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::System.Net.Http.HttpMessageHandler handler)
+			=> CreateMock(null, null, new object?[] { handler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
+		/// </summary>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Net.Http.HttpMessageHandler handler)
+			=> CreateMock(mockBehavior, null, new object?[] { handler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler)
+			=> CreateMock(null, setup, new object?[] { handler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler)">HttpClient(HttpMessageHandler)</see> constructor.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler)
+			=> CreateMock(mockBehavior, setup, new object?[] { handler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
+		/// </summary>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
+			=> CreateMock(null, null, new object?[] { handler, disposeHandler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" /> and the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
+		/// </summary>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
+			=> CreateMock(mockBehavior, null, new object?[] { handler, disposeHandler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
+			=> CreateMock(null, setup, new object?[] { handler, disposeHandler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given constructor parameters to invoke the <see cref="global::System.Net.Http.HttpClient(global::System.Net.Http.HttpMessageHandler, bool)">HttpClient(HttpMessageHandler, bool)</see> constructor.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <param name="handler">Value forwarded to the base-class constructor.</param>
+		/// <param name="disposeHandler">Value forwarded to the base-class constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient> setup, global::System.Net.Http.HttpMessageHandler handler, bool disposeHandler)
+			=> CreateMock(mockBehavior, setup, new object?[] { handler, disposeHandler });
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
+		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::System.Net.Http.HttpClient">HttpClient</see>.</returns>
+		public static global::System.Net.Http.HttpClient CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<IMockSetupInitializationForHttpClient>? setup, object?[]? constructorParameters)
+		{
+			if (mockBehavior is not null)
+			{
+				IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;
+				if (mockBehaviorAccess.TryGet<global::System.Action<IMockSetupInitializationForHttpClient>?>(out var additionalSetup))
+				{
+					if (setup is null)
+					{
+						setup = additionalSetup;
+					}
+					else
+					{
+						var originalSetup = setup;
+						setup = s => { additionalSetup.Invoke(s); originalSetup.Invoke(s); };
+					}
+				}
+				if (constructorParameters is null && mockBehaviorAccess.TryGetConstructorParameters<global::System.Net.Http.HttpClient>(out object?[]? parameters))
+				{
+					constructorParameters = parameters;
+				}
+			}
+
+			global::Mockolate.MockBehavior effectiveBehavior = mockBehavior ?? global::Mockolate.MockBehavior.Default;
+			global::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(effectiveBehavior, global::Mockolate.Mock.HttpClient.CreateFastInteractions(effectiveBehavior), constructorParameters);
+			if (constructorParameters is null)
+			{
+				constructorParameters = [new global::Mockolate.Mock.HttpMessageHandler(mockRegistry),];
+				mockRegistry = new global::Mockolate.MockRegistry(mockRegistry, constructorParameters);
+			}
+			else if (constructorParameters.Length > 0 && constructorParameters[0] is global::Mockolate.Mock.HttpMessageHandler && constructorParameters[0] is global::Mockolate.IMock httpMessageHandlerMock)
+			{
+				if (mockBehavior is not null && httpMessageHandlerMock.MockRegistry.Behavior != mockBehavior)
+				{
+					throw new global::Mockolate.Exceptions.MockException($"Mock of type 'System.Net.Http.HttpClient' cannot be created with behavior '{mockBehavior}' because it shares its mock registry with a mock of type 'System.Net.Http.HttpMessageHandler' that has behavior '{httpMessageHandlerMock.MockRegistry.Behavior}'.");
+				}
+				mockRegistry = new global::Mockolate.MockRegistry(httpMessageHandlerMock.MockRegistry, constructorParameters);
+			}
+			mockBehavior ??= global::Mockolate.MockBehavior.Default;
+			return CreateMockInstance(mockRegistry, constructorParameters, setup);
+		}
+
+		private static global::System.Net.Http.HttpClient CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<IMockSetupInitializationForHttpClient>? setup)
+		{
+			if (constructorParameters is null || constructorParameters.Length == 0)
+			{
+				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
+				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
+				if (setup is not null)
+				{
+					setupTarget ??= new(mockRegistry);
+					setup.Invoke(setupTarget);
+				}
+				return new global::Mockolate.Mock.HttpClient(mockRegistry);
+			}
+			else if (constructorParameters.Length == 0)
+			{
+				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
+				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
+				if (setup is not null)
+				{
+					setupTarget ??= new(mockRegistry);
+					setup.Invoke(setupTarget);
+				}
+				return new global::Mockolate.Mock.HttpClient(mockRegistry);
+			}
+			else if (constructorParameters.Length == 1
+			    && TryCast(constructorParameters, 0, mockRegistry.Behavior, out global::System.Net.Http.HttpMessageHandler c2p1))
+			{
+				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
+				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
+				if (setup is not null)
+				{
+					setupTarget ??= new(mockRegistry);
+					setup.Invoke(setupTarget);
+				}
+				return new global::Mockolate.Mock.HttpClient(mockRegistry, c2p1);
+			}
+			else if (constructorParameters.Length == 2
+			    && TryCast(constructorParameters, 0, mockRegistry.Behavior, out global::System.Net.Http.HttpMessageHandler c3p1)
+			    && TryCast(constructorParameters, 1, mockRegistry.Behavior, out bool c3p2))
+			{
+				global::Mockolate.Mock.HttpClient.MockRegistryProvider.Value = mockRegistry;
+				global::Mockolate.MockExtensionsForHttpClient.MockSetup? setupTarget = null;
+				if (setup is not null)
+				{
+					setupTarget ??= new(mockRegistry);
+					setup.Invoke(setupTarget);
+				}
+				return new global::Mockolate.Mock.HttpClient(mockRegistry, c3p1, c3p2);
+			}
+			else
+			{
+				throw new global::Mockolate.Exceptions.MockException($"Could not find any constructor for 'System.Net.Http.HttpClient' that matches the {constructorParameters.Length} given parameters ({string.Join(", ", constructorParameters)}).");
+			}
+			static bool TryCast<TValue>(object?[] values, int index, global::Mockolate.MockBehavior behavior, out TValue result)
+			{
+			    var value = values[index];
+				if (value is TValue typedValue)
+				{
+					result = typedValue;
+					return true;
+				}
+				
+				result = default!;
+				return value is null;
+			}
+		}
+		/// <summary>
+		///     Creates a mock that wraps the given <paramref name="instance" />.
+		/// </summary>
+		/// <remarks>
+		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
+		/// </remarks>
+		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
+		/// <returns>A new mock of <see cref="global::System.Net.Http.HttpClient">HttpClient</see> that delegates to <paramref name="instance" />.</returns>
+		public global::System.Net.Http.HttpClient Wrapping(global::System.Net.Http.HttpClient instance)
+		{
+			if (mock is global::Mockolate.IMock mockInterface)
+			{
+				global::Mockolate.MockRegistry wrappingRegistry = new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance);
+				wrappingRegistry = new global::Mockolate.MockRegistry(wrappingRegistry, global::Mockolate.Mock.HttpClient.CreateFastInteractions(wrappingRegistry.Behavior));
+				return CreateMockInstance(wrappingRegistry, mockInterface.MockRegistry.ConstructorParameters, null);
+			}
+			throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
+		}
+
+	}
+
+	/// <inheritdoc cref="MockExtensionsForHttpClient" />
+	extension(global::Mockolate.MockBehavior behavior)
+	{
+		/// <summary>
+		///     Initializes mocks of type <typeparamref name="T" /> with the given <paramref name="setup" />.
+		/// </summary>
+		/// <remarks>
+		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
+		/// </remarks>
+		/// <typeparam name="T">The mockable type derived from <see cref="global::System.Net.Http.HttpClient">HttpClient</see> that this setup should apply to.</typeparam>
+		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
+		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
+		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<IMockSetupInitializationForHttpClient> setup)
+			where T : global::System.Net.Http.HttpClient
+		{
+			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
+			return behaviorAccess.Set(setup);
+		}
+	}
+	internal interface IMockSetupInitializationForHttpClient : global::Mockolate.Mock.IMockSetupForHttpClient
+	{
+		/// <summary>
+		///     Setup protected members
+		/// </summary>
+		global::Mockolate.Mock.IMockProtectedSetupForHttpClient Protected { get; }
+	}
+
+	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	internal sealed class MockSetup(global::Mockolate.MockRegistry mockRegistry) : global::Mockolate.Mock.IMockSetupForHttpClient, global::Mockolate.Mock.IMockProtectedSetupForHttpClient, IMockSetupInitializationForHttpClient
+	{
+		/// <inheritdoc />
+		global::Mockolate.Mock.IMockProtectedSetupForHttpClient IMockSetupInitializationForHttpClient.Protected => this;
+		private global::Mockolate.MockRegistry MockRegistry { get; } = mockRegistry;
+
+		#region IMockSetupForHttpClient
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameters(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", parameters, "request", "cancellationToken");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::System.Net.Http.HttpRequestMessage request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::System.Threading.CancellationToken cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.Send(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Net.Http.HttpResponseMessage, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Send", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Send, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameters(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", parameters, "request", "cancellationToken");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::System.Net.Http.HttpRequestMessage request, global::Mockolate.Parameters.IParameter<global::System.Threading.CancellationToken>? cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), CovariantParameterAdapter<global::System.Threading.CancellationToken>.Wrap(cancellationToken ?? global::Mockolate.It.IsNull<global::System.Threading.CancellationToken>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupWithCallback<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::Mockolate.Parameters.IParameter<global::System.Net.Http.HttpRequestMessage>? request, global::System.Threading.CancellationToken cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", CovariantParameterAdapter<global::System.Net.Http.HttpRequestMessage>.Wrap(request ?? global::Mockolate.It.IsNull<global::System.Net.Http.HttpRequestMessage>("null")), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IReturnMethodSetupParameterIgnorer<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken> global::Mockolate.Mock.IMockSetupForHttpClient.SendAsync(global::System.Net.Http.HttpRequestMessage request, global::System.Threading.CancellationToken cancellationToken)
+		{
+			var methodSetup = new global::Mockolate.Setup.ReturnMethodSetup<global::System.Threading.Tasks.Task<global::System.Net.Http.HttpResponseMessage>, global::System.Net.Http.HttpRequestMessage, global::System.Threading.CancellationToken>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.SendAsync", (global::Mockolate.Parameters.IParameterMatch<global::System.Net.Http.HttpRequestMessage>)global::Mockolate.It.IsValue<global::System.Net.Http.HttpRequestMessage>(request), (global::Mockolate.Parameters.IParameterMatch<global::System.Threading.CancellationToken>)global::Mockolate.It.IsValue<global::System.Threading.CancellationToken>(cancellationToken));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_SendAsync, methodSetup);
+			return methodSetup;
+		}
+
+		#endregion IMockSetupForHttpClient
+
+		#region IMockProtectedSetupForHttpClient
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<bool> global::Mockolate.Mock.IMockProtectedSetupForHttpClient.Dispose(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<bool>.WithParameters(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Dispose", parameters, "disposing");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Dispose, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<bool> global::Mockolate.Mock.IMockProtectedSetupForHttpClient.Dispose(global::Mockolate.Parameters.IParameter<bool>? disposing)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<bool>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Dispose", CovariantParameterAdapter<bool>.Wrap(disposing ?? global::Mockolate.It.IsNull<bool>("null")));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Dispose, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupParameterIgnorer<bool> global::Mockolate.Mock.IMockProtectedSetupForHttpClient.Dispose(bool disposing)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<bool>.WithParameterCollection(MockRegistry, "global::System.Net.Http.HttpMessageInvoker.Dispose", (global::Mockolate.Parameters.IParameterMatch<bool>)global::Mockolate.It.IsValue<bool>(disposing));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.HttpClient.MemberId_Dispose, methodSetup);
+			return methodSetup;
+		}
+
+		#endregion IMockProtectedSetupForHttpClient
+	}
+
+	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	private sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>
+	{
+		public bool Matches(T value) => inner.Matches(value);
+		public void InvokeCallbacks(T value) => inner.InvokeCallbacks(value);
+		public override string? ToString() => inner.ToString();
+
+		public static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)
+			=> parameter is global::Mockolate.Parameters.IParameterMatch<T> direct
+				? direct
+				: new CovariantParameterAdapter<T>(parameter);
 	}
 }
 
