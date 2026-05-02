@@ -3,10 +3,10 @@
 <img align="right" width="200" src="Docs/logo_256x256.png" alt="Mockolate logo" />
 
 [![Nuget](https://img.shields.io/nuget/v/Mockolate)](https://www.nuget.org/packages/Mockolate)
-[![Build](https://github.com/aweXpect/Mockolate/actions/workflows/build.yml/badge.svg)](https://github.com/aweXpect/Mockolate/actions/workflows/build.yml)
+[![Build](https://github.com/Testably/Mockolate/actions/workflows/build.yml/badge.svg)](https://github.com/Testably/Mockolate/actions/workflows/build.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=aweXpect_Mockolate)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=coverage)](https://sonarcloud.io/summary/overall?id=aweXpect_Mockolate)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/main)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FMockolate%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Mockolate/main)
 
 **Mockolate** is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators.
 It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, .NET 10 and .NET Framework 4.8.
@@ -29,7 +29,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
 For side-by-side setup, usage, and verification syntax against Moq, NSubstitute, and FakeItEasy, see the
 [full code comparison](https://awexpect.com/docs/mockolate/comparison).
 
-Already on Moq or NSubstitute? The companion package [`Mockolate.Migration`](https://github.com/aweXpect/Mockolate.Migration)
+Already on Moq or NSubstitute? The companion package [`Mockolate.Migration`](https://github.com/Testably/Mockolate.Migration)
 ships analyzers and code fixers that translate common Moq and NSubstitute patterns to Mockolate syntax in-place: point it
 at an existing test project and apply the suggested fixes.
 
