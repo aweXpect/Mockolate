@@ -29,7 +29,7 @@ partial class Build
 			string[] lines = File.ReadAllLines(Solution.Directory / "README.md");
 			sb.AppendLine(lines.First());
 			sb.AppendLine(
-				$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/aweXpect/Mockolate/releases/tag/v{version})");
+				$"[![Changelog](https://img.shields.io/badge/Changelog-v{version}-blue)](https://github.com/{BuildExtensions.Owner}/{BuildExtensions.Repo}/releases/tag/v{version})");
 			bool foundBadge = false;
 			bool addedImage = false;
 			foreach (string line in lines.Skip(1))
@@ -40,7 +40,7 @@ partial class Build
 					continue;
 				}
 
-				if (line.StartsWith("[![Build](https://github.com/aweXpect/Mockolate/actions/workflows/build.yml") ||
+				if (line.StartsWith($"[![Build](https://github.com/{BuildExtensions.Owner}/{BuildExtensions.Repo}/actions/workflows/build.yml") ||
 				    line.StartsWith("[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure"))
 				{
 					foundBadge = true;
@@ -65,7 +65,7 @@ partial class Build
 				if (foundBadge && string.IsNullOrWhiteSpace(line) && !addedImage)
 				{
 					sb.AppendLine();
-					sb.AppendLine("![Mockolate logo](https://raw.githubusercontent.com/aweXpect/Mockolate/main/Docs/logo_256x256.png)  ");
+					sb.AppendLine($"![Mockolate logo](https://raw.githubusercontent.com/{BuildExtensions.Owner}/{BuildExtensions.Repo}/main/Docs/logo_256x256.png)  ");
 					addedImage = true;
 				}
 

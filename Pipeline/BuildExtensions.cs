@@ -15,7 +15,9 @@ namespace Build;
 
 public static class BuildExtensions
 {
-	private const string RepositoryApiBaseUrl = "https://api.github.com/repos/aweXpect/Mockolate";
+	internal const string Owner = "Testably";
+	internal const string Repo = "Mockolate";
+	private const string RepositoryApiBaseUrl = "https://api.github.com/repos/" + Owner + "/" + Repo;
 
 	public static SonarScannerBeginSettings SetPullRequestOrBranchName(
 		this SonarScannerBeginSettings settings,

@@ -71,7 +71,7 @@ partial class Build
 				                      {
 				                      	"stryker-config": {
 				                      		"project-info": {
-				                      			"name": "github.com/aweXpect/Mockolate",
+				                      			"name": "github.com/{{BuildExtensions.Owner}}/{{BuildExtensions.Repo}}",
 				                      			"module": "{{project.Key.Name}}",
 				                      			"version": "{{branchName}}"
 				                      		},
@@ -128,7 +128,7 @@ partial class Build
 
 			string body = "## :alien: Mutation Results"
 			              + Environment.NewLine
-			              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FaweXpect%2FMockolate%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/aweXpect/Mockolate/pull/{prId}/merge)"
+			              + $"[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2F{BuildExtensions.Owner}%2F{BuildExtensions.Repo}%2Fpull/{prId}/merge)](https://dashboard.stryker-mutator.io/reports/github.com/{BuildExtensions.Owner}/{BuildExtensions.Repo}/pull/{prId}/merge)"
 			              + Environment.NewLine
 			              + MutationCommentBody;
 			File.WriteAllText(ArtifactsDirectory / "PR_Comment.md", body);
@@ -165,7 +165,7 @@ partial class Build
 				client.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
 				// https://stryker-mutator.io/docs/General/dashboard/#send-a-report-via-curl
 				await client.PutAsync(
-					$"https://dashboard.stryker-mutator.io/api/reports/github.com/aweXpect/Mockolate/{branchName}?module={project.Key.Name}",
+					$"https://dashboard.stryker-mutator.io/api/reports/github.com/{BuildExtensions.Owner}/{BuildExtensions.Repo}/{branchName}?module={project.Key.Name}",
 					new StringContent(reportComment, new MediaTypeHeaderValue("application/json")));
 			}
 
@@ -180,7 +180,7 @@ partial class Build
 					Credentials tokenAuth = new(GithubToken);
 					gitHubClient.Credentials = tokenAuth;
 					IReadOnlyList<IssueComment> comments =
-						await gitHubClient.Issue.Comment.GetAllForIssue("aweXpect", "Mockolate", prId);
+						await gitHubClient.Issue.Comment.GetAllForIssue(BuildExtensions.Owner, BuildExtensions.Repo, prId);
 					long? commentId = null;
 					Log.Information($"Found {comments.Count} comments");
 					foreach (IssueComment comment in comments)
@@ -195,12 +195,12 @@ partial class Build
 					if (commentId == null)
 					{
 						Log.Information($"Create comment:\n{body}");
-						await gitHubClient.Issue.Comment.Create("aweXpect", "Mockolate", prId, body);
+						await gitHubClient.Issue.Comment.Create(BuildExtensions.Owner, BuildExtensions.Repo, prId, body);
 					}
 					else
 					{
 						Log.Information($"Update comment:\n{body}");
-						await gitHubClient.Issue.Comment.Update("aweXpect", "Mockolate", commentId.Value, body);
+						await gitHubClient.Issue.Comment.Update(BuildExtensions.Owner, BuildExtensions.Repo, commentId.Value, body);
 					}
 				}
 			}
