@@ -10,187 +10,6 @@
 #nullable enable annotations
 namespace Mockolate;
 
-/// <summary>
-///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.
-/// </summary>
-[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-internal static partial class MockExtensionsForICombinationMockA
-{
-	/// <inheritdoc cref="MockExtensionsForICombinationMockA" />
-	extension(global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA mock)
-	{
-		/// <summary>
-		///     Gets the mock accessor for <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> - the entry point for configuring setups, verifying interactions and raising events.
-		/// </summary>
-		/// <remarks>
-		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
-		///     Through it you can:<br />
-		///     <list type="bullet"><br />
-		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
-		///       <item><description><c>Verify</c> - assert how often (and in which order) members were invoked.</description></item><br />
-		///       <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item><br />
-		///       <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item><br />
-		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
-		///     </list>
-		/// </remarks>
-		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</exception>
-		public global::Mockolate.Mock.IMockForICombinationMockA Mock
-		{
-			get
-			{
-				if (mock is global::Mockolate.Mock.IMockForICombinationMockA mockInterface)
-				{
-					return mockInterface;
-				}
-				throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
-			}
-		}
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
-		/// </summary>
-		/// <remarks>
-		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
-		///     <list type="bullet"><br />
-		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
-		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
-		///     </list><br />
-		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
-		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
-		/// </remarks>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock()
-			=> CreateMock(null, null, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA> setup)
-			=> CreateMock(null, setup, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the given <paramref name="mockBehavior" />.
-		/// </summary>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::Mockolate.MockBehavior mockBehavior)
-			=> CreateMock(mockBehavior, null, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA> setup)
-			=> CreateMock(mockBehavior, setup, (object?[]?)null);
-
-		/// <summary>
-		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
-		/// </summary>
-		/// <remarks>
-		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
-		/// </remarks>
-		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
-		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
-		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
-		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
-		private static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>? setup, object?[]? constructorParameters)
-		{
-			if (mockBehavior is not null)
-			{
-				IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;
-				if (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>?>(out var additionalSetup))
-				{
-					if (setup is null)
-					{
-						setup = additionalSetup;
-					}
-					else
-					{
-						var originalSetup = setup;
-						setup = s => { additionalSetup.Invoke(s); originalSetup.Invoke(s); };
-					}
-				}
-			}
-
-			mockBehavior ??= global::Mockolate.MockBehavior.Default;
-			global::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, global::Mockolate.Mock.ICombinationMockA.CreateFastInteractions(mockBehavior), constructorParameters);
-			return CreateMockInstance(mockRegistry, constructorParameters, setup);
-		}
-
-		private static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>? setup)
-		{
-			var value = new global::Mockolate.Mock.ICombinationMockA(mockRegistry);
-			if (setup is not null)
-			{
-				setup.Invoke(value);
-			}
-			return value;
-		}
-		/// <summary>
-		///     Creates a mock that wraps the given <paramref name="instance" />.
-		/// </summary>
-		/// <remarks>
-		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
-		/// </remarks>
-		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
-		/// <returns>A new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> that delegates to <paramref name="instance" />.</returns>
-		public global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA Wrapping(global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA instance)
-		{
-			if (mock is global::Mockolate.IMock mockInterface)
-			{
-				global::Mockolate.MockRegistry wrappingRegistry = new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance);
-				wrappingRegistry = new global::Mockolate.MockRegistry(wrappingRegistry, global::Mockolate.Mock.ICombinationMockA.CreateFastInteractions(wrappingRegistry.Behavior));
-				return CreateMockInstance(wrappingRegistry, mockInterface.MockRegistry.ConstructorParameters, null);
-			}
-			throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
-		}
-
-	}
-
-	/// <inheritdoc cref="MockExtensionsForICombinationMockA" />
-	extension(global::Mockolate.MockBehavior behavior)
-	{
-		/// <summary>
-		///     Initializes mocks of type <typeparamref name="T" /> with the given <paramref name="setup" />.
-		/// </summary>
-		/// <remarks>
-		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
-		/// </remarks>
-		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> that this setup should apply to.</typeparam>
-		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
-		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
-		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA> setup)
-			where T : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA
-		{
-			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
-			return behaviorAccess.Set(setup);
-		}
-	}
-
-	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-	private sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>
-	{
-		public bool Matches(T value) => inner.Matches(value);
-		public void InvokeCallbacks(T value) => inner.InvokeCallbacks(value);
-		public override string? ToString() => inner.ToString();
-
-		public static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)
-			=> parameter is global::Mockolate.Parameters.IParameterMatch<T> direct
-				? direct
-				: new CovariantParameterAdapter<T>(parameter);
-	}
-}
-
 internal static partial class Mock
 {
 	/// <summary>
@@ -610,6 +429,186 @@ internal static partial class Mock
 		/// </summary>
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForICombinationMockA>.IgnoreParameters Run();
 
+	}
+}
+/// <summary>
+///     Mock extensions for <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.
+/// </summary>
+[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+internal static partial class MockExtensionsForICombinationMockA
+{
+	/// <inheritdoc cref="MockExtensionsForICombinationMockA" />
+	extension(global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA mock)
+	{
+		/// <summary>
+		///     Gets the mock accessor for <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> - the entry point for configuring setups, verifying interactions and raising events.
+		/// </summary>
+		/// <remarks>
+		///     The accessor is the bridge between the strongly-typed instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> returned by <c>CreateMock(...)</c> and the underlying mock registry where setups and recorded interactions live.<br />
+		///     Through it you can:<br />
+		///     <list type="bullet"><br />
+		///       <item><description><c>Setup</c> - configure how members respond when invoked (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, ...).</description></item><br />
+		///       <item><description><c>Verify</c> - assert how often (and in which order) members were invoked.</description></item><br />
+		///       <item><description><c>InScenario</c> / <c>TransitionTo</c> - scope setups and behavior to a named scenario and switch between scenarios.</description></item><br />
+		///       <item><description><c>Monitor</c>, <c>ClearAllInteractions</c>, <c>VerifyThatAllInteractionsAreVerified</c>, <c>VerifyThatAllSetupsAreUsed</c> - manage recorded interactions.</description></item><br />
+		///       <item><description><c>VerifySetup</c> - verify how often a specific setup matched.</description></item><br />
+		///     </list>
+		/// </remarks>
+		/// <exception cref="global::Mockolate.Exceptions.MockException">The instance is not a Mockolate-generated mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</exception>
+		public global::Mockolate.Mock.IMockForICombinationMockA Mock
+		{
+			get
+			{
+				if (mock is global::Mockolate.Mock.IMockForICombinationMockA mockInterface)
+				{
+					return mockInterface;
+				}
+				throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
+			}
+		}
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.
+		/// </summary>
+		/// <remarks>
+		///     The returned instance is a strongly-typed mock generated at compile time - it implements <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> and exposes the Mockolate surface through <c>.Mock</c>:<br />
+		///     <list type="bullet"><br />
+		///       <item><description><c>.Mock.Setup</c> configures how members respond (<c>Returns</c>, <c>Throws</c>, <c>Do</c>, <c>InitializeWith</c>, sequences, callbacks).</description></item><br />
+		///       <item><description><c>.Mock.Verify</c> asserts how often and in which order members were invoked.</description></item><br />
+		///     </list><br />
+		///     With the default behavior, un-configured members return <c>default</c> values (empty collections / strings, completed tasks, <see langword="null" /> otherwise) and base-class implementations are invoked for class mocks. Use one of the overloads that accepts a <see cref="global::Mockolate.MockBehavior">MockBehavior</see> to customize this (for example to make un-configured calls throw or to skip the base class).<br />
+		///     Overloads allow you to additionally pass constructor parameters (for class mocks), apply an initial <c>setup</c> callback before the instance is returned, or combine both.
+		/// </remarks>
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock()
+			=> CreateMock(null, null, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the default <see cref="global::Mockolate.MockBehavior">MockBehavior</see>, applying the given <paramref name="setup" /> immediately.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA> setup)
+			=> CreateMock(null, setup, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the given <paramref name="mockBehavior" />.
+		/// </summary>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::Mockolate.MockBehavior mockBehavior)
+			=> CreateMock(mockBehavior, null, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> with the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup; see <see cref="global::Mockolate.MockBehavior">MockBehavior</see>.</param>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned.</param>
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+		public static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::Mockolate.MockBehavior mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA> setup)
+			=> CreateMock(mockBehavior, setup, (object?[]?)null);
+
+		/// <summary>
+		///     Creates a new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> using the given <paramref name="mockBehavior" />, applying the given <paramref name="setup" /> immediately, using the given <paramref name="constructorParameters" />.
+		/// </summary>
+		/// <remarks>
+		///     The provided <paramref name="setup" /> is immediately applied to the mock. Use this overload when you want setups to cover virtual interactions triggered inside the constructor.
+		/// </remarks>
+		/// <param name="mockBehavior">Controls how the mock responds when members are invoked without a matching setup, or <see langword="null" /> for <c>MockBehavior.Default</c>.</param>
+		/// <param name="setup">Callback that receives the mock's setup surface and registers initial setups before the mock is returned, or <see langword="null" /> to skip.</param>
+		/// <param name="constructorParameters">Values forwarded to a matching base-class constructor, or <see langword="null" /> to use the parameterless constructor.</param>
+		/// <returns>A new mock instance of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see>.</returns>
+		private static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMock(global::Mockolate.MockBehavior? mockBehavior, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>? setup, object?[]? constructorParameters)
+		{
+			if (mockBehavior is not null)
+			{
+				IMockBehaviorAccess mockBehaviorAccess = (global::Mockolate.IMockBehaviorAccess)mockBehavior;
+				if (mockBehaviorAccess.TryGet<global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>?>(out var additionalSetup))
+				{
+					if (setup is null)
+					{
+						setup = additionalSetup;
+					}
+					else
+					{
+						var originalSetup = setup;
+						setup = s => { additionalSetup.Invoke(s); originalSetup.Invoke(s); };
+					}
+				}
+			}
+
+			mockBehavior ??= global::Mockolate.MockBehavior.Default;
+			global::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, global::Mockolate.Mock.ICombinationMockA.CreateFastInteractions(mockBehavior), constructorParameters);
+			return CreateMockInstance(mockRegistry, constructorParameters, setup);
+		}
+
+		private static global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA CreateMockInstance(global::Mockolate.MockRegistry mockRegistry, object?[]? constructorParameters, global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA>? setup)
+		{
+			var value = new global::Mockolate.Mock.ICombinationMockA(mockRegistry);
+			if (setup is not null)
+			{
+				setup.Invoke(value);
+			}
+			return value;
+		}
+		/// <summary>
+		///     Creates a mock that wraps the given <paramref name="instance" />.
+		/// </summary>
+		/// <remarks>
+		///     Public members on the mock forward to <paramref name="instance" /> unless overridden by a setup; protected members still go through the base-class implementation. All forwarded interactions are recorded and can be verified the same as on a plain mock.
+		/// </remarks>
+		/// <param name="instance">The real object whose calls should be forwarded. Must not be <see langword="null" />.</param>
+		/// <returns>A new mock of <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> that delegates to <paramref name="instance" />.</returns>
+		public global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA Wrapping(global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA instance)
+		{
+			if (mock is global::Mockolate.IMock mockInterface)
+			{
+				global::Mockolate.MockRegistry wrappingRegistry = new global::Mockolate.MockRegistry(mockInterface.MockRegistry, instance);
+				wrappingRegistry = new global::Mockolate.MockRegistry(wrappingRegistry, global::Mockolate.Mock.ICombinationMockA.CreateFastInteractions(wrappingRegistry.Behavior));
+				return CreateMockInstance(wrappingRegistry, mockInterface.MockRegistry.ConstructorParameters, null);
+			}
+			throw new global::Mockolate.Exceptions.MockException("The subject is no mock.");
+		}
+
+	}
+
+	/// <inheritdoc cref="MockExtensionsForICombinationMockA" />
+	extension(global::Mockolate.MockBehavior behavior)
+	{
+		/// <summary>
+		///     Initializes mocks of type <typeparamref name="T" /> with the given <paramref name="setup" />.
+		/// </summary>
+		/// <remarks>
+		///     The <paramref name="setup" /> is applied to the mock before the constructor is executed. Calling <c>Initialize</c> again overlays additional setups on top of any previously registered ones.
+		/// </remarks>
+		/// <typeparam name="T">The mockable type derived from <see cref="global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA">ICombinationMockA</see> that this setup should apply to.</typeparam>
+		/// <param name="setup">Callback invoked when a new mock of <typeparamref name="T" /> is created.</param>
+		/// <returns>A new <see cref="global::Mockolate.MockBehavior">MockBehavior</see> with the registered initializer. The original instance is unchanged.</returns>
+		public global::Mockolate.MockBehavior Initialize<T>(global::System.Action<global::Mockolate.Mock.IMockSetupForICombinationMockA> setup)
+			where T : global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA
+		{
+			var behaviorAccess = (global::Mockolate.IMockBehaviorAccess)behavior;
+			return behaviorAccess.Set(setup);
+		}
+	}
+
+	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	private sealed class CovariantParameterAdapter<T>(global::Mockolate.Parameters.IParameter inner) : global::Mockolate.Parameters.IParameterMatch<T>
+	{
+		public bool Matches(T value) => inner.Matches(value);
+		public void InvokeCallbacks(T value) => inner.InvokeCallbacks(value);
+		public override string? ToString() => inner.ToString();
+
+		public static global::Mockolate.Parameters.IParameterMatch<T> Wrap(global::Mockolate.Parameters.IParameter<T> parameter)
+			=> parameter is global::Mockolate.Parameters.IParameterMatch<T> direct
+				? direct
+				: new CovariantParameterAdapter<T>(parameter);
 	}
 }
 
