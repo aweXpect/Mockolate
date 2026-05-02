@@ -61,7 +61,6 @@ internal static partial class Mock
 	///     A <see cref="IDefaultValueFactory">IDefaultValueFactory</see> that returns a specified <paramref name="value" /> for the given type
 	///     parameter <typeparamref name="T" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	internal class TypedDefaultValueFactory<T>(T value) : IDefaultValueFactory
 	{
@@ -77,7 +76,6 @@ internal static partial class Mock
 	///     A <see cref="IDefaultValueFactory">IDefaultValueFactory</see> that returns an empty <see cref="global::System.Net.Http.HttpResponseMessage">HttpResponseMessage</see> with the specified
 	///     <paramref name="statusCode" />.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private sealed class HttpResponseMessageFactory(global::System.Net.HttpStatusCode statusCode) : IDefaultValueFactory
 	{
@@ -93,7 +91,6 @@ internal static partial class Mock
 	/// <summary>
 	///     Provides default values for common types used in mocking scenarios.
 	/// </summary>
-	[global::System.Diagnostics.DebuggerNonUserCode]
 	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 	private class DefaultValueGenerator : IDefaultValueGenerator
 	{
@@ -140,7 +137,6 @@ internal static partial class Mock
 			value = null;
 			return false;
 
-			[global::System.Diagnostics.DebuggerNonUserCode]
 			bool Predicate(global::Mockolate.Mock.IDefaultValueFactory f)
 				=> f.IsMatch(type);
 		}
@@ -158,7 +154,6 @@ internal static partial class Mock
 			return false;
 		}
 
-		[global::System.Diagnostics.DebuggerNonUserCode]
 		[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		private sealed class CancellableTaskFactory : IDefaultValueFactory
 		{
@@ -178,7 +173,6 @@ internal static partial class Mock
 			}
 		}
 	#if NET8_0_OR_GREATER
-		[global::System.Diagnostics.DebuggerNonUserCode]
 		[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 		private sealed class CancellableValueTaskFactory : IDefaultValueFactory
 		{
@@ -204,7 +198,6 @@ internal static partial class Mock
 /// <summary>
 ///     Extensions on <see cref="IDefaultValueGenerator">IDefaultValueGenerator</see>
 /// </summary>
-[global::System.Diagnostics.DebuggerNonUserCode]
 [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 internal static class DefaultValueGeneratorExtensions
 {

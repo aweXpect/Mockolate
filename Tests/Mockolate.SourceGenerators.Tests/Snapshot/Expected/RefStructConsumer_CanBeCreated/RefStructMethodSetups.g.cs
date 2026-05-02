@@ -33,7 +33,6 @@ namespace Mockolate.Setup
 	///     Concrete ref-struct-compatible void setup for arity 5. See <see cref="global::Mockolate.Setup.RefStructVoidMethodSetup{T}">RefStructVoidMethodSetup&lt;T&gt;</see>.
 	/// </summary>
 #if !DEBUG
-	[global::System.Diagnostics.DebuggerNonUserCode]
 #endif
 	public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup, global::Mockolate.Setup.IRefStructVoidMethodSetup<T1, T2, T3, T4, T5>
 		where T1 : allows ref struct
@@ -147,7 +146,6 @@ namespace Mockolate.Setup
 	///     Concrete ref-struct-compatible indexer getter setup for arity 5. See <see cref="global::Mockolate.Setup.RefStructIndexerGetterSetup{TValue, T}">RefStructIndexerGetterSetup&lt;TValue, T&gt;</see>.
 	/// </summary>
 #if !DEBUG
-	[global::System.Diagnostics.DebuggerNonUserCode]
 #endif
 	public sealed class RefStructIndexerGetterSetup<TValue, T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup, global::Mockolate.Setup.IRefStructIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>
 		where T1 : allows ref struct
@@ -373,7 +371,6 @@ namespace Mockolate.Setup
 	///     Concrete ref-struct-compatible indexer setter setup for arity 5. See <see cref="global::Mockolate.Setup.RefStructIndexerSetterSetup{TValue, T}">RefStructIndexerSetterSetup&lt;TValue, T&gt;</see>.
 	/// </summary>
 #if !DEBUG
-	[global::System.Diagnostics.DebuggerNonUserCode]
 #endif
 	public sealed class RefStructIndexerSetterSetup<TValue, T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup, global::Mockolate.Setup.IRefStructIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>
 		where T1 : allows ref struct
@@ -493,7 +490,6 @@ namespace Mockolate.Setup
 	///     Concrete ref-struct-compatible combined indexer setup for arity 5. See <see cref="global::Mockolate.Setup.RefStructIndexerSetup{TValue, T}">RefStructIndexerSetup&lt;TValue, T&gt;</see>.
 	/// </summary>
 #if !DEBUG
-	[global::System.Diagnostics.DebuggerNonUserCode]
 #endif
 	public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4, T5> : global::Mockolate.Setup.MethodSetup, global::Mockolate.Setup.IRefStructIndexerSetup<TValue, T1, T2, T3, T4, T5>
 		where T1 : allows ref struct
