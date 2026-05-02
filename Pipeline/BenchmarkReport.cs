@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 // ReSharper disable once RedundantUsingDirective
 using System;
 // ReSharper disable once RedundantUsingDirective
@@ -348,7 +349,7 @@ static class BenchmarkReport
     }
 }
 
-sealed record BenchmarkReportFile(string[] ReportLines, string[] BaselineLines);
+sealed record BenchmarkReportFile(string[] ReportLines, [CanBeNull] string[] BaselineLines);
 
 sealed record TableRow(int RowIndex, string[] Tokens);
 
@@ -362,9 +363,11 @@ sealed class BenchmarkTableParser
 {
     public const int DataRowStartIndex = 2;
 
+    // ReSharper disable InconsistentNaming
     readonly string[] _columnsToRemove;
     int[]? _droppedColumnIndices;
     int _nextRowIndex;
+    // ReSharper restore InconsistentNaming
 
     public BenchmarkTableParser(string[] columnsToRemove)
     {
