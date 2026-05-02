@@ -8,7 +8,7 @@ namespace Mockolate.SourceGenerators.Tests.TestHelpers;
 
 public static partial class SnapshotStorage
 {
-    [GeneratedRegex(@"[ \t]*\[global::System\.Diagnostics\.DebuggerNonUserCode\]\r?\n?", RegexOptions.Compiled)]
+    [GeneratedRegex(@"[ \t]*\[global::System\.Diagnostics\.DebuggerNonUserCode\]\r?\n?")]
     private static partial Regex DebuggerNonUserCodeRegex { get; }
 
     public static string ReadCoverageFile(string coverageFileName)
