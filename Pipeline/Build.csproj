@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net10.0</TargetFramework>
-		<NoWarn>CS0649;CS0169;CA1050;CA1822;CA2211;IDE1006</NoWarn>
+		<NoWarn>CS0649;CS0169;CA1050;CA1822;CA2211;IDE1006;CS8632;NU1901;NU1902;NU1903</NoWarn>
 		<NukeRootDirectory>..</NukeRootDirectory>
 		<NukeScriptDirectory>..</NukeScriptDirectory>
 		<NukeTelemetryVersion>1</NukeTelemetryVersion>
