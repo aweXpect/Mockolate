@@ -5,11 +5,11 @@ on:
         branches: [ main ]
         paths:
             - 'Docs/pages/**'
-            - '.github/workflows/notify-docs-site.yml'
     workflow_dispatch:
 
 jobs:
     dispatch:
+        if: github.ref == 'refs/heads/main'
         name: Trigger Site rebuild
         runs-on: ubuntu-latest
         steps:
