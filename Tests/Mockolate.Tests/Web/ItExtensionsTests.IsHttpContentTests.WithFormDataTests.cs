@@ -47,7 +47,7 @@ public sealed partial class ItExtensionsTests
 				};
 
 				HttpResponseMessage result =
-					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
+					await httpClient.PostAsync("https://www.testably.org", content, CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
@@ -72,7 +72,7 @@ public sealed partial class ItExtensionsTests
 				};
 
 				HttpResponseMessage result =
-					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
+					await httpClient.PostAsync("https://www.testably.org", content, CancellationToken.None);
 
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
@@ -109,7 +109,7 @@ public sealed partial class ItExtensionsTests
 				};
 
 				HttpResponseMessage result =
-					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
+					await httpClient.PostAsync("https://www.testably.org", content, CancellationToken.None);
 
 				await That(httpClient.Mock.Verify
 						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithFormData(values)))
@@ -148,7 +148,7 @@ public sealed partial class ItExtensionsTests
 				};
 
 				HttpResponseMessage result =
-					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
+					await httpClient.PostAsync("https://www.testably.org", content, CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectMatch ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
@@ -189,7 +189,7 @@ public sealed partial class ItExtensionsTests
 				};
 
 				HttpResponseMessage result =
-					await httpClient.PostAsync("https://www.aweXpect.com", content, CancellationToken.None);
+					await httpClient.PostAsync("https://www.testably.org", content, CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectMatch ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);

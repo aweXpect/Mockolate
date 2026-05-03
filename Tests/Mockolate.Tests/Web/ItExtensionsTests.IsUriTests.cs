@@ -83,31 +83,31 @@ public sealed partial class ItExtensionsTests
 				.Do(_ => callbackCount++)
 				.Monitor(out IParameterMonitor<Uri?> monitor));
 
-			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
-			await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
-			await httpClient.GetAsync("https://www.aweXpect.com/bar", CancellationToken.None);
+			await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
+			await httpClient.GetAsync("https://www.testably.org/foo", CancellationToken.None);
+			await httpClient.GetAsync("https://www.testably.org/bar", CancellationToken.None);
 
 			await That(monitor.Values.Select(u => u?.ToString()))
 				.IsEqualTo([
-					"https://www.aweXpect.com/",
-					"https://www.aweXpect.com/foo",
-					"https://www.aweXpect.com/bar",
+					"https://www.testably.org/",
+					"https://www.testably.org/foo",
+					"https://www.testably.org/bar",
 				]).IgnoringCase();
 			await That(callbackCount).IsEqualTo(3);
 		}
 
 		[Theory]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "aweXpect.com*x=123", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=123&y=4", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "http://www.aweXpect.com/foo/bar?x=123&y=4", false)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/baz?x=123&y=4", false)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=124&y=4", false)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https://www.aweXpect.com/foo/bar?x=123", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*www.aweXpect.com*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*/foo/bar*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*x=123*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "*y=4*", true)]
-		[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=4", "https*", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "testably.org*x=123", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "https://www.testably.org/foo/bar?x=123&y=4", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "http://www.testably.org/foo/bar?x=123&y=4", false)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "https://www.testably.org/foo/baz?x=123&y=4", false)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "https://www.testably.org/foo/bar?x=124&y=4", false)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "https://www.testably.org/foo/bar?x=123", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "*www.testably.org*", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "*/foo/bar*", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "*x=123*", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "*y=4*", true)]
+		[InlineData("https://www.testably.org/foo/bar?x=123&y=4", "https*", true)]
 		public async Task ShouldVerifyFullUriWithWildcardMatch(string uri, string pattern, bool expectMatch)
 		{
 			HttpClient httpClient = HttpClient.CreateMock();
@@ -121,8 +121,8 @@ public sealed partial class ItExtensionsTests
 		}
 
 		[Theory]
-		[InlineData("*aweXpect.com")]
-		[InlineData("*aweXpect.com/")]
+		[InlineData("*testably.org")]
+		[InlineData("*testably.org/")]
 		public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
 		{
 			HttpClient httpClient = HttpClient.CreateMock();
@@ -131,7 +131,7 @@ public sealed partial class ItExtensionsTests
 				.ReturnsAsync(HttpStatusCode.OK);
 
 			HttpResponseMessage result =
-				await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+				await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 			await That(result.StatusCode)
 				.IsEqualTo(HttpStatusCode.OK);
@@ -142,11 +142,11 @@ public sealed partial class ItExtensionsTests
 		{
 			HttpClient httpClient = HttpClient.CreateMock();
 			httpClient.Mock.Setup
-				.GetAsync(It.IsUri("*www.aweXpect.com/foo/"))
+				.GetAsync(It.IsUri("*www.testably.org/foo/"))
 				.ReturnsAsync(HttpStatusCode.OK);
 
 			HttpResponseMessage result =
-				await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
+				await httpClient.GetAsync("https://www.testably.org/foo", CancellationToken.None);
 
 			await That(result.StatusCode)
 				.IsEqualTo(HttpStatusCode.NotImplemented);
@@ -181,9 +181,9 @@ public sealed partial class ItExtensionsTests
 		{
 			HttpClient httpClient = HttpClient.CreateMock();
 
-			await httpClient.GetAsync("https://aweXpect.com/", CancellationToken.None);
+			await httpClient.GetAsync("https://testably.org/", CancellationToken.None);
 
-			await That(httpClient.Mock.Verify.GetAsync(It.IsUri("https://aweXpect.com")))
+			await That(httpClient.Mock.Verify.GetAsync(It.IsUri("https://testably.org")))
 				.Once();
 		}
 	}

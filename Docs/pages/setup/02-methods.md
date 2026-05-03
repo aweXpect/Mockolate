@@ -66,4 +66,4 @@ sut.Mock.Setup.Dispense(It.Is("White"), It.IsAny<int>())
 - When you specify overlapping setups, the most recently defined setup takes precedence.
 - All callbacks and return values support more advanced features like conditional execution, frequency control,
   parallel execution, and access to the invocation counter.
-  See [Advanced callback features](https://awexpect.com/docs/mockolate/advanced-features/advanced-callback-features) for details.
+  See [Advanced callback features](../advanced-features/advanced-callback-features) for details.

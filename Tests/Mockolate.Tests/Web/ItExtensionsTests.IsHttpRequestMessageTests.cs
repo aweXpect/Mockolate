@@ -19,7 +19,7 @@ public sealed partial class ItExtensionsTests
 			HttpRequestMessage? captured = null;
 			sut.Do(message => captured = message);
 
-			HttpRequestMessage target = new(HttpMethod.Get, "https://www.aweXpect.com");
+			HttpRequestMessage target = new(HttpMethod.Get, "https://www.testably.org");
 			sut.InvokeCallbacks(target);
 
 			await That(captured).IsSameAs(target);
@@ -52,7 +52,7 @@ public sealed partial class ItExtensionsTests
 		{
 			ItExtensions.IHttpRequestMessageParameter sut = It.IsHttpRequestMessage();
 
-			bool result = sut.Matches(new HttpRequestMessage(HttpMethod.Get, "https://www.aweXpect.com"));
+			bool result = sut.Matches(new HttpRequestMessage(HttpMethod.Get, "https://www.testably.org"));
 
 			await That(result).IsTrue();
 		}
@@ -74,7 +74,7 @@ public sealed partial class ItExtensionsTests
 
 			foreach (ByteArrayContent response in responses)
 			{
-				await httpClient.PostAsync("https://www.aweXpect.com", response, CancellationToken.None);
+				await httpClient.PostAsync("https://www.testably.org", response, CancellationToken.None);
 			}
 
 #if !NETFRAMEWORK
@@ -91,9 +91,9 @@ public sealed partial class ItExtensionsTests
 		{
 			ItExtensions.IHttpRequestMessageParameter sut = It.IsHttpRequestMessage()
 				.WithHeaders(("x-correlation", "abc"));
-			HttpRequestMessage withoutContent = new(HttpMethod.Get, "https://www.aweXpect.com");
+			HttpRequestMessage withoutContent = new(HttpMethod.Get, "https://www.testably.org");
 			withoutContent.Headers.Add("x-correlation", "abc");
-			HttpRequestMessage withContent = new(HttpMethod.Post, "https://www.aweXpect.com")
+			HttpRequestMessage withContent = new(HttpMethod.Post, "https://www.testably.org")
 			{
 				Content = new StringContent("body"),
 			};
@@ -118,7 +118,7 @@ public sealed partial class ItExtensionsTests
 				.SendAsync(It.IsHttpRequestMessage(new HttpMethod(method)))
 				.ReturnsAsync(HttpStatusCode.OK);
 
-			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com",
+			HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org",
 				CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);

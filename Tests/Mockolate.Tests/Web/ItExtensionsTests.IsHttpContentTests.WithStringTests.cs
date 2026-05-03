@@ -28,7 +28,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).Exactly().IgnoringCase())
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -49,7 +49,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).Exactly())
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -71,7 +71,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected).IgnoringCase())
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -93,7 +93,7 @@ public sealed partial class ItExtensionsTests
 						.WithString(c => c.Equals(c.ToLowerInvariant(), StringComparison.Ordinal)))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(content),
 					CancellationToken.None);
 
@@ -114,7 +114,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString(expected))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -132,7 +132,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new ByteArrayContent(bytes),
 					CancellationToken.None);
 
@@ -158,7 +158,7 @@ public sealed partial class ItExtensionsTests
 
 				foreach (StringContent response in responses)
 				{
-					await httpClient.PostAsync("https://www.aweXpect.com", response, CancellationToken.None);
+					await httpClient.PostAsync("https://www.testably.org", response, CancellationToken.None);
 				}
 
 #if !NETFRAMEWORK
@@ -181,7 +181,7 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("foo", Encoding.UTF8, "text/plain");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -203,7 +203,7 @@ public sealed partial class ItExtensionsTests
 				ByteArrayContent content = new(bytes);
 
 				HttpResponseMessage result = await httpClient.PostAsync(
-					"https://www.aweXpect.com", content, CancellationToken.None);
+					"https://www.testably.org", content, CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(HttpStatusCode.OK);
@@ -229,7 +229,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("Content-Type", $"text/plain; charset={charsetHeader}");
 
 				HttpResponseMessage result = await httpClient.PostAsync(
-					"https://www.aweXpect.com", content, CancellationToken.None);
+					"https://www.testably.org", content, CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
@@ -244,7 +244,7 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
-					.PostAsync("https://www.aweXpect.com", new StringContent("foo"), CancellationToken.None);
+					.PostAsync("https://www.testably.org", new StringContent("foo"), CancellationToken.None);
 
 				await That(httpClient.Mock.Verify
 						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithString("foo")))
@@ -271,7 +271,7 @@ public sealed partial class ItExtensionsTests
 				};
 
 				HttpResponseMessage result = await httpClient.PostAsync(
-					"https://www.aweXpect.com", content, CancellationToken.None);
+					"https://www.testably.org", content, CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(HttpStatusCode.OK);
@@ -302,7 +302,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), isHttpContent)
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 

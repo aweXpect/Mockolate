@@ -37,10 +37,10 @@ public sealed partial class HttpClientExtensionsTests
 	{
 		HttpClient httpClient = HttpClient.CreateMock();
 		IMethodSetup setup = httpClient
-			.Mock.Setup.GetAsync(It.IsUri("https://www.aweXpect.com"))
+			.Mock.Setup.GetAsync(It.IsUri("https://www.testably.org"))
 			.ReturnsAsync(HttpStatusCode.Accepted);
 		HttpResponseMessage result =
-			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 		await That(result.StatusCode)
 			.IsEqualTo(HttpStatusCode.Accepted);
@@ -138,20 +138,20 @@ public sealed partial class HttpClientExtensionsTests
 				.Monitor(out IParameterMonitor<string> monitor))
 			.ReturnsAsync(HttpStatusCode.OK);
 
-		await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
-		await httpClient.PostAsync("https://www.aweXpect.com/bar", null, CancellationToken.None);
-		await httpClient.GetAsync("https://www.aweXpect.com/baz", CancellationToken.None);
+		await httpClient.GetAsync("https://www.testably.org/foo", CancellationToken.None);
+		await httpClient.PostAsync("https://www.testably.org/bar", null, CancellationToken.None);
+		await httpClient.GetAsync("https://www.testably.org/baz", CancellationToken.None);
 
 		await That(monitor.Values).IsEqualTo([
-			"https://www.awexpect.com/foo",
-			"https://www.awexpect.com/baz",
+			"https://www.testably.org/foo",
+			"https://www.testably.org/baz",
 		]);
 		await That(callbackCount).IsEqualTo(2);
 	}
 
 	[Theory]
-	[InlineData("*aweXpect.com")]
-	[InlineData("*aweXpect.com/")]
+	[InlineData("*testably.org")]
+	[InlineData("*testably.org/")]
 	public async Task TrailingSlash_ShouldBeIgnored(string matchPattern)
 	{
 		HttpClient httpClient = HttpClient.CreateMock();
@@ -160,7 +160,7 @@ public sealed partial class HttpClientExtensionsTests
 			.ReturnsAsync(HttpStatusCode.OK);
 
 		HttpResponseMessage result =
-			await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 		await That(result.StatusCode)
 			.IsEqualTo(HttpStatusCode.OK);
@@ -171,11 +171,11 @@ public sealed partial class HttpClientExtensionsTests
 	{
 		HttpClient httpClient = HttpClient.CreateMock();
 		httpClient.Mock.Setup
-			.GetAsync(It.Matches("*www.aweXpect.com/foo/"))
+			.GetAsync(It.Matches("*www.testably.org/foo/"))
 			.ReturnsAsync(HttpStatusCode.OK);
 
 		HttpResponseMessage result =
-			await httpClient.GetAsync("https://www.aweXpect.com/foo", CancellationToken.None);
+			await httpClient.GetAsync("https://www.testably.org/foo", CancellationToken.None);
 
 		await That(result.StatusCode)
 			.IsEqualTo(HttpStatusCode.NotImplemented);

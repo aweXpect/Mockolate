@@ -12,9 +12,9 @@ public sealed partial class ItExtensionsTests
 		public sealed class ForHttpAndHttpsTests
 		{
 			[Theory]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("HTTP://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", false)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&y=234", true)]
+			[InlineData("HTTP://www.testably.org/foo/bar?x=123&y=234", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", false)]
 			public async Task ForHttp_ShouldVerifyHttpScheme(string uri, bool expectMatch)
 			{
 				HttpClient httpClient = HttpClient.CreateMock();
@@ -29,9 +29,9 @@ public sealed partial class ItExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("HTTPS://www.aweXpect.com/foo/bar?x=123&y=234", true)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", false)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", true)]
+			[InlineData("HTTPS://www.testably.org/foo/bar?x=123&y=234", true)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&y=234", false)]
 			public async Task ForHttps_ShouldVerifyHttpsScheme(string uri, bool expectMatch)
 			{
 				HttpClient httpClient = HttpClient.CreateMock();

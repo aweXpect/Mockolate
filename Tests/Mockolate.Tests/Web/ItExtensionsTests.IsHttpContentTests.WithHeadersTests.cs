@@ -24,7 +24,7 @@ public sealed partial class ItExtensionsTests
 				StringContent content = new("");
 				content.Headers.Add("foo", "my-value");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -43,7 +43,7 @@ public sealed partial class ItExtensionsTests
 				StringContent content = new("");
 				content.Headers.Add("foo", "my-value");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -68,7 +68,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("x-myHeader2", "bar");
 				content.Headers.Add("x-myHeader3", "baz");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -94,7 +94,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("x-myHeader2", "bar");
 				content.Headers.Add("x-myHeader3", "baz");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -120,7 +120,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("x-myHeader2", "bar");
 				content.Headers.Add("x-myHeader3", "baz");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -140,7 +140,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("x-myHeader", "bar");
 				content.Headers.Add("x-myHeader", "baz");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -160,7 +160,7 @@ public sealed partial class ItExtensionsTests
 				StringContent content = new("");
 				content.Headers.Add(key, "my-value");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -181,7 +181,7 @@ public sealed partial class ItExtensionsTests
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", value);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -207,7 +207,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("bar", "my-bar-value");
 				content.Headers.Add("baz", "my-baz-value");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -233,7 +233,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("x-myHeader2", "bar");
 				content.Headers.Add("x-myHeader3", "baz");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -266,7 +266,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("x-myHeader2", "bar");
 				content.Headers.Add("x-myHeader3", "baz");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 

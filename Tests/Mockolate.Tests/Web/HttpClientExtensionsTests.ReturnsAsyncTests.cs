@@ -21,7 +21,7 @@ public sealed partial class HttpClientExtensionsTests
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode);
 
-			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
 #if NET8_0_OR_GREATER
@@ -43,7 +43,7 @@ public sealed partial class HttpClientExtensionsTests
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, bytes);
 
-			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content).Is<ByteArrayContent>();
@@ -65,7 +65,7 @@ public sealed partial class HttpClientExtensionsTests
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, content);
 
-			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content).Is<ByteArrayContent>();
@@ -84,7 +84,7 @@ public sealed partial class HttpClientExtensionsTests
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, content);
 
-			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content).Is<StringContent>();
@@ -105,7 +105,7 @@ public sealed partial class HttpClientExtensionsTests
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, bytes, mediaType);
 
-			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content).Is<ByteArrayContent>();
@@ -125,7 +125,7 @@ public sealed partial class HttpClientExtensionsTests
 				.GetAsync(It.IsAny<Uri>())
 				.ReturnsAsync(statusCode, content, mediaType);
 
-			HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com", CancellationToken.None);
+			HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org", CancellationToken.None);
 
 			await That(result.StatusCode).IsEqualTo(statusCode);
 			await That(result.Content).Is<StringContent>();

@@ -35,7 +35,7 @@ In both cases, it will block the test execution until the expected interaction o
 If the interaction does not occur within the specified time, a `MockVerificationException` will be thrown.
 
 If you need truly asynchronous verification without blocking the test thread, you can use the
-[aweXpect.Mockolate](https://awexpect.com/aweXpect.Mockolate) extension package which has an asynchronous `Within(TimeSpan)` variant.
+[aweXpect.Mockolate](https://docs.testably.org/extensions/aweXpect.Mockolate) extension package which has an asynchronous `Within(TimeSpan)` variant.
 
 ## Properties
 

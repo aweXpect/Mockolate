@@ -25,7 +25,7 @@ public sealed partial class ItExtensionsTests
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithString("foo")))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new ByteArrayContent(bytes),
 					CancellationToken.None);
 
@@ -45,7 +45,7 @@ public sealed partial class ItExtensionsTests
 				ByteArrayContent content = new([]);
 				content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -65,7 +65,7 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(HttpStatusCode.OK);
 				StringContent content = new("foo", Encoding.UTF8, "text/plain");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -103,7 +103,7 @@ public sealed partial class ItExtensionsTests
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithBytes(b => b.Length > 0 && b[0] == expectedFirstByte)))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new ByteArrayContent(body),
 					CancellationToken.None);
 
@@ -148,7 +148,7 @@ public sealed partial class ItExtensionsTests
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithBytes(expected)))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new ByteArrayContent(body),
 					CancellationToken.None);
 
@@ -169,7 +169,7 @@ public sealed partial class ItExtensionsTests
 				ByteArrayContent content = new([]);
 				content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -189,7 +189,7 @@ public sealed partial class ItExtensionsTests
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithString(expected).IgnoringCase()))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -211,7 +211,7 @@ public sealed partial class ItExtensionsTests
 						.WithString(v => v.Equals(v.ToLowerInvariant(), StringComparison.Ordinal))))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(content),
 					CancellationToken.None);
 
@@ -231,7 +231,7 @@ public sealed partial class ItExtensionsTests
 					.SendAsync(It.IsHttpRequestMessage().WhoseContentIs(c => c.WithString(expected)))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -253,7 +253,7 @@ public sealed partial class ItExtensionsTests
 						.WhoseContentIs(c => c.WithStringMatching(pattern).AsRegex().IgnoringCase()))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -274,7 +274,7 @@ public sealed partial class ItExtensionsTests
 						.WhoseContentIs(c => c.WithStringMatching(pattern).AsRegex()))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -291,7 +291,7 @@ public sealed partial class ItExtensionsTests
 						.WithStringMatching("F[A-Z]*").AsRegex(RegexOptions.IgnoreCase)))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent("foo"),
 					CancellationToken.None);
 
@@ -309,7 +309,7 @@ public sealed partial class ItExtensionsTests
 
 				Task Act()
 				{
-					return httpClient.PostAsync("https://www.aweXpect.com",
+					return httpClient.PostAsync("https://www.testably.org",
 						new StringContent("foo"),
 						CancellationToken.None);
 				}
@@ -335,7 +335,7 @@ public sealed partial class ItExtensionsTests
 						.WithStringMatching(pattern).IgnoringCase()))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 
@@ -359,7 +359,7 @@ public sealed partial class ItExtensionsTests
 						.WithStringMatching(pattern)))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(body),
 					CancellationToken.None);
 

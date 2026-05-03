@@ -16,7 +16,7 @@ namespace Mockolate.Benchmarks;
 public class CallbackBenchmarks : BenchmarksBase
 {
 	/// <summary>
-	///     <see href="https://awexpect.com/Mockolate" />
+	///     <see href="https://docs.testably.org/Mockolate" />
 	/// </summary>
 	[Benchmark(Baseline = true)]
 	public int Callback_Mockolate()

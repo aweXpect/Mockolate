@@ -25,7 +25,7 @@ public sealed partial class HttpClientExtensionsTests
 					.PatchAsync(It.IsAny<string>(), It.IsHttpContent("application/json"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PatchAsync("https://www.testably.org",
 					new StringContent("", Encoding.UTF8, mediaType),
 					CancellationToken.None);
 
@@ -43,11 +43,11 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.Mock.Setup
-					.PatchAsync(It.Matches("*aweXpect.com*"))
+					.PatchAsync(It.Matches("*testably.org*"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.SendAsync(
-					new HttpRequestMessage(new HttpMethod(method), "https://www.aweXpect.com"),
+					new HttpRequestMessage(new HttpMethod(method), "https://www.testably.org"),
 					CancellationToken.None);
 
 				await That(result.StatusCode)
@@ -55,9 +55,9 @@ public sealed partial class HttpClientExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("*aweXpect.com*", true)]
-			[InlineData("*aweXpect.com", true)]
-			[InlineData("aweXpect.com*", false)]
+			[InlineData("*testably.org*", true)]
+			[InlineData("*testably.org", true)]
+			[InlineData("testably.org*", false)]
 			[InlineData("*foo*", false)]
 			public async Task StringUri_ShouldVerifyUriString(string pattern, bool expectSuccess)
 			{
@@ -66,7 +66,7 @@ public sealed partial class HttpClientExtensionsTests
 					.PatchAsync(It.Matches(pattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PatchAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -82,12 +82,12 @@ public sealed partial class HttpClientExtensionsTests
 				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.Mock.Setup
 					.PatchAsync(
-						It.Matches("*aweXpect.com*"),
+						It.Matches("*testably.org*"),
 						It.IsAny<HttpContent>(),
 						It.Satisfies<CancellationToken>(_ => tokenMatches))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PatchAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -103,7 +103,7 @@ public sealed partial class HttpClientExtensionsTests
 				void Act()
 				{
 					httpClient.Mock.Setup
-						.PatchAsync(It.Matches("*aweXpect.com*"))
+						.PatchAsync(It.Matches("*testably.org*"))
 						.ReturnsAsync(HttpStatusCode.OK);
 				}
 
@@ -123,7 +123,7 @@ public sealed partial class HttpClientExtensionsTests
 					.PatchAsync(It.IsAny<Uri>(), It.IsHttpContent("application/json"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PatchAsync("https://www.testably.org",
 					new StringContent("", Encoding.UTF8, mediaType),
 					CancellationToken.None);
 
@@ -141,11 +141,11 @@ public sealed partial class HttpClientExtensionsTests
 			{
 				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.Mock.Setup
-					.PatchAsync(It.IsUri("*aweXpect.com*"))
+					.PatchAsync(It.IsUri("*testably.org*"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.SendAsync(
-					new HttpRequestMessage(new HttpMethod(method), "https://www.aweXpect.com"),
+					new HttpRequestMessage(new HttpMethod(method), "https://www.testably.org"),
 					CancellationToken.None);
 
 				await That(result.StatusCode)
@@ -153,9 +153,9 @@ public sealed partial class HttpClientExtensionsTests
 			}
 
 			[Theory]
-			[InlineData("*aweXpect.com*", true)]
-			[InlineData("*aweXpect.com", true)]
-			[InlineData("aweXpect.com*", true)]
+			[InlineData("*testably.org*", true)]
+			[InlineData("*testably.org", true)]
+			[InlineData("testably.org*", true)]
 			[InlineData("*foo*", false)]
 			public async Task Uri_ShouldVerifyUri(string pattern, bool expectSuccess)
 			{
@@ -164,7 +164,7 @@ public sealed partial class HttpClientExtensionsTests
 					.PatchAsync(It.IsUri(pattern))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PatchAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -180,12 +180,12 @@ public sealed partial class HttpClientExtensionsTests
 				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.Mock.Setup
 					.PatchAsync(
-						It.IsUri("*aweXpect.com*"),
+						It.IsUri("*testably.org*"),
 						It.IsAny<HttpContent>(),
 						It.Satisfies<CancellationToken>(_ => tokenMatches))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PatchAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PatchAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -201,7 +201,7 @@ public sealed partial class HttpClientExtensionsTests
 				void Act()
 				{
 					httpClient.Mock.Setup
-						.PatchAsync(It.IsUri("*aweXpect.com*"))
+						.PatchAsync(It.IsUri("*testably.org*"))
 						.ReturnsAsync(HttpStatusCode.OK);
 				}
 

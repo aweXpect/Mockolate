@@ -27,7 +27,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
 | Hot path       | dynamic-proxy dispatch                       | direct dispatch            |
 
 For side-by-side setup, usage, and verification syntax against Moq, NSubstitute, and FakeItEasy, see the
-[full code comparison](https://awexpect.com/docs/mockolate/comparison).
+[full code comparison](https://docs.testably.org/mockolate/comparison).
 
 Already on Moq or NSubstitute? The companion package [`Mockolate.Migration`](https://github.com/Testably/Mockolate.Migration)
 ships analyzers and code fixers that translate common Moq and NSubstitute patterns to Mockolate syntax in-place: point it
@@ -800,8 +800,8 @@ In both cases, it will block the test execution until the expected interaction o
 If the interaction does not occur within the specified time, a `MockVerificationException` will be thrown.
 
 If you need truly asynchronous verification without blocking the test thread, you can use the
-[aweXpect.Mockolate](https://awexpect.com/aweXpect.Mockolate) NuGet package, which integrates Mockolate's verification
-API with [aweXpect](https://awexpect.com) and offers an awaitable `Within(TimeSpan)` variant.
+[aweXpect.Mockolate](https://docs.testably.org/extensions/aweXpect.Mockolate/) NuGet package, which integrates Mockolate's verification
+API with [aweXpect](https://docs.testably.org/aweXpect) and offers an awaitable `Within(TimeSpan)` variant.
 
 ### Properties
 
@@ -1258,14 +1258,14 @@ httpClient.Mock.Setup
         It.IsHttpContent())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
-HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/api/chocolate/dispense",
+HttpResponseMessage result = await httpClient.PostAsync("https://testably.org/api/chocolate/dispense",
     new StringContent("""
                       { "type": "Dark", "amount": 3 }
                       """, Encoding.UTF8, "application/json"));
 
 await That(result.IsSuccessStatusCode).IsTrue();
 httpClient.Mock.Verify.PostAsync(
-    It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
+    It.IsUri("*testably.org/api/chocolate/dispense*").ForHttps(),
     It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
 ```
 
@@ -1331,12 +1331,12 @@ Filter requests by URI scheme using `.ForHttps()` or `.ForHttp()`:
 ```csharp
 // Match only HTTPS requests
 httpClient.Mock.Verify
-    .GetAsync(It.IsUri("*aweXpect.com*").ForHttps())
+    .GetAsync(It.IsUri("*testably.org*").ForHttps())
     .Once();
 
 // Match only HTTP requests
 httpClient.Mock.Verify
-    .GetAsync(It.IsUri("*aweXpect.com*").ForHttp())
+    .GetAsync(It.IsUri("*testably.org*").ForHttp())
     .Never();
 ```
 
@@ -1346,7 +1346,7 @@ Filter requests by host using `.WithHost(string)`. You can provide a wildcard pa
 
 ```csharp
 httpClient.Mock.Verify
-    .GetAsync(It.IsUri().WithHost("*aweXpect.com*"))
+    .GetAsync(It.IsUri().WithHost("*testably.org*"))
     .Once();
 ```
 
