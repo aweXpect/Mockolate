@@ -42,6 +42,7 @@
         "MutationTestExecution",
         "MutationTests",
         "Pack",
+        "PublishBenchmarkReport",
         "Restore",
         "UnitTests",
         "UpdateReadme"
