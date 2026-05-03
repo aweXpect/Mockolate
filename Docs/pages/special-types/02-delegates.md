@@ -43,7 +43,7 @@ processor.Mock.Setup(It.IsAny<int>(), It.IsRef<int>(v => v + 1), It.IsOut(() => 
 - Use `.Returns(…)` to specify the return value for `Func<T>` delegates.
 - Use `.Throws(…)` to specify an exception to throw.
 - Use `.Returns(…)` and `.Throws(…)` repeatedly to define a sequence of behaviors.
-- Full [parameter matching](https://docs.testably.org/mockolate/setup/parameter-matching) support for delegate
+- Full [parameter matching](../setup/parameter-matching) support for delegate
   parameters including `ref` and `out` parameters.
 
 ## Verification
@@ -89,4 +89,4 @@ processor.Mock.Verify(It.IsAny<int>(), It.IsRef<int>(), It.IsOut<int>()).Once();
 
 **Note:**  
 Delegate parameters also
-support [argument matchers](https://docs.testably.org/mockolate/verify-interactions#argument-matchers).
+support [argument matchers](../verify-interactions#argument-matchers).

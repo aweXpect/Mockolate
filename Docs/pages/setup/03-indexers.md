@@ -77,10 +77,10 @@ sut.Mock.Setup[It.IsAny<string>()].OnGet
 
 - All callbacks support more advanced features like conditional execution, frequency control, parallel execution, and
   access to the invocation counter.
-  See [Advanced callback features](https://docs.testably.org/mockolate/advanced-features/advanced-callback-features) for
+  See [Advanced callback features](../advanced-features/advanced-callback-features) for
   details.
-- You can use the same [parameter matching](https://docs.testably.org/mockolate/setup/parameter-matching)
-  and [interaction](https://docs.testably.org/mockolate/setup/parameter-matching#parameter-interaction) options as for
+- You can use the same [parameter matching](parameter-matching)
+  and [interaction](parameter-matching#parameter-interaction) options as for
   methods.
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific indexer (only for class mocks).
 - When you specify overlapping setups, the most recently defined setup takes precedence.
