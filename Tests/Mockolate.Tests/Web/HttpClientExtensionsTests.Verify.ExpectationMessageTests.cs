@@ -18,7 +18,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				void Act()
 				{
-					httpClient.Mock.Verify.DeleteAsync(It.Matches("*aweXpect*")).AtLeastOnce();
+					httpClient.Mock.Verify.DeleteAsync(It.Matches("*testably*")).AtLeastOnce();
 				}
 
 				await That(Act).Throws<MockVerificationException>()
@@ -32,7 +32,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				void Act()
 				{
-					httpClient.Mock.Verify.DeleteAsync(It.IsUri("*aweXpect*")).AtLeastOnce();
+					httpClient.Mock.Verify.DeleteAsync(It.IsUri("*testably*")).AtLeastOnce();
 				}
 
 				await That(Act).Throws<MockVerificationException>()
@@ -46,7 +46,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				void Act()
 				{
-					httpClient.Mock.Verify.PutAsync(It.Matches("*aweXpect*"), It.IsAny<HttpContent>()).AtLeastOnce();
+					httpClient.Mock.Verify.PutAsync(It.Matches("*testably*"), It.IsAny<HttpContent>()).AtLeastOnce();
 				}
 
 				await That(Act).Throws<MockVerificationException>()
@@ -60,7 +60,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				void Act()
 				{
-					httpClient.Mock.Verify.PutAsync(It.IsUri("*aweXpect*"), It.IsAny<HttpContent>()).AtLeastOnce();
+					httpClient.Mock.Verify.PutAsync(It.IsUri("*testably*"), It.IsAny<HttpContent>()).AtLeastOnce();
 				}
 
 				await That(Act).Throws<MockVerificationException>()
@@ -75,7 +75,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				void Act()
 				{
-					httpClient.Mock.Verify.PatchAsync(It.Matches("*aweXpect*"), It.IsAny<HttpContent>()).AtLeastOnce();
+					httpClient.Mock.Verify.PatchAsync(It.Matches("*testably*"), It.IsAny<HttpContent>()).AtLeastOnce();
 				}
 
 				await That(Act).Throws<MockVerificationException>()
@@ -89,7 +89,7 @@ public sealed partial class HttpClientExtensionsTests
 
 				void Act()
 				{
-					httpClient.Mock.Verify.PatchAsync(It.IsUri("*aweXpect*"), It.IsAny<HttpContent>()).AtLeastOnce();
+					httpClient.Mock.Verify.PatchAsync(It.IsUri("*testably*"), It.IsAny<HttpContent>()).AtLeastOnce();
 				}
 
 				await That(Act).Throws<MockVerificationException>()

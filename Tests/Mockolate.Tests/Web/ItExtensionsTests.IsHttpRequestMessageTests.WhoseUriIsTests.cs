@@ -18,7 +18,7 @@ public sealed partial class ItExtensionsTests
 			{
 				HttpClient httpClient = HttpClient.CreateMock();
 				httpClient.Mock.Setup
-					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs("*awexpect*", u => u.ForHttps()))
+					.SendAsync(It.IsHttpRequestMessage().WhoseUriIs("*testably*", u => u.ForHttps()))
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient.GetAsync(uri, CancellationToken.None);
