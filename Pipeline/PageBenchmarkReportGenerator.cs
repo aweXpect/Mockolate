@@ -39,7 +39,13 @@ public class PageBenchmarkReportGenerator
 	public static (string FullContent, string LimitedContent) Append(CommitInfo commitInfo,
 		string currentFileContent, List<string> benchmarkReportsContents, int limit)
 	{
-		PageReportData pageReport = ParseOrCreate(currentFileContent);
+		if (!currentFileContent.StartsWith(FilePrefix))
+		{
+			throw new NotSupportedException($"The benchmark data file is incorrect (does not start with {FilePrefix})");
+		}
+
+		PageReportData pageReport =
+			JsonSerializer.Deserialize<PageReportData>(currentFileContent.Substring(FilePrefix.Length));
 
 		if (pageReport.Values.Any(r => r.Commits.Any(c => c.Sha == commitInfo.Sha)))
 		{
@@ -67,22 +73,6 @@ public class PageBenchmarkReportGenerator
 		string limitedFileContent =
 			$"{FilePrefix}{JsonSerializer.Serialize(pageReport.Limit(limit), BenchmarkSerializerOptions)}";
 		return (newFileContent, limitedFileContent);
-	}
-
-	internal static PageReportData ParseOrCreate(string currentFileContent)
-	{
-		if (string.IsNullOrWhiteSpace(currentFileContent))
-		{
-			return new PageReportData();
-		}
-
-		if (!currentFileContent.StartsWith(FilePrefix))
-		{
-			throw new NotSupportedException($"The benchmark data file is incorrect (does not start with {FilePrefix})");
-		}
-
-		return JsonSerializer.Deserialize<PageReportData>(currentFileContent.Substring(FilePrefix.Length))
-		       ?? new PageReportData();
 	}
 
 	internal sealed class PageReportData : Dictionary<string, PageReport>

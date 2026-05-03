@@ -166,52 +166,6 @@ public static class BuildExtensions
 	}
 
 	/// <summary>
-	///     Ensures that the given branch exists in the repository. If it does not, creates it pointing at the head
-	///     of <paramref name="sourceBranch" />. Returns <see langword="true" /> if the branch was newly created.
-	/// </summary>
-	public static async Task<bool> EnsureBranchExistsAsync(string branch, string sourceBranch, string githubToken)
-	{
-		using HttpClient client = CreateGithubClient(githubToken);
-		HttpResponseMessage exists = await client.GetAsync(
-			$"{RepositoryApiBaseUrl}/git/ref/heads/{Uri.EscapeDataString(branch)}");
-		if (exists.IsSuccessStatusCode)
-		{
-			return false;
-		}
-
-		HttpResponseMessage source = await client.GetAsync(
-			$"{RepositoryApiBaseUrl}/git/ref/heads/{Uri.EscapeDataString(sourceBranch)}");
-		if (!source.IsSuccessStatusCode)
-		{
-			string errorContent = await source.Content.ReadAsStringAsync();
-			throw new InvalidOperationException(
-				$"Could not read source branch '{sourceBranch}': {errorContent}");
-		}
-
-		string sourceContent = await source.Content.ReadAsStringAsync();
-		using JsonDocument document = JsonDocument.Parse(sourceContent);
-		string sha = document.RootElement.GetProperty("object").GetProperty("sha").GetString();
-
-		string body = JsonSerializer.Serialize(new
-		{
-			@ref = $"refs/heads/{branch}",
-			sha,
-		});
-		HttpResponseMessage create = await client.PostAsync($"{RepositoryApiBaseUrl}/git/refs",
-			new StringContent(body, Encoding.UTF8, "application/json"));
-		if (!create.IsSuccessStatusCode)
-		{
-			string errorContent = await create.Content.ReadAsStringAsync();
-			throw new InvalidOperationException(
-				$"Could not create branch '{branch}' from '{sourceBranch}': {errorContent}");
-		}
-
-		Log.Information("Created branch '{Branch}' from '{SourceBranch}' at {Sha}.", branch, sourceBranch,
-			sha?.Substring(0, 8));
-		return true;
-	}
-
-	/// <summary>
 	///     Reads a file from the given <paramref name="branch" /> using the GitHub contents API.
 	///     Returns <see langword="null" /> if the file does not exist on that branch.
 	/// </summary>
@@ -259,61 +213,6 @@ public static class BuildExtensions
 		}
 	}
 
-	/// <summary>
-	///     Lists successful runs of the given workflow on the given branch (newest first), returning the run id
-	///     plus the head commit metadata (sha, author, date, message).
-	/// </summary>
-	public static async Task<List<WorkflowRunInfo>> ListSuccessfulRunsAsync(string workflowFileName, string branch,
-		int count, string githubToken)
-	{
-		using HttpClient client = CreateGithubClient(githubToken);
-		string url = $"{RepositoryApiBaseUrl}/actions/workflows/{Uri.EscapeDataString(workflowFileName)}/runs" +
-		             $"?status=success&branch={Uri.EscapeDataString(branch)}&per_page={count}";
-		HttpResponseMessage response = await client.GetAsync(url);
-		string responseContent = await response.Content.ReadAsStringAsync();
-		if (!response.IsSuccessStatusCode)
-		{
-			Log.Warning(
-				$"Could not list recent runs for workflow '{workflowFileName}' on branch '{branch}': {responseContent}");
-			return new List<WorkflowRunInfo>();
-		}
-
-		List<WorkflowRunInfo> result = new();
-		using JsonDocument document = JsonDocument.Parse(responseContent);
-		foreach (JsonElement run in document.RootElement.GetProperty("workflow_runs").EnumerateArray())
-		{
-			long id = run.GetProperty("id").GetInt64();
-			string sha = run.GetProperty("head_sha").GetString();
-			string headBranch = run.TryGetProperty("head_branch", out JsonElement hb) ? hb.GetString() : null;
-			string createdAt = run.TryGetProperty("created_at", out JsonElement ca) ? ca.GetString() : null;
-			string author = null;
-			string message = null;
-			string commitDate = createdAt;
-			if (run.TryGetProperty("head_commit", out JsonElement hc) && hc.ValueKind == JsonValueKind.Object)
-			{
-				if (hc.TryGetProperty("message", out JsonElement m))
-				{
-					message = m.GetString()?.Split('\n')[0]?.Trim();
-				}
-
-				if (hc.TryGetProperty("timestamp", out JsonElement ts))
-				{
-					commitDate = ts.GetString() ?? createdAt;
-				}
-
-				if (hc.TryGetProperty("author", out JsonElement aut) && aut.ValueKind == JsonValueKind.Object &&
-				    aut.TryGetProperty("name", out JsonElement an))
-				{
-					author = an.GetString();
-				}
-			}
-
-			result.Add(new WorkflowRunInfo(id, sha, headBranch, author, commitDate, message));
-		}
-
-		return result;
-	}
-
 	private static HttpClient CreateGithubClient(string githubToken)
 	{
 		HttpClient client = new();
@@ -333,8 +232,6 @@ public static class BuildExtensions
 	}
 
 	public record GithubFile(string Content, string Sha);
-
-	public record WorkflowRunInfo(long Id, string Sha, string Branch, string Author, string Date, string Message);
 
 	// ReSharper disable InconsistentNaming
 	// ReSharper disable NotAccessedPositionalProperty.Local

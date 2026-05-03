@@ -25,9 +25,6 @@ partial class Build
 
 	[Parameter("Filter for BenchmarkDotNet - Default is '*'")] readonly string BenchmarkFilter = "*";
 
-	[Parameter("Maximum number of historic Build runs to seed via 'BenchmarkSeedHistory' - Default is 30")]
-	readonly int BenchmarkSeedRunLimit = 30;
-
 	Target BenchmarkDotNet => _ => _
 		.Executes(() =>
 		{
@@ -158,8 +155,6 @@ partial class Build
 				"Appending benchmark data for commit {Sha} ({Author}, {Date}): {Message}",
 				commitInfo.Sha, commitInfo.Author, commitInfo.Date, commitInfo.Message);
 
-			await BuildExtensions.EnsureBranchExistsAsync(BenchmarkBranch, "main", GithubToken);
-
 			BuildExtensions.GithubFile dataFile =
 				await BuildExtensions.ReadBranchFileAsync(BenchmarkDataPath, BenchmarkBranch, GithubToken);
 			BuildExtensions.GithubFile limitedFile =
@@ -167,7 +162,7 @@ partial class Build
 
 			(string updated, string limited) = PageBenchmarkReportGenerator.Append(
 				commitInfo,
-				dataFile?.Content ?? string.Empty,
+				dataFile.Content,
 				benchmarkReports,
 				BenchmarkLimit);
 
@@ -180,104 +175,9 @@ partial class Build
 			string commitMessage =
 				$"Update benchmark for {commitInfo.Sha.Substring(0, 8)}: {commitInfo.Message} by {commitInfo.Author}";
 			await BuildExtensions.WriteBranchFileAsync(BenchmarkDataPath, BenchmarkBranch, commitMessage, updated,
-				dataFile?.Sha, GithubToken);
+				dataFile.Sha, GithubToken);
 			await BuildExtensions.WriteBranchFileAsync(BenchmarkLimitedDataPath, BenchmarkBranch, commitMessage,
-				limited, limitedFile?.Sha, GithubToken);
-		});
-
-	Target BenchmarkSeedHistory => _ => _
-		.Description("Seeds the benchmark data files on the 'benchmarks' branch with results from past " +
-		             "successful 'Build' workflow runs on main, by downloading their Benchmarks-* artifacts. " +
-		             "One-shot tool; safe to re-run (commits already recorded are skipped).")
-		.Requires(() => GithubToken)
-		.Executes(async () =>
-		{
-			List<BuildExtensions.WorkflowRunInfo> runs = await BuildExtensions.ListSuccessfulRunsAsync(
-				"build.yml", "main", BenchmarkSeedRunLimit, GithubToken);
-			if (runs.Count == 0)
-			{
-				Log.Warning("No successful 'Build' runs found on main - nothing to seed.");
-				return;
-			}
-
-			runs.Reverse();
-			Log.Information("Seeding from {Count} historical runs (oldest first).", runs.Count);
-
-			await BuildExtensions.EnsureBranchExistsAsync(BenchmarkBranch, "main", GithubToken);
-
-			BuildExtensions.GithubFile dataFile =
-				await BuildExtensions.ReadBranchFileAsync(BenchmarkDataPath, BenchmarkBranch, GithubToken);
-			BuildExtensions.GithubFile limitedFile =
-				await BuildExtensions.ReadBranchFileAsync(BenchmarkLimitedDataPath, BenchmarkBranch, GithubToken);
-
-			string accumulatedContent = dataFile?.Content ?? string.Empty;
-			string accumulatedLimited = limitedFile?.Content ?? string.Empty;
-			string lastFullSha = dataFile?.Sha;
-			string lastLimitedSha = limitedFile?.Sha;
-			int updatedRuns = 0;
-
-			foreach (BuildExtensions.WorkflowRunInfo run in runs)
-			{
-				AbsolutePath runDirectory = ArtifactsDirectory / "SeedHistory" / run.Id.ToString();
-				runDirectory.CreateOrCleanDirectory();
-				try
-				{
-					await BuildExtensions.DownloadArtifactsFromRunStartingWith(run.Id, "Benchmarks-",
-						runDirectory, GithubToken);
-				}
-				catch (Exception ex)
-				{
-					Log.Warning(ex, "Skipping run #{RunId} ({Sha}): could not download artifacts.", run.Id,
-						run.Sha?.Substring(0, 8));
-					continue;
-				}
-
-				List<string> benchmarkReports = LoadBenchmarkJsonReports(runDirectory / "Benchmarks" / "results");
-				if (benchmarkReports.Count == 0)
-				{
-					Log.Information("Run #{RunId} ({Sha}) had no benchmark JSON reports - skipping.", run.Id,
-						run.Sha?.Substring(0, 8));
-					continue;
-				}
-
-				PageBenchmarkReportGenerator.CommitInfo commitInfo = new(
-					run.Sha,
-					run.Author ?? "unknown",
-					run.Date ?? string.Empty,
-					run.Message ?? string.Empty);
-
-				(string updated, string limited) = PageBenchmarkReportGenerator.Append(
-					commitInfo,
-					accumulatedContent,
-					benchmarkReports,
-					BenchmarkLimit);
-
-				if (string.IsNullOrWhiteSpace(updated))
-				{
-					Log.Information("Run #{RunId} ({Sha}) already recorded - skipping.", run.Id,
-						run.Sha?.Substring(0, 8));
-					continue;
-				}
-
-				accumulatedContent = updated;
-				accumulatedLimited = limited;
-				updatedRuns++;
-				Log.Information("Seeded run #{RunId} ({Sha}): {Message}", run.Id,
-					run.Sha?.Substring(0, 8), commitInfo.Message);
-			}
-
-			if (updatedRuns == 0)
-			{
-				Log.Information("No new benchmark data to seed.");
-				return;
-			}
-
-			string commitMessage = $"Seed historic benchmark data ({updatedRuns} runs)";
-			await BuildExtensions.WriteBranchFileAsync(BenchmarkDataPath, BenchmarkBranch, commitMessage,
-				accumulatedContent, lastFullSha, GithubToken);
-			await BuildExtensions.WriteBranchFileAsync(BenchmarkLimitedDataPath, BenchmarkBranch, commitMessage,
-				accumulatedLimited, lastLimitedSha, GithubToken);
-			Log.Information("Seeded benchmark data from {Count} historical runs.", updatedRuns);
+				limited, limitedFile.Sha, GithubToken);
 		});
 
 	private static List<string> LoadBenchmarkJsonReports(AbsolutePath resultsDirectory)
