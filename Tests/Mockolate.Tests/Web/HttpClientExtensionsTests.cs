@@ -138,9 +138,9 @@ public sealed partial class HttpClientExtensionsTests
 				.Monitor(out IParameterMonitor<string> monitor))
 			.ReturnsAsync(HttpStatusCode.OK);
 
-		await httpClient.GetAsync("https://www.testably.org/foo", CancellationToken.None);
-		await httpClient.PostAsync("https://www.testably.org/bar", null, CancellationToken.None);
-		await httpClient.GetAsync("https://www.testably.org/baz", CancellationToken.None);
+		await httpClient.GetAsync("https://www.Testably.org/foo", CancellationToken.None);
+		await httpClient.PostAsync("https://www.Testably.org/bar", null, CancellationToken.None);
+		await httpClient.GetAsync("https://www.Testably.org/baz", CancellationToken.None);
 
 		await That(monitor.Values).IsEqualTo([
 			"https://www.testably.org/foo",
