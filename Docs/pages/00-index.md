@@ -1,10 +1,10 @@
 # Mockolate
 
-<img align="right" width="200" src="https://raw.githubusercontent.com/aweXpect/Mockolate/main/Docs/logo_256x256.png" alt="Mockolate logo" />
+<img align="right" width="200" src="https://raw.githubusercontent.com/Testably/Mockolate/main/Docs/Mockolate_256x256.png" alt="Mockolate logo" />
 
 [![Nuget](https://img.shields.io/nuget/v/Mockolate)](https://www.nuget.org/packages/Mockolate)
 
-[**Mockolate**](https://github.com/aweXpect/Mockolate) is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators.
+[**Mockolate**](https://github.com/Testably/Mockolate) is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators.
 It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, .NET 10 and .NET Framework 4.8.
 
 - **Source generator-based**: No runtime proxy generation.
@@ -24,7 +24,7 @@ It enables fast, compile-time validated mocking with .NET Standard 2.0, .NET 8, 
 
 For side-by-side setup, usage, and verification syntax against Moq, NSubstitute, and FakeItEasy, see the [full code comparison](08-comparison.md).
 
-Already on Moq or NSubstitute? The companion package [`Mockolate.Migration`](https://github.com/aweXpect/Mockolate.Migration)
+Already on Moq or NSubstitute? The companion package [`Mockolate.Migration`](https://github.com/Testably/Mockolate.Migration)
 ships analyzers and code fixers that translate common Moq and NSubstitute patterns to Mockolate syntax in-place: point it
 at an existing test project and apply the suggested fixes.
 

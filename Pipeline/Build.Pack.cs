@@ -65,7 +65,7 @@ partial class Build
 				if (foundBadge && string.IsNullOrWhiteSpace(line) && !addedImage)
 				{
 					sb.AppendLine();
-					sb.AppendLine($"![Mockolate logo](https://raw.githubusercontent.com/{BuildExtensions.Owner}/{BuildExtensions.Repo}/main/Docs/logo_256x256.png)  ");
+					sb.AppendLine($"![Mockolate logo](https://raw.githubusercontent.com/{BuildExtensions.Owner}/{BuildExtensions.Repo}/main/Docs/Mockolate_256x256.png)  ");
 					addedImage = true;
 				}
 

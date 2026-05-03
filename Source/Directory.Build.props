@@ -10,7 +10,7 @@
 		<RepositoryUrl>https://github.com/Testably/Mockolate.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageIcon>Docs/logo_256x256.png</PackageIcon>
+		<PackageIcon>Docs/logo.png</PackageIcon>
 		<PackageReadmeFile>Docs/README.md</PackageReadmeFile>
 	</PropertyGroup>
 
@@ -51,10 +51,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="$([MSBuild]::GetPathOfFileAbove('logo_256x256.png', '$(MSBuildThisFileDirectory)../Docs/'))"
+		<None Include="$([MSBuild]::GetPathOfFileAbove('Mockolate_256x256.png', '$(MSBuildThisFileDirectory)../Docs/'))"
 			  Pack="true"
 			  PackagePath="/Docs/"
-			  Link="\Docs\logo_256x256.png"/>
+			  Link="\Docs\Mockolate_256x256.png"/>
+		<None Include="$([MSBuild]::GetPathOfFileAbove('logo.png', '$(MSBuildThisFileDirectory)../Docs/'))"
+			  Pack="true"
+			  PackagePath="/Docs/"
+			  Link="\Docs\logo.png"/>
 		<None Include="$(SolutionDir)/Artifacts/README.md"
 			  Condition="Exists('$(SolutionDir)/Artifacts/README.md')"
 			  Pack="true"
