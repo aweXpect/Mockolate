@@ -19,7 +19,7 @@ namespace Mockolate.Benchmarks;
 public class CompleteEventBenchmarks : BenchmarksBase
 {
 	/// <summary>
-	///     <see href="https://awexpect.com/Mockolate" />
+	///     <see href="https://docs.testably.org/Mockolate" />
 	/// </summary>
 	[Benchmark(Baseline = true)]
 	public void Event_Mockolate()

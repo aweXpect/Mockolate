@@ -20,7 +20,7 @@ public sealed partial class ItExtensionsTests
 					1, 2, 3,
 				};
 
-				await httpClient.PostAsync("https://aweXpect.com", new ByteArrayContent(payload), CancellationToken.None);
+				await httpClient.PostAsync("https://testably.org", new ByteArrayContent(payload), CancellationToken.None);
 
 				// The first WithBytes predicate matches (length == 3) while the second does not.
 				// Original (??=): first wins, verification succeeds.
@@ -63,7 +63,7 @@ public sealed partial class ItExtensionsTests
 						It.IsHttpContent().WithBytes(b => b.Length > 0 && b[0] == expectedFirstByte))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new ByteArrayContent(body),
 					CancellationToken.None);
 
@@ -108,7 +108,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(expected))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new ByteArrayContent(body),
 					CancellationToken.None);
 
@@ -126,7 +126,7 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
-					.PostAsync("https://www.aweXpect.com", new ByteArrayContent(body), CancellationToken.None);
+					.PostAsync("https://www.testably.org", new ByteArrayContent(body), CancellationToken.None);
 
 				await That(httpClient.Mock.Verify
 						.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithBytes(body)))

@@ -16,10 +16,10 @@ public class HttpClientTests
 		HttpClient client1 = HttpClient.CreateMock([handler,]);
 		HttpClient client2 = HttpClient.CreateMock([handler,]);
 		IMethodSetup setup = client1.Mock.Setup
-			.GetAsync(It.IsUri("aweXpect.com"))
+			.GetAsync(It.IsUri("testably.org"))
 			.ReturnsAsync(HttpStatusCode.Accepted);
 
-		HttpResponseMessage response = await client2.GetAsync("https://aweXpect.com", CancellationToken.None);
+		HttpResponseMessage response = await client2.GetAsync("https://testably.org", CancellationToken.None);
 
 		await That(response.StatusCode).IsEqualTo(HttpStatusCode.Accepted);
 		await That(client1.Mock.VerifySetup(setup)).Once();

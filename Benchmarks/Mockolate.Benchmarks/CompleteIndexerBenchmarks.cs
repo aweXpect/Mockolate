@@ -20,7 +20,7 @@ public class CompleteIndexerBenchmarks : BenchmarksBase
 	[Params(1, 10)] public int N { get; set; }
 
 	/// <summary>
-	///     <see href="https://awexpect.com/Mockolate" />
+	///     <see href="https://docs.testably.org/Mockolate" />
 	/// </summary>
 	[Benchmark(Baseline = true)]
 	public void Indexer_Mockolate()

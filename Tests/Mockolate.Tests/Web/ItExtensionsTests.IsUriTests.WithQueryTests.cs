@@ -26,7 +26,7 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
-					.GetAsync("https://www.aweXpect.com/foo/bar?x=123&y=234&z=345", CancellationToken.None);
+					.GetAsync("https://www.testably.org/foo/bar?x=123&y=234&z=345", CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
@@ -46,7 +46,7 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
-					.GetAsync("https://www.aweXpect.com/foo/bar?x=123&y=234&z=345", CancellationToken.None);
+					.GetAsync("https://www.testably.org/foo/bar?x=123&y=234&z=345", CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
@@ -66,7 +66,7 @@ public sealed partial class ItExtensionsTests
 					.ReturnsAsync(HttpStatusCode.OK);
 
 				HttpResponseMessage result = await httpClient
-					.GetAsync("https://www.aweXpect.com/foo/bar?x=123&y=234&z=345", CancellationToken.None);
+					.GetAsync("https://www.testably.org/foo/bar?x=123&y=234&z=345", CancellationToken.None);
 
 				await That(result.StatusCode)
 					.IsEqualTo(expectSuccess ? HttpStatusCode.OK : HttpStatusCode.NotImplemented);
@@ -81,20 +81,20 @@ public sealed partial class ItExtensionsTests
 					.GetAsync(It.IsUri().WithQuery(key, value))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com/?x%3c%3e=1%3c2%3e+3",
+				HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org/?x%3c%3e=1%3c2%3e+3",
 					CancellationToken.None);
 
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
 			[Theory]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", "123", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "y", "234", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", "", false)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y", "", false)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", "234", false)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y", "123", false)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&foo&y=234", "foo", "", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "x", "123", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "y", "234", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "x", "", false)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&y=234", "y", "", false)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "x", "234", false)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&y=234", "y", "123", false)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&foo&y=234", "foo", "", true)]
 			public async Task WithQueryParameter_ShouldVerifyQueryParameters(string uri, string key, string value,
 				bool expectMatch)
 			{
@@ -125,23 +125,23 @@ public sealed partial class ItExtensionsTests
 					.GetAsync(It.IsUri().WithQuery(queryParameters))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.GetAsync("https://www.aweXpect.com?x=123&y=234&z=345",
+				HttpResponseMessage result = await httpClient.GetAsync("https://www.testably.org?x=123&y=234&z=345",
 					CancellationToken.None);
 
 				await That(result.StatusCode).IsEqualTo(HttpStatusCode.OK);
 			}
 
 			[Theory]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "?x=123&y=234", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "?y=234&x=123&", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x=123", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "y=234", true)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x", false)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y", false)]
-			[InlineData("https://www.aweXpect.com/foo/bar?x=123&y=234", "x=234", false)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "y=123", false)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&y=234", "x=123&y=23", false)]
-			[InlineData("http://www.aweXpect.com/foo/bar?x=123&foo&y=234", "foo", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "?x=123&y=234", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "?y=234&x=123&", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "x=123", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "y=234", true)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "x", false)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&y=234", "y", false)]
+			[InlineData("https://www.testably.org/foo/bar?x=123&y=234", "x=234", false)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&y=234", "y=123", false)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&y=234", "x=123&y=23", false)]
+			[InlineData("http://www.testably.org/foo/bar?x=123&foo&y=234", "foo", true)]
 			public async Task WithQueryString_ShouldVerifyQueryParameters(string uri, string query, bool expectMatch)
 			{
 				HttpClient httpClient = HttpClient.CreateMock();

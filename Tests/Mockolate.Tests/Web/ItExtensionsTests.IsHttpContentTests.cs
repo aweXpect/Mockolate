@@ -95,7 +95,7 @@ public sealed partial class ItExtensionsTests
 
 			foreach (ByteArrayContent response in responses)
 			{
-				await httpClient.PostAsync("https://www.aweXpect.com", response, CancellationToken.None);
+				await httpClient.PostAsync("https://www.testably.org", response, CancellationToken.None);
 			}
 
 #if !NETFRAMEWORK
@@ -121,7 +121,7 @@ public sealed partial class ItExtensionsTests
 			ByteArrayContent content = new(bytes);
 			content.Headers.Add("x-my-header", "my-value");
 
-			HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+			HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 				content,
 				CancellationToken.None);
 
@@ -141,7 +141,7 @@ public sealed partial class ItExtensionsTests
 			ByteArrayContent content = new(bytes);
 			content.Headers.Add("x-my-header", "my-value");
 
-			HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+			HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 				content,
 				CancellationToken.None);
 
@@ -161,7 +161,7 @@ public sealed partial class ItExtensionsTests
 			ByteArrayContent content = new([]);
 			content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
-			HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+			HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 				content,
 				CancellationToken.None);
 
@@ -192,7 +192,7 @@ public sealed partial class ItExtensionsTests
 			ByteArrayContent content = new([]);
 			content.Headers.ContentType = new MediaTypeHeaderValue(mediaType);
 
-			HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+			HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 				content,
 				CancellationToken.None);
 

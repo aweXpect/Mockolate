@@ -13,14 +13,14 @@ httpClient.Mock.Setup
         It.IsHttpContent())
     .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
 
-HttpResponseMessage result = await httpClient.PostAsync("https://aweXpect.com/api/chocolate/dispense",
+HttpResponseMessage result = await httpClient.PostAsync("https://testably.org/api/chocolate/dispense",
     new StringContent("""
                       { "type": "Dark", "amount": 3 }
                       """, Encoding.UTF8, "application/json"));
 
 await That(result.IsSuccessStatusCode).IsTrue();
 httpClient.Mock.Verify.PostAsync(
-    It.IsUri("*aweXpect.com/api/chocolate/dispense*").ForHttps(),
+    It.IsUri("*testably.org/api/chocolate/dispense*").ForHttps(),
     It.IsHttpContent("application/json").WithStringMatching("*\"type\": \"Dark\"*\"amount\": 3*")).Once();
 ```
 
@@ -86,12 +86,12 @@ Filter requests by URI scheme using `.ForHttps()` or `.ForHttp()`:
 ```csharp
 // Match only HTTPS requests
 httpClient.Mock.Verify
-    .GetAsync(It.IsUri("*aweXpect.com*").ForHttps())
+    .GetAsync(It.IsUri("*testably.org*").ForHttps())
     .Once();
 
 // Match only HTTP requests
 httpClient.Mock.Verify
-    .GetAsync(It.IsUri("*aweXpect.com*").ForHttp())
+    .GetAsync(It.IsUri("*testably.org*").ForHttp())
     .Never();
 ```
 
@@ -101,7 +101,7 @@ Filter requests by host using `.WithHost(string)`. You can provide a wildcard pa
 
 ```csharp
 httpClient.Mock.Verify
-    .GetAsync(It.IsUri().WithHost("*aweXpect.com*"))
+    .GetAsync(It.IsUri().WithHost("*testably.org*"))
     .Once();
 ```
 

@@ -30,7 +30,7 @@ public sealed partial class ItExtensionsTests
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", "foo");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -56,7 +56,7 @@ public sealed partial class ItExtensionsTests
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", "foo");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -82,7 +82,7 @@ public sealed partial class ItExtensionsTests
 				StringContent content = new("");
 				content.Headers.Add("x-myHeader", "foo");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -109,7 +109,7 @@ public sealed partial class ItExtensionsTests
 				content.Headers.Add("x-myHeader2", "bar");
 				content.Headers.Add("x-myHeader3", "baz");
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					content,
 					CancellationToken.None);
 
@@ -130,7 +130,7 @@ public sealed partial class ItExtensionsTests
 						             """))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -150,7 +150,7 @@ public sealed partial class ItExtensionsTests
 					.SendAsync(It.IsHttpRequestMessage().WithHeaders(key, "Basic abcdef"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -171,7 +171,7 @@ public sealed partial class ItExtensionsTests
 					.SendAsync(It.IsHttpRequestMessage().WithHeaders("Authorization", $"Basic {value}"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -195,7 +195,7 @@ public sealed partial class ItExtensionsTests
 							("Accept", "application/json")))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 
@@ -219,7 +219,7 @@ public sealed partial class ItExtensionsTests
 							("Accept", "application/json")))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent(""),
 					CancellationToken.None);
 

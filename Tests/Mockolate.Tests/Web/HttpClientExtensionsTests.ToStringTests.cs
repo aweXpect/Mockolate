@@ -16,11 +16,11 @@ public sealed partial class HttpClientExtensionsTests
 
 			void Act()
 			{
-				httpClient.Mock.Verify.GetAsync(It.Matches("*aweXpect.com*")).Once();
+				httpClient.Mock.Verify.GetAsync(It.Matches("*testably.org*")).Once();
 			}
 
 			await That(Act).Throws<MockVerificationException>()
-				.WithMessage("*GET-Request with Uri matching It.Matches(\"*aweXpect.com*\")*").AsWildcard();
+				.WithMessage("*GET-Request with Uri matching It.Matches(\"*testably.org*\")*").AsWildcard();
 		}
 
 		[Fact]

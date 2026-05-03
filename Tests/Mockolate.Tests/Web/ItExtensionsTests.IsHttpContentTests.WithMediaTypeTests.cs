@@ -23,7 +23,7 @@ public sealed partial class ItExtensionsTests
 					.PostAsync(It.IsAny<Uri>(), It.IsHttpContent().WithMediaType("application/json"))
 					.ReturnsAsync(HttpStatusCode.OK);
 
-				HttpResponseMessage result = await httpClient.PostAsync("https://www.aweXpect.com",
+				HttpResponseMessage result = await httpClient.PostAsync("https://www.testably.org",
 					new StringContent("", Encoding.UTF8, mediaType),
 					CancellationToken.None);
 
