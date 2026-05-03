@@ -29,6 +29,7 @@
         "BenchmarkDotNet",
         "BenchmarkResult",
         "Benchmarks",
+        "BenchmarkSeedHistory",
         "CalculateNugetVersion",
         "Clean",
         "CodeAnalysis",
@@ -42,6 +43,7 @@
         "MutationTestExecution",
         "MutationTests",
         "Pack",
+        "PublishBenchmarkReport",
         "Restore",
         "UnitTests",
         "UpdateReadme"
@@ -121,6 +123,11 @@
         "BenchmarkFilter": {
           "type": "string",
           "description": "Filter for BenchmarkDotNet - Default is '*'"
+        },
+        "BenchmarkSeedRunLimit": {
+          "type": "integer",
+          "description": "Maximum number of historic Build runs to seed via 'BenchmarkSeedHistory' - Default is 30",
+          "format": "int32"
         },
         "Configuration": {
           "type": "string",

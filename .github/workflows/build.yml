@@ -103,6 +103,30 @@ jobs:
                         ./Artifacts/*
                     if-no-files-found: ignore
 
+    publish-benchmark-report:
+        name: "Publish Benchmark Report"
+        needs: [ benchmarks ]
+        if: github.ref == 'refs/heads/main'
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        env:
+            DOTNET_NOLOGO: true
+        steps:
+            -   uses: actions/checkout@v6
+                with:
+                    fetch-depth: 0
+            -   name: Setup .NET SDKs
+                uses: actions/setup-dotnet@v5
+                with:
+                    dotnet-version: |
+                        10.0.x
+            -   name: Publish benchmark report
+                run: ./build.sh PublishBenchmarkReport
+                env:
+                    GithubToken: ${{ secrets.GITHUB_TOKEN }}
+                    WorkflowRunId: ${{ github.run_id }}
+
     mutation-tests:
         name: "Mutation tests"
         runs-on: ubuntu-latest
