@@ -4,8 +4,8 @@
 
 [![Nuget](https://img.shields.io/nuget/v/Mockolate)](https://www.nuget.org/packages/Mockolate)
 [![Build](https://github.com/Testably/Mockolate/actions/workflows/build.yml/badge.svg)](https://github.com/Testably/Mockolate/actions/workflows/build.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=aweXpect_Mockolate)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=aweXpect_Mockolate&metric=coverage)](https://sonarcloud.io/summary/overall?id=aweXpect_Mockolate)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Testably_Mockolate&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Testably_Mockolate)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Testably_Mockolate&metric=coverage)](https://sonarcloud.io/summary/overall?id=Testably_Mockolate)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FTestably%2FMockolate%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/Testably/Mockolate/main)
 
 **Mockolate** is a modern, strongly-typed, AOT-compatible mocking library for .NET, powered by source generators.

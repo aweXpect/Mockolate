@@ -17,7 +17,7 @@ partial class Build
 		{
 			SonarScannerTasks.SonarScannerBegin(s => s
 				.SetOrganization("awexpect")
-				.SetProjectKey("aweXpect_Mockolate")
+				.SetProjectKey("Testably_Mockolate")
 				.AddVSTestReports(TestResultsDirectory / "*.trx")
 				.AddOpenCoverPaths(TestResultsDirectory / "reports" / "OpenCover.xml")
 				.SetPullRequestOrBranchName(GitHubActions, GitVersion)
