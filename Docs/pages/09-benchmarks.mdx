@@ -1,0 +1,150 @@
+---
+title: Benchmarks
+sidebar_position: 9
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import MockolateBenchmarkResult from '@site/src/components/MockolateBenchmarkResult';
+
+These benchmarks measure Mockolate's runtime overhead against
+[Moq](https://github.com/devlooped/moq),
+[NSubstitute](https://nsubstitute.github.io/),
+[FakeItEasy](https://fakeiteasy.github.io/),
+[TUnit.Mocks](https://github.com/thomhurst/TUnit/) and
+[Imposter](https://github.com/themidnightgospel/Imposter) for the same end-to-end mocking flow.
+
+:::info[Methodology]
+
+- **Suite**: [`Mockolate.Benchmarks`](https://github.com/Testably/Mockolate/tree/main/Benchmarks/Mockolate.Benchmarks) driven by [BenchmarkDotNet](https://benchmarkdotnet.org/).
+- **Job**: `MediumRun` with the in-process toolchain.
+- **Runner**: `ubuntu-latest` GitHub Actions agent, refreshed on every push to `main`.
+- Each row shows time and allocated memory, sorted fastest-first; bars are scaled within the row so length corresponds to magnitude. The Mockolate row is highlighted as the baseline (`1.00x`) and every other row shows its ratio relative to Mockolate. **Lower is better.**
+- Benchmarks parameterised with `[Params(1, 10)]` (Method/Property/Indexer) repeat their inner body 1× or 10× to surface fixed-cost vs per-call overhead — switch between them with the inline tabs.
+
+:::
+
+<Tabs groupId="mockolateBenchmark">
+
+<TabItem value="Method" label="Method">
+
+Setup a method, call it `N` times with `It.IsAny<int>()`, then verify it ran exactly `N` times.
+
+<MockolateBenchmarkResult name="Method" />
+
+```csharp title="Mockolate"
+IMyMethodInterface sut = IMyMethodInterface.CreateMock();
+sut.Mock.Setup.MyFunc(It.IsAny<int>()).Returns(true);
+
+for (int i = 0; i < N; i++)
+    sut.MyFunc(42);
+
+sut.Mock.Verify.MyFunc(It.IsAny<int>()).Exactly(N);
+```
+
+[View source on GitHub →](https://github.com/Testably/Mockolate/blob/main/Benchmarks/Mockolate.Benchmarks/CompleteMethodBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="Property" label="Property">
+
+Initialise an `int` property to 42, read+write it `N` times, then verify the getter and setter each ran exactly `N` times.
+
+<MockolateBenchmarkResult name="Property" />
+
+```csharp title="Mockolate"
+IMyPropertyInterface sut = IMyPropertyInterface.CreateMock();
+sut.Mock.Setup.Counter.InitializeWith(42);
+
+for (int i = 0; i < N; i++)
+{
+    _ = sut.Counter;
+    sut.Counter = i;
+}
+
+sut.Mock.Verify.Counter.Got().Exactly(N);
+sut.Mock.Verify.Counter.Set(It.IsAny<int>()).Exactly(N);
+```
+
+[View source on GitHub →](https://github.com/Testably/Mockolate/blob/main/Benchmarks/Mockolate.Benchmarks/CompletePropertyBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="Indexer" label="Indexer">
+
+Setup a `string this[int]` indexer, read+write it `N` times, then verify the getter and setter each ran exactly `N` times.
+
+<MockolateBenchmarkResult name="Indexer" />
+
+```csharp title="Mockolate"
+IMyIndexerInterface sut = IMyIndexerInterface.CreateMock();
+sut.Mock.Setup[It.IsAny<int>()].Returns("foo");
+
+for (int i = 0; i < N; i++)
+{
+    _ = sut[42];
+    sut[42] = "bar";
+}
+
+sut.Mock.Verify[It.IsAny<int>()].Got().Exactly(N);
+sut.Mock.Verify[It.IsAny<int>()].Set(It.IsAny<string>()).Exactly(N);
+```
+
+[View source on GitHub →](https://github.com/Testably/Mockolate/blob/main/Benchmarks/Mockolate.Benchmarks/CompleteIndexerBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="Event" label="Event">
+
+Subscribe to a mock event, raise it once, then verify the subscription was recorded.
+
+<MockolateBenchmarkResult name="Event" />
+
+```csharp title="Mockolate"
+IMyEventInterface sut = IMyEventInterface.CreateMock();
+EventHandler handler = (_, _) => { };
+
+sut.SomeEvent += handler;
+sut.Mock.Raise.SomeEvent(null, EventArgs.Empty);
+
+sut.Mock.Verify.SomeEvent.Subscribed().Once();
+```
+
+[View source on GitHub →](https://github.com/Testably/Mockolate/blob/main/Benchmarks/Mockolate.Benchmarks/CompleteEventBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="Callback" label="Callback">
+
+Configure a callback on a method invocation and trigger it twice — measures the per-invocation cost of side-effect setups.
+
+<MockolateBenchmarkResult name="Callback" />
+
+```csharp title="Mockolate"
+int count = 0;
+IMyCallbackInterface sut = IMyCallbackInterface.CreateMock();
+sut.Mock.Setup.MyFunc(It.IsAny<int>()).Do(() => count++);
+
+sut.MyFunc(1);
+sut.MyFunc(2);
+```
+
+[View source on GitHub →](https://github.com/Testably/Mockolate/blob/main/Benchmarks/Mockolate.Benchmarks/CallbackBenchmarks.cs)
+
+</TabItem>
+
+<TabItem value="CreateMock" label="Create mock" default>
+
+Cost of constructing an empty mock — no setup, no invocations, no verification. The fixed overhead every test pays.
+
+<MockolateBenchmarkResult name="CreateMock" />
+
+```csharp title="Mockolate"
+ICalculatorService.CreateMock();
+```
+
+[View source on GitHub →](https://github.com/Testably/Mockolate/blob/main/Benchmarks/Mockolate.Benchmarks/MockCreationBenchmarks.cs)
+
+</TabItem>
+
+</Tabs>

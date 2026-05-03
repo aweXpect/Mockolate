@@ -62,4 +62,4 @@ at an existing test project and apply the suggested fixes.
    ```
 
    For a richer walkthrough combining properties, indexers, events, and stateful setup,
-   see [A complete example](09-complete-example.md).
+   see [A complete example](10-complete-example.md).
