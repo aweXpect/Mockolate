@@ -45,7 +45,7 @@ sut.Mock.InScenario("empty")
 
 sut.Mock.InScenario("loaded")
     .Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
-    .Throws<OutOfStockException>()
+    .Returns(true)
     .TransitionTo("empty");
 ```
 
