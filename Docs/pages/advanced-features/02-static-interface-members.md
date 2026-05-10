@@ -1,22 +1,33 @@
-# Static interface members (.NET 8+)
+# Static interface members
 
 Mockolate supports mocking static abstract and static virtual members on interfaces (.NET 8+). Static member
 invocations use async-flow scoping, meaning each mock instance has its own isolated static member context, this makes parallel test execution safe.
 
 Static members can be set up, raised, and verified just like instance members, but through the `Mock.SetupStatic`, `Mock.RaiseStatic`, and `Mock.VerifyStatic` properties:
 
+**Example**
+
 ```csharp
+public interface IChocolateFactory
+{
+    static abstract string DefaultRecipe { get; set; }
+    static abstract int ProduceBatch(string type, int amount);
+    static abstract event Action<int> BatchCompleted;
+}
+
+IChocolateFactory sut = IChocolateFactory.CreateMock();
+
 // Setup static members
-sut.Mock.SetupStatic.AbstractStaticMethod().Returns("some-value");
-sut.Mock.SetupStatic.AbstractStaticProperty.Returns("some-value");
+sut.Mock.SetupStatic.ProduceBatch(It.Is("Dark"), It.IsAny<int>()).Returns(42);
+sut.Mock.SetupStatic.DefaultRecipe.Returns("Dark");
 
 // Raise static events
-sut.Mock.RaiseStatic.AbstractStaticEvent(value);
+sut.Mock.RaiseStatic.BatchCompleted(42);
 
 // Verify static interactions
-sut.Mock.VerifyStatic.AbstractStaticMethod().Once();
-sut.Mock.VerifyStatic.AbstractStaticProperty.Got().Once();
-sut.Mock.VerifyStatic.AbstractStaticEvent.Subscribed().Once();
+sut.Mock.VerifyStatic.ProduceBatch(It.Is("Dark"), It.IsAny<int>()).Once();
+sut.Mock.VerifyStatic.DefaultRecipe.Got().Once();
+sut.Mock.VerifyStatic.BatchCompleted.Subscribed().Once();
 ```
 
 **Notes:**
