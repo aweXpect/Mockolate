@@ -124,7 +124,7 @@ int result = sut.Process("HELLO");
 
 Parameter matchers are covariant in their type argument: when a method declares a parameter of a base type, you can
 narrow the match by supplying a matcher for a derived type. Only calls whose actual argument is an instance of that
-derived type (or a further-derived type) will match — calls passing other runtime types fall through to other setups.
+derived type (or a further-derived type) match the setup; calls passing other runtime types fall through.
 
 ```csharp
 public abstract class Chocolate { }
@@ -144,7 +144,7 @@ sut.Mock.Setup.Add(It.IsAny<DarkChocolate>()).Returns(true);
 bool dark = sut.Add(new DarkChocolate());  // true, matched the DarkChocolate setup
 bool milk = sut.Add(new MilkChocolate());  // false, no setup matched -> default
 
-// Verifications are covariant too — only dark-chocolate additions are counted.
+// Verifications are covariant too: only dark-chocolate additions are counted.
 sut.Mock.Verify.Add(It.IsAny<DarkChocolate>()).Once();
 ```
 

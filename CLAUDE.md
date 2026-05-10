@@ -114,5 +114,5 @@ All PRs must pass:
 - New public API must have XML doc comments
 - All assemblies are **strong-named** (`Directory.Build.props`)
 - Package versions managed centrally in `Directory.Packages.props`
-- Documentation lives in `Docs/pages/` and mirrors the README; published at https://awexpect.com/docs/mockolate/index
+- Documentation lives in `Docs/pages/`; the README links to it for reference content. Published at https://docs.testably.org/Mockolate/
 - Examples go in `Mockolate.ExampleTests`, not inline in test helper files
