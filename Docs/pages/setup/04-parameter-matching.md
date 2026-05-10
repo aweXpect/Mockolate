@@ -124,7 +124,7 @@ int result = sut.Process("HELLO");
 
 Parameter matchers are covariant in their type argument: when a method declares a parameter of a base type, you can
 narrow the match by supplying a matcher for a derived type. Only calls whose actual argument is an instance of that
-derived type will match — calls passing sibling or base-only typed values fall through to other setups.
+derived type (or a further-derived type) will match — calls passing other runtime types fall through to other setups.
 
 ```csharp
 public abstract class Chocolate { }
