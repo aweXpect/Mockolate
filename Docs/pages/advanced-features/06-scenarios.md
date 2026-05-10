@@ -1,8 +1,8 @@
 # Scenarios
 
 Scenarios let you define multiple sets of setups on a single mock and switch between them at runtime. This is useful
-when the collaborator behaves differently depending on its internal state &mdash; for example a connection that starts
-disconnected, becomes connected after `Connect()`, and times out after a failure.
+when the collaborator behaves differently depending on its internal state &mdash; for example a chocolate dispenser
+that starts empty, becomes loaded after `Refill(...)`, and runs out of stock after dispensing.
 
 A mock always has an *active scenario* (the empty string `""` by default). When a member is accessed, Mockolate looks
 for a matching setup in the active scenario first, then falls back to the default scope.
@@ -13,17 +13,19 @@ Use `InScenario(name)` to scope setups to a named scenario. It returns a scope w
 `sut.Mock.Setup` but targets the scenario's bucket:
 
 ```csharp
-sut.Mock.InScenario("disconnected").Setup.Ping().Throws<TimeoutException>();
-sut.Mock.InScenario("connected").Setup.Ping().Returns(true);
+sut.Mock.InScenario("empty").Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Throws<OutOfStockException>();
+sut.Mock.InScenario("loaded").Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Returns(true);
 ```
 
 A callback overload batches multiple setups into the same scenario:
 
 ```csharp
-sut.Mock.InScenario("connected", scope =>
+sut.Mock.InScenario("loaded", scope =>
 {
-    scope.Setup.Ping().Returns(true);
-    scope.Setup.Send(It.IsAny<string>()).Returns(true);
+    scope.Setup.Dispense(It.IsAny<string>(), It.IsAny<int>()).Returns(true);
+    scope.Setup.Refill(It.IsAny<int>()).Returns(true);
 });
 ```
 
@@ -36,18 +38,18 @@ the active scenario when the setup fires. The transition runs as a parallel side
 the return value or throw behaviour.
 
 ```csharp
-sut.Mock.InScenario("disconnected")
-    .Setup.Connect()
+sut.Mock.InScenario("empty")
+    .Setup.Refill(It.IsAny<int>())
     .Returns(true)
-    .TransitionTo("connected");
+    .TransitionTo("loaded");
 
-sut.Mock.InScenario("connected")
-    .Setup.Ping()
-    .Throws<TimeoutException>()
-    .TransitionTo("disconnected");
+sut.Mock.InScenario("loaded")
+    .Setup.Dispense(It.IsAny<string>(), It.IsAny<int>())
+    .Throws<OutOfStockException>()
+    .TransitionTo("empty");
 ```
 
-You can also change the active scenario manually via `sut.Mock.TransitionTo("connected");`, which is useful for
+You can also change the active scenario manually via `sut.Mock.TransitionTo("loaded");`, which is useful for
 arranging the starting state.
 
 ### Resolution rules
