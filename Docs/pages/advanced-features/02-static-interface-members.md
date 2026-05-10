@@ -21,13 +21,27 @@ IChocolateFactory sut = IChocolateFactory.CreateMock();
 sut.Mock.SetupStatic.ProduceBatch(It.Is("Dark"), It.IsAny<int>()).Returns(42);
 sut.Mock.SetupStatic.DefaultRecipe.Returns("Dark");
 
-// Raise static events
-sut.Mock.RaiseStatic.BatchCompleted(42);
+// Static abstract members can only be invoked through a generic type parameter,
+// so route the call through a helper constrained to the interface and pass the
+// generated mock type (Mock.IChocolateFactory) as the type argument.
+string recipe = ReadRecipe<Mock.IChocolateFactory>();
+int produced = Produce<Mock.IChocolateFactory>("Dark", 10);
+Subscribe<Mock.IChocolateFactory>(amount => Console.WriteLine($"Batch of {amount} ready"));
+
+// Raise static events to the registered handlers
+sut.Mock.RaiseStatic.BatchCompleted(produced);
 
 // Verify static interactions
 sut.Mock.VerifyStatic.ProduceBatch(It.Is("Dark"), It.IsAny<int>()).Once();
 sut.Mock.VerifyStatic.DefaultRecipe.Got().Once();
 sut.Mock.VerifyStatic.BatchCompleted.Subscribed().Once();
+
+static string ReadRecipe<T>() where T : IChocolateFactory
+    => T.DefaultRecipe;
+static int Produce<T>(string type, int amount) where T : IChocolateFactory
+    => T.ProduceBatch(type, amount);
+static void Subscribe<T>(Action<int> handler) where T : IChocolateFactory
+    => T.BatchCompleted += handler;
 ```
 
 **Notes:**
