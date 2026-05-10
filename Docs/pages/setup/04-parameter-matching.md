@@ -120,6 +120,34 @@ int result = sut.Process("HELLO");
 // result == 42
 ```
 
+### Covariant Type Matching
+
+Parameter matchers are covariant in their type argument: when a method declares a parameter of a base type, you can
+narrow the match by supplying a matcher for a derived type. Only calls whose actual argument is an instance of that
+derived type (or a further-derived type) will match — calls passing other runtime types fall through to other setups.
+
+```csharp
+public abstract class Chocolate { }
+public class DarkChocolate : Chocolate { }
+public class MilkChocolate : Chocolate { }
+
+public interface IChocolateBox
+{
+    bool Add(Chocolate chocolate);
+}
+
+IChocolateBox sut = IChocolateBox.CreateMock();
+
+// Narrow the match to DarkChocolate, even though Add accepts any Chocolate.
+sut.Mock.Setup.Add(It.IsAny<DarkChocolate>()).Returns(true);
+
+bool dark = sut.Add(new DarkChocolate());  // true, matched the DarkChocolate setup
+bool milk = sut.Add(new MilkChocolate());  // false, no setup matched -> default
+
+// Verifications are covariant too — only dark-chocolate additions are counted.
+sut.Mock.Verify.Add(It.IsAny<DarkChocolate>()).Once();
+```
+
 ### Span Parameters (.NET 8+)
 
 - `It.IsSpan<T>(predicate)`: Matches `Span<T>` parameters that satisfy the predicate.
