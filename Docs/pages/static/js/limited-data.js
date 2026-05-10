@@ -144,6 +144,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -170,7 +176,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -200,7 +207,8 @@ window.BENCHMARK_DATA = {
           322.78922561804455,
           337.4766311645508,
           328.5691133499146,
-          377.2716012734633
+          377.2716012734633,
+          255.09518791834515
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -215,6 +223,7 @@ window.BENCHMARK_DATA = {
           1832,
           1832,
           1832,
+          1720,
           1720,
           1720,
           1720,
@@ -273,7 +282,8 @@ window.BENCHMARK_DATA = {
           71325.96527569111,
           99080.86520182292,
           71697.89055989584,
-          73652.80139160156
+          73652.80139160156,
+          57059.349291992185
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -308,7 +318,8 @@ window.BENCHMARK_DATA = {
           9096,
           9096,
           9096,
-          9090
+          9090,
+          9095
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -346,7 +357,8 @@ window.BENCHMARK_DATA = {
           4392.1351563589915,
           4399.622433589055,
           4112.032887268067,
-          4384.65381266276
+          4384.65381266276,
+          3470.2247545878095
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -358,6 +370,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          7928,
           7928,
           7928,
           7928,
@@ -419,7 +432,8 @@ window.BENCHMARK_DATA = {
           4629.998776753743,
           4710.441719055176,
           4433.110623677571,
-          4465.058356065017
+          4465.058356065017,
+          3854.1561620076495
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -454,7 +468,8 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6970,
-          6959
+          6959,
+          6970
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -492,7 +507,8 @@ window.BENCHMARK_DATA = {
           415.0008999279567,
           417.68991187413536,
           410.99325265884397,
-          472.26547005971275
+          472.26547005971275,
+          357.25428322383334
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -504,6 +520,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -565,7 +582,8 @@ window.BENCHMARK_DATA = {
           715.5125970840454,
           614.7377208709717,
           638.3388544962957,
-          742.4372638702392
+          742.4372638702392,
+          544.5308355967204
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -577,6 +595,7 @@ window.BENCHMARK_DATA = {
         "label": "TUnitMocks memory",
         "unit": "b",
         "data": [
+          2688,
           2688,
           2688,
           2688,
@@ -758,6 +777,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -784,7 +809,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -814,7 +840,8 @@ window.BENCHMARK_DATA = {
           293.604226175944,
           280.9317083040873,
           290.4020754609789,
-          298.74162472211395
+          298.74162472211395,
+          353.58654998143516
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -831,6 +858,7 @@ window.BENCHMARK_DATA = {
           1872,
           1952,
           1952,
+          1824,
           1824,
           1824,
           1824,
@@ -887,7 +915,8 @@ window.BENCHMARK_DATA = {
           15991.390052208533,
           15907.604529747596,
           17515.993977864582,
-          16275.10909329928
+          16275.10909329928,
+          16240.164038085937
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -899,6 +928,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          12809,
           12809,
           12809,
           12809,
@@ -960,7 +990,8 @@ window.BENCHMARK_DATA = {
           5635.530977884929,
           5562.704734802246,
           5425.411679404123,
-          5731.25718160776
+          5731.25718160776,
+          6118.520427703857
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -972,6 +1003,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -1033,7 +1065,8 @@ window.BENCHMARK_DATA = {
           212214.082421875,
           212923.4352376302,
           209933.50503305288,
-          217826.56095377603
+          217826.56095377603,
+          218861.17157854352
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1057,6 +1090,7 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15747,
+          15628,
           15628,
           15628,
           15628,
@@ -1106,7 +1140,8 @@ window.BENCHMARK_DATA = {
           1357.1753170830864,
           1288.3650981358119,
           1313.0606557405913,
-          1338.6206398010254
+          1338.6206398010254,
+          1580.8291356404623
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1118,6 +1153,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -1179,7 +1215,8 @@ window.BENCHMARK_DATA = {
           182.12114272798811,
           177.52727438722337,
           185.0316649400271,
-          186.4091747601827
+          186.4091747601827,
+          236.42267286777496
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1191,6 +1228,7 @@ window.BENCHMARK_DATA = {
         "label": "TUnitMocks memory",
         "unit": "b",
         "data": [
+          1400,
           1400,
           1400,
           1400,
@@ -1372,6 +1410,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -1398,7 +1442,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -1428,7 +1473,8 @@ window.BENCHMARK_DATA = {
           949.0822988656851,
           683.461569922311,
           989.5752366383871,
-          1050.9074473063151
+          1050.9074473063151,
+          968.7976636250813
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1443,6 +1489,7 @@ window.BENCHMARK_DATA = {
           3992,
           3992,
           3992,
+          3904,
           3904,
           3904,
           3904,
@@ -1501,7 +1548,8 @@ window.BENCHMARK_DATA = {
           219934.36345563616,
           133191.25323016828,
           168382.74782151444,
-          170789.06166294642
+          170789.06166294642,
+          216956.69261067707
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1532,6 +1580,7 @@ window.BENCHMARK_DATA = {
           20860,
           20732,
           20849,
+          20860,
           20860,
           20860,
           20860,
@@ -1574,7 +1623,8 @@ window.BENCHMARK_DATA = {
           9712.401766967774,
           6375.735798136393,
           8598.160009765625,
-          8684.946721394857
+          8684.946721394857,
+          9639.222909545899
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1609,7 +1659,8 @@ window.BENCHMARK_DATA = {
           13144,
           13088,
           13088,
-          13088
+          13088,
+          13144
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1647,7 +1698,8 @@ window.BENCHMARK_DATA = {
           12163.737254842123,
           7653.302565941443,
           10060.468082682291,
-          10776.940821329752
+          10776.940821329752,
+          12380.961460367838
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1681,6 +1733,7 @@ window.BENCHMARK_DATA = {
           14291,
           13954,
           14067,
+          13954,
           13954,
           13954
         ],
@@ -1720,7 +1773,8 @@ window.BENCHMARK_DATA = {
           930.145553334554,
           639.4173330579486,
           846.1717369215829,
-          876.904117266337
+          876.904117266337,
+          931.6750819524129
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1732,6 +1786,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -1913,6 +1968,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -1939,7 +2000,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -1969,7 +2031,8 @@ window.BENCHMARK_DATA = {
           2642.454864501953,
           1882.356866983267,
           2551.7235631306967,
-          2573.9094673156737
+          2573.9094673156737,
+          2572.7736691792807
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1984,6 +2047,7 @@ window.BENCHMARK_DATA = {
           5072,
           5072,
           5072,
+          4984,
           4984,
           4984,
           4984,
@@ -2042,7 +2106,8 @@ window.BENCHMARK_DATA = {
           231445.2200358073,
           141942.15705217634,
           180466.0042375837,
-          184124.49868539663
+          184124.49868539663,
+          229651.91151646205
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2073,6 +2138,7 @@ window.BENCHMARK_DATA = {
           30610,
           29332,
           30603,
+          30610,
           30610,
           30610,
           30610,
@@ -2115,7 +2181,8 @@ window.BENCHMARK_DATA = {
           23053.46174519857,
           15974.813781738281,
           21242.950455729166,
-          21560.910170491537
+          21560.910170491537,
+          22230.905712421125
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2150,7 +2217,8 @@ window.BENCHMARK_DATA = {
           26249,
           26193,
           26193,
-          26193
+          26193,
+          26249
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2188,7 +2256,8 @@ window.BENCHMARK_DATA = {
           25802.913505045573,
           16094.56870814732,
           21366.73516191755,
-          22053.9560933431
+          22053.9560933431,
+          24758.928955078125
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2222,6 +2291,7 @@ window.BENCHMARK_DATA = {
           34102,
           33764,
           33877,
+          33764,
           33764,
           33764
         ],
@@ -2261,7 +2331,8 @@ window.BENCHMARK_DATA = {
           2309.223671468099,
           1576.4154198510307,
           2018.1610768636067,
-          2232.032374518258
+          2232.032374518258,
+          2305.266092681885
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2273,6 +2344,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -2454,6 +2526,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -2480,7 +2558,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -2510,7 +2589,8 @@ window.BENCHMARK_DATA = {
           350.59380400975544,
           359.08735704421997,
           360.942064666748,
-          281.30132087071735
+          281.30132087071735,
+          395.16518681844076
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2525,6 +2605,7 @@ window.BENCHMARK_DATA = {
           2200,
           2200,
           2200,
+          2088,
           2088,
           2088,
           2088,
@@ -2583,7 +2664,8 @@ window.BENCHMARK_DATA = {
           180881.09307391828,
           136015.22117396764,
           186387.4980844351,
-          105125.04749348959
+          105125.04749348959,
+          137769.92635672432
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2618,6 +2700,7 @@ window.BENCHMARK_DATA = {
           15086,
           15098,
           15086,
+          14938,
           14938
         ],
         "borderColor": "#A052B0",
@@ -2656,7 +2739,8 @@ window.BENCHMARK_DATA = {
           5781.305841299204,
           5240.04212290446,
           5646.837032063802,
-          4198.177435302734
+          4198.177435302734,
+          5848.980455126081
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2691,6 +2775,7 @@ window.BENCHMARK_DATA = {
           9336,
           9336,
           9280,
+          9336,
           9336
         ],
         "borderColor": "#5E2750",
@@ -2729,7 +2814,8 @@ window.BENCHMARK_DATA = {
           6107.1184290568035,
           5247.2681230817525,
           6152.596764784593,
-          4295.990813191732
+          4295.990813191732,
+          5955.151101684571
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2764,7 +2850,8 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8244,
-          8245
+          8245,
+          8251
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2802,7 +2889,8 @@ window.BENCHMARK_DATA = {
           540.2254403659275,
           529.5129922458103,
           569.4042837778727,
-          417.84967991283963
+          417.84967991283963,
+          636.4415760040283
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2814,6 +2902,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -2875,7 +2964,8 @@ window.BENCHMARK_DATA = {
           660.5891347249349,
           672.6743368784587,
           647.0372218404498,
-          522.9802267710368
+          522.9802267710368,
+          721.51546893801
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2887,6 +2977,7 @@ window.BENCHMARK_DATA = {
         "label": "TUnitMocks memory",
         "unit": "b",
         "data": [
+          2968,
           2968,
           2968,
           2968,
@@ -3068,6 +3159,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -3094,7 +3191,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -3124,7 +3222,8 @@ window.BENCHMARK_DATA = {
           643.8771094004313,
           633.6094682557242,
           639.2696406046549,
-          493.72512747446694
+          493.72512747446694,
+          818.9949380874634
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3139,6 +3238,7 @@ window.BENCHMARK_DATA = {
           2416,
           2416,
           2416,
+          2304,
           2304,
           2304,
           2304,
@@ -3197,7 +3297,8 @@ window.BENCHMARK_DATA = {
           186171.20600585936,
           139987.52619280134,
           191157.60452473958,
-          106780.27498372395
+          106780.27498372395,
+          143529.54565429688
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3232,6 +3333,7 @@ window.BENCHMARK_DATA = {
           19085,
           19085,
           19085,
+          18930,
           18930
         ],
         "borderColor": "#A052B0",
@@ -3270,7 +3372,8 @@ window.BENCHMARK_DATA = {
           8673.263165987455,
           7805.68389078776,
           8336.809141892652,
-          6383.182884724935
+          6383.182884724935,
+          8934.535101754325
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3305,6 +3408,7 @@ window.BENCHMARK_DATA = {
           12361,
           12361,
           11800,
+          12360,
           12360
         ],
         "borderColor": "#5E2750",
@@ -3343,7 +3447,8 @@ window.BENCHMARK_DATA = {
           9308.929693368766,
           8258.961409505207,
           9209.97968183245,
-          6945.8028635297505
+          6945.8028635297505,
+          9773.92478288923
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3361,6 +3466,7 @@ window.BENCHMARK_DATA = {
           16433,
           16433,
           16433,
+          15786,
           15786,
           15786,
           15786,
@@ -3416,7 +3522,8 @@ window.BENCHMARK_DATA = {
           1130.8260825020927,
           1062.2529266357421,
           1094.3627580495981,
-          850.6986356099446
+          850.6986356099446,
+          1225.89933497111
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3428,6 +3535,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -3489,7 +3597,8 @@ window.BENCHMARK_DATA = {
           1704.2362865448,
           1758.1884719848633,
           1689.4392870494298,
-          1374.3537357330322
+          1374.3537357330322,
+          2127.51576096671
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -3501,6 +3610,7 @@ window.BENCHMARK_DATA = {
         "label": "TUnitMocks memory",
         "unit": "b",
         "data": [
+          4600,
           4600,
           4600,
           4600,
@@ -3682,6 +3792,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -3708,7 +3824,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -3738,7 +3855,8 @@ window.BENCHMARK_DATA = {
           632.7969459533691,
           512.3098900477091,
           488.60512740271434,
-          503.4577962239583
+          503.4577962239583,
+          613.2413881301879
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3750,6 +3868,7 @@ window.BENCHMARK_DATA = {
         "label": "Mockolate memory",
         "unit": "b",
         "data": [
+          2520,
           2520,
           2520,
           2520,
@@ -3811,7 +3930,8 @@ window.BENCHMARK_DATA = {
           11718.014282226562,
           11995.384826660156,
           11385.355503627232,
-          11963.030652727399
+          11963.030652727399,
+          12521.605647160457
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3846,7 +3966,8 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10641,
-          10753
+          10753,
+          10641
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3884,7 +4005,8 @@ window.BENCHMARK_DATA = {
           7894.221592203776,
           7432.9783036368235,
           7616.940800803049,
-          7411.525026174692
+          7411.525026174692,
+          7753.509143066406
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3896,6 +4018,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -3957,7 +4080,8 @@ window.BENCHMARK_DATA = {
           8343.427280970982,
           8141.941693115235,
           8181.409336344401,
-          8269.70677286784
+          8269.70677286784,
+          8686.770189412435
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3990,6 +4114,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11518,
+          11508,
           11508,
           11508,
           11508
@@ -4030,7 +4155,8 @@ window.BENCHMARK_DATA = {
           537.7008991922651,
           469.991436788014,
           440.4043812115987,
-          440.62925783793133
+          440.62925783793133,
+          555.8503096262614
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4042,6 +4168,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -4103,7 +4230,8 @@ window.BENCHMARK_DATA = {
           841.96865234375,
           689.2866441090902,
           671.306419245402,
-          685.0326906840006
+          685.0326906840006,
+          808.3051346460978
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -4115,6 +4243,7 @@ window.BENCHMARK_DATA = {
         "label": "TUnitMocks memory",
         "unit": "b",
         "data": [
+          2568,
           2568,
           2568,
           2568,
@@ -4296,6 +4425,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -4322,7 +4457,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -4352,7 +4488,8 @@ window.BENCHMARK_DATA = {
           1351.8144775390624,
           1036.895455678304,
           977.4855739886945,
-          1034.6849034627278
+          1034.6849034627278,
+          1175.298529179891
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4364,6 +4501,7 @@ window.BENCHMARK_DATA = {
         "label": "Mockolate memory",
         "unit": "b",
         "data": [
+          3024,
           3024,
           3024,
           3024,
@@ -4425,7 +4563,8 @@ window.BENCHMARK_DATA = {
           18544.8949605306,
           19086.73515625,
           18162.61420694987,
-          18975.54248860677
+          18975.54248860677,
+          19049.5174214681
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4460,7 +4599,8 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           18721,
-          18833
+          18833,
+          18721
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4498,7 +4638,8 @@ window.BENCHMARK_DATA = {
           16923.5767191569,
           17444.174483235678,
           17600.685575212752,
-          17067.308451334637
+          17067.308451334637,
+          16804.604404703776
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4510,6 +4651,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -4571,7 +4713,8 @@ window.BENCHMARK_DATA = {
           20353.343595232283,
           19574.459711710613,
           19143.517061505998,
-          19505.296223958332
+          19505.296223958332,
+          19670.287904866538
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4604,6 +4747,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31543,
+          31546,
           31546,
           31546,
           31546
@@ -4644,7 +4788,8 @@ window.BENCHMARK_DATA = {
           1452.0117118835449,
           1103.9734922555776,
           1099.581747872489,
-          1125.1293643951417
+          1125.1293643951417,
+          1293.659698867798
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4656,6 +4801,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -4717,7 +4863,8 @@ window.BENCHMARK_DATA = {
           2717.1524274190265,
           2077.6942059443545,
           2010.6801457722981,
-          2129.5027931758336
+          2129.5027931758336,
+          2120.5821314493814
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -4729,6 +4876,7 @@ window.BENCHMARK_DATA = {
         "label": "TUnitMocks memory",
         "unit": "b",
         "data": [
+          4776,
           4776,
           4776,
           4776,
@@ -4910,6 +5058,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun May 10 13:36:10 2026 \u002B0200",
         "message": "docs: refine static interface members page (#771)"
+      },
+      {
+        "sha": "0bb1ef9abd5b6ba69247b82ce2f48290d01187f5",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun May 10 15:13:57 2026 \u002B0200",
+        "message": "docs: re-theme scenarios examples to chocolate dispenser (#772)"
       }
     ],
     "labels": [
@@ -4936,7 +5090,8 @@ window.BENCHMARK_DATA = {
       "6e5f7666",
       "c447736f",
       "51e47a3c",
-      "ac5d004a"
+      "ac5d004a",
+      "0bb1ef9a"
     ],
     "datasets": [
       {
@@ -4966,7 +5121,8 @@ window.BENCHMARK_DATA = {
           59.954978958765665,
           52.35563068304743,
           77.36138673339572,
-          50.53372154633204
+          50.53372154633204,
+          65.97762368520101
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4983,6 +5139,7 @@ window.BENCHMARK_DATA = {
           1048,
           1048,
           1048,
+          440,
           440,
           440,
           440,
@@ -5039,7 +5196,8 @@ window.BENCHMARK_DATA = {
           261.80343163808186,
           228.0734360376994,
           351.6166745821635,
-          217.9791339806148
+          217.9791339806148,
+          278.75270476708044
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5051,6 +5209,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -5112,7 +5271,8 @@ window.BENCHMARK_DATA = {
           38.32732129096985,
           33.64049445305552,
           49.203729101022084,
-          34.072575416167574
+          34.072575416167574,
+          42.65225601654787
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5124,6 +5284,7 @@ window.BENCHMARK_DATA = {
         "label": "TUnitMocks memory",
         "unit": "b",
         "data": [
+          224,
           224,
           224,
           224,
@@ -5185,7 +5346,8 @@ window.BENCHMARK_DATA = {
           1377.2701404571533,
           1105.2864747365315,
           1403.9250719706217,
-          1042.5615392049153
+          1042.5615392049153,
+          1329.597645350865
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5197,6 +5359,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -5258,7 +5421,8 @@ window.BENCHMARK_DATA = {
           1896.7285361971174,
           1552.3568574269614,
           2079.183207648141,
-          1419.8076230367026
+          1419.8076230367026,
+          1843.9359753472465
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5270,6 +5434,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -5331,7 +5496,8 @@ window.BENCHMARK_DATA = {
           1662.3375582377116,
           1544.0097095489502,
           1841.437673841204,
-          1356.2719558715821
+          1356.2719558715821,
+          1798.2614554723104
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5366,6 +5532,7 @@ window.BENCHMARK_DATA = {
           2763,
           2763,
           2772,
+          2763,
           2763
         ],
         "borderColor": "#4A6FA5",
