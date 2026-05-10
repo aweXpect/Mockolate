@@ -214,8 +214,8 @@ The project uses GitHub Actions with several workflows:
 
 ## Documentation
 
-- Keep README.md up to date with API changes
-- Update markdown files under `Docs/` to match README.md content - they are published to https://awexpect.com/docs/mockolate/index
+- README is the GitHub/NuGet landing page (pitch + quick start + links to docs); full reference docs live under `Docs/pages/` and are published to https://docs.testably.org/Mockolate/
+- Keep `Docs/pages/` up to date with API changes; the README's link index should match the published structure
 - Document public APIs with XML comments
 - Examples should be in Mockolate.ExampleTests
 - Follow existing documentation style
