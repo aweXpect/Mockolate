@@ -130,8 +130,25 @@ internal static class Helpers
 		=> type.IsRefStruct
 		   && type.SpecialGenericType is not (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
 
+	/// <summary>
+	///     Returns true if the parameter must flow through the ref-struct setup pipeline. The
+	///     <see cref="Type" /> overload excludes <c>Span&lt;T&gt;</c> and <c>ReadOnlySpan&lt;T&gt;</c>
+	///     because <c>by-value</c>, <c>out</c>, and <c>ref</c> positions use the
+	///     <c>SpanWrapper&lt;T&gt;</c> / <c>ReadOnlySpanWrapper&lt;T&gt;</c> non-ref-struct carve-out.
+	///     <c>ref readonly</c> Span/ROS, however, has no dedicated wrapper-based emit branch, so it
+	///     falls back to the generic ref-struct pipeline.
+	/// </summary>
 	public static bool NeedsRefStructPipeline(this MethodParameter parameter)
-		=> parameter.Type.NeedsRefStructPipeline();
+	{
+		if (parameter.Type.NeedsRefStructPipeline())
+		{
+			return true;
+		}
+
+		return parameter.RefKind == RefKind.RefReadOnlyParameter
+			&& parameter.Type.IsRefStruct
+			&& parameter.Type.SpecialGenericType is (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
+	}
 
 	extension(ITypeSymbol typeSymbol)
 	{
@@ -454,24 +471,47 @@ internal static class Helpers
 
 		public string ToParameter()
 		{
-			return (parameter.RefKind, parameter.Type.SpecialGenericType) switch
+			bool needsRefStructPipeline = parameter.NeedsRefStructPipeline();
+			return (parameter.RefKind, parameter.Type.SpecialGenericType, needsRefStructPipeline) switch
 			{
-				(RefKind.Ref, _) => $"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
-				(RefKind.Out, _) => $"global::Mockolate.Parameters.IOutParameter<{GetMethodParameterType(parameter)}>",
-				(RefKind.RefReadOnlyParameter, _) => $"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
-				(_, SpecialGenericType.Span) => $"global::Mockolate.Parameters.ISpanParameter<{GetMethodParameterType(parameter)}>",
-				(_, SpecialGenericType.ReadOnlySpan) =>
+				(RefKind.Ref, _, true) =>
+					$"global::Mockolate.Parameters.IRefRefStructParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.Out, _, true) =>
+					$"global::Mockolate.Parameters.IOutRefStructParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.RefReadOnlyParameter, _, true) =>
+					$"global::Mockolate.Parameters.IRefRefStructParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.Out, SpecialGenericType.Span, _) =>
+					$"global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.SpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>>",
+				(RefKind.Out, SpecialGenericType.ReadOnlySpan, _) =>
+					$"global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>>",
+				(RefKind.Ref, SpecialGenericType.Span, _) =>
+					$"global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.SpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>>",
+				(RefKind.Ref, SpecialGenericType.ReadOnlySpan, _) =>
+					$"global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>>",
+				(RefKind.Ref, _, _) => $"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.Out, _, _) => $"global::Mockolate.Parameters.IOutParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.RefReadOnlyParameter, _, _) =>
+					$"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
+				(_, SpecialGenericType.Span, _) =>
+					$"global::Mockolate.Parameters.ISpanParameter<{GetMethodParameterType(parameter)}>",
+				(_, SpecialGenericType.ReadOnlySpan, _) =>
 					$"global::Mockolate.Parameters.IReadOnlySpanParameter<{GetMethodParameterType(parameter)}>",
-				(_, _) => $"global::Mockolate.Parameters.IParameter<{GetMethodParameterType(parameter)}>",
+				(_, _, _) => $"global::Mockolate.Parameters.IParameter<{GetMethodParameterType(parameter)}>",
 			};
 
 			static string GetMethodParameterType(MethodParameter parameter)
 			{
+				// The non-ref-struct routes for Span/ROS use the SpanWrapper / ReadOnlySpanWrapper
+				// matcher, so the relevant generic argument is the element type. The ref-struct
+				// pipeline, by contrast, handles the bare Span<T> / ReadOnlySpan<T> directly, so we
+				// must preserve the full type there.
+				bool stripSpanToElement = !parameter.NeedsRefStructPipeline();
 				return (parameter.Type.SpecialGenericType,
 						parameter.IsNullableAnnotated && !parameter.Type.Fullname.EndsWith("?")) switch
 					{
-						(SpecialGenericType.Span, _) => parameter.Type.GenericTypeParameters!.Value.First().Fullname,
-						(SpecialGenericType.ReadOnlySpan, _) =>
+						(SpecialGenericType.Span, _) when stripSpanToElement =>
+							parameter.Type.GenericTypeParameters!.Value.First().Fullname,
+						(SpecialGenericType.ReadOnlySpan, _) when stripSpanToElement =>
 							parameter.Type.GenericTypeParameters!.Value.First().Fullname,
 						(_, false) => parameter.Type.Fullname,
 						(_, true) => $"{parameter.Type.Fullname}?",

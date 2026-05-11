@@ -66,7 +66,7 @@ public sealed class RefStructIndexerSetup<TValue, T> : MethodSetup, IRefStructIn
 	///     abstract contract and returns <see langword="false" /> so the combined instance never
 	///     participates in <see cref="MockRegistry.GetMethodSetups{T}" /> lookups.
 	/// </remarks>
-	protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) => false;
+	protected override bool MatchesInteraction(Interactions.IMethodInteraction interaction) => false;
 
 	IRefStructIndexerSetup<TValue, T> IRefStructIndexerSetup<TValue, T>.SkippingBaseClass(bool skipBaseClass)
 	{
@@ -147,7 +147,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2> : MethodSetup, IRefStr
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetup{TValue, T}.MatchesInteraction(Mockolate.Interactions.IMethodInteraction)" />
-	protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) => false;
+	protected override bool MatchesInteraction(Interactions.IMethodInteraction interaction) => false;
 
 	IRefStructIndexerSetup<TValue, T1, T2> IRefStructIndexerSetup<TValue, T1, T2>.SkippingBaseClass(bool skipBaseClass)
 	{
@@ -231,7 +231,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2, T3> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetup{TValue, T}.MatchesInteraction(Mockolate.Interactions.IMethodInteraction)" />
-	protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) => false;
+	protected override bool MatchesInteraction(Interactions.IMethodInteraction interaction) => false;
 
 	IRefStructIndexerSetup<TValue, T1, T2, T3> IRefStructIndexerSetup<TValue, T1, T2, T3>.SkippingBaseClass(bool skipBaseClass)
 	{
@@ -317,7 +317,7 @@ public sealed class RefStructIndexerSetup<TValue, T1, T2, T3, T4> : MethodSetup,
 	}
 
 	/// <inheritdoc cref="RefStructIndexerSetup{TValue, T}.MatchesInteraction(Mockolate.Interactions.IMethodInteraction)" />
-	protected override bool MatchesInteraction(Mockolate.Interactions.IMethodInteraction interaction) => false;
+	protected override bool MatchesInteraction(Interactions.IMethodInteraction interaction) => false;
 
 	IRefStructIndexerSetup<TValue, T1, T2, T3, T4> IRefStructIndexerSetup<TValue, T1, T2, T3, T4>.SkippingBaseClass(bool skipBaseClass)
 	{

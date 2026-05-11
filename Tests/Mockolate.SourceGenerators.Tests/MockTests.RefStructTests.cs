@@ -515,7 +515,7 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
-		public async Task MethodWithOutRefStructParameter_ShouldEmitNotSupportedExceptionAndSkipSetupSurface()
+		public async Task MethodWithOutRefStructParameter_ShouldEmitRefStructOutParameterPipeline()
 		{
 			GeneratorResult result = Generator
 				.Run("""
@@ -542,12 +542,12 @@ public sealed partial class MockTests
 
 			await That(result.Sources).ContainsKey("Mock.IPacketBag.g.cs");
 			await That(result.Sources["Mock.IPacketBag.g.cs"])
-				.Contains("Mockolate: out/ref ref-struct parameters are not supported. Method 'global::MyCode.IPacketBag.Take'.")
-				.Because("the method body must throw NotSupportedException because the ref-struct out parameter cannot flow through the setup pipeline").And
-				.DoesNotContain("IRefStructVoidMethodSetup<global::MyCode.Packet>")
-				.Because("the setup-interface declaration must be skipped for unsupported ref-struct signatures").And
-				.DoesNotContain("new global::Mockolate.Setup.RefStructVoidMethodSetup<global::MyCode.Packet>")
-				.Because("the setup-interface implementation must be skipped for unsupported ref-struct signatures");
+				.Contains("IRefStructVoidMethodSetup<global::MyCode.Packet>")
+				.Because("the setup-interface declaration is now emitted for out ref-struct parameters").And
+				.Contains("new global::Mockolate.Setup.RefStructVoidMethodSetup<global::MyCode.Packet>")
+				.Because("the setup-builder constructs the ref-struct setup type").And
+				.Contains("global::Mockolate.Parameters.IOutRefStructParameter<global::MyCode.Packet>")
+				.Because("the mock body routes the out slot through IOutRefStructParameter<T> instead of IOutParameter<T>");
 		}
 
 		[Fact]

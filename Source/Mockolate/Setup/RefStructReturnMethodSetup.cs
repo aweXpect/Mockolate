@@ -38,6 +38,13 @@ public sealed class RefStructReturnMethodSetup<TReturn, T> : MethodSetup, IRefSt
 		=> _matcher is null || _matcher.Matches(value);
 
 	/// <summary>
+	///     Returns the matcher for the first (and only) parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T>? GetMatcher1()
+		=> _matcher;
+
+	/// <summary>
 	///     Invokes matcher callbacks, applies any configured throw, and returns the configured
 	///     value. If no return value is configured, falls back to <paramref name="defaultFactory" />
 	///     or <see langword="default" />.
@@ -156,6 +163,20 @@ public sealed class RefStructReturnMethodSetup<TReturn, T1, T2> : MethodSetup, I
 		=> (_matcher1 is null || _matcher1.Matches(value1))
 		   && (_matcher2 is null || _matcher2.Matches(value2));
 
+	/// <summary>
+	///     Returns the matcher for the first parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T1>? GetMatcher1()
+		=> _matcher1;
+
+	/// <summary>
+	///     Returns the matcher for the second parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T2>? GetMatcher2()
+		=> _matcher2;
+
 	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.Invoke(T, Func{TReturn})" />
 	public TReturn Invoke(T1 value1, T2 value2, Func<TReturn>? defaultFactory = null)
 	{
@@ -266,6 +287,27 @@ public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3> : MethodSetu
 		=> (_matcher1 is null || _matcher1.Matches(value1))
 		   && (_matcher2 is null || _matcher2.Matches(value2))
 		   && (_matcher3 is null || _matcher3.Matches(value3));
+
+	/// <summary>
+	///     Returns the matcher for the first parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T1>? GetMatcher1()
+		=> _matcher1;
+
+	/// <summary>
+	///     Returns the matcher for the second parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T2>? GetMatcher2()
+		=> _matcher2;
+
+	/// <summary>
+	///     Returns the matcher for the third parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T3>? GetMatcher3()
+		=> _matcher3;
 
 	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.Invoke(T, Func{TReturn})" />
 	public TReturn Invoke(T1 value1, T2 value2, T3 value3, Func<TReturn>? defaultFactory = null)
@@ -383,6 +425,34 @@ public sealed class RefStructReturnMethodSetup<TReturn, T1, T2, T3, T4> : Method
 		   && (_matcher2 is null || _matcher2.Matches(value2))
 		   && (_matcher3 is null || _matcher3.Matches(value3))
 		   && (_matcher4 is null || _matcher4.Matches(value4));
+
+	/// <summary>
+	///     Returns the matcher for the first parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T1>? GetMatcher1()
+		=> _matcher1;
+
+	/// <summary>
+	///     Returns the matcher for the second parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T2>? GetMatcher2()
+		=> _matcher2;
+
+	/// <summary>
+	///     Returns the matcher for the third parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T3>? GetMatcher3()
+		=> _matcher3;
+
+	/// <summary>
+	///     Returns the matcher for the fourth parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T4>? GetMatcher4()
+		=> _matcher4;
 
 	/// <inheritdoc cref="RefStructReturnMethodSetup{TReturn, T}.Invoke(T, Func{TReturn})" />
 	public TReturn Invoke(T1 value1, T2 value2, T3 value3, T4 value4, Func<TReturn>? defaultFactory = null)

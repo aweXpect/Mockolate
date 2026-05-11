@@ -41,7 +41,7 @@ public sealed class MockGenerationSnapshotTests
     [
         new(
             "BaseClass_WithMultipleAdditionalInterfaces_CanBeCreated",
-            ["ComprehensiveAbstractClass.cs", "ICombinationParts.cs",],
+            ["ComprehensiveAbstractClass.cs", "MyAbstractBase.cs", "ICombinationMockA.cs", "ICombinationMockB.cs",],
             """
             ComprehensiveAbstractClass sut = ComprehensiveAbstractClass.CreateMock()
             	.Implementing<ICombinationMockA>()
@@ -50,7 +50,7 @@ public sealed class MockGenerationSnapshotTests
             []),
         new(
             "ComprehensiveAbstractClass_CanBeCreated",
-            ["ComprehensiveAbstractClass.cs",],
+            ["ComprehensiveAbstractClass.cs", "MyAbstractBase.cs",],
             """
             ComprehensiveAbstractClass sut = ComprehensiveAbstractClass.CreateMock();
             """,
@@ -64,7 +64,10 @@ public sealed class MockGenerationSnapshotTests
             []),
         new(
             "ComprehensiveInterface_CanBeCreated",
-            ["ComprehensiveDelegate.cs", "IComprehensiveInterface.cs",],
+            [
+                "ComprehensiveDelegate.cs", "IComprehensiveInterface.cs",
+                "MyBase.cs", "MyEnum.cs", "MyEventArgs.cs", "MyStruct.cs",
+            ],
             """
             IComprehensiveInterface sut = IComprehensiveInterface.CreateMock();
             """,
@@ -78,14 +81,14 @@ public sealed class MockGenerationSnapshotTests
             [typeof(HttpClient), typeof(HttpStatusCode),]),
         new(
             "KeywordEdgeCases_CanBeCreated",
-            ["KeywordEdgeCases.cs",],
+            ["IKeywordEdgeCases.cs",],
             """
             IKeywordEdgeCases sut = IKeywordEdgeCases.CreateMock();
             """,
             []),
         new(
             "RefStructConsumer_CanBeCreated",
-            ["IRefStructConsumer.cs",],
+            ["IRefStructConsumer.cs", "Packet.cs",],
             """
             IRefStructConsumer sut = IRefStructConsumer.CreateMock();
             """,

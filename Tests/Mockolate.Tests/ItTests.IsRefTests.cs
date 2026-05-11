@@ -38,5 +38,41 @@ public sealed partial class ItTests
 			await That(result).IsTrue();
 			await That(() => ((IParameterMatch<int?>)sut).InvokeCallbacks(0)).DoesNotThrow();
 		}
+
+#if NET9_0_OR_GREATER
+		[Fact]
+		public async Task ToString_WithRefStructTransform_ShouldReturnExpectedValue()
+		{
+			IRefRefStructParameter<Span<int>> sut = It.IsRef<Span<int>>(value => value);
+			string expectedValue = "It.IsRef<Span<int>>(value => value)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task ToString_WithRefStructPredicateAndTransform_ShouldReturnExpectedValue()
+		{
+			IRefRefStructParameter<Span<int>> sut =
+				It.IsRef<Span<int>>(value => value.Length > 0, value => value);
+			string expectedValue = "It.IsRef<Span<int>>(value => value.Length > 0, value => value)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task ToString_WithRefStructPredicateOnly_ShouldReturnExpectedValue()
+		{
+			IRefRefStructParameter<Span<int>> sut = It.IsRef<Span<int>>(value => value.Length > 0);
+			string expectedValue = "It.IsRef<Span<int>>(value => value.Length > 0)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+#endif
 	}
 }

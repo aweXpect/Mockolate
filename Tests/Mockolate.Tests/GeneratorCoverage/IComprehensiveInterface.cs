@@ -4,22 +4,6 @@ using System.Threading.Tasks;
 
 namespace Mockolate.Tests.GeneratorCoverage;
 
-public class MyBase
-{
-}
-
-public enum MyEnum { A, B, C, }
-
-public struct MyStruct
-{
-	public int X;
-}
-
-public class MyEventArgs : EventArgs
-{
-	public int N;
-}
-
 /// <summary>
 ///     Squeezes every interface-shaped generator branch we can fit into a single type:
 ///     property accessor combinations, indexers (single + arity-5), all three event flavors,

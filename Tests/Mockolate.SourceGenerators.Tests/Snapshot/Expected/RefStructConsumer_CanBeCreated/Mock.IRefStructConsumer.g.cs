@@ -24,7 +24,15 @@ internal static partial class Mock
 		internal const int MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Get = 0;
 		internal const int MemberId_Indexer_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_int_global__Mockolate_Tests_GeneratorCoverage_Packet_Set = 1;
 		internal const int MemberId_Consume5 = 2;
-		internal const int MemberCount = 3;
+		internal const int MemberId_Produce = 3;
+		internal const int MemberId_Mutate = 4;
+		internal const int MemberId_Inspect = 5;
+		internal const int MemberId_ProduceSpan = 6;
+		internal const int MemberId_MutateSpan = 7;
+		internal const int MemberId_ProduceReadOnlySpan = 8;
+		internal const int MemberId_MutateReadOnlySpan = 9;
+		internal const int MemberId_InspectSpan = 10;
+		internal const int MemberCount = 11;
 
 		/// <summary>
 		///     Creates a <see cref="global::Mockolate.Interactions.FastMockInteractions">FastMockInteractions</see> sized to <see cref="MemberCount">MemberCount</see> for use as the mock's interaction store.
@@ -47,6 +55,18 @@ internal static partial class Mock
 		global::Mockolate.MockRegistry global::Mockolate.IMock.MockRegistry => this.MockRegistry;
 		private global::Mockolate.MockRegistry MockRegistry { get; }
 
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.SpanWrapper<int>> MockolateBuffer_ProduceSpan
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.SpanWrapper<int>>>(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, static fast => new global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.SpanWrapper<int>>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.SpanWrapper<int>> MockolateBuffer_MutateSpan
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.SpanWrapper<int>>>(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, static fast => new global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.SpanWrapper<int>>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> MockolateBuffer_ProduceReadOnlySpan
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, static fast => new global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> MockolateBuffer_MutateReadOnlySpan
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, static fast => new global::Mockolate.Interactions.FastMethod1Buffer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>(fast)));
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
@@ -187,6 +207,402 @@ internal static partial class Mock
 #endif
 		}
 
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce(out global::Mockolate.Tests.GeneratorCoverage.Packet)" />
+		public void Produce(out global::Mockolate.Tests.GeneratorCoverage.Packet packet)
+		{
+#if NET9_0_OR_GREATER
+			this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce", "packet"));
+			packet = default!;
+			bool matched = false;
+			foreach (global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce"))
+			{
+				if (!setup.Matches(packet))
+				{
+					continue;
+				}
+
+				matched = true;
+				if (setup.GetMatcher1() is global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet> outParam1 && outParam1.TryGetValue(out packet)) { }
+				else
+				{
+					packet = default!;
+				}
+				setup.Invoke(packet);
+				return;
+			}
+			if (!matched && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce(Packet)' was invoked without prior setup.");
+			}
+#else
+#error Mockolate: methods with ref-struct parameters require .NET 9 or later (uses the 'allows ref struct' anti-constraint).
+			throw new global::System.NotSupportedException();
+#endif
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate(ref global::Mockolate.Tests.GeneratorCoverage.Packet)" />
+		public void Mutate(ref global::Mockolate.Tests.GeneratorCoverage.Packet packet)
+		{
+#if NET9_0_OR_GREATER
+			this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate", "packet"));
+			bool matched = false;
+			foreach (global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate"))
+			{
+				if (!setup.Matches(packet))
+				{
+					continue;
+				}
+
+				matched = true;
+				if (setup.GetMatcher1() is global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet> refParam1)
+				{
+					packet = refParam1.GetValue(packet);
+				}
+				setup.Invoke(packet);
+				return;
+			}
+			if (!matched && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate(Packet)' was invoked without prior setup.");
+			}
+#else
+#error Mockolate: methods with ref-struct parameters require .NET 9 or later (uses the 'allows ref struct' anti-constraint).
+			throw new global::System.NotSupportedException();
+#endif
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect(ref readonly global::Mockolate.Tests.GeneratorCoverage.Packet)" />
+		public void Inspect(ref readonly global::Mockolate.Tests.GeneratorCoverage.Packet packet)
+		{
+#if NET9_0_OR_GREATER
+			this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect", "packet"));
+			bool matched = false;
+			foreach (global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect"))
+			{
+				if (!setup.Matches(packet))
+				{
+					continue;
+				}
+
+				matched = true;
+				setup.Invoke(packet);
+				return;
+			}
+			if (!matched && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect(Packet)' was invoked without prior setup.");
+			}
+#else
+#error Mockolate: methods with ref-struct parameters require .NET 9 or later (uses the 'allows ref struct' anti-constraint).
+			throw new global::System.NotSupportedException();
+#endif
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan(out global::System.Span{int})" />
+		public void ProduceSpan(out global::System.Span<int> span)
+		{
+			global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>? methodSetup = null;
+			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+			{
+				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan);
+				if (snapshot_methodSetup is not null)
+				{
+					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
+					{
+						if (snapshot_methodSetup[i_methodSetup] is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>> s_methodSetup && s_methodSetup.Matches(default))
+						{
+							methodSetup = s_methodSetup;
+							break;
+						}
+					}
+				}
+			}
+			if (methodSetup is null)
+			{
+				foreach (global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan"))
+				{
+					if (s_methodSetup.Matches(default))
+					{
+						methodSetup = s_methodSetup;
+						break;
+					}
+				}
+			}
+			bool hasWrappedResult = false;
+			span = default!;
+			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+			{
+				this.MockolateBuffer_ProduceSpan.Append("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", new global::Mockolate.Setup.SpanWrapper<int>(span));
+			}
+			try
+			{
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer wraps)
+				{
+					wraps.ProduceSpan(out span);
+					hasWrappedResult = true;
+				}
+				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection)
+				{
+					if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection wpc)
+					{
+						if (wpc.Parameter1 is not global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.SpanWrapper<int>> outParam1 || !outParam1.TryGetValue(out global::Mockolate.Setup.SpanWrapper<int> outTemp1))
+						{
+							span = this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<int>)!);
+						}
+						else
+						{
+							span = outTemp1;
+						}
+					}
+					else
+					{
+						span = this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.SpanWrapper<int>)!);
+					}
+				}
+			}
+			finally
+			{
+				methodSetup?.TriggerCallbacks(new global::Mockolate.Setup.SpanWrapper<int>(span));
+			}
+			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan(Span<int>)' was invoked without prior setup.");
+			}
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan(ref global::System.Span{int})" />
+		public void MutateSpan(ref global::System.Span<int> span)
+		{
+			var ref_span = span;
+			global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>? methodSetup = null;
+			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+			{
+				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan);
+				if (snapshot_methodSetup is not null)
+				{
+					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
+					{
+						if (snapshot_methodSetup[i_methodSetup] is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>> s_methodSetup && s_methodSetup.Matches(ref_span))
+						{
+							methodSetup = s_methodSetup;
+							break;
+						}
+					}
+				}
+			}
+			if (methodSetup is null)
+			{
+				foreach (global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan"))
+				{
+					if (s_methodSetup.Matches(ref_span))
+					{
+						methodSetup = s_methodSetup;
+						break;
+					}
+				}
+			}
+			bool hasWrappedResult = false;
+			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+			{
+				this.MockolateBuffer_MutateSpan.Append("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", new global::Mockolate.Setup.SpanWrapper<int>(span));
+			}
+			try
+			{
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer wraps)
+				{
+					wraps.MutateSpan(ref span);
+					hasWrappedResult = true;
+				}
+				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection)
+				{
+					if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection wpc)
+					{
+						if (wpc.Parameter1 is global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.SpanWrapper<int>> refParam1)
+						{
+							span = refParam1.GetValue(span);
+						}
+					}
+					else
+					{
+					}
+				}
+			}
+			finally
+			{
+				methodSetup?.TriggerCallbacks(new global::Mockolate.Setup.SpanWrapper<int>(span));
+			}
+			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan(Span<int>)' was invoked without prior setup.");
+			}
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan(out global::System.ReadOnlySpan{int})" />
+		public void ProduceReadOnlySpan(out global::System.ReadOnlySpan<int> span)
+		{
+			global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>? methodSetup = null;
+			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+			{
+				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan);
+				if (snapshot_methodSetup is not null)
+				{
+					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
+					{
+						if (snapshot_methodSetup[i_methodSetup] is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_methodSetup && s_methodSetup.Matches(default))
+						{
+							methodSetup = s_methodSetup;
+							break;
+						}
+					}
+				}
+			}
+			if (methodSetup is null)
+			{
+				foreach (global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan"))
+				{
+					if (s_methodSetup.Matches(default))
+					{
+						methodSetup = s_methodSetup;
+						break;
+					}
+				}
+			}
+			bool hasWrappedResult = false;
+			span = default!;
+			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+			{
+				this.MockolateBuffer_ProduceReadOnlySpan.Append("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(span));
+			}
+			try
+			{
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer wraps)
+				{
+					wraps.ProduceReadOnlySpan(out span);
+					hasWrappedResult = true;
+				}
+				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection)
+				{
+					if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection wpc)
+					{
+						if (wpc.Parameter1 is not global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> outParam1 || !outParam1.TryGetValue(out global::Mockolate.Setup.ReadOnlySpanWrapper<int> outTemp1))
+						{
+							span = this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<int>)!);
+						}
+						else
+						{
+							span = outTemp1;
+						}
+					}
+					else
+					{
+						span = this.MockRegistry.Behavior.DefaultValue.Generate(default(global::Mockolate.Setup.ReadOnlySpanWrapper<int>)!);
+					}
+				}
+			}
+			finally
+			{
+				methodSetup?.TriggerCallbacks(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(span));
+			}
+			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan(ReadOnlySpan<int>)' was invoked without prior setup.");
+			}
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan(ref global::System.ReadOnlySpan{int})" />
+		public void MutateReadOnlySpan(ref global::System.ReadOnlySpan<int> span)
+		{
+			var ref_span = span;
+			global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>? methodSetup = null;
+			if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+			{
+				global::Mockolate.Setup.MethodSetup[]? snapshot_methodSetup = this.MockRegistry.GetMethodSetupSnapshot(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan);
+				if (snapshot_methodSetup is not null)
+				{
+					for (int i_methodSetup = snapshot_methodSetup.Length - 1; i_methodSetup >= 0; i_methodSetup--)
+					{
+						if (snapshot_methodSetup[i_methodSetup] is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_methodSetup && s_methodSetup.Matches(ref_span))
+						{
+							methodSetup = s_methodSetup;
+							break;
+						}
+					}
+				}
+			}
+			if (methodSetup is null)
+			{
+				foreach (global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> s_methodSetup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan"))
+				{
+					if (s_methodSetup.Matches(ref_span))
+					{
+						methodSetup = s_methodSetup;
+						break;
+					}
+				}
+			}
+			bool hasWrappedResult = false;
+			if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+			{
+				this.MockolateBuffer_MutateReadOnlySpan.Append("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(span));
+			}
+			try
+			{
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer wraps)
+				{
+					wraps.MutateReadOnlySpan(ref span);
+					hasWrappedResult = true;
+				}
+				if (!hasWrappedResult || methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection)
+				{
+					if (methodSetup is global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection wpc)
+					{
+						if (wpc.Parameter1 is global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> refParam1)
+						{
+							span = refParam1.GetValue(span);
+						}
+					}
+					else
+					{
+					}
+				}
+			}
+			finally
+			{
+				methodSetup?.TriggerCallbacks(new global::Mockolate.Setup.ReadOnlySpanWrapper<int>(span));
+			}
+			if (methodSetup is null && !hasWrappedResult && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan(ReadOnlySpan<int>)' was invoked without prior setup.");
+			}
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan(ref readonly global::System.Span{int})" />
+		public void InspectSpan(ref readonly global::System.Span<int> span)
+		{
+#if NET9_0_OR_GREATER
+			this.MockRegistry.RegisterInteraction(new global::Mockolate.Interactions.RefStructMethodInvocation("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan", "span"));
+			bool matched = false;
+			foreach (global::Mockolate.Setup.RefStructVoidMethodSetup<global::System.Span<int>> setup in this.MockRegistry.GetMethodSetups<global::Mockolate.Setup.RefStructVoidMethodSetup<global::System.Span<int>>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan"))
+			{
+				if (!setup.Matches(span))
+				{
+					continue;
+				}
+
+				matched = true;
+				setup.Invoke(span);
+				return;
+			}
+			if (!matched && this.MockRegistry.Behavior.ThrowWhenNotSetup)
+			{
+				throw new global::Mockolate.Exceptions.MockNotSetupException("The method 'global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan(Span<int>)' was invoked without prior setup.");
+			}
+#else
+#error Mockolate: methods with ref-struct parameters require .NET 9 or later (uses the 'allows ref struct' anti-constraint).
+			throw new global::System.NotSupportedException();
+#endif
+		}
+
 		#endregion Mockolate.Tests.GeneratorCoverage.IRefStructConsumer
 
 		#region IMockSetupForIRefStructConsumer
@@ -215,10 +631,162 @@ internal static partial class Mock
 		}
 #endif
 
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Produce(global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Produce, methodSetup);
+			return methodSetup;
+		}
+#endif
+
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Mutate(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Mutate, methodSetup);
+			return methodSetup;
+		}
+#endif
+
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Inspect(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Inspect, methodSetup);
+			return methodSetup;
+		}
+#endif
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.SpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.SpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, methodSetup);
+			return methodSetup;
+		}
+
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.InspectSpan(global::Mockolate.Parameters.IRefRefStructParameter<global::System.Span<int>>? span)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::System.Span<int>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan", (global::Mockolate.Parameters.IParameterMatch<global::System.Span<int>>?)span);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_InspectSpan, methodSetup);
+			return methodSetup;
+		}
+#endif
+
 		#endregion IMockSetupForIRefStructConsumer
 
 		#region IMockVerifyForIRefStructConsumer
 
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"ProduceSpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IVerifyOutParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.SpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.SpanWrapper<int>))), () => $"ProduceSpan({span})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"MutateSpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IVerifyRefParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.SpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.SpanWrapper<int>))), () => $"MutateSpan({span})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"ProduceReadOnlySpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IVerifyOutParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.ReadOnlySpanWrapper<int>))), () => $"ProduceReadOnlySpan({span})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"MutateReadOnlySpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IVerifyRefParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.ReadOnlySpanWrapper<int>))), () => $"MutateReadOnlySpan({span})");
 		#endregion IMockVerifyForIRefStructConsumer
 	}
 
@@ -229,6 +797,54 @@ internal static partial class Mock
 
 		#region IMockVerifyForIRefStructConsumer
 
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"ProduceSpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IVerifyOutParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.SpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.SpanWrapper<int>))), () => $"ProduceSpan({span})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"MutateSpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IVerifyRefParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.SpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.SpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.SpanWrapper<int>))), () => $"MutateSpan({span})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"ProduceReadOnlySpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IVerifyOutParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.ReadOnlySpanWrapper<int>))), () => $"ProduceReadOnlySpan({span})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", __i => parameters switch
+				{
+					global::Mockolate.Parameters.IParametersMatch m => m.Matches([__i.Parameter1]),
+					global::Mockolate.Parameters.INamedParametersMatch m => m.Matches([("span", __i.Parameter1)]),
+					_ => true
+				}, () => $"MutateReadOnlySpan({parameters})");
+		/// <inheritdoc />
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> IMockVerifyForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IVerifyRefParameter<int> span)
+			=> this.MockRegistry.VerifyMethod<IMockVerifyForIRefStructConsumer, global::Mockolate.Interactions.MethodInvocation<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>>(this, global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", __i => 
+				(span is global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> spanMatch ? spanMatch.Matches(__i.Parameter1) : global::System.Collections.Generic.EqualityComparer<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.Default.Equals(__i.Parameter1, default(global::Mockolate.Setup.ReadOnlySpanWrapper<int>))), () => $"MutateReadOnlySpan({span})");
 		#endregion IMockVerifyForIRefStructConsumer
 	}
 
@@ -270,6 +886,110 @@ internal static partial class Mock
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Consume5", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p1, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p2, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p3, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p4, (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)p5);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Consume5, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+#endif
+
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Produce(global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Produce, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+#endif
+
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Mutate(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Mutate, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+#endif
+
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Inspect(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Inspect, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+#endif
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceSpan(global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.SpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceSpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateSpan(global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.SpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.SpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.SpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateSpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.ProduceReadOnlySpan(global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_ProduceReadOnlySpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IParameters parameters)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", parameters, "span");
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+		/// <inheritdoc />
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.MutateReadOnlySpan(global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> span)
+		{
+			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>.WithParameterCollection(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<int>>)(span));
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_MutateReadOnlySpan, _scenarioName, methodSetup);
+			return methodSetup;
+		}
+
+#if NET9_0_OR_GREATER
+		/// <inheritdoc />
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.InspectSpan(global::Mockolate.Parameters.IRefRefStructParameter<global::System.Span<int>>? span)
+		{
+			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::System.Span<int>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan", (global::Mockolate.Parameters.IParameterMatch<global::System.Span<int>>?)span);
+			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_InspectSpan, _scenarioName, methodSetup);
 			return methodSetup;
 		}
 #endif
@@ -411,6 +1131,106 @@ internal static partial class Mock
 		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet, global::Mockolate.Tests.GeneratorCoverage.Packet> Consume5(global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p1, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p2, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p3, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p4, global::Mockolate.Parameters.IParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? p5);
 #endif
 
+#if NET9_0_OR_GREATER
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce(global::Mockolate.Tests.GeneratorCoverage.Packet)">Produce(Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
+		/// </summary>
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Produce(global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
+#endif
+
+#if NET9_0_OR_GREATER
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate(global::Mockolate.Tests.GeneratorCoverage.Packet)">Mutate(Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
+		/// </summary>
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Mutate(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
+#endif
+
+#if NET9_0_OR_GREATER
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect(global::Mockolate.Tests.GeneratorCoverage.Packet)">Inspect(Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
+		/// </summary>
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Inspect(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
+#endif
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan(out global::System.Span{int})">ProduceSpan(out Span&lt;int&gt;)</see> with the given <paramref name="parameters" />.
+		/// </summary>
+		/// <remarks>
+		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> ProduceSpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan(out global::System.Span{int})">ProduceSpan(out Span&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> ProduceSpan(global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.SpanWrapper<int>> span);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan(ref global::System.Span{int})">MutateSpan(ref Span&lt;int&gt;)</see> with the given <paramref name="parameters" />.
+		/// </summary>
+		/// <remarks>
+		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> MutateSpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan(ref global::System.Span{int})">MutateSpan(ref Span&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.SpanWrapper<int>> MutateSpan(global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.SpanWrapper<int>> span);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan(out global::System.ReadOnlySpan{int})">ProduceReadOnlySpan(out ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="parameters" />.
+		/// </summary>
+		/// <remarks>
+		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> ProduceReadOnlySpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan(out global::System.ReadOnlySpan{int})">ProduceReadOnlySpan(out ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> ProduceReadOnlySpan(global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> span);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan(ref global::System.ReadOnlySpan{int})">MutateReadOnlySpan(ref ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="parameters" />.
+		/// </summary>
+		/// <remarks>
+		///     This overload configures the setup via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> MutateReadOnlySpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan(ref global::System.ReadOnlySpan{int})">MutateReadOnlySpan(ref ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Setup.IVoidMethodSetupWithCallback<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> MutateReadOnlySpan(global::Mockolate.Parameters.IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<int>> span);
+
+#if NET9_0_OR_GREATER
+		/// <summary>
+		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan(global::System.Span{int})">InspectSpan(Span&lt;int&gt;)</see> — ref-struct parameter pipeline (narrow setup surface).
+		/// </summary>
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> InspectSpan(global::Mockolate.Parameters.IRefRefStructParameter<global::System.Span<int>>? span);
+#endif
+
 	}
 
 	/// <summary>
@@ -418,6 +1238,78 @@ internal static partial class Mock
 	/// </summary>
 	internal interface IMockVerifyForIRefStructConsumer : global::Mockolate.Verify.IMockVerify<global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer>
 	{
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan(out global::System.Span{int})">ProduceSpan(out Span&lt;int&gt;)</see> with the given <paramref name="parameters"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> ProduceSpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceSpan(out global::System.Span{int})">ProduceSpan(out Span&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> ProduceSpan(global::Mockolate.Parameters.IVerifyOutParameter<int> span);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan(ref global::System.Span{int})">MutateSpan(ref Span&lt;int&gt;)</see> with the given <paramref name="parameters"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> MutateSpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateSpan(ref global::System.Span{int})">MutateSpan(ref Span&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> MutateSpan(global::Mockolate.Parameters.IVerifyRefParameter<int> span);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan(out global::System.ReadOnlySpan{int})">ProduceReadOnlySpan(out ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="parameters"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> ProduceReadOnlySpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.ProduceReadOnlySpan(out global::System.ReadOnlySpan{int})">ProduceReadOnlySpan(out ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> ProduceReadOnlySpan(global::Mockolate.Parameters.IVerifyOutParameter<int> span);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan(ref global::System.ReadOnlySpan{int})">MutateReadOnlySpan(ref ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="parameters"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload matches invocations via a custom <see cref="global::Mockolate.Match">Match</see> predicate (for example <see cref="global::Mockolate.Match.AnyParameters()">AnyParameters()</see> or <see cref="global::Mockolate.Match.Parameters(global::System.Func{object?[], bool}, string)">Parameters(Func&lt;object?[], bool&gt;, string)</see>) rather than per-parameter matchers.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue - 1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> MutateReadOnlySpan(global::Mockolate.Parameters.IParameters parameters);
+
+		/// <summary>
+		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.MutateReadOnlySpan(ref global::System.ReadOnlySpan{int})">MutateReadOnlySpan(ref ReadOnlySpan&lt;int&gt;)</see> with the given <paramref name="span"/>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		global::Mockolate.Verify.VerificationResult<IMockVerifyForIRefStructConsumer> MutateReadOnlySpan(global::Mockolate.Parameters.IVerifyRefParameter<int> span);
+
 	}
 }
 /// <summary>

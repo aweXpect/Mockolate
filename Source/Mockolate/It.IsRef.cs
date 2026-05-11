@@ -89,6 +89,122 @@ public partial class It
 	public static IRefParameter<T> IsAnyRef<T>()
 		=> new AnyRefParameterMatch<T>();
 
+#if NET8_0_OR_GREATER
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="Span{T}" /> parameter and replaces its value
+	///     with the result of <paramref name="setter" /> when the method is invoked.
+	/// </summary>
+	/// <remarks>
+	///     <see cref="Span{T}" /> is a ref struct, so the setup-side payload is the non-ref-struct
+	///     <see cref="global::Mockolate.Setup.SpanWrapper{T}" />. The wrapper's implicit conversion
+	///     operators carry the value across the ref boundary in both directions.
+	/// </remarks>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.SpanWrapper<T>> IsRefSpan<T>(
+		Func<Setup.SpanWrapper<T>, Setup.SpanWrapper<T>> setter,
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<Setup.SpanWrapper<T>>(_ => true, setter, null, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="Span{T}" /> parameter whose wrapped current value
+	///     satisfies <paramref name="predicate" />, and replaces its value with the result of
+	///     <paramref name="setter" />.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.SpanWrapper<T>> IsRefSpan<T>(
+		Func<Setup.SpanWrapper<T>, bool> predicate,
+		Func<Setup.SpanWrapper<T>, Setup.SpanWrapper<T>> setter,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
+		=> new RefParameterMatch<Setup.SpanWrapper<T>>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="Span{T}" /> parameter whose wrapped current value
+	///     satisfies <paramref name="predicate" />, without replacing it.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.SpanWrapper<T>> IsRefSpan<T>(
+		Func<Setup.SpanWrapper<T>, bool> predicate,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<Setup.SpanWrapper<T>>(predicate, null, doNotPopulateThisValue, null);
+
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="Span{T}" /> parameter without replacing its value.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.SpanWrapper<T>> IsAnyRefSpan<T>()
+		=> new AnyRefParameterMatch<Setup.SpanWrapper<T>>();
+
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter and replaces its
+	///     value with the result of <paramref name="setter" /> when the method is invoked.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(
+		Func<Setup.ReadOnlySpanWrapper<T>, Setup.ReadOnlySpanWrapper<T>> setter,
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<Setup.ReadOnlySpanWrapper<T>>(_ => true, setter, null, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter whose wrapped current
+	///     value satisfies <paramref name="predicate" />, and replaces its value with the result of
+	///     <paramref name="setter" />.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(
+		Func<Setup.ReadOnlySpanWrapper<T>, bool> predicate,
+		Func<Setup.ReadOnlySpanWrapper<T>, Setup.ReadOnlySpanWrapper<T>> setter,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
+		=> new RefParameterMatch<Setup.ReadOnlySpanWrapper<T>>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter whose wrapped current
+	///     value satisfies <paramref name="predicate" />, without replacing it.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(
+		Func<Setup.ReadOnlySpanWrapper<T>, bool> predicate,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<Setup.ReadOnlySpanWrapper<T>>(predicate, null, doNotPopulateThisValue, null);
+
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter without replacing
+	///     its value.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<Setup.ReadOnlySpanWrapper<T>> IsAnyRefReadOnlySpan<T>()
+		=> new AnyRefParameterMatch<Setup.ReadOnlySpanWrapper<T>>();
+#endif
+
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
@@ -144,14 +260,17 @@ public partial class It
 	}
 
 	/// <summary>
-	///     Matches a method <see langword="out" /> parameter against an expectation.
+	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
 	private sealed class InvokedRefParameterMatch<T> : IVerifyRefParameter<T>, IParameterMatch<T>
+#if NET9_0_OR_GREATER
+		where T : allows ref struct
+#endif
 	{
-		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
 		bool IParameterMatch<T>.Matches(T value)
 			=> true;
 
@@ -205,6 +324,147 @@ public partial class It
 		/// </summary>
 		protected abstract bool Matches(T value);
 	}
+
+#if NET9_0_OR_GREATER
+	/// <summary>
+	///     Matches any <see langword="ref" /> parameter of a ref struct type
+	///     <typeparamref name="T" /> and replaces its value with the result of
+	///     <paramref name="setter" /> when the method is invoked.
+	/// </summary>
+	/// <remarks>
+	///     The ref-struct-safe counterpart to <see cref="IsRef{T}(System.Func{T, T}, string)" /> does
+	///     not support <see cref="IRefParameter{T}.Do(System.Action{T})" /> callbacks because
+	///     <see cref="System.Action{T}" /> cannot carry the <c>allows ref struct</c> anti-constraint.
+	///     <see cref="System.Runtime.CompilerServices.OverloadResolutionPriorityAttribute" /> defers
+	///     to the <see cref="System.Func{T, T}" /> overload when both are viable.
+	/// </remarks>
+	/// <typeparam name="T">The ref-parameter's ref struct type.</typeparam>
+	/// <param name="setter">Factory that takes the caller's current value and returns the replacement value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that mutates the caller's ref-variable via <paramref name="setter" />.</returns>
+	[OverloadResolutionPriority(-1)]
+	public static IRefRefStructParameter<T> IsRef<T>(RefStructTransform<T> setter,
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+		where T : allows ref struct
+		=> new RefRefStructParameterMatch<T>(static _ => true, setter, null, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> parameter of a ref struct type whose current value
+	///     satisfies <paramref name="predicate" />, and replaces its value with the result of
+	///     <paramref name="setter" />.
+	/// </summary>
+	/// <typeparam name="T">The ref-parameter's ref struct type.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's current value.</param>
+	/// <param name="setter">Factory that takes the caller's current value and returns the replacement value.</param>
+	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and mutates via <paramref name="setter" />.</returns>
+	[OverloadResolutionPriority(-1)]
+	public static IRefRefStructParameter<T> IsRef<T>(RefStructPredicate<T> predicate, RefStructTransform<T> setter,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
+		where T : allows ref struct
+		=> new RefRefStructParameterMatch<T>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> parameter of a ref struct type whose current value
+	///     satisfies <paramref name="predicate" />, without replacing it.
+	/// </summary>
+	/// <typeparam name="T">The ref-parameter's ref struct type.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's current value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and does not mutate the ref-variable.</returns>
+	[OverloadResolutionPriority(-1)]
+	public static IRefRefStructParameter<T> IsRef<T>(RefStructPredicate<T> predicate,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
+		where T : allows ref struct
+		=> new RefRefStructParameterMatch<T>(predicate, null, doNotPopulateThisValue, null);
+
+	/// <summary>
+	///     Matches any <see langword="ref" /> parameter of a ref struct type
+	///     <typeparamref name="T" /> without replacing its value.
+	/// </summary>
+	/// <typeparam name="T">The ref-parameter's ref struct type.</typeparam>
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that matches any ref-argument and leaves it unchanged.</returns>
+	public static IRefRefStructParameter<T> IsAnyRefRefStruct<T>()
+		where T : allows ref struct
+		=> new AnyRefRefStructParameterMatch<T>();
+
+	/// <summary>
+	///     Matches a method <see langword="ref" /> parameter of a ref struct type against an expectation.
+	/// </summary>
+#if !DEBUG
+	[System.Diagnostics.DebuggerNonUserCode]
+#endif
+	private sealed class RefRefStructParameterMatch<T>(
+		RefStructPredicate<T> predicate,
+		RefStructTransform<T>? setter,
+		string? predicateExpression,
+		string? setterExpression) : IRefRefStructParameter<T>, IParameterMatch<T>
+		where T : allows ref struct
+	{
+		/// <inheritdoc cref="IRefRefStructParameter{T}.GetValue(T)" />
+		public T GetValue(T value)
+		{
+			if (setter is null)
+			{
+				return value;
+			}
+
+			return setter(value);
+		}
+
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
+		public bool Matches(T value)
+			=> predicate(value);
+
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		public void InvokeCallbacks(T value)
+		{
+			// No callbacks: Action<T> cannot carry the 'allows ref struct' anti-constraint.
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> (predicateExpression is not null, setterExpression is not null) switch
+			{
+				(true, true) => $"It.IsRef<{typeof(T).FormatType()}>({predicateExpression}, {setterExpression})",
+				(true, false) => $"It.IsRef<{typeof(T).FormatType()}>({predicateExpression})",
+				(false, _) => $"It.IsRef<{typeof(T).FormatType()}>({setterExpression})",
+			};
+	}
+
+	/// <summary>
+	///     Matches any method <see langword="ref" /> parameter of a ref struct type without
+	///     mutating the value.
+	/// </summary>
+#if !DEBUG
+	[System.Diagnostics.DebuggerNonUserCode]
+#endif
+	private sealed class AnyRefRefStructParameterMatch<T> : IRefRefStructParameter<T>, IParameterMatch<T>
+		where T : allows ref struct
+	{
+		/// <inheritdoc cref="IRefRefStructParameter{T}.GetValue(T)" />
+		public T GetValue(T value)
+			=> value;
+
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
+		public bool Matches(T value)
+			=> true;
+
+		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		public void InvokeCallbacks(T value)
+		{
+			// No callbacks: Action<T> cannot carry the 'allows ref struct' anti-constraint.
+		}
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString() => $"It.IsAnyRefRefStruct<{typeof(T).FormatType()}>()";
+	}
+
+#endif
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members
 #pragma warning restore S3453 // This class can't be instantiated; make its constructor 'public'.

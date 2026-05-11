@@ -116,7 +116,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		if (type.TypeKind == TypeKind.Delegate)
 		{
 			if (type is INamedTypeSymbol { DelegateInvokeMethod: { } invoke, } &&
-			    TryGetRefStructIssue(invoke, pipelineUnsupportedReason, out string? delegateIssue))
+			    TryGetRefStructIssue(invoke, pipelineUnsupportedReason, out string? delegateIssue, isDelegate: true))
 			{
 				context.ReportDiagnostic(Diagnostic.Create(
 					s_refStructRule,
@@ -292,7 +292,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static bool TryGetRefStructIssue(IMethodSymbol method, string? pipelineUnsupportedReason,
-		out string? issue)
+		out string? issue, bool isDelegate = false)
 	{
 		bool hasRefStructParam = false;
 		foreach (IParameterSymbol p in method.Parameters)
@@ -304,9 +304,14 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 
 			hasRefStructParam = true;
 
-			if (p.RefKind is RefKind.Out or RefKind.Ref or RefKind.RefReadOnlyParameter)
+			// Delegates don't go through the ref-struct setup pipeline at all, so any ref-struct
+			// parameter (by-value or by-ref) is unsupported on delegate Invoke methods — the
+			// emitted VoidMethodSetup<T> / ReturnMethodSetup<T> lacks an 'allows ref struct'
+			// constraint. Interface/class methods route through the IOutRefStructParameter /
+			// IRefRefStructParameter pipeline.
+			if (isDelegate)
 			{
-				issue = "out/ref ref-struct parameters are not supported";
+				issue = "ref-struct parameters are not supported on delegate types";
 				return true;
 			}
 		}

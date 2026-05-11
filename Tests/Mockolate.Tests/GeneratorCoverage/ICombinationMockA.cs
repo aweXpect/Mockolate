@@ -12,9 +12,4 @@ public interface ICombinationMockA
 	void Run();
 }
 
-public interface ICombinationMockB
-{
-	int Value { get; }
-	void Run();
-}
 #endif

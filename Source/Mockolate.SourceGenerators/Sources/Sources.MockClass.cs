@@ -2267,8 +2267,9 @@ internal static partial class Sources
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
 				sb2.Append(paramRef);
 			}
-			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
-			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+			else if (p.RefKind != RefKind.Out &&
+			         (p.Type.SpecialGenericType == SpecialGenericType.Span ||
+			          p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan))
 			{
 				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", method.Parameters);
 
@@ -2440,6 +2441,7 @@ internal static partial class Sources
 		{
 			string outParamBase = Helpers.GetUniqueIndexedLocalVariableBase("outParam", method.Parameters);
 			string refParamBase = Helpers.GetUniqueIndexedLocalVariableBase("refParam", method.Parameters);
+			string outTempBase = Helpers.GetUniqueIndexedLocalVariableBase("outTemp", method.Parameters);
 			sb.Append("\t\t\t\tif (!").Append(hasWrappedResult).Append(" || ").Append(methodSetup).Append(" is ")
 				.Append(methodSetupType)
 				.Append(".WithParameterCollection)")
@@ -2454,17 +2456,45 @@ internal static partial class Sources
 				parameterIndex++;
 				if (parameter.RefKind == RefKind.Out)
 				{
-					sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
-						.Append(" is not global::Mockolate.Parameters.IOutParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase)
-						.Append(parameterIndex)
-						.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
-						.Append(parameter.Name).Append("))").AppendLine();
-					sb.Append("\t\t\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
-						.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
-						.Append(';').AppendLine();
-					sb.Append("\t\t\t\t\t\t}").AppendLine();
+					bool isSpanOrReadOnlySpan = parameter.Type.SpecialGenericType
+						is SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan;
+					if (isSpanOrReadOnlySpan)
+					{
+						// C# does not insert user-defined implicit conversions across `out`, so the
+						// wrapper-typed slot must be unpacked into a wrapper-typed temp local first,
+						// then assigned to the bare-typed parameter (which triggers the implicit op).
+						sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
+							.Append(" is not global::Mockolate.Parameters.IOutParameter<")
+							.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase)
+							.Append(parameterIndex)
+							.Append(" || !").Append(outParamBase).Append(parameterIndex)
+							.Append(".TryGetValue(out ").Append(parameter.Type.ToTypeOrWrapper())
+							.Append(' ').Append(outTempBase).Append(parameterIndex).Append("))").AppendLine();
+						sb.Append("\t\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
+							.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
+							.Append(';').AppendLine();
+						sb.Append("\t\t\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\t\t\telse").AppendLine();
+						sb.Append("\t\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(outTempBase)
+							.Append(parameterIndex).Append(';').AppendLine();
+						sb.Append("\t\t\t\t\t\t}").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
+							.Append(" is not global::Mockolate.Parameters.IOutParameter<")
+							.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase)
+							.Append(parameterIndex)
+							.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
+							.Append(parameter.Name).Append("))").AppendLine();
+						sb.Append("\t\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
+							.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
+							.Append(';').AppendLine();
+						sb.Append("\t\t\t\t\t\t}").AppendLine();
+					}
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{
@@ -2593,21 +2623,15 @@ internal static partial class Sources
 	{
 		sb.Append("#if NET9_0_OR_GREATER").AppendLine();
 
-		bool hasUnsupportedParameter =
-			method.Parameters.Any(p =>
-				(p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
-				 p.RefKind == RefKind.RefReadOnlyParameter) && p.NeedsRefStructPipeline());
 		bool returnsUnsupportedRefStruct = method.ReturnType.IsRefStruct &&
 		                                   method.ReturnType.SpecialGenericType is not
 			                                   (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
 
-		if (hasUnsupportedParameter || returnsUnsupportedRefStruct)
+		if (returnsUnsupportedRefStruct)
 		{
-			string reason = returnsUnsupportedRefStruct
-				? "methods returning a non-span ref struct are not supported"
-				: "out/ref ref-struct parameters are not supported";
 			sb.Append("\t\t\tthrow new global::System.NotSupportedException(\"Mockolate: ")
-				.Append(reason).Append(". Method '").Append(method.ContainingType).Append('.')
+				.Append("methods returning a non-span ref struct are not supported")
+				.Append(". Method '").Append(method.ContainingType).Append('.')
 				.Append(method.Name).Append("'.\");").AppendLine();
 			sb.Append("#else").AppendLine();
 			sb.Append(
@@ -2634,6 +2658,15 @@ internal static partial class Sources
 
 		sb.Append("));").AppendLine();
 
+		// Pre-default any `out` ref-struct slot. The MockBehavior.DefaultValue generator returns
+		// object? and cannot produce ref-struct values, so we assign default! directly. If a
+		// matching setup later supplies a value via IOutRefStructParameter<T>.TryGetValue, that
+		// value overwrites this; otherwise the default! sticks.
+		foreach (MethodParameter outParameter in method.Parameters.Where(p => p.RefKind == RefKind.Out))
+		{
+			sb.Append("\t\t\t").Append(outParameter.Name).Append(" = default!;").AppendLine();
+		}
+
 		// Iterate setups in latest-registered-first order (scenario-scoped first, default-scope
 		// after — GetMethodSetups<T> preserves that ordering). Stop on the first matcher that
 		// accepts every positional argument. The matching runs synchronously on the stack so
@@ -2653,6 +2686,37 @@ internal static partial class Sources
 		sb.Append("\t\t\t\t}").AppendLine();
 		sb.AppendLine();
 		sb.Append("\t\t\t\t").Append(matchedVar).Append(" = true;").AppendLine();
+
+		// Per-slot write-back for out/ref ref-struct parameters. ref-readonly is read-only by
+		// definition and needs no write-back.
+		int refStructSlotIndex = 0;
+		foreach (MethodParameter parameter in method.Parameters)
+		{
+			refStructSlotIndex++;
+			if (parameter.RefKind == RefKind.Out)
+			{
+				string outVar = Helpers.GetUniqueLocalVariableName($"outParam{refStructSlotIndex}", method.Parameters);
+				sb.Append("\t\t\t\tif (").Append(setupVar).Append(".GetMatcher").Append(refStructSlotIndex)
+					.Append("() is global::Mockolate.Parameters.IOutRefStructParameter<")
+					.Append(parameter.Type.Fullname).Append("> ").Append(outVar).Append(" && ").Append(outVar)
+					.Append(".TryGetValue(out ").Append(parameter.Name).Append(")) { }").AppendLine();
+				sb.Append("\t\t\t\telse").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = default!;").AppendLine();
+				sb.Append("\t\t\t\t}").AppendLine();
+			}
+			else if (parameter.RefKind == RefKind.Ref)
+			{
+				string refVar = Helpers.GetUniqueLocalVariableName($"refParam{refStructSlotIndex}", method.Parameters);
+				sb.Append("\t\t\t\tif (").Append(setupVar).Append(".GetMatcher").Append(refStructSlotIndex)
+					.Append("() is global::Mockolate.Parameters.IRefRefStructParameter<")
+					.Append(parameter.Type.Fullname).Append("> ").Append(refVar).Append(")").AppendLine();
+				sb.Append("\t\t\t\t{").AppendLine();
+				sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(refVar).Append(".GetValue(")
+					.Append(parameter.Name).Append(");").AppendLine();
+				sb.Append("\t\t\t\t}").AppendLine();
+			}
+		}
 
 		if (method.ReturnType == Type.Void)
 		{
@@ -3774,16 +3838,19 @@ internal static partial class Sources
 	private static void AppendRefStructMethodSetupDefinition(StringBuilder sb, Method method,
 		string? methodNameOverride)
 	{
+		// Out/ref/ref-readonly slots that don't go through the ref-struct setup pipeline have no setup
+		// surface today. That includes regular non-ref-struct types and out/ref Span/ReadOnlySpan
+		// (which route through the SpanWrapper/ReadOnlySpanWrapper carve-out, not IParameterMatch<T>).
+		// The ref-struct narrow setup uses IParameterMatch<T> slots; mixing in a wrapper-based or
+		// non-ref-struct IOutParameter<T> would require a wider pipeline. Continue to skip those.
 		bool unsupported = method.Parameters.Any(p =>
-			                   p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
-			                   p.RefKind == RefKind.RefReadOnlyParameter) ||
+			                   (p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
+			                    p.RefKind == RefKind.RefReadOnlyParameter)
+			                   && !p.NeedsRefStructPipeline()) ||
 		                   (method.ReturnType.IsRefStruct && method.ReturnType.SpecialGenericType is not
 			                   (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan));
 		if (unsupported)
 		{
-			// No setup surface — the mock method body throws NotSupportedException at runtime and
-			// the analyzer flags the signature at build time. Skipping the declaration entirely
-			// keeps the setup interface clean.
 			return;
 		}
 
@@ -3806,8 +3873,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("global::Mockolate.Parameters.IParameter<").Append(parameter.Type.Fullname)
-				.Append(">? ").Append(parameter.Name);
+			sb.Append(parameter.ToParameter()).Append("? ").Append(parameter.Name);
 		}
 
 		sb.Append(");").AppendLine();
@@ -3828,8 +3894,9 @@ internal static partial class Sources
 #pragma warning restore S107
 	{
 		bool unsupported = method.Parameters.Any(p =>
-			                   p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
-			                   p.RefKind == RefKind.RefReadOnlyParameter) ||
+			                   (p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
+			                    p.RefKind == RefKind.RefReadOnlyParameter)
+			                   && !p.NeedsRefStructPipeline()) ||
 		                   (method.ReturnType.IsRefStruct && method.ReturnType.SpecialGenericType is not
 			                   (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan));
 		if (unsupported)
@@ -3859,8 +3926,7 @@ internal static partial class Sources
 				sb.Append(", ");
 			}
 
-			sb.Append("global::Mockolate.Parameters.IParameter<").Append(parameter.Type.Fullname)
-				.Append(">? ").Append(parameter.Name);
+			sb.Append(parameter.ToParameter()).Append("? ").Append(parameter.Name);
 		}
 
 		sb.Append(")").AppendLine();
