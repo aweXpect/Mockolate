@@ -454,15 +454,24 @@ internal static class Helpers
 
 		public string ToParameter()
 		{
-			return (parameter.RefKind, parameter.Type.SpecialGenericType) switch
+			bool needsRefStructPipeline = parameter.NeedsRefStructPipeline();
+			return (parameter.RefKind, parameter.Type.SpecialGenericType, needsRefStructPipeline) switch
 			{
-				(RefKind.Ref, _) => $"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
-				(RefKind.Out, _) => $"global::Mockolate.Parameters.IOutParameter<{GetMethodParameterType(parameter)}>",
-				(RefKind.RefReadOnlyParameter, _) => $"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
-				(_, SpecialGenericType.Span) => $"global::Mockolate.Parameters.ISpanParameter<{GetMethodParameterType(parameter)}>",
-				(_, SpecialGenericType.ReadOnlySpan) =>
+				(RefKind.Ref, _, true) =>
+					$"global::Mockolate.Parameters.IRefStructRefParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.Out, _, true) =>
+					$"global::Mockolate.Parameters.IRefStructOutParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.RefReadOnlyParameter, _, true) =>
+					$"global::Mockolate.Parameters.IRefStructRefParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.Ref, _, _) => $"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.Out, _, _) => $"global::Mockolate.Parameters.IOutParameter<{GetMethodParameterType(parameter)}>",
+				(RefKind.RefReadOnlyParameter, _, _) =>
+					$"global::Mockolate.Parameters.IRefParameter<{GetMethodParameterType(parameter)}>",
+				(_, SpecialGenericType.Span, _) =>
+					$"global::Mockolate.Parameters.ISpanParameter<{GetMethodParameterType(parameter)}>",
+				(_, SpecialGenericType.ReadOnlySpan, _) =>
 					$"global::Mockolate.Parameters.IReadOnlySpanParameter<{GetMethodParameterType(parameter)}>",
-				(_, _) => $"global::Mockolate.Parameters.IParameter<{GetMethodParameterType(parameter)}>",
+				(_, _, _) => $"global::Mockolate.Parameters.IParameter<{GetMethodParameterType(parameter)}>",
 			};
 
 			static string GetMethodParameterType(MethodParameter parameter)

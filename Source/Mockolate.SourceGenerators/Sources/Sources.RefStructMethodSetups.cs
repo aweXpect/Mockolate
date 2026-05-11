@@ -179,6 +179,19 @@ internal static partial class Sources
 		sb.Append(';').AppendLine();
 		sb.AppendLine();
 
+		// Per-slot matcher accessors. Used by generated mock bodies to access
+		// IRefStructOutParameter<T>/IRefStructRefParameter<T> payloads on out/ref slots.
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(
+					"\t\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Parameters.IParameterMatch<T").Append(i)
+				.Append(">? GetMatcher").Append(i).Append("() => _matcher").Append(i).Append(';').AppendLine();
+		}
+
+		sb.AppendLine();
+
 		// Invoke.
 		sb.Append("\t\tpublic void Invoke(");
 		for (int i = 1; i <= numberOfParameters; i++)
@@ -384,6 +397,19 @@ internal static partial class Sources
 		}
 
 		sb.Append(';').AppendLine();
+		sb.AppendLine();
+
+		// Per-slot matcher accessors. Used by generated mock bodies to access
+		// IRefStructOutParameter<T>/IRefStructRefParameter<T> payloads on out/ref slots.
+		for (int i = 1; i <= numberOfParameters; i++)
+		{
+			sb.Append(
+					"\t\t[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]")
+				.AppendLine();
+			sb.Append("\t\tpublic global::Mockolate.Parameters.IParameterMatch<T").Append(i)
+				.Append(">? GetMatcher").Append(i).Append("() => _matcher").Append(i).Append(';').AppendLine();
+		}
+
 		sb.AppendLine();
 
 		// Invoke.

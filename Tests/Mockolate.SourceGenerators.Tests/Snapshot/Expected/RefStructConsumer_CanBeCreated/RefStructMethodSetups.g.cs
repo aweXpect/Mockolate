@@ -65,6 +65,17 @@ namespace Mockolate.Setup
 			   && (_matcher4 is null || _matcher4.Matches(value4))
 			   && (_matcher5 is null || _matcher5.Matches(value5));
 
+		[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+		public global::Mockolate.Parameters.IParameterMatch<T1>? GetMatcher1() => _matcher1;
+		[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+		public global::Mockolate.Parameters.IParameterMatch<T2>? GetMatcher2() => _matcher2;
+		[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+		public global::Mockolate.Parameters.IParameterMatch<T3>? GetMatcher3() => _matcher3;
+		[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+		public global::Mockolate.Parameters.IParameterMatch<T4>? GetMatcher4() => _matcher4;
+		[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]
+		public global::Mockolate.Parameters.IParameterMatch<T5>? GetMatcher5() => _matcher5;
+
 		public void Invoke(T1 value1, T2 value2, T3 value3, T4 value4, T5 value5)
 		{
 			_matcher1?.InvokeCallbacks(value1);

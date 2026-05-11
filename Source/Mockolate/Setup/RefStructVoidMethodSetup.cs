@@ -59,6 +59,15 @@ public sealed class RefStructVoidMethodSetup<T> : MethodSetup, IRefStructVoidMet
 		=> _matcher is null || _matcher.Matches(value);
 
 	/// <summary>
+	///     Returns the matcher for the first (and only) parameter slot, or <see langword="null" />
+	///     when the slot has no matcher configured. Used by generated mock bodies to access ref-struct
+	///     <c>out</c>/<c>ref</c> matcher payloads (e.g. <see cref="IRefStructOutParameter{T}" />).
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T>? GetMatcher1()
+		=> _matcher;
+
+	/// <summary>
 	///     Invokes any matcher-level callbacks against the live <paramref name="value" /> and then
 	///     applies the currently configured throw (if any).
 	/// </summary>
@@ -161,6 +170,20 @@ public sealed class RefStructVoidMethodSetup<T1, T2> : MethodSetup, IRefStructVo
 	public bool Matches(T1 value1, T2 value2)
 		=> (_matcher1 is null || _matcher1.Matches(value1))
 		   && (_matcher2 is null || _matcher2.Matches(value2));
+
+	/// <summary>
+	///     Returns the matcher for the first parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T1>? GetMatcher1()
+		=> _matcher1;
+
+	/// <summary>
+	///     Returns the matcher for the second parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T2>? GetMatcher2()
+		=> _matcher2;
 
 	/// <summary>
 	///     Invokes any matcher-level callbacks and applies the currently configured throw (if any).
@@ -268,6 +291,27 @@ public sealed class RefStructVoidMethodSetup<T1, T2, T3> : MethodSetup, IRefStru
 		=> (_matcher1 is null || _matcher1.Matches(value1))
 		   && (_matcher2 is null || _matcher2.Matches(value2))
 		   && (_matcher3 is null || _matcher3.Matches(value3));
+
+	/// <summary>
+	///     Returns the matcher for the first parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T1>? GetMatcher1()
+		=> _matcher1;
+
+	/// <summary>
+	///     Returns the matcher for the second parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T2>? GetMatcher2()
+		=> _matcher2;
+
+	/// <summary>
+	///     Returns the matcher for the third parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T3>? GetMatcher3()
+		=> _matcher3;
 
 	/// <summary>
 	///     Invokes any matcher-level callbacks and applies the currently configured throw (if any).
@@ -381,6 +425,34 @@ public sealed class RefStructVoidMethodSetup<T1, T2, T3, T4> : MethodSetup, IRef
 		   && (_matcher2 is null || _matcher2.Matches(value2))
 		   && (_matcher3 is null || _matcher3.Matches(value3))
 		   && (_matcher4 is null || _matcher4.Matches(value4));
+
+	/// <summary>
+	///     Returns the matcher for the first parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T1>? GetMatcher1()
+		=> _matcher1;
+
+	/// <summary>
+	///     Returns the matcher for the second parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T2>? GetMatcher2()
+		=> _matcher2;
+
+	/// <summary>
+	///     Returns the matcher for the third parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T3>? GetMatcher3()
+		=> _matcher3;
+
+	/// <summary>
+	///     Returns the matcher for the fourth parameter slot.
+	/// </summary>
+	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+	public IParameterMatch<T4>? GetMatcher4()
+		=> _matcher4;
 
 	/// <summary>
 	///     Invokes any matcher-level callbacks and applies the currently configured throw (if any).
