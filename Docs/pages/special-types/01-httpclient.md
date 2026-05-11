@@ -294,3 +294,58 @@ httpClient.Mock.Setup
         .WhoseContentIs("application/json", c => c.WithStringMatching("*\"type\": \"Dark\"*")))
     .ReturnsAsync(HttpStatusCode.OK);
 ```
+
+## Mocking `IHttpClientFactory`
+
+When the code under test pulls clients from `IHttpClientFactory` and wraps them in `using` blocks
+(`using var client = _factory.CreateClient();`), two naive mocking patterns both break:
+
+- Returning **the same mocked `HttpClient` instance** from every `CreateClient` call throws
+  `ObjectDisposedException` on the second call, because the first `using` block already disposed it.
+- Returning **a freshly created mocked `HttpClient`** from a `Returns(() => ...)` factory avoids the
+  disposal exception but spreads invocation history across many short-lived mocks, so verifications
+  can no longer see the full call sequence.
+
+The fix is to mock the underlying `HttpMessageHandler` once and hand out fresh `HttpClient` wrappers
+that all share it. Because Mockolate intercepts on the handler, the registry (and therefore the
+invocation history) lives on the handler and survives any number of wrapper disposals. Pass
+`disposeHandler: false` when constructing each wrapper so that disposing the wrapper does not also
+dispose the shared handler.
+
+```csharp
+// One mocked handler shared by every HttpClient the factory hands out.
+HttpMessageHandler handler = HttpMessageHandler.CreateMock();
+
+// Setup goes on any HttpClient wrapping the handler; the shared registry routes the
+// configuration to every wrapper that uses the same handler.
+HttpClient setupClient = HttpClient.CreateMock(handler, disposeHandler: false);
+setupClient.Mock.Setup
+    .GetAsync(It.IsUri("*testably.org/api/chocolate/inventory/*").ForHttps())
+    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+
+// The factory returns a fresh HttpClient each call, all sharing the handler.
+// `disposeHandler: false` keeps the shared handler alive when consumers `using` the client.
+IHttpClientFactory factory = IHttpClientFactory.CreateMock();
+factory.Mock.Setup.CreateClient(It.IsAny<string>())
+    .Returns(() => HttpClient.CreateMock(handler, disposeHandler: false));
+
+// The code under test can now safely use `using` blocks. Each call goes through the same
+// handler, so the invocation history is preserved across every disposed wrapper.
+foreach (string type in new[] { "Dark", "Milk", "White" })
+{
+    using HttpClient client = factory.CreateClient("chocolate-api");
+    _ = await client.GetAsync($"https://testably.org/api/chocolate/inventory/{type}");
+}
+
+setupClient.Mock.Verify
+    .GetAsync(It.IsUri("*testably.org/api/chocolate/inventory/*").ForHttps())
+    .Exactly(3);
+```
+
+**Notes:**
+
+- `disposeHandler: false` is the critical bit. `HttpClient.Dispose()` defaults to disposing its
+  handler, which would tear down the shared registry after the first `using` block.
+- Setup and verify can target any `HttpClient` wrapping the same handler; both reach the same
+  registry. The `setupClient` above is just one convenient handle, and the wrappers handed out by
+  the factory work equally well.
