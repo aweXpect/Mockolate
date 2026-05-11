@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Mockolate.Interactions;
 using Mockolate.Internals;
@@ -568,6 +569,40 @@ public abstract class VoidMethodSetup<T1> : MethodSetup,
 		public override string ToString()
 			=> $"void {Name.SubstringAfterLast('.')}({Parameter1})";
 	}
+
+	/// <summary>
+	///     Setup for a method with one parameter where the expected value is stored directly on the
+	///     setup, avoiding the per-call <see cref="IParameterMatch{T1}" /> allocation that
+	///     <see cref="WithParameterCollection" /> requires.
+	/// </summary>
+	public class WithLiteralValues : VoidMethodSetup<T1>,
+		IVoidMethodSetupParameterIgnorer<T1>
+	{
+		private readonly T1 _value1;
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1}" />
+		public WithLiteralValues(MockRegistry mockRegistry, string name, T1 value1)
+			: base(mockRegistry, name)
+		{
+			_value1 = value1;
+		}
+
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1}.AnyParameters()" />
+		IVoidMethodSetup<T1> IVoidMethodSetupParameterIgnorer<T1>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1}.Matches(T1)" />
+		public override bool Matches(T1 p1Value)
+			=> _matchAnyParameters || EqualityComparer<T1>.Default.Equals(_value1, p1Value);
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({FormatLiteralValue(_value1)})";
+	}
 }
 
 /// <summary>
@@ -911,6 +946,44 @@ public abstract class VoidMethodSetup<T1, T2> : MethodSetup,
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 			=> $"void {Name.SubstringAfterLast('.')}({Parameter1}, {Parameter2})";
+	}
+
+	/// <summary>
+	///     Setup for a method with two parameters where the expected values are stored directly on
+	///     the setup, avoiding the per-call <see cref="IParameterMatch{T}" /> allocations that
+	///     <see cref="WithParameterCollection" /> requires.
+	/// </summary>
+	public class WithLiteralValues : VoidMethodSetup<T1, T2>,
+		IVoidMethodSetupParameterIgnorer<T1, T2>
+	{
+		private readonly T1 _value1;
+		private readonly T2 _value2;
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2}" />
+		public WithLiteralValues(MockRegistry mockRegistry, string name, T1 value1, T2 value2)
+			: base(mockRegistry, name)
+		{
+			_value1 = value1;
+			_value2 = value2;
+		}
+
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2}.AnyParameters()" />
+		IVoidMethodSetup<T1, T2> IVoidMethodSetupParameterIgnorer<T1, T2>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2}.Matches(T1, T2)" />
+		public override bool Matches(T1 p1Value, T2 p2Value)
+			=> _matchAnyParameters ||
+			   (EqualityComparer<T1>.Default.Equals(_value1, p1Value) &&
+			    EqualityComparer<T2>.Default.Equals(_value2, p2Value));
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({FormatLiteralValue(_value1)}, {FormatLiteralValue(_value2)})";
 	}
 }
 
@@ -1268,6 +1341,48 @@ public abstract class VoidMethodSetup<T1, T2, T3> : MethodSetup,
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 			=> $"void {Name.SubstringAfterLast('.')}({Parameter1}, {Parameter2}, {Parameter3})";
+	}
+
+	/// <summary>
+	///     Setup for a method with three parameters where the expected values are stored directly on
+	///     the setup, avoiding the per-call <see cref="IParameterMatch{T}" /> allocations that
+	///     <see cref="WithParameterCollection" /> requires.
+	/// </summary>
+	public class WithLiteralValues : VoidMethodSetup<T1, T2, T3>,
+		IVoidMethodSetupParameterIgnorer<T1, T2, T3>
+	{
+		private readonly T1 _value1;
+		private readonly T2 _value2;
+		private readonly T3 _value3;
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}" />
+		public WithLiteralValues(MockRegistry mockRegistry, string name,
+			T1 value1, T2 value2, T3 value3)
+			: base(mockRegistry, name)
+		{
+			_value1 = value1;
+			_value2 = value2;
+			_value3 = value3;
+		}
+
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3}.AnyParameters()" />
+		IVoidMethodSetup<T1, T2, T3> IVoidMethodSetupParameterIgnorer<T1, T2, T3>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3}.Matches(T1, T2, T3)" />
+		public override bool Matches(T1 p1Value, T2 p2Value, T3 p3Value)
+			=> _matchAnyParameters ||
+			   (EqualityComparer<T1>.Default.Equals(_value1, p1Value) &&
+			    EqualityComparer<T2>.Default.Equals(_value2, p2Value) &&
+			    EqualityComparer<T3>.Default.Equals(_value3, p3Value));
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({FormatLiteralValue(_value1)}, {FormatLiteralValue(_value2)}, {FormatLiteralValue(_value3)})";
 	}
 }
 
@@ -1636,5 +1751,50 @@ public abstract class VoidMethodSetup<T1, T2, T3, T4> : MethodSetup,
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 			=> $"void {Name.SubstringAfterLast('.')}({Parameter1}, {Parameter2}, {Parameter3}, {Parameter4})";
+	}
+
+	/// <summary>
+	///     Setup for a method with four parameters where the expected values are stored directly on
+	///     the setup, avoiding the per-call <see cref="IParameterMatch{T}" /> allocations that
+	///     <see cref="WithParameterCollection" /> requires.
+	/// </summary>
+	public class WithLiteralValues : VoidMethodSetup<T1, T2, T3, T4>,
+		IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>
+	{
+		private readonly T1 _value1;
+		private readonly T2 _value2;
+		private readonly T3 _value3;
+		private readonly T4 _value4;
+		private bool _matchAnyParameters;
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}" />
+		public WithLiteralValues(MockRegistry mockRegistry, string name,
+			T1 value1, T2 value2, T3 value3, T4 value4)
+			: base(mockRegistry, name)
+		{
+			_value1 = value1;
+			_value2 = value2;
+			_value3 = value3;
+			_value4 = value4;
+		}
+
+		/// <inheritdoc cref="IVoidMethodSetupParameterIgnorer{T1, T2, T3, T4}.AnyParameters()" />
+		IVoidMethodSetup<T1, T2, T3, T4> IVoidMethodSetupParameterIgnorer<T1, T2, T3, T4>.AnyParameters()
+		{
+			_matchAnyParameters = true;
+			return this;
+		}
+
+		/// <inheritdoc cref="VoidMethodSetup{T1, T2, T3, T4}.Matches(T1, T2, T3, T4)" />
+		public override bool Matches(T1 p1Value, T2 p2Value, T3 p3Value, T4 p4Value)
+			=> _matchAnyParameters ||
+			   (EqualityComparer<T1>.Default.Equals(_value1, p1Value) &&
+			    EqualityComparer<T2>.Default.Equals(_value2, p2Value) &&
+			    EqualityComparer<T3>.Default.Equals(_value3, p3Value) &&
+			    EqualityComparer<T4>.Default.Equals(_value4, p4Value));
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> $"void {Name.SubstringAfterLast('.')}({FormatLiteralValue(_value1)}, {FormatLiteralValue(_value2)}, {FormatLiteralValue(_value3)}, {FormatLiteralValue(_value4)})";
 	}
 }

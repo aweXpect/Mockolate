@@ -221,6 +221,33 @@ public sealed class FastMethod1Buffer<T1> : IFastMemberBuffer
 		return matches;
 	}
 
+	/// <summary>
+	///     Literal-value variant of <see cref="ConsumeMatching(IParameterMatch{T1})" /> — compares each
+	///     recorded parameter against <paramref name="value1" /> using
+	///     <see cref="EqualityComparer{T}.Default" />, sparing the per-call <see cref="IParameterMatch{T1}" />
+	///     allocation that the matcher overload requires.
+	/// </summary>
+	public int ConsumeMatchingLiteral(T1 value1)
+	{
+		int matches = 0;
+		EqualityComparer<T1> cmp = EqualityComparer<T1>.Default;
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				ref Record r = ref _storage.SlotUnderLock(slot);
+				if (cmp.Equals(value1, r.P1))
+				{
+					matches++;
+					_storage.VerifiedUnderLock(slot) = true;
+				}
+			}
+		}
+
+		return matches;
+	}
+
 	internal int ConsumeAll()
 	{
 		lock (_storage.Lock)
@@ -340,6 +367,34 @@ public sealed class FastMethod2Buffer<T1, T2> : IFastMemberBuffer
 			{
 				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2))
+				{
+					matches++;
+					_storage.VerifiedUnderLock(slot) = true;
+				}
+			}
+		}
+
+		return matches;
+	}
+
+	/// <summary>
+	///     Literal-value variant of
+	///     <see cref="ConsumeMatching(IParameterMatch{T1}, IParameterMatch{T2})" /> — compares each
+	///     recorded parameter against <paramref name="value1" /> / <paramref name="value2" /> using
+	///     <see cref="EqualityComparer{T}.Default" />, sparing the per-call matcher allocations.
+	/// </summary>
+	public int ConsumeMatchingLiteral(T1 value1, T2 value2)
+	{
+		int matches = 0;
+		EqualityComparer<T1> cmp1 = EqualityComparer<T1>.Default;
+		EqualityComparer<T2> cmp2 = EqualityComparer<T2>.Default;
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				ref Record r = ref _storage.SlotUnderLock(slot);
+				if (cmp1.Equals(value1, r.P1) && cmp2.Equals(value2, r.P2))
 				{
 					matches++;
 					_storage.VerifiedUnderLock(slot) = true;
@@ -480,6 +535,35 @@ public sealed class FastMethod3Buffer<T1, T2, T3> : IFastMemberBuffer
 		return matches;
 	}
 
+	/// <summary>
+	///     Literal-value variant of
+	///     <see cref="ConsumeMatching(IParameterMatch{T1}, IParameterMatch{T2}, IParameterMatch{T3})" />
+	///     — compares each recorded parameter against the supplied values using
+	///     <see cref="EqualityComparer{T}.Default" />, sparing the per-call matcher allocations.
+	/// </summary>
+	public int ConsumeMatchingLiteral(T1 value1, T2 value2, T3 value3)
+	{
+		int matches = 0;
+		EqualityComparer<T1> cmp1 = EqualityComparer<T1>.Default;
+		EqualityComparer<T2> cmp2 = EqualityComparer<T2>.Default;
+		EqualityComparer<T3> cmp3 = EqualityComparer<T3>.Default;
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				ref Record r = ref _storage.SlotUnderLock(slot);
+				if (cmp1.Equals(value1, r.P1) && cmp2.Equals(value2, r.P2) && cmp3.Equals(value3, r.P3))
+				{
+					matches++;
+					_storage.VerifiedUnderLock(slot) = true;
+				}
+			}
+		}
+
+		return matches;
+	}
+
 	internal int ConsumeAll()
 	{
 		lock (_storage.Lock)
@@ -602,6 +686,37 @@ public sealed class FastMethod4Buffer<T1, T2, T3, T4> : IFastMemberBuffer
 			{
 				ref Record r = ref _storage.SlotUnderLock(slot);
 				if (match1.Matches(r.P1) && match2.Matches(r.P2) && match3.Matches(r.P3) && match4.Matches(r.P4))
+				{
+					matches++;
+					_storage.VerifiedUnderLock(slot) = true;
+				}
+			}
+		}
+
+		return matches;
+	}
+
+	/// <summary>
+	///     Literal-value variant of
+	///     <see cref="ConsumeMatching(IParameterMatch{T1}, IParameterMatch{T2}, IParameterMatch{T3}, IParameterMatch{T4})" />
+	///     — compares each recorded parameter against the supplied values using
+	///     <see cref="EqualityComparer{T}.Default" />, sparing the per-call matcher allocations.
+	/// </summary>
+	public int ConsumeMatchingLiteral(T1 value1, T2 value2, T3 value3, T4 value4)
+	{
+		int matches = 0;
+		EqualityComparer<T1> cmp1 = EqualityComparer<T1>.Default;
+		EqualityComparer<T2> cmp2 = EqualityComparer<T2>.Default;
+		EqualityComparer<T3> cmp3 = EqualityComparer<T3>.Default;
+		EqualityComparer<T4> cmp4 = EqualityComparer<T4>.Default;
+		lock (_storage.Lock)
+		{
+			int n = _storage.PublishedUnderLock;
+			for (int slot = 0; slot < n; slot++)
+			{
+				ref Record r = ref _storage.SlotUnderLock(slot);
+				if (cmp1.Equals(value1, r.P1) && cmp2.Equals(value2, r.P2) &&
+				    cmp3.Equals(value3, r.P3) && cmp4.Equals(value4, r.P4))
 				{
 					matches++;
 					_storage.VerifiedUnderLock(slot) = true;

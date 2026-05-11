@@ -504,6 +504,95 @@ public partial class MockRegistry
 	}
 
 	/// <summary>
+	///     Literal-value fast-path Verify for 1-parameter methods. Avoids allocating an
+	///     <see cref="IParameterMatch{T1}" /> wrapper around <paramref name="literalValue1" /> by
+	///     comparing it inline with <see cref="EqualityComparer{T}.Default" />.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1>(T subject, int memberId, string methodName,
+		T1 literalValue1, Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod1Buffer<T1> typed)
+		{
+			Method1LiteralCountSource<T1> source = new(typed, literalValue1);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				source.Matches,
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1>>(subject, methodName,
+			m => EqualityComparer<T1>.Default.Equals(literalValue1, m.Parameter1), expectation);
+	}
+
+	/// <summary>
+	///     Literal-value fast-path Verify for 2-parameter methods.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2>(T subject, int memberId, string methodName,
+		T1 literalValue1, T2 literalValue2, Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod2Buffer<T1, T2> typed)
+		{
+			Method2LiteralCountSource<T1, T2> source = new(typed, literalValue1, literalValue2);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				source.Matches,
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1, T2>>(subject, methodName,
+			m => EqualityComparer<T1>.Default.Equals(literalValue1, m.Parameter1) &&
+			     EqualityComparer<T2>.Default.Equals(literalValue2, m.Parameter2), expectation);
+	}
+
+	/// <summary>
+	///     Literal-value fast-path Verify for 3-parameter methods.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2, T3>(T subject, int memberId, string methodName,
+		T1 literalValue1, T2 literalValue2, T3 literalValue3, Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod3Buffer<T1, T2, T3> typed)
+		{
+			Method3LiteralCountSource<T1, T2, T3> source = new(typed, literalValue1, literalValue2, literalValue3);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				source.Matches,
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1, T2, T3>>(subject, methodName,
+			m => EqualityComparer<T1>.Default.Equals(literalValue1, m.Parameter1) &&
+			     EqualityComparer<T2>.Default.Equals(literalValue2, m.Parameter2) &&
+			     EqualityComparer<T3>.Default.Equals(literalValue3, m.Parameter3), expectation);
+	}
+
+	/// <summary>
+	///     Literal-value fast-path Verify for 4-parameter methods.
+	/// </summary>
+	public VerificationResult<T>.IgnoreParameters VerifyMethod<T, T1, T2, T3, T4>(T subject, int memberId, string methodName,
+		T1 literalValue1, T2 literalValue2, T3 literalValue3, T4 literalValue4, Func<string> expectation)
+	{
+		IFastMemberBuffer? buffer = TryGetBuffer(memberId);
+		if (buffer is FastMethod4Buffer<T1, T2, T3, T4> typed)
+		{
+			Method4LiteralCountSource<T1, T2, T3, T4> source = new(typed,
+				literalValue1, literalValue2, literalValue3, literalValue4);
+			return new VerificationResult<T>.IgnoreParameters(
+				subject, Interactions, buffer, source, methodName,
+				source.Matches,
+				() => $"invoked method {expectation()}");
+		}
+
+		return VerifyMethod<T, MethodInvocation<T1, T2, T3, T4>>(subject, methodName,
+			m => EqualityComparer<T1>.Default.Equals(literalValue1, m.Parameter1) &&
+			     EqualityComparer<T2>.Default.Equals(literalValue2, m.Parameter2) &&
+			     EqualityComparer<T3>.Default.Equals(literalValue3, m.Parameter3) &&
+			     EqualityComparer<T4>.Default.Equals(literalValue4, m.Parameter4), expectation);
+	}
+
+	/// <summary>
 	///     Typed fast-path Verify for property getter accesses.
 	/// </summary>
 	public VerificationResult<T> VerifyPropertyTyped<T>(T subject, int memberId, string propertyName)
