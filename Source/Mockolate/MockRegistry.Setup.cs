@@ -12,7 +12,7 @@ public partial class MockRegistry
 	private readonly object _setupsByMemberIdLock = new();
 
 	/// <summary>
-	///     Returns the generator-known maximum member id when <see cref="Interactions" /> is a
+	///     Returns the generator-known member count hint when <see cref="Interactions" /> is a
 	///     <see cref="FastMockInteractions" />, so dispatch tables can be sized once on first allocation
 	///     instead of growing one slot at a time as setups for higher-numbered members come in.
 	/// </summary>
