@@ -154,8 +154,9 @@ public class MockabilityAnalyzerRefStructTests
 			  {
 			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
 
-			  	// Delegate Invoke methods are analyzed the same as interface methods; out/ref on
-			  	// a ref-struct parameter must be rejected.
+			  	// Delegate Invoke methods are analyzed the same as interface methods; ref-struct
+			  	// parameters (any RefKind) must be rejected because the emitted VoidMethodSetup
+			  	// has no 'allows ref struct' constraint.
 			  	public delegate void PacketProducerDelegate(out Packet packet);
 
 			  	public class MyClass
@@ -170,11 +171,11 @@ public class MockabilityAnalyzerRefStructTests
 			new DiagnosticResult("Mockolate0003", DiagnosticSeverity.Warning)
 				.WithLocation(0)
 				.WithArguments("MyNamespace.PacketProducerDelegate", "Invoke",
-					"out/ref ref-struct parameters are not supported on delegate types")
+					"ref-struct parameters are not supported on delegate types")
 		);
 
 	[Fact]
-	public async Task WhenMockingDelegateWithPlainRefStructParameter_ShouldNotBeFlagged() => await Verifier
+	public async Task WhenMockingDelegateWithPlainRefStructParameter_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerAsync(
 			$$"""
 			  {{GeneratedPrefix("MyNamespace.PacketHandler")}}
@@ -183,19 +184,24 @@ public class MockabilityAnalyzerRefStructTests
 			  {
 			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
 
-			  	// Delegate Invoke with a plain ref-struct parameter — routed through the
-			  	// generator's ref-struct pipeline, no diagnostic expected.
+			  	// Delegate Invoke with a plain ref-struct parameter — the generator emits
+			  	// VoidMethodSetup<Packet>, which lacks 'allows ref struct' and therefore fails
+			  	// to compile. The analyzer must reject this case as well.
 			  	public delegate void PacketHandler(Packet packet);
 
 			  	public class MyClass
 			  	{
 			  		public void MyTest()
 			  		{
-			  			PacketHandler.CreateMock();
+			  			{|#0:PacketHandler|}.CreateMock();
 			  		}
 			  	}
 			  }
-			  """
+			  """,
+			new DiagnosticResult("Mockolate0003", DiagnosticSeverity.Warning)
+				.WithLocation(0)
+				.WithArguments("MyNamespace.PacketHandler", "Invoke",
+					"ref-struct parameters are not supported on delegate types")
 		);
 
 	[Fact]

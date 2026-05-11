@@ -300,28 +300,62 @@ public sealed class RefStructOutRefParameterTests
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.MutateReadOnlySpan(
-			It.IsRefReadOnlySpan<int>(w => w.ReadOnlySpanValues.Length == 1));
+				It.IsRefReadOnlySpan<int>(w => w.ReadOnlySpanValues.Length == 1))
+			.Throws(new InvalidOperationException("matched"));
 
-		ReadOnlySpan<int> span = new[] { 42 };
-		sut.MutateReadOnlySpan(ref span);
-		int first = span[0];
-		int length = span.Length;
+		ReadOnlySpan<int> matching = new[] { 42 };
+		Exception? matchingThrew = null;
+		try
+		{
+			sut.MutateReadOnlySpan(ref matching);
+		}
+		catch (Exception ex)
+		{
+			matchingThrew = ex;
+		}
+		int matchingFirst = matching[0];
+		int matchingLength = matching.Length;
 
-		await That(first).IsEqualTo(42);
-		await That(length).IsEqualTo(1);
+		ReadOnlySpan<int> nonMatching = new[] { 13, 14 };
+		Exception? nonMatchingThrew = null;
+		try
+		{
+			sut.MutateReadOnlySpan(ref nonMatching);
+		}
+		catch (Exception ex)
+		{
+			nonMatchingThrew = ex;
+		}
+		int nonMatchingFirst = nonMatching[0];
+
+		await That(matchingThrew).IsNotNull();
+		await That(matchingFirst).IsEqualTo(42);
+		await That(matchingLength).IsEqualTo(1);
+		await That(nonMatchingThrew).IsNull();
+		await That(nonMatchingFirst).IsEqualTo(13);
 	}
 
 	[Fact]
 	public async Task RefReadOnlySpan_WithIsAnyRefRefStruct_MatchesViaRefStructPipeline()
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-		sut.Mock.Setup.InspectSpan(It.IsAnyRefRefStruct<Span<int>>());
+		sut.Mock.Setup.InspectSpan(It.IsAnyRefRefStruct<Span<int>>())
+			.Throws(new InvalidOperationException("matched"));
 
 		Span<int> span = new[] { 17, 18, 19 };
-		sut.InspectSpan(in span);
+		Exception? thrown = null;
+		try
+		{
+			sut.InspectSpan(in span);
+		}
+		catch (Exception ex)
+		{
+			thrown = ex;
+		}
 		int length = span.Length;
 		int first = span[0];
 
+		await That(thrown).IsNotNull();
 		await That(length).IsEqualTo(3);
 		await That(first).IsEqualTo(17);
 	}

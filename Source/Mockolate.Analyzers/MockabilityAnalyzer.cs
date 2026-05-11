@@ -304,12 +304,14 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 
 			hasRefStructParam = true;
 
-			// Delegates don't go through the ref-struct setup pipeline, so out/ref on a ref-struct
-			// parameter remains unsupported for delegate Invoke methods. Interface/class methods
-			// route through the IOutRefStructParameter / IRefRefStructParameter pipeline.
-			if (isDelegate && p.RefKind is RefKind.Out or RefKind.Ref or RefKind.RefReadOnlyParameter)
+			// Delegates don't go through the ref-struct setup pipeline at all, so any ref-struct
+			// parameter (by-value or by-ref) is unsupported on delegate Invoke methods — the
+			// emitted VoidMethodSetup<T> / ReturnMethodSetup<T> lacks an 'allows ref struct'
+			// constraint. Interface/class methods route through the IOutRefStructParameter /
+			// IRefRefStructParameter pipeline.
+			if (isDelegate)
 			{
-				issue = "out/ref ref-struct parameters are not supported on delegate types";
+				issue = "ref-struct parameters are not supported on delegate types";
 				return true;
 			}
 		}
