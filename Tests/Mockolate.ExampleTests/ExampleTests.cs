@@ -93,6 +93,30 @@ public class ExampleTests
 
 		await That(result.StatusCode).IsEqualTo(statusCode);
 	}
+
+	[Fact]
+	public async Task IHttpClientFactory_SharedHandler_PreservesInvocationsAcrossDisposes()
+	{
+		HttpMessageHandler handler = HttpMessageHandler.CreateMock();
+		HttpClient setupClient = HttpClient.CreateMock(handler, disposeHandler: false);
+		setupClient.Mock.Setup.GetAsync(It.Matches("*example.com*"))
+			.ReturnsAsync(() => new HttpResponseMessage(HttpStatusCode.OK));
+
+		IHttpClientFactory factory = IHttpClientFactory.CreateMock();
+		factory.Mock.Setup.CreateClient(It.IsAny<string>())
+			.Returns(() => HttpClient.CreateMock(handler, disposeHandler: false));
+
+		HttpStatusCode[] statuses = new HttpStatusCode[3];
+		for (int i = 0; i < statuses.Length; i++)
+		{
+			using HttpClient client = factory.CreateClient("api");
+			HttpResponseMessage response = await client.GetAsync($"https://example.com/{i}");
+			statuses[i] = response.StatusCode;
+		}
+
+		await That(statuses).IsEqualTo([HttpStatusCode.OK, HttpStatusCode.OK, HttpStatusCode.OK,]);
+		setupClient.Mock.Verify.GetAsync(It.Matches("*example.com*")).Exactly(3);
+	}
 #endif
 
 	[Fact]
