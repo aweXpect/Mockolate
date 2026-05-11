@@ -2423,7 +2423,7 @@ namespace Mockolate.Setup
     {
         public ReadOnlySpanWrapper(System.ReadOnlySpan<T> span) { }
         public T[] ReadOnlySpanValues { get; }
-        public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T> wrapper) { }
+        public static System.ReadOnlySpan<T> op_Implicit(Mockolate.Setup.ReadOnlySpanWrapper<T>? wrapper) { }
         public static Mockolate.Setup.ReadOnlySpanWrapper<T> op_Implicit(System.ReadOnlySpan<T> span) { }
     }
     public sealed class RefStructIndexerGetterSetup<TValue, T> : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.IRefStructIndexerGetterSetup<TValue, T>, Mockolate.Setup.ISetup
@@ -2780,7 +2780,7 @@ namespace Mockolate.Setup
     {
         public SpanWrapper(System.Span<T> span) { }
         public T[] SpanValues { get; }
-        public static System.Span<T> op_Implicit(Mockolate.Setup.SpanWrapper<T> wrapper) { }
+        public static System.Span<T> op_Implicit(Mockolate.Setup.SpanWrapper<T>? wrapper) { }
         public static Mockolate.Setup.SpanWrapper<T> op_Implicit(System.Span<T> span) { }
     }
     public abstract class VoidMethodSetup : Mockolate.Setup.MethodSetup, Mockolate.Setup.IMethodSetup, Mockolate.Setup.ISetup, Mockolate.Setup.IVoidMethodSetup, Mockolate.Setup.IVoidMethodSetupCallbackBuilder, Mockolate.Setup.IVoidMethodSetupCallbackWhenBuilder, Mockolate.Setup.IVoidMethodSetupParallelCallbackBuilder, Mockolate.Setup.IVoidMethodSetupReturnBuilder, Mockolate.Setup.IVoidMethodSetupReturnWhenBuilder

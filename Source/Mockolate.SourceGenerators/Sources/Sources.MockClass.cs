@@ -3838,9 +3838,11 @@ internal static partial class Sources
 	private static void AppendRefStructMethodSetupDefinition(StringBuilder sb, Method method,
 		string? methodNameOverride)
 	{
-		// Out/ref slots on non-ref-struct parameters inside a ref-struct-containing method don't have
-		// a setup surface today (the ref-struct narrow setup uses IParameterMatch<T> slots; mixing in
-		// a non-ref-struct IOutParameter<T> would require a wider pipeline). Continue to skip those.
+		// Out/ref/ref-readonly slots that don't go through the ref-struct setup pipeline have no setup
+		// surface today. That includes regular non-ref-struct types and out/ref Span/ReadOnlySpan
+		// (which route through the SpanWrapper/ReadOnlySpanWrapper carve-out, not IParameterMatch<T>).
+		// The ref-struct narrow setup uses IParameterMatch<T> slots; mixing in a wrapper-based or
+		// non-ref-struct IOutParameter<T> would require a wider pipeline. Continue to skip those.
 		bool unsupported = method.Parameters.Any(p =>
 			                   (p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
 			                    p.RefKind == RefKind.RefReadOnlyParameter)

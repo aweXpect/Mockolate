@@ -27,7 +27,7 @@ public class ReadOnlySpanWrapper<T>
 	///     Implicitly converts a <see cref="ReadOnlySpanWrapper{T}" /> to a <see cref="ReadOnlySpan{T}" />.
 	///     A <see langword="null" /> wrapper yields <see langword="default" />(<see cref="ReadOnlySpan{T}" />).
 	/// </summary>
-	public static implicit operator ReadOnlySpan<T>(ReadOnlySpanWrapper<T> wrapper)
+	public static implicit operator ReadOnlySpan<T>(ReadOnlySpanWrapper<T>? wrapper)
 	{
 		return wrapper is null ? default : new ReadOnlySpan<T>(wrapper.ReadOnlySpanValues);
 	}
