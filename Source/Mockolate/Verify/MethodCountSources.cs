@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Mockolate.Interactions;
 using Mockolate.Parameters;
 
@@ -105,6 +106,117 @@ internal sealed class Method4CountSource<T1, T2, T3, T4> : IFastMethodCountSourc
 
 	public int Count() => _buffer.ConsumeMatching(_match1, _match2, _match3, _match4);
 	public int CountAll() => _buffer.ConsumeAll();
+}
+
+/// <summary>
+///     Allocation-free count source backed by a 1-parameter method buffer and a captured literal value.
+///     Sibling of <see cref="Method1CountSource{T1}" /> that fuses the expected value into the source so
+///     no <see cref="IParameterMatch{T1}" /> wrapper has to be allocated for bare-value verifies.
+///     Also exposes <see cref="Matches" /> so the verify predicate can be passed as a method group on this
+///     instance instead of a capturing lambda, keeping the fast verify path free of closure allocations.
+/// </summary>
+internal sealed class Method1LiteralCountSource<T1> : IFastMethodCountSource
+{
+	private readonly FastMethod1Buffer<T1> _buffer;
+	private readonly T1 _value1;
+
+	public Method1LiteralCountSource(FastMethod1Buffer<T1> buffer, T1 value1)
+	{
+		_buffer = buffer;
+		_value1 = value1;
+	}
+
+	public int Count() => _buffer.ConsumeMatchingLiteral(_value1);
+	public int CountAll() => _buffer.ConsumeAll();
+
+	public bool Matches(IInteraction interaction)
+		=> interaction is MethodInvocation<T1> m &&
+		   EqualityComparer<T1>.Default.Equals(_value1, m.Parameter1);
+}
+
+/// <summary>
+///     Allocation-free count source backed by a 2-parameter method buffer and captured literal values.
+/// </summary>
+internal sealed class Method2LiteralCountSource<T1, T2> : IFastMethodCountSource
+{
+	private readonly FastMethod2Buffer<T1, T2> _buffer;
+	private readonly T1 _value1;
+	private readonly T2 _value2;
+
+	public Method2LiteralCountSource(FastMethod2Buffer<T1, T2> buffer, T1 value1, T2 value2)
+	{
+		_buffer = buffer;
+		_value1 = value1;
+		_value2 = value2;
+	}
+
+	public int Count() => _buffer.ConsumeMatchingLiteral(_value1, _value2);
+	public int CountAll() => _buffer.ConsumeAll();
+
+	public bool Matches(IInteraction interaction)
+		=> interaction is MethodInvocation<T1, T2> m &&
+		   EqualityComparer<T1>.Default.Equals(_value1, m.Parameter1) &&
+		   EqualityComparer<T2>.Default.Equals(_value2, m.Parameter2);
+}
+
+/// <summary>
+///     Allocation-free count source backed by a 3-parameter method buffer and captured literal values.
+/// </summary>
+internal sealed class Method3LiteralCountSource<T1, T2, T3> : IFastMethodCountSource
+{
+	private readonly FastMethod3Buffer<T1, T2, T3> _buffer;
+	private readonly T1 _value1;
+	private readonly T2 _value2;
+	private readonly T3 _value3;
+
+	public Method3LiteralCountSource(FastMethod3Buffer<T1, T2, T3> buffer, T1 value1, T2 value2, T3 value3)
+	{
+		_buffer = buffer;
+		_value1 = value1;
+		_value2 = value2;
+		_value3 = value3;
+	}
+
+	public int Count() => _buffer.ConsumeMatchingLiteral(_value1, _value2, _value3);
+	public int CountAll() => _buffer.ConsumeAll();
+
+	public bool Matches(IInteraction interaction)
+		=> interaction is MethodInvocation<T1, T2, T3> m &&
+		   EqualityComparer<T1>.Default.Equals(_value1, m.Parameter1) &&
+		   EqualityComparer<T2>.Default.Equals(_value2, m.Parameter2) &&
+		   EqualityComparer<T3>.Default.Equals(_value3, m.Parameter3);
+}
+
+/// <summary>
+///     Allocation-free count source backed by a 4-parameter method buffer and captured literal values.
+/// </summary>
+internal sealed class Method4LiteralCountSource<T1, T2, T3, T4> : IFastMethodCountSource
+{
+	private readonly FastMethod4Buffer<T1, T2, T3, T4> _buffer;
+	private readonly T1 _value1;
+	private readonly T2 _value2;
+	private readonly T3 _value3;
+	private readonly T4 _value4;
+
+	public Method4LiteralCountSource(FastMethod4Buffer<T1, T2, T3, T4> buffer,
+		T1 value1, T2 value2, T3 value3, T4 value4)
+	{
+		_buffer = buffer;
+		_value1 = value1;
+		_value2 = value2;
+		_value3 = value3;
+		_value4 = value4;
+	}
+
+	public int Count() => _buffer.ConsumeMatchingLiteral(_value1, _value2, _value3, _value4);
+	public int CountAll() => _buffer.ConsumeAll();
+
+	public bool Matches(IInteraction interaction)
+		=> interaction is MethodInvocation<T1, T2, T3, T4> m &&
+		   EqualityComparer<T1>.Default.Equals(_value1, m.Parameter1) &&
+		   EqualityComparer<T2>.Default.Equals(_value2, m.Parameter2) &&
+		   EqualityComparer<T3>.Default.Equals(_value3, m.Parameter3) &&
+		   EqualityComparer<T4>.Default.Equals(_value4, m.Parameter4);
 }
 
 /// <summary>

@@ -3711,25 +3711,50 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append(".WithParameterCollection(").Append(mockRegistryName).Append(", ")
-				.Append(method.GetUniqueNameString());
-			int j = 0;
-			foreach (MethodParameter parameter in method.Parameters)
+			// Fused literal path: when the call site is the bare-value overload (every parameter is a
+			// literal value) we can store the values directly on the setup via WithLiteralValues and
+			// skip the per-parameter IParameterMatch<T> allocations that WithParameterCollection
+			// would otherwise force via It.IsValue<T>(...). Gated to 1..4 parameters because that is
+			// the arity range covered by the WithLiteralValues nested types.
+			bool useLiteralValues = valueFlags is { Length: > 0 and <= MaxExplicitParameters, } &&
+			                        valueFlags.All(x => x) &&
+			                        !method.Parameters.Any(p => p.RefKind == RefKind.Out ||
+			                                                    p.RefKind == RefKind.Ref ||
+			                                                    p.RefKind == RefKind.RefReadOnlyParameter);
+			if (useLiteralValues)
 			{
-				sb.Append(", ");
-				if (valueFlags?[j] == true)
+				sb.Append(".WithLiteralValues(").Append(mockRegistryName).Append(", ")
+					.Append(method.GetUniqueNameString());
+				foreach (MethodParameter parameter in method.Parameters)
 				{
-					AppendNamedValueParameter(sb, parameter);
-				}
-				else
-				{
-					AppendNamedParameter(sb, parameter);
+					sb.Append(", ").Append(parameter.Name);
 				}
 
-				j++;
+				sb.Append(");").AppendLine();
+			}
+			else
+			{
+				sb.Append(".WithParameterCollection(").Append(mockRegistryName).Append(", ")
+					.Append(method.GetUniqueNameString());
+				int j = 0;
+				foreach (MethodParameter parameter in method.Parameters)
+				{
+					sb.Append(", ");
+					if (valueFlags?[j] == true)
+					{
+						AppendNamedValueParameter(sb, parameter);
+					}
+					else
+					{
+						AppendNamedParameter(sb, parameter);
+					}
+
+					j++;
+				}
+
+				sb.Append(");").AppendLine();
 			}
 
-			sb.Append(");").AppendLine();
 			sb.Append("\t\t\tthis.").Append(mockRegistryName).Append(".SetupMethod(")
 				.Append(memberIdRef).Append(", ").Append(scopePrefix).Append(methodSetupVar).Append(");").AppendLine();
 			sb.Append("\t\t\treturn ").Append(methodSetupVar).Append(';').AppendLine();
@@ -5211,14 +5236,47 @@ internal static partial class Sources
 
 		sb.AppendLine();
 
+		bool noRefStruct = !method.Parameters.Any(p
+			=> p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
+			   p.RefKind == RefKind.RefReadOnlyParameter);
+		bool baseEligible = !useParameters
+		                    && method.Parameters.Count is > 0 and <= 4
+		                    && (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
+		                    && noRefStruct;
+
+		bool canUseLiteralVerify = baseEligible &&
+		                           valueFlags is { Length: > 0 and <= 4, } &&
+		                           valueFlags.All(x => x);
 		bool canUseTypedVerify = useFastForMethod
 		                         && !useParameters
 		                         && method.Parameters.Count <= 4
 		                         && (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
 		                         && (valueFlags is null || !valueFlags.Any(x => x))
-		                         && !method.Parameters.Any(p
-			                         => p.RefKind == RefKind.Out || p.RefKind == RefKind.Ref ||
-			                            p.RefKind == RefKind.RefReadOnlyParameter);
+		                         && noRefStruct;
+
+		if (canUseLiteralVerify)
+		{
+			// Bare-value verify path: every parameter is a literal value, so we can route through the
+			// MockRegistry.VerifyMethod overload that takes the values directly (no IParameterMatch<T>
+			// allocation) and uses Method{N}LiteralCountSource for the allocation-free fast path. The
+			// memberId may be -1 here when fast buffers are off, which the runtime overload handles by
+			// dispatching to the slow predicate-based VerifyMethod.
+			sb.Append("\t\t\t=> this.").Append(mockRegistryName).Append(".VerifyMethod<").Append(verifyName);
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", ").Append(parameter.ToTypeOrWrapper());
+			}
+
+			sb.Append(">(this, ").Append(methodMemberId).Append(", ").Append(method.GetUniqueNameString());
+			foreach (MethodParameter parameter in method.Parameters)
+			{
+				sb.Append(", ").Append(parameter.Name);
+			}
+
+			sb.Append(", () => $\"").Append(method.Name).Append("(")
+				.Append(string.Join(", ", method.Parameters.Select(p => $"{{{p.Name}}}"))).Append(")\");").AppendLine();
+			return;
+		}
 
 		if (canUseTypedVerify)
 		{
