@@ -74,10 +74,10 @@ public partial class It
 	/// <param name="setter">Factory that produces the wrapper to assign to the caller's out-variable.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
 	/// <returns>An <see cref="IOutParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
-	public static IOutParameter<global::Mockolate.Setup.SpanWrapper<T>> IsOutSpan<T>(
-		Func<global::Mockolate.Setup.SpanWrapper<T>> setter,
+	public static IOutParameter<Setup.SpanWrapper<T>> IsOutSpan<T>(
+		Func<Setup.SpanWrapper<T>> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
-		=> new OutParameterMatch<global::Mockolate.Setup.SpanWrapper<T>>(setter, doNotPopulateThisValue);
+		=> new OutParameterMatch<Setup.SpanWrapper<T>>(setter, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches any <see langword="out" /> <see cref="Span{T}" /> parameter in a <c>Setup</c> and
@@ -87,8 +87,8 @@ public partial class It
 	/// </summary>
 	/// <typeparam name="T">The element type of the out-<see cref="Span{T}" /> parameter.</typeparam>
 	/// <returns>An <see cref="IOutParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
-	public static IOutParameter<global::Mockolate.Setup.SpanWrapper<T>> IsAnyOutSpan<T>()
-		=> new AnyOutParameterMatch<global::Mockolate.Setup.SpanWrapper<T>>();
+	public static IOutParameter<Setup.SpanWrapper<T>> IsAnyOutSpan<T>()
+		=> new AnyOutParameterMatch<Setup.SpanWrapper<T>>();
 
 	/// <summary>
 	///     Matches any <see langword="out" /> <see cref="ReadOnlySpan{T}" /> parameter in a <c>Setup</c>
@@ -104,10 +104,10 @@ public partial class It
 	/// <param name="setter">Factory that produces the wrapper to assign to the caller's out-variable.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
 	/// <returns>An <see cref="IOutParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
-	public static IOutParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<T>> IsOutReadOnlySpan<T>(
-		Func<global::Mockolate.Setup.ReadOnlySpanWrapper<T>> setter,
+	public static IOutParameter<Setup.ReadOnlySpanWrapper<T>> IsOutReadOnlySpan<T>(
+		Func<Setup.ReadOnlySpanWrapper<T>> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
-		=> new OutParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<T>>(setter, doNotPopulateThisValue);
+		=> new OutParameterMatch<Setup.ReadOnlySpanWrapper<T>>(setter, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches any <see langword="out" /> <see cref="ReadOnlySpan{T}" /> parameter in a <c>Setup</c>
@@ -116,8 +116,8 @@ public partial class It
 	/// </summary>
 	/// <typeparam name="T">The element type of the out-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
 	/// <returns>An <see cref="IOutParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
-	public static IOutParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<T>> IsAnyOutReadOnlySpan<T>()
-		=> new AnyOutParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<T>>();
+	public static IOutParameter<Setup.ReadOnlySpanWrapper<T>> IsAnyOutReadOnlySpan<T>()
+		=> new AnyOutParameterMatch<Setup.ReadOnlySpanWrapper<T>>();
 #endif
 
 	/// <summary>
@@ -237,7 +237,7 @@ public partial class It
 	/// <param name="setter">Factory that produces the value to assign to the caller's out-variable.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
 	/// <returns>An <see cref="IRefStructOutParameter{T}" /> that produces a value via <paramref name="setter" />.</returns>
-	[System.Runtime.CompilerServices.OverloadResolutionPriority(-1)]
+	[OverloadResolutionPriority(-1)]
 	public static IRefStructOutParameter<T> IsOut<T>(RefStructFactory<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		where T : allows ref struct
@@ -319,7 +319,7 @@ public partial class It
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"It.IsAnyOut<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"It.IsAnyRefStructOut<{typeof(T).FormatType()}>()";
 	}
 
 #endif

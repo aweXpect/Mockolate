@@ -28,6 +28,19 @@ public sealed partial class ItTests
 			await That(result).IsEqualTo(expectedValue);
 		}
 
+#if NET10_0_OR_GREATER
+		[Fact]
+		public async Task ToString_WithRefStructFactory_ShouldReturnExpectedValue()
+		{
+			IRefStructOutParameter<Span<int>> sut = It.IsOut<Span<int>>(() => default);
+			string expectedValue = "It.IsOut<Span<int>>(() => default)";
+
+			string? result = sut.ToString();
+
+			await That(result).IsEqualTo(expectedValue);
+		}
+#endif
+
 		[Theory]
 		[InlineData(42)]
 		[InlineData(-2)]
