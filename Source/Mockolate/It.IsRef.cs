@@ -260,7 +260,7 @@ public partial class It
 	}
 
 	/// <summary>
-	///     Matches a method <see langword="out" /> parameter against an expectation.
+	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
@@ -270,7 +270,7 @@ public partial class It
 		where T : allows ref struct
 #endif
 	{
-		/// <inheritdoc cref="IParameterMatch{T}.InvokeCallbacks(T)" />
+		/// <inheritdoc cref="IParameterMatch{T}.Matches(T)" />
 		bool IParameterMatch<T>.Matches(T value)
 			=> true;
 
