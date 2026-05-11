@@ -303,7 +303,7 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameterWithCallback<T> Monitor<T>(this Mockolate.Parameters.IParameterWithCallback<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
         public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
     }
-    public delegate T RefStructFactory<T>();
+    public delegate T RefStructFactory<out T>();
     public delegate bool RefStructPredicate<in T>(T value);
     public delegate TProjected RefStructProjection<in T, out TProjected>(T value);
     public delegate T RefStructTransform<T>(T value);

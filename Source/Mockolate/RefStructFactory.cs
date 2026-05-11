@@ -12,6 +12,6 @@ namespace Mockolate;
 ///     <see cref="It.IsOut{T}(RefStructFactory{T}, string)" /> to produce the value assigned to
 ///     a caller's <see langword="out" /> variable when the mock is invoked.
 /// </remarks>
-public delegate T RefStructFactory<T>()
+public delegate T RefStructFactory<out T>()
 	where T : allows ref struct;
 #endif
