@@ -41,7 +41,7 @@ public sealed class MockGenerationSnapshotTests
     [
         new(
             "BaseClass_WithMultipleAdditionalInterfaces_CanBeCreated",
-            ["ComprehensiveAbstractClass.cs", "ICombinationParts.cs",],
+            ["ComprehensiveAbstractClass.cs", "ICombinationMockA.cs", "ICombinationMockB.cs",],
             """
             ComprehensiveAbstractClass sut = ComprehensiveAbstractClass.CreateMock()
             	.Implementing<ICombinationMockA>()
@@ -78,7 +78,7 @@ public sealed class MockGenerationSnapshotTests
             [typeof(HttpClient), typeof(HttpStatusCode),]),
         new(
             "KeywordEdgeCases_CanBeCreated",
-            ["KeywordEdgeCases.cs",],
+            ["IKeywordEdgeCases.cs",],
             """
             IKeywordEdgeCases sut = IKeywordEdgeCases.CreateMock();
             """,

@@ -2267,8 +2267,9 @@ internal static partial class Sources
 				sb.Append("\t\t\tvar ").Append(paramRef).Append(" = ").Append(p.Name).Append(';').AppendLine();
 				sb2.Append(paramRef);
 			}
-			else if (p.Type.SpecialGenericType == SpecialGenericType.Span ||
-			         p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan)
+			else if (p.RefKind != RefKind.Out &&
+			         (p.Type.SpecialGenericType == SpecialGenericType.Span ||
+			          p.Type.SpecialGenericType == SpecialGenericType.ReadOnlySpan))
 			{
 				string paramRef = Helpers.GetUniqueLocalVariableName($"ref_{p.Name}", method.Parameters);
 
@@ -2440,6 +2441,7 @@ internal static partial class Sources
 		{
 			string outParamBase = Helpers.GetUniqueIndexedLocalVariableBase("outParam", method.Parameters);
 			string refParamBase = Helpers.GetUniqueIndexedLocalVariableBase("refParam", method.Parameters);
+			string outTempBase = Helpers.GetUniqueIndexedLocalVariableBase("outTemp", method.Parameters);
 			sb.Append("\t\t\t\tif (!").Append(hasWrappedResult).Append(" || ").Append(methodSetup).Append(" is ")
 				.Append(methodSetupType)
 				.Append(".WithParameterCollection)")
@@ -2454,17 +2456,45 @@ internal static partial class Sources
 				parameterIndex++;
 				if (parameter.RefKind == RefKind.Out)
 				{
-					sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
-						.Append(" is not global::Mockolate.Parameters.IOutParameter<")
-						.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase)
-						.Append(parameterIndex)
-						.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
-						.Append(parameter.Name).Append("))").AppendLine();
-					sb.Append("\t\t\t\t\t\t{").AppendLine();
-					sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
-						.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
-						.Append(';').AppendLine();
-					sb.Append("\t\t\t\t\t\t}").AppendLine();
+					bool isSpanOrReadOnlySpan = parameter.Type.SpecialGenericType
+						is SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan;
+					if (isSpanOrReadOnlySpan)
+					{
+						// C# does not insert user-defined implicit conversions across `out`, so the
+						// wrapper-typed slot must be unpacked into a wrapper-typed temp local first,
+						// then assigned to the bare-typed parameter (which triggers the implicit op).
+						sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
+							.Append(" is not global::Mockolate.Parameters.IOutParameter<")
+							.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase)
+							.Append(parameterIndex)
+							.Append(" || !").Append(outParamBase).Append(parameterIndex)
+							.Append(".TryGetValue(out ").Append(parameter.Type.ToTypeOrWrapper())
+							.Append(' ').Append(outTempBase).Append(parameterIndex).Append("))").AppendLine();
+						sb.Append("\t\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
+							.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
+							.Append(';').AppendLine();
+						sb.Append("\t\t\t\t\t\t}").AppendLine();
+						sb.Append("\t\t\t\t\t\telse").AppendLine();
+						sb.Append("\t\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(outTempBase)
+							.Append(parameterIndex).Append(';').AppendLine();
+						sb.Append("\t\t\t\t\t\t}").AppendLine();
+					}
+					else
+					{
+						sb.Append("\t\t\t\t\t\tif (").Append(wpc).Append(".Parameter").Append(parameterIndex)
+							.Append(" is not global::Mockolate.Parameters.IOutParameter<")
+							.Append(parameter.Type.ToTypeOrWrapper()).Append("> ").Append(outParamBase)
+							.Append(parameterIndex)
+							.Append(" || !").Append(outParamBase).Append(parameterIndex).Append(".TryGetValue(out ")
+							.Append(parameter.Name).Append("))").AppendLine();
+						sb.Append("\t\t\t\t\t\t{").AppendLine();
+						sb.Append("\t\t\t\t\t\t\t").Append(parameter.Name).Append(" = ")
+							.AppendDefaultValueGeneratorFor(parameter.Type, $"{mockRegistry}.Behavior.DefaultValue")
+							.Append(';').AppendLine();
+						sb.Append("\t\t\t\t\t\t}").AppendLine();
+					}
 				}
 				else if (parameter.RefKind == RefKind.Ref)
 				{

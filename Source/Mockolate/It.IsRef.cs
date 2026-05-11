@@ -89,6 +89,122 @@ public partial class It
 	public static IRefParameter<T> IsAnyRef<T>()
 		=> new AnyRefParameterMatch<T>();
 
+#if NET8_0_OR_GREATER
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="Span{T}" /> parameter and replaces its value
+	///     with the result of <paramref name="setter" /> when the method is invoked.
+	/// </summary>
+	/// <remarks>
+	///     <see cref="Span{T}" /> is a ref struct, so the setup-side payload is the non-ref-struct
+	///     <see cref="global::Mockolate.Setup.SpanWrapper{T}" />. The wrapper's implicit conversion
+	///     operators carry the value across the ref boundary in both directions.
+	/// </remarks>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.SpanWrapper<T>> IsRefSpan<T>(
+		Func<global::Mockolate.Setup.SpanWrapper<T>, global::Mockolate.Setup.SpanWrapper<T>> setter,
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<global::Mockolate.Setup.SpanWrapper<T>>(_ => true, setter, null, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="Span{T}" /> parameter whose wrapped current value
+	///     satisfies <paramref name="predicate" />, and replaces its value with the result of
+	///     <paramref name="setter" />.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.SpanWrapper<T>> IsRefSpan<T>(
+		Func<global::Mockolate.Setup.SpanWrapper<T>, bool> predicate,
+		Func<global::Mockolate.Setup.SpanWrapper<T>, global::Mockolate.Setup.SpanWrapper<T>> setter,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
+		=> new RefParameterMatch<global::Mockolate.Setup.SpanWrapper<T>>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="Span{T}" /> parameter whose wrapped current value
+	///     satisfies <paramref name="predicate" />, without replacing it.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.SpanWrapper<T>> IsRefSpan<T>(
+		Func<global::Mockolate.Setup.SpanWrapper<T>, bool> predicate,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<global::Mockolate.Setup.SpanWrapper<T>>(predicate, null, doNotPopulateThisValue, null);
+
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="Span{T}" /> parameter without replacing its value.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="Span{T}" /> parameter.</typeparam>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.SpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.SpanWrapper<T>> IsAnyRefSpan<T>()
+		=> new AnyRefParameterMatch<global::Mockolate.Setup.SpanWrapper<T>>();
+
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter and replaces its
+	///     value with the result of <paramref name="setter" /> when the method is invoked.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(
+		Func<global::Mockolate.Setup.ReadOnlySpanWrapper<T>, global::Mockolate.Setup.ReadOnlySpanWrapper<T>> setter,
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<T>>(_ => true, setter, null, doNotPopulateThisValue);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter whose wrapped current
+	///     value satisfies <paramref name="predicate" />, and replaces its value with the result of
+	///     <paramref name="setter" />.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="setter">Factory that takes the caller's wrapped current value and returns the replacement wrapper.</param>
+	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
+	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(
+		Func<global::Mockolate.Setup.ReadOnlySpanWrapper<T>, bool> predicate,
+		Func<global::Mockolate.Setup.ReadOnlySpanWrapper<T>, global::Mockolate.Setup.ReadOnlySpanWrapper<T>> setter,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue1 = "",
+		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
+		=> new RefParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<T>>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
+
+	/// <summary>
+	///     Matches a <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter whose wrapped current
+	///     value satisfies <paramref name="predicate" />, without replacing it.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <param name="predicate">The predicate evaluated against the caller's wrapped current value.</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(
+		Func<global::Mockolate.Setup.ReadOnlySpanWrapper<T>, bool> predicate,
+		[CallerArgumentExpression("predicate")]
+		string doNotPopulateThisValue = "")
+		=> new RefParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<T>>(predicate, null, doNotPopulateThisValue, null);
+
+	/// <summary>
+	///     Matches any <see langword="ref" /> <see cref="ReadOnlySpan{T}" /> parameter without replacing
+	///     its value.
+	/// </summary>
+	/// <typeparam name="T">The element type of the ref-<see cref="ReadOnlySpan{T}" /> parameter.</typeparam>
+	/// <returns>An <see cref="IRefParameter{T}" /> over <see cref="global::Mockolate.Setup.ReadOnlySpanWrapper{T}" />.</returns>
+	public static IRefParameter<global::Mockolate.Setup.ReadOnlySpanWrapper<T>> IsAnyRefReadOnlySpan<T>()
+		=> new AnyRefParameterMatch<global::Mockolate.Setup.ReadOnlySpanWrapper<T>>();
+#endif
+
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter against an expectation.
 	/// </summary>

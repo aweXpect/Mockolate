@@ -24,11 +24,12 @@ public class SpanWrapper<T>
 	public T[] SpanValues { get; }
 
 	/// <summary>
-	///     Implicitly converts a <see cref="SpanWrapper{T}" /> to a <see cref="Span{T}" />.
+	///     Implicitly converts a <see cref="SpanWrapper{T}" /> to a <see cref="Span{T}" />. A
+	///     <see langword="null" /> wrapper yields <see langword="default" />(<see cref="Span{T}" />).
 	/// </summary>
 	public static implicit operator Span<T>(SpanWrapper<T> wrapper)
 	{
-		return new Span<T>(wrapper.SpanValues);
+		return wrapper is null ? default : new Span<T>(wrapper.SpanValues);
 	}
 
 	/// <summary>

@@ -13,5 +13,10 @@ public interface IRefStructConsumer
 	void Produce(out Packet packet);
 	void Mutate(ref Packet packet);
 	void Inspect(ref readonly Packet packet);
+	void ProduceSpan(out System.Span<int> span);
+	void MutateSpan(ref System.Span<int> span);
+	void ProduceReadOnlySpan(out System.ReadOnlySpan<int> span);
+	void MutateReadOnlySpan(ref System.ReadOnlySpan<int> span);
+	void InspectSpan(ref readonly System.Span<int> span);
 }
 #endif
