@@ -298,7 +298,7 @@ httpClient.Mock.Setup
 ## Mocking `IHttpClientFactory`
 
 When the code under test pulls clients from `IHttpClientFactory` and wraps them in `using` blocks
-(`using var client = _factory.CreateClient();`), two naive mocking patterns both break:
+(`using var client = _factory.CreateClient("chocolate-api");`), two naive mocking patterns both break:
 
 - Returning **the same mocked `HttpClient` instance** from every `CreateClient` call throws
   `ObjectDisposedException` on the second call, because the first `using` block already disposed it.
@@ -321,7 +321,7 @@ HttpMessageHandler handler = HttpMessageHandler.CreateMock();
 HttpClient setupClient = HttpClient.CreateMock(handler, disposeHandler: false);
 setupClient.Mock.Setup
     .GetAsync(It.IsUri("*testably.org/api/chocolate/inventory/*").ForHttps())
-    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+    .ReturnsAsync(() => new HttpResponseMessage(HttpStatusCode.OK));
 
 // The factory returns a fresh HttpClient each call, all sharing the handler.
 // `disposeHandler: false` keeps the shared handler alive when consumers `using` the client.

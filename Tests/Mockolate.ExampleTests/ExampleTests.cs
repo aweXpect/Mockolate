@@ -100,7 +100,7 @@ public class ExampleTests
 		HttpMessageHandler handler = HttpMessageHandler.CreateMock();
 		HttpClient setupClient = HttpClient.CreateMock(handler, disposeHandler: false);
 		setupClient.Mock.Setup.GetAsync(It.Matches("*example.com*"))
-			.ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));
+			.ReturnsAsync(() => new HttpResponseMessage(HttpStatusCode.OK));
 
 		IHttpClientFactory factory = IHttpClientFactory.CreateMock();
 		factory.Mock.Setup.CreateClient(It.IsAny<string>())
