@@ -1,4 +1,4 @@
-#if NET10_0_OR_GREATER
+#if NET9_0_OR_GREATER
 using GcPacket = Mockolate.Tests.GeneratorCoverage.Packet;
 using Mockolate.Setup;
 using Mockolate.Tests.GeneratorCoverage;
@@ -7,8 +7,8 @@ namespace Mockolate.Tests.RefStruct;
 
 /// <summary>
 ///     End-to-end coverage for `out`, `ref`, and `ref readonly` ref-struct parameters routed
-///     through <see cref="Mockolate.Parameters.IRefStructOutParameter{T}" /> /
-///     <see cref="Mockolate.Parameters.IRefStructRefParameter{T}" />. Uses the
+///     through <see cref="Mockolate.Parameters.IOutRefStructParameter{T}" /> /
+///     <see cref="Mockolate.Parameters.IRefRefStructParameter{T}" />. Uses the
 ///     <see cref="GeneratorCoverage.Packet" /> ref struct (single-int ctor) to isolate this
 ///     scenario from the payload-carrying <see cref="Packet" /> used by other RefStruct tests.
 /// </summary>
@@ -32,12 +32,12 @@ public sealed class RefStructOutRefParameterTests
 	}
 
 	[Fact]
-	public async Task OutRefStruct_WithIsAnyRefStructOut_AssignsDefault()
+	public async Task OutRefStruct_WithIsAnyOutRefStruct_AssignsDefault()
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-		sut.Mock.Setup.Produce(It.IsAnyRefStructOut<GcPacket>());
+		sut.Mock.Setup.Produce(It.IsAnyOutRefStruct<GcPacket>());
 
-		GcPacket packet = new GcPacket(99);
+		GcPacket packet = new(99);
 		sut.Produce(out packet);
 		int id = packet.Id;
 
@@ -49,7 +49,7 @@ public sealed class RefStructOutRefParameterTests
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 
-		GcPacket packet = new GcPacket(99);
+		GcPacket packet = new(99);
 		sut.Produce(out packet);
 		int id = packet.Id;
 
@@ -62,7 +62,7 @@ public sealed class RefStructOutRefParameterTests
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.Mutate(It.IsRef<GcPacket>(p => new GcPacket(p.Id + 1)));
 
-		GcPacket packet = new GcPacket(41);
+		GcPacket packet = new(41);
 		sut.Mutate(ref packet);
 		int id = packet.Id;
 
@@ -70,12 +70,12 @@ public sealed class RefStructOutRefParameterTests
 	}
 
 	[Fact]
-	public async Task RefRefStruct_WithIsAnyRefStructRef_LeavesValueUnchanged()
+	public async Task RefRefStruct_WithIsAnyRefRefStruct_LeavesValueUnchanged()
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-		sut.Mock.Setup.Mutate(It.IsAnyRefStructRef<GcPacket>());
+		sut.Mock.Setup.Mutate(It.IsAnyRefRefStruct<GcPacket>());
 
-		GcPacket packet = new GcPacket(13);
+		GcPacket packet = new(13);
 		sut.Mutate(ref packet);
 		int id = packet.Id;
 
@@ -86,13 +86,13 @@ public sealed class RefStructOutRefParameterTests
 	public async Task RefRefStruct_WithPredicate_OnlyTransformsWhenPredicateHolds()
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-		sut.Mock.Setup.Mutate(It.IsRef<GcPacket>(p => p.Id == 41, p => new GcPacket(99)));
+		sut.Mock.Setup.Mutate(It.IsRef<GcPacket>(p => p.Id == 41, _ => new GcPacket(99)));
 
-		GcPacket matching = new GcPacket(41);
+		GcPacket matching = new(41);
 		sut.Mutate(ref matching);
 		int matchingId = matching.Id;
 
-		GcPacket nonMatching = new GcPacket(1);
+		GcPacket nonMatching = new(1);
 		sut.Mutate(ref nonMatching);
 		int nonMatchingId = nonMatching.Id;
 
@@ -105,7 +105,7 @@ public sealed class RefStructOutRefParameterTests
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 
-		GcPacket packet = new GcPacket(17);
+		GcPacket packet = new(17);
 		sut.Inspect(in packet);
 		int idAfter = packet.Id;
 
@@ -116,9 +116,9 @@ public sealed class RefStructOutRefParameterTests
 	public async Task OutSpan_WithIsOutSpan_AssignsSetterArray()
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-		sut.Mock.Setup.ProduceSpan(It.IsOutSpan<int>(() => new SpanWrapper<int>(new int[] { 1, 2, 3 })));
+		sut.Mock.Setup.ProduceSpan(It.IsOutSpan(() => new SpanWrapper<int>(new[] { 1, 2, 3 })));
 
-		System.Span<int> span = default;
+		Span<int> span = default;
 		sut.ProduceSpan(out span);
 		int length = span.Length;
 		int first = span[0];
@@ -135,7 +135,7 @@ public sealed class RefStructOutRefParameterTests
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.ProduceSpan(It.IsAnyOutSpan<int>());
 
-		System.Span<int> span = new int[] { 99 };
+		Span<int> span = new[] { 99 };
 		sut.ProduceSpan(out span);
 		int length = span.Length;
 
@@ -147,7 +147,7 @@ public sealed class RefStructOutRefParameterTests
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 
-		System.Span<int> span = new int[] { 99 };
+		Span<int> span = new[] { 99 };
 		sut.ProduceSpan(out span);
 		int length = span.Length;
 
@@ -161,14 +161,14 @@ public sealed class RefStructOutRefParameterTests
 		int observedFirst = 0;
 		int observedLength = 0;
 		sut.Mock.Setup.ProduceSpan(
-			It.IsOutSpan<int>(() => new SpanWrapper<int>(new int[] { 7, 8 }))
+			It.IsOutSpan(() => new SpanWrapper<int>(new[] { 7, 8 }))
 				.Do(w =>
 				{
 					observedFirst = w.SpanValues[0];
 					observedLength = w.SpanValues.Length;
 				}));
 
-		System.Span<int> span = default;
+		Span<int> span = default;
 		sut.ProduceSpan(out span);
 
 		await That(observedFirst).IsEqualTo(7);
@@ -179,9 +179,9 @@ public sealed class RefStructOutRefParameterTests
 	public async Task RefSpan_WithIsRefSpan_TransformsArray()
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-		sut.Mock.Setup.MutateSpan(It.IsRefSpan<int>(w => new SpanWrapper<int>(new int[] { w.SpanValues[0] + 1 })));
+		sut.Mock.Setup.MutateSpan(It.IsRefSpan<int>(w => new SpanWrapper<int>(new[] { w.SpanValues[0] + 1 })));
 
-		System.Span<int> span = new int[] { 41 };
+		Span<int> span = new[] { 41 };
 		sut.MutateSpan(ref span);
 		int first = span[0];
 		int length = span.Length;
@@ -196,7 +196,7 @@ public sealed class RefStructOutRefParameterTests
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.MutateSpan(It.IsAnyRefSpan<int>());
 
-		System.Span<int> span = new int[] { 13, 14 };
+		Span<int> span = new[] { 13, 14 };
 		sut.MutateSpan(ref span);
 		int first = span[0];
 		int length = span.Length;
@@ -212,13 +212,13 @@ public sealed class RefStructOutRefParameterTests
 		sut.Mock.Setup.MutateSpan(
 			It.IsRefSpan<int>(
 				w => w.SpanValues.Length > 0 && w.SpanValues[0] == 41,
-				w => new SpanWrapper<int>(new int[] { 99 })));
+				_ => new SpanWrapper<int>(new[] { 99 })));
 
-		System.Span<int> matching = new int[] { 41 };
+		Span<int> matching = new[] { 41 };
 		sut.MutateSpan(ref matching);
 		int matchingFirst = matching[0];
 
-		System.Span<int> nonMatching = new int[] { 1 };
+		Span<int> nonMatching = new[] { 1 };
 		sut.MutateSpan(ref nonMatching);
 		int nonMatchingFirst = nonMatching[0];
 
@@ -231,9 +231,9 @@ public sealed class RefStructOutRefParameterTests
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.ProduceReadOnlySpan(
-			It.IsOutReadOnlySpan<int>(() => new ReadOnlySpanWrapper<int>(new int[] { 5, 6, 7 })));
+			It.IsOutReadOnlySpan(() => new ReadOnlySpanWrapper<int>(new[] { 5, 6, 7 })));
 
-		System.ReadOnlySpan<int> span = default;
+		ReadOnlySpan<int> span = default;
 		sut.ProduceReadOnlySpan(out span);
 		int length = span.Length;
 		int first = span[0];
@@ -248,7 +248,7 @@ public sealed class RefStructOutRefParameterTests
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.ProduceReadOnlySpan(It.IsAnyOutReadOnlySpan<int>());
 
-		System.ReadOnlySpan<int> span = new int[] { 99 };
+		ReadOnlySpan<int> span = new[] { 99 };
 		sut.ProduceReadOnlySpan(out span);
 		int length = span.Length;
 
@@ -260,7 +260,7 @@ public sealed class RefStructOutRefParameterTests
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 
-		System.ReadOnlySpan<int> span = new int[] { 99 };
+		ReadOnlySpan<int> span = new[] { 99 };
 		sut.ProduceReadOnlySpan(out span);
 		int length = span.Length;
 
@@ -273,9 +273,9 @@ public sealed class RefStructOutRefParameterTests
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.MutateReadOnlySpan(
 			It.IsRefReadOnlySpan<int>(
-				w => new ReadOnlySpanWrapper<int>(new int[] { w.ReadOnlySpanValues[0] + 1 })));
+				w => new ReadOnlySpanWrapper<int>(new[] { w.ReadOnlySpanValues[0] + 1 })));
 
-		System.ReadOnlySpan<int> span = new int[] { 41 };
+		ReadOnlySpan<int> span = new[] { 41 };
 		sut.MutateReadOnlySpan(ref span);
 		int first = span[0];
 
@@ -288,7 +288,7 @@ public sealed class RefStructOutRefParameterTests
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
 		sut.Mock.Setup.MutateReadOnlySpan(It.IsAnyRefReadOnlySpan<int>());
 
-		System.ReadOnlySpan<int> span = new int[] { 13 };
+		ReadOnlySpan<int> span = new[] { 13 };
 		sut.MutateReadOnlySpan(ref span);
 		int first = span[0];
 
@@ -302,7 +302,7 @@ public sealed class RefStructOutRefParameterTests
 		sut.Mock.Setup.MutateReadOnlySpan(
 			It.IsRefReadOnlySpan<int>(w => w.ReadOnlySpanValues.Length == 1));
 
-		System.ReadOnlySpan<int> span = new int[] { 42 };
+		ReadOnlySpan<int> span = new[] { 42 };
 		sut.MutateReadOnlySpan(ref span);
 		int first = span[0];
 		int length = span.Length;
@@ -312,12 +312,12 @@ public sealed class RefStructOutRefParameterTests
 	}
 
 	[Fact]
-	public async Task RefReadOnlySpan_WithIsAnyRefStructRef_MatchesViaRefStructPipeline()
+	public async Task RefReadOnlySpan_WithIsAnyRefRefStruct_MatchesViaRefStructPipeline()
 	{
 		IRefStructConsumer sut = IRefStructConsumer.CreateMock();
-		sut.Mock.Setup.InspectSpan(It.IsAnyRefStructRef<System.Span<int>>());
+		sut.Mock.Setup.InspectSpan(It.IsAnyRefRefStruct<Span<int>>());
 
-		System.Span<int> span = new int[] { 17, 18, 19 };
+		Span<int> span = new[] { 17, 18, 19 };
 		sut.InspectSpan(in span);
 		int length = span.Length;
 		int first = span[0];

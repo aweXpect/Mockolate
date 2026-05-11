@@ -222,7 +222,7 @@ internal static partial class Mock
 				}
 
 				matched = true;
-				if (setup.GetMatcher1() is global::Mockolate.Parameters.IRefStructOutParameter<global::Mockolate.Tests.GeneratorCoverage.Packet> outParam1 && outParam1.TryGetValue(out packet)) { }
+				if (setup.GetMatcher1() is global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet> outParam1 && outParam1.TryGetValue(out packet)) { }
 				else
 				{
 					packet = default!;
@@ -254,7 +254,7 @@ internal static partial class Mock
 				}
 
 				matched = true;
-				if (setup.GetMatcher1() is global::Mockolate.Parameters.IRefStructRefParameter<global::Mockolate.Tests.GeneratorCoverage.Packet> refParam1)
+				if (setup.GetMatcher1() is global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet> refParam1)
 				{
 					packet = refParam1.GetValue(packet);
 				}
@@ -633,7 +633,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Produce(global::Mockolate.Parameters.IRefStructOutParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Produce(global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Produce, methodSetup);
@@ -643,7 +643,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Mutate(global::Mockolate.Parameters.IRefStructRefParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Mutate(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Mutate, methodSetup);
@@ -653,7 +653,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Inspect(global::Mockolate.Parameters.IRefStructRefParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Inspect(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Inspect, methodSetup);
@@ -727,7 +727,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.InspectSpan(global::Mockolate.Parameters.IRefStructRefParameter<global::System.Span<int>>? span)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.InspectSpan(global::Mockolate.Parameters.IRefRefStructParameter<global::System.Span<int>>? span)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::System.Span<int>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan", (global::Mockolate.Parameters.IParameterMatch<global::System.Span<int>>?)span);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_InspectSpan, methodSetup);
@@ -892,7 +892,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Produce(global::Mockolate.Parameters.IRefStructOutParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Produce(global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Produce, _scenarioName, methodSetup);
@@ -902,7 +902,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Mutate(global::Mockolate.Parameters.IRefStructRefParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Mutate(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Mutate, _scenarioName, methodSetup);
@@ -912,7 +912,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Inspect(global::Mockolate.Parameters.IRefStructRefParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.Inspect(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect", (global::Mockolate.Parameters.IParameterMatch<global::Mockolate.Tests.GeneratorCoverage.Packet>?)packet);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_Inspect, _scenarioName, methodSetup);
@@ -986,7 +986,7 @@ internal static partial class Mock
 
 #if NET9_0_OR_GREATER
 		/// <inheritdoc />
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.InspectSpan(global::Mockolate.Parameters.IRefStructRefParameter<global::System.Span<int>>? span)
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> global::Mockolate.Mock.IMockSetupForIRefStructConsumer.InspectSpan(global::Mockolate.Parameters.IRefRefStructParameter<global::System.Span<int>>? span)
 		{
 			var methodSetup = new global::Mockolate.Setup.RefStructVoidMethodSetup<global::System.Span<int>>("global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan", (global::Mockolate.Parameters.IParameterMatch<global::System.Span<int>>?)span);
 			this.MockRegistry.SetupMethod(global::Mockolate.Mock.IRefStructConsumer.MemberId_InspectSpan, _scenarioName, methodSetup);
@@ -1135,21 +1135,21 @@ internal static partial class Mock
 		/// <summary>
 		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Produce(global::Mockolate.Tests.GeneratorCoverage.Packet)">Produce(Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
 		/// </summary>
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Produce(global::Mockolate.Parameters.IRefStructOutParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Produce(global::Mockolate.Parameters.IOutRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
 #endif
 
 #if NET9_0_OR_GREATER
 		/// <summary>
 		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Mutate(global::Mockolate.Tests.GeneratorCoverage.Packet)">Mutate(Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
 		/// </summary>
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Mutate(global::Mockolate.Parameters.IRefStructRefParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Mutate(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
 #endif
 
 #if NET9_0_OR_GREATER
 		/// <summary>
 		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.Inspect(global::Mockolate.Tests.GeneratorCoverage.Packet)">Inspect(Packet)</see> — ref-struct parameter pipeline (narrow setup surface).
 		/// </summary>
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Inspect(global::Mockolate.Parameters.IRefStructRefParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::Mockolate.Tests.GeneratorCoverage.Packet> Inspect(global::Mockolate.Parameters.IRefRefStructParameter<global::Mockolate.Tests.GeneratorCoverage.Packet>? packet);
 #endif
 
 		/// <summary>
@@ -1228,7 +1228,7 @@ internal static partial class Mock
 		/// <summary>
 		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IRefStructConsumer.InspectSpan(global::System.Span{int})">InspectSpan(Span&lt;int&gt;)</see> — ref-struct parameter pipeline (narrow setup surface).
 		/// </summary>
-		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> InspectSpan(global::Mockolate.Parameters.IRefStructRefParameter<global::System.Span<int>>? span);
+		global::Mockolate.Setup.IRefStructVoidMethodSetup<global::System.Span<int>> InspectSpan(global::Mockolate.Parameters.IRefRefStructParameter<global::System.Span<int>>? span);
 #endif
 
 	}

@@ -475,11 +475,11 @@ internal static class Helpers
 			return (parameter.RefKind, parameter.Type.SpecialGenericType, needsRefStructPipeline) switch
 			{
 				(RefKind.Ref, _, true) =>
-					$"global::Mockolate.Parameters.IRefStructRefParameter<{GetMethodParameterType(parameter)}>",
+					$"global::Mockolate.Parameters.IRefRefStructParameter<{GetMethodParameterType(parameter)}>",
 				(RefKind.Out, _, true) =>
-					$"global::Mockolate.Parameters.IRefStructOutParameter<{GetMethodParameterType(parameter)}>",
+					$"global::Mockolate.Parameters.IOutRefStructParameter<{GetMethodParameterType(parameter)}>",
 				(RefKind.RefReadOnlyParameter, _, true) =>
-					$"global::Mockolate.Parameters.IRefStructRefParameter<{GetMethodParameterType(parameter)}>",
+					$"global::Mockolate.Parameters.IRefRefStructParameter<{GetMethodParameterType(parameter)}>",
 				(RefKind.Out, SpecialGenericType.Span, _) =>
 					$"global::Mockolate.Parameters.IOutParameter<global::Mockolate.Setup.SpanWrapper<{parameter.Type.GenericTypeParameters!.Value.First().Fullname}>>",
 				(RefKind.Out, SpecialGenericType.ReadOnlySpan, _) =>

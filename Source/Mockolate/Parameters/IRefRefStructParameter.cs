@@ -11,7 +11,7 @@ namespace Mockolate.Parameters;
 ///     <see cref="System.Action{T}" /> cannot carry the <c>allows ref struct</c> anti-constraint.
 ///     Use a non-ref-struct <see cref="IRefParameter{T}" /> for types that are not ref structs.
 /// </remarks>
-public interface IRefStructRefParameter<T>
+public interface IRefRefStructParameter<T>
 	where T : allows ref struct
 {
 	/// <summary>

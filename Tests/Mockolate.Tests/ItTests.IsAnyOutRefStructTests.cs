@@ -1,17 +1,17 @@
-#if NET10_0_OR_GREATER
+#if NET9_0_OR_GREATER
 using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
 
 public sealed partial class ItTests
 {
-	public sealed class IsAnyRefStructOutTests
+	public sealed class IsAnyOutRefStructTests
 	{
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IRefStructOutParameter<Span<int>> sut = It.IsAnyRefStructOut<Span<int>>();
-			string expectedValue = "It.IsAnyRefStructOut<Span<int>>()";
+			IOutRefStructParameter<Span<int>> sut = It.IsAnyOutRefStruct<Span<int>>();
+			string expectedValue = "It.IsAnyOutRefStruct<Span<int>>()";
 
 			string? result = sut.ToString();
 
@@ -21,7 +21,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task TryGetValue_ShouldReturnFalse()
 		{
-			IRefStructOutParameter<Span<int>> sut = It.IsAnyRefStructOut<Span<int>>();
+			IOutRefStructParameter<Span<int>> sut = It.IsAnyOutRefStruct<Span<int>>();
 
 			bool result = sut.TryGetValue(out _);
 

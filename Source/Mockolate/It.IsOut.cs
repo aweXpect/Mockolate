@@ -218,7 +218,7 @@ public partial class It
 		}
 	}
 
-#if NET10_0_OR_GREATER
+#if NET9_0_OR_GREATER
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of a ref struct type
 	///     <typeparamref name="T" /> in a <c>Setup</c> and uses <paramref name="setter" /> to
@@ -236,12 +236,12 @@ public partial class It
 	/// <typeparam name="T">The out-parameter's ref struct type.</typeparam>
 	/// <param name="setter">Factory that produces the value to assign to the caller's out-variable.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
-	/// <returns>An <see cref="IRefStructOutParameter{T}" /> that produces a value via <paramref name="setter" />.</returns>
+	/// <returns>An <see cref="IOutRefStructParameter{T}" /> that produces a value via <paramref name="setter" />.</returns>
 	[OverloadResolutionPriority(-1)]
-	public static IRefStructOutParameter<T> IsOut<T>(RefStructFactory<T> setter,
+	public static IOutRefStructParameter<T> IsOut<T>(RefStructFactory<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		where T : allows ref struct
-		=> new RefStructOutParameterMatch<T>(setter, doNotPopulateThisValue);
+		=> new OutRefStructParameterMatch<T>(setter, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches any <see langword="out" /> parameter of a ref struct type
@@ -255,10 +255,10 @@ public partial class It
 	///     <see cref="MockBehavior.DefaultValue" /> cannot produce ref-struct values.
 	/// </remarks>
 	/// <typeparam name="T">The out-parameter's ref struct type.</typeparam>
-	/// <returns>An <see cref="IRefStructOutParameter{T}" /> that produces <see langword="default" />.</returns>
-	public static IRefStructOutParameter<T> IsAnyRefStructOut<T>()
+	/// <returns>An <see cref="IOutRefStructParameter{T}" /> that produces <see langword="default" />.</returns>
+	public static IOutRefStructParameter<T> IsAnyOutRefStruct<T>()
 		where T : allows ref struct
-		=> new AnyRefStructOutParameterMatch<T>();
+		=> new AnyOutRefStructParameterMatch<T>();
 
 	/// <summary>
 	///     Matches an <see langword="out" /> parameter of a ref struct type against an expectation.
@@ -266,11 +266,11 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class RefStructOutParameterMatch<T>(RefStructFactory<T> setter, string setterExpression)
-		: IRefStructOutParameter<T>, IParameterMatch<T>
+	private sealed class OutRefStructParameterMatch<T>(RefStructFactory<T> setter, string setterExpression)
+		: IOutRefStructParameter<T>, IParameterMatch<T>
 		where T : allows ref struct
 	{
-		/// <inheritdoc cref="IRefStructOutParameter{T}.TryGetValue(out T)" />
+		/// <inheritdoc cref="IOutRefStructParameter{T}.TryGetValue(out T)" />
 		public bool TryGetValue(out T value)
 		{
 			value = setter();
@@ -298,10 +298,10 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class AnyRefStructOutParameterMatch<T> : IRefStructOutParameter<T>, IParameterMatch<T>
+	private sealed class AnyOutRefStructParameterMatch<T> : IOutRefStructParameter<T>, IParameterMatch<T>
 		where T : allows ref struct
 	{
-		/// <inheritdoc cref="IRefStructOutParameter{T}.TryGetValue(out T)" />
+		/// <inheritdoc cref="IOutRefStructParameter{T}.TryGetValue(out T)" />
 		public bool TryGetValue(out T value)
 		{
 			value = default!;
@@ -319,7 +319,7 @@ public partial class It
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"It.IsAnyRefStructOut<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"It.IsAnyOutRefStruct<{typeof(T).FormatType()}>()";
 	}
 
 #endif

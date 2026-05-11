@@ -5,13 +5,13 @@ namespace Mockolate.Tests;
 
 public sealed partial class ItTests
 {
-	public sealed class IsAnyRefStructRefTests
+	public sealed class IsAnyRefRefStructTests
 	{
 		[Fact]
 		public async Task ToString_ShouldReturnExpectedValue()
 		{
-			IRefStructRefParameter<Span<int>> sut = It.IsAnyRefStructRef<Span<int>>();
-			string expectedValue = "It.IsAnyRefStructRef<Span<int>>()";
+			IRefRefStructParameter<Span<int>> sut = It.IsAnyRefRefStruct<Span<int>>();
+			string expectedValue = "It.IsAnyRefRefStruct<Span<int>>()";
 
 			string? result = sut.ToString();
 
@@ -21,7 +21,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task GetValue_ShouldReturnSameValue()
 		{
-			IRefStructRefParameter<Span<int>> sut = It.IsAnyRefStructRef<Span<int>>();
+			IRefRefStructParameter<Span<int>> sut = It.IsAnyRefRefStruct<Span<int>>();
 			int[] backing = [1, 2, 3];
 
 			Span<int> roundTripped = sut.GetValue(backing.AsSpan());

@@ -341,12 +341,12 @@ public partial class It
 	/// <typeparam name="T">The ref-parameter's ref struct type.</typeparam>
 	/// <param name="setter">Factory that takes the caller's current value and returns the replacement value.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
-	/// <returns>An <see cref="IRefStructRefParameter{T}" /> that mutates the caller's ref-variable via <paramref name="setter" />.</returns>
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that mutates the caller's ref-variable via <paramref name="setter" />.</returns>
 	[OverloadResolutionPriority(-1)]
-	public static IRefStructRefParameter<T> IsRef<T>(RefStructTransform<T> setter,
+	public static IRefRefStructParameter<T> IsRef<T>(RefStructTransform<T> setter,
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue = "")
 		where T : allows ref struct
-		=> new RefStructRefParameterMatch<T>(static _ => true, setter, null, doNotPopulateThisValue);
+		=> new RefRefStructParameterMatch<T>(static _ => true, setter, null, doNotPopulateThisValue);
 
 	/// <summary>
 	///     Matches a <see langword="ref" /> parameter of a ref struct type whose current value
@@ -358,14 +358,14 @@ public partial class It
 	/// <param name="setter">Factory that takes the caller's current value and returns the replacement value.</param>
 	/// <param name="doNotPopulateThisValue1">Do not populate - captured automatically by the compiler.</param>
 	/// <param name="doNotPopulateThisValue2">Do not populate - captured automatically by the compiler.</param>
-	/// <returns>An <see cref="IRefStructRefParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and mutates via <paramref name="setter" />.</returns>
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and mutates via <paramref name="setter" />.</returns>
 	[OverloadResolutionPriority(-1)]
-	public static IRefStructRefParameter<T> IsRef<T>(RefStructPredicate<T> predicate, RefStructTransform<T> setter,
+	public static IRefRefStructParameter<T> IsRef<T>(RefStructPredicate<T> predicate, RefStructTransform<T> setter,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue1 = "",
 		[CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "")
 		where T : allows ref struct
-		=> new RefStructRefParameterMatch<T>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
+		=> new RefRefStructParameterMatch<T>(predicate, setter, doNotPopulateThisValue1, doNotPopulateThisValue2);
 
 	/// <summary>
 	///     Matches a <see langword="ref" /> parameter of a ref struct type whose current value
@@ -374,23 +374,23 @@ public partial class It
 	/// <typeparam name="T">The ref-parameter's ref struct type.</typeparam>
 	/// <param name="predicate">The predicate evaluated against the caller's current value.</param>
 	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
-	/// <returns>An <see cref="IRefStructRefParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and does not mutate the ref-variable.</returns>
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that matches when <paramref name="predicate" /> is satisfied and does not mutate the ref-variable.</returns>
 	[OverloadResolutionPriority(-1)]
-	public static IRefStructRefParameter<T> IsRef<T>(RefStructPredicate<T> predicate,
+	public static IRefRefStructParameter<T> IsRef<T>(RefStructPredicate<T> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
 		where T : allows ref struct
-		=> new RefStructRefParameterMatch<T>(predicate, null, doNotPopulateThisValue, null);
+		=> new RefRefStructParameterMatch<T>(predicate, null, doNotPopulateThisValue, null);
 
 	/// <summary>
 	///     Matches any <see langword="ref" /> parameter of a ref struct type
 	///     <typeparamref name="T" /> without replacing its value.
 	/// </summary>
 	/// <typeparam name="T">The ref-parameter's ref struct type.</typeparam>
-	/// <returns>An <see cref="IRefStructRefParameter{T}" /> that matches any ref-argument and leaves it unchanged.</returns>
-	public static IRefStructRefParameter<T> IsAnyRefStructRef<T>()
+	/// <returns>An <see cref="IRefRefStructParameter{T}" /> that matches any ref-argument and leaves it unchanged.</returns>
+	public static IRefRefStructParameter<T> IsAnyRefRefStruct<T>()
 		where T : allows ref struct
-		=> new AnyRefStructRefParameterMatch<T>();
+		=> new AnyRefRefStructParameterMatch<T>();
 
 	/// <summary>
 	///     Matches a method <see langword="ref" /> parameter of a ref struct type against an expectation.
@@ -398,14 +398,14 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class RefStructRefParameterMatch<T>(
+	private sealed class RefRefStructParameterMatch<T>(
 		RefStructPredicate<T> predicate,
 		RefStructTransform<T>? setter,
 		string? predicateExpression,
-		string? setterExpression) : IRefStructRefParameter<T>, IParameterMatch<T>
+		string? setterExpression) : IRefRefStructParameter<T>, IParameterMatch<T>
 		where T : allows ref struct
 	{
-		/// <inheritdoc cref="IRefStructRefParameter{T}.GetValue(T)" />
+		/// <inheritdoc cref="IRefRefStructParameter{T}.GetValue(T)" />
 		public T GetValue(T value)
 		{
 			if (setter is null)
@@ -443,10 +443,10 @@ public partial class It
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class AnyRefStructRefParameterMatch<T> : IRefStructRefParameter<T>, IParameterMatch<T>
+	private sealed class AnyRefRefStructParameterMatch<T> : IRefRefStructParameter<T>, IParameterMatch<T>
 		where T : allows ref struct
 	{
-		/// <inheritdoc cref="IRefStructRefParameter{T}.GetValue(T)" />
+		/// <inheritdoc cref="IRefRefStructParameter{T}.GetValue(T)" />
 		public T GetValue(T value)
 			=> value;
 
@@ -461,7 +461,7 @@ public partial class It
 		}
 
 		/// <inheritdoc cref="object.ToString()" />
-		public override string ToString() => $"It.IsAnyRefStructRef<{typeof(T).FormatType()}>()";
+		public override string ToString() => $"It.IsAnyRefRefStruct<{typeof(T).FormatType()}>()";
 	}
 
 #endif

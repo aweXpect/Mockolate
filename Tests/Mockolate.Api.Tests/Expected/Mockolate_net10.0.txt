@@ -98,14 +98,14 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameterWithCallback<T> IsAny<T>() { }
         public static Mockolate.Parameters.IOutParameter<T> IsAnyOut<T>() { }
         public static Mockolate.Parameters.IOutParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> IsAnyOutReadOnlySpan<T>() { }
+        public static Mockolate.Parameters.IOutRefStructParameter<T> IsAnyOutRefStruct<T>() { }
         public static Mockolate.Parameters.IOutParameter<Mockolate.Setup.SpanWrapper<T>> IsAnyOutSpan<T>() { }
         public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> IsAnyReadOnlySpan<T>() { }
         public static Mockolate.Parameters.IRefParameter<T> IsAnyRef<T>() { }
         public static Mockolate.Parameters.IRefParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> IsAnyRefReadOnlySpan<T>() { }
+        public static Mockolate.Parameters.IRefRefStructParameter<T> IsAnyRefRefStruct<T>() { }
         public static Mockolate.Parameters.IRefParameter<Mockolate.Setup.SpanWrapper<T>> IsAnyRefSpan<T>() { }
         public static Mockolate.Parameters.IParameter<T> IsAnyRefStruct<T>() { }
-        public static Mockolate.Parameters.IRefStructOutParameter<T> IsAnyRefStructOut<T>() { }
-        public static Mockolate.Parameters.IRefStructRefParameter<T> IsAnyRefStructRef<T>() { }
         public static Mockolate.Parameters.IVerifySpanParameter<T> IsAnySpan<T>() { }
         public static Mockolate.Parameters.IParameterWithCallback<bool> IsFalse() { }
         public static Mockolate.It.IInRangeParameter<T> IsInRange<T>(T minimum, T maximum, [System.Runtime.CompilerServices.CallerArgumentExpression("minimum")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("maximum")] string doNotPopulateThisValue2 = "")
@@ -116,17 +116,17 @@ namespace Mockolate
         public static Mockolate.Parameters.IParameterWithCallback<T> IsNull<T>(string? toString = null) { }
         public static Mockolate.It.IIsOneOfParameter<T> IsOneOf<T>(System.Collections.Generic.IEnumerable<T> values) { }
         public static Mockolate.Parameters.IVerifyOutParameter<T> IsOut<T>() { }
-        public static Mockolate.Parameters.IRefStructOutParameter<T> IsOut<T>(Mockolate.RefStructFactory<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IOutRefStructParameter<T> IsOut<T>(Mockolate.RefStructFactory<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IOutParameter<T> IsOut<T>(System.Func<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IOutParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> IsOutReadOnlySpan<T>(System.Func<Mockolate.Setup.ReadOnlySpanWrapper<T>> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IOutParameter<Mockolate.Setup.SpanWrapper<T>> IsOutSpan<T>(System.Func<Mockolate.Setup.SpanWrapper<T>> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IVerifyReadOnlySpanParameter<T> IsReadOnlySpan<T>(System.Func<T[], bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IVerifyRefParameter<T> IsRef<T>() { }
-        public static Mockolate.Parameters.IRefStructRefParameter<T> IsRef<T>(Mockolate.RefStructPredicate<T> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IRefStructRefParameter<T> IsRef<T>(Mockolate.RefStructTransform<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IRefRefStructParameter<T> IsRef<T>(Mockolate.RefStructPredicate<T> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.Parameters.IRefRefStructParameter<T> IsRef<T>(Mockolate.RefStructTransform<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static Mockolate.Parameters.IRefStructRefParameter<T> IsRef<T>(Mockolate.RefStructPredicate<T> predicate, Mockolate.RefStructTransform<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
+        public static Mockolate.Parameters.IRefRefStructParameter<T> IsRef<T>(Mockolate.RefStructPredicate<T> predicate, Mockolate.RefStructTransform<T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Parameters.IRefParameter<T> IsRef<T>(System.Func<T, bool> predicate, System.Func<T, T> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue1 = "", [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue2 = "") { }
         public static Mockolate.Parameters.IRefParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(System.Func<Mockolate.Setup.ReadOnlySpanWrapper<T>, Mockolate.Setup.ReadOnlySpanWrapper<T>> setter, [System.Runtime.CompilerServices.CallerArgumentExpression("setter")] string doNotPopulateThisValue = "") { }
         public static Mockolate.Parameters.IRefParameter<Mockolate.Setup.ReadOnlySpanWrapper<T>> IsRefReadOnlySpan<T>(System.Func<Mockolate.Setup.ReadOnlySpanWrapper<T>, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
@@ -1085,6 +1085,10 @@ namespace Mockolate.Parameters
         Mockolate.Parameters.IOutParameter<T> Do(System.Action<T> callback);
         bool TryGetValue(out T value);
     }
+    public interface IOutRefStructParameter<T>
+    {
+        bool TryGetValue(out T value);
+    }
     public interface IParameter
     {
         void InvokeCallbacks(object? value);
@@ -1115,9 +1119,9 @@ namespace Mockolate.Parameters
         Mockolate.Parameters.IRefParameter<T> Do(System.Action<T> callback);
         T GetValue(T value);
     }
-    public interface IRefStructOutParameter<T>
+    public interface IRefRefStructParameter<T>
     {
-        bool TryGetValue(out T value);
+        T GetValue(T value);
     }
     public interface IRefStructProjectionMatch<in T> : Mockolate.Parameters.IParameterMatch<T>
     {
@@ -1127,10 +1131,6 @@ namespace Mockolate.Parameters
         where TProjected :  notnull
     {
         TProjected Project(T value);
-    }
-    public interface IRefStructRefParameter<T>
-    {
-        T GetValue(T value);
     }
     public interface ISpanParameter<T> : Mockolate.Parameters.IParameter, Mockolate.Parameters.IParameterWithCallback<Mockolate.Setup.SpanWrapper<T>>, Mockolate.Parameters.IParameter<Mockolate.Setup.SpanWrapper<T>> { }
     public interface IVerifyOutParameter<out T> { }

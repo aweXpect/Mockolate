@@ -180,7 +180,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// Per-slot matcher accessors. Used by generated mock bodies to access
-		// IRefStructOutParameter<T>/IRefStructRefParameter<T> payloads on out/ref slots.
+		// IOutRefStructParameter<T>/IRefRefStructParameter<T> payloads on out/ref slots.
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(
@@ -400,7 +400,7 @@ internal static partial class Sources
 		sb.AppendLine();
 
 		// Per-slot matcher accessors. Used by generated mock bodies to access
-		// IRefStructOutParameter<T>/IRefStructRefParameter<T> payloads on out/ref slots.
+		// IOutRefStructParameter<T>/IRefRefStructParameter<T> payloads on out/ref slots.
 		for (int i = 1; i <= numberOfParameters; i++)
 		{
 			sb.Append(

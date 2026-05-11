@@ -546,8 +546,8 @@ public sealed partial class MockTests
 				.Because("the setup-interface declaration is now emitted for out ref-struct parameters").And
 				.Contains("new global::Mockolate.Setup.RefStructVoidMethodSetup<global::MyCode.Packet>")
 				.Because("the setup-builder constructs the ref-struct setup type").And
-				.Contains("global::Mockolate.Parameters.IRefStructOutParameter<global::MyCode.Packet>")
-				.Because("the mock body routes the out slot through IRefStructOutParameter<T> instead of IOutParameter<T>");
+				.Contains("global::Mockolate.Parameters.IOutRefStructParameter<global::MyCode.Packet>")
+				.Because("the mock body routes the out slot through IOutRefStructParameter<T> instead of IOutParameter<T>");
 		}
 
 		[Fact]

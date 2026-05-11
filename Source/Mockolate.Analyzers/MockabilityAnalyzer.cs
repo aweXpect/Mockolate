@@ -306,7 +306,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 
 			// Delegates don't go through the ref-struct setup pipeline, so out/ref on a ref-struct
 			// parameter remains unsupported for delegate Invoke methods. Interface/class methods
-			// route through the IRefStructOutParameter / IRefStructRefParameter pipeline.
+			// route through the IOutRefStructParameter / IRefRefStructParameter pipeline.
 			if (isDelegate && p.RefKind is RefKind.Out or RefKind.Ref or RefKind.RefReadOnlyParameter)
 			{
 				issue = "out/ref ref-struct parameters are not supported on delegate types";

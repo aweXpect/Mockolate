@@ -95,7 +95,7 @@ public class MockabilityAnalyzerRefStructTests
 
 			  	public abstract class BaseProducer
 			  	{
-			  		// Out ref-struct parameters are supported via IRefStructOutParameter<T>.
+			  		// Out ref-struct parameters are supported via IOutRefStructParameter<T>.
 			  		public abstract void Produce(out Packet packet);
 			  	}
 
@@ -296,7 +296,7 @@ public class MockabilityAnalyzerRefStructTests
 			  	public readonly ref struct Packet(int id) { public int Id { get; } = id; }
 
 			  	// Both overloads are now supported — the by-value variant via the standard
-			  	// ref-struct pipeline, the out variant via IRefStructOutParameter<T>.
+			  	// ref-struct pipeline, the out variant via IOutRefStructParameter<T>.
 			  	public interface IOverloadedSink
 			  	{
 			  		void Consume(Packet packet);

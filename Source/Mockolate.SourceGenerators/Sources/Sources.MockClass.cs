@@ -2660,7 +2660,7 @@ internal static partial class Sources
 
 		// Pre-default any `out` ref-struct slot. The MockBehavior.DefaultValue generator returns
 		// object? and cannot produce ref-struct values, so we assign default! directly. If a
-		// matching setup later supplies a value via IRefStructOutParameter<T>.TryGetValue, that
+		// matching setup later supplies a value via IOutRefStructParameter<T>.TryGetValue, that
 		// value overwrites this; otherwise the default! sticks.
 		foreach (MethodParameter outParameter in method.Parameters.Where(p => p.RefKind == RefKind.Out))
 		{
@@ -2697,7 +2697,7 @@ internal static partial class Sources
 			{
 				string outVar = Helpers.GetUniqueLocalVariableName($"outParam{refStructSlotIndex}", method.Parameters);
 				sb.Append("\t\t\t\tif (").Append(setupVar).Append(".GetMatcher").Append(refStructSlotIndex)
-					.Append("() is global::Mockolate.Parameters.IRefStructOutParameter<")
+					.Append("() is global::Mockolate.Parameters.IOutRefStructParameter<")
 					.Append(parameter.Type.Fullname).Append("> ").Append(outVar).Append(" && ").Append(outVar)
 					.Append(".TryGetValue(out ").Append(parameter.Name).Append(")) { }").AppendLine();
 				sb.Append("\t\t\t\telse").AppendLine();
@@ -2709,7 +2709,7 @@ internal static partial class Sources
 			{
 				string refVar = Helpers.GetUniqueLocalVariableName($"refParam{refStructSlotIndex}", method.Parameters);
 				sb.Append("\t\t\t\tif (").Append(setupVar).Append(".GetMatcher").Append(refStructSlotIndex)
-					.Append("() is global::Mockolate.Parameters.IRefStructRefParameter<")
+					.Append("() is global::Mockolate.Parameters.IRefRefStructParameter<")
 					.Append(parameter.Type.Fullname).Append("> ").Append(refVar).Append(")").AppendLine();
 				sb.Append("\t\t\t\t{").AppendLine();
 				sb.Append("\t\t\t\t\t").Append(parameter.Name).Append(" = ").Append(refVar).Append(".GetValue(")

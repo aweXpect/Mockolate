@@ -43,7 +43,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_WithRefStructTransform_ShouldReturnExpectedValue()
 		{
-			IRefStructRefParameter<Span<int>> sut = It.IsRef<Span<int>>(value => value);
+			IRefRefStructParameter<Span<int>> sut = It.IsRef<Span<int>>(value => value);
 			string expectedValue = "It.IsRef<Span<int>>(value => value)";
 
 			string? result = sut.ToString();
@@ -54,7 +54,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_WithRefStructPredicateAndTransform_ShouldReturnExpectedValue()
 		{
-			IRefStructRefParameter<Span<int>> sut =
+			IRefRefStructParameter<Span<int>> sut =
 				It.IsRef<Span<int>>(value => value.Length > 0, value => value);
 			string expectedValue = "It.IsRef<Span<int>>(value => value.Length > 0, value => value)";
 
@@ -66,7 +66,7 @@ public sealed partial class ItTests
 		[Fact]
 		public async Task ToString_WithRefStructPredicateOnly_ShouldReturnExpectedValue()
 		{
-			IRefStructRefParameter<Span<int>> sut = It.IsRef<Span<int>>(value => value.Length > 0);
+			IRefRefStructParameter<Span<int>> sut = It.IsRef<Span<int>>(value => value.Length > 0);
 			string expectedValue = "It.IsRef<Span<int>>(value => value.Length > 0)";
 
 			string? result = sut.ToString();
