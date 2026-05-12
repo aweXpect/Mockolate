@@ -2016,7 +2016,6 @@ public sealed partial class SetupMethodTests
 		void UniqueMethodWith5Parameters(int p1, int p2, int p3, int p4, int p5);
 	}
 
-#if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
 	[Fact]
 	public async Task ReturnMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
@@ -2060,9 +2059,7 @@ public sealed partial class SetupMethodTests
 		await That(isCalled).IsEqualTo(1);
 		await That(result).IsEqualTo(171);
 	}
-#endif
 
-#if DEBUG // TODO: re-enable after https://github.com/dotnet/sdk/issues/52579 is fixed
 	[Fact]
 	public async Task VoidMethodWith17Parameters_ShouldStillAllowCallbackAndReturns()
 	{
@@ -2100,5 +2097,4 @@ public sealed partial class SetupMethodTests
 
 		await That(isCalled).IsEqualTo(1);
 	}
-#endif
 }
