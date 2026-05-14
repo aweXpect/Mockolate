@@ -47,8 +47,11 @@
 		<File Path="Docs/pages/01-create-mocks.md" />
 		<File Path="Docs/pages/03-mock-events.md" />
 		<File Path="Docs/pages/04-verify-interactions.md" />
-		<File Path="Docs/pages/07-analyzers.md" />
-		<File Path="Docs/pages/08-comparison.md" />
+		<File Path="Docs/pages/07-complete-example.md" />
+		<File Path="Docs/pages/08-analyzers.md" />
+		<File Path="Docs/pages/09-comparison.md" />
+		<File Path="Docs/pages/10-benchmarks.mdx" />
+		<File Path="Docs/pages/11-migration.md" />
 	</Folder>
 	<Folder Name="/_/Docs/advanced-features/">
 		<File Path="Docs/pages/advanced-features/01-protected-members.md" />
@@ -56,6 +59,7 @@
 		<File Path="Docs/pages/advanced-features/03-advanced-callback-features.md" />
 		<File Path="Docs/pages/advanced-features/04-monitor-interactions.md" />
 		<File Path="Docs/pages/advanced-features/05-check-for-unexpected-interactions.md" />
+		<File Path="Docs/pages/advanced-features/06-scenarios.md" />
 		<File Path="Docs/pages/advanced-features/_category_.json" />
 	</Folder>
 	<Folder Name="/_/Docs/setup/">
