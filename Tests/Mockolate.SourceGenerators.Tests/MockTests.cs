@@ -700,6 +700,42 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task ShouldPreserveProtectedInternalAccessibilityOnOverriddenMembers()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+			     using System;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args) => _ = MyClass.CreateMock();
+			     }
+
+			     public class MyClass
+			     {
+			     	protected internal virtual void ProtectedInternalMethod() { }
+			     	protected internal virtual int ProtectedInternalProperty { get; set; }
+			     	protected internal virtual event EventHandler? ProtectedInternalEvent;
+			     	public virtual int MixedAccessorProperty { get; protected internal set; }
+			     }
+			     """);
+
+		await That(result.Sources).ContainsKey("Mock.MyClass.g.cs");
+		string generated = result.Sources["Mock.MyClass.g.cs"];
+		await That(generated)
+			.Contains("protected internal override void ProtectedInternalMethod()").And
+			.Contains("protected internal override int ProtectedInternalProperty").And
+			.Contains("protected internal override event global::System.EventHandler? ProtectedInternalEvent").And
+			.Contains("protected internal set").And
+			.DoesNotContain("protected override void ProtectedInternalMethod").And
+			.DoesNotContain("protected override int ProtectedInternalProperty").And
+			.DoesNotContain("protected override event");
+	}
+
+	[Fact]
 	public async Task ShouldSupportSpecialTypes()
 	{
 		GeneratorResult result = Generator

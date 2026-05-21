@@ -1486,7 +1486,7 @@ internal static partial class Sources
 		{
 			if (@event.ExplicitImplementation is null)
 			{
-				sb.Append("\t\t").Append(@event.Accessibility.ToVisibilityString()).Append(' ');
+				sb.Append("\t\t").Append(@event.OverrideAccessibility).Append(' ');
 				if (@event.IsStatic)
 				{
 					sb.Append("static ");
@@ -1625,7 +1625,7 @@ internal static partial class Sources
 		{
 			if (property.ExplicitImplementation is null)
 			{
-				sb.Append("\t\t").Append(property.Accessibility.ToVisibilityString()).Append(' ');
+				sb.Append("\t\t").Append(property.OverrideAccessibility).Append(' ');
 				if (property.IsStatic)
 				{
 					sb.Append("static ");
@@ -1671,7 +1671,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t");
 			if (property.Getter.Accessibility != property.Accessibility)
 			{
-				sb.Append(property.Getter.Accessibility.ToVisibilityString()).Append(' ');
+				sb.Append(property.Getter.OverrideAccessibility).Append(' ');
 			}
 
 			sb.AppendLine("get");
@@ -1906,7 +1906,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t");
 			if (property.Setter.Accessibility != property.Accessibility)
 			{
-				sb.Append(property.Setter.Accessibility.ToVisibilityString()).Append(' ');
+				sb.Append(property.Setter.OverrideAccessibility).Append(' ');
 			}
 
 			sb.AppendLine(property.Setter.IsInitOnly ? "init" : "set");
@@ -2143,7 +2143,7 @@ internal static partial class Sources
 			sb.Append("\t\t");
 			if (method.ExplicitImplementation is null)
 			{
-				sb.Append(method.Accessibility.ToVisibilityString()).Append(' ');
+				sb.Append(method.OverrideAccessibility).Append(' ');
 				if (method.IsStatic)
 				{
 					sb.Append("static ");

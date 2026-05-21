@@ -9,6 +9,8 @@ internal record Method
 	public Method(IMethodSymbol methodSymbol, List<Method>? alreadyDefinedMethods, IAssemblySymbol? sourceAssembly = null)
 	{
 		Accessibility = methodSymbol.DeclaredAccessibility;
+		OverrideAccessibility = Helpers.ResolveOverrideVisibility(
+			Accessibility, methodSymbol.ContainingAssembly, sourceAssembly);
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
 		IsAbstract = methodSymbol.IsAbstract;
 		IsStatic = methodSymbol.IsStatic;
@@ -67,6 +69,7 @@ internal record Method
 	};
 
 	public Accessibility Accessibility { get; }
+	public string OverrideAccessibility { get; }
 	public Type ReturnType { get; }
 	public string Name { get; }
 	public string ContainingType { get; }
