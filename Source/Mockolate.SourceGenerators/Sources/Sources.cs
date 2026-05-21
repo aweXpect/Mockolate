@@ -671,20 +671,6 @@ internal static partial class Sources
 		}
 	}
 
-	extension(Accessibility accessibility)
-	{
-		internal string ToVisibilityString()
-			=> accessibility switch
-			{
-				Accessibility.Protected => "protected",
-				Accessibility.Internal => "internal",
-				Accessibility.ProtectedOrInternal => "protected",
-				Accessibility.Public => "public",
-				Accessibility.ProtectedAndInternal => "private protected",
-				_ => "private",
-			};
-	}
-
 	extension(RefKind refKind)
 	{
 		internal string GetString(bool replaceRefReadonlyWithIn = false)

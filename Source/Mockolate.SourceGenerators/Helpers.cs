@@ -78,10 +78,12 @@ internal static class Helpers
 		}
 	}
 
-	// A member (or accessor) declared in another assembly is overridable only if the overriding
-	// assembly can actually see it. `internal` and `private protected` are invisible across assembly
-	// boundaries unless the declaring assembly grants InternalsVisibleTo. `protected internal`
-	// (= protected OR internal) is always reachable via the protected half from a derived class.
+	/// <summary>
+	///     A member (or accessor) declared in another assembly is overridable only if the overriding
+	///     assembly can actually see it. `internal` and `private protected` are invisible across assembly
+	///     boundaries unless the declaring assembly grants InternalsVisibleTo. `protected internal`
+	///     (= protected OR internal) is always reachable via the protected half from a derived class.
+	/// </summary>
 	public static bool IsOverridableFrom(ISymbol member, IAssemblySymbol? sourceAssembly)
 	{
 		if (sourceAssembly is null ||
@@ -91,6 +93,41 @@ internal static class Helpers
 		}
 
 		IAssemblySymbol containingAssembly = member.ContainingAssembly;
+		if (SymbolEqualityComparer.Default.Equals(containingAssembly, sourceAssembly))
+		{
+			return true;
+		}
+
+		return containingAssembly.GivesAccessTo(sourceAssembly);
+	}
+
+	/// <summary>
+	///     C# requires an override to match the base member's declared accessibility, with one
+	///     exception: when overriding a `protected internal` member from an assembly that cannot see
+	///     `internal` (i.e. neither the same assembly nor an InternalsVisibleTo target), the override
+	///     must drop the internal half and use plain `protected`.
+	/// </summary>
+	public static string ResolveOverrideVisibility(Accessibility accessibility,
+		IAssemblySymbol? containingAssembly, IAssemblySymbol? sourceAssembly)
+		=> accessibility switch
+		{
+			Accessibility.Public => "public",
+			Accessibility.Protected => "protected",
+			Accessibility.Internal => "internal",
+			Accessibility.ProtectedAndInternal => "private protected",
+			Accessibility.ProtectedOrInternal => HasInternalAccess(containingAssembly, sourceAssembly)
+				? "protected internal"
+				: "protected",
+			_ => "private",
+		};
+
+	private static bool HasInternalAccess(IAssemblySymbol? containingAssembly, IAssemblySymbol? sourceAssembly)
+	{
+		if (sourceAssembly is null || containingAssembly is null)
+		{
+			return false;
+		}
+
 		if (SymbolEqualityComparer.Default.Equals(containingAssembly, sourceAssembly))
 		{
 			return true;
@@ -146,8 +183,8 @@ internal static class Helpers
 		}
 
 		return parameter.RefKind == RefKind.RefReadOnlyParameter
-			&& parameter.Type.IsRefStruct
-			&& parameter.Type.SpecialGenericType is (SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan);
+		       && parameter.Type.IsRefStruct
+		       && parameter.Type.SpecialGenericType is SpecialGenericType.Span or SpecialGenericType.ReadOnlySpan;
 	}
 
 	extension(ITypeSymbol typeSymbol)

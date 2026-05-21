@@ -9,6 +9,8 @@ internal record Event
 	public Event(IEventSymbol eventSymbol, IMethodSymbol delegateInvokeMethod, List<Event>? alreadyDefinedEvents, IAssemblySymbol? sourceAssembly = null)
 	{
 		Accessibility = eventSymbol.DeclaredAccessibility;
+		OverrideAccessibility = Helpers.ResolveOverrideVisibility(
+			Accessibility, eventSymbol.ContainingAssembly, sourceAssembly);
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
 		IsAbstract = eventSymbol.IsAbstract;
 		Name = Helpers.EscapeIfKeyword(eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name);
@@ -53,6 +55,7 @@ internal record Event
 	};
 
 	public Accessibility Accessibility { get; }
+	public string OverrideAccessibility { get; }
 	public string Name { get; }
 	public string? ExplicitImplementation { get; }
 

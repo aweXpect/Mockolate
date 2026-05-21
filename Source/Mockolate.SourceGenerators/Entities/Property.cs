@@ -9,6 +9,8 @@ internal record Property
 	public Property(IPropertySymbol propertySymbol, List<Property>? alreadyDefinedProperties, IAssemblySymbol? sourceAssembly = null)
 	{
 		Accessibility = propertySymbol.DeclaredAccessibility;
+		OverrideAccessibility = Helpers.ResolveOverrideVisibility(
+			Accessibility, propertySymbol.ContainingAssembly, sourceAssembly);
 		UseOverride = propertySymbol.IsVirtual || propertySymbol.IsAbstract;
 		string rawName = propertySymbol.ExplicitInterfaceImplementations.Length > 0 ? propertySymbol.ExplicitInterfaceImplementations[0].Name : propertySymbol.Name;
 		Name = propertySymbol.IsIndexer ? rawName : Helpers.EscapeIfKeyword(rawName);
@@ -72,6 +74,7 @@ internal record Property
 	public EquatableArray<Attribute>? Attributes { get; }
 
 	public Accessibility Accessibility { get; }
+	public string OverrideAccessibility { get; }
 	public string Name { get; }
 	public string? ExplicitImplementation { get; }
 
