@@ -31,6 +31,11 @@ internal record Type
 				.ToArray());
 		}
 
+		if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
+		{
+			ElementType = From(arrayTypeSymbol.ElementType);
+		}
+
 		SpecialGenericType = typeSymbol.GetSpecialType();
 		SpecialType = typeSymbol.SpecialType;
 		CanBeNullable = typeSymbol.NullableAnnotation == NullableAnnotation.Annotated ||
@@ -53,6 +58,11 @@ internal record Type
 	public SpecialGenericType SpecialGenericType { get; }
 	public EquatableArray<Type>? TupleTypes { get; }
 	public EquatableArray<Type>? GenericTypeParameters { get; }
+
+	/// <summary>
+	///     The element type when this type is an array (e.g. <c>bool</c> for <c>bool[]</c>); otherwise <see langword="null" />.
+	/// </summary>
+	public Type? ElementType { get; }
 	public string? Namespace { get; }
 
 	internal static Type Void { get; } = new("void");

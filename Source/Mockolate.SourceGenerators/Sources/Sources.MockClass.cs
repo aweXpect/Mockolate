@@ -3235,6 +3235,12 @@ internal static partial class Sources
 				{
 					AppendMethodSetupDefinition(sb, @class, method, false,
 						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					if (TryGetPerElementParamsParameter(method, out _))
+					{
+						AppendMethodSetupDefinition(sb, @class, method, false,
+							hasOverloadResolutionPriority: hasOverloadResolutionPriority, perElementParams: true);
+					}
+
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
@@ -3312,9 +3318,50 @@ internal static partial class Sources
 		sb.AppendXmlRemarks(text);
 	}
 
+	/// <summary>
+	///     Detects whether <paramref name="method" /> ends in a <c>params T[]</c> parameter that can carry a
+	///     per-element matcher overload. The element type must flow through the regular <c>IParameter&lt;T&gt;</c>
+	///     pipeline (ref-struct element types are excluded for this prototype).
+	/// </summary>
+	private static bool TryGetPerElementParamsParameter(Method method, out string elementType)
+	{
+		elementType = "";
+		if (method.Parameters.Count == 0)
+		{
+			return false;
+		}
+
+		MethodParameter last = method.Parameters.AsArray()[method.Parameters.Count - 1];
+		if (!last.IsParams || last.Type.ElementType is null || last.NeedsRefStructPipeline())
+		{
+			return false;
+		}
+
+		elementType = last.Type.ElementType.Fullname;
+		return true;
+	}
+
+	/// <summary>
+	///     True when <paramref name="valueFlags" /> marks the trailing <c>params T[]</c> parameter as a
+	///     literal value. Such overloads render the parameter as <c>params T[]</c> and match it element-wise
+	///     by value (via <c>It.SequenceEquals</c>) rather than by whole-array reference equality.
+	/// </summary>
+	private static bool HasParamsValueParameter(Method method, bool[]? valueFlags)
+	{
+		if (valueFlags is null || method.Parameters.Count == 0)
+		{
+			return false;
+		}
+
+		int last = method.Parameters.Count - 1;
+		MethodParameter parameter = method.Parameters.AsArray()[last];
+		return valueFlags[last] && parameter.IsParams && parameter.Type.ElementType is not null &&
+		       !parameter.NeedsRefStructPipeline();
+	}
+
 	private static void AppendMethodSetupDefinition(StringBuilder sb, Class @class, Method method,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
-		bool hasOverloadResolutionPriority = false)
+		bool hasOverloadResolutionPriority = false, bool perElementParams = false)
 	{
 		// Methods using a generic type parameter that declares `allows ref struct` cannot expose
 		// a setup surface: IReturnMethodSetup<T> / IVoidMethodSetup<T> do not carry the same
@@ -3478,8 +3525,19 @@ internal static partial class Sources
 				}
 
 				bool isValueParam = valueFlags?[i] == true;
-				if (isValueParam)
+				if (perElementParams && parameter.IsParams &&
+				    parameter.Type.ElementType is not null)
 				{
+					sb.Append("params global::Mockolate.Parameters.IParameter<")
+						.Append(parameter.Type.ElementType.Fullname).Append(">[] ").Append(parameter.Name);
+				}
+				else if (isValueParam)
+				{
+					if (parameter.IsParams && parameter.Type.ElementType is not null)
+					{
+						sb.Append("params ");
+					}
+
 					sb.Append(parameter.ToNullableType()).Append(' ').Append(parameter.Name);
 				}
 				else
@@ -3645,6 +3703,12 @@ internal static partial class Sources
 				{
 					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
 						memberIds, memberIdPrefix, scopeExpression: scopeExpression);
+					if (TryGetPerElementParamsParameter(method, out _))
+					{
+						AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
+							memberIds, memberIdPrefix, scopeExpression: scopeExpression, perElementParams: true);
+					}
+
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
@@ -3674,7 +3738,7 @@ internal static partial class Sources
 		string setupName,
 		bool useParameters, MemberIdTable memberIds, string memberIdPrefix,
 		string? methodNameOverride = null, bool[]? valueFlags = null,
-		string? scopeExpression = null)
+		string? scopeExpression = null, bool perElementParams = false)
 	{
 		// Setup-side carve-out: methods using a generic type parameter that declares
 		// `allows ref struct` have no setup interface declaration (see
@@ -3773,8 +3837,19 @@ internal static partial class Sources
 				}
 
 				bool isValueParam = valueFlags?[i] == true;
-				if (isValueParam)
+				if (perElementParams && parameter.IsParams &&
+				    parameter.Type.ElementType is not null)
 				{
+					sb.Append("params global::Mockolate.Parameters.IParameter<")
+						.Append(parameter.Type.ElementType.Fullname).Append(">[] ").Append(parameter.Name);
+				}
+				else if (isValueParam)
+				{
+					if (parameter.IsParams && parameter.Type.ElementType is not null)
+					{
+						sb.Append("params ");
+					}
+
 					sb.Append(parameter.ToNullableType()).Append(' ').Append(parameter.Name);
 				}
 				else
@@ -3863,8 +3938,11 @@ internal static partial class Sources
 			// skip the per-parameter IParameterMatch<T> allocations that WithParameterCollection
 			// would otherwise force via It.IsValue<T>(...). Gated to 1..4 parameters because that is
 			// the arity range covered by the WithLiteralValues nested types.
+			// A params value parameter matches element-wise by value (It.SequenceEquals), which the
+			// reference-equality WithLiteralValues fast path cannot express — force the collection path.
 			bool useLiteralValues = valueFlags is { Length: > 0 and <= MaxExplicitParameters, } &&
 			                        valueFlags.All(x => x) &&
+			                        !HasParamsValueParameter(method, valueFlags) &&
 			                        !method.Parameters.Any(p => p.RefKind == RefKind.Out ||
 			                                                    p.RefKind == RefKind.Ref ||
 			                                                    p.RefKind == RefKind.RefReadOnlyParameter);
@@ -3887,9 +3965,27 @@ internal static partial class Sources
 				foreach (MethodParameter parameter in method.Parameters)
 				{
 					sb.Append(", ");
-					if (valueFlags?[j] == true)
+					if (perElementParams && parameter.IsParams &&
+					    parameter.Type.ElementType is not null)
 					{
-						AppendNamedValueParameter(sb, parameter);
+						sb.Append("new global::Mockolate.Parameters.ParamsArrayParameterMatch<")
+							.Append(parameter.Type.ElementType.Fullname).Append(">(").Append(parameter.Name)
+							.Append(")");
+					}
+					else if (valueFlags?[j] == true)
+					{
+						if (parameter.IsParams && parameter.Type.ElementType is not null)
+						{
+							// params value parameter: match element-wise by value via It.SequenceEquals.
+							sb.Append("CovariantParameterAdapter<").Append(parameter.Type.Fullname)
+								.Append(">.Wrap(global::Mockolate.It.SequenceEquals<")
+								.Append(parameter.Type.ElementType.Fullname).Append(">(").Append(parameter.Name)
+								.Append("))");
+						}
+						else
+						{
+							AppendNamedValueParameter(sb, parameter);
+						}
 					}
 					else
 					{
@@ -4987,6 +5083,12 @@ internal static partial class Sources
 				{
 					AppendMethodVerifyDefinition(sb, method, verifyName, false,
 						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
+					if (TryGetPerElementParamsParameter(method, out _))
+					{
+						AppendMethodVerifyDefinition(sb, method, verifyName, false,
+							hasOverloadResolutionPriority: hasOverloadResolutionPriority, perElementParams: true);
+					}
+
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
@@ -5029,7 +5131,7 @@ internal static partial class Sources
 
 	private static void AppendMethodVerifyDefinition(StringBuilder sb, Method method, string verifyName,
 		bool useParameters, string? methodNameOverride = null, bool[]? valueFlags = null,
-		bool hasOverloadResolutionPriority = false)
+		bool hasOverloadResolutionPriority = false, bool perElementParams = false)
 	{
 		// For methods with ref-struct parameters, skip Verify emission entirely. The
 		// VerificationResult pipeline takes IParameter<T>? matchers that then feed into
@@ -5115,8 +5217,19 @@ internal static partial class Sources
 				}
 
 				bool isValueParam = valueFlags?[i] == true;
-				if (isValueParam)
+				if (perElementParams && parameter.IsParams &&
+				    parameter.Type.ElementType is not null)
 				{
+					sb.Append("params global::Mockolate.Parameters.IParameter<")
+						.Append(parameter.Type.ElementType.Fullname).Append(">[] ").Append(parameter.Name);
+				}
+				else if (isValueParam)
+				{
+					if (parameter.IsParams && parameter.Type.ElementType is not null)
+					{
+						sb.Append("params ");
+					}
+
 					sb.Append(parameter.ToNullableType()).Append(' ').Append(parameter.Name);
 				}
 				else
@@ -5255,6 +5368,12 @@ internal static partial class Sources
 				{
 					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
 						memberIds, memberIdPrefix, useFastBuffers);
+					if (TryGetPerElementParamsParameter(method, out _))
+					{
+						AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
+							memberIds, memberIdPrefix, useFastBuffers, perElementParams: true);
+					}
+
 					if (method.Parameters.Count <= MaxExplicitParameters)
 					{
 						foreach (bool[] valueFlags in GenerateValueFlagCombinations(method.Parameters))
@@ -5317,7 +5436,7 @@ internal static partial class Sources
 	private static void AppendMethodVerifyImplementation(StringBuilder sb, Method method, string mockRegistryName,
 		string verifyName,
 		bool useParameters, MemberIdTable memberIds, string memberIdPrefix, bool useFastBuffers,
-		string? methodNameOverride = null, bool[]? valueFlags = null)
+		string? methodNameOverride = null, bool[]? valueFlags = null, bool perElementParams = false)
 #pragma warning restore S107
 	{
 		// Mirror the AppendMethodVerifyDefinition short-circuit for ref-struct signatures.
@@ -5355,8 +5474,19 @@ internal static partial class Sources
 				}
 
 				bool isValueParam = valueFlags?[i] == true;
-				if (isValueParam)
+				if (perElementParams && parameter.IsParams &&
+				    parameter.Type.ElementType is not null)
 				{
+					sb.Append("params global::Mockolate.Parameters.IParameter<")
+						.Append(parameter.Type.ElementType.Fullname).Append(">[] ").Append(parameter.Name);
+				}
+				else if (isValueParam)
+				{
+					if (parameter.IsParams && parameter.Type.ElementType is not null)
+					{
+						sb.Append("params ");
+					}
+
 					sb.Append(parameter.ToNullableType()).Append(' ').Append(parameter.Name);
 				}
 				else
@@ -5395,8 +5525,13 @@ internal static partial class Sources
 
 		bool canUseLiteralVerify = baseEligible &&
 		                           valueFlags is { Length: > 0 and <= 4, } &&
-		                           valueFlags.All(x => x);
-		bool canUseTypedVerify = useFastForMethod
+		                           valueFlags.All(x => x) &&
+		                           !HasParamsValueParameter(method, valueFlags);
+		// The per-element params overload passes a `params IParameter<TElement>[]` argument, which neither the
+		// literal nor the typed fast path can render (both assume a whole-array IParameter<TElement[]>). Route it
+		// through the slow predicate path, where the composite matcher is built explicitly.
+		bool canUseTypedVerify = !perElementParams
+		                         && useFastForMethod
 		                         && !useParameters
 		                         && method.Parameters.Count <= 4
 		                         && (method.GenericParameters is null || method.GenericParameters.Value.Count == 0)
@@ -5491,10 +5626,19 @@ internal static partial class Sources
 				sb.AppendLine().Append("\t\t\t\t");
 
 				bool isValueParam = valueFlags?[i] == true;
-				if (isValueParam)
+				if (perElementParams && parameter.IsParams &&
+				    parameter.Type.ElementType is not null)
+				{
+					sb.Append("(new global::Mockolate.Parameters.ParamsArrayParameterMatch<")
+						.Append(parameter.Type.ElementType.Fullname).Append(">(").Append(parameter.Name)
+						.Append(").Matches(__i.Parameter").Append(i + 1).Append("))");
+				}
+				else if (isValueParam)
 				{
 					sb.Append(
-						$"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, __i.Parameter{i + 1}))");
+						parameter.IsParams && parameter.Type.ElementType is not null
+							? $"(CovariantParameterAdapter<{parameter.Type.Fullname}>.Wrap(global::Mockolate.It.SequenceEquals<{parameter.Type.ElementType.Fullname}>({parameter.Name})).Matches(__i.Parameter{i + 1}))"
+							: $"(global::System.Collections.Generic.EqualityComparer<{parameter.ToTypeOrWrapper()}>.Default.Equals({parameter.Name}, __i.Parameter{i + 1}))");
 				}
 				else if (parameter.RefKind == RefKind.Out || parameter.RefKind == RefKind.Ref ||
 				         parameter.RefKind == RefKind.RefReadOnlyParameter)

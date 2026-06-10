@@ -943,6 +943,13 @@ namespace Mockolate.Parameters
     }
     public interface IVerifyOutParameter<out T> { }
     public interface IVerifyRefParameter<T> { }
+    public sealed class ParamsArrayParameterMatch<TElement> : Mockolate.Parameters.IParameterMatch<TElement[]>
+    {
+        public ParamsArrayParameterMatch(params Mockolate.Parameters.IParameter<TElement>[] matchers) { }
+        public void InvokeCallbacks(TElement[] value) { }
+        public bool Matches(TElement[] value) { }
+        public override string ToString() { }
+    }
 }
 namespace Mockolate.Setup
 {
