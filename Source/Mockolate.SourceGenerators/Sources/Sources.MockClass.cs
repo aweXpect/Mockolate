@@ -10,8 +10,13 @@ internal static partial class Sources
 {
 	private const int MaxExplicitParameters = 4;
 
-	public static string MockClass(string name, Class @class, bool hasOverloadResolutionPriority = false)
+	public static string MockClass(
+		string name,
+		Class @class,
+		bool hasOverloadResolutionPriority = false,
+		(string Name, Class Class)[]? hiddenBaseInterfaces = null)
 	{
+		hiddenBaseInterfaces ??= [];
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
 		bool hasParameterizedConstructor = !@class.IsInterface &&
 		                                   constructors?.Any(m => m.Parameters.Count > 0) == true;
@@ -23,7 +28,14 @@ internal static partial class Sources
 		bool hasProtectedMembers = !@class.IsInterface && (@class.AllMethods().Any(method => method.IsProtected) || @class.AllProperties().Any(property => property.IsProtected));
 		string setupType = hasProtectedMembers ? $"IMockSetupInitializationFor{name}" : $"global::Mockolate.Mock.IMockSetupFor{name}";
 		string mockRegistryName = @class.GetUniqueName("MockRegistry", "MockolateMockRegistry");
-		MemberIdTable memberIds = ComputeMemberIds(@class);
+		Class[] memberIdClasses = new Class[1 + hiddenBaseInterfaces.Length];
+		memberIdClasses[0] = @class;
+		for (int i = 0; i < hiddenBaseInterfaces.Length; i++)
+		{
+			memberIdClasses[i + 1] = hiddenBaseInterfaces[i].Class;
+		}
+
+		MemberIdTable memberIds = ComputeMemberIds(memberIdClasses);
 		string memberIdPrefix = $"global::Mockolate.Mock.{name}.";
 		
 		StringBuilder sb = InitializeBuilder();
@@ -86,6 +98,37 @@ internal static partial class Sources
 
 		sb.Append(',').AppendLine();
 
+		foreach ((string Name, Class Class) hiddenBase in hiddenBaseInterfaces)
+		{
+			bool hbHasStaticMembers = hiddenBase.Class.AllMethods().Any(x => x.IsStatic) ||
+			                          hiddenBase.Class.AllProperties().Any(x => x.IsStatic);
+			bool hbHasStaticEvents = hiddenBase.Class.AllEvents().Any(x => x.IsStatic);
+			bool hbHasInstanceEvents = hiddenBase.Class.AllEvents().Any(x => !x.IsStatic);
+			sb.Append("\t\tIMockFor").Append(hiddenBase.Name).Append(", IMockSetupFor").Append(hiddenBase.Name);
+			if (hbHasStaticMembers)
+			{
+				sb.Append(", IMockStaticSetupFor").Append(hiddenBase.Name);
+			}
+
+			if (hbHasInstanceEvents)
+			{
+				sb.Append(", IMockRaiseOn").Append(hiddenBase.Name);
+			}
+
+			if (hbHasStaticEvents)
+			{
+				sb.Append(", IMockStaticRaiseOn").Append(hiddenBase.Name);
+			}
+
+			sb.Append(", IMockVerifyFor").Append(hiddenBase.Name);
+			if (hbHasStaticMembers || hbHasStaticEvents)
+			{
+				sb.Append(", IMockStaticVerifyFor").Append(hiddenBase.Name);
+			}
+
+			sb.Append(",").AppendLine();
+		}
+
 		sb.Append("\t\tglobal::Mockolate.IMock").AppendLine();
 		sb.Append("\t{").AppendLine();
 
@@ -129,6 +172,16 @@ internal static partial class Sources
 		sb.AppendLine();
 		
 		ImplementMockForInterface(sb, mockRegistryName, name, hasEvents, hasProtectedMembers, hasProtectedEvents, hasStaticMembers, hasStaticEvents);
+
+		foreach ((string Name, Class Class) hiddenBase in hiddenBaseInterfaces)
+		{
+			ImplementMockForInterface(sb, mockRegistryName, hiddenBase.Name,
+				hiddenBase.Class.AllEvents().Any(x => !x.IsStatic),
+				false /* interfaces have no protected members */,
+				false /* interfaces have no protected events */,
+				hiddenBase.Class.AllMethods().Any(x => x.IsStatic) || hiddenBase.Class.AllProperties().Any(x => x.IsStatic),
+				hiddenBase.Class.AllEvents().Any(x => x.IsStatic));
+		}
 
 		sb.Append("\t\t/// <inheritdoc />").AppendLine();
 		sb.Append("\t\tstring global::Mockolate.IMock.ToString()").AppendLine();
@@ -189,6 +242,15 @@ internal static partial class Sources
 			sb.Append("\t\t#endregion IMockStaticSetupFor").Append(name).AppendLine();
 		}
 
+		foreach ((string Name, Class Class) hiddenBase in hiddenBaseInterfaces)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockSetupFor").Append(hiddenBase.Name).AppendLine();
+			sb.AppendLine();
+			ImplementSetupInterface(sb, hiddenBase.Class, mockRegistryName, $"IMockSetupFor{hiddenBase.Name}", MemberType.Public, memberIds, memberIdPrefix);
+			sb.Append("\t\t#endregion IMockSetupFor").Append(hiddenBase.Name).AppendLine();
+		}
+
 		#endregion Mock.Setup
 
 		#region Mock.Raise
@@ -221,6 +283,18 @@ internal static partial class Sources
 			sb.Append("\t\t#endregion IMockStaticRaiseOn").Append(name).AppendLine();
 		}
 		
+		foreach ((string Name, Class Class) hiddenBase in hiddenBaseInterfaces)
+		{
+			if (hiddenBase.Class.AllEvents().Any(x => !x.IsStatic))
+			{
+				sb.AppendLine();
+				sb.Append("\t\t#region IMockRaiseOn").Append(hiddenBase.Name).AppendLine();
+				sb.AppendLine();
+				ImplementRaiseInterface(sb, hiddenBase.Class, mockRegistryName, $"IMockRaiseOn{hiddenBase.Name}", MemberType.Public);
+				sb.Append("\t\t#endregion IMockRaiseOn").Append(hiddenBase.Name).AppendLine();
+			}
+		}
+
 		#endregion Mock.Raise
 
 		#region Mock.Verify
@@ -247,6 +321,15 @@ internal static partial class Sources
 			sb.AppendLine();
 			ImplementVerifyInterface(sb, @class, mockRegistryName, $"IMockStaticVerifyFor{name}", MemberType.Static, memberIds, memberIdPrefix);
 			sb.Append("\t\t#endregion IMockStaticVerifyFor").Append(name).AppendLine();
+		}
+
+		foreach ((string Name, Class Class) hiddenBase in hiddenBaseInterfaces)
+		{
+			sb.AppendLine();
+			sb.Append("\t\t#region IMockVerifyFor").Append(hiddenBase.Name).AppendLine();
+			sb.AppendLine();
+			ImplementVerifyInterface(sb, hiddenBase.Class, mockRegistryName, $"IMockVerifyFor{hiddenBase.Name}", MemberType.Public, memberIds, memberIdPrefix, false);
+			sb.Append("\t\t#endregion IMockVerifyFor").Append(hiddenBase.Name).AppendLine();
 		}
 
 		#endregion Mock.Verify
