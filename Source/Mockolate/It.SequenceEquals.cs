@@ -72,6 +72,11 @@ public partial class It
 		/// <inheritdoc cref="CollectionMatchCore{T}.MatchesCollection(IEnumerable{T})" />
 		protected override bool MatchesCollection(IEnumerable<T> value)
 		{
+			if (value is null)
+			{
+				return false;
+			}
+
 			IEqualityComparer<T> comparer = _comparer ?? EqualityComparer<T>.Default;
 			return value.SequenceEqual(expected, comparer);
 		}

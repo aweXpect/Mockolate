@@ -37,7 +37,7 @@ public sealed class ParamsArrayParameterMatch<TElement> : IParameterMatch<TEleme
 
 		for (int i = 0; i < _matchers.Length; i++)
 		{
-			if (!_matchers[i].Matches(value[i]))
+			if (_matchers[i] is null || !_matchers[i].Matches(value[i]))
 			{
 				return false;
 			}
@@ -56,7 +56,7 @@ public sealed class ParamsArrayParameterMatch<TElement> : IParameterMatch<TEleme
 
 		for (int i = 0; i < _matchers.Length; i++)
 		{
-			_matchers[i].InvokeCallbacks(value[i]);
+			_matchers[i]?.InvokeCallbacks(value[i]);
 		}
 	}
 

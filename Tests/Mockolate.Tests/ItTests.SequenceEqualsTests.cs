@@ -193,6 +193,16 @@ public sealed partial class ItTests
 			await That(result).IsTrue();
 		}
 
+		[Fact]
+		public async Task TypedArrayMatch_WithNullValue_ShouldNotMatch()
+		{
+			IParameter<int[]> sut = It.SequenceEquals(1, 2, 3);
+
+			bool result = ((IParameterMatch<int[]>)sut).Matches(null!);
+
+			await That(result).IsFalse();
+		}
+
 		public sealed class DoTests
 		{
 			[Fact]

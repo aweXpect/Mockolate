@@ -3235,7 +3235,7 @@ internal static partial class Sources
 				{
 					AppendMethodSetupDefinition(sb, @class, method, false,
 						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
-					if (TryGetPerElementParamsParameter(method, out _))
+					if (TryGetPerElementParamsParameter(method))
 					{
 						AppendMethodSetupDefinition(sb, @class, method, false,
 							hasOverloadResolutionPriority: hasOverloadResolutionPriority, perElementParams: true);
@@ -3321,11 +3321,11 @@ internal static partial class Sources
 	/// <summary>
 	///     Detects whether <paramref name="method" /> ends in a <c>params T[]</c> parameter that can carry a
 	///     per-element matcher overload. The element type must flow through the regular <c>IParameter&lt;T&gt;</c>
-	///     pipeline (ref-struct element types are excluded for this prototype).
+	///     pipeline; ref-struct element types are intentionally not supported, as they cannot satisfy
+	///     <c>IParameter&lt;T&gt;</c>.
 	/// </summary>
-	private static bool TryGetPerElementParamsParameter(Method method, out string elementType)
+	private static bool TryGetPerElementParamsParameter(Method method)
 	{
-		elementType = "";
 		if (method.Parameters.Count == 0)
 		{
 			return false;
@@ -3337,7 +3337,6 @@ internal static partial class Sources
 			return false;
 		}
 
-		elementType = last.Type.ElementType.Fullname;
 		return true;
 	}
 
@@ -3703,7 +3702,7 @@ internal static partial class Sources
 				{
 					AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
 						memberIds, memberIdPrefix, scopeExpression: scopeExpression);
-					if (TryGetPerElementParamsParameter(method, out _))
+					if (TryGetPerElementParamsParameter(method))
 					{
 						AppendMethodSetupImplementation(sb, method, mockRegistryName, setupName, false,
 							memberIds, memberIdPrefix, scopeExpression: scopeExpression, perElementParams: true);
@@ -5083,7 +5082,7 @@ internal static partial class Sources
 				{
 					AppendMethodVerifyDefinition(sb, method, verifyName, false,
 						hasOverloadResolutionPriority: hasOverloadResolutionPriority);
-					if (TryGetPerElementParamsParameter(method, out _))
+					if (TryGetPerElementParamsParameter(method))
 					{
 						AppendMethodVerifyDefinition(sb, method, verifyName, false,
 							hasOverloadResolutionPriority: hasOverloadResolutionPriority, perElementParams: true);
@@ -5368,7 +5367,7 @@ internal static partial class Sources
 				{
 					AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
 						memberIds, memberIdPrefix, useFastBuffers);
-					if (TryGetPerElementParamsParameter(method, out _))
+					if (TryGetPerElementParamsParameter(method))
 					{
 						AppendMethodVerifyImplementation(sb, method, mockRegistryName, verifyName, false,
 							memberIds, memberIdPrefix, useFastBuffers, perElementParams: true);
