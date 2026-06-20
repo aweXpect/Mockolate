@@ -356,8 +356,18 @@ public class MockGenerator : IIncrementalGenerator
 		List<NamedMock> result = new(arr.Length);
 		HashSet<string> seenBaseClasses = new(StringComparer.Ordinal);
 
-		// Pass 1: assign disambiguated names to every distinct base/additional class. The order
-		// here must be deterministic so the same input set always yields the same names.
+		Dictionary<string, MockClass> primaryMocks = new(StringComparer.Ordinal);
+		foreach (MockClass mc in arr)
+		{
+			if (IsValidMockDeclaration(mc))
+			{
+				primaryMocks[mc.ClassFullName] = mc;
+			}
+		}
+
+		// Pass 1a: assign disambiguated names to every distinct base/additional/hidden-base class. The
+		// order here must be deterministic so the same input set always yields the same names.
+		List<Class> orderedClasses = new();
 		foreach (MockClass mc in arr)
 		{
 			if (!IsValidMockDeclaration(mc))
@@ -381,8 +391,25 @@ public class MockGenerator : IIncrementalGenerator
 				}
 
 				baseClassNames[@class.ClassFullName] = actualName;
-				result.Add(new NamedMock(actualName, actualName, @class, null));
+				orderedClasses.Add(@class);
 			}
+		}
+
+		// Pass 1b: create one standalone NamedMock per distinct class. Names are now fully assigned, so
+		// hidden-base interfaces can be resolved to their disambiguated names.
+		foreach (Class @class in orderedClasses)
+		{
+			string actualName = baseClassNames[@class.ClassFullName];
+			EquatableArray<NamedClass>? hiddenBases = null;
+			if (primaryMocks.TryGetValue(@class.ClassFullName, out MockClass? primaryMock) &&
+			    primaryMock.HiddenBaseInterfaces.Count > 0)
+			{
+				hiddenBases = new EquatableArray<NamedClass>(primaryMock.HiddenBaseInterfaces
+					.Select(hiddenBase => new NamedClass(baseClassNames[hiddenBase.ClassFullName], hiddenBase))
+					.ToArray());
+			}
+
+			result.Add(new NamedMock(actualName, actualName, @class, null, hiddenBases));
 		}
 
 		// Pass 2: combination mocks (additional implementations).
@@ -420,6 +447,15 @@ public class MockGenerator : IIncrementalGenerator
 		List<MockAsExtensionPair> ordered = new();
 		foreach (NamedMock nm in arr)
 		{
+			if (nm.HiddenBases is { } hiddenBases)
+			{
+				foreach (NamedClass hiddenBase in hiddenBases)
+				{
+					AddIfNew(seen, ordered, MockAsExtensionPair.Create(
+						nm.ParentName, nm.Mock.ClassFullName, hiddenBase.Name, hiddenBase.Class.ClassFullName));
+				}
+			}
+
 			if (nm.AdditionalClasses is not { } additional || additional.Count == 0)
 			{
 				continue;
@@ -471,8 +507,19 @@ public class MockGenerator : IIncrementalGenerator
 
 		if (named.AdditionalClasses is not { } additional || additional.Count == 0)
 		{
+			(string Name, Class Class)[] hiddenBaseArr = [];
+			if (named.HiddenBases is { } hiddenBases && hiddenBases.Count > 0)
+			{
+				NamedClass[] hiddenNamed = hiddenBases.AsArray();
+				hiddenBaseArr = new (string Name, Class Class)[hiddenNamed.Length];
+				for (int i = 0; i < hiddenNamed.Length; i++)
+				{
+					hiddenBaseArr[i] = (hiddenNamed[i].Name, hiddenNamed[i].Class);
+				}
+			}
+
 			context.AddSource($"Mock.{fileName}.g.cs",
-				ToSource(Sources.Sources.MockClass(named.ParentName, @class, hasOverloadResolutionPriority)));
+				ToSource(Sources.Sources.MockClass(named.ParentName, @class, hasOverloadResolutionPriority, hiddenBaseArr)));
 			return;
 		}
 
@@ -535,18 +582,21 @@ internal readonly record struct NamedClass(string Name, Class Class);
 
 internal sealed class NamedMock : IEquatable<NamedMock>
 {
-	public NamedMock(string fileName, string parentName, Class mock, EquatableArray<NamedClass>? additionalClasses)
+	public NamedMock(string fileName, string parentName, Class mock, EquatableArray<NamedClass>? additionalClasses,
+		EquatableArray<NamedClass>? hiddenBases = null)
 	{
 		FileName = fileName;
 		ParentName = parentName;
 		Mock = mock;
 		AdditionalClasses = additionalClasses;
+		HiddenBases = hiddenBases;
 	}
 
 	public string FileName { get; }
 	public string ParentName { get; }
 	public Class Mock { get; }
 	public EquatableArray<NamedClass>? AdditionalClasses { get; }
+	public EquatableArray<NamedClass>? HiddenBases { get; }
 
 	public bool Equals(NamedMock? other)
 	{
@@ -565,6 +615,11 @@ internal sealed class NamedMock : IEquatable<NamedMock>
 			return false;
 		}
 
+		if (!NullableEquals(HiddenBases, other.HiddenBases))
+		{
+			return false;
+		}
+
 		if (AdditionalClasses is null)
 		{
 			return other.AdditionalClasses is null;
@@ -576,6 +631,11 @@ internal sealed class NamedMock : IEquatable<NamedMock>
 		}
 
 		return AdditionalClasses.Value.Equals(other.AdditionalClasses.Value);
+
+		static bool NullableEquals(EquatableArray<NamedClass>? a, EquatableArray<NamedClass>? b)
+		{
+			return a is null ? b is null : b is not null && a.Value.Equals(b.Value);
+		}
 	}
 
 	public override bool Equals(object? obj) => Equals(obj as NamedMock);
@@ -588,6 +648,11 @@ internal sealed class NamedMock : IEquatable<NamedMock>
 		if (AdditionalClasses is { } additional)
 		{
 			hash = unchecked((hash * 17) + additional.GetHashCode());
+		}
+
+		if (HiddenBases is { } hiddenBases)
+		{
+			hash = unchecked((hash * 17) + hiddenBases.GetHashCode());
 		}
 
 		return hash;
