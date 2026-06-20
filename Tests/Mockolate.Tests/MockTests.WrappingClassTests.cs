@@ -8,6 +8,18 @@ public sealed partial class MockTests
 	public sealed class WrappingClassTests
 	{
 		[Fact]
+		public async Task Wrap_ClassWithoutParameterlessConstructor_ShouldDelegateToWrappedInstance()
+		{
+			ServiceWithConstructor myService = new("real");
+			ServiceWithConstructor wrappedService = ServiceWithConstructor.CreateMock("mock").Wrapping(myService);
+
+			string result = wrappedService.Format("value");
+
+			await That(result).IsEqualTo("real:value");
+			await That(wrappedService.Mock.Verify.Format("value")).Once();
+		}
+
+		[Fact]
 		public async Task Wrap_Events_ForwardEventsFromWrappedInstance()
 		{
 			MyChocolateDispenser myDispenser = new();
@@ -143,6 +155,19 @@ public sealed partial class MockTests
 
 			await That(result).IsEqualTo(5);
 			await That(myMock.Mock.Verify.MyPublicMethod()).Once();
+		}
+
+		internal class ServiceWithConstructor
+		{
+			private readonly string _prefix;
+
+			public ServiceWithConstructor(string prefix)
+			{
+				_prefix = prefix;
+			}
+
+			public virtual string Format(string value)
+				=> $"{_prefix}:{value}";
 		}
 
 		internal class ServiceWithProtectedMembers
