@@ -158,6 +158,16 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
+		public async Task TypedArrayMatch_WithNullValue_ShouldNotMatch()
+		{
+			IParameter<int[]> sut = It.Contains(5);
+
+			bool result = ((IParameterMatch<int[]>)sut).Matches(null!);
+
+			await That(result).IsFalse();
+		}
+
+		[Fact]
 		public async Task ShouldSupportVerify()
 		{
 			ICollectionConsumer sut = ICollectionConsumer.CreateMock();

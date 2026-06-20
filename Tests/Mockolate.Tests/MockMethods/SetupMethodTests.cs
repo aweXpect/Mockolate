@@ -484,7 +484,7 @@ public sealed partial class SetupMethodTests
 	}
 
 	[Fact]
-	public async Task WithParamsParameters_ExplicitArrayArgument_ShouldUseReferenceEquality()
+	public async Task WithParamsParameters_ExplicitArrayArgument_ShouldUseValueEquality()
 	{
 		IMyService sut = IMyService.CreateMock();
 		bool[] flags = [true, false,];
@@ -492,9 +492,39 @@ public sealed partial class SetupMethodTests
 
 		bool result1 = sut.MyMethodWithParams(1, flags);
 		bool result2 = sut.MyMethodWithParams(1, true, false);
+		bool result3 = sut.MyMethodWithParams(1, false, true);
+
+		await That(result1).IsTrue();
+		await That(result2).IsTrue();
+		await That(result3).IsFalse();
+	}
+
+	[Fact]
+	public async Task WithParamsParameters_PerElementValues_ShouldMatchElementByElement()
+	{
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.MyMethodWithParams(It.IsAny<int>(), true, false).Returns(true);
+
+		bool result1 = sut.MyMethodWithParams(5, true, false);
+		bool result2 = sut.MyMethodWithParams(5, true, true);
+		bool result3 = sut.MyMethodWithParams(5, true);
+		bool result4 = sut.MyMethodWithParams(5, true, false, true);
 
 		await That(result1).IsTrue();
 		await That(result2).IsFalse();
+		await That(result3).IsFalse();
+		await That(result4).IsFalse();
+	}
+
+	[Fact]
+	public async Task WithParamsParameters_PerElementValues_ShouldSupportVerify()
+	{
+		IMyService sut = IMyService.CreateMock();
+
+		_ = sut.MyMethodWithParams(5, true, false);
+
+		await That(sut.Mock.Verify.MyMethodWithParams(It.IsAny<int>(), true, false)).Once();
+		await That(sut.Mock.Verify.MyMethodWithParams(It.IsAny<int>(), true, true)).Never();
 	}
 
 	[Fact]
@@ -512,6 +542,40 @@ public sealed partial class SetupMethodTests
 		await That(result2).IsFalse();
 		await That(result3).IsTrue();
 		await That(result4).IsTrue();
+	}
+
+	[Fact]
+	public async Task WithParamsParameters_PerElementMatchers_ShouldMatchElementByElement()
+	{
+		IMyService sut = IMyService.CreateMock();
+		sut.Mock.Setup.MyMethodWithParams(It.IsAny<int>(), It.IsAny<bool>(), It.IsFalse()).Returns(true);
+
+		bool result1 = sut.MyMethodWithParams(5);
+		bool result2 = sut.MyMethodWithParams(5, true);
+		bool result3 = sut.MyMethodWithParams(5, true, false);
+		bool result4 = sut.MyMethodWithParams(5, true, true);
+		bool result5 = sut.MyMethodWithParams(5, true, false, true);
+
+		await That(result1).IsFalse();
+		await That(result2).IsFalse();
+		await That(result3).IsTrue();
+		await That(result4).IsFalse();
+		await That(result5).IsFalse();
+	}
+
+	[Fact]
+	public async Task WithParamsParameters_PerElementMatchers_ShouldSupportVerify()
+	{
+		IMyService sut = IMyService.CreateMock();
+
+		_ = sut.MyMethodWithParams(5);
+		_ = sut.MyMethodWithParams(5, true);
+		_ = sut.MyMethodWithParams(5, true, false);
+		_ = sut.MyMethodWithParams(5, true, true);
+		_ = sut.MyMethodWithParams(5, true, false, true);
+
+		await That(sut.Mock.Verify.MyMethodWithParams(
+			It.IsAny<int>(), It.IsAny<bool>(), It.IsFalse())).Once();
 	}
 
 	[Fact]
