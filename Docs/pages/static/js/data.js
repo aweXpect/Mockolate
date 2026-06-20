@@ -248,10 +248,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -296,7 +296,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -344,7 +344,7 @@ window.BENCHMARK_DATA = {
           308.46218665440875,
           344.0163266318185,
           323.78995840890065,
-          313.36729635511125
+          321.097069867452
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -453,7 +453,7 @@ window.BENCHMARK_DATA = {
           71190.8449358259,
           97668.51267903646,
           72490.748273577,
-          73273.68113606771
+          98177.12781575522
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -562,7 +562,7 @@ window.BENCHMARK_DATA = {
           4028.4778879801434,
           4494.006188964844,
           4194.555804443359,
-          4025.935346476237
+          4259.697175246019
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -671,7 +671,7 @@ window.BENCHMARK_DATA = {
           4384.9337926228845,
           4789.669967651367,
           4402.485179356167,
-          4268.514130728586
+          4681.305263264974
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -780,7 +780,7 @@ window.BENCHMARK_DATA = {
           385.09582923008844,
           435.2488980293274,
           402.5084812482198,
-          400.68791212354387
+          399.6109811147054
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -889,7 +889,7 @@ window.BENCHMARK_DATA = {
           528.111366335551,
           526.0001818111965,
           534.3226893288748,
-          517.3319053649902
+          475.3434842314039
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -942,7 +942,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
-          2032
+          2040
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1204,10 +1204,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -1252,7 +1252,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -1300,7 +1300,7 @@ window.BENCHMARK_DATA = {
           358.81036043167114,
           304.69400723775226,
           305.4529285589854,
-          289.0866809844971
+          327.48536659876504
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1409,7 +1409,7 @@ window.BENCHMARK_DATA = {
           16505.475834147135,
           15877.329493931362,
           15920.97098482572,
-          15991.579321289062
+          14758.116119384766
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1518,7 +1518,7 @@ window.BENCHMARK_DATA = {
           6017.229307992117,
           5472.753806050619,
           5518.874809810093,
-          5607.35260118757
+          5513.477928670248
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1627,7 +1627,7 @@ window.BENCHMARK_DATA = {
           248344.3408578726,
           212702.8413574219,
           210827.58217366537,
-          215975.38505859376
+          230839.2000325521
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1736,7 +1736,7 @@ window.BENCHMARK_DATA = {
           1584.2617788950602,
           1292.2033963521321,
           1337.3598634174891,
-          1293.1940012711746
+          1661.8409879684448
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1845,7 +1845,7 @@ window.BENCHMARK_DATA = {
           210.31195335388185,
           179.0949455669948,
           182.5402222275734,
-          178.3426343032292
+          197.1126252969106
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1898,7 +1898,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
-          1368
+          1376
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2160,10 +2160,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -2208,7 +2208,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -2256,7 +2256,7 @@ window.BENCHMARK_DATA = {
           971.0985743204752,
           1023.2669820149739,
           1137.5731559753417,
-          904.251044341496
+          995.3119922002156
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2365,7 +2365,7 @@ window.BENCHMARK_DATA = {
           176149.55016276042,
           166780.8474609375,
           167483.48053850446,
-          220018.24319893974
+          217720.94203404017
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2418,7 +2418,7 @@ window.BENCHMARK_DATA = {
           20860,
           20849,
           20721,
-          20860
+          20732
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2474,7 +2474,7 @@ window.BENCHMARK_DATA = {
           8274.13950398763,
           9967.299831136068,
           9787.912096150716,
-          9200.495881300707
+          9145.046932765415
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2583,7 +2583,7 @@ window.BENCHMARK_DATA = {
           9620.061845906575,
           11069.530017089844,
           12012.772979736328,
-          12369.924305216471
+          11696.30127280099
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2692,7 +2692,7 @@ window.BENCHMARK_DATA = {
           829.757609807528,
           950.2389097849529,
           1055.0064094543457,
-          850.6678134918213
+          840.7421754428318
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3007,10 +3007,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -3055,7 +3055,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -3103,7 +3103,7 @@ window.BENCHMARK_DATA = {
           2428.835368347168,
           2905.4666915893554,
           3032.2649386088056,
-          2452.232248433431
+          2397.562699999128
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3212,7 +3212,7 @@ window.BENCHMARK_DATA = {
           185080.63657924108,
           176910.3588378906,
           177822.9604654948,
-          229994.7739780971
+          229780.86905924478
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3265,7 +3265,7 @@ window.BENCHMARK_DATA = {
           30610,
           30603,
           29324,
-          30610
+          29332
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3321,7 +3321,7 @@ window.BENCHMARK_DATA = {
           20383.052352905273,
           23624.399028233118,
           23424.42562866211,
-          23089.498278808594
+          22366.106215413412
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3430,7 +3430,7 @@ window.BENCHMARK_DATA = {
           20589.90074157715,
           23592.80067952474,
           25020.401100667317,
-          24787.384390694755
+          25037.81621500651
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3539,7 +3539,7 @@ window.BENCHMARK_DATA = {
           1988.8540649414062,
           2419.995024108887,
           2503.828367869059,
-          2136.0344680786134
+          2000.2053202115571
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3854,10 +3854,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -3902,7 +3902,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -3950,7 +3950,7 @@ window.BENCHMARK_DATA = {
           345.0582211934603,
           365.40915199688504,
           389.341205406189,
-          359.2665194193522
+          362.40164038113187
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4059,7 +4059,7 @@ window.BENCHMARK_DATA = {
           185176.1654575893,
           136423.01627604166,
           188286.84964192708,
-          137846.40665108818
+          136642.5873325893
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4168,7 +4168,7 @@ window.BENCHMARK_DATA = {
           5610.338311331613,
           5419.848208109538,
           5794.761483764649,
-          5180.199264526367
+          5252.005239868164
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4221,7 +4221,7 @@ window.BENCHMARK_DATA = {
           9336,
           9336,
           9336,
-          9336
+          9280
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4277,7 +4277,7 @@ window.BENCHMARK_DATA = {
           5849.963805643717,
           5793.448399861653,
           6415.307803853353,
-          5343.989927019392
+          5327.510377502442
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4386,7 +4386,7 @@ window.BENCHMARK_DATA = {
           514.3837502343314,
           551.4574928283691,
           568.8499755178179,
-          525.9942140579224
+          536.6754687173026
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4495,7 +4495,7 @@ window.BENCHMARK_DATA = {
           452.1708852694585,
           499.15576623280845,
           471.36170399983723,
-          486.44733217784335
+          495.086448097229
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -4548,7 +4548,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
-          2056
+          2064
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -4810,10 +4810,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -4858,7 +4858,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -4906,7 +4906,7 @@ window.BENCHMARK_DATA = {
           642.3598878043039,
           676.7881896336874,
           706.1377662658691,
-          634.7590211459568
+          633.6435656865438
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5015,7 +5015,7 @@ window.BENCHMARK_DATA = {
           188740.57278645833,
           143918.28211388222,
           195996.17556966146,
-          140778.8131573017
+          139947.92353515624
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5124,7 +5124,7 @@ window.BENCHMARK_DATA = {
           8320.804607684795,
           8243.27079119001,
           8752.334768168132,
-          7840.906080118815
+          7961.9633778889975
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5177,7 +5177,7 @@ window.BENCHMARK_DATA = {
           12361,
           12361,
           12361,
-          12361
+          11800
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5233,7 +5233,7 @@ window.BENCHMARK_DATA = {
           9083.251178995768,
           8837.554067339215,
           10093.640817260743,
-          8354.534914289203
+          8404.035357883999
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5342,7 +5342,7 @@ window.BENCHMARK_DATA = {
           1034.2082710266113,
           1185.5845638275146,
           1168.395023473104,
-          1061.3100817362467
+          1074.9621583302817
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5451,7 +5451,7 @@ window.BENCHMARK_DATA = {
           1347.4942272731237,
           1519.3200089381291,
           1461.889575322469,
-          1427.7625119345528
+          1397.8907443682353
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5504,7 +5504,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
-          3808
+          3816
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5766,10 +5766,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -5814,7 +5814,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -5862,7 +5862,7 @@ window.BENCHMARK_DATA = {
           509.6452435175578,
           881.6833140055338,
           565.6013423919678,
-          821.1287336349487
+          535.9998128890991
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5971,7 +5971,7 @@ window.BENCHMARK_DATA = {
           11728.541945237379,
           10130.931405203683,
           10658.567068246695,
-          12169.643345424107
+          12317.135522460938
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6024,7 +6024,7 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10513,
-          10753
+          10513
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6080,7 +6080,7 @@ window.BENCHMARK_DATA = {
           7359.217084612165,
           6646.506149836949,
           7120.38572038923,
-          7263.077929360526
+          7580.243794759114
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6189,7 +6189,7 @@ window.BENCHMARK_DATA = {
           8134.113964625767,
           7010.535306113107,
           7974.75007985433,
-          8394.463563283285
+          8664.588631184895
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6298,7 +6298,7 @@ window.BENCHMARK_DATA = {
           445.7189165183476,
           431.3916382789612,
           443.24638284047444,
-          434.6427755696433
+          464.80996638077954
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6407,7 +6407,7 @@ window.BENCHMARK_DATA = {
           459.6990920066834,
           450.26900948010956,
           482.2703650156657,
-          449.13414872487385
+          471.8172441482544
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6460,7 +6460,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
-          1672
+          1680
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6722,10 +6722,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -6770,7 +6770,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -6818,7 +6818,7 @@ window.BENCHMARK_DATA = {
           1028.1573910346399,
           1017.3402383168539,
           1077.9393480936685,
-          1025.5182029724122
+          1035.3626860300699
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6927,7 +6927,7 @@ window.BENCHMARK_DATA = {
           18510.78193359375,
           16498.893621826173,
           17214.80944620768,
-          19057.37284749349
+          19278.967383248466
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6980,7 +6980,7 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           17441,
-          18833
+          17441
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7036,7 +7036,7 @@ window.BENCHMARK_DATA = {
           17469.077244059245,
           15856.913982684795,
           16915.00025503976,
-          16748.270745849608
+          17838.394856770832
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7145,7 +7145,7 @@ window.BENCHMARK_DATA = {
           19155.59569658552,
           16653.189042154947,
           18275.51221172626,
-          19783.975873819985
+          19800.952989850724
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7254,7 +7254,7 @@ window.BENCHMARK_DATA = {
           1126.375521214803,
           1067.0156260172525,
           1097.6558989206949,
-          1061.6835683186848
+          1123.5224586486815
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7363,7 +7363,7 @@ window.BENCHMARK_DATA = {
           1563.432879257202,
           1568.2131299972534,
           1718.7631295067924,
-          1632.4439804894585
+          1624.916238648551
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7416,7 +7416,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
-          4024
+          4032
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7678,10 +7678,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump SharpCompress from 0.48.1 to 0.49.1 (#792)"
       },
       {
-        "sha": "95f41218567bdd2f0e5240acc2fc54ab7ff8dcaa",
+        "sha": "c1f866e2d5c5d9d6af408f7d763a75e778952704",
         "author": "dependabot[bot]",
-        "date": "Sat Jun 20 11:36:38 2026 \u002B0200",
-        "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeFix.Testing from 1.1.3 to 1.1.4 (#798)"
+        "date": "Sat Jun 20 11:36:54 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.51.0 to 1.55.2 (#800)"
       }
     ],
     "labels": [
@@ -7726,7 +7726,7 @@ window.BENCHMARK_DATA = {
       "0532e282",
       "3424df74",
       "65d3ca74",
-      "95f41218"
+      "c1f866e2"
     ],
     "datasets": [
       {
@@ -7774,7 +7774,7 @@ window.BENCHMARK_DATA = {
           64.02155894438425,
           63.21124790112177,
           66.23289399487632,
-          67.16968266963958
+          50.9580771724383
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7883,7 +7883,7 @@ window.BENCHMARK_DATA = {
           270.0219073295593,
           269.43764080320085,
           280.1030704975128,
-          281.4467307971074
+          222.22164516448976
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7992,7 +7992,7 @@ window.BENCHMARK_DATA = {
           35.49696811116659,
           35.37719884117444,
           37.1766397635142,
-          38.109580095609026
+          29.56679181655248
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8045,7 +8045,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
-          192
+          200
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8101,7 +8101,7 @@ window.BENCHMARK_DATA = {
           1321.1454723903112,
           1316.2869247436524,
           1327.423984527588,
-          1367.837335722787
+          1058.0575651804606
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8210,7 +8210,7 @@ window.BENCHMARK_DATA = {
           1814.3997047969274,
           1816.666676012675,
           1838.41850904318,
-          2040.353094736735
+          1420.9053585345928
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8319,7 +8319,7 @@ window.BENCHMARK_DATA = {
           1745.4286918640137,
           1707.9367577689034,
           1782.993139403207,
-          1884.8351756504603
+          1389.1392592021398
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
