@@ -264,6 +264,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -310,7 +316,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -360,7 +367,8 @@ window.BENCHMARK_DATA = {
           323.78995840890065,
           321.097069867452,
           340.53021376927694,
-          327.52950426510404
+          327.52950426510404,
+          328.3097351074219
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -375,6 +383,7 @@ window.BENCHMARK_DATA = {
           1832,
           1832,
           1832,
+          1720,
           1720,
           1720,
           1720,
@@ -473,7 +482,8 @@ window.BENCHMARK_DATA = {
           72490.748273577,
           98177.12781575522,
           71242.256086077,
-          72000.21970912388
+          72000.21970912388,
+          98186.8475748698
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -526,6 +536,7 @@ window.BENCHMARK_DATA = {
           9096,
           9096,
           9208,
+          9096,
           9096,
           9096,
           9096
@@ -586,7 +597,8 @@ window.BENCHMARK_DATA = {
           4194.555804443359,
           4259.697175246019,
           4099.057168070475,
-          4257.220399584089
+          4257.220399584089,
+          4482.762282738318
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -598,6 +610,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          7928,
           7928,
           7928,
           7928,
@@ -699,7 +712,8 @@ window.BENCHMARK_DATA = {
           4402.485179356167,
           4681.305263264974,
           4439.99020131429,
-          4483.993589274089
+          4483.993589274089,
+          4831.511616007487
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -740,6 +754,7 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6959,
+          6970,
           6970,
           6970,
           6970,
@@ -812,7 +827,8 @@ window.BENCHMARK_DATA = {
           402.5084812482198,
           399.6109811147054,
           419.5090321222941,
-          413.75944269620453
+          413.75944269620453,
+          396.15656702335065
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -824,6 +840,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -925,7 +942,8 @@ window.BENCHMARK_DATA = {
           534.3226893288748,
           475.3434842314039,
           519.724902519813,
-          565.4344334602356
+          565.4344334602356,
+          474.39399422918046
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -978,6 +996,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040
@@ -1258,6 +1277,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -1304,7 +1329,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -1354,7 +1380,8 @@ window.BENCHMARK_DATA = {
           305.4529285589854,
           327.48536659876504,
           305.4970123608907,
-          332.2364135106405
+          332.2364135106405,
+          294.0793772061666
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1371,6 +1398,7 @@ window.BENCHMARK_DATA = {
           1872,
           1952,
           1952,
+          1824,
           1824,
           1824,
           1824,
@@ -1467,7 +1495,8 @@ window.BENCHMARK_DATA = {
           15920.97098482572,
           14758.116119384766,
           14182.597387695312,
-          16545.199368990383
+          16545.199368990383,
+          16188.9679914202
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1479,6 +1508,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          12809,
           12809,
           12809,
           12809,
@@ -1580,7 +1610,8 @@ window.BENCHMARK_DATA = {
           5518.874809810093,
           5513.477928670248,
           5164.768974849156,
-          5680.55021870931
+          5680.55021870931,
+          5558.861244788537
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1592,6 +1623,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -1693,7 +1725,8 @@ window.BENCHMARK_DATA = {
           210827.58217366537,
           230839.2000325521,
           231456.87268880208,
-          215360.0833170573
+          215360.0833170573,
+          214676.53004673548
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1748,7 +1781,8 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15628,
-          15628
+          15628,
+          15740
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1806,7 +1840,8 @@ window.BENCHMARK_DATA = {
           1337.3598634174891,
           1661.8409879684448,
           1295.168740272522,
-          1409.8849573135376
+          1409.8849573135376,
+          1266.0354490280151
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1818,6 +1853,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -1919,7 +1955,8 @@ window.BENCHMARK_DATA = {
           182.5402222275734,
           197.1126252969106,
           173.034425173487,
-          194.9467976729075
+          194.9467976729075,
+          175.6534941673279
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1972,6 +2009,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376
@@ -2252,6 +2290,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -2298,7 +2342,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -2348,7 +2393,8 @@ window.BENCHMARK_DATA = {
           1137.5731559753417,
           995.3119922002156,
           937.2146085103353,
-          1076.9882094701131
+          1076.9882094701131,
+          921.7648592631023
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2385,6 +2431,7 @@ window.BENCHMARK_DATA = {
           3904,
           3904,
           3904,
+          3912,
           3912,
           3912,
           3912,
@@ -2461,7 +2508,8 @@ window.BENCHMARK_DATA = {
           167483.48053850446,
           217720.94203404017,
           171466.96431790866,
-          174541.56099759616
+          174541.56099759616,
+          213442.4510672433
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2516,7 +2564,8 @@ window.BENCHMARK_DATA = {
           20721,
           20732,
           20844,
-          20972
+          20972,
+          20980
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2574,7 +2623,8 @@ window.BENCHMARK_DATA = {
           9787.912096150716,
           9145.046932765415,
           8758.208048502604,
-          8867.093095906575
+          8867.093095906575,
+          8960.273666381836
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2629,7 +2679,8 @@ window.BENCHMARK_DATA = {
           13088,
           13088,
           13144,
-          13144
+          13144,
+          13088
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2687,7 +2738,8 @@ window.BENCHMARK_DATA = {
           12012.772979736328,
           11696.30127280099,
           10060.74537556966,
-          10479.855262247722
+          10479.855262247722,
+          12052.905728149413
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2740,6 +2792,7 @@ window.BENCHMARK_DATA = {
           13954,
           13943,
           13943,
+          13954,
           13954,
           13954,
           13954
@@ -2800,7 +2853,8 @@ window.BENCHMARK_DATA = {
           1055.0064094543457,
           840.7421754428318,
           818.7479092053005,
-          861.7634079272931
+          861.7634079272931,
+          846.0088533401489
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2812,6 +2866,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -3133,6 +3188,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -3179,7 +3240,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -3229,7 +3291,8 @@ window.BENCHMARK_DATA = {
           3032.2649386088056,
           2397.562699999128,
           2493.126840863909,
-          2575.039095071646
+          2575.039095071646,
+          2490.36492767334
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3266,6 +3329,7 @@ window.BENCHMARK_DATA = {
           4984,
           4984,
           4984,
+          4992,
           4992,
           4992,
           4992,
@@ -3342,7 +3406,8 @@ window.BENCHMARK_DATA = {
           177822.9604654948,
           229780.86905924478,
           184894.8772298177,
-          186367.47864583333
+          186367.47864583333,
+          229273.5503092448
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3397,7 +3462,8 @@ window.BENCHMARK_DATA = {
           29324,
           29332,
           29444,
-          29570
+          29570,
+          30730
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3455,7 +3521,8 @@ window.BENCHMARK_DATA = {
           23424.42562866211,
           22366.106215413412,
           21017.5939919608,
-          22278.33654315655
+          22278.33654315655,
+          22616.689170328777
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3510,7 +3577,8 @@ window.BENCHMARK_DATA = {
           26193,
           26193,
           26249,
-          26249
+          26249,
+          26193
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3568,7 +3636,8 @@ window.BENCHMARK_DATA = {
           25020.401100667317,
           25037.81621500651,
           21065.357448032923,
-          21918.055877685547
+          21918.055877685547,
+          25585.915006510415
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3621,6 +3690,7 @@ window.BENCHMARK_DATA = {
           33764,
           33772,
           33772,
+          33764,
           33764,
           33764,
           33764
@@ -3681,7 +3751,8 @@ window.BENCHMARK_DATA = {
           2503.828367869059,
           2000.2053202115571,
           2047.5321102142334,
-          2134.703297206334
+          2134.703297206334,
+          2135.3975616455077
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3693,6 +3764,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -4014,6 +4086,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -4060,7 +4138,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -4110,7 +4189,8 @@ window.BENCHMARK_DATA = {
           389.341205406189,
           362.40164038113187,
           375.55236431530545,
-          430.2977404912313
+          430.2977404912313,
+          426.67118450800575
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4125,6 +4205,7 @@ window.BENCHMARK_DATA = {
           2200,
           2200,
           2200,
+          2088,
           2088,
           2088,
           2088,
@@ -4223,7 +4304,8 @@ window.BENCHMARK_DATA = {
           188286.84964192708,
           136642.5873325893,
           134759.1072265625,
-          184929.19199916295
+          184929.19199916295,
+          187843.6942313058
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4278,6 +4360,7 @@ window.BENCHMARK_DATA = {
           15150,
           15098,
           15086,
+          14926,
           14926
         ],
         "borderColor": "#A052B0",
@@ -4336,7 +4419,8 @@ window.BENCHMARK_DATA = {
           5794.761483764649,
           5252.005239868164,
           5537.460307820638,
-          6165.0543696085615
+          6165.0543696085615,
+          6014.035827091762
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4391,7 +4475,8 @@ window.BENCHMARK_DATA = {
           9336,
           9280,
           9336,
-          9280
+          9280,
+          9336
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4449,7 +4534,8 @@ window.BENCHMARK_DATA = {
           6415.307803853353,
           5327.510377502442,
           5755.268306986491,
-          6315.150686536516
+          6315.150686536516,
+          6539.289426167806
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4499,6 +4585,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8245,
+          8244,
           8244,
           8244,
           8244,
@@ -4562,7 +4649,8 @@ window.BENCHMARK_DATA = {
           568.8499755178179,
           536.6754687173026,
           540.2658959168655,
-          616.0389137268066
+          616.0389137268066,
+          688.8804828098843
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4574,6 +4662,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -4675,7 +4764,8 @@ window.BENCHMARK_DATA = {
           471.36170399983723,
           495.086448097229,
           488.7871950013297,
-          527.3643661907741
+          527.3643661907741,
+          616.1356421152751
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -4728,6 +4818,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064
@@ -5008,6 +5099,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -5054,7 +5151,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -5104,7 +5202,8 @@ window.BENCHMARK_DATA = {
           706.1377662658691,
           633.6435656865438,
           666.3505357742309,
-          700.4914154688518
+          700.4914154688518,
+          769.9645594278971
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5119,6 +5218,7 @@ window.BENCHMARK_DATA = {
           2416,
           2416,
           2416,
+          2304,
           2304,
           2304,
           2304,
@@ -5217,7 +5317,8 @@ window.BENCHMARK_DATA = {
           195996.17556966146,
           139947.92353515624,
           138989.0513183594,
-          190824.61600435697
+          190824.61600435697,
+          193580.7376953125
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5272,6 +5373,7 @@ window.BENCHMARK_DATA = {
           19149,
           19085,
           19085,
+          18925,
           18925
         ],
         "borderColor": "#A052B0",
@@ -5330,7 +5432,8 @@ window.BENCHMARK_DATA = {
           8752.334768168132,
           7961.9633778889975,
           8036.020787920271,
-          8734.385186331612
+          8734.385186331612,
+          9125.274357096354
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5385,7 +5488,8 @@ window.BENCHMARK_DATA = {
           12361,
           11800,
           12361,
-          11800
+          11800,
+          12361
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5443,7 +5547,8 @@ window.BENCHMARK_DATA = {
           10093.640817260743,
           8404.035357883999,
           8683.566288248698,
-          9697.02717263358
+          9697.02717263358,
+          10059.154685974121
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5461,6 +5566,7 @@ window.BENCHMARK_DATA = {
           16433,
           16433,
           16433,
+          15786,
           15786,
           15786,
           15786,
@@ -5556,7 +5662,8 @@ window.BENCHMARK_DATA = {
           1168.395023473104,
           1074.9621583302817,
           1112.416587148394,
-          1197.6138587315877
+          1197.6138587315877,
+          1267.8855096181235
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5568,6 +5675,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -5669,7 +5777,8 @@ window.BENCHMARK_DATA = {
           1461.889575322469,
           1397.8907443682353,
           1451.036745707194,
-          1457.0087961469378
+          1457.0087961469378,
+          1626.9964746747698
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5722,6 +5831,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816
@@ -6002,6 +6112,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -6048,7 +6164,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -6098,7 +6215,8 @@ window.BENCHMARK_DATA = {
           565.6013423919678,
           535.9998128890991,
           528.8145252863566,
-          518.8012578964233
+          518.8012578964233,
+          594.0000323568072
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6135,6 +6253,7 @@ window.BENCHMARK_DATA = {
           2520,
           2520,
           2520,
+          2528,
           2528,
           2528,
           2528,
@@ -6211,7 +6330,8 @@ window.BENCHMARK_DATA = {
           10658.567068246695,
           12317.135522460938,
           12024.556658063617,
-          11874.28310922476
+          11874.28310922476,
+          12804.70998273577
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6266,7 +6386,8 @@ window.BENCHMARK_DATA = {
           10513,
           10513,
           10641,
-          10513
+          10513,
+          10785
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6324,7 +6445,8 @@ window.BENCHMARK_DATA = {
           7120.38572038923,
           7580.243794759114,
           7890.702718098958,
-          7853.07316385905
+          7853.07316385905,
+          7849.440130615234
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6336,6 +6458,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -6437,7 +6560,8 @@ window.BENCHMARK_DATA = {
           7974.75007985433,
           8664.588631184895,
           8399.66040649414,
-          8562.106182861327
+          8562.106182861327,
+          9016.7335194179
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6485,6 +6609,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11588,
+          11508,
           11508,
           11508,
           11508,
@@ -6550,7 +6675,8 @@ window.BENCHMARK_DATA = {
           443.24638284047444,
           464.80996638077954,
           474.72524785995483,
-          426.88254769643146
+          426.88254769643146,
+          528.6746174494425
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6562,6 +6688,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -6663,7 +6790,8 @@ window.BENCHMARK_DATA = {
           482.2703650156657,
           471.8172441482544,
           470.72769614628385,
-          500.1350400606791
+          500.1350400606791,
+          531.4717914717538
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6716,6 +6844,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680
@@ -6996,6 +7125,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -7042,7 +7177,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -7092,7 +7228,8 @@ window.BENCHMARK_DATA = {
           1077.9393480936685,
           1035.3626860300699,
           1034.6230656941732,
-          993.2554721832275
+          993.2554721832275,
+          1182.9851322174072
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7129,6 +7266,7 @@ window.BENCHMARK_DATA = {
           3024,
           3024,
           3024,
+          3032,
           3032,
           3032,
           3032,
@@ -7205,7 +7343,8 @@ window.BENCHMARK_DATA = {
           17214.80944620768,
           19278.967383248466,
           19034.355529785156,
-          18950.123219081335
+          18950.123219081335,
+          19609.041630045573
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7260,7 +7399,8 @@ window.BENCHMARK_DATA = {
           17441,
           17441,
           18721,
-          17441
+          17441,
+          18865
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7318,7 +7458,8 @@ window.BENCHMARK_DATA = {
           16915.00025503976,
           17838.394856770832,
           17494.42833533654,
-          17913.932873535156
+          17913.932873535156,
+          17631.267175292967
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7330,6 +7471,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -7431,7 +7573,8 @@ window.BENCHMARK_DATA = {
           18275.51221172626,
           19800.952989850724,
           19902.303764930137,
-          20694.08217914288
+          20694.08217914288,
+          20631.941352257363
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7479,6 +7622,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31627,
+          31546,
           31546,
           31546,
           31546,
@@ -7544,7 +7688,8 @@ window.BENCHMARK_DATA = {
           1097.6558989206949,
           1123.5224586486815,
           1067.300642306988,
-          1097.7486941473824
+          1097.7486941473824,
+          1251.7582230885823
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7556,6 +7701,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -7657,7 +7803,8 @@ window.BENCHMARK_DATA = {
           1718.7631295067924,
           1624.916238648551,
           1576.7223945030798,
-          1595.2356498718261
+          1595.2356498718261,
+          1714.5081233978271
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7710,6 +7857,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032
@@ -7990,6 +8138,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
         "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
+      },
+      {
+        "sha": "4c019e46bd42919dc68985527183cdda59ceafdb",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 14:40:42 2026 \u002B0200",
+        "message": "feat: expose hidden base-interface members via Mock.As\u003CTBase\u003E() (#802)"
       }
     ],
     "labels": [
@@ -8036,7 +8190,8 @@ window.BENCHMARK_DATA = {
       "65d3ca74",
       "c1f866e2",
       "23044325",
-      "a751598c"
+      "a751598c",
+      "4c019e46"
     ],
     "datasets": [
       {
@@ -8086,7 +8241,8 @@ window.BENCHMARK_DATA = {
           66.23289399487632,
           50.9580771724383,
           36.8702533920606,
-          66.19160300095876
+          66.19160300095876,
+          51.41278080741564
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8103,6 +8259,7 @@ window.BENCHMARK_DATA = {
           1048,
           1048,
           1048,
+          440,
           440,
           440,
           440,
@@ -8199,7 +8356,8 @@ window.BENCHMARK_DATA = {
           280.1030704975128,
           222.22164516448976,
           149.6021406820842,
-          283.0366304397583
+          283.0366304397583,
+          222.15664154688517
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8211,6 +8369,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -8312,7 +8471,8 @@ window.BENCHMARK_DATA = {
           37.1766397635142,
           29.56679181655248,
           21.19058529688762,
-          37.338926608363785
+          37.338926608363785,
+          29.214212375027792
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8365,6 +8525,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200
@@ -8425,7 +8586,8 @@ window.BENCHMARK_DATA = {
           1327.423984527588,
           1058.0575651804606,
           773.861977036794,
-          1350.6345277150472
+          1350.6345277150472,
+          1055.283120564052
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8437,6 +8599,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -8538,7 +8701,8 @@ window.BENCHMARK_DATA = {
           1838.41850904318,
           1420.9053585345928,
           1041.1626898447673,
-          1918.9002193450929
+          1918.9002193450929,
+          1459.4765743891398
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8550,6 +8714,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -8651,7 +8816,8 @@ window.BENCHMARK_DATA = {
           1782.993139403207,
           1389.1392592021398,
           980.9286453247071,
-          1805.4048516409737
+          1805.4048516409737,
+          1459.8206631978353
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8701,6 +8867,7 @@ window.BENCHMARK_DATA = {
           2763,
           2763,
           2772,
+          2763,
           2763,
           2763,
           2763,
