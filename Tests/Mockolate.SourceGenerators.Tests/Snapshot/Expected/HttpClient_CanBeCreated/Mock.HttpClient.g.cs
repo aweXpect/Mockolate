@@ -38,7 +38,7 @@ internal static partial class Mock
 		/// </summary>
 		private static global::Mockolate.MockRegistry MockolateCreateRegistryFromBehavior(global::Mockolate.MockBehavior behavior)
 		{
-			global::Mockolate.MockRegistry registry = new global::Mockolate.MockRegistry(behavior, CreateFastInteractions(behavior));
+			global::Mockolate.MockRegistry registry = new global::Mockolate.MockRegistry(behavior, MemberCount);
 			MockRegistryProvider.Value = registry;
 			return registry;
 		}

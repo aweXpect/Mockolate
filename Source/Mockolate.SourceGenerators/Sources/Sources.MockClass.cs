@@ -934,7 +934,7 @@ internal static partial class Sources
 		else
 		{
 			sb.Append("\t\t\tmockBehavior ??= global::Mockolate.MockBehavior.Default;").AppendLine();
-			sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, global::Mockolate.Mock.").Append(name).Append(".CreateFastInteractions(mockBehavior), constructorParameters);").AppendLine();
+			sb.Append("\t\t\tglobal::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, global::Mockolate.Mock.").Append(name).Append(".MemberCount, constructorParameters);").AppendLine();
 		}
 
 		sb.Append("\t\t\treturn CreateMockInstance(mockRegistry, constructorParameters, setup);").AppendLine();
@@ -1383,7 +1383,7 @@ internal static partial class Sources
 		sb.Append(indent).Append("/// </summary>").AppendLine();
 		sb.Append(indent).Append("private static global::Mockolate.MockRegistry MockolateCreateRegistryFromBehavior(global::Mockolate.MockBehavior behavior)").AppendLine();
 		sb.Append(indent).Append("{").AppendLine();
-		sb.Append(indent).Append("\tglobal::Mockolate.MockRegistry registry = new global::Mockolate.MockRegistry(behavior, CreateFastInteractions(behavior));").AppendLine();
+		sb.Append(indent).Append("\tglobal::Mockolate.MockRegistry registry = new global::Mockolate.MockRegistry(behavior, MemberCount);").AppendLine();
 		if (setsMockRegistryProvider)
 		{
 			sb.Append(indent).Append("\tMockRegistryProvider.Value = registry;").AppendLine();

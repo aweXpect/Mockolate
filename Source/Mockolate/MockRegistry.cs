@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
 using Mockolate.Interactions;
 using Mockolate.Setup;
 
@@ -18,7 +19,7 @@ namespace Mockolate;
 public partial class MockRegistry
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private readonly ScenarioState _scenarioState;
+	private ScenarioState? _scenarioState;
 
 	/// <summary>
 	///     Creates a new <see cref="MockRegistry" /> with the given <paramref name="behavior" />, a caller-provided
@@ -46,9 +47,32 @@ public partial class MockRegistry
 
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
-		Interactions = interactions;
-		Setup = new MockSetups();
-		_scenarioState = new ScenarioState();
+		_interactions = interactions;
+		// Setup (MockSetups) and _scenarioState are allocated lazily on first use so a mock that is
+		// only created — and never has a setup registered or a scenario transition — pays for neither.
+		Wraps = null;
+	}
+
+	/// <summary>
+	///     Creates a new <see cref="MockRegistry" /> with the given <paramref name="behavior" /> whose interaction
+	///     store is a <see cref="FastMockInteractions" /> sized to <paramref name="memberCount" />, allocated lazily
+	///     on first access.
+	/// </summary>
+	/// <remarks>
+	///     The generator-emitted <c>CreateMock</c> paths use this overload so that a mock which is only created — and
+	///     never has a member invoked or verified — never allocates an interaction store at all.
+	/// </remarks>
+	/// <param name="behavior">The <see cref="MockBehavior" /> that governs how the mock responds without a matching setup.</param>
+	/// <param name="memberCount">The number of distinct mockable members the lazily-created interaction store should hold.</param>
+	/// <param name="constructorParameters">
+	///     Values forwarded to the base-class constructor, or <see langword="null" /> if no base constructor call is needed.
+	/// </param>
+	public MockRegistry(MockBehavior behavior, int memberCount, object?[]? constructorParameters = null)
+	{
+		Behavior = behavior;
+		ConstructorParameters = constructorParameters;
+		_interactionMemberCount = memberCount;
+		// Interactions, Setup and _scenarioState are all allocated lazily on first use.
 		Wraps = null;
 	}
 
@@ -62,9 +86,11 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Interactions = new FastMockInteractions(0, registry.Behavior.SkipInteractionRecording);
-		Setup = registry.Setup;
-		_scenarioState = registry._scenarioState;
+		_interactions = new FastMockInteractions(0, registry.Behavior.SkipInteractionRecording);
+		// Materialize the parent's setups and scenario state so they stay shared by reference
+		// (derived registries for wrap/monitor/constructor-params share state with their source).
+		_setups = registry.Setup;
+		_scenarioState = registry.GetOrCreateScenarioState();
 		Wraps = wraps;
 	}
 
@@ -78,9 +104,12 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = constructorParameters;
-		Interactions = registry.Interactions;
-		Setup = registry.Setup;
-		_scenarioState = registry._scenarioState;
+		// Materialize the parent's interactions so this derived registry shares the same store.
+		_interactions = registry.Interactions;
+		// Materialize the parent's setups and scenario state so they stay shared by reference
+		// (derived registries for wrap/monitor/constructor-params share state with their source).
+		_setups = registry.Setup;
+		_scenarioState = registry.GetOrCreateScenarioState();
 		Wraps = registry.Wraps;
 	}
 
@@ -104,9 +133,11 @@ public partial class MockRegistry
 
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
-		Interactions = interactions;
-		Setup = registry.Setup;
-		_scenarioState = registry._scenarioState;
+		_interactions = interactions;
+		// Materialize the parent's setups and scenario state so they stay shared by reference
+		// (derived registries for wrap/monitor/constructor-params share state with their source).
+		_setups = registry.Setup;
+		_scenarioState = registry.GetOrCreateScenarioState();
 		Wraps = registry.Wraps;
 	}
 
@@ -131,7 +162,7 @@ public partial class MockRegistry
 	///     Scenario setups add to, rather than replace, the default bucket - register catch-alls at the default scope
 	///     and override specific members per scenario.
 	/// </remarks>
-	public string Scenario => _scenarioState.Current;
+	public string Scenario => _scenarioState?.Current ?? "";
 
 	/// <summary>
 	///     Gets the behavior settings used by this mock instance.
@@ -166,7 +197,18 @@ public partial class MockRegistry
 	///     for the full resolution order.
 	/// </remarks>
 	public void TransitionTo(string scenario)
-		=> _scenarioState.Current = scenario;
+		=> GetOrCreateScenarioState().Current = scenario;
+
+	private ScenarioState GetOrCreateScenarioState()
+	{
+		if (_scenarioState is { } existing)
+		{
+			return existing;
+		}
+
+		Interlocked.CompareExchange(ref _scenarioState, new ScenarioState(), null);
+		return _scenarioState!;
+	}
 
 	private sealed class ScenarioState
 	{

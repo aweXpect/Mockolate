@@ -22,7 +22,20 @@ public class FastMockInteractions : IMockInteractions
 	private long _globalSequence;
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private readonly MockolateLock _verifiedLock = new();
+	[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private MockolateLock VerifiedLock
+	{
+		get
+		{
+			if (field is { } existing)
+			{
+				return existing;
+			}
+
+			Interlocked.CompareExchange(ref field, new MockolateLock(), null);
+			return field!;
+		}
+	}
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private HashSet<IInteraction>? _verified;
@@ -191,7 +204,7 @@ public class FastMockInteractions : IMockInteractions
 			unverified.Sort(static (left, right) => left.Seq.CompareTo(right.Seq));
 		}
 
-		lock (_verifiedLock)
+		lock (VerifiedLock)
 		{
 			if (_verified is null || _verified.Count == 0)
 			{
@@ -224,7 +237,7 @@ public class FastMockInteractions : IMockInteractions
 
 	void IMockInteractions.Verified(IEnumerable<IInteraction> interactions)
 	{
-		lock (_verifiedLock)
+		lock (VerifiedLock)
 		{
 			_verified ??= [];
 			foreach (IInteraction interaction in interactions)
@@ -245,7 +258,7 @@ public class FastMockInteractions : IMockInteractions
 
 		Volatile.Read(ref _fallback)?.Clear();
 
-		lock (_verifiedLock)
+		lock (VerifiedLock)
 		{
 			_verified = null;
 		}

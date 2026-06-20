@@ -17,7 +17,7 @@ public partial class MockRegistry
 	///     instead of growing one slot at a time as setups for higher-numbered members come in.
 	/// </summary>
 	private int GetMemberCountHint()
-		=> Interactions is FastMockInteractions fast ? fast.Buffers.Length : 0;
+		=> _interactions is FastMockInteractions fast ? fast.Buffers.Length : _interactionMemberCount;
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private EventSetup[]?[]? _eventSetupsByMemberId;
@@ -31,10 +31,24 @@ public partial class MockRegistry
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private MethodSetup[]?[]? _setupsByMemberId;
 
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private MockSetups? _setups;
+
 	/// <summary>
 	///     The registered setups for the mock, including methods, properties, indexers and events.
 	/// </summary>
-	internal MockSetups Setup { get; }
+	/// <remarks>
+	///     Allocated lazily on first access (setup registration or a read that has to consult the
+	///     string-keyed/scenario buckets). A mock that is only created — and only ever has its members
+	///     invoked through the member-id snapshot path — never allocates a <see cref="MockSetups" />.
+	/// </remarks>
+	internal MockSetups Setup => _setups ?? EnsureSetups();
+
+	private MockSetups EnsureSetups()
+	{
+		Interlocked.CompareExchange(ref _setups, new MockSetups(), null);
+		return _setups!;
+	}
 
 	/// <summary>
 	///     Registers <paramref name="indexerSetup" /> for the default scenario.
