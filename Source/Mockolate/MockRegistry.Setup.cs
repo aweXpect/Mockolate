@@ -9,7 +9,24 @@ namespace Mockolate;
 public partial class MockRegistry
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private readonly object _setupsByMemberIdLock = new();
+	private object? _setupsByMemberIdLock;
+
+	// Lazily allocated: only setup registration (the AppendTo*/PublishProperty* paths) takes this lock,
+	// so a mock that is only created — and never has a setup registered — never allocates it.
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private object SetupsByMemberIdLock
+	{
+		get
+		{
+			if (_setupsByMemberIdLock is { } existing)
+			{
+				return existing;
+			}
+
+			Interlocked.CompareExchange(ref _setupsByMemberIdLock, new object(), null);
+			return _setupsByMemberIdLock!;
+		}
+	}
 
 	/// <summary>
 	///     Returns the generator-known member count hint when <see cref="Interactions" /> is a
@@ -102,7 +119,7 @@ public partial class MockRegistry
 
 	private void AppendToIndexerMemberIdBucket(int memberId, IndexerSetup indexerSetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			IndexerSetup[]?[]? oldTable = _indexerSetupsByMemberId;
 			int requiredLen = memberId + 1;
@@ -198,7 +215,7 @@ public partial class MockRegistry
 
 	private void AppendToMemberIdBucket(int memberId, MethodSetup methodSetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			MethodSetup[]?[]? oldTable = _setupsByMemberId;
 			int requiredLen = memberId + 1;
@@ -293,7 +310,7 @@ public partial class MockRegistry
 
 	private void PublishPropertyToMemberIdBucket(int memberId, PropertySetup propertySetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			PropertySetup?[]? oldTable = _propertySetupsByMemberId;
 			int requiredLen = memberId + 1;
@@ -383,7 +400,7 @@ public partial class MockRegistry
 
 	private void AppendToEventMemberIdBucket(int memberId, EventSetup eventSetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			EventSetup[]?[]? oldTable = _eventSetupsByMemberId;
 			int requiredLen = memberId + 1;
