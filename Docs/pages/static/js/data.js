@@ -258,6 +258,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -303,7 +309,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -352,7 +359,8 @@ window.BENCHMARK_DATA = {
           344.0163266318185,
           323.78995840890065,
           321.097069867452,
-          340.53021376927694
+          340.53021376927694,
+          327.52950426510404
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -367,6 +375,7 @@ window.BENCHMARK_DATA = {
           1832,
           1832,
           1832,
+          1720,
           1720,
           1720,
           1720,
@@ -463,7 +472,8 @@ window.BENCHMARK_DATA = {
           97668.51267903646,
           72490.748273577,
           98177.12781575522,
-          71242.256086077
+          71242.256086077,
+          72000.21970912388
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -516,6 +526,7 @@ window.BENCHMARK_DATA = {
           9096,
           9096,
           9208,
+          9096,
           9096,
           9096
         ],
@@ -574,7 +585,8 @@ window.BENCHMARK_DATA = {
           4494.006188964844,
           4194.555804443359,
           4259.697175246019,
-          4099.057168070475
+          4099.057168070475,
+          4257.220399584089
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -586,6 +598,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          7928,
           7928,
           7928,
           7928,
@@ -685,7 +698,8 @@ window.BENCHMARK_DATA = {
           4789.669967651367,
           4402.485179356167,
           4681.305263264974,
-          4439.99020131429
+          4439.99020131429,
+          4483.993589274089
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -726,6 +740,7 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6959,
+          6970,
           6970,
           6970,
           6970,
@@ -796,7 +811,8 @@ window.BENCHMARK_DATA = {
           435.2488980293274,
           402.5084812482198,
           399.6109811147054,
-          419.5090321222941
+          419.5090321222941,
+          413.75944269620453
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -808,6 +824,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -907,7 +924,8 @@ window.BENCHMARK_DATA = {
           526.0001818111965,
           534.3226893288748,
           475.3434842314039,
-          519.724902519813
+          519.724902519813,
+          565.4344334602356
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -960,6 +978,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040
         ],
@@ -1233,6 +1252,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -1278,7 +1303,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -1327,7 +1353,8 @@ window.BENCHMARK_DATA = {
           304.69400723775226,
           305.4529285589854,
           327.48536659876504,
-          305.4970123608907
+          305.4970123608907,
+          332.2364135106405
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1344,6 +1371,7 @@ window.BENCHMARK_DATA = {
           1872,
           1952,
           1952,
+          1824,
           1824,
           1824,
           1824,
@@ -1438,7 +1466,8 @@ window.BENCHMARK_DATA = {
           15877.329493931362,
           15920.97098482572,
           14758.116119384766,
-          14182.597387695312
+          14182.597387695312,
+          16545.199368990383
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1450,6 +1479,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          12809,
           12809,
           12809,
           12809,
@@ -1549,7 +1579,8 @@ window.BENCHMARK_DATA = {
           5472.753806050619,
           5518.874809810093,
           5513.477928670248,
-          5164.768974849156
+          5164.768974849156,
+          5680.55021870931
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1561,6 +1592,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -1660,7 +1692,8 @@ window.BENCHMARK_DATA = {
           212702.8413574219,
           210827.58217366537,
           230839.2000325521,
-          231456.87268880208
+          231456.87268880208,
+          215360.0833170573
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1711,6 +1744,7 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15594,
+          15628,
           15628,
           15628,
           15628,
@@ -1771,7 +1805,8 @@ window.BENCHMARK_DATA = {
           1292.2033963521321,
           1337.3598634174891,
           1661.8409879684448,
-          1295.168740272522
+          1295.168740272522,
+          1409.8849573135376
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1783,6 +1818,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -1882,7 +1918,8 @@ window.BENCHMARK_DATA = {
           179.0949455669948,
           182.5402222275734,
           197.1126252969106,
-          173.034425173487
+          173.034425173487,
+          194.9467976729075
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1935,6 +1972,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376
         ],
@@ -2208,6 +2246,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -2253,7 +2297,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -2302,7 +2347,8 @@ window.BENCHMARK_DATA = {
           1023.2669820149739,
           1137.5731559753417,
           995.3119922002156,
-          937.2146085103353
+          937.2146085103353,
+          1076.9882094701131
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2339,6 +2385,7 @@ window.BENCHMARK_DATA = {
           3904,
           3904,
           3904,
+          3912,
           3912,
           3912,
           3912,
@@ -2413,7 +2460,8 @@ window.BENCHMARK_DATA = {
           166780.8474609375,
           167483.48053850446,
           217720.94203404017,
-          171466.96431790866
+          171466.96431790866,
+          174541.56099759616
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2467,7 +2515,8 @@ window.BENCHMARK_DATA = {
           20849,
           20721,
           20732,
-          20844
+          20844,
+          20972
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2524,7 +2573,8 @@ window.BENCHMARK_DATA = {
           9967.299831136068,
           9787.912096150716,
           9145.046932765415,
-          8758.208048502604
+          8758.208048502604,
+          8867.093095906575
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2578,6 +2628,7 @@ window.BENCHMARK_DATA = {
           13088,
           13088,
           13088,
+          13144,
           13144
         ],
         "borderColor": "#5E2750",
@@ -2635,7 +2686,8 @@ window.BENCHMARK_DATA = {
           11069.530017089844,
           12012.772979736328,
           11696.30127280099,
-          10060.74537556966
+          10060.74537556966,
+          10479.855262247722
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2688,6 +2740,7 @@ window.BENCHMARK_DATA = {
           13954,
           13943,
           13943,
+          13954,
           13954,
           13954
         ],
@@ -2746,7 +2799,8 @@ window.BENCHMARK_DATA = {
           950.2389097849529,
           1055.0064094543457,
           840.7421754428318,
-          818.7479092053005
+          818.7479092053005,
+          861.7634079272931
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2758,6 +2812,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -3072,6 +3127,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -3117,7 +3178,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -3166,7 +3228,8 @@ window.BENCHMARK_DATA = {
           2905.4666915893554,
           3032.2649386088056,
           2397.562699999128,
-          2493.126840863909
+          2493.126840863909,
+          2575.039095071646
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3203,6 +3266,7 @@ window.BENCHMARK_DATA = {
           4984,
           4984,
           4984,
+          4992,
           4992,
           4992,
           4992,
@@ -3277,7 +3341,8 @@ window.BENCHMARK_DATA = {
           176910.3588378906,
           177822.9604654948,
           229780.86905924478,
-          184894.8772298177
+          184894.8772298177,
+          186367.47864583333
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3331,7 +3396,8 @@ window.BENCHMARK_DATA = {
           30603,
           29324,
           29332,
-          29444
+          29444,
+          29570
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3388,7 +3454,8 @@ window.BENCHMARK_DATA = {
           23624.399028233118,
           23424.42562866211,
           22366.106215413412,
-          21017.5939919608
+          21017.5939919608,
+          22278.33654315655
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3442,6 +3509,7 @@ window.BENCHMARK_DATA = {
           26193,
           26193,
           26193,
+          26249,
           26249
         ],
         "borderColor": "#5E2750",
@@ -3499,7 +3567,8 @@ window.BENCHMARK_DATA = {
           23592.80067952474,
           25020.401100667317,
           25037.81621500651,
-          21065.357448032923
+          21065.357448032923,
+          21918.055877685547
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3552,6 +3621,7 @@ window.BENCHMARK_DATA = {
           33764,
           33772,
           33772,
+          33764,
           33764,
           33764
         ],
@@ -3610,7 +3680,8 @@ window.BENCHMARK_DATA = {
           2419.995024108887,
           2503.828367869059,
           2000.2053202115571,
-          2047.5321102142334
+          2047.5321102142334,
+          2134.703297206334
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3622,6 +3693,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -3936,6 +4008,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -3981,7 +4059,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -4030,7 +4109,8 @@ window.BENCHMARK_DATA = {
           365.40915199688504,
           389.341205406189,
           362.40164038113187,
-          375.55236431530545
+          375.55236431530545,
+          430.2977404912313
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4045,6 +4125,7 @@ window.BENCHMARK_DATA = {
           2200,
           2200,
           2200,
+          2088,
           2088,
           2088,
           2088,
@@ -4141,7 +4222,8 @@ window.BENCHMARK_DATA = {
           136423.01627604166,
           188286.84964192708,
           136642.5873325893,
-          134759.1072265625
+          134759.1072265625,
+          184929.19199916295
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4195,7 +4277,8 @@ window.BENCHMARK_DATA = {
           15086,
           15150,
           15098,
-          15086
+          15086,
+          14926
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4252,7 +4335,8 @@ window.BENCHMARK_DATA = {
           5419.848208109538,
           5794.761483764649,
           5252.005239868164,
-          5537.460307820638
+          5537.460307820638,
+          6165.0543696085615
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4306,7 +4390,8 @@ window.BENCHMARK_DATA = {
           9336,
           9336,
           9280,
-          9336
+          9336,
+          9280
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4363,7 +4448,8 @@ window.BENCHMARK_DATA = {
           5793.448399861653,
           6415.307803853353,
           5327.510377502442,
-          5755.268306986491
+          5755.268306986491,
+          6315.150686536516
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4413,6 +4499,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8245,
+          8244,
           8244,
           8244,
           8244,
@@ -4474,7 +4561,8 @@ window.BENCHMARK_DATA = {
           551.4574928283691,
           568.8499755178179,
           536.6754687173026,
-          540.2658959168655
+          540.2658959168655,
+          616.0389137268066
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4486,6 +4574,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -4585,7 +4674,8 @@ window.BENCHMARK_DATA = {
           499.15576623280845,
           471.36170399983723,
           495.086448097229,
-          488.7871950013297
+          488.7871950013297,
+          527.3643661907741
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -4638,6 +4728,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064
         ],
@@ -4911,6 +5002,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -4956,7 +5053,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -5005,7 +5103,8 @@ window.BENCHMARK_DATA = {
           676.7881896336874,
           706.1377662658691,
           633.6435656865438,
-          666.3505357742309
+          666.3505357742309,
+          700.4914154688518
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5020,6 +5119,7 @@ window.BENCHMARK_DATA = {
           2416,
           2416,
           2416,
+          2304,
           2304,
           2304,
           2304,
@@ -5116,7 +5216,8 @@ window.BENCHMARK_DATA = {
           143918.28211388222,
           195996.17556966146,
           139947.92353515624,
-          138989.0513183594
+          138989.0513183594,
+          190824.61600435697
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5170,7 +5271,8 @@ window.BENCHMARK_DATA = {
           19085,
           19149,
           19085,
-          19085
+          19085,
+          18925
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5227,7 +5329,8 @@ window.BENCHMARK_DATA = {
           8243.27079119001,
           8752.334768168132,
           7961.9633778889975,
-          8036.020787920271
+          8036.020787920271,
+          8734.385186331612
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5281,7 +5384,8 @@ window.BENCHMARK_DATA = {
           12361,
           12361,
           11800,
-          12361
+          12361,
+          11800
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5338,7 +5442,8 @@ window.BENCHMARK_DATA = {
           8837.554067339215,
           10093.640817260743,
           8404.035357883999,
-          8683.566288248698
+          8683.566288248698,
+          9697.02717263358
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5356,6 +5461,7 @@ window.BENCHMARK_DATA = {
           16433,
           16433,
           16433,
+          15786,
           15786,
           15786,
           15786,
@@ -5449,7 +5555,8 @@ window.BENCHMARK_DATA = {
           1185.5845638275146,
           1168.395023473104,
           1074.9621583302817,
-          1112.416587148394
+          1112.416587148394,
+          1197.6138587315877
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5461,6 +5568,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -5560,7 +5668,8 @@ window.BENCHMARK_DATA = {
           1519.3200089381291,
           1461.889575322469,
           1397.8907443682353,
-          1451.036745707194
+          1451.036745707194,
+          1457.0087961469378
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5613,6 +5722,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816
         ],
@@ -5886,6 +5996,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -5931,7 +6047,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -5980,7 +6097,8 @@ window.BENCHMARK_DATA = {
           881.6833140055338,
           565.6013423919678,
           535.9998128890991,
-          528.8145252863566
+          528.8145252863566,
+          518.8012578964233
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6017,6 +6135,7 @@ window.BENCHMARK_DATA = {
           2520,
           2520,
           2520,
+          2528,
           2528,
           2528,
           2528,
@@ -6091,7 +6210,8 @@ window.BENCHMARK_DATA = {
           10130.931405203683,
           10658.567068246695,
           12317.135522460938,
-          12024.556658063617
+          12024.556658063617,
+          11874.28310922476
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6145,7 +6265,8 @@ window.BENCHMARK_DATA = {
           10641,
           10513,
           10513,
-          10641
+          10641,
+          10513
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6202,7 +6323,8 @@ window.BENCHMARK_DATA = {
           6646.506149836949,
           7120.38572038923,
           7580.243794759114,
-          7890.702718098958
+          7890.702718098958,
+          7853.07316385905
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6214,6 +6336,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -6313,7 +6436,8 @@ window.BENCHMARK_DATA = {
           7010.535306113107,
           7974.75007985433,
           8664.588631184895,
-          8399.66040649414
+          8399.66040649414,
+          8562.106182861327
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6361,6 +6485,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11588,
+          11508,
           11508,
           11508,
           11508,
@@ -6424,7 +6549,8 @@ window.BENCHMARK_DATA = {
           431.3916382789612,
           443.24638284047444,
           464.80996638077954,
-          474.72524785995483
+          474.72524785995483,
+          426.88254769643146
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6436,6 +6562,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -6535,7 +6662,8 @@ window.BENCHMARK_DATA = {
           450.26900948010956,
           482.2703650156657,
           471.8172441482544,
-          470.72769614628385
+          470.72769614628385,
+          500.1350400606791
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6588,6 +6716,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680
         ],
@@ -6861,6 +6990,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -6906,7 +7041,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -6955,7 +7091,8 @@ window.BENCHMARK_DATA = {
           1017.3402383168539,
           1077.9393480936685,
           1035.3626860300699,
-          1034.6230656941732
+          1034.6230656941732,
+          993.2554721832275
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6992,6 +7129,7 @@ window.BENCHMARK_DATA = {
           3024,
           3024,
           3024,
+          3032,
           3032,
           3032,
           3032,
@@ -7066,7 +7204,8 @@ window.BENCHMARK_DATA = {
           16498.893621826173,
           17214.80944620768,
           19278.967383248466,
-          19034.355529785156
+          19034.355529785156,
+          18950.123219081335
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7120,7 +7259,8 @@ window.BENCHMARK_DATA = {
           18721,
           17441,
           17441,
-          18721
+          18721,
+          17441
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7177,7 +7317,8 @@ window.BENCHMARK_DATA = {
           15856.913982684795,
           16915.00025503976,
           17838.394856770832,
-          17494.42833533654
+          17494.42833533654,
+          17913.932873535156
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7189,6 +7330,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -7288,7 +7430,8 @@ window.BENCHMARK_DATA = {
           16653.189042154947,
           18275.51221172626,
           19800.952989850724,
-          19902.303764930137
+          19902.303764930137,
+          20694.08217914288
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7336,6 +7479,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31627,
+          31546,
           31546,
           31546,
           31546,
@@ -7399,7 +7543,8 @@ window.BENCHMARK_DATA = {
           1067.0156260172525,
           1097.6558989206949,
           1123.5224586486815,
-          1067.300642306988
+          1067.300642306988,
+          1097.7486941473824
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7411,6 +7556,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -7510,7 +7656,8 @@ window.BENCHMARK_DATA = {
           1568.2131299972534,
           1718.7631295067924,
           1624.916238648551,
-          1576.7223945030798
+          1576.7223945030798,
+          1595.2356498718261
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7563,6 +7710,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032
         ],
@@ -7836,6 +7984,12 @@ window.BENCHMARK_DATA = {
         "author": "dependabot[bot]",
         "date": "Sat Jun 20 09:51:27 2026 \u002B0000",
         "message": "chore: Bump Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing from 1.1.3 to 1.1.4 (#799)"
+      },
+      {
+        "sha": "a751598c8c42fb5e340ed3cf63e5f6117f2ddcd9",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Jun 20 11:54:22 2026 \u002B0200",
+        "message": "coverage: cover wrapping a class without a parameterless constructor (#801)"
       }
     ],
     "labels": [
@@ -7881,7 +8035,8 @@ window.BENCHMARK_DATA = {
       "3424df74",
       "65d3ca74",
       "c1f866e2",
-      "23044325"
+      "23044325",
+      "a751598c"
     ],
     "datasets": [
       {
@@ -7930,7 +8085,8 @@ window.BENCHMARK_DATA = {
           63.21124790112177,
           66.23289399487632,
           50.9580771724383,
-          36.8702533920606
+          36.8702533920606,
+          66.19160300095876
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7947,6 +8103,7 @@ window.BENCHMARK_DATA = {
           1048,
           1048,
           1048,
+          440,
           440,
           440,
           440,
@@ -8041,7 +8198,8 @@ window.BENCHMARK_DATA = {
           269.43764080320085,
           280.1030704975128,
           222.22164516448976,
-          149.6021406820842
+          149.6021406820842,
+          283.0366304397583
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8053,6 +8211,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -8152,7 +8311,8 @@ window.BENCHMARK_DATA = {
           35.37719884117444,
           37.1766397635142,
           29.56679181655248,
-          21.19058529688762
+          21.19058529688762,
+          37.338926608363785
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8205,6 +8365,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200
         ],
@@ -8263,7 +8424,8 @@ window.BENCHMARK_DATA = {
           1316.2869247436524,
           1327.423984527588,
           1058.0575651804606,
-          773.861977036794
+          773.861977036794,
+          1350.6345277150472
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8275,6 +8437,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -8374,7 +8537,8 @@ window.BENCHMARK_DATA = {
           1816.666676012675,
           1838.41850904318,
           1420.9053585345928,
-          1041.1626898447673
+          1041.1626898447673,
+          1918.9002193450929
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8386,6 +8550,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -8485,7 +8650,8 @@ window.BENCHMARK_DATA = {
           1707.9367577689034,
           1782.993139403207,
           1389.1392592021398,
-          980.9286453247071
+          980.9286453247071,
+          1805.4048516409737
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8535,6 +8701,7 @@ window.BENCHMARK_DATA = {
           2763,
           2763,
           2772,
+          2763,
           2763,
           2763,
           2763,
