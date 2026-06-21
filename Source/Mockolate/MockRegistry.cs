@@ -48,8 +48,6 @@ public partial class MockRegistry
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
 		_interactions = interactions;
-		// Setup (MockSetups) and _scenarioState are allocated lazily on first use so a mock that is
-		// only created — and never has a setup registered or a scenario transition — pays for neither.
 		Wraps = null;
 	}
 
@@ -72,7 +70,6 @@ public partial class MockRegistry
 		Behavior = behavior;
 		ConstructorParameters = constructorParameters;
 		_interactionMemberCount = memberCount;
-		// Interactions, Setup and _scenarioState are all allocated lazily on first use.
 		Wraps = null;
 	}
 
@@ -87,8 +84,6 @@ public partial class MockRegistry
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
 		_interactions = new FastMockInteractions(0, registry.Behavior.SkipInteractionRecording);
-		// Materialize the parent's setups and scenario state so they stay shared by reference
-		// (derived registries for wrap/monitor/constructor-params share state with their source).
 		_setups = registry.Setup;
 		_scenarioState = registry.GetOrCreateScenarioState();
 		Wraps = wraps;
@@ -104,10 +99,7 @@ public partial class MockRegistry
 	{
 		Behavior = registry.Behavior;
 		ConstructorParameters = constructorParameters;
-		// Materialize the parent's interactions so this derived registry shares the same store.
 		_interactions = registry.Interactions;
-		// Materialize the parent's setups and scenario state so they stay shared by reference
-		// (derived registries for wrap/monitor/constructor-params share state with their source).
 		_setups = registry.Setup;
 		_scenarioState = registry.GetOrCreateScenarioState();
 		Wraps = registry.Wraps;
@@ -134,8 +126,6 @@ public partial class MockRegistry
 		Behavior = registry.Behavior;
 		ConstructorParameters = registry.ConstructorParameters;
 		_interactions = interactions;
-		// Materialize the parent's setups and scenario state so they stay shared by reference
-		// (derived registries for wrap/monitor/constructor-params share state with their source).
 		_setups = registry.Setup;
 		_scenarioState = registry.GetOrCreateScenarioState();
 		Wraps = registry.Wraps;

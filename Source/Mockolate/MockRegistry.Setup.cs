@@ -9,22 +9,18 @@ namespace Mockolate;
 public partial class MockRegistry
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private object? _setupsByMemberIdLock;
-
-	// Lazily allocated: only setup registration (the AppendTo*/PublishProperty* paths) takes this lock,
-	// so a mock that is only created — and never has a setup registered — never allocates it.
-	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private object SetupsByMemberIdLock
 	{
 		get
 		{
-			if (_setupsByMemberIdLock is { } existing)
+			if (field is { } existing)
 			{
 				return existing;
 			}
 
-			Interlocked.CompareExchange(ref _setupsByMemberIdLock, new object(), null);
-			return _setupsByMemberIdLock!;
+			Interlocked.CompareExchange(ref field, new object(), null);
+			return field!;
 		}
 	}
 
@@ -54,11 +50,6 @@ public partial class MockRegistry
 	/// <summary>
 	///     The registered setups for the mock, including methods, properties, indexers and events.
 	/// </summary>
-	/// <remarks>
-	///     Allocated lazily on first access (setup registration or a read that has to consult the
-	///     string-keyed/scenario buckets). A mock that is only created — and only ever has its members
-	///     invoked through the member-id snapshot path — never allocates a <see cref="MockSetups" />.
-	/// </remarks>
 	internal MockSetups Setup => _setups ?? EnsureSetups();
 
 	private MockSetups EnsureSetups()

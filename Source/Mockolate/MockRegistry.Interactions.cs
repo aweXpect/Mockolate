@@ -17,11 +17,6 @@ public partial class MockRegistry
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	/// <remarks>
-	///     When the registry was created from a member count (the generator-emitted <c>CreateMock</c> path), the
-	///     backing <see cref="FastMockInteractions" /> is allocated lazily on first access — a mock that is only
-	///     created, never invoked or verified, allocates no interaction store at all.
-	/// </remarks>
 	public IMockInteractions Interactions => _interactions ?? EnsureInteractions();
 
 	private IMockInteractions EnsureInteractions()
