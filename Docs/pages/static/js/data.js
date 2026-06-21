@@ -282,6 +282,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -331,7 +337,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -384,7 +391,8 @@ window.BENCHMARK_DATA = {
           327.52950426510404,
           328.3097351074219,
           312.91700550715126,
-          304.31465107599894
+          304.31465107599894,
+          304.2058266230992
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -442,6 +450,7 @@ window.BENCHMARK_DATA = {
           1720,
           1720,
           1720,
+          1608,
           1608
         ],
         "borderColor": "#63A2AC",
@@ -503,7 +512,8 @@ window.BENCHMARK_DATA = {
           72000.21970912388,
           98186.8475748698,
           71640.63216145833,
-          70760.5832170759
+          70760.5832170759,
+          70439.36157226562
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -556,6 +566,7 @@ window.BENCHMARK_DATA = {
           9096,
           9096,
           9208,
+          9096,
           9096,
           9096,
           9096,
@@ -622,7 +633,8 @@ window.BENCHMARK_DATA = {
           4257.220399584089,
           4482.762282738318,
           4057.233439127604,
-          4216.404076131185
+          4216.404076131185,
+          4032.5333192007884
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -634,6 +646,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          7928,
           7928,
           7928,
           7928,
@@ -741,7 +754,8 @@ window.BENCHMARK_DATA = {
           4483.993589274089,
           4831.511616007487,
           4203.350462849935,
-          4308.587842123849
+          4308.587842123849,
+          4404.360576883952
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -782,6 +796,7 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6959,
+          6970,
           6970,
           6970,
           6970,
@@ -860,7 +875,8 @@ window.BENCHMARK_DATA = {
           413.75944269620453,
           396.15656702335065,
           394.35130710601806,
-          405.2406050137111
+          405.2406050137111,
+          400.8168460772588
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -872,6 +888,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -979,7 +996,8 @@ window.BENCHMARK_DATA = {
           565.4344334602356,
           474.39399422918046,
           518.6020746866863,
-          522.5295310020447
+          522.5295310020447,
+          509.28957763085
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1032,6 +1050,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040,
@@ -1333,6 +1352,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -1382,7 +1407,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -1435,7 +1461,8 @@ window.BENCHMARK_DATA = {
           332.2364135106405,
           294.0793772061666,
           314.64878641764324,
-          290.0517318725586
+          290.0517318725586,
+          353.3741834640503
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1493,6 +1520,7 @@ window.BENCHMARK_DATA = {
           1824,
           1824,
           1824,
+          1744,
           1744
         ],
         "borderColor": "#63A2AC",
@@ -1554,7 +1582,8 @@ window.BENCHMARK_DATA = {
           16545.199368990383,
           16188.9679914202,
           14027.902189127604,
-          15712.250018780049
+          15712.250018780049,
+          17233.691669170672
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1566,6 +1595,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          12809,
           12809,
           12809,
           12809,
@@ -1673,7 +1703,8 @@ window.BENCHMARK_DATA = {
           5680.55021870931,
           5558.861244788537,
           5333.216164222131,
-          5727.052622868465
+          5727.052622868465,
+          6061.138748168945
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1685,6 +1716,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -1792,7 +1824,8 @@ window.BENCHMARK_DATA = {
           215360.0833170573,
           214676.53004673548,
           230136.70387486048,
-          216541.3254720052
+          216541.3254720052,
+          220986.71739908855
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1849,6 +1882,7 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15740,
+          15628,
           15628,
           15628
         ],
@@ -1911,7 +1945,8 @@ window.BENCHMARK_DATA = {
           1409.8849573135376,
           1266.0354490280151,
           1391.9450846354166,
-          1364.604754002889
+          1364.604754002889,
+          1641.1515489578246
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1923,6 +1958,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -2030,7 +2066,8 @@ window.BENCHMARK_DATA = {
           194.9467976729075,
           175.6534941673279,
           173.99331359068552,
-          177.73827620653006
+          177.73827620653006,
+          230.36439193089802
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2083,6 +2120,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376,
@@ -2384,6 +2422,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -2433,7 +2477,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -2486,7 +2531,8 @@ window.BENCHMARK_DATA = {
           1076.9882094701131,
           921.7648592631023,
           958.425599416097,
-          965.2852500915527
+          965.2852500915527,
+          1016.374113591512
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2544,6 +2590,7 @@ window.BENCHMARK_DATA = {
           3912,
           3912,
           3912,
+          3856,
           3856
         ],
         "borderColor": "#63A2AC",
@@ -2605,7 +2652,8 @@ window.BENCHMARK_DATA = {
           174541.56099759616,
           213442.4510672433,
           167624.26143973213,
-          170414.0892857143
+          170414.0892857143,
+          172215.57289341517
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2663,7 +2711,8 @@ window.BENCHMARK_DATA = {
           20972,
           20980,
           20732,
-          21084
+          21084,
+          20860
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2724,7 +2773,8 @@ window.BENCHMARK_DATA = {
           8867.093095906575,
           8960.273666381836,
           8453.463522338867,
-          8670.430185953775
+          8670.430185953775,
+          8789.561079915364
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2782,7 +2832,8 @@ window.BENCHMARK_DATA = {
           13144,
           13088,
           13144,
-          13088
+          13088,
+          13144
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2843,7 +2894,8 @@ window.BENCHMARK_DATA = {
           10479.855262247722,
           12052.905728149413,
           10046.269366455079,
-          9865.226838175457
+          9865.226838175457,
+          10154.945251464844
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2896,6 +2948,7 @@ window.BENCHMARK_DATA = {
           13954,
           13943,
           13943,
+          13954,
           13954,
           13954,
           13954,
@@ -2962,7 +3015,8 @@ window.BENCHMARK_DATA = {
           861.7634079272931,
           846.0088533401489,
           852.2498442786081,
-          841.6286561829703
+          841.6286561829703,
+          848.0217645009359
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2974,6 +3028,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -3316,6 +3371,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -3365,7 +3426,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -3418,7 +3480,8 @@ window.BENCHMARK_DATA = {
           2575.039095071646,
           2490.36492767334,
           2502.2778381347657,
-          2530.895807902018
+          2530.895807902018,
+          2561.750093841553
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3476,6 +3539,7 @@ window.BENCHMARK_DATA = {
           4992,
           4992,
           4992,
+          4936,
           4936
         ],
         "borderColor": "#63A2AC",
@@ -3537,7 +3601,8 @@ window.BENCHMARK_DATA = {
           186367.47864583333,
           229273.5503092448,
           177956.95029296874,
-          183500.6024169922
+          183500.6024169922,
+          187342.12270507813
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3595,7 +3660,8 @@ window.BENCHMARK_DATA = {
           29570,
           30730,
           29332,
-          30834
+          30834,
+          30610
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3656,7 +3722,8 @@ window.BENCHMARK_DATA = {
           22278.33654315655,
           22616.689170328777,
           20892.24571126302,
-          21092.50370686849
+          21092.50370686849,
+          21753.405529785156
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3714,7 +3781,8 @@ window.BENCHMARK_DATA = {
           26249,
           26193,
           26249,
-          26193
+          26193,
+          26249
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3775,7 +3843,8 @@ window.BENCHMARK_DATA = {
           21918.055877685547,
           25585.915006510415,
           20991.217535400392,
-          21079.63395385742
+          21079.63395385742,
+          21875.68434729943
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3828,6 +3897,7 @@ window.BENCHMARK_DATA = {
           33764,
           33772,
           33772,
+          33764,
           33764,
           33764,
           33764,
@@ -3894,7 +3964,8 @@ window.BENCHMARK_DATA = {
           2134.703297206334,
           2135.3975616455077,
           2008.801169531686,
-          2174.5654169718423
+          2174.5654169718423,
+          2117.124129486084
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3906,6 +3977,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -4248,6 +4320,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -4297,7 +4375,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -4350,7 +4429,8 @@ window.BENCHMARK_DATA = {
           430.2977404912313,
           426.67118450800575,
           389.7140454292297,
-          360.87086121241254
+          360.87086121241254,
+          371.45175580978395
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4408,6 +4488,7 @@ window.BENCHMARK_DATA = {
           2088,
           2088,
           2088,
+          1976,
           1976
         ],
         "borderColor": "#63A2AC",
@@ -4469,7 +4550,8 @@ window.BENCHMARK_DATA = {
           184929.19199916295,
           187843.6942313058,
           188323.41193498884,
-          186792.14815848213
+          186792.14815848213,
+          135328.4366280692
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4527,7 +4609,8 @@ window.BENCHMARK_DATA = {
           14926,
           14926,
           15086,
-          15086
+          15086,
+          14938
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4588,7 +4671,8 @@ window.BENCHMARK_DATA = {
           6165.0543696085615,
           6014.035827091762,
           6064.438907623291,
-          5723.378050667899
+          5723.378050667899,
+          5765.281456538609
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4646,7 +4730,8 @@ window.BENCHMARK_DATA = {
           9280,
           9336,
           9336,
-          9280
+          9280,
+          9336
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4707,7 +4792,8 @@ window.BENCHMARK_DATA = {
           6315.150686536516,
           6539.289426167806,
           6423.870134989421,
-          6000.436496480306
+          6000.436496480306,
+          5825.9786661783855
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4757,6 +4843,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8245,
+          8244,
           8244,
           8244,
           8244,
@@ -4826,7 +4913,8 @@ window.BENCHMARK_DATA = {
           616.0389137268066,
           688.8804828098843,
           605.032711982727,
-          552.0445617039999
+          552.0445617039999,
+          591.0744873682657
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4838,6 +4926,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -4945,7 +5034,8 @@ window.BENCHMARK_DATA = {
           527.3643661907741,
           616.1356421152751,
           525.3355987548828,
-          475.3158173561096
+          475.3158173561096,
+          527.7352011998495
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -4998,6 +5088,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064,
@@ -5299,6 +5390,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -5348,7 +5445,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -5401,7 +5499,8 @@ window.BENCHMARK_DATA = {
           700.4914154688518,
           769.9645594278971,
           711.0125778834025,
-          670.3497179031372
+          670.3497179031372,
+          671.5895349796002
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5459,6 +5558,7 @@ window.BENCHMARK_DATA = {
           2304,
           2304,
           2304,
+          2192,
           2192
         ],
         "borderColor": "#63A2AC",
@@ -5520,7 +5620,8 @@ window.BENCHMARK_DATA = {
           190824.61600435697,
           193580.7376953125,
           194922.68095703126,
-          190270.25418526787
+          190270.25418526787,
+          137601.0453613281
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5578,7 +5679,8 @@ window.BENCHMARK_DATA = {
           18925,
           18925,
           19085,
-          19085
+          19085,
+          18925
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5639,7 +5741,8 @@ window.BENCHMARK_DATA = {
           8734.385186331612,
           9125.274357096354,
           8825.181256103515,
-          8583.467663104717
+          8583.467663104717,
+          8514.945125873272
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5697,7 +5800,8 @@ window.BENCHMARK_DATA = {
           11800,
           12361,
           12361,
-          11800
+          11800,
+          12361
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5758,7 +5862,8 @@ window.BENCHMARK_DATA = {
           9697.02717263358,
           10059.154685974121,
           9948.720352172852,
-          9119.229592895508
+          9119.229592895508,
+          9208.857442220053
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5776,6 +5881,7 @@ window.BENCHMARK_DATA = {
           16433,
           16433,
           16433,
+          15786,
           15786,
           15786,
           15786,
@@ -5877,7 +5983,8 @@ window.BENCHMARK_DATA = {
           1197.6138587315877,
           1267.8855096181235,
           1230.325917816162,
-          1097.861228942871
+          1097.861228942871,
+          1188.5082686106364
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5889,6 +5996,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -5996,7 +6104,8 @@ window.BENCHMARK_DATA = {
           1457.0087961469378,
           1626.9964746747698,
           1431.809259033203,
-          1390.0710737864176
+          1390.0710737864176,
+          1517.5802830060322
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6049,6 +6158,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816,
@@ -6350,6 +6460,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -6399,7 +6515,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -6452,7 +6569,8 @@ window.BENCHMARK_DATA = {
           518.8012578964233,
           594.0000323568072,
           551.9605986913045,
-          523.2107543627421
+          523.2107543627421,
+          575.152395929609
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6510,6 +6628,7 @@ window.BENCHMARK_DATA = {
           2528,
           2528,
           2528,
+          2472,
           2472
         ],
         "borderColor": "#63A2AC",
@@ -6571,7 +6690,8 @@ window.BENCHMARK_DATA = {
           11874.28310922476,
           12804.70998273577,
           10799.771732875279,
-          10266.050330528846
+          10266.050330528846,
+          10889.271044049945
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6628,6 +6748,7 @@ window.BENCHMARK_DATA = {
           10641,
           10513,
           10785,
+          10641,
           10641,
           10641
         ],
@@ -6690,7 +6811,8 @@ window.BENCHMARK_DATA = {
           7853.07316385905,
           7849.440130615234,
           7111.111449686686,
-          6691.33326121739
+          6691.33326121739,
+          7104.477105712891
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6702,6 +6824,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -6809,7 +6932,8 @@ window.BENCHMARK_DATA = {
           8562.106182861327,
           9016.7335194179,
           7652.510189601353,
-          7172.1521328517365
+          7172.1521328517365,
+          7888.710850016276
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6857,6 +6981,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11588,
+          11508,
           11508,
           11508,
           11508,
@@ -6928,7 +7053,8 @@ window.BENCHMARK_DATA = {
           426.88254769643146,
           528.6746174494425,
           452.1911063875471,
-          420.89139956694385
+          420.89139956694385,
+          470.91852045059204
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6940,6 +7066,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -7047,7 +7174,8 @@ window.BENCHMARK_DATA = {
           500.1350400606791,
           531.4717914717538,
           466.91861019134524,
-          456.92606592178345
+          456.92606592178345,
+          503.30326245625815
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7100,6 +7228,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680,
@@ -7401,6 +7530,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -7450,7 +7585,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -7503,7 +7639,8 @@ window.BENCHMARK_DATA = {
           993.2554721832275,
           1182.9851322174072,
           1070.9573574066162,
-          1142.0640145710536
+          1142.0640145710536,
+          1071.7006322224936
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7561,6 +7698,7 @@ window.BENCHMARK_DATA = {
           3032,
           3032,
           3032,
+          2976,
           2976
         ],
         "borderColor": "#63A2AC",
@@ -7622,7 +7760,8 @@ window.BENCHMARK_DATA = {
           18950.123219081335,
           19609.041630045573,
           17308.062925211587,
-          16490.833573404947
+          16490.833573404947,
+          17466.935681152343
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7679,6 +7818,7 @@ window.BENCHMARK_DATA = {
           18721,
           17441,
           18865,
+          18721,
           18721,
           18721
         ],
@@ -7741,7 +7881,8 @@ window.BENCHMARK_DATA = {
           17913.932873535156,
           17631.267175292967,
           16345.33067220052,
-          15513.053839547294
+          15513.053839547294,
+          16534.070361328126
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7753,6 +7894,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -7860,7 +8002,8 @@ window.BENCHMARK_DATA = {
           20694.08217914288,
           20631.941352257363,
           18657.710599626815,
-          16721.275137765067
+          16721.275137765067,
+          17854.841206141882
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7908,6 +8051,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31627,
+          31546,
           31546,
           31546,
           31546,
@@ -7979,7 +8123,8 @@ window.BENCHMARK_DATA = {
           1097.7486941473824,
           1251.7582230885823,
           1132.0309701283772,
-          1060.0334617614747
+          1060.0334617614747,
+          1160.6480667114258
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7991,6 +8136,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -8098,7 +8244,8 @@ window.BENCHMARK_DATA = {
           1595.2356498718261,
           1714.5081233978271,
           1673.024366124471,
-          1564.1639014652797
+          1564.1639014652797,
+          1678.5663684844972
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8151,6 +8298,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032,
@@ -8452,6 +8600,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Sun Jun 21 07:26:17 2026 \u002B0200",
         "message": "perf: defer eager allocations in the mock-creation path (#803)"
+      },
+      {
+        "sha": "15105c66d7921106731f58f0c16ceabf3c62063e",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sun Jun 21 10:11:32 2026 \u002B0200",
+        "message": "chore: notify docs site after benchmark data is published (#804)"
       }
     ],
     "labels": [
@@ -8501,7 +8655,8 @@ window.BENCHMARK_DATA = {
       "a751598c",
       "4c019e46",
       "a6a49786",
-      "7f1ccd5e"
+      "7f1ccd5e",
+      "15105c66"
     ],
     "datasets": [
       {
@@ -8554,7 +8709,8 @@ window.BENCHMARK_DATA = {
           66.19160300095876,
           51.41278080741564,
           67.59039234320322,
-          18.920454076925914
+          18.920454076925914,
+          18.481705710291862
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8612,6 +8768,7 @@ window.BENCHMARK_DATA = {
           440,
           440,
           440,
+          160,
           160
         ],
         "borderColor": "#63A2AC",
@@ -8673,7 +8830,8 @@ window.BENCHMARK_DATA = {
           283.0366304397583,
           222.15664154688517,
           284.0454666064336,
-          294.41384544372556
+          294.41384544372556,
+          292.2102603594462
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8685,6 +8843,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -8792,7 +8951,8 @@ window.BENCHMARK_DATA = {
           37.338926608363785,
           29.214212375027792,
           36.999948449929555,
-          36.39422563711802
+          36.39422563711802,
+          38.06875399947167
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8845,6 +9005,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200,
@@ -8911,7 +9072,8 @@ window.BENCHMARK_DATA = {
           1350.6345277150472,
           1055.283120564052,
           1465.099299621582,
-          1486.8694733937582
+          1486.8694733937582,
+          1411.7223691940308
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8923,6 +9085,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -9030,7 +9193,8 @@ window.BENCHMARK_DATA = {
           1918.9002193450929,
           1459.4765743891398,
           2056.193089893886,
-          2089.4945508321125
+          2089.4945508321125,
+          2045.1172320048015
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9042,6 +9206,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -9149,7 +9314,8 @@ window.BENCHMARK_DATA = {
           1805.4048516409737,
           1459.8206631978353,
           1901.9527265003749,
-          1955.5342505137125
+          1955.5342505137125,
+          2002.7945545832315
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -9199,6 +9365,7 @@ window.BENCHMARK_DATA = {
           2763,
           2763,
           2772,
+          2763,
           2763,
           2763,
           2763,
