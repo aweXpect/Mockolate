@@ -9,7 +9,20 @@ namespace Mockolate;
 public partial class MockRegistry
 {
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-	private readonly object _setupsByMemberIdLock = new();
+	[field: DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private object SetupsByMemberIdLock
+	{
+		get
+		{
+			if (field is { } existing)
+			{
+				return existing;
+			}
+
+			Interlocked.CompareExchange(ref field, new object(), null);
+			return field!;
+		}
+	}
 
 	/// <summary>
 	///     Returns the generator-known member count hint when <see cref="Interactions" /> is a
@@ -17,7 +30,7 @@ public partial class MockRegistry
 	///     instead of growing one slot at a time as setups for higher-numbered members come in.
 	/// </summary>
 	private int GetMemberCountHint()
-		=> Interactions is FastMockInteractions fast ? fast.Buffers.Length : 0;
+		=> _interactions is FastMockInteractions fast ? fast.Buffers.Length : _interactionMemberCount;
 
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private EventSetup[]?[]? _eventSetupsByMemberId;
@@ -31,10 +44,19 @@ public partial class MockRegistry
 	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 	private MethodSetup[]?[]? _setupsByMemberId;
 
+	[DebuggerBrowsable(DebuggerBrowsableState.Never)]
+	private MockSetups? _setups;
+
 	/// <summary>
 	///     The registered setups for the mock, including methods, properties, indexers and events.
 	/// </summary>
-	internal MockSetups Setup { get; }
+	internal MockSetups Setup => _setups ?? EnsureSetups();
+
+	private MockSetups EnsureSetups()
+	{
+		Interlocked.CompareExchange(ref _setups, new MockSetups(), null);
+		return _setups!;
+	}
 
 	/// <summary>
 	///     Registers <paramref name="indexerSetup" /> for the default scenario.
@@ -88,7 +110,7 @@ public partial class MockRegistry
 
 	private void AppendToIndexerMemberIdBucket(int memberId, IndexerSetup indexerSetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			IndexerSetup[]?[]? oldTable = _indexerSetupsByMemberId;
 			int requiredLen = memberId + 1;
@@ -184,7 +206,7 @@ public partial class MockRegistry
 
 	private void AppendToMemberIdBucket(int memberId, MethodSetup methodSetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			MethodSetup[]?[]? oldTable = _setupsByMemberId;
 			int requiredLen = memberId + 1;
@@ -279,7 +301,7 @@ public partial class MockRegistry
 
 	private void PublishPropertyToMemberIdBucket(int memberId, PropertySetup propertySetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			PropertySetup?[]? oldTable = _propertySetupsByMemberId;
 			int requiredLen = memberId + 1;
@@ -369,7 +391,7 @@ public partial class MockRegistry
 
 	private void AppendToEventMemberIdBucket(int memberId, EventSetup eventSetup)
 	{
-		lock (_setupsByMemberIdLock)
+		lock (SetupsByMemberIdLock)
 		{
 			EventSetup[]?[]? oldTable = _eventSetupsByMemberId;
 			int requiredLen = memberId + 1;

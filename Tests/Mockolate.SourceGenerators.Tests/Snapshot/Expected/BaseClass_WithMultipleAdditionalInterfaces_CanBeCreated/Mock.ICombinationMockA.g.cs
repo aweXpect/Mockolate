@@ -39,7 +39,7 @@ internal static partial class Mock
 		/// </summary>
 		private static global::Mockolate.MockRegistry MockolateCreateRegistryFromBehavior(global::Mockolate.MockBehavior behavior)
 		{
-			global::Mockolate.MockRegistry registry = new global::Mockolate.MockRegistry(behavior, CreateFastInteractions(behavior));
+			global::Mockolate.MockRegistry registry = new global::Mockolate.MockRegistry(behavior, MemberCount);
 			return registry;
 		}
 
@@ -544,7 +544,7 @@ internal static partial class MockExtensionsForICombinationMockA
 			}
 
 			mockBehavior ??= global::Mockolate.MockBehavior.Default;
-			global::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, global::Mockolate.Mock.ICombinationMockA.CreateFastInteractions(mockBehavior), constructorParameters);
+			global::Mockolate.MockRegistry mockRegistry = new global::Mockolate.MockRegistry(mockBehavior, global::Mockolate.Mock.ICombinationMockA.MemberCount, constructorParameters);
 			return CreateMockInstance(mockRegistry, constructorParameters, setup);
 		}
 

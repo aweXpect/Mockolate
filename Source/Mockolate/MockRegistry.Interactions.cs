@@ -11,10 +11,20 @@ namespace Mockolate;
 
 public partial class MockRegistry
 {
+	private IMockInteractions? _interactions;
+	private readonly int _interactionMemberCount;
+
 	/// <summary>
 	///     Gets the collection of interactions recorded by the mock object.
 	/// </summary>
-	public IMockInteractions Interactions { get; }
+	public IMockInteractions Interactions => _interactions ?? EnsureInteractions();
+
+	private IMockInteractions EnsureInteractions()
+	{
+		Interlocked.CompareExchange(ref _interactions,
+			new FastMockInteractions(_interactionMemberCount, Behavior.SkipInteractionRecording), null);
+		return _interactions!;
+	}
 
 	/// <summary>
 	///     Clears all interactions recorded by the mock object.
@@ -131,8 +141,9 @@ public partial class MockRegistry
 	/// <returns>A lazy stream of matching setups, scenario-scoped first.</returns>
 	public IEnumerable<T> GetMethodSetups<T>(string methodName) where T : MethodSetup
 	{
-		if (!string.IsNullOrEmpty(Scenario) &&
-		    Setup.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
+		MockSetups? setups = _setups;
+		if (!string.IsNullOrEmpty(Scenario) && setups is not null &&
+		    setups.TryGetScenario(Scenario, out MockScenarioSetup? scopedBucket))
 		{
 			return EnumerateScopedAndGlobalMethodSetups<T>(methodName, scopedBucket);
 		}
@@ -140,7 +151,7 @@ public partial class MockRegistry
 		MethodSetup[]?[]? snapshot = Volatile.Read(ref _setupsByMemberId);
 		if (snapshot is null)
 		{
-			return Setup.Methods.EnumerateByName<T>(methodName);
+			return setups is null ? Array.Empty<T>() : setups.Methods.EnumerateByName<T>(methodName);
 		}
 
 		return EnumerateGlobalMethodSetups<T>(methodName, snapshot);
@@ -178,11 +189,14 @@ public partial class MockRegistry
 		}
 
 		// Hand-written SetupMethod(MethodSetup) entries (e.g. the HttpClientExtensions pipeline) live
-		// only in the root dict; the empty-storage fast path returns Array.Empty<T> so the loop
-		// allocates nothing further when no such entry exists.
-		foreach (T setup in Setup.Methods.EnumerateByName<T>(methodName))
+		// only in the root dict; when no MockSetups has been allocated there can be none, so the loop
+		// is skipped entirely and never forces the lazy allocation.
+		if (_setups is { } setups)
 		{
-			yield return setup;
+			foreach (T setup in setups.Methods.EnumerateByName<T>(methodName))
+			{
+				yield return setup;
+			}
 		}
 	}
 
