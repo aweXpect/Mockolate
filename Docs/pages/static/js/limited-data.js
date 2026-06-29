@@ -296,10 +296,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -352,7 +352,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -408,7 +408,7 @@ window.BENCHMARK_DATA = {
           304.2058266230992,
           338.6672256787618,
           350.37004073460895,
-          349.49583628972374
+          340.05267201937164
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -533,7 +533,7 @@ window.BENCHMARK_DATA = {
           70439.36157226562,
           101945.34482421874,
           99088.11336844308,
-          100901.52008928571
+          97761.98113141741
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -658,7 +658,7 @@ window.BENCHMARK_DATA = {
           4032.5333192007884,
           4311.432818603515,
           4619.299671936035,
-          4551.867371150425
+          4682.623350524902
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -783,7 +783,7 @@ window.BENCHMARK_DATA = {
           4404.360576883952,
           4949.9436274937225,
           5080.398547363281,
-          5004.752079554966
+          4979.082642110189
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -908,7 +908,7 @@ window.BENCHMARK_DATA = {
           400.8168460772588,
           407.01974654197693,
           454.2394699369158,
-          455.2220277150472
+          439.5243856906891
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1033,7 +1033,7 @@ window.BENCHMARK_DATA = {
           509.28957763085,
           486.8008132662092,
           544.9337533542088,
-          544.8009708086649
+          522.2387529373169
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1404,10 +1404,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -1460,7 +1460,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -1516,7 +1516,7 @@ window.BENCHMARK_DATA = {
           353.3741834640503,
           285.74055198033653,
           297.4741662343343,
-          315.5373158795493
+          299.804274336497
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1641,7 +1641,7 @@ window.BENCHMARK_DATA = {
           17233.691669170672,
           15674.02138671875,
           16384.306474958146,
-          14468.367309570312
+          13948.90283610026
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1766,7 +1766,7 @@ window.BENCHMARK_DATA = {
           6061.138748168945,
           5555.690846369816,
           5726.474281819662,
-          5275.4750982012065
+          5140.680752345494
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1891,7 +1891,7 @@ window.BENCHMARK_DATA = {
           220986.71739908855,
           211774.6158541166,
           211844.59014423078,
-          228408.34003557477
+          230784.5215983073
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2016,7 +2016,7 @@ window.BENCHMARK_DATA = {
           1641.1515489578246,
           1278.3521768252056,
           1343.829134496053,
-          1406.9148769378662
+          1323.9210748036703
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2141,7 +2141,7 @@ window.BENCHMARK_DATA = {
           230.36439193089802,
           179.044157402856,
           187.4157907451902,
-          181.65909706751506
+          173.69336314201354
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2512,10 +2512,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -2568,7 +2568,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -2624,7 +2624,7 @@ window.BENCHMARK_DATA = {
           1016.374113591512,
           1000.3796611785889,
           1003.7066095987956,
-          973.5776486714681
+          942.9587848369891
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2749,7 +2749,7 @@ window.BENCHMARK_DATA = {
           172215.57289341517,
           219051.28100585938,
           223815.48992047991,
-          162725.56256510416
+          214757.9515625
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2810,7 +2810,7 @@ window.BENCHMARK_DATA = {
           20860,
           20732,
           20860,
-          20849
+          20940
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2874,7 +2874,7 @@ window.BENCHMARK_DATA = {
           8789.561079915364,
           9216.456399536133,
           9552.85468183245,
-          9280.460334269206
+          9091.803953988212
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2935,7 +2935,7 @@ window.BENCHMARK_DATA = {
           13144,
           13088,
           13144,
-          13088
+          13144
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2999,7 +2999,7 @@ window.BENCHMARK_DATA = {
           10154.945251464844,
           11764.10573049692,
           12711.145857747395,
-          11258.679206848145
+          11757.850473022461
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3060,7 +3060,7 @@ window.BENCHMARK_DATA = {
           13954,
           13954,
           13954,
-          13943
+          13954
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3124,7 +3124,7 @@ window.BENCHMARK_DATA = {
           848.0217645009359,
           920.498572731018,
           919.6638009389242,
-          869.3891297067914
+          889.4004725676316
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3495,10 +3495,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -3551,7 +3551,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -3607,7 +3607,7 @@ window.BENCHMARK_DATA = {
           2561.750093841553,
           2563.017930984497,
           2507.6690747578937,
-          2866.350111643473
+          2525.805099759783
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3732,7 +3732,7 @@ window.BENCHMARK_DATA = {
           187342.12270507813,
           231661.5697265625,
           233563.7876499721,
-          173024.09435221355
+          224912.80291341146
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3793,7 +3793,7 @@ window.BENCHMARK_DATA = {
           30610,
           29332,
           30610,
-          30603
+          30690
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3857,7 +3857,7 @@ window.BENCHMARK_DATA = {
           21753.405529785156,
           22457.469556535994,
           24429.811061604818,
-          22417.72626139323
+          22615.175517781576
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3918,7 +3918,7 @@ window.BENCHMARK_DATA = {
           26249,
           26193,
           26249,
-          26193
+          26249
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3982,7 +3982,7 @@ window.BENCHMARK_DATA = {
           21875.68434729943,
           24826.55660541241,
           26030.403454589843,
-          23124.146122233073
+          24046.29910481771
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4043,7 +4043,7 @@ window.BENCHMARK_DATA = {
           33764,
           33764,
           33764,
-          33772
+          33764
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4107,7 +4107,7 @@ window.BENCHMARK_DATA = {
           2117.124129486084,
           2063.04304784139,
           2010.0754222869873,
-          2110.33478418986
+          2029.531027730306
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4478,10 +4478,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -4534,7 +4534,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -4590,7 +4590,7 @@ window.BENCHMARK_DATA = {
           371.45175580978395,
           366.48039121627806,
           381.69868755340576,
-          355.4427429607936
+          275.7367683819362
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4715,7 +4715,7 @@ window.BENCHMARK_DATA = {
           135328.4366280692,
           185252.32587890624,
           188112.94170673078,
-          183845.99015299478
+          107255.39554268973
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4776,7 +4776,7 @@ window.BENCHMARK_DATA = {
           14938,
           15086,
           15086,
-          14926
+          14938
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4840,7 +4840,7 @@ window.BENCHMARK_DATA = {
           5765.281456538609,
           6006.719189961751,
           5998.894364420573,
-          5670.580717820388
+          4340.4100143432615
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4901,7 +4901,7 @@ window.BENCHMARK_DATA = {
           9336,
           9336,
           9336,
-          9280
+          9336
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4965,7 +4965,7 @@ window.BENCHMARK_DATA = {
           5825.9786661783855,
           6080.617865929236,
           6504.850513712565,
-          5974.825772421701
+          4404.941117422922
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5026,7 +5026,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8244,
-          8245
+          8244
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5090,7 +5090,7 @@ window.BENCHMARK_DATA = {
           591.0744873682657,
           635.0853397505624,
           596.6942837397257,
-          674.181636946542
+          441.3219393662044
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5215,7 +5215,7 @@ window.BENCHMARK_DATA = {
           527.7352011998495,
           511.7413249015808,
           519.775258954366,
-          466.27494948250904
+          388.64090364319935
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5586,10 +5586,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -5642,7 +5642,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -5698,7 +5698,7 @@ window.BENCHMARK_DATA = {
           671.5895349796002,
           691.9345628738404,
           720.3860968907674,
-          654.958247593471
+          496.18181412560597
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5823,7 +5823,7 @@ window.BENCHMARK_DATA = {
           137601.0453613281,
           189735.71419270834,
           190789.0630231585,
-          188690.18863351006
+          110324.61223895733
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5884,7 +5884,7 @@ window.BENCHMARK_DATA = {
           18925,
           19085,
           19085,
-          18925
+          18930
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5948,7 +5948,7 @@ window.BENCHMARK_DATA = {
           8514.945125873272,
           9163.773128255209,
           8834.052185058594,
-          8277.034109933036
+          6262.805243428548
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6009,7 +6009,7 @@ window.BENCHMARK_DATA = {
           12361,
           12361,
           12361,
-          11800
+          12360
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6073,7 +6073,7 @@ window.BENCHMARK_DATA = {
           9208.857442220053,
           9779.044163004557,
           9500.630198552059,
-          9225.057068961007
+          6946.186600240072
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6198,7 +6198,7 @@ window.BENCHMARK_DATA = {
           1188.5082686106364,
           1221.3798047383627,
           1131.0782358805338,
-          1211.2483900705972
+          873.2159222284953
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6323,7 +6323,7 @@ window.BENCHMARK_DATA = {
           1517.5802830060322,
           1392.9545591990152,
           1398.0761063893635,
-          1346.9465971726638
+          1184.550634765625
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6694,10 +6694,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -6750,7 +6750,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -6806,7 +6806,7 @@ window.BENCHMARK_DATA = {
           575.152395929609,
           524.4938935552325,
           589.6365030288696,
-          577.7708262125651
+          582.8212743486677
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6931,7 +6931,7 @@ window.BENCHMARK_DATA = {
           10889.271044049945,
           11643.258122762045,
           11908.808034261068,
-          12266.812342325846
+          11476.21639404297
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6992,7 +6992,7 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10513,
-          10641
+          10721
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7056,7 +7056,7 @@ window.BENCHMARK_DATA = {
           7104.477105712891,
           7225.378588540213,
           7766.287805829729,
-          7718.812224324544
+          7858.661600748698
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7181,7 +7181,7 @@ window.BENCHMARK_DATA = {
           7888.710850016276,
           8136.859811401368,
           8249.561372023363,
-          8668.130761282784
+          8235.946854654949
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7242,7 +7242,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11508,
-          11508
+          11518
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7306,7 +7306,7 @@ window.BENCHMARK_DATA = {
           470.91852045059204,
           443.1416636980497,
           451.5495771408081,
-          530.5353353940524
+          440.94399582544963
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7431,7 +7431,7 @@ window.BENCHMARK_DATA = {
           503.30326245625815,
           448.59544369379677,
           460.14957200563873,
-          503.1886140823364
+          502.44428157806396
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7802,10 +7802,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -7858,7 +7858,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -7914,7 +7914,7 @@ window.BENCHMARK_DATA = {
           1071.7006322224936,
           1082.4066170283727,
           1018.9216499328613,
-          1094.7942714691162
+          1241.2308470408123
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8039,7 +8039,7 @@ window.BENCHMARK_DATA = {
           17466.935681152343,
           18696.99156697591,
           18883.614267985027,
-          19022.407599894206
+          18419.455823625838
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8100,7 +8100,7 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           17441,
-          18721
+          18801
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8164,7 +8164,7 @@ window.BENCHMARK_DATA = {
           16534.070361328126,
           16956.310294596355,
           18841.782005896934,
-          17454.091208902995
+          17062.326594761438
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8289,7 +8289,7 @@ window.BENCHMARK_DATA = {
           17854.841206141882,
           19075.204486553484,
           19421.16519165039,
-          20054.991537240836
+          18938.529684884208
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8350,7 +8350,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31546,
-          31546
+          31543
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8414,7 +8414,7 @@ window.BENCHMARK_DATA = {
           1160.6480667114258,
           1102.0296411514282,
           1092.5750779469809,
-          1200.2974281311035
+          1240.4622729165214
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8539,7 +8539,7 @@ window.BENCHMARK_DATA = {
           1678.5663684844972,
           1587.2763557434082,
           1565.2727027620588,
-          1705.1855513254802
+          1891.6341536385673
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8910,10 +8910,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump actions/checkout from 6 to 7 (#805)"
       },
       {
-        "sha": "11b872e355874485031bb1e365988b6f4e99c71e",
+        "sha": "ad18dd0d66bd17557411cf984e80daa8b5808c03",
         "author": "dependabot[bot]",
-        "date": "Mon Jun 29 12:23:35 2026 \u002B0200",
-        "message": "chore: Bump TUnit.Mocks from 1.56.25 to 1.57.0 (#809)"
+        "date": "Mon Jun 29 12:23:44 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.6.0 to 18.7.0 (#808)"
       }
     ],
     "labels": [
@@ -8966,7 +8966,7 @@ window.BENCHMARK_DATA = {
       "15105c66",
       "96f0e4f4",
       "9048d66e",
-      "11b872e3"
+      "ad18dd0d"
     ],
     "datasets": [
       {
@@ -9022,7 +9022,7 @@ window.BENCHMARK_DATA = {
           18.481705710291862,
           20.256130607922874,
           17.01160976489385,
-          18.398665734699794
+          17.375343225399654
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -9147,7 +9147,7 @@ window.BENCHMARK_DATA = {
           292.2102603594462,
           321.031064919063,
           262.197993516922,
-          282.30303711891173
+          267.1141842206319
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -9272,7 +9272,7 @@ window.BENCHMARK_DATA = {
           38.06875399947167,
           39.69365565265928,
           34.499804973602295,
-          38.324807269232615
+          34.87607982754707
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9397,7 +9397,7 @@ window.BENCHMARK_DATA = {
           1411.7223691940308,
           1421.9594572703043,
           1328.4706499917168,
-          1344.0048326764788
+          1380.824992452349
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9522,7 +9522,7 @@ window.BENCHMARK_DATA = {
           2045.1172320048015,
           2025.305958066668,
           1899.8680458068848,
-          1852.3360310963221
+          2019.6561211806077
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9647,7 +9647,7 @@ window.BENCHMARK_DATA = {
           2002.7945545832315,
           1895.066424179077,
           1713.6817294529505,
-          1768.4753294626871
+          1758.2722884586879
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
