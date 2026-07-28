@@ -378,6 +378,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -443,7 +449,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -512,7 +519,8 @@ window.BENCHMARK_DATA = {
           310.9418816884359,
           363.538735294342,
           345.1729146071843,
-          233.83566827774047
+          233.83566827774047,
+          304.87013619740804
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -570,6 +578,7 @@ window.BENCHMARK_DATA = {
           1720,
           1720,
           1720,
+          1608,
           1608,
           1608,
           1608,
@@ -663,7 +672,8 @@ window.BENCHMARK_DATA = {
           100119.39466145834,
           101273.05245535714,
           71631.00375976562,
-          55579.74009602865
+          55579.74009602865,
+          70127.98216145833
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -737,7 +747,8 @@ window.BENCHMARK_DATA = {
           9096,
           9096,
           9090,
-          9095
+          9095,
+          9096
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -814,7 +825,8 @@ window.BENCHMARK_DATA = {
           4719.337187194824,
           4736.905554090227,
           4446.337056986491,
-          3195.4091007526104
+          3195.4091007526104,
+          4464.94301714216
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -882,6 +894,7 @@ window.BENCHMARK_DATA = {
           7928,
           7928,
           7928,
+          7896,
           7896,
           7896,
           7896,
@@ -965,7 +978,8 @@ window.BENCHMARK_DATA = {
           4810.608672587076,
           5029.031539916992,
           4722.653645833333,
-          3453.215056639451
+          3453.215056639451,
+          4613.2336435953775
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1039,6 +1053,7 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6959,
+          6970,
           6970
         ],
         "borderColor": "#4A6FA5",
@@ -1116,7 +1131,8 @@ window.BENCHMARK_DATA = {
           395.99195137023924,
           480.01378911336263,
           423.6896518389384,
-          314.61810314655304
+          314.61810314655304,
+          397.1482574939728
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1128,6 +1144,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -1267,7 +1284,8 @@ window.BENCHMARK_DATA = {
           531.9339933395386,
           537.4986668904622,
           573.2128211339315,
-          408.7862802573613
+          408.7862802573613,
+          521.0506278355916
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1320,6 +1338,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040,
@@ -1733,6 +1752,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -1798,7 +1823,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -1867,7 +1893,8 @@ window.BENCHMARK_DATA = {
           300.6762379010518,
           296.2553795178731,
           292.31280531202043,
-          283.8544905662537
+          283.8544905662537,
+          343.95641090075173
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1925,6 +1952,7 @@ window.BENCHMARK_DATA = {
           1824,
           1824,
           1824,
+          1744,
           1744,
           1744,
           1744,
@@ -2018,7 +2046,8 @@ window.BENCHMARK_DATA = {
           15833.60799734933,
           13970.854618326823,
           13815.197932652065,
-          15684.371069335937
+          15684.371069335937,
+          16455.06512451172
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2088,6 +2117,7 @@ window.BENCHMARK_DATA = {
           12809,
           12809,
           13033,
+          12809,
           12809,
           12809,
           12809,
@@ -2169,7 +2199,8 @@ window.BENCHMARK_DATA = {
           5805.208317057291,
           5237.494193013509,
           5044.429010831393,
-          5639.0034430367605
+          5639.0034430367605,
+          5759.33374949864
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2181,6 +2212,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -2320,7 +2352,8 @@ window.BENCHMARK_DATA = {
           215005.59511021205,
           232575.64368614784,
           231025.15035807292,
-          217270.27696010045
+          217270.27696010045,
+          217952.669921875
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2377,6 +2410,7 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15740,
+          15628,
           15628,
           15628,
           15628,
@@ -2471,7 +2505,8 @@ window.BENCHMARK_DATA = {
           1398.385641684899,
           1341.675290298462,
           1258.2256397519793,
-          1303.6409413473946
+          1303.6409413473946,
+          1384.2240882873534
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2483,6 +2518,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -2622,7 +2658,8 @@ window.BENCHMARK_DATA = {
           204.96119684832436,
           172.9401307106018,
           170.4487316449483,
-          180.68983476956686
+          180.68983476956686,
+          199.38998092015584
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2675,6 +2712,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376,
@@ -3088,6 +3126,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -3153,7 +3197,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -3222,7 +3267,8 @@ window.BENCHMARK_DATA = {
           984.4172592163086,
           958.0362227121989,
           1053.2778668721517,
-          947.3332894189017
+          947.3332894189017,
+          1078.6244870503745
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3280,6 +3326,7 @@ window.BENCHMARK_DATA = {
           3912,
           3912,
           3912,
+          3856,
           3856,
           3856,
           3856,
@@ -3373,7 +3420,8 @@ window.BENCHMARK_DATA = {
           221902.99211774554,
           219696.26836688703,
           216574.68780048078,
-          218407.83848353795
+          218407.83848353795,
+          162275.02575683594
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3447,7 +3495,8 @@ window.BENCHMARK_DATA = {
           21147,
           20956,
           20980,
-          20860
+          20860,
+          20849
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3524,7 +3573,8 @@ window.BENCHMARK_DATA = {
           9547.430532836914,
           9671.291566975911,
           9398.393634033204,
-          9678.738721720378
+          9678.738721720378,
+          9542.720741271973
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3597,6 +3647,7 @@ window.BENCHMARK_DATA = {
           13144,
           13144,
           13144,
+          13088,
           13088,
           13088
         ],
@@ -3675,7 +3726,8 @@ window.BENCHMARK_DATA = {
           12192.273152669271,
           12024.033365885416,
           12603.041407267252,
-          11974.241760253906
+          11974.241760253906,
+          11293.455675397601
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3749,7 +3801,8 @@ window.BENCHMARK_DATA = {
           13954,
           13954,
           13954,
-          13954
+          13954,
+          13943
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3826,7 +3879,8 @@ window.BENCHMARK_DATA = {
           973.3840831756592,
           884.0984922555776,
           988.0931234995525,
-          889.9982554117838
+          889.9982554117838,
+          1002.0929336547852
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3838,6 +3892,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -4292,6 +4347,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -4357,7 +4418,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -4426,7 +4488,8 @@ window.BENCHMARK_DATA = {
           2514.1685796465194,
           2573.0765935262043,
           2574.199112955729,
-          2444.5829933166506
+          2444.5829933166506,
+          2933.3939977373398
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4484,6 +4547,7 @@ window.BENCHMARK_DATA = {
           4992,
           4992,
           4992,
+          4936,
           4936,
           4936,
           4936,
@@ -4577,7 +4641,8 @@ window.BENCHMARK_DATA = {
           228506.2423502604,
           229453.77244466144,
           227822.8867013114,
-          232036.67150878906
+          232036.67150878906,
+          172812.87188720703
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4651,7 +4716,8 @@ window.BENCHMARK_DATA = {
           30898,
           29556,
           30730,
-          30610
+          30610,
+          30603
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4728,7 +4794,8 @@ window.BENCHMARK_DATA = {
           23708.112954711913,
           23620.773999532063,
           23284.206469726563,
-          24557.570361328126
+          24557.570361328126,
+          22849.17380777995
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4801,6 +4868,7 @@ window.BENCHMARK_DATA = {
           26249,
           26249,
           26249,
+          26193,
           26193,
           26193
         ],
@@ -4879,7 +4947,8 @@ window.BENCHMARK_DATA = {
           25558.161808558874,
           25771.10126546224,
           26104.15284423828,
-          25327.010450090682
+          25327.010450090682,
+          23854.911507161458
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4953,7 +5022,8 @@ window.BENCHMARK_DATA = {
           33764,
           33764,
           33764,
-          33764
+          33764,
+          33772
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5030,7 +5100,8 @@ window.BENCHMARK_DATA = {
           2184.7804039001467,
           2203.97745997111,
           2335.260085805257,
-          2193.3809973398843
+          2193.3809973398843,
+          2314.987053171794
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5042,6 +5113,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -5496,6 +5568,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -5561,7 +5639,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -5630,7 +5709,8 @@ window.BENCHMARK_DATA = {
           367.349714585713,
           367.5896806716919,
           365.0409446716309,
-          349.1203324113573
+          349.1203324113573,
+          365.04202092488606
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5688,6 +5768,7 @@ window.BENCHMARK_DATA = {
           2088,
           2088,
           2088,
+          1976,
           1976,
           1976,
           1976,
@@ -5781,7 +5862,8 @@ window.BENCHMARK_DATA = {
           185253.0581752232,
           81114.19375,
           184716.09547526043,
-          131618.17653111048
+          131618.17653111048,
+          184427.82934570312
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5855,7 +5937,8 @@ window.BENCHMARK_DATA = {
           14926,
           14930,
           14926,
-          14938
+          14938,
+          14926
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5932,7 +6015,8 @@ window.BENCHMARK_DATA = {
           5952.841504778181,
           4830.021085611979,
           5849.545528956822,
-          5699.676369887132
+          5699.676369887132,
+          5742.258112226214
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6005,6 +6089,7 @@ window.BENCHMARK_DATA = {
           9336,
           9280,
           9280,
+          9336,
           9336,
           9336
         ],
@@ -6083,7 +6168,8 @@ window.BENCHMARK_DATA = {
           6435.696628316244,
           4233.348073323567,
           6340.756989034017,
-          5432.5193846566335
+          5432.5193846566335,
+          6191.8823582967125
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6156,6 +6242,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8257,
+          8244,
           8244,
           8244
         ],
@@ -6234,7 +6321,8 @@ window.BENCHMARK_DATA = {
           598.3660481316703,
           513.2190226872762,
           597.2964797973633,
-          525.3137947491238
+          525.3137947491238,
+          581.8757630666097
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6246,6 +6334,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -6385,7 +6474,8 @@ window.BENCHMARK_DATA = {
           485.92892793019615,
           472.206968160776,
           481.68744373321533,
-          495.75327898661294
+          495.75327898661294,
+          532.0203690895668
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6438,6 +6528,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064,
@@ -6851,6 +6942,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -6916,7 +7013,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -6985,7 +7083,8 @@ window.BENCHMARK_DATA = {
           721.5460090001424,
           777.3029230753581,
           659.0929353713989,
-          613.4477546691894
+          613.4477546691894,
+          644.2165404637655
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7043,6 +7142,7 @@ window.BENCHMARK_DATA = {
           2304,
           2304,
           2304,
+          2192,
           2192,
           2192,
           2192,
@@ -7136,7 +7236,8 @@ window.BENCHMARK_DATA = {
           190888.5360576923,
           84189.76673177084,
           190692.35380859376,
-          134640.22403971353
+          134640.22403971353,
+          192211.78876953124
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7209,6 +7310,7 @@ window.BENCHMARK_DATA = {
           18925,
           18925,
           18907,
+          18925,
           18925,
           18925
         ],
@@ -7287,7 +7389,8 @@ window.BENCHMARK_DATA = {
           8913.613322666713,
           7061.2156453450525,
           8750.065881582406,
-          8779.439086914062
+          8779.439086914062,
+          8564.137435913086
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7360,6 +7463,7 @@ window.BENCHMARK_DATA = {
           12361,
           11800,
           11800,
+          12361,
           12361,
           12361
         ],
@@ -7438,7 +7542,8 @@ window.BENCHMARK_DATA = {
           10181.356550089518,
           7394.468305460612,
           9160.676885477702,
-          9270.795721200797
+          9270.795721200797,
+          9368.49080505371
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7511,6 +7616,7 @@ window.BENCHMARK_DATA = {
           15786,
           15786,
           15785,
+          15786,
           15786,
           15786
         ],
@@ -7589,7 +7695,8 @@ window.BENCHMARK_DATA = {
           1279.9123446600777,
           1056.4588141123454,
           1147.9041221618652,
-          1086.1297899882
+          1086.1297899882,
+          1207.200300725301
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7601,6 +7708,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -7740,7 +7848,8 @@ window.BENCHMARK_DATA = {
           1454.8135761260987,
           1591.2583934783936,
           1363.999755859375,
-          1422.4450224467687
+          1422.4450224467687,
+          1427.5544918060302
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7793,6 +7902,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816,
@@ -8206,6 +8316,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -8271,7 +8387,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -8340,7 +8457,8 @@ window.BENCHMARK_DATA = {
           546.1643156687419,
           619.3018880844116,
           610.2409631093343,
-          515.0266249338786
+          515.0266249338786,
+          533.4404433568319
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8398,6 +8516,7 @@ window.BENCHMARK_DATA = {
           2528,
           2528,
           2528,
+          2472,
           2472,
           2472,
           2472,
@@ -8491,7 +8610,8 @@ window.BENCHMARK_DATA = {
           12032.401322428386,
           12209.714803059896,
           11649.607413155692,
-          11681.255776541573
+          11681.255776541573,
+          12081.422640286959
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8565,7 +8685,8 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10641,
-          10641
+          10641,
+          10513
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8642,7 +8763,8 @@ window.BENCHMARK_DATA = {
           7484.208405049642,
           7760.746255493164,
           7531.446464538574,
-          7469.636166890462
+          7469.636166890462,
+          7745.394556681315
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8654,6 +8776,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -8793,7 +8916,8 @@ window.BENCHMARK_DATA = {
           8832.209437052408,
           8738.902243477958,
           8142.024173191616,
-          8288.348692830403
+          8288.348692830403,
+          8504.53475036621
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8862,6 +8986,7 @@ window.BENCHMARK_DATA = {
           11508,
           11518,
           11518,
+          11508,
           11508,
           11508,
           11508,
@@ -8944,7 +9069,8 @@ window.BENCHMARK_DATA = {
           522.9724287668864,
           520.4530617396036,
           469.28986104329425,
-          438.8086566925049
+          438.8086566925049,
+          456.751085464771
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8956,6 +9082,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -9095,7 +9222,8 @@ window.BENCHMARK_DATA = {
           457.9102034228189,
           505.0907885869344,
           476.90714104970294,
-          441.8393448193868
+          441.8393448193868,
+          477.85770117441814
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9148,6 +9276,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680,
@@ -9561,6 +9690,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -9626,7 +9761,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -9695,7 +9831,8 @@ window.BENCHMARK_DATA = {
           1030.0508512769427,
           1045.679082107544,
           1016.6610855102539,
-          1011.4862211772373
+          1011.4862211772373,
+          1041.3009877522786
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -9753,6 +9890,7 @@ window.BENCHMARK_DATA = {
           3032,
           3032,
           3032,
+          2976,
           2976,
           2976,
           2976,
@@ -9846,7 +9984,8 @@ window.BENCHMARK_DATA = {
           18538.987278529577,
           18932.56966756185,
           17997.600385393416,
-          18385.107271466935
+          18385.107271466935,
+          18947.869179861886
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9920,7 +10059,8 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           18721,
-          18721
+          18721,
+          17441
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9997,7 +10137,8 @@ window.BENCHMARK_DATA = {
           17082.484368896483,
           18037.32969548152,
           18237.861820765906,
-          17264.331286621094
+          17264.331286621094,
+          16808.787976074218
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -10009,6 +10150,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -10148,7 +10290,8 @@ window.BENCHMARK_DATA = {
           19840.29471059946,
           21546.66792733329,
           20227.582567487443,
-          19146.209773472376
+          19146.209773472376,
+          19584.828454589842
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -10217,6 +10360,7 @@ window.BENCHMARK_DATA = {
           31546,
           31543,
           31543,
+          31546,
           31546,
           31546,
           31546,
@@ -10299,7 +10443,8 @@ window.BENCHMARK_DATA = {
           1164.027216911316,
           1238.8385407584053,
           1206.2321242014566,
-          1101.0203612009684
+          1101.0203612009684,
+          1117.6113394419351
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -10311,6 +10456,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -10450,7 +10596,8 @@ window.BENCHMARK_DATA = {
           1594.0135653177897,
           1660.5984853108723,
           1596.7109570821126,
-          1600.1489267985025
+          1600.1489267985025,
+          1578.8674963633218
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -10503,6 +10650,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032,
@@ -10916,6 +11064,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Jul 28 22:47:54 2026 \u002B0200",
         "message": "fix: keep types mockable when an inaccessible member is already implemented (#826)"
+      },
+      {
+        "sha": "7a658ac8a86ac9c345345a627eafada05f39c41d",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 23:22:54 2026 \u002B0200",
+        "message": "refactor: move assertion rationale from comments into .Because(...) (#827)"
       }
     ],
     "labels": [
@@ -10981,7 +11135,8 @@ window.BENCHMARK_DATA = {
       "dc016265",
       "be3c0da9",
       "bbc30ec4",
-      "e99f0b49"
+      "e99f0b49",
+      "7a658ac8"
     ],
     "datasets": [
       {
@@ -11050,7 +11205,8 @@ window.BENCHMARK_DATA = {
           17.95091250439485,
           10.223735629365994,
           21.41945485472679,
-          17.36899935801824
+          17.36899935801824,
+          20.085231909155844
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -11108,6 +11264,7 @@ window.BENCHMARK_DATA = {
           440,
           440,
           440,
+          160,
           160,
           160,
           160,
@@ -11201,7 +11358,8 @@ window.BENCHMARK_DATA = {
           283.98529914220177,
           141.22235870361328,
           327.4441621462504,
-          272.74244413375857
+          272.74244413375857,
+          282.34438778559365
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -11213,6 +11371,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -11352,7 +11511,8 @@ window.BENCHMARK_DATA = {
           37.24843244949977,
           20.968257252986614,
           41.419264772108626,
-          38.438577338059744
+          38.438577338059744,
+          39.04570859869321
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -11405,6 +11565,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200,
@@ -11503,7 +11664,8 @@ window.BENCHMARK_DATA = {
           1394.498101679484,
           794.4015552080594,
           1470.4477645556133,
-          1080.452170916966
+          1080.452170916966,
+          1342.8113082005427
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -11515,6 +11677,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -11654,7 +11817,8 @@ window.BENCHMARK_DATA = {
           1890.516462580363,
           1033.0198290688652,
           2151.436617279053,
-          1754.341262272426
+          1754.341262272426,
+          1890.1709733690534
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -11666,6 +11830,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -11805,7 +11970,8 @@ window.BENCHMARK_DATA = {
           1811.4468340192523,
           978.6085502624512,
           2000.1365257263183,
-          1275.4025169372558
+          1275.4025169372558,
+          1792.3916962305705
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -11879,7 +12045,8 @@ window.BENCHMARK_DATA = {
           2763,
           2763,
           2763,
-          2759
+          2759,
+          2763
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
