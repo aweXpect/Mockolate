@@ -296,10 +296,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -352,7 +352,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -408,7 +408,7 @@ window.BENCHMARK_DATA = {
           348.1326802253723,
           306.9382216771444,
           230.03980353900366,
-          327.9320433480399
+          310.9418816884359
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -533,7 +533,7 @@ window.BENCHMARK_DATA = {
           99190.88162434896,
           70761.61036783854,
           33120.60419640174,
-          98736.80236002603
+          100119.39466145834
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -658,7 +658,7 @@ window.BENCHMARK_DATA = {
           4738.785566329956,
           4152.730354895959,
           2788.900873819987,
-          4733.358468736921
+          4719.337187194824
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -783,7 +783,7 @@ window.BENCHMARK_DATA = {
           4997.062913513184,
           4284.990898132324,
           2398.122862952096,
-          5053.836615929236
+          4810.608672587076
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -908,7 +908,7 @@ window.BENCHMARK_DATA = {
           443.8901007334391,
           392.88942677634105,
           289.9862971305847,
-          429.724073378245
+          395.99195137023924
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1033,7 +1033,7 @@ window.BENCHMARK_DATA = {
           522.1489847728184,
           533.0445364634196,
           369.1735189144428,
-          518.2619400660197
+          531.9339933395386
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1404,10 +1404,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -1460,7 +1460,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -1516,7 +1516,7 @@ window.BENCHMARK_DATA = {
           303.6602024078369,
           240.2937931060791,
           309.83541383743284,
-          290.34706055323284
+          300.6762379010518
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1641,7 +1641,7 @@ window.BENCHMARK_DATA = {
           14202.94022310697,
           11601.827562604632,
           16060.338444010416,
-          16018.926208496094
+          15833.60799734933
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1766,7 +1766,7 @@ window.BENCHMARK_DATA = {
           5142.493243408203,
           4293.898540203388,
           5733.120022583008,
-          5648.4158121744795
+          5805.208317057291
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1891,7 +1891,7 @@ window.BENCHMARK_DATA = {
           229076.70276692708,
           184299.11056082588,
           212324.59164663462,
-          215311.61513671876
+          215005.59511021205
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2016,7 +2016,7 @@ window.BENCHMARK_DATA = {
           1343.0178802490234,
           1178.4863681793213,
           1383.73574701945,
-          1301.2001118659973
+          1398.385641684899
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2141,7 +2141,7 @@ window.BENCHMARK_DATA = {
           176.02213295300803,
           150.42054948439966,
           183.54034488017743,
-          178.92020603815715
+          204.96119684832436
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2512,10 +2512,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -2568,7 +2568,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -2624,7 +2624,7 @@ window.BENCHMARK_DATA = {
           1001.105771446228,
           980.823318208967,
           992.0170852661133,
-          1480.2227948506672
+          984.4172592163086
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2749,7 +2749,7 @@ window.BENCHMARK_DATA = {
           221093.2582310268,
           172073.48018973213,
           220631.82170222356,
-          168105.86981670672
+          221902.99211774554
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2810,7 +2810,7 @@ window.BENCHMARK_DATA = {
           20732,
           21267,
           21084,
-          20972
+          21147
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2874,7 +2874,7 @@ window.BENCHMARK_DATA = {
           9365.960077139047,
           8375.9494527181,
           9444.316337076823,
-          8520.2310353597
+          9547.430532836914
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2999,7 +2999,7 @@ window.BENCHMARK_DATA = {
           12372.313104901996,
           9837.95153427124,
           11887.249201093402,
-          9734.45932006836
+          12192.273152669271
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3124,7 +3124,7 @@ window.BENCHMARK_DATA = {
           952.3882904052734,
           826.7576047352383,
           938.2533870697022,
-          833.9584365572248
+          973.3840831756592
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3495,10 +3495,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -3551,7 +3551,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -3607,7 +3607,7 @@ window.BENCHMARK_DATA = {
           2554.6312614440917,
           2489.1675613948278,
           2557.3101351601736,
-          2523.4608454386394
+          2514.1685796465194
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3732,7 +3732,7 @@ window.BENCHMARK_DATA = {
           233916.1245774489,
           182617.85953194756,
           232821.85454450335,
-          180089.18575846354
+          228506.2423502604
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3793,7 +3793,7 @@ window.BENCHMARK_DATA = {
           29332,
           29867,
           30834,
-          30722
+          30898
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3857,7 +3857,7 @@ window.BENCHMARK_DATA = {
           22915.352569580078,
           21050.756293160575,
           23293.48571166992,
-          21410.300454946664
+          23708.112954711913
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3982,7 +3982,7 @@ window.BENCHMARK_DATA = {
           25927.883711751303,
           20828.836491511418,
           25232.200970458984,
-          20835.260813395184
+          25558.161808558874
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4107,7 +4107,7 @@ window.BENCHMARK_DATA = {
           2290.9823300679523,
           1957.2716000874836,
           2250.530216217041,
-          1947.489304133824
+          2184.7804039001467
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4478,10 +4478,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -4534,7 +4534,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -4590,7 +4590,7 @@ window.BENCHMARK_DATA = {
           352.92762196858723,
           344.4083041350047,
           367.3351839383443,
-          364.0978856086731
+          367.349714585713
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4715,7 +4715,7 @@ window.BENCHMARK_DATA = {
           189170.09638671874,
           132279.3578404018,
           185492.0107421875,
-          132133.2109200614
+          185253.0581752232
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4776,7 +4776,7 @@ window.BENCHMARK_DATA = {
           15086,
           15098,
           14926,
-          14938
+          14926
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4840,7 +4840,7 @@ window.BENCHMARK_DATA = {
           5981.993138631185,
           5235.016499655588,
           5668.576284281413,
-          5472.37756652832
+          5952.841504778181
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4965,7 +4965,7 @@ window.BENCHMARK_DATA = {
           6424.110859462193,
           5298.043910980225,
           6122.925632222494,
-          5518.120837284969
+          6435.696628316244
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5090,7 +5090,7 @@ window.BENCHMARK_DATA = {
           564.464219601949,
           520.1488609313965,
           581.8785559790475,
-          548.3619333047134
+          598.3660481316703
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5215,7 +5215,7 @@ window.BENCHMARK_DATA = {
           481.53489837646487,
           489.7846429824829,
           514.1897261301676,
-          498.9849927902222
+          485.92892793019615
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5586,10 +5586,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -5642,7 +5642,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -5698,7 +5698,7 @@ window.BENCHMARK_DATA = {
           701.4143887201946,
           608.6372812906901,
           683.766410001119,
-          635.745774269104
+          721.5460090001424
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5823,7 +5823,7 @@ window.BENCHMARK_DATA = {
           195391.7250279018,
           135225.27428385417,
           191491.13103841146,
-          134962.15504807694
+          190888.5360576923
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5948,7 +5948,7 @@ window.BENCHMARK_DATA = {
           9023.29028085562,
           7816.787630208333,
           8467.346037801106,
-          8156.027878316244
+          8913.613322666713
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6073,7 +6073,7 @@ window.BENCHMARK_DATA = {
           9877.574817911784,
           8274.157862345377,
           9440.924643380302,
-          8764.29695332845
+          10181.356550089518
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6198,7 +6198,7 @@ window.BENCHMARK_DATA = {
           1271.631699625651,
           1046.5538749694824,
           1156.9028888429914,
-          1128.7062973022462
+          1279.9123446600777
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6323,7 +6323,7 @@ window.BENCHMARK_DATA = {
           1467.3874630561243,
           1392.246146774292,
           1417.9220123291016,
-          1434.6431668145317
+          1454.8135761260987
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6694,10 +6694,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -6750,7 +6750,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -6806,7 +6806,7 @@ window.BENCHMARK_DATA = {
           646.9822986602783,
           613.2594451904297,
           536.835631942749,
-          596.9630751291911
+          546.1643156687419
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6931,7 +6931,7 @@ window.BENCHMARK_DATA = {
           11048.164203350361,
           12257.789957682291,
           10658.737121582031,
-          12166.367887369792
+          12032.401322428386
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6992,7 +6992,7 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10641,
-          10513
+          10641
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7056,7 +7056,7 @@ window.BENCHMARK_DATA = {
           7641.214975992839,
           7609.007114664713,
           7199.449713486892,
-          7718.57302347819
+          7484.208405049642
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7181,7 +7181,7 @@ window.BENCHMARK_DATA = {
           8300.043143136161,
           8575.47507770245,
           7629.336109924317,
-          8308.678176879883
+          8832.209437052408
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7306,7 +7306,7 @@ window.BENCHMARK_DATA = {
           526.4289948145548,
           462.85083230336505,
           426.02324622017994,
-          459.003091775454
+          522.9724287668864
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7431,7 +7431,7 @@ window.BENCHMARK_DATA = {
           567.1550201416015,
           471.0922704083579,
           472.43776416778564,
-          482.72046394348143
+          457.9102034228189
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7802,10 +7802,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -7858,7 +7858,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -7914,7 +7914,7 @@ window.BENCHMARK_DATA = {
           1364.230551147461,
           1044.8693804423015,
           1064.645912023691,
-          1041.0818241119384
+          1030.0508512769427
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8039,7 +8039,7 @@ window.BENCHMARK_DATA = {
           18187.6160736084,
           19189.606719970703,
           17336.82831624349,
-          18982.51631281926
+          18538.987278529577
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8100,7 +8100,7 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           18721,
-          17441
+          18721
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8164,7 +8164,7 @@ window.BENCHMARK_DATA = {
           16939.905707223075,
           17568.20606689453,
           16127.344423566547,
-          17591.60231604943
+          17082.484368896483
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8289,7 +8289,7 @@ window.BENCHMARK_DATA = {
           19221.680686442058,
           20460.687263997395,
           18120.710075887044,
-          20016.047912597656
+          19840.29471059946
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8414,7 +8414,7 @@ window.BENCHMARK_DATA = {
           1381.8060671488445,
           1122.864460627238,
           1119.345603942871,
-          1220.3854549952916
+          1164.027216911316
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8539,7 +8539,7 @@ window.BENCHMARK_DATA = {
           2055.8518582661945,
           1612.0750241960798,
           1670.6224793752035,
-          1587.8229376475017
+          1594.0135653177897
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8910,10 +8910,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.59.0 to 1.61.15 (#820)"
       },
       {
-        "sha": "93d2c2bb313da5e77eae1db75fd65e9cd012ab32",
+        "sha": "dc01626563dd9661cd3dfd3e32769d384604c2ed",
         "author": "dependabot[bot]",
-        "date": "Tue Jul 28 16:12:03 2026 \u002B0200",
-        "message": "chore: Bump LibGit2Sharp from 0.31.0 to 0.32.0 (#821)"
+        "date": "Tue Jul 28 16:12:22 2026 \u002B0200",
+        "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       }
     ],
     "labels": [
@@ -8966,7 +8966,7 @@ window.BENCHMARK_DATA = {
       "20b5c372",
       "d64dfe53",
       "46ac6721",
-      "93d2c2bb"
+      "dc016265"
     ],
     "datasets": [
       {
@@ -9022,7 +9022,7 @@ window.BENCHMARK_DATA = {
           17.084601155349187,
           19.282127283513546,
           17.33060103229114,
-          18.496546408959798
+          17.95091250439485
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -9147,7 +9147,7 @@ window.BENCHMARK_DATA = {
           258.6981281133798,
           304.73221015930176,
           289.56813342754657,
-          282.53859414373125
+          283.98529914220177
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -9272,7 +9272,7 @@ window.BENCHMARK_DATA = {
           34.008769754852565,
           39.242267817258835,
           36.9684378862381,
-          37.77741472996198
+          37.24843244949977
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9397,7 +9397,7 @@ window.BENCHMARK_DATA = {
           1404.6939071927752,
           1334.7503617150444,
           1533.4122047424316,
-          1344.6551851908366
+          1394.498101679484
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9522,7 +9522,7 @@ window.BENCHMARK_DATA = {
           1936.9703309195381,
           1886.0032268251691,
           2086.1813786824546,
-          1925.7321921757289
+          1890.516462580363
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9647,7 +9647,7 @@ window.BENCHMARK_DATA = {
           1736.8281285422188,
           1804.9808710734048,
           2005.8398541041784,
-          1838.512990061442
+          1811.4468340192523
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
