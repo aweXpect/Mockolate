@@ -134,13 +134,24 @@ public sealed partial class MockTests
 				.Contains("public override int Compute()");
 		}
 
+		// The emitted override must repeat the base member's declared accessibility, so assert the
+		// full signature rather than just the member name: the name alone also appears in the
+		// setup/verify surfaces and would match even if no override were emitted at all.
 		[Theory]
-		[InlineData("public abstract string MyProperty { get; internal set; }", "MyProperty")]
-		[InlineData("internal abstract void MyMethod();", "MyMethod")]
-		[InlineData("internal abstract int MyProperty { get; set; }", "MyProperty")]
-		[InlineData("internal abstract event System.EventHandler MyEvent;", "MyEvent")]
+		[InlineData("public abstract string MyProperty { get; internal set; }", "public override string MyProperty")]
+		[InlineData("internal abstract void MyMethod();", "internal override void MyMethod()")]
+		[InlineData("internal abstract int MyProperty { get; set; }", "internal override int MyProperty")]
+		[InlineData("internal abstract event System.EventHandler MyEvent;",
+			"internal override event global::System.EventHandler MyEvent")]
+		[InlineData("private protected abstract void MyMethod();", "private protected override void MyMethod()")]
+		[InlineData("private protected abstract int MyProperty { get; set; }",
+			"private protected override int MyProperty")]
+		[InlineData("private protected abstract event System.EventHandler MyEvent;",
+			"private protected override event global::System.EventHandler MyEvent")]
+		[InlineData("public abstract string MyProperty { get; private protected set; }",
+			"public override string MyProperty")]
 		public async Task InaccessibleAbstractClassMember_WithInternalsVisibleTo_ShouldBeMocked(
-			string member, string memberName)
+			string member, string expectedOverride)
 		{
 			MetadataReference external = CompileMyExternalTypeAssembly("abstract class", member,
 				grantsInternalsVisibleTo: true);
@@ -149,9 +160,32 @@ public sealed partial class MockTests
 
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources).ContainsKey("Mock.MyExternalType.g.cs");
-			await That(result.Sources["Mock.MyExternalType.g.cs"]).Contains(memberName);
+			await That(result.Sources["Mock.MyExternalType.g.cs"]).Contains(expectedOverride);
 		}
 
+		// A `private protected` member cannot be reached through a base-typed qualifier from the
+		// derived mock, so it must not take part in the `Wraps` forwarding (CS1540). Non-mixed
+		// accessors additionally route to the protected setup surface rather than the public one.
+		[Theory]
+		[InlineData("private protected abstract void MyMethod();")]
+		[InlineData("private protected abstract event System.EventHandler MyEvent;")]
+		public async Task PrivateProtectedMember_WithInternalsVisibleTo_ShouldNotBeWrapped(string member)
+		{
+			MetadataReference external = CompileMyExternalTypeAssembly("abstract class", member,
+				grantsInternalsVisibleTo: true);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"]).DoesNotContain(".Wraps is global::Ext.MyExternalType");
+		}
+
+		// Diagnostics being empty here is not evidence of a graceful outcome: `Mock.g.cs` emits a
+		// generic `CreateMock` fallback that the call binds to (and CS1061 is suppressed in
+		// Generator.NoWarn anyway), so the program compiles and throws MockException at runtime. The
+		// user-facing guarantee is the Mockolate0002 error from MockabilityAnalyzer, covered by
+		// MockabilityAnalyzerAccessibilityTests. What this test pins is only that the generator
+		// refuses to emit a mock whose overrides could not compile.
 		[Theory]
 		[InlineData("interface", "string MyProperty { get; internal set; }")]
 		[InlineData("interface", "internal void MyMethod();")]
@@ -159,6 +193,9 @@ public sealed partial class MockTests
 		[InlineData("abstract class", "internal abstract void MyMethod();")]
 		[InlineData("abstract class", "internal abstract int MyProperty { get; set; }")]
 		[InlineData("abstract class", "internal abstract event System.EventHandler MyEvent;")]
+		[InlineData("abstract class", "private protected abstract void MyMethod();")]
+		[InlineData("abstract class", "private protected abstract int MyProperty { get; set; }")]
+		[InlineData("abstract class", "private protected abstract event System.EventHandler MyEvent;")]
 		public async Task InaccessibleRequiredMember_WithoutInternalsVisibleTo_ShouldNotBeMocked(
 			string typeKeyword, string member)
 		{

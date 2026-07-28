@@ -53,7 +53,8 @@ internal record Property
 	public bool IsIndexer { get; }
 	public bool IsAbstract { get; }
 	public bool IsStatic { get; }
-	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal;
+	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal
+		or Accessibility.ProtectedAndInternal;
 
 	public MemberType MemberType => (IsStatic, IsProtected) switch
 	{

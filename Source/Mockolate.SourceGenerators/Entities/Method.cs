@@ -59,7 +59,8 @@ internal record Method
 	public bool IsInitOnly { get; }
 	public bool IsRefReturn { get; }
 	public bool IsRefReadonlyReturn { get; }
-	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal;
+	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal
+		or Accessibility.ProtectedAndInternal;
 
 	public MemberType MemberType => (IsStatic, IsProtected) switch
 	{

@@ -34,9 +34,10 @@ Mocked types must be mockable. This rule will prevent you from using unsupported
 
 It also fires when the type has a member that the mock would have to implement (an abstract member,
 or an interface member without a default implementation) but that is not accessible from your
-assembly: for example an `internal abstract` member, or a `{ get; internal set; }` property, on a
-type from a referenced assembly that does not grant `InternalsVisibleTo`. There is no valid code a
-mock could emit for such a member, so the type cannot be mocked at all.
+assembly: for example an `internal abstract` or `private protected abstract` member, or a
+`{ get; internal set; }` property, on a type from a referenced assembly that does not grant
+`InternalsVisibleTo`. There is no valid code a mock could emit for such a member, so the type cannot
+be mocked at all.
 
 ## Mockolate0003
 
