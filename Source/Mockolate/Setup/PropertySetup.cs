@@ -189,7 +189,8 @@ public abstract class PropertySetup : IInteractivePropertySetup
 public class PropertySetup<T> : PropertySetup,
 	IPropertyGetterSetupCallbackBuilder<T>, IPropertySetterSetupCallbackBuilder<T>,
 	IPropertySetupReturnBuilder<T>,
-	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
+	IPropertyGetterSetup<T>, IPropertySetterSetup<T>,
+	IPropertyGetterOnlySetup<T>, IPropertySetterOnlySetup<T>
 {
 	private readonly MockRegistry _mockRegistry;
 	private readonly string _name;
@@ -668,4 +669,46 @@ public class PropertySetup<T> : PropertySetup,
 	}
 
 	#endregion IPropertySetup<T>
+
+	#region Accessor-restricted views
+
+	// The narrow views reuse the full implementation and only re-type the chaining return value, so a
+	// get-only property cannot reach OnSet and a set-only one cannot reach OnGet or the read-sequence.
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.SkippingBaseClass(bool)" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetup<T>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Register()" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetup<T>.Register()
+	{
+		Register();
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.InitializeWith(T)" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetup<T>.InitializeWith(T value)
+	{
+		InitializeWith(value);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetup{T}.SkippingBaseClass(bool)" />
+	IPropertySetterOnlySetup<T> IPropertySetterOnlySetup<T>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetup{T}.Register()" />
+	IPropertySetterOnlySetup<T> IPropertySetterOnlySetup<T>.Register()
+	{
+		Register();
+		return this;
+	}
+
+	#endregion Accessor-restricted views
 }

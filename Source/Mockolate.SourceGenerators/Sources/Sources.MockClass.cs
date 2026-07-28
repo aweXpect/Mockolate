@@ -3142,6 +3142,54 @@ internal static partial class Sources
 		return false;
 	}
 
+	/// <summary>
+	///     Which accessors of <paramref name="property" /> the mock actually intercepts, and therefore
+	///     which setup/verify facade the generated surface exposes. The setup type, the verify type and the
+	///     verify constructor arguments all derive from this one classification so they cannot disagree.
+	/// </summary>
+	/// <remarks>
+	///     The classification follows the accessors the mock emits a body for, which is exactly what
+	///     <see cref="Property.Getter" />/<see cref="Property.Setter" /> being non-null means: the property
+	///     declares the accessor, and it is not an <c>internal</c>/<c>private protected</c> one hidden from
+	///     the mock's assembly. Other accessibilities are not considered here, so a
+	///     <c>{ get; private set; }</c> property still classifies as <see cref="PropertyAccessors.Both" />.
+	///     The <see cref="PropertyAccessors.Both" /> arm therefore also absorbs degenerate shapes that
+	///     cannot produce compiling output regardless of the facade chosen.
+	/// </remarks>
+	private static PropertyAccessors GetInterceptedAccessors(Property property)
+		=> (property.Getter, property.Setter) switch
+		{
+			(not null, null) => PropertyAccessors.GetOnly,
+			(null, not null) => PropertyAccessors.SetOnly,
+			_ => PropertyAccessors.Both,
+		};
+
+	/// <summary>
+	///     The setup facade emitted for <paramref name="property" />, narrowed to the accessors classified
+	///     by <see cref="GetInterceptedAccessors" />.
+	/// </summary>
+	private static string GetPropertySetupType(Property property)
+		=> GetInterceptedAccessors(property) switch
+		{
+			PropertyAccessors.GetOnly => $"global::Mockolate.Setup.IPropertyGetterOnlySetup<{property.Type.Fullname}>",
+			PropertyAccessors.SetOnly => $"global::Mockolate.Setup.IPropertySetterOnlySetup<{property.Type.Fullname}>",
+			_ => $"global::Mockolate.Setup.PropertySetup<{property.Type.Fullname}>",
+		};
+
+	/// <summary>
+	///     The verify facade emitted for <paramref name="property" />, narrowed to the accessors classified
+	///     by <see cref="GetInterceptedAccessors" />.
+	/// </summary>
+	private static string GetPropertyVerifyType(Property property, string verifyName)
+		=> GetInterceptedAccessors(property) switch
+		{
+			PropertyAccessors.GetOnly =>
+				$"global::Mockolate.Verify.VerificationPropertyGetterResult<{verifyName}>",
+			PropertyAccessors.SetOnly =>
+				$"global::Mockolate.Verify.VerificationPropertySetterResult<{verifyName}, {property.Type.Fullname}>",
+			_ => $"global::Mockolate.Verify.VerificationPropertyResult<{verifyName}, {property.Type.Fullname}>",
+		};
+
 	private static void DefineSetupInterface(StringBuilder sb, Class @class, MemberType memberType,
 		bool hasOverloadResolutionPriority)
 	{
@@ -3154,7 +3202,7 @@ internal static partial class Sources
 		{
 			sb.AppendXmlSummary(
 				$"Setup for the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname).Append("> ")
+			sb.Append("\t\t").Append(GetPropertySetupType(property)).Append(' ')
 				.Append(property.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
@@ -3591,8 +3639,8 @@ internal static partial class Sources
 			sb.Append(
 					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
 				.AppendLine();
-			sb.Append("\t\tglobal::Mockolate.Setup.PropertySetup<").Append(property.Type.Fullname)
-				.Append("> global::Mockolate.Mock.").Append(setupName).Append('.').Append(property.Name).AppendLine();
+			sb.Append("\t\t").Append(GetPropertySetupType(property))
+				.Append(" global::Mockolate.Mock.").Append(setupName).Append('.').Append(property.Name).AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
@@ -5013,8 +5061,8 @@ internal static partial class Sources
 		{
 			sb.AppendXmlSummary(
 				$"Verify interactions with the {property.Type.Fullname.EscapeForXmlDoc()} property <see cref=\"{property.ContainingType.EscapeForXmlDoc()}.{property.Name}\" />.");
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ")
-				.Append(property.Type.Fullname).Append("> ").Append(property.Name).Append(" { get; }").AppendLine();
+			sb.Append("\t\t").Append(GetPropertyVerifyType(property, verifyName)).Append(' ')
+				.Append(property.Name).Append(" { get; }").AppendLine();
 			sb.AppendLine();
 		}
 
@@ -5287,15 +5335,21 @@ internal static partial class Sources
 			sb.Append(
 					"\t\t[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]")
 				.AppendLine();
-			sb.Append("\t\tglobal::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName).Append(", ")
-				.Append(property.Type.Fullname).Append("> ").Append(verifyName).Append('.').Append(property.Name)
+			string verifyType = GetPropertyVerifyType(property, verifyName);
+			// The narrow views take only the member id of the accessor they expose.
+			string verifyMemberIds = GetInterceptedAccessors(property) switch
+			{
+				PropertyAccessors.GetOnly => propertyGetMemberId,
+				PropertyAccessors.SetOnly => propertySetMemberId,
+				_ => $"{propertyGetMemberId}, {propertySetMemberId}",
+			};
+			sb.Append("\t\t").Append(verifyType).Append(' ').Append(verifyName).Append('.').Append(property.Name)
 				.AppendLine();
 			sb.Append("\t\t{").AppendLine();
 			sb.Append("\t\t\tget").AppendLine();
 			sb.Append("\t\t\t{").AppendLine();
-			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationPropertyResult<").Append(verifyName)
-				.Append(", ").Append(property.Type.Fullname).Append(">(this, this.").Append(mockRegistryName)
-				.Append(", ").Append(propertyGetMemberId).Append(", ").Append(propertySetMemberId).Append(", ")
+			sb.Append("\t\t\t\treturn new ").Append(verifyType).Append("(this, this.").Append(mockRegistryName)
+				.Append(", ").Append(verifyMemberIds).Append(", ")
 				.Append(property.GetUniqueNameString()).Append(");").AppendLine();
 			sb.Append("\t\t\t}").AppendLine();
 			sb.Append("\t\t}").AppendLine();

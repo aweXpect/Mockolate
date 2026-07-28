@@ -415,7 +415,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@class
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@class
 		{
 			get
 			{
@@ -567,11 +567,11 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int> IMockVerifyForIKeywordEdgeCases.@class
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@class
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Set, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
+				return new global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIKeywordEdgeCases>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
 			}
 		}
 
@@ -687,11 +687,11 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int> IMockVerifyForIKeywordEdgeCases.@class
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIKeywordEdgeCases> IMockVerifyForIKeywordEdgeCases.@class
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Set, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
+				return new global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIKeywordEdgeCases>(this, this.MockRegistry, global::Mockolate.Mock.IKeywordEdgeCases.MemberId__class_Get, "global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class");
 			}
 		}
 
@@ -818,7 +818,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@class
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> global::Mockolate.Mock.IMockSetupForIKeywordEdgeCases.@class
 		{
 			get
 			{
@@ -1081,7 +1081,7 @@ internal static partial class Mock
 		/// <summary>
 		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class">@class</see>.
 		/// </summary>
-		global::Mockolate.Setup.PropertySetup<int> @class { get; }
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> @class { get; }
 
 		/// <summary>
 		///     Setup for the event <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@event">@event</see>.
@@ -1211,7 +1211,7 @@ internal static partial class Mock
 		/// <summary>
 		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.@class">@class</see>.
 		/// </summary>
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIKeywordEdgeCases, int> @class { get; }
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIKeywordEdgeCases> @class { get; }
 
 		/// <summary>
 		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IKeywordEdgeCases.this[int, string]">this[int, string]</see>.

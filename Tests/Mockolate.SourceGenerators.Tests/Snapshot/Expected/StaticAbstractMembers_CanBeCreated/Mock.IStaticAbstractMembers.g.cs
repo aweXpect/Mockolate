@@ -304,7 +304,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockStaticSetupForIStaticAbstractMembers.VirtualStaticProperty
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> global::Mockolate.Mock.IMockStaticSetupForIStaticAbstractMembers.VirtualStaticProperty
 		{
 			get
 			{
@@ -379,11 +379,11 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int> IMockStaticVerifyForIStaticAbstractMembers.VirtualStaticProperty
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockStaticVerifyForIStaticAbstractMembers> IMockStaticVerifyForIStaticAbstractMembers.VirtualStaticProperty
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int>(this, this.MockRegistry, -1, -1, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
+				return new global::Mockolate.Verify.VerificationPropertyGetterResult<IMockStaticVerifyForIStaticAbstractMembers>(this, this.MockRegistry, -1, "global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty");
 			}
 		}
 
@@ -598,7 +598,7 @@ internal static partial class Mock
 		/// <summary>
 		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty">VirtualStaticProperty</see>.
 		/// </summary>
-		global::Mockolate.Setup.PropertySetup<int> VirtualStaticProperty { get; }
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> VirtualStaticProperty { get; }
 
 		/// <summary>
 		///     Setup for the event <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticEvent">AbstractStaticEvent</see>.
@@ -656,7 +656,7 @@ internal static partial class Mock
 		/// <summary>
 		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.VirtualStaticProperty">VirtualStaticProperty</see>.
 		/// </summary>
-		global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIStaticAbstractMembers, int> VirtualStaticProperty { get; }
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockStaticVerifyForIStaticAbstractMembers> VirtualStaticProperty { get; }
 
 		/// <summary>
 		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IStaticAbstractMembers.AbstractStaticMethod()">AbstractStaticMethod()</see>.

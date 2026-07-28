@@ -275,6 +275,76 @@ public interface IPropertySetup<T>
 }
 
 /// <summary>
+///     Setup for a mocked property of type <typeparamref name="T" /> that the mock only reads.
+/// </summary>
+/// <remarks>
+///     Used instead of <see cref="IPropertySetup{T}" /> when the mock has no setter to intercept, either
+///     because the property is declared without one or because its setter is not accessible from the
+///     mock's assembly. Writes then never reach the mock, so <see cref="IPropertySetup{T}.OnSet" /> is not
+///     offered.
+/// </remarks>
+public interface IPropertyGetterOnlySetup<T>
+{
+	/// <inheritdoc cref="IPropertySetup{T}.OnGet" />
+	IPropertyGetterSetup<T> OnGet { get; }
+
+	/// <inheritdoc cref="IPropertySetup{T}.SkippingBaseClass(bool)" />
+	IPropertyGetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Register()" />
+	IPropertyGetterOnlySetup<T> Register();
+
+	/// <inheritdoc cref="IPropertySetup{T}.InitializeWith(T)" />
+	/// <remarks>
+	///     Seeds the value that reads return. Unlike a read-write property there is no setter to update the
+	///     slot afterwards, so it stays at <paramref name="value" /> unless a <c>Returns</c> entry applies.
+	/// </remarks>
+	IPropertyGetterOnlySetup<T> InitializeWith(T value);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Returns(T)" />
+	IPropertySetupReturnBuilder<T> Returns(T returnValue);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T})" />
+	IPropertySetupReturnBuilder<T> Returns(Func<T> callback);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T, T})" />
+	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Throws{TException}()" />
+	IPropertySetupReturnBuilder<T> Throws<TException>()
+		where TException : Exception, new();
+
+	/// <inheritdoc cref="IPropertySetup{T}.Throws(Exception)" />
+	IPropertySetupReturnBuilder<T> Throws(Exception exception);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{Exception})" />
+	IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{T, Exception})" />
+	IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback);
+}
+
+/// <summary>
+///     Setup for a mocked property of type <typeparamref name="T" /> that the mock only writes.
+/// </summary>
+/// <remarks>
+///     The write-only counterpart of <see cref="IPropertyGetterOnlySetup{T}" />: the mock has no getter to
+///     intercept, so <see cref="IPropertySetup{T}.OnGet" /> and the <c>Returns</c>/<c>Throws</c>
+///     read-sequence are not offered.
+/// </remarks>
+public interface IPropertySetterOnlySetup<T>
+{
+	/// <inheritdoc cref="IPropertySetup{T}.OnSet" />
+	IPropertySetterSetup<T> OnSet { get; }
+
+	/// <inheritdoc cref="IPropertySetup{T}.SkippingBaseClass(bool)" />
+	IPropertySetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
+
+	/// <inheritdoc cref="IPropertySetup{T}.Register()" />
+	IPropertySetterOnlySetup<T> Register();
+}
+
+/// <summary>
 ///     Interface for setting up a property getter with fluent syntax.
 /// </summary>
 public interface IPropertyGetterSetupParallelCallbackBuilder<T> : IPropertyGetterSetupCallbackWhenBuilder<T>

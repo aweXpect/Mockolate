@@ -1430,6 +1430,21 @@ namespace Mockolate.Setup
         string Name { get; }
     }
     public interface IMockSetup<out T> : Mockolate.IInteractiveMock<T> { }
+    public interface IPropertyGetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterSetup<T> OnGet { get; }
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> InitializeWith(T value);
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> Register();
+        Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T> callback);
+        Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(System.Func<T, T> callback);
+        Mockolate.Setup.IPropertySetupReturnBuilder<T> Returns(T returnValue);
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws(System.Exception exception);
+        Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws(System.Func<System.Exception> callback);
+        Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws(System.Func<T, System.Exception> callback);
+        Mockolate.Setup.IPropertySetupReturnBuilder<T> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
     public interface IPropertyGetterSetupCallbackBuilder<T> : Mockolate.Setup.IPropertyGetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T> InParallel();
@@ -1449,6 +1464,12 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T> Do(System.Action<int, T> callback);
         Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+    }
+    public interface IPropertySetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertySetterSetup<T> OnSet { get; }
+        Mockolate.Setup.IPropertySetterOnlySetup<T> Register();
+        Mockolate.Setup.IPropertySetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
     }
     public interface IPropertySetterSetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
@@ -2070,7 +2091,7 @@ namespace Mockolate.Setup
         protected abstract void InvokeSetter<TValue>(TValue value, Mockolate.MockBehavior behavior);
         protected abstract bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
-    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterOnlySetup<T>, Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterOnlySetup<T>, Mockolate.Setup.IPropertySetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         public PropertySetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public override string Name { get; }
@@ -2443,11 +2464,22 @@ namespace Mockolate.Verify
         public override Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
         public override Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }
+    public class VerificationPropertyGetterResult<TSubject>
+    {
+        public VerificationPropertyGetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, string propertyName) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+    }
     public class VerificationPropertyResult<TSubject, TParameter>
     {
         public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, string propertyName) { }
         public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public class VerificationPropertySetterResult<TSubject, TParameter>
+    {
+        public VerificationPropertySetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int setMemberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }

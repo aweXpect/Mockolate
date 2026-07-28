@@ -2204,7 +2204,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.GetOnly
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.GetOnly
 		{
 			get
 			{
@@ -2216,7 +2216,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.SetOnly
+		global::Mockolate.Setup.IPropertySetterOnlySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.SetOnly
 		{
 			get
 			{
@@ -2804,7 +2804,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockStaticSetupForIComprehensiveInterface.StaticAbstractValue
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> global::Mockolate.Mock.IMockStaticSetupForIComprehensiveInterface.StaticAbstractValue
 		{
 			get
 			{
@@ -2886,21 +2886,21 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int> IMockVerifyForIComprehensiveInterface.GetOnly
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.GetOnly
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetOnly_Get, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetOnly_Set, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly");
+				return new global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIComprehensiveInterface>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetOnly_Get, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly");
 			}
 		}
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int> IMockVerifyForIComprehensiveInterface.SetOnly
+		global::Mockolate.Verify.VerificationPropertySetterResult<IMockVerifyForIComprehensiveInterface, int> IMockVerifyForIComprehensiveInterface.SetOnly
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_SetOnly_Get, global::Mockolate.Mock.IComprehensiveInterface.MemberId_SetOnly_Set, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly");
+				return new global::Mockolate.Verify.VerificationPropertySetterResult<IMockVerifyForIComprehensiveInterface, int>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_SetOnly_Set, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly");
 			}
 		}
 
@@ -3383,11 +3383,11 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIComprehensiveInterface, int> IMockStaticVerifyForIComprehensiveInterface.StaticAbstractValue
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockStaticVerifyForIComprehensiveInterface> IMockStaticVerifyForIComprehensiveInterface.StaticAbstractValue
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIComprehensiveInterface, int>(this, this.MockRegistry, -1, -1, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.StaticAbstractValue");
+				return new global::Mockolate.Verify.VerificationPropertyGetterResult<IMockStaticVerifyForIComprehensiveInterface>(this, this.MockRegistry, -1, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.StaticAbstractValue");
 			}
 		}
 
@@ -3416,21 +3416,21 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int> IMockVerifyForIComprehensiveInterface.GetOnly
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.GetOnly
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetOnly_Get, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetOnly_Set, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly");
+				return new global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIComprehensiveInterface>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_GetOnly_Get, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly");
 			}
 		}
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int> IMockVerifyForIComprehensiveInterface.SetOnly
+		global::Mockolate.Verify.VerificationPropertySetterResult<IMockVerifyForIComprehensiveInterface, int> IMockVerifyForIComprehensiveInterface.SetOnly
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_SetOnly_Get, global::Mockolate.Mock.IComprehensiveInterface.MemberId_SetOnly_Set, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly");
+				return new global::Mockolate.Verify.VerificationPropertySetterResult<IMockVerifyForIComprehensiveInterface, int>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_SetOnly_Set, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly");
 			}
 		}
 
@@ -3942,7 +3942,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.GetOnly
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.GetOnly
 		{
 			get
 			{
@@ -3954,7 +3954,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.SetOnly
+		global::Mockolate.Setup.IPropertySetterOnlySetup<int> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.SetOnly
 		{
 			get
 			{
@@ -4691,12 +4691,12 @@ internal static partial class Mock
 		/// <summary>
 		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly">GetOnly</see>.
 		/// </summary>
-		global::Mockolate.Setup.PropertySetup<int> GetOnly { get; }
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> GetOnly { get; }
 
 		/// <summary>
 		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly">SetOnly</see>.
 		/// </summary>
-		global::Mockolate.Setup.PropertySetup<int> SetOnly { get; }
+		global::Mockolate.Setup.IPropertySetterOnlySetup<int> SetOnly { get; }
 
 		/// <summary>
 		///     Setup for the string? property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.NullableProp">NullableProp</see>.
@@ -5250,7 +5250,7 @@ internal static partial class Mock
 		/// <summary>
 		///     Setup for the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.StaticAbstractValue">StaticAbstractValue</see>.
 		/// </summary>
-		global::Mockolate.Setup.PropertySetup<int> StaticAbstractValue { get; }
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> StaticAbstractValue { get; }
 
 		/// <summary>
 		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.StaticAbstractMethod()">StaticAbstractMethod()</see>.
@@ -5310,12 +5310,12 @@ internal static partial class Mock
 		/// <summary>
 		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly">GetOnly</see>.
 		/// </summary>
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int> GetOnly { get; }
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForIComprehensiveInterface> GetOnly { get; }
 
 		/// <summary>
 		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly">SetOnly</see>.
 		/// </summary>
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForIComprehensiveInterface, int> SetOnly { get; }
+		global::Mockolate.Verify.VerificationPropertySetterResult<IMockVerifyForIComprehensiveInterface, int> SetOnly { get; }
 
 		/// <summary>
 		///     Verify interactions with the string? property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.NullableProp">NullableProp</see>.
@@ -5860,7 +5860,7 @@ internal static partial class Mock
 		/// <summary>
 		///     Verify interactions with the int property <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.StaticAbstractValue">StaticAbstractValue</see>.
 		/// </summary>
-		global::Mockolate.Verify.VerificationPropertyResult<IMockStaticVerifyForIComprehensiveInterface, int> StaticAbstractValue { get; }
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockStaticVerifyForIComprehensiveInterface> StaticAbstractValue { get; }
 
 		/// <summary>
 		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.StaticAbstractMethod()">StaticAbstractMethod()</see>.

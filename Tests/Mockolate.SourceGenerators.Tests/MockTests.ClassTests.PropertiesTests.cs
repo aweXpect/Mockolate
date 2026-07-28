@@ -6,6 +6,48 @@ public sealed partial class MockTests
 	{
 		public sealed class PropertiesTests
 		{
+			[Theory]
+			[InlineData("string Name { get; }", "Setup.IPropertyGetterOnlySetup<string>",
+				"Verify.VerificationPropertyGetterResult<IMockVerifyForIMyService>",
+				"Setup.PropertySetup<string>", "Verify.VerificationPropertyResult<IMockVerifyForIMyService, string>")]
+			[InlineData("string Name { set; }", "Setup.IPropertySetterOnlySetup<string>",
+				"Verify.VerificationPropertySetterResult<IMockVerifyForIMyService, string>",
+				"Setup.PropertySetup<string>", "Verify.VerificationPropertyResult<IMockVerifyForIMyService, string>")]
+			[InlineData("string Name { get; set; }", "Setup.PropertySetup<string>",
+				"Verify.VerificationPropertyResult<IMockVerifyForIMyService, string>",
+				"Setup.IPropertyGetterOnlySetup<string>", "Verify.VerificationPropertyGetterResult<IMockVerifyForIMyService>")]
+			public async Task PropertySurface_ShouldOnlyExposeTheAccessorsTheMockIntercepts(
+				string property, string expectedSetupType, string expectedVerifyType,
+				string unexpectedSetupType, string unexpectedVerifyType)
+			{
+				GeneratorResult result = Generator
+					.Run($$"""
+					       using Mockolate;
+
+					       namespace MyCode;
+					       public class Program
+					       {
+					           public static void Main(string[] args)
+					           {
+					       		_ = IMyService.CreateMock();
+					           }
+					       }
+
+					       public interface IMyService
+					       {
+					           {{property}}
+					       }
+					       """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources["Mock.IMyService.g.cs"])
+					.Contains($"global::Mockolate.{expectedSetupType} Name {{ get; }}").And
+					.Contains($"global::Mockolate.{expectedVerifyType} Name {{ get; }}").And
+					.DoesNotContain($"global::Mockolate.{unexpectedSetupType} Name {{ get; }}").And
+					.DoesNotContain($"global::Mockolate.{unexpectedVerifyType} Name {{ get; }}")
+					.Because("a widened facade would silently re-expose an accessor the mock never intercepts");
+			}
+
 			[Fact]
 			public async Task InitOnlyProperty_ShouldEmitInitAccessorAndCompile()
 			{

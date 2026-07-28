@@ -72,6 +72,55 @@ sut.Mock.Setup.TotalDispensed.OnGet
     .Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```
 
+## Properties with only one accessor
+
+The setup and verify surfaces only offer the accessors the mock actually intercepts.
+`Register()` and `SkippingBaseClass(…)` stay available on both, but the accessor-specific members do
+not: a get-only property has no `OnSet`, and a set-only property has neither `OnGet` nor the
+`Returns`/`Throws` read-sequence nor `InitializeWith`, since there is no getter to read the value
+back.
+
+```csharp
+public interface IChocolateInventory
+{
+    int RemainingBars { get; }        // no setter
+    string LastCountedBy { set; }     // no getter
+}
+
+IChocolateInventory sut = IChocolateInventory.CreateMock();
+
+sut.Mock.Setup.RemainingBars.Returns(3);
+sut.Mock.Setup.RemainingBars.Register();
+sut.Mock.Setup.RemainingBars.OnSet…                 // does not compile
+
+sut.Mock.Setup.LastCountedBy.OnSet.Do(value => { });
+sut.Mock.Setup.LastCountedBy.Register();
+sut.Mock.Setup.LastCountedBy.Returns("Ada")…        // does not compile
+sut.Mock.Setup.LastCountedBy.InitializeWith("Ada")… // does not compile
+```
+
+The verify facade likewise offers the intercepted accessor only:
+
+```csharp
+_ = sut.RemainingBars;
+sut.LastCountedBy = "Ada";
+
+await That(sut.Mock.Verify.RemainingBars.Got()).Once();
+await That(sut.Mock.Verify.LastCountedBy.Set("Ada")).Once();
+
+sut.Mock.Verify.RemainingBars.Set(3)…               // does not compile
+sut.Mock.Verify.LastCountedBy.Got()…                // does not compile
+```
+
+This also applies when the property declares an accessor the mock cannot see, such as
+`{ get; internal set; }` on a type from an assembly that does not grant `InternalsVisibleTo`. Writes
+never reach the mock in that case, so configuring or verifying one could only ever report zero
+interactions. See [Mockolate0002](../analyzers#mockolate0002) for when such a type is mockable at all.
+
+The verify facade is fully restricted. On the setup side the restriction covers the property's own
+surface: the fluent builders returned by `Returns`, `Throws`, `Do` and `TransitionTo` are shared with
+read-write properties, so chaining on past one of them reaches the full setup again.
+
 **Notes:**
 
 - Use `.SkippingBaseClass(…)` to override the base class behavior for a specific property (only for class mocks).
