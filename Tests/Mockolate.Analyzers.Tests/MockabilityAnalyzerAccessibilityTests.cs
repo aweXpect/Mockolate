@@ -78,6 +78,54 @@ public class MockabilityAnalyzerAccessibilityTests
 			MockCreation,
 			ExternalType("abstract class", "protected internal abstract void MyMember();"));
 
+	// `private protected` (= protected AND internal) is unreachable across an assembly boundary
+	// without InternalsVisibleTo, so it must be flagged just like plain `internal`. This mirrors
+	// Helpers.IsOverridableFrom in the generator, which refuses to emit the mock for the same input.
+	[Theory]
+	[InlineData("private protected abstract void MyMember();", "Ext.MyExternalType.MyMember()")]
+	[InlineData("private protected abstract int MyMember { get; set; }", "Ext.MyExternalType.MyMember.get")]
+	[InlineData("private protected abstract event System.EventHandler MyMember;", "Ext.MyExternalType.MyMember")]
+	[InlineData("public abstract string MyMember { get; private protected set; }", "Ext.MyExternalType.MyMember.set")]
+	public async Task WhenPrivateProtectedAbstractMemberIsNotAccessible_ShouldBeFlagged(
+		string member, string reportedMember) => await Verifier
+		.VerifyAnalyzerWithReferencedProjectAsync(
+			MockCreation,
+			ExternalType("abstract class", member),
+			Verifier.Diagnostic(Rules.MockabilityRule)
+				.WithLocation(0)
+				.WithArguments("Ext.MyExternalType",
+					$"the member '{reportedMember}' must be implemented, but it is not accessible from this assembly")
+		);
+
+	[Theory]
+	[InlineData("private protected abstract void MyMember();")]
+	[InlineData("private protected abstract event System.EventHandler MyMember;")]
+	[InlineData("public abstract string MyMember { get; private protected set; }")]
+	public async Task WhenPrivateProtectedAbstractMemberIsVisibleToTheMockAssembly_ShouldNotBeFlagged(string member)
+		=> await Verifier
+			.VerifyAnalyzerWithReferencedProjectAsync(
+				MockCreation,
+				ExternalType("abstract class", member, internalsVisibleToTestProject: true));
+
+	// The same check guards the Implementing<T>() call site, which reaches IsMockable through a
+	// different code path (type argument rather than invocation receiver).
+	[Fact]
+	public async Task WhenAdditionalInterfaceHasAnInaccessibleMember_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerWithReferencedProjectAsync(
+			ImplementingMockCreation,
+			ExternalType("interface", "internal void MyMember();"),
+			Verifier.Diagnostic(Rules.MockabilityRule)
+				.WithLocation(0)
+				.WithArguments("Ext.MyExternalType",
+					"the member 'Ext.MyExternalType.MyMember()' must be implemented, but it is not accessible from this assembly")
+		);
+
+	[Fact]
+	public async Task WhenAdditionalInterfaceMemberIsVisibleToTheMockAssembly_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerWithReferencedProjectAsync(
+			ImplementingMockCreation,
+			ExternalType("interface", "internal void MyMember();", internalsVisibleToTestProject: true));
+
 	private const string MockCreation = """
 	                                    namespace Mockolate
 	                                    {
@@ -101,6 +149,35 @@ public class MockabilityAnalyzerAccessibilityTests
 	                                    	}
 	                                    }
 	                                    """;
+
+	private const string ImplementingMockCreation = """
+	                                                namespace Mockolate
+	                                                {
+	                                                	internal static partial class MockExtensionsForIMyInterface
+	                                                	{
+	                                                		extension(MyNamespace.IMyInterface mock)
+	                                                		{
+	                                                			public static MyNamespace.IMyInterface CreateMock() => default!;
+	                                                			public MyNamespace.IMyInterface Implementing<TInterface>() => default!;
+	                                                		}
+	                                                	}
+	                                                }
+
+	                                                namespace MyNamespace
+	                                                {
+	                                                	public interface IMyInterface
+	                                                	{
+	                                                	}
+
+	                                                	public class MyClass
+	                                                	{
+	                                                		public void MyTest()
+	                                                		{
+	                                                			IMyInterface.CreateMock().Implementing<{|#0:Ext.MyExternalType|}>();
+	                                                		}
+	                                                	}
+	                                                }
+	                                                """;
 
 	private static string ExternalType(string typeKeyword, string member,
 		bool internalsVisibleToTestProject = false)
