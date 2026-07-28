@@ -71,12 +71,11 @@ public sealed partial class MockTests
 				     """);
 
 			await That(result.Diagnostics).IsEmpty();
-			// One occurrence per generator-emitted public ctor: the (MockRegistry, ...) overload and
-			// the typed (MockBehavior, ...) overload that subclasses use. The base ctor already carries
-			// the attribute, and the dedup check still suppresses an injected duplicate on each.
 			await That(result.Sources).ContainsKey("Mock.AnnotatedShape.g.cs");
 			await That(result.Sources["Mock.AnnotatedShape.g.cs"])
-				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Exactly(2);
+				.Contains("[global::System.Diagnostics.CodeAnalysis.SetsRequiredMembers]").Exactly(2)
+				.Because(
+					"one occurrence per generator-emitted public ctor, the (MockRegistry, ...) overload and the typed (MockBehavior, ...) overload that subclasses use; the base ctor already carries the attribute and the dedup check suppresses an injected duplicate on each");
 		}
 
 		[Fact]

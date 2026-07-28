@@ -692,11 +692,11 @@ public sealed partial class MockTests
 			     }
 			     """);
 
-		// Even though MyMiddleClass.Equals has non-nullable parameter (object),
-		// it should still match and filter out object.Equals with nullable parameter (object?)
 		await That(result.Sources).ContainsKey("Mock.MyDerivedClass.g.cs");
 		await That(result.Sources["Mock.MyDerivedClass.g.cs"])
-			.DoesNotContain("override bool Equals");
+			.DoesNotContain("override bool Equals")
+			.Because(
+				"MyMiddleClass.Equals(object) must still match and filter out object.Equals(object?) despite the nullability difference");
 	}
 
 	[Fact]

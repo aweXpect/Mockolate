@@ -460,15 +460,14 @@ public class FastMockInteractionsTests
 	[Fact]
 	public async Task GetUnverifiedInteractions_WhenNothingRecorded_ShouldReturnArrayEmptySingleton()
 	{
-		// Pins the `return Array.Empty<IInteraction>();` early-return on the empty path. With
-		// the block removed, the method falls through to `new IInteraction[unverified.Count]`
-		// and returns a freshly-allocated zero-length array instead of the shared singleton.
 		FastMockInteractions sut = new(1);
 		InstallMethod(sut, 0);
 
 		IReadOnlyCollection<IInteraction> result = sut.GetUnverifiedInteractions();
 
-		await That(result).IsSameAs(Array.Empty<IInteraction>());
+		await That(result).IsSameAs(Array.Empty<IInteraction>())
+			.Because(
+				"the empty path must take the `return Array.Empty<IInteraction>();` early-return rather than fall through and allocate a fresh zero-length array");
 	}
 
 	[Fact]

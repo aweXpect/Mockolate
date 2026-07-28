@@ -346,8 +346,8 @@ public sealed class GeneratedPacketSinkTests
 
 			await That(high).IsEqualTo(100);
 			await That(low).IsEqualTo(1);
-			// Nothing matches → framework default.
-			await That(mid).IsEqualTo(0);
+			await That(mid).IsEqualTo(0)
+				.Because("nothing matches, so the framework default applies");
 		}
 
 		[Fact]
@@ -472,8 +472,8 @@ public sealed class GeneratedPacketSinkTests
 			}
 
 			await That(match).IsEqualTo("hit");
-			// Nothing matches -> Mockolate default string value "".
-			await That(miss).IsEqualTo("");
+			await That(miss).IsEqualTo("")
+				.Because("nothing matches, so Mockolate's default string value applies");
 			await That(ActWriteHit).Throws<InvalidOperationException>();
 		}
 
@@ -956,8 +956,8 @@ public sealed class GeneratedPacketSinkTests
 			string miss = sut[new Packet(2, missBytes)];
 
 			await That(hit).IsEqualTo("matched");
-			// Nothing matches -> framework default; Mockolate's default for string is "".
-			await That(miss).IsEqualTo("");
+			await That(miss).IsEqualTo("")
+				.Because("nothing matches, so the framework default applies and Mockolate's default for string is \"\"");
 		}
 
 		[Fact]

@@ -201,8 +201,8 @@ public sealed partial class SetupEventTests
 			sut.ChocolateDispensed += Handler;
 		}
 
-		// subscriptions at index 0, 2, 4 pass the predicate
-		await That(callCount).IsEqualTo(3);
+		await That(callCount).IsEqualTo(3)
+			.Because("the subscriptions at index 0, 2 and 4 pass the predicate");
 
 		void Handler(string type, int amount) { }
 	}
@@ -387,8 +387,8 @@ public sealed partial class SetupEventTests
 			sut.ChocolateDispensed -= Handler;
 		}
 
-		// unsubscriptions at index 0, 2, 4 pass the predicate
-		await That(callCount).IsEqualTo(3);
+		await That(callCount).IsEqualTo(3)
+			.Because("the unsubscriptions at index 0, 2 and 4 pass the predicate");
 	}
 
 	[Fact]

@@ -75,8 +75,8 @@ public sealed class ProjectionIndexerTests
 			string small = sut[new Packet(5, [])];
 
 			await That(big).IsEqualTo("wrote-big");
-			// small does not match the setup → getter falls through to framework default.
-			await That(small).IsEqualTo("");
+			await That(small).IsEqualTo("")
+				.Because("small does not match the setup, so the getter falls through to the framework default");
 		}
 
 		[Fact]
@@ -236,11 +236,11 @@ public sealed class ProjectionIndexerTests
 
 			sut[new Packet(1, []), new Packet(2, [])] = "written";
 			byte[] bytes = [0xA];
-			// Same projected ids but different inline spans — still matches the stored bucket.
 			string hit = sut[new Packet(1, bytes), new Packet(2, [])];
 			string miss = sut[new Packet(1, []), new Packet(3, [])];
 
-			await That(hit).IsEqualTo("written");
+			await That(hit).IsEqualTo("written")
+				.Because("the projected ids are the same, so the differing inline spans still match the stored bucket");
 			await That(miss).IsEqualTo("fallback");
 		}
 	}
@@ -319,13 +319,14 @@ public sealed class ProjectionIndexerTests
 		[Fact]
 		public async Task IsRefStructBy_Matches_ObjectOverload_ReturnsFalse()
 		{
-			// The untyped IParameter.Matches(object?) overload is a fallback for covariance-safe
-			// dispatch; ref-struct matchers always return false from it (ref structs cannot be
-			// boxed into object in the first place).
 			IParameter<Packet> matcher = It.IsRefStructBy<Packet, int>(p => p.Id);
 
-			await That(matcher.Matches(null)).IsFalse();
-			await That(matcher.Matches(42)).IsFalse();
+			await That(matcher.Matches(null)).IsFalse()
+				.Because(
+					"the untyped IParameter.Matches(object?) overload is only a fallback for covariance-safe dispatch, and a ref struct can never be boxed into object");
+			await That(matcher.Matches(42)).IsFalse()
+				.Because(
+					"the untyped IParameter.Matches(object?) overload is only a fallback for covariance-safe dispatch, and a ref struct can never be boxed into object");
 		}
 	}
 }

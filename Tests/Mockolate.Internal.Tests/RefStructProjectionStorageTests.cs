@@ -116,13 +116,13 @@ public sealed class RefStructProjectionStorageTests
 	[Fact]
 	public async Task GetterSetup_WithProjection_HasReturnValue_IsTrueEvenWithoutReturnFactory()
 	{
-		// Activation of the storage dictionary flips HasReturnValue to true so that the
-		// generator's emitted getter body takes the return path and serves stored values.
 		RefStructIndexerGetterSetup<string, Key> getter = new(
 			"get_Item",
 			(IParameterMatch<Key>)It.IsRefStructBy<Key, int>(k => k.Id));
 
-		await That(getter.HasReturnValue).IsTrue();
+		await That(getter.HasReturnValue).IsTrue()
+			.Because(
+				"activating the storage dictionary must flip HasReturnValue, so that the generator's emitted getter body takes the return path and serves stored values");
 	}
 
 	[Fact]
@@ -184,14 +184,14 @@ public sealed class RefStructProjectionStorageTests
 		RefStructIndexerSetup<string, Key> setup = new(
 			"get_Item", "set_Item", (IParameterMatch<Key>)matcher);
 
-		// BoundGetter is still wired (the combined setup always wires it), but the getter's
-		// storage is not active — writes cannot be stored.
-		await That(setup.Setter.BoundGetter).IsSameAs(setup.Getter);
+		await That(setup.Setter.BoundGetter).IsSameAs(setup.Getter)
+			.Because("the combined setup always wires the bound getter, projection or not");
 
 		setup.Setter.Invoke(new Key(7), "seven");
 		bool found = setup.Getter.TryGetStoredValue(new Key(7), out _);
 
-		await That(found).IsFalse();
+		await That(found).IsFalse()
+			.Because("without a projection the getter's storage is never activated, so writes cannot be stored");
 	}
 
 	public sealed class Arity2Tests

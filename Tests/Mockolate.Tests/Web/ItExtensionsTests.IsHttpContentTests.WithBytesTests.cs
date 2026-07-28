@@ -22,15 +22,14 @@ public sealed partial class ItExtensionsTests
 
 				await httpClient.PostAsync("https://testably.org", new ByteArrayContent(payload), CancellationToken.None);
 
-				// The first WithBytes predicate matches (length == 3) while the second does not.
-				// Original (??=): first wins, verification succeeds.
-				// Mutant (=): second wins, verification fails.
 				await That(httpClient.Mock.Verify.PostAsync(
 						It.IsAny<string?>(),
 						It.IsHttpContent()
 							.WithBytes(b => b.Length == 3)
 							.WithBytes(b => b.Length == 99)))
-					.Once();
+					.Once()
+					.Because(
+						"the first WithBytes predicate matches (length == 3) while the second does not, and the first one must win");
 			}
 
 			[Theory]

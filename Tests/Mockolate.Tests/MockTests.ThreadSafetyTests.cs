@@ -170,7 +170,6 @@ public sealed partial class MockTests
 				barrier.Set();
 				await Task.WhenAll(tasks);
 
-				// Verify all reads returned expected values (no corruption)
 				await That(valuesByKey).All().Satisfy(kvp =>
 				{
 					string expectedValue = $"key-{kvp.Key}";
@@ -332,13 +331,16 @@ public sealed partial class MockTests
 				barrier.Set();
 				await Task.WhenAll(tasks);
 
-				// Each read sees either the pre-setup default or the configured value.
-				await That(stringValues).All().Satisfy(v => v is "" or "hello");
-				await That(guidValues).All().Satisfy(v => v == Guid.Empty || v == expectedGuid);
-				// Both setup tasks have finished by now, so the configured value
-				// must win — a racing default insert must not have overwritten it.
-				await That(sut.MyStringProperty).IsEqualTo("hello");
-				await That(sut.MyGuidProperty).IsEqualTo(expectedGuid);
+				await That(stringValues).All().Satisfy(v => v is "" or "hello")
+					.Because("each read sees either the pre-setup default or the configured value");
+				await That(guidValues).All().Satisfy(v => v == Guid.Empty || v == expectedGuid)
+					.Because("each read sees either the pre-setup default or the configured value");
+				await That(sut.MyStringProperty).IsEqualTo("hello")
+					.Because(
+						"both setup tasks have finished by now, so a racing default insert must not have overwritten the configured value");
+				await That(sut.MyGuidProperty).IsEqualTo(expectedGuid)
+					.Because(
+						"both setup tasks have finished by now, so a racing default insert must not have overwritten the configured value");
 				await That(sut.Mock.Verify.MyStringProperty.Got()).Exactly((readerCount * iterationsPerReader) + 1);
 				await That(sut.Mock.Verify.MyGuidProperty.Got()).Exactly((readerCount * iterationsPerReader) + 1);
 			}

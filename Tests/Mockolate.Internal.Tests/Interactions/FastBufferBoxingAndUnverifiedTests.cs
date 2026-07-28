@@ -129,10 +129,6 @@ public class FastBufferBoxingAndUnverifiedTests
 	[Fact]
 	public async Task FastEventBuffer_Unsubscribe_AppendBoxedUnverified_ShouldBoxAsEventUnsubscription()
 	{
-		// Pins the `_kind == FastEventBufferKind.Subscribe ? new EventSubscription(...) :
-		// new EventUnsubscription(...)` ternary in AppendBoxedUnverified. With the conditional
-		// flipped to `(true ? Subscription : Unsubscription)`, an unsubscribe buffer would
-		// surface its records as EventSubscription.
 		FastMockInteractions store = new(1);
 		FastEventBuffer buffer = InstallEventUnsubscribe(store, 0);
 		buffer.Append("E", this, SampleMethod);
@@ -141,7 +137,9 @@ public class FastBufferBoxingAndUnverifiedTests
 		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
 
 		await That(dest).HasCount(1);
-		await That(dest[0].Interaction).IsExactly<EventUnsubscription>();
+		await That(dest[0].Interaction).IsExactly<EventUnsubscription>()
+			.Because(
+				"the `_kind == FastEventBufferKind.Subscribe` ternary in AppendBoxedUnverified must pick the record type from the buffer kind, so an unsubscribe buffer never surfaces EventSubscription");
 	}
 
 	[Fact]
@@ -931,9 +929,6 @@ public class FastBufferBoxingAndUnverifiedTests
 	[Fact]
 	public async Task FastPropertySetterBuffer_ConsumeMatching_ShouldMarkSlotsVerified()
 	{
-		// Pins the `_storage.VerifiedUnderLock(slot) = true` write. With the mutation flipped
-		// to `false`, ConsumeMatching would still report matches but the slots would never be
-		// marked verified — so a second ConsumeMatching call would re-count the same records.
 		FastMockInteractions store = new(1);
 		FastPropertySetterBuffer<int> buffer = InstallPropertySetter<int>(store, 0);
 		buffer.Append("P", 1);
@@ -945,7 +940,9 @@ public class FastBufferBoxingAndUnverifiedTests
 		List<(long Seq, IInteraction Interaction)> dest = [];
 		((IFastMemberBuffer)buffer).AppendBoxedUnverified(dest);
 
-		await That(dest).IsEmpty();
+		await That(dest).IsEmpty()
+			.Because(
+				"ConsumeMatching must write `_storage.VerifiedUnderLock(slot) = true`, otherwise the matched slots stay unverified and a second call would re-count the same records");
 	}
 
 	[Fact]

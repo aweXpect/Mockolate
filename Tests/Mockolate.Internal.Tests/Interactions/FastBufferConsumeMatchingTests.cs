@@ -241,16 +241,15 @@ public class FastBufferConsumeMatchingTests
 	[Fact]
 	public async Task FastMethod1Buffer_ConsumeAll_OnEmptyBuffer_ShouldReturnZeroWithoutThrowing()
 	{
-		// Pins the `slot < n` loop bound in Method1 ConsumeAll. Mutated to `slot <= n`, an empty
-		// buffer (n == 0) would still enter the loop at slot=0 and call VerifiedUnderLock(0),
-		// which dereferences the not-yet-allocated VerifiedChunks[0] → NRE.
 		FastMockInteractions store = new(1);
 		FastMethod1Buffer<int> buffer = store.GetOrCreateBuffer<FastMethod1Buffer<int>>(0,
 			static f => new FastMethod1Buffer<int>(f));
 
 		int consumed = buffer.ConsumeAll();
 
-		await That(consumed).IsEqualTo(0);
+		await That(consumed).IsEqualTo(0)
+			.Because(
+				"the `slot < n` loop bound in Method1 ConsumeAll must keep an empty buffer out of the loop; entering it at slot 0 would dereference the not-yet-allocated VerifiedChunks[0]");
 	}
 
 	[Fact]
