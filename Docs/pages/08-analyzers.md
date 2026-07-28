@@ -39,6 +39,35 @@ assembly: for example an `internal abstract` or `private protected abstract` mem
 `InternalsVisibleTo`. There is no valid code a mock could emit for such a member, so the type cannot
 be mocked at all.
 
+The rule only considers members the mock is still obliged to implement. If a more derived type in the
+referenced assembly already overrides the inaccessible member, the obligation is discharged and the
+type stays mockable:
+
+```csharp
+// In a referenced assembly that does not grant InternalsVisibleTo:
+public abstract class Dispenser
+{
+    internal abstract void Refill();
+}
+
+public abstract class ChocolateDispenser : Dispenser
+{
+    internal override void Refill() { }  // obligation discharged
+}
+
+// Mockolate0002 fires for Dispenser, but ChocolateDispenser mocks fine.
+ChocolateDispenser sut = ChocolateDispenser.CreateMock();
+```
+
+`Refill` itself is not part of the mock's surface, since your assembly cannot see it. An
+`internal abstract override` re-declaration is not a discharge: it continues the obligation without
+implementing it, so the rule still fires.
+
+The same applies per accessor. For a property whose accessors differ in accessibility, such as
+`public abstract string Flavour { get; internal set; }`, an override further down discharges only the
+inaccessible half. The mock then overrides the accessor it can see and leaves the other one to the
+referenced assembly's implementation, so writes through the mock are not intercepted or recorded.
+
 ## Mockolate0003
 
 A mocked member's signature routes through the ref-struct pipeline in a way Mockolate can't

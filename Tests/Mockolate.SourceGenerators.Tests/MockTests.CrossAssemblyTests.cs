@@ -209,8 +209,8 @@ public sealed partial class MockTests
 		[InlineData("internal abstract int Hidden { get; set; }", "internal override int Hidden { get; set; }")]
 		[InlineData("internal abstract event System.EventHandler Hidden;",
 			"internal override event System.EventHandler Hidden;")]
-		[InlineData("public abstract string Hidden { get; internal set; }",
-			"public override string Hidden { get => null!; internal set { } }")]
+		[InlineData("private protected abstract int Hidden { get; set; }",
+			"private protected override int Hidden { get; set; }")]
 		public async Task InaccessibleAbstractMemberAlreadyOverridden_ShouldStillBeMocked(
 			string baseMember, string derivedOverride)
 		{
@@ -271,6 +271,177 @@ public sealed partial class MockTests
 				.Contains("public int Visible()").And
 				.DoesNotContain("Hidden")
 				.Because("the default implementation fills the slot, so the mock inherits it rather than restating it");
+		}
+
+		[Theory]
+		[InlineData("public abstract string Mixed { get; internal set; }",
+			"public override string Mixed { get => null!; internal set { } }", "internal set")]
+		[InlineData("public abstract string Mixed { get; private protected set; }",
+			"public override string Mixed { get => null!; private protected set { } }", "private protected set")]
+		public async Task MixedAccessorSlotAlreadyOverridden_ShouldBeMockedWithTheAccessibleAccessorOnly(
+			string baseMember, string derivedOverride, string inaccessibleAccessor)
+		{
+			MetadataReference external = ExternalAssembly.Compile($$"""
+			                                                       namespace Ext;
+
+			                                                       public abstract class MyBaseType
+			                                                       {
+			                                                       	{{baseMember}}
+			                                                       }
+
+			                                                       public abstract class MyExternalType : MyBaseType
+			                                                       {
+			                                                       	{{derivedOverride}}
+			                                                       }
+			                                                       """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public override string Mixed").And
+				.Contains(".GetProperty").And
+				.DoesNotContain(inaccessibleAccessor)
+				.Because("the accessor is invisible to the mock's assembly, so only the reachable one may be overridden");
+		}
+
+		[Theory]
+		[InlineData("public abstract string Mixed { internal get; set; }",
+			"public override string Mixed { internal get => null!; set { } }", "internal get")]
+		public async Task MixedAccessorSlotAlreadyOverridden_WithOnlyTheSetterReachable_ShouldBeMockedWithTheSetter(
+			string baseMember, string derivedOverride, string inaccessibleAccessor)
+		{
+			MetadataReference external = ExternalAssembly.Compile($$"""
+			                                                       namespace Ext;
+
+			                                                       public abstract class MyBaseType
+			                                                       {
+			                                                       	{{baseMember}}
+			                                                       }
+
+			                                                       public abstract class MyExternalType : MyBaseType
+			                                                       {
+			                                                       	{{derivedOverride}}
+			                                                       }
+			                                                       """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public override string Mixed").And
+				.Contains(".SetProperty").And
+				.DoesNotContain(inaccessibleAccessor)
+				.Because("the accessor is invisible to the mock's assembly, so only the reachable one may be overridden");
+		}
+
+		[Fact]
+		public async Task MixedAccessorIndexerSlotAlreadyOverridden_ShouldBeMockedWithTheAccessibleAccessorOnly()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      public abstract class MyBaseType
+			                                                      {
+			                                                      	public abstract int this[int index] { get; internal set; }
+			                                                      }
+
+			                                                      public abstract class MyExternalType : MyBaseType
+			                                                      {
+			                                                      	public override int this[int index] { get => 0; internal set { } }
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public override int this[int index]").And
+				.DoesNotContain("internal set")
+				.Because("the setter is invisible to the mock's assembly, so only the getter may be overridden");
+		}
+
+		[Fact]
+		public async Task MixedAccessorSlotFilledByAnIntermediateType_ShouldBeMockedWithTheAccessibleAccessorOnly()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      public abstract class MyBaseType
+			                                                      {
+			                                                      	public abstract string Mixed { get; internal set; }
+			                                                      }
+
+			                                                      public abstract class MyMiddleType : MyBaseType
+			                                                      {
+			                                                      	public override string Mixed { get => null!; internal set { } }
+			                                                      }
+
+			                                                      public abstract class MyExternalType : MyMiddleType
+			                                                      {
+			                                                      	public abstract int Visible();
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public override string Mixed").And
+				.DoesNotContain("internal set")
+				.Because("the slot is filled further up the chain, which discharges the setter just as a direct override does");
+		}
+
+		[Fact]
+		public async Task MixedAccessorSlot_WithInternalsVisibleTo_ShouldBeMockedWithBothAccessors()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("TestAssembly")]
+			                                                      namespace Ext;
+
+			                                                      public abstract class MyBaseType
+			                                                      {
+			                                                      	public abstract string Mixed { get; internal set; }
+			                                                      }
+
+			                                                      public abstract class MyExternalType : MyBaseType
+			                                                      {
+			                                                      	public override string Mixed { get => null!; internal set { } }
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"]).Contains("internal set");
+		}
+
+		[Fact]
+		public async Task MixedAccessorInterfaceSlotWithDefaultImplementation_ShouldNotBeRestated()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      public interface IMyBaseType
+			                                                      {
+			                                                      	string Mixed { get; internal set; }
+			                                                      }
+
+			                                                      public interface MyExternalType : IMyBaseType
+			                                                      {
+			                                                      	string IMyBaseType.Mixed { get => null!; set { } }
+			                                                      	int Visible();
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public int Visible()").And
+				.DoesNotContain("Mixed")
+				.Because(
+					"an explicit interface implementation must supply every accessor (CS0551) and cannot reach the internal one (CS0122), so interface slots stay all-or-nothing");
 		}
 
 		[Fact]
