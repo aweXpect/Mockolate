@@ -57,6 +57,75 @@ public class MockabilityAnalyzerAccessibilityTests
 		);
 
 	[Theory]
+	[InlineData("internal abstract void MyMember();", "internal override void MyMember() { }")]
+	[InlineData("internal abstract int MyMember { get; set; }", "internal override int MyMember { get; set; }")]
+	[InlineData("internal abstract event System.EventHandler MyMember;",
+		"internal override event System.EventHandler MyMember;")]
+	[InlineData("public abstract string MyMember { get; internal set; }",
+		"public override string MyMember { get => null!; internal set { } }")]
+	public async Task WhenInaccessibleAbstractMemberIsAlreadyOverridden_ShouldNotBeFlagged(
+		string baseMember, string derivedOverride) => await Verifier
+		.VerifyAnalyzerWithReferencedProjectAsync(
+			MockCreation,
+			$$"""
+			  namespace Ext
+			  {
+			  	public abstract class MyBaseType
+			  	{
+			  		{{baseMember}}
+			  	}
+
+			  	public abstract class MyExternalType : MyBaseType
+			  	{
+			  		{{derivedOverride}}
+			  	}
+			  }
+			  """);
+
+	[Fact]
+	public async Task WhenInaccessibleInterfaceMemberHasADefaultImplementation_ShouldNotBeFlagged() => await Verifier
+		.VerifyAnalyzerWithReferencedProjectAsync(
+			MockCreation,
+			"""
+			namespace Ext
+			{
+				public interface IMyBaseType
+				{
+					internal void MyMember();
+				}
+
+				public interface MyExternalType : IMyBaseType
+				{
+					void IMyBaseType.MyMember() { }
+				}
+			}
+			""");
+
+	[Fact]
+	public async Task WhenInaccessibleAbstractMemberIsReDeclaredAsAbstract_ShouldBeFlagged() => await Verifier
+		.VerifyAnalyzerWithReferencedProjectAsync(
+			MockCreation,
+			"""
+			namespace Ext
+			{
+				public abstract class MyBaseType
+				{
+					internal abstract void MyMember();
+				}
+
+				public abstract class MyExternalType : MyBaseType
+				{
+					internal abstract override void MyMember();
+				}
+			}
+			""",
+			Verifier.Diagnostic(Rules.MockabilityRule)
+				.WithLocation(0)
+				.WithArguments("Ext.MyExternalType",
+					"the member 'Ext.MyExternalType.MyMember()' must be implemented, but it is not accessible from this assembly")
+		);
+
+	[Theory]
 	[InlineData("internal abstract void MyMember();")]
 	[InlineData("public abstract string MyMember { get; internal set; }")]
 	public async Task WhenInternalsAreVisibleToTheMockAssembly_ShouldNotBeFlagged(string member) => await Verifier
@@ -78,9 +147,6 @@ public class MockabilityAnalyzerAccessibilityTests
 			MockCreation,
 			ExternalType("abstract class", "protected internal abstract void MyMember();"));
 
-	// `private protected` (= protected AND internal) is unreachable across an assembly boundary
-	// without InternalsVisibleTo, so it must be flagged just like plain `internal`. This mirrors
-	// Helpers.IsOverridableFrom in the generator, which refuses to emit the mock for the same input.
 	[Theory]
 	[InlineData("private protected abstract void MyMember();", "Ext.MyExternalType.MyMember()")]
 	[InlineData("private protected abstract int MyMember { get; set; }", "Ext.MyExternalType.MyMember.get")]
@@ -107,8 +173,6 @@ public class MockabilityAnalyzerAccessibilityTests
 				MockCreation,
 				ExternalType("abstract class", member, internalsVisibleToTestProject: true));
 
-	// The same check guards the Implementing<T>() call site, which reaches IsMockable through a
-	// different code path (type argument rather than invocation receiver).
 	[Fact]
 	public async Task WhenAdditionalInterfaceHasAnInaccessibleMember_ShouldBeFlagged() => await Verifier
 		.VerifyAnalyzerWithReferencedProjectAsync(

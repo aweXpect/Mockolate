@@ -134,9 +134,6 @@ public sealed partial class MockTests
 				.Contains("public override int Compute()");
 		}
 
-		// The emitted override must repeat the base member's declared accessibility, so assert the
-		// full signature rather than just the member name: the name alone also appears in the
-		// setup/verify surfaces and would match even if no override were emitted at all.
 		[Theory]
 		[InlineData("public abstract string MyProperty { get; internal set; }", "public override string MyProperty")]
 		[InlineData("internal abstract void MyMethod();", "internal override void MyMethod()")]
@@ -160,12 +157,11 @@ public sealed partial class MockTests
 
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources).ContainsKey("Mock.MyExternalType.g.cs");
-			await That(result.Sources["Mock.MyExternalType.g.cs"]).Contains(expectedOverride);
+			await That(result.Sources["Mock.MyExternalType.g.cs"]).Contains(expectedOverride)
+				.Because(
+					"the override must repeat the base member's declared accessibility, and the member name alone would also match the setup and verify surfaces");
 		}
 
-		// A `private protected` member cannot be reached through a base-typed qualifier from the
-		// derived mock, so it must not take part in the `Wraps` forwarding (CS1540). Non-mixed
-		// accessors additionally route to the protected setup surface rather than the public one.
 		[Theory]
 		[InlineData("private protected abstract void MyMethod();")]
 		[InlineData("private protected abstract event System.EventHandler MyEvent;")]
@@ -177,15 +173,11 @@ public sealed partial class MockTests
 			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
 
 			await That(result.Diagnostics).IsEmpty();
-			await That(result.Sources["Mock.MyExternalType.g.cs"]).DoesNotContain(".Wraps is global::Ext.MyExternalType");
+			await That(result.Sources["Mock.MyExternalType.g.cs"]).DoesNotContain(".Wraps is global::Ext.MyExternalType")
+				.Because(
+					"a `private protected` member cannot be reached through a base-typed qualifier from the derived mock (CS1540)");
 		}
 
-		// Diagnostics being empty here is not evidence of a graceful outcome: `Mock.g.cs` emits a
-		// generic `CreateMock` fallback that the call binds to (and CS1061 is suppressed in
-		// Generator.NoWarn anyway), so the program compiles and throws MockException at runtime. The
-		// user-facing guarantee is the Mockolate0002 error from MockabilityAnalyzer, covered by
-		// MockabilityAnalyzerAccessibilityTests. What this test pins is only that the generator
-		// refuses to emit a mock whose overrides could not compile.
 		[Theory]
 		[InlineData("interface", "string MyProperty { get; internal set; }")]
 		[InlineData("interface", "internal void MyMethod();")]
@@ -204,8 +196,106 @@ public sealed partial class MockTests
 
 			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
 
+			await That(result.Diagnostics).IsEmpty()
+				.Because(
+					"the call binds to the generic `CreateMock` fallback in Mock.g.cs, so the program still compiles and throws MockException at runtime instead");
+			await That(result.Sources).DoesNotContainKey("Mock.MyExternalType.g.cs")
+				.Because(
+					"the generator must refuse to emit a mock whose overrides could not compile; the user-facing guarantee is the Mockolate0002 error");
+		}
+
+		[Theory]
+		[InlineData("internal abstract void Hidden();", "internal override void Hidden() { }")]
+		[InlineData("internal abstract int Hidden { get; set; }", "internal override int Hidden { get; set; }")]
+		[InlineData("internal abstract event System.EventHandler Hidden;",
+			"internal override event System.EventHandler Hidden;")]
+		[InlineData("public abstract string Hidden { get; internal set; }",
+			"public override string Hidden { get => null!; internal set { } }")]
+		public async Task InaccessibleAbstractMemberAlreadyOverridden_ShouldStillBeMocked(
+			string baseMember, string derivedOverride)
+		{
+			MetadataReference external = ExternalAssembly.Compile($$"""
+			                                                       namespace Ext;
+
+			                                                       public abstract class MyBaseType
+			                                                       {
+			                                                       	{{baseMember}}
+			                                                       	public abstract int Visible();
+			                                                       }
+
+			                                                       public abstract class MyExternalType : MyBaseType
+			                                                       {
+			                                                       	{{derivedOverride}}
+			                                                       }
+			                                                       """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
 			await That(result.Diagnostics).IsEmpty();
-			await That(result.Sources).DoesNotContainKey("Mock.MyExternalType.g.cs");
+			await That(result.Sources).ContainsKey("Mock.MyExternalType.g.cs");
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public override int Visible()").And
+				.DoesNotContain("Hidden")
+				.Because("the slot is already filled, so neither the unreachable override nor the base declaration may be restated");
+		}
+
+		[Theory]
+		[InlineData("internal void Hidden();", "void IMyBaseType.Hidden() { }")]
+		[InlineData("internal int Hidden { get; set; }",
+			"int IMyBaseType.Hidden { get => 0; set { } }")]
+		[InlineData("internal event System.EventHandler Hidden;",
+			"event System.EventHandler IMyBaseType.Hidden { add { } remove { } }")]
+		public async Task InaccessibleInterfaceMemberWithDefaultImplementation_ShouldStillBeMocked(
+			string baseMember, string defaultImplementation)
+		{
+			MetadataReference external = ExternalAssembly.Compile($$"""
+			                                                       namespace Ext;
+
+			                                                       public interface IMyBaseType
+			                                                       {
+			                                                       	{{baseMember}}
+			                                                       }
+
+			                                                       public interface MyExternalType : IMyBaseType
+			                                                       {
+			                                                       	{{defaultImplementation}}
+			                                                       	int Visible();
+			                                                       }
+			                                                       """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.MyExternalType.g.cs");
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public int Visible()").And
+				.DoesNotContain("Hidden")
+				.Because("the default implementation fills the slot, so the mock inherits it rather than restating it");
+		}
+
+		[Fact]
+		public async Task InaccessibleAbstractMemberReDeclaredAsAbstract_ShouldNotBeMocked()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      public abstract class MyBaseType
+			                                                      {
+			                                                      	internal abstract void Hidden();
+			                                                      }
+
+			                                                      public abstract class MyExternalType : MyBaseType
+			                                                      {
+			                                                      	internal abstract override void Hidden();
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).DoesNotContainKey("Mock.MyExternalType.g.cs")
+				.Because(
+					"an `abstract override` re-declaration continues the slot without filling it, so the member is still the mock's obligation");
 		}
 
 		private static MetadataReference CompileMyExternalTypeAssembly(string typeKeyword, string member,

@@ -12,6 +12,7 @@ internal record Event
 		OverrideAccessibility = Helpers.ResolveOverrideVisibility(
 			Accessibility, eventSymbol.ContainingAssembly, sourceAssembly);
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
+		IsOverridableFromMock = Helpers.IsOverridableFrom(eventSymbol, sourceAssembly);
 		IsAbstract = eventSymbol.IsAbstract;
 		Name = Helpers.EscapeIfKeyword(eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name);
 		Type = Type.From(eventSymbol.Type);
@@ -43,6 +44,7 @@ internal record Event
 	public Type Type { get; }
 	public string ContainingType { get; }
 	public bool UseOverride { get; }
+	public bool IsOverridableFromMock { get; }
 	public bool IsAbstract { get; }
 	public bool IsStatic { get; }
 	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal

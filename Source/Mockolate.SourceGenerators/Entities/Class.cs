@@ -64,6 +64,27 @@ internal class Class : IEquatable<Class>
 
 		foreach (ISymbol member in members)
 		{
+			if (!FillsInaccessibleBaseSlot(member, sourceAssembly))
+			{
+				continue;
+			}
+
+			switch (member)
+			{
+				case IMethodSymbol methodSymbol:
+					methodExceptCandidates.Add(new Method(methodSymbol, null, sourceAssembly));
+					break;
+				case IPropertySymbol propertySymbol:
+					propertyExceptCandidates.Add(new Property(propertySymbol, null, sourceAssembly));
+					break;
+				case IEventSymbol { Type: INamedTypeSymbol { DelegateInvokeMethod: { } eventInvoke, }, } eventSymbol:
+					eventExceptCandidates.Add(new Event(eventSymbol, eventInvoke, null, sourceAssembly));
+					break;
+			}
+		}
+
+		foreach (ISymbol member in members)
+		{
 			switch (member)
 			{
 				case IMethodSymbol methodSymbol when methodSymbol.MethodKind is MethodKind.Ordinary:
@@ -148,13 +169,18 @@ internal class Class : IEquatable<Class>
 
 		ReservedNames = ComputeReservedNames(type);
 
-		HasInaccessibleRequiredMember = ComputeHasInaccessibleRequiredMember(members, sourceAssembly) ||
+		HasInaccessibleRequiredMember = ComputeHasInaccessibleRequiredMember() ||
 		                                InheritedTypes.Any(inherited => inherited.HasInaccessibleRequiredMember);
 
 		_surfaceHash = ComputeSurfaceHash();
 
 		bool ShouldIncludeMember(ISymbol member)
 		{
+			if (FillsInaccessibleBaseSlot(member, _sourceAssembly))
+			{
+				return false;
+			}
+
 			if (IsInterface || member.IsAbstract)
 			{
 				return true;
@@ -220,43 +246,92 @@ internal class Class : IEquatable<Class>
 	}
 
 	/// <summary>
-	///     True when one of <paramref name="members" /> is abstract (so the mock must implement it) but
-	///     invisible to <paramref name="sourceAssembly" />, leaving no valid code the generator could
-	///     emit for it.
+	///     True when a member the mock is still obliged to implement is invisible to the mock's
+	///     assembly, leaving no valid code the generator could emit for it.
 	/// </summary>
 	/// <remarks>
+	///     Deliberately reads the filtered <see cref="Methods" />/<see cref="Properties" />/
+	///     <see cref="Events" /> rather than <c>type.GetMembers()</c>: an abstract member that a
+	///     more-derived type already overrides has been dropped from those sets by
+	///     <see cref="FillsInaccessibleBaseSlot" />, and it is no longer the mock's obligation. Judging
+	///     the raw symbols instead would reject types that mock perfectly well.
+	///     <para />
 	///     Mirrored by <c>MockabilityAnalyzer.FindInaccessibleRequiredMember</c>, which reports
 	///     Mockolate0002 for the same condition so the user gets a diagnostic instead of a silently
 	///     missing mock. Keep both in sync.
 	/// </remarks>
-	private static bool ComputeHasInaccessibleRequiredMember(ImmutableArray<ISymbol> members,
-		IAssemblySymbol sourceAssembly)
-	{
-		foreach (ISymbol member in members)
-		{
-			bool isInaccessible = member switch
-			{
-				IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method
-					=> !Helpers.IsOverridableFrom(method, sourceAssembly),
-				IPropertySymbol { IsAbstract: true, } property
-					=> IsInaccessibleAccessor(property.GetMethod, sourceAssembly) ||
-					   IsInaccessibleAccessor(property.SetMethod, sourceAssembly),
-				IEventSymbol { IsAbstract: true, } @event
-					=> !Helpers.IsOverridableFrom(@event, sourceAssembly),
-				_ => false,
-			};
+	private bool ComputeHasInaccessibleRequiredMember()
+		=> Methods.Any(method => method is { IsAbstract: true, IsOverridableFromMock: false, }) ||
+		   Properties.Any(property => property is { IsAbstract: true, IsOverridableFromMock: false, }) ||
+		   Events.Any(@event => @event is { IsAbstract: true, IsOverridableFromMock: false, });
 
-			if (isInaccessible)
-			{
-				return true;
-			}
+	/// <summary>
+	///     True when <paramref name="member" /> fills a base slot (by <see langword="override" /> or by
+	///     explicit interface implementation) whose base declaration is invisible to
+	///     <paramref name="sourceAssembly" />.
+	/// </summary>
+	private static bool FillsInaccessibleBaseSlot(ISymbol member, IAssemblySymbol? sourceAssembly)
+		=> EnumerateFilledSlots(member).Any(slot => !IsSlotReachable(slot, sourceAssembly));
+
+	private static IEnumerable<ISymbol> EnumerateFilledSlots(ISymbol member)
+	{
+		if (member.IsAbstract)
+		{
+			yield break;
 		}
 
-		return false;
+		switch (member)
+		{
+			case IMethodSymbol method:
+				if (method.OverriddenMethod is { } overriddenMethod)
+				{
+					yield return overriddenMethod;
+				}
+
+				foreach (IMethodSymbol implemented in method.ExplicitInterfaceImplementations)
+				{
+					yield return implemented;
+				}
+
+				break;
+			case IPropertySymbol property:
+				if (property.OverriddenProperty is { } overriddenProperty)
+				{
+					yield return overriddenProperty;
+				}
+
+				foreach (IPropertySymbol implemented in property.ExplicitInterfaceImplementations)
+				{
+					yield return implemented;
+				}
+
+				break;
+			case IEventSymbol @event:
+				if (@event.OverriddenEvent is { } overriddenEvent)
+				{
+					yield return overriddenEvent;
+				}
+
+				foreach (IEventSymbol implemented in @event.ExplicitInterfaceImplementations)
+				{
+					yield return implemented;
+				}
+
+				break;
+		}
 	}
 
-	private static bool IsInaccessibleAccessor(IMethodSymbol? accessor, IAssemblySymbol sourceAssembly)
-		=> accessor is not null && !Helpers.IsOverridableFrom(accessor, sourceAssembly);
+	private static bool IsSlotReachable(ISymbol slot, IAssemblySymbol? sourceAssembly)
+		=> slot switch
+		{
+			IPropertySymbol property => Helpers.IsOverridableFrom(property, sourceAssembly) &&
+			                            IsAccessorReachable(property.GetMethod, sourceAssembly) &&
+			                            IsAccessorReachable(property.SetMethod, sourceAssembly),
+			_ => Helpers.IsOverridableFrom(slot, sourceAssembly),
+		};
+
+	private static bool IsAccessorReachable(IMethodSymbol? accessor, IAssemblySymbol? sourceAssembly)
+		=> accessor is null || Helpers.IsOverridableFrom(accessor, sourceAssembly);
 
 	/// <summary>
 	///     Identifiers that the mock class shares its scope with but that aren't surfaced through
