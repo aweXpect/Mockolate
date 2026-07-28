@@ -23,7 +23,8 @@ internal class Class : IEquatable<Class>
 		List<Event>? alreadyDefinedEvents = null,
 		List<Method>? exceptMethods = null,
 		List<Property>? exceptProperties = null,
-		List<Event>? exceptEvents = null)
+		List<Event>? exceptEvents = null,
+		List<Property>? filledProperties = null)
 #pragma warning restore S107
 	{
 		_sourceAssembly = sourceAssembly;
@@ -61,9 +62,15 @@ internal class Class : IEquatable<Class>
 		List<Method> methodExceptCandidates = new();
 		List<Property> propertyExceptCandidates = new();
 		List<Event> eventExceptCandidates = new();
+		List<Property> propertyFilledCandidates = new();
 
 		foreach (ISymbol member in members)
 		{
+			if (FindPartlyReachableFilledSlot(member, sourceAssembly) is { } partlyReachableSlot)
+			{
+				propertyFilledCandidates.Add(new Property(partlyReachableSlot, null, sourceAssembly));
+			}
+
 			if (!FillsInaccessibleBaseSlot(member, sourceAssembly))
 			{
 				continue;
@@ -161,15 +168,18 @@ internal class Class : IEquatable<Class>
 		exceptEvents ??= new List<Event>();
 		exceptEvents.AddRange(DistinctList(eventExceptCandidates));
 
+		filledProperties ??= new List<Property>();
+		filledProperties.AddRange(DistinctList(propertyFilledCandidates));
+
 		InheritedTypes = new EquatableArray<Class>(
 			GetInheritedTypes(type).Select(t
 					=> new Class(t, sourceAssembly, methods, properties, events, exceptMethods, exceptProperties,
-						exceptEvents))
+						exceptEvents, filledProperties))
 				.ToArray());
 
 		ReservedNames = ComputeReservedNames(type);
 
-		HasInaccessibleRequiredMember = ComputeHasInaccessibleRequiredMember() ||
+		HasInaccessibleRequiredMember = ComputeHasInaccessibleRequiredMember(filledProperties) ||
 		                                InheritedTypes.Any(inherited => inherited.HasInaccessibleRequiredMember);
 
 		_surfaceHash = ComputeSurfaceHash();
@@ -260,18 +270,44 @@ internal class Class : IEquatable<Class>
 	///     Mockolate0002 for the same condition so the user gets a diagnostic instead of a silently
 	///     missing mock. Keep both in sync.
 	/// </remarks>
-	private bool ComputeHasInaccessibleRequiredMember()
+	private bool ComputeHasInaccessibleRequiredMember(List<Property> filledProperties)
 		=> Methods.Any(method => method is { IsAbstract: true, IsOverridableFromMock: false, }) ||
-		   Properties.Any(property => property is { IsAbstract: true, IsOverridableFromMock: false, }) ||
+		   Properties.Any(property => property is { IsAbstract: true, IsOverridableFromMock: false, } &&
+		                              !filledProperties.Contains(property,
+			                              Property.ContainingTypeIndependentEqualityComparer)) ||
 		   Events.Any(@event => @event is { IsAbstract: true, IsOverridableFromMock: false, });
 
 	/// <summary>
 	///     True when <paramref name="member" /> fills a base slot (by <see langword="override" /> or by
-	///     explicit interface implementation) whose base declaration is invisible to
-	///     <paramref name="sourceAssembly" />.
+	///     explicit interface implementation) that the mock must leave alone entirely, because the base
+	///     declaration or one of its accessors is invisible to <paramref name="sourceAssembly" />.
 	/// </summary>
 	private static bool FillsInaccessibleBaseSlot(ISymbol member, IAssemblySymbol? sourceAssembly)
-		=> EnumerateFilledSlots(member).Any(slot => !IsSlotReachable(slot, sourceAssembly));
+	{
+		if (FindPartlyReachableFilledSlot(member, sourceAssembly) is not null)
+		{
+			return false;
+		}
+
+		return EnumerateFilledSlots(member).Any(slot => !IsSlotReachable(slot, sourceAssembly));
+	}
+
+	/// <summary>
+	///     A filled slot the mock can still restate in part, as in
+	///     <c>public abstract string P { get; internal set; }</c>: it keeps the reachable accessor and
+	///     drops the other, which the filling member already implements.
+	/// </summary>
+	/// <remarks>
+	///     Only an <see langword="override" /> qualifies; an explicit interface implementation must supply
+	///     every accessor (CS0551) and cannot reach an internal one (CS0122).
+	/// </remarks>
+	private static IPropertySymbol? FindPartlyReachableFilledSlot(ISymbol member,
+		IAssemblySymbol? sourceAssembly)
+		=> member is IPropertySymbol { IsAbstract: false, OverriddenProperty: { } slot, } &&
+		   Helpers.IsOverridableFrom(slot, sourceAssembly) &&
+		   HasUnreachableAccessor(slot, sourceAssembly)
+			? slot
+			: null;
 
 	private static IEnumerable<ISymbol> EnumerateFilledSlots(ISymbol member)
 	{
@@ -322,16 +358,15 @@ internal class Class : IEquatable<Class>
 	}
 
 	private static bool IsSlotReachable(ISymbol slot, IAssemblySymbol? sourceAssembly)
-		=> slot switch
-		{
-			IPropertySymbol property => Helpers.IsOverridableFrom(property, sourceAssembly) &&
-			                            IsAccessorReachable(property.GetMethod, sourceAssembly) &&
-			                            IsAccessorReachable(property.SetMethod, sourceAssembly),
-			_ => Helpers.IsOverridableFrom(slot, sourceAssembly),
-		};
+		=> Helpers.IsOverridableFrom(slot, sourceAssembly) &&
+		   (slot is not IPropertySymbol property || !HasUnreachableAccessor(property, sourceAssembly));
 
-	private static bool IsAccessorReachable(IMethodSymbol? accessor, IAssemblySymbol? sourceAssembly)
-		=> accessor is null || Helpers.IsOverridableFrom(accessor, sourceAssembly);
+	private static bool HasUnreachableAccessor(IPropertySymbol property, IAssemblySymbol? sourceAssembly)
+		=> IsUnreachableAccessor(property.GetMethod, sourceAssembly) ||
+		   IsUnreachableAccessor(property.SetMethod, sourceAssembly);
+
+	private static bool IsUnreachableAccessor(IMethodSymbol? accessor, IAssemblySymbol? sourceAssembly)
+		=> accessor is not null && !Helpers.IsOverridableFrom(accessor, sourceAssembly);
 
 	/// <summary>
 	///     Identifiers that the mock class shares its scope with but that aren't surfaced through

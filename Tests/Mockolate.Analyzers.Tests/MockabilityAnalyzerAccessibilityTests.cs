@@ -63,6 +63,10 @@ public class MockabilityAnalyzerAccessibilityTests
 		"internal override event System.EventHandler MyMember;")]
 	[InlineData("public abstract string MyMember { get; internal set; }",
 		"public override string MyMember { get => null!; internal set { } }")]
+	[InlineData("public abstract string MyMember { internal get; set; }",
+		"public override string MyMember { internal get => null!; set { } }")]
+	[InlineData("private protected abstract int MyMember { get; set; }",
+		"private protected override int MyMember { get; set; }")]
 	public async Task WhenInaccessibleAbstractMemberIsAlreadyOverridden_ShouldNotBeFlagged(
 		string baseMember, string derivedOverride) => await Verifier
 		.VerifyAnalyzerWithReferencedProjectAsync(
