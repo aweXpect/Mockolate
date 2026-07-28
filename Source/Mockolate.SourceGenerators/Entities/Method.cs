@@ -12,6 +12,7 @@ internal record Method
 		OverrideAccessibility = Helpers.ResolveOverrideVisibility(
 			Accessibility, methodSymbol.ContainingAssembly, sourceAssembly);
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
+		IsOverridableFromMock = Helpers.IsOverridableFrom(methodSymbol, sourceAssembly);
 		IsAbstract = methodSymbol.IsAbstract;
 		IsStatic = methodSymbol.IsStatic;
 		IsInitOnly = methodSymbol.IsInitOnly;
@@ -54,6 +55,7 @@ internal record Method
 	public EquatableArray<GenericParameter>? GenericParameters { get; }
 
 	public bool UseOverride { get; }
+	public bool IsOverridableFromMock { get; }
 	public bool IsAbstract { get; }
 	public bool IsStatic { get; }
 	public bool IsInitOnly { get; }

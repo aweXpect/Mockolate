@@ -478,10 +478,86 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static ISymbol? FindInaccessibleRequiredMember(ITypeSymbol type, IAssemblySymbol sourceAssembly)
-		=> EnumerateImplementedTypes(type)
-			.SelectMany(implementedType => implementedType.GetMembers())
-			.Select(member => FindInaccessibleMember(member, sourceAssembly))
-			.FirstOrDefault(inaccessibleMember => inaccessibleMember is not null);
+	{
+		HashSet<string> filledSlots = new(StringComparer.Ordinal);
+
+		foreach (ITypeSymbol implementedType in EnumerateImplementedTypes(type))
+		{
+			foreach (ISymbol member in implementedType.GetMembers())
+			{
+				foreach (ISymbol slot in EnumerateFilledSlots(member))
+				{
+					filledSlots.Add(GetSignatureKey(slot));
+				}
+			}
+		}
+
+		foreach (ITypeSymbol implementedType in EnumerateImplementedTypes(type))
+		{
+			foreach (ISymbol member in implementedType.GetMembers())
+			{
+				if (filledSlots.Contains(GetSignatureKey(member)))
+				{
+					continue;
+				}
+
+				if (FindInaccessibleMember(member, sourceAssembly) is { } inaccessibleMember)
+				{
+					return inaccessibleMember;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private static IEnumerable<ISymbol> EnumerateFilledSlots(ISymbol member)
+	{
+		if (member.IsAbstract)
+		{
+			yield break;
+		}
+
+		switch (member)
+		{
+			case IMethodSymbol method:
+				if (method.OverriddenMethod is { } overriddenMethod)
+				{
+					yield return overriddenMethod;
+				}
+
+				foreach (IMethodSymbol implemented in method.ExplicitInterfaceImplementations)
+				{
+					yield return implemented;
+				}
+
+				break;
+			case IPropertySymbol property:
+				if (property.OverriddenProperty is { } overriddenProperty)
+				{
+					yield return overriddenProperty;
+				}
+
+				foreach (IPropertySymbol implemented in property.ExplicitInterfaceImplementations)
+				{
+					yield return implemented;
+				}
+
+				break;
+			case IEventSymbol @event:
+				if (@event.OverriddenEvent is { } overriddenEvent)
+				{
+					yield return overriddenEvent;
+				}
+
+				foreach (IEventSymbol implemented in @event.ExplicitInterfaceImplementations)
+				{
+					yield return implemented;
+				}
+
+				break;
+		}
+	}
 
 	private static ISymbol? FindInaccessibleMember(ISymbol member, IAssemblySymbol sourceAssembly)
 		=> member switch

@@ -37,10 +37,17 @@ internal record Property
 			alreadyDefinedProperties.Add(this);
 		}
 
-		Getter = propertySymbol.GetMethod is { } getter && Helpers.IsOverridableFrom(getter, sourceAssembly)
+		bool getterOverridable = propertySymbol.GetMethod is not { } getterSymbol ||
+		                         Helpers.IsOverridableFrom(getterSymbol, sourceAssembly);
+		bool setterOverridable = propertySymbol.SetMethod is not { } setterSymbol ||
+		                         Helpers.IsOverridableFrom(setterSymbol, sourceAssembly);
+		IsOverridableFromMock = getterOverridable && setterOverridable &&
+		                        Helpers.IsOverridableFrom(propertySymbol, sourceAssembly);
+
+		Getter = propertySymbol.GetMethod is { } getter && getterOverridable
 			? new Method(getter, null, sourceAssembly)
 			: null;
-		Setter = propertySymbol.SetMethod is { } setter && Helpers.IsOverridableFrom(setter, sourceAssembly)
+		Setter = propertySymbol.SetMethod is { } setter && setterOverridable
 			? new Method(setter, null, sourceAssembly)
 			: null;
 	}
@@ -51,6 +58,7 @@ internal record Property
 		new ContainingTypeIndependentPropertyEqualityComparer();
 
 	public bool IsIndexer { get; }
+	public bool IsOverridableFromMock { get; }
 	public bool IsAbstract { get; }
 	public bool IsStatic { get; }
 	public bool IsProtected => Accessibility is Accessibility.Protected or Accessibility.ProtectedOrInternal
