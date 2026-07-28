@@ -296,10 +296,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -352,7 +352,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -408,7 +408,7 @@ window.BENCHMARK_DATA = {
           306.9382216771444,
           230.03980353900366,
           310.9418816884359,
-          303.2860138575236
+          363.538735294342
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -533,7 +533,7 @@ window.BENCHMARK_DATA = {
           70761.61036783854,
           33120.60419640174,
           100119.39466145834,
-          70810.36239188058
+          101273.05245535714
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -658,7 +658,7 @@ window.BENCHMARK_DATA = {
           4152.730354895959,
           2788.900873819987,
           4719.337187194824,
-          4174.146067937215
+          4736.905554090227
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -783,7 +783,7 @@ window.BENCHMARK_DATA = {
           4284.990898132324,
           2398.122862952096,
           4810.608672587076,
-          4296.188059997558
+          5029.031539916992
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -908,7 +908,7 @@ window.BENCHMARK_DATA = {
           392.88942677634105,
           289.9862971305847,
           395.99195137023924,
-          411.9049721785954
+          480.01378911336263
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1033,7 +1033,7 @@ window.BENCHMARK_DATA = {
           533.0445364634196,
           369.1735189144428,
           531.9339933395386,
-          531.9364141623179
+          537.4986668904622
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1404,10 +1404,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -1460,7 +1460,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -1516,7 +1516,7 @@ window.BENCHMARK_DATA = {
           240.2937931060791,
           309.83541383743284,
           300.6762379010518,
-          295.905307837895
+          296.2553795178731
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -1641,7 +1641,7 @@ window.BENCHMARK_DATA = {
           11601.827562604632,
           16060.338444010416,
           15833.60799734933,
-          13814.28422328404
+          13970.854618326823
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1766,7 +1766,7 @@ window.BENCHMARK_DATA = {
           4293.898540203388,
           5733.120022583008,
           5805.208317057291,
-          4992.701973978678
+          5237.494193013509
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1891,7 +1891,7 @@ window.BENCHMARK_DATA = {
           184299.11056082588,
           212324.59164663462,
           215005.59511021205,
-          230819.74375
+          232575.64368614784
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2016,7 +2016,7 @@ window.BENCHMARK_DATA = {
           1178.4863681793213,
           1383.73574701945,
           1398.385641684899,
-          1290.4951119422913
+          1341.675290298462
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2141,7 +2141,7 @@ window.BENCHMARK_DATA = {
           150.42054948439966,
           183.54034488017743,
           204.96119684832436,
-          168.27507880755834
+          172.9401307106018
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2512,10 +2512,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -2568,7 +2568,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -2624,7 +2624,7 @@ window.BENCHMARK_DATA = {
           980.823318208967,
           992.0170852661133,
           984.4172592163086,
-          949.6248878479004
+          958.0362227121989
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2749,7 +2749,7 @@ window.BENCHMARK_DATA = {
           172073.48018973213,
           220631.82170222356,
           221902.99211774554,
-          219244.20302734376
+          219696.26836688703
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2810,7 +2810,7 @@ window.BENCHMARK_DATA = {
           21267,
           21084,
           21147,
-          20732
+          20956
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2874,7 +2874,7 @@ window.BENCHMARK_DATA = {
           8375.9494527181,
           9444.316337076823,
           9547.430532836914,
-          9261.075600179036
+          9671.291566975911
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2999,7 +2999,7 @@ window.BENCHMARK_DATA = {
           9837.95153427124,
           11887.249201093402,
           12192.273152669271,
-          11859.574201456706
+          12024.033365885416
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3124,7 +3124,7 @@ window.BENCHMARK_DATA = {
           826.7576047352383,
           938.2533870697022,
           973.3840831756592,
-          845.2903979374812
+          884.0984922555776
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3495,10 +3495,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -3551,7 +3551,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -3607,7 +3607,7 @@ window.BENCHMARK_DATA = {
           2489.1675613948278,
           2557.3101351601736,
           2514.1685796465194,
-          2425.585459136963
+          2573.0765935262043
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3732,7 +3732,7 @@ window.BENCHMARK_DATA = {
           182617.85953194756,
           232821.85454450335,
           228506.2423502604,
-          230150.20582682293
+          229453.77244466144
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3793,7 +3793,7 @@ window.BENCHMARK_DATA = {
           29867,
           30834,
           30898,
-          29332
+          29556
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3857,7 +3857,7 @@ window.BENCHMARK_DATA = {
           21050.756293160575,
           23293.48571166992,
           23708.112954711913,
-          22599.015873209635
+          23620.773999532063
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3918,7 +3918,7 @@ window.BENCHMARK_DATA = {
           26249,
           26249,
           26249,
-          26753
+          26249
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3982,7 +3982,7 @@ window.BENCHMARK_DATA = {
           20828.836491511418,
           25232.200970458984,
           25558.161808558874,
-          25532.97334798177
+          25771.10126546224
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4107,7 +4107,7 @@ window.BENCHMARK_DATA = {
           1957.2716000874836,
           2250.530216217041,
           2184.7804039001467,
-          2146.9412473042808
+          2203.97745997111
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4478,10 +4478,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -4534,7 +4534,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -4590,7 +4590,7 @@ window.BENCHMARK_DATA = {
           344.4083041350047,
           367.3351839383443,
           367.349714585713,
-          426.1252073219844
+          367.5896806716919
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4715,7 +4715,7 @@ window.BENCHMARK_DATA = {
           132279.3578404018,
           185492.0107421875,
           185253.0581752232,
-          191140.54028320312
+          81114.19375
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4776,7 +4776,7 @@ window.BENCHMARK_DATA = {
           15098,
           14926,
           14926,
-          14926
+          14930
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4840,7 +4840,7 @@ window.BENCHMARK_DATA = {
           5235.016499655588,
           5668.576284281413,
           5952.841504778181,
-          6083.075080871582
+          4830.021085611979
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4901,7 +4901,7 @@ window.BENCHMARK_DATA = {
           9336,
           9336,
           9280,
-          9336
+          9280
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4965,7 +4965,7 @@ window.BENCHMARK_DATA = {
           5298.043910980225,
           6122.925632222494,
           6435.696628316244,
-          6495.712578406701
+          4233.348073323567
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5026,7 +5026,7 @@ window.BENCHMARK_DATA = {
           8245,
           8244,
           8244,
-          8244
+          8257
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5090,7 +5090,7 @@ window.BENCHMARK_DATA = {
           520.1488609313965,
           581.8785559790475,
           598.3660481316703,
-          709.679056040446
+          513.2190226872762
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5215,7 +5215,7 @@ window.BENCHMARK_DATA = {
           489.7846429824829,
           514.1897261301676,
           485.92892793019615,
-          550.959250831604
+          472.206968160776
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -5586,10 +5586,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -5642,7 +5642,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -5698,7 +5698,7 @@ window.BENCHMARK_DATA = {
           608.6372812906901,
           683.766410001119,
           721.5460090001424,
-          756.7099786758423
+          777.3029230753581
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5823,7 +5823,7 @@ window.BENCHMARK_DATA = {
           135225.27428385417,
           191491.13103841146,
           190888.5360576923,
-          197992.6138044085
+          84189.76673177084
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5884,7 +5884,7 @@ window.BENCHMARK_DATA = {
           19085,
           18925,
           18925,
-          18925
+          18907
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5948,7 +5948,7 @@ window.BENCHMARK_DATA = {
           7816.787630208333,
           8467.346037801106,
           8913.613322666713,
-          9169.375145467122
+          7061.2156453450525
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6009,7 +6009,7 @@ window.BENCHMARK_DATA = {
           12361,
           12361,
           11800,
-          12361
+          11800
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6073,7 +6073,7 @@ window.BENCHMARK_DATA = {
           8274.157862345377,
           9440.924643380302,
           10181.356550089518,
-          10117.018819173178
+          7394.468305460612
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6134,7 +6134,7 @@ window.BENCHMARK_DATA = {
           15786,
           15786,
           15786,
-          15786
+          15785
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6198,7 +6198,7 @@ window.BENCHMARK_DATA = {
           1046.5538749694824,
           1156.9028888429914,
           1279.9123446600777,
-          1380.1203596932548
+          1056.4588141123454
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6323,7 +6323,7 @@ window.BENCHMARK_DATA = {
           1392.246146774292,
           1417.9220123291016,
           1454.8135761260987,
-          1533.6032695770264
+          1591.2583934783936
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6694,10 +6694,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -6750,7 +6750,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -6806,7 +6806,7 @@ window.BENCHMARK_DATA = {
           613.2594451904297,
           536.835631942749,
           546.1643156687419,
-          533.7576913152423
+          619.3018880844116
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6931,7 +6931,7 @@ window.BENCHMARK_DATA = {
           12257.789957682291,
           10658.737121582031,
           12032.401322428386,
-          10219.973254394532
+          12209.714803059896
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7056,7 +7056,7 @@ window.BENCHMARK_DATA = {
           7609.007114664713,
           7199.449713486892,
           7484.208405049642,
-          6795.397099812825
+          7760.746255493164
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7181,7 +7181,7 @@ window.BENCHMARK_DATA = {
           8575.47507770245,
           7629.336109924317,
           8832.209437052408,
-          7220.1560310950645
+          8738.902243477958
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7306,7 +7306,7 @@ window.BENCHMARK_DATA = {
           462.85083230336505,
           426.02324622017994,
           522.9724287668864,
-          443.2487844149272
+          520.4530617396036
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7431,7 +7431,7 @@ window.BENCHMARK_DATA = {
           471.0922704083579,
           472.43776416778564,
           457.9102034228189,
-          452.1257218292781
+          505.0907885869344
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7802,10 +7802,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -7858,7 +7858,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -7914,7 +7914,7 @@ window.BENCHMARK_DATA = {
           1044.8693804423015,
           1064.645912023691,
           1030.0508512769427,
-          1010.4107024329049
+          1045.679082107544
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8039,7 +8039,7 @@ window.BENCHMARK_DATA = {
           19189.606719970703,
           17336.82831624349,
           18538.987278529577,
-          16501.69399370466
+          18932.56966756185
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8164,7 +8164,7 @@ window.BENCHMARK_DATA = {
           17568.20606689453,
           16127.344423566547,
           17082.484368896483,
-          15489.580122884114
+          18037.32969548152
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8289,7 +8289,7 @@ window.BENCHMARK_DATA = {
           20460.687263997395,
           18120.710075887044,
           19840.29471059946,
-          16687.283051710863
+          21546.66792733329
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8414,7 +8414,7 @@ window.BENCHMARK_DATA = {
           1122.864460627238,
           1119.345603942871,
           1164.027216911316,
-          1071.0669565836588
+          1238.8385407584053
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8539,7 +8539,7 @@ window.BENCHMARK_DATA = {
           1612.0750241960798,
           1670.6224793752035,
           1594.0135653177897,
-          1558.5195130666098
+          1660.5984853108723
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8910,10 +8910,10 @@ window.BENCHMARK_DATA = {
         "message": "chore: Bump TUnit.Mocks from 1.61.15 to 1.61.38 (#823)"
       },
       {
-        "sha": "e08e5ab320b59aab5d3cc22b8bbb4da203e80cc6",
-        "author": "dependabot[bot]",
-        "date": "Tue Jul 28 14:28:53 2026 \u002B0000",
-        "message": "chore: Bump SharpCompress from 0.50.0 to 0.50.1 (#822)"
+        "sha": "be3c0da9a0d1b0a3726ad6d5dba6e62c4deea1a8",
+        "author": "Valentin Breu\u00DF",
+        "date": "Tue Jul 28 16:34:39 2026 \u002B0200",
+        "message": "test: cover cross-assembly accessibility in the source generator (#824)"
       }
     ],
     "labels": [
@@ -8966,7 +8966,7 @@ window.BENCHMARK_DATA = {
       "d64dfe53",
       "46ac6721",
       "dc016265",
-      "e08e5ab3"
+      "be3c0da9"
     ],
     "datasets": [
       {
@@ -9022,7 +9022,7 @@ window.BENCHMARK_DATA = {
           19.282127283513546,
           17.33060103229114,
           17.95091250439485,
-          17.085867001612982
+          10.223735629365994
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -9147,7 +9147,7 @@ window.BENCHMARK_DATA = {
           304.73221015930176,
           289.56813342754657,
           283.98529914220177,
-          306.53204447428385
+          141.22235870361328
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -9272,7 +9272,7 @@ window.BENCHMARK_DATA = {
           39.242267817258835,
           36.9684378862381,
           37.24843244949977,
-          34.613312881726486
+          20.968257252986614
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9397,7 +9397,7 @@ window.BENCHMARK_DATA = {
           1334.7503617150444,
           1533.4122047424316,
           1394.498101679484,
-          1359.0513198852539
+          794.4015552080594
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9522,7 +9522,7 @@ window.BENCHMARK_DATA = {
           1886.0032268251691,
           2086.1813786824546,
           1890.516462580363,
-          1943.8707477863018
+          1033.0198290688652
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9647,7 +9647,7 @@ window.BENCHMARK_DATA = {
           1804.9808710734048,
           2005.8398541041784,
           1811.4468340192523,
-          1783.4171267191568
+          978.6085502624512
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
