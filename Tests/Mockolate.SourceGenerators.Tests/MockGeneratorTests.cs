@@ -168,12 +168,12 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		// No typed overloads beyond the existing hand-written ones; the existing parameterless
-		// CreateMock() overload is still there and no typed overload is emitted for it.
 		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
 		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("public static global::MyCode.MyService CreateMock()")
-			.IgnoringNewlineStyle();
+			.IgnoringNewlineStyle()
+			.Because(
+				"the hand-written parameterless CreateMock() overload is still emitted, and no typed overload is added beyond it");
 	}
 
 	[Fact]
@@ -541,11 +541,10 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		// The hand-written CreateMock(MockBehavior) overload already covers this signature.
-		// A typed single-parameter overload with the same signature would produce a duplicate
-		// definition, so the generator must skip it.
 		int matches = CreateMockBehaviorSignatureRegex().Count(result.Sources["Mock.MyService.g.cs"]);
-		await That(matches).IsEqualTo(1);
+		await That(matches).IsEqualTo(1)
+			.Because(
+				"the hand-written CreateMock(MockBehavior) overload already covers this signature, so a typed single-parameter overload would produce a duplicate definition");
 	}
 
 	[Fact]
@@ -574,12 +573,12 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		// Action<string> does not collide with the setup action type (Action<IMockSetupForMyService>),
-		// so the generator should emit the typed overload.
 		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
 		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("CreateMock(global::System.Action<string> callback)")
-			.IgnoringNewlineStyle();
+			.IgnoringNewlineStyle()
+			.Because(
+				"Action<string> does not collide with the setup action type (Action<IMockSetupForMyService>)");
 	}
 
 	[Fact]
@@ -676,12 +675,12 @@ public partial class MockGeneratorTests
 			     """);
 
 		await That(result.Diagnostics).IsEmpty();
-		// The generator emits a mock for the closed generic MyService<string>. Locate the generated
-		// file and assert the typed overload was emitted with the substituted type argument.
 		string generated = string.Concat(result.Sources.Values);
 		await That(generated)
 			.Contains("CreateMock(string value)")
-			.IgnoringNewlineStyle();
+			.IgnoringNewlineStyle()
+			.Because(
+				"the mock for the closed generic MyService<string> must carry the typed overload with the substituted type argument");
 	}
 
 	[Fact]
@@ -1191,12 +1190,12 @@ public partial class MockGeneratorTests
 			.Contains($"to invoke the <see cref=\"{expectedCref}\">MyService(int, string)</see> constructor.")
 			.IgnoringNewlineStyle();
 
-		// CS1574/CS1584/CS1658 messages embed the offending cref text; if the constructor cref
-		// resolved cleanly under DocumentationMode.Diagnose, no diagnostic mentions it.
 		string[] crefFailures = result.Diagnostics
 			.Where(d => d.Contains(expectedCref))
 			.ToArray();
-		await That(crefFailures).IsEmpty();
+		await That(crefFailures).IsEmpty()
+			.Because(
+				"CS1574/CS1584/CS1658 messages embed the offending cref text, so a cref that resolves cleanly under DocumentationMode.Diagnose is mentioned by no diagnostic");
 	}
 
 	[Fact]
@@ -1254,15 +1253,14 @@ public partial class MockGeneratorTests
 			     }
 			     """, DocumentationMode.Diagnose);
 
-		// Closed-generic constructor crefs (e.g. MyService{int}.MyService(int)) aren't valid C#
-		// cref syntax, so the generator falls back to the unlinked phrasing for generic classes
-		// rather than emit something that would surface CS1584 on the consumer side.
 		await That(result.Sources).ContainsKey("Mock.MyService_int.g.cs");
 		await That(result.Sources["Mock.MyService_int.g.cs"])
 			.Contains("to invoke the base-class constructor.")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("MyService.MyService(")
-			.IgnoringNewlineStyle();
+			.IgnoringNewlineStyle()
+			.Because(
+				"closed-generic constructor crefs (e.g. MyService{int}.MyService(int)) aren't valid C# cref syntax, so generic classes fall back to the unlinked phrasing rather than surface CS1584 on the consumer side");
 	}
 
 	[Fact]

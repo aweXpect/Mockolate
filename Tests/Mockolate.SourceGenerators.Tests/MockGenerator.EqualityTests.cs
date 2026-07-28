@@ -178,11 +178,11 @@ public sealed class MockGeneratorEqualityTests
 				new EquatableArray<NamedClass>([new NamedClass("X", mc),]));
 			NamedMock withNull = new("F", "P", mc, null);
 
-			// Different additionalClasses should produce different hash codes — can't guarantee
-			// strict inequality, but the field is part of the hash so at minimum it must run.
 			_ = withAdditional.GetHashCode();
 			_ = withNull.GetHashCode();
-			await That(true).IsTrue();
+			await That(true).IsTrue()
+				.Because(
+					"strict inequality of the two hash codes cannot be guaranteed, so this only pins that additionalClasses takes part in the hash at all");
 		}
 
 		private static MockClass CreateMockClass(string source = "public interface IFoo { void M(); }",

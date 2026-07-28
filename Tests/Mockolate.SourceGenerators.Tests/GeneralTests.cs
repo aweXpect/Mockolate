@@ -608,14 +608,14 @@ public class GeneralTests
 			     }
 			     """);
 
-		// A mock subclass declaring a property `MockRegistry` would hide the inherited field
-		// (CS0108). The dedup pipeline must skip past the conflicting member name.
 		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
 		await That(result.Sources["Mock.MyService.g.cs"])
 			.Contains("MockolateMockRegistry")
 			.IgnoringNewlineStyle().And
 			.DoesNotContain("private global::Mockolate.MockRegistry MockRegistry { get; }")
-			.IgnoringNewlineStyle();
+			.IgnoringNewlineStyle()
+			.Because(
+				"a mock subclass declaring a property `MockRegistry` would hide the inherited field (CS0108), so the dedup pipeline must skip past the conflicting member name");
 	}
 
 	[Fact]
@@ -673,12 +673,12 @@ public class GeneralTests
 			     }
 			     """);
 
-		// `Mock` is a method on the type, so the extension `Mock` property would shadow access.
-		// CreateUniquePropertyName must now skip past it to a Mockolate_-prefixed alternative.
 		await That(result.Sources).ContainsKey("Mock.IMyInterface.g.cs");
 		await That(result.Sources["Mock.IMyInterface.g.cs"])
 			.Contains("Mockolate_Mock")
-			.IgnoringNewlineStyle();
+			.IgnoringNewlineStyle()
+			.Because(
+				"`Mock` is a method on the type, so the extension `Mock` property would shadow access and CreateUniquePropertyName must skip past it to a Mockolate_-prefixed alternative");
 	}
 
 	[Fact]

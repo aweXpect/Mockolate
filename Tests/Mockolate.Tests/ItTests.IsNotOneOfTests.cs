@@ -52,10 +52,10 @@ public sealed partial class ItTests
 
 			sut.DoSomething(other);
 
-			// 'other' is not in [value1, value2], so the match is found once
-			await That(sut.Mock.Verify.DoSomething(It.IsNotOneOf(value1, value2))).Once();
-			// 'other' IS in [other], so no match
-			await That(sut.Mock.Verify.DoSomething(It.IsNotOneOf(other))).Never();
+			await That(sut.Mock.Verify.DoSomething(It.IsNotOneOf(value1, value2))).Once()
+				.Because("'other' is not in [value1, value2]");
+			await That(sut.Mock.Verify.DoSomething(It.IsNotOneOf(other))).Never()
+				.Because("'other' IS in [other]");
 		}
 
 		[Fact]

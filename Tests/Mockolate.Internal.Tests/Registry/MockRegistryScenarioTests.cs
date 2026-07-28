@@ -18,8 +18,8 @@ public sealed class MockRegistryScenarioTests
 		int callCount = 0;
 		int result = registry.ApplyIndexerGetter(access, setup, () => ++callCount, 0);
 
-		// FakeIndexerSetup.GetResult<TResult>(access, behavior, defaultValueGenerator) returns the generator's value.
-		await That(result).IsEqualTo(1);
+		await That(result).IsEqualTo(1)
+			.Because("FakeIndexerSetup.GetResult hands back the value produced by the default value generator");
 		await That(callCount).IsEqualTo(1);
 	}
 

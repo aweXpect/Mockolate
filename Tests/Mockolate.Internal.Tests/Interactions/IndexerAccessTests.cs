@@ -125,12 +125,11 @@ public sealed class IndexerAccessTests
 	[Fact]
 	public async Task ToString_OnIndexerGetterAccess3_FormatsEachNullParameterAsNullLiteral()
 	{
-		// Pins the `?? "null"` literals in IndexerGetterAccess<T1, T2, T3>.ToString. With any of
-		// the three "null" → "" mutations applied, a null parameter would render as an empty
-		// slot like "[, ...]" instead of "[null, ...]".
 		IndexerGetterAccess<string?, string?, string?> access = new(null, null, null);
 
-		await That(access.ToString()).IsEqualTo("get indexer [null, null, null]");
+		await That(access.ToString()).IsEqualTo("get indexer [null, null, null]")
+			.Because(
+				"each `?? \"null\"` literal in IndexerGetterAccess<T1, T2, T3>.ToString must render a null parameter as `null` rather than as an empty slot like \"[, ...]\"");
 	}
 
 	[Fact]
@@ -176,14 +175,13 @@ public sealed class IndexerAccessTests
 	[Fact]
 	public async Task TryFindStoredValue_OnIndexerGetterAccess1_WithoutStorage_ShouldReturnFalse()
 	{
-		// Pins the `if (s is null) { return null; }` first guard in
-		// IndexerGetterAccess<T1>.TraverseStorage. With the body removed, the next line would
-		// dereference null `s` to call GetChildDispatch and throw NRE.
 		IndexerGetterAccess<int> access = new(42);
 
 		bool found = access.TryFindStoredValue(out string _);
 
-		await That(found).IsFalse();
+		await That(found).IsFalse()
+			.Because(
+				"the first `if (s is null) { return null; }` guard in IndexerGetterAccess<T1>.TraverseStorage must short-circuit instead of dereferencing null to call GetChildDispatch");
 	}
 
 	[Fact]

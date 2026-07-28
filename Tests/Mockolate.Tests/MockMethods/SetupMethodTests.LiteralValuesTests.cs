@@ -153,9 +153,9 @@ public sealed partial class SetupMethodTests
 				registry.GetUnusedSetups(new Mockolate.Interactions.FastMockInteractions(0));
 			Mockolate.Setup.ISetup setup = await That(unused).HasSingle();
 
-			// 0.5 must be formatted with InvariantCulture; on a German-locale host the host default
-			// would render it as "0,5" — this assertion would fail if FormatLiteralValue regressed.
-			await That(setup.ToString()!).Contains("0.5");
+			await That(setup.ToString()!).Contains("0.5")
+				.Because(
+					"FormatLiteralValue must use InvariantCulture; on a German-locale host the host default would render 0.5 as \"0,5\"");
 		}
 	}
 

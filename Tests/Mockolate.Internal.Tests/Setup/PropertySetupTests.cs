@@ -23,14 +23,14 @@ public sealed class PropertySetupTests
 	[Fact]
 	public async Task DefaultInvokeGetter_WhenRequestedTypeDiffersFromBackingType_ShouldFallBackToGenerator()
 	{
-		// 0x40400000 reinterpreted via Unsafe.As<int, float> would yield 3.0f; the correct path
-		// must take the typeof-equality branch and fall through to the defaultValueGenerator.
 		PropertySetup.Default<int> setup = new("p", 0x40400000);
 		IInteractivePropertySetup interactive = setup;
 
 		float value = interactive.InvokeGetter(null, MockBehavior.Default, () => 99f);
 
-		await That(value).IsEqualTo(99f);
+		await That(value).IsEqualTo(99f)
+			.Because(
+				"the typeof-equality branch must fall through to the defaultValueGenerator; reinterpreting 0x40400000 via Unsafe.As<int, float> would yield 3.0f instead");
 	}
 
 	[Fact]

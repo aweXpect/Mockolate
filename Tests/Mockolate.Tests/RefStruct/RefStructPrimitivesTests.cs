@@ -72,13 +72,13 @@ public sealed class RefStructPrimitivesTests
 		[Fact]
 		public async Task IsAnyRefStruct_NonGenericMatches_ReturnsFalseForBoxedSlot()
 		{
-			// The non-generic IParameter.Matches(object?) is the covariance-safe fallback and is
-			// deliberately inert for ref-struct matchers: the boxed path can never be a ref struct.
 			IParameter sut = It.IsAnyRefStruct<Packet>();
 
 			bool result = sut.Matches(null);
 
-			await That(result).IsFalse();
+			await That(result).IsFalse()
+				.Because(
+					"the non-generic IParameter.Matches(object?) is the covariance-safe fallback and is deliberately inert for ref-struct matchers, as the boxed path can never be a ref struct");
 		}
 	}
 

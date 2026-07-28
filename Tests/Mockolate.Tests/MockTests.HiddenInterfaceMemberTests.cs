@@ -22,9 +22,9 @@ public sealed partial class MockTests
 
 			_ = ((IBaseIndexer)mock)[5];
 
-			// Indexers are keyed by their parameter signature (not the declaring interface), so base and
-			// derived access share storage; As<TBase> still reaches the same recorded interaction.
-			await That(mock.Mock.As<IBaseIndexer>().Verify[It.IsAny<int>()].Got()).Once();
+			await That(mock.Mock.As<IBaseIndexer>().Verify[It.IsAny<int>()].Got()).Once()
+				.Because(
+					"indexers are keyed by their parameter signature rather than the declaring interface, so base and derived access share storage and As<TBase> reaches the same recorded interaction");
 		}
 
 		[Fact]

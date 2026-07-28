@@ -586,9 +586,6 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task WithNullSnapshotAtMemberIdSlot_ShouldFallBackToColdPathWithoutThrowing()
 		{
-			// The member-id table is allocated to length 6 by registering at index 5, leaving indices
-			// 0..4 holding null entries. Reading from such a null slot must fall through to the cold
-			// path rather than dereferencing the null PropertySetup reference.
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> unrelatedSetup = new(registry, "Q");
 			unrelatedSetup.InitializeWith(99);
@@ -596,7 +593,9 @@ public sealed class MockRegistryTests
 
 			int result = registry.GetPropertyFast(0, new PropertyGetterAccess("P"), _ => 7);
 
-			await That(result).IsEqualTo(7);
+			await That(result).IsEqualTo(7)
+				.Because(
+					"registering at index 5 sizes the member-id table to 6 and leaves indices 0..4 null, and reading such a slot must fall through to the cold path rather than dereference the null PropertySetup");
 		}
 
 		[Fact]
@@ -903,10 +902,6 @@ public sealed class MockRegistryTests
 		[Fact]
 		public async Task GetPropertyFast_WhenSnapshotTableHasNullEntryAtMemberId_ShouldFallToColdPath()
 		{
-			// Pins the `if (snapshot is not null)` guard inside ResolvePropertyFast. With the
-			// guard inverted to `is null`, the body would dereference a null `snapshot` and
-			// throw NullReferenceException. Forces the snapshot table to be non-null with
-			// length > queried memberId, but with `table[memberId]` itself null.
 			MockRegistry registry = new(MockBehavior.Default, new FastMockInteractions(0));
 			PropertySetup<int> snapshotAtFive = new(registry, "P5");
 			snapshotAtFive.InitializeWith(50);
@@ -914,7 +909,9 @@ public sealed class MockRegistryTests
 
 			int result = registry.GetPropertyFast(2, new PropertyGetterAccess("P"), _ => 7);
 
-			await That(result).IsEqualTo(7);
+			await That(result).IsEqualTo(7)
+				.Because(
+					"the snapshot table is long enough for the queried memberId but holds null there, so the `if (snapshot is not null)` guard inside ResolvePropertyFast must skip the body instead of dereferencing it");
 		}
 	}
 
