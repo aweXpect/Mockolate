@@ -478,31 +478,22 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	private static ISymbol? FindInaccessibleRequiredMember(ITypeSymbol type, IAssemblySymbol sourceAssembly)
-	{
-		foreach (ITypeSymbol implementedType in EnumerateImplementedTypes(type))
+		=> EnumerateImplementedTypes(type)
+			.SelectMany(implementedType => implementedType.GetMembers())
+			.Select(member => FindInaccessibleMember(member, sourceAssembly))
+			.FirstOrDefault(inaccessibleMember => inaccessibleMember is not null);
+
+	private static ISymbol? FindInaccessibleMember(ISymbol member, IAssemblySymbol sourceAssembly)
+		=> member switch
 		{
-			foreach (ISymbol member in implementedType.GetMembers())
-			{
-				ISymbol? inaccessibleMember = member switch
-				{
-					IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method
-						=> IsAccessibleFrom(method, sourceAssembly) ? null : method,
-					IPropertySymbol { IsAbstract: true, } property
-						=> FindInaccessibleAccessor(property, sourceAssembly),
-					IEventSymbol { IsAbstract: true, } @event
-						=> IsAccessibleFrom(@event, sourceAssembly) ? null : @event,
-					_ => null,
-				};
-
-				if (inaccessibleMember is not null)
-				{
-					return inaccessibleMember;
-				}
-			}
-		}
-
-		return null;
-	}
+			IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method
+				=> IsAccessibleFrom(method, sourceAssembly) ? null : method,
+			IPropertySymbol { IsAbstract: true, } property
+				=> FindInaccessibleAccessor(property, sourceAssembly),
+			IEventSymbol { IsAbstract: true, } @event
+				=> IsAccessibleFrom(@event, sourceAssembly) ? null : @event,
+			_ => null,
+		};
 
 	private static ISymbol? FindInaccessibleAccessor(IPropertySymbol property, IAssemblySymbol sourceAssembly)
 	{
