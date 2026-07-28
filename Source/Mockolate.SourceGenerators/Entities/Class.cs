@@ -148,6 +148,9 @@ internal class Class : IEquatable<Class>
 
 		ReservedNames = ComputeReservedNames(type);
 
+		HasInaccessibleRequiredMember = ComputeHasInaccessibleRequiredMember(members, sourceAssembly) ||
+		                                InheritedTypes.Any(inherited => inherited.HasInaccessibleRequiredMember);
+
 		_surfaceHash = ComputeSurfaceHash();
 
 		bool ShouldIncludeMember(ISymbol member)
@@ -169,6 +172,7 @@ internal class Class : IEquatable<Class>
 
 	public bool IsInterface { get; }
 	public bool HasRequiredMembers { get; }
+	public bool HasInaccessibleRequiredMember { get; }
 	public string ClassFullName { get; }
 	public string ClassName { get; }
 	public string DisplayString { get; }
@@ -211,8 +215,48 @@ internal class Class : IEquatable<Class>
 		hash = unchecked((hash * 17) + ReservedNames.GetHashCode());
 		hash = unchecked((hash * 17) + (IsInterface ? 1 : 0));
 		hash = unchecked((hash * 17) + (HasRequiredMembers ? 1 : 0));
+		hash = unchecked((hash * 17) + (HasInaccessibleRequiredMember ? 1 : 0));
 		return hash;
 	}
+
+	/// <summary>
+	///     True when one of <paramref name="members" /> is abstract (so the mock must implement it) but
+	///     invisible to <paramref name="sourceAssembly" />, leaving no valid code the generator could
+	///     emit for it.
+	/// </summary>
+	/// <remarks>
+	///     Mirrored by <c>MockabilityAnalyzer.FindInaccessibleRequiredMember</c>, which reports
+	///     Mockolate0002 for the same condition so the user gets a diagnostic instead of a silently
+	///     missing mock. Keep both in sync.
+	/// </remarks>
+	private static bool ComputeHasInaccessibleRequiredMember(ImmutableArray<ISymbol> members,
+		IAssemblySymbol sourceAssembly)
+	{
+		foreach (ISymbol member in members)
+		{
+			bool isInaccessible = member switch
+			{
+				IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method
+					=> !Helpers.IsOverridableFrom(method, sourceAssembly),
+				IPropertySymbol { IsAbstract: true, } property
+					=> IsInaccessibleAccessor(property.GetMethod, sourceAssembly) ||
+					   IsInaccessibleAccessor(property.SetMethod, sourceAssembly),
+				IEventSymbol { IsAbstract: true, } @event
+					=> !Helpers.IsOverridableFrom(@event, sourceAssembly),
+				_ => false,
+			};
+
+			if (isInaccessible)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static bool IsInaccessibleAccessor(IMethodSymbol? accessor, IAssemblySymbol sourceAssembly)
+		=> accessor is not null && !Helpers.IsOverridableFrom(accessor, sourceAssembly);
 
 	/// <summary>
 	///     Identifiers that the mock class shares its scope with but that aren't surfaced through

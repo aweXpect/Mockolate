@@ -87,7 +87,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return;
 		}
 
-		if (!IsMockable(receiverType, out string? reason))
+		if (!IsMockable(receiverType, context.Compilation.Assembly, out string? reason))
 		{
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.MockabilityRule,
@@ -376,7 +376,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		Location typeArgumentLocation = AnalyzerHelpers.GetTypeArgumentLocation(invocation, typeArgument) ??
 		                                invocation.GetLocation();
 
-		if (!IsMockable(typeArgument, out string? reason))
+		if (!IsMockable(typeArgument, context.Compilation.Assembly, out string? reason))
 		{
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.MockabilityRule,
@@ -426,7 +426,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static bool IsInMockolateNamespace(ISymbol symbol)
 		=> symbol.ContainingNamespace is { Name: "Mockolate", ContainingNamespace.IsGlobalNamespace: true, };
 
-	private static bool IsMockable(ITypeSymbol typeSymbol, out string? reason)
+	private static bool IsMockable(ITypeSymbol typeSymbol, IAssemblySymbol sourceAssembly, out string? reason)
 	{
 		if (typeSymbol.TypeKind == TypeKind.Struct)
 		{
@@ -466,7 +466,107 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return false;
 		}
 
+		if (FindInaccessibleRequiredMember(typeSymbol, sourceAssembly) is { } inaccessibleMember)
+		{
+			reason =
+				$"the member '{inaccessibleMember.ToDisplayString()}' must be implemented, but it is not accessible from this assembly";
+			return false;
+		}
+
 		reason = null;
 		return true;
+	}
+
+	private static ISymbol? FindInaccessibleRequiredMember(ITypeSymbol type, IAssemblySymbol sourceAssembly)
+		=> EnumerateImplementedTypes(type)
+			.SelectMany(implementedType => implementedType.GetMembers())
+			.Select(member => FindInaccessibleMember(member, sourceAssembly))
+			.FirstOrDefault(inaccessibleMember => inaccessibleMember is not null);
+
+	private static ISymbol? FindInaccessibleMember(ISymbol member, IAssemblySymbol sourceAssembly)
+		=> member switch
+		{
+			IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method
+				=> IsAccessibleFrom(method, sourceAssembly) ? null : method,
+			IPropertySymbol { IsAbstract: true, } property
+				=> FindInaccessibleAccessor(property, sourceAssembly),
+			IEventSymbol { IsAbstract: true, } @event
+				=> IsAccessibleFrom(@event, sourceAssembly) ? null : @event,
+			_ => null,
+		};
+
+	private static ISymbol? FindInaccessibleAccessor(IPropertySymbol property, IAssemblySymbol sourceAssembly)
+	{
+		if (property.GetMethod is { } getter && !IsAccessibleFrom(getter, sourceAssembly))
+		{
+			return getter;
+		}
+
+		if (property.SetMethod is { } setter && !IsAccessibleFrom(setter, sourceAssembly))
+		{
+			return setter;
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	///     Yields the types that declare the members a mock of <paramref name="type" /> is obliged to
+	///     implement: the type itself, plus its base interfaces (for an interface) or its base class
+	///     chain (for a class).
+	/// </summary>
+	/// <remarks>
+	///     Deliberately narrower than <see cref="GetCandidateMembers" />, which also walks
+	///     <see cref="ITypeSymbol.AllInterfaces" /> for classes. A class must already implement every
+	///     interface member it inherits (CS0535), so those members are not the mock's obligation and
+	///     folding them in here would reject types that mock perfectly well. The two walkers are not
+	///     interchangeable; keep them separate.
+	/// </remarks>
+	private static IEnumerable<ITypeSymbol> EnumerateImplementedTypes(ITypeSymbol type)
+	{
+		yield return type;
+
+		if (type.TypeKind == TypeKind.Interface)
+		{
+			foreach (INamedTypeSymbol @interface in type.AllInterfaces)
+			{
+				yield return @interface;
+			}
+
+			yield break;
+		}
+
+		for (ITypeSymbol? baseType = type.BaseType;
+		     baseType is not null && baseType.SpecialType != SpecialType.System_Object;
+		     baseType = baseType.BaseType)
+		{
+			yield return baseType;
+		}
+	}
+
+	/// <summary>
+	///     A member (or accessor) declared in another assembly is overridable only if the overriding
+	///     assembly can actually see it. <c>internal</c> and <c>private protected</c> are invisible
+	///     across assembly boundaries unless the declaring assembly grants InternalsVisibleTo.
+	///     <c>protected internal</c> (= protected OR internal) is always reachable via the protected
+	///     half from a derived class.
+	/// </summary>
+	/// <remarks>
+	///     Must stay in sync with <c>Helpers.IsOverridableFrom</c> in
+	///     <c>Source/Mockolate.SourceGenerators/Helpers.cs</c>, which gates the generator on the same
+	///     rule. The two projects share no sources, so the logic is duplicated by necessity: if this
+	///     check and the generator's disagree, the analyzer either reports a type the generator mocks
+	///     fine or stays silent on one it refuses to emit.
+	/// </remarks>
+	private static bool IsAccessibleFrom(ISymbol member, IAssemblySymbol sourceAssembly)
+	{
+		if (member.DeclaredAccessibility is not (Accessibility.Internal or Accessibility.ProtectedAndInternal))
+		{
+			return true;
+		}
+
+		IAssemblySymbol containingAssembly = member.ContainingAssembly;
+		return SymbolEqualityComparer.Default.Equals(containingAssembly, sourceAssembly) ||
+		       containingAssembly.GivesAccessTo(sourceAssembly);
 	}
 }
