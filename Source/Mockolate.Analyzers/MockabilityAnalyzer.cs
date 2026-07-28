@@ -510,6 +510,18 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		return null;
 	}
 
+	/// <summary>
+	///     Yields the types that declare the members a mock of <paramref name="type" /> is obliged to
+	///     implement: the type itself, plus its base interfaces (for an interface) or its base class
+	///     chain (for a class).
+	/// </summary>
+	/// <remarks>
+	///     Deliberately narrower than <see cref="GetCandidateMembers" />, which also walks
+	///     <see cref="ITypeSymbol.AllInterfaces" /> for classes. A class must already implement every
+	///     interface member it inherits (CS0535), so those members are not the mock's obligation and
+	///     folding them in here would reject types that mock perfectly well. The two walkers are not
+	///     interchangeable; keep them separate.
+	/// </remarks>
 	private static IEnumerable<ITypeSymbol> EnumerateImplementedTypes(ITypeSymbol type)
 	{
 		yield return type;
@@ -532,6 +544,20 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		}
 	}
 
+	/// <summary>
+	///     A member (or accessor) declared in another assembly is overridable only if the overriding
+	///     assembly can actually see it. <c>internal</c> and <c>private protected</c> are invisible
+	///     across assembly boundaries unless the declaring assembly grants InternalsVisibleTo.
+	///     <c>protected internal</c> (= protected OR internal) is always reachable via the protected
+	///     half from a derived class.
+	/// </summary>
+	/// <remarks>
+	///     Must stay in sync with <c>Helpers.IsOverridableFrom</c> in
+	///     <c>Source/Mockolate.SourceGenerators/Helpers.cs</c>, which gates the generator on the same
+	///     rule. The two projects share no sources, so the logic is duplicated by necessity: if this
+	///     check and the generator's disagree, the analyzer either reports a type the generator mocks
+	///     fine or stays silent on one it refuses to emit.
+	/// </remarks>
 	private static bool IsAccessibleFrom(ISymbol member, IAssemblySymbol sourceAssembly)
 	{
 		if (member.DeclaredAccessibility is not (Accessibility.Internal or Accessibility.ProtectedAndInternal))

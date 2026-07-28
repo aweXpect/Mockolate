@@ -219,6 +219,16 @@ internal class Class : IEquatable<Class>
 		return hash;
 	}
 
+	/// <summary>
+	///     True when one of <paramref name="members" /> is abstract (so the mock must implement it) but
+	///     invisible to <paramref name="sourceAssembly" />, leaving no valid code the generator could
+	///     emit for it.
+	/// </summary>
+	/// <remarks>
+	///     Mirrored by <c>MockabilityAnalyzer.FindInaccessibleRequiredMember</c>, which reports
+	///     Mockolate0002 for the same condition so the user gets a diagnostic instead of a silently
+	///     missing mock. Keep both in sync.
+	/// </remarks>
 	private static bool ComputeHasInaccessibleRequiredMember(ImmutableArray<ISymbol> members,
 		IAssemblySymbol sourceAssembly)
 	{
