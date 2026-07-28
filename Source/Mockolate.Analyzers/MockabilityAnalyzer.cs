@@ -87,7 +87,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return;
 		}
 
-		if (!IsMockable(receiverType, out string? reason))
+		if (!IsMockable(receiverType, context.Compilation.Assembly, out string? reason))
 		{
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.MockabilityRule,
@@ -376,7 +376,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		Location typeArgumentLocation = AnalyzerHelpers.GetTypeArgumentLocation(invocation, typeArgument) ??
 		                                invocation.GetLocation();
 
-		if (!IsMockable(typeArgument, out string? reason))
+		if (!IsMockable(typeArgument, context.Compilation.Assembly, out string? reason))
 		{
 			context.ReportDiagnostic(Diagnostic.Create(
 				Rules.MockabilityRule,
@@ -426,7 +426,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	private static bool IsInMockolateNamespace(ISymbol symbol)
 		=> symbol.ContainingNamespace is { Name: "Mockolate", ContainingNamespace.IsGlobalNamespace: true, };
 
-	private static bool IsMockable(ITypeSymbol typeSymbol, out string? reason)
+	private static bool IsMockable(ITypeSymbol typeSymbol, IAssemblySymbol sourceAssembly, out string? reason)
 	{
 		if (typeSymbol.TypeKind == TypeKind.Struct)
 		{
@@ -466,7 +466,90 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return false;
 		}
 
+		if (FindInaccessibleRequiredMember(typeSymbol, sourceAssembly) is { } inaccessibleMember)
+		{
+			reason =
+				$"the member '{inaccessibleMember.ToDisplayString()}' must be implemented, but it is not accessible from this assembly";
+			return false;
+		}
+
 		reason = null;
 		return true;
+	}
+
+	private static ISymbol? FindInaccessibleRequiredMember(ITypeSymbol type, IAssemblySymbol sourceAssembly)
+	{
+		foreach (ITypeSymbol implementedType in EnumerateImplementedTypes(type))
+		{
+			foreach (ISymbol member in implementedType.GetMembers())
+			{
+				ISymbol? inaccessibleMember = member switch
+				{
+					IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method
+						=> IsAccessibleFrom(method, sourceAssembly) ? null : method,
+					IPropertySymbol { IsAbstract: true, } property
+						=> FindInaccessibleAccessor(property, sourceAssembly),
+					IEventSymbol { IsAbstract: true, } @event
+						=> IsAccessibleFrom(@event, sourceAssembly) ? null : @event,
+					_ => null,
+				};
+
+				if (inaccessibleMember is not null)
+				{
+					return inaccessibleMember;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private static ISymbol? FindInaccessibleAccessor(IPropertySymbol property, IAssemblySymbol sourceAssembly)
+	{
+		if (property.GetMethod is { } getter && !IsAccessibleFrom(getter, sourceAssembly))
+		{
+			return getter;
+		}
+
+		if (property.SetMethod is { } setter && !IsAccessibleFrom(setter, sourceAssembly))
+		{
+			return setter;
+		}
+
+		return null;
+	}
+
+	private static IEnumerable<ITypeSymbol> EnumerateImplementedTypes(ITypeSymbol type)
+	{
+		yield return type;
+
+		if (type.TypeKind == TypeKind.Interface)
+		{
+			foreach (INamedTypeSymbol @interface in type.AllInterfaces)
+			{
+				yield return @interface;
+			}
+
+			yield break;
+		}
+
+		for (ITypeSymbol? baseType = type.BaseType;
+		     baseType is not null && baseType.SpecialType != SpecialType.System_Object;
+		     baseType = baseType.BaseType)
+		{
+			yield return baseType;
+		}
+	}
+
+	private static bool IsAccessibleFrom(ISymbol member, IAssemblySymbol sourceAssembly)
+	{
+		if (member.DeclaredAccessibility is not (Accessibility.Internal or Accessibility.ProtectedAndInternal))
+		{
+			return true;
+		}
+
+		IAssemblySymbol containingAssembly = member.ContainingAssembly;
+		return SymbolEqualityComparer.Default.Equals(containingAssembly, sourceAssembly) ||
+		       containingAssembly.GivesAccessTo(sourceAssembly);
 	}
 }

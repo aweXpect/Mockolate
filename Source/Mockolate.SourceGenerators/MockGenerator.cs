@@ -536,7 +536,8 @@ public class MockGenerator : IIncrementalGenerator
 
 	private static bool IsValidMockDeclaration(MockClass mockClass)
 		=> (mockClass.IsInterface || mockClass.Constructors is { Count: > 0, }) &&
-		   mockClass.AdditionalImplementations.All(x => x.IsInterface);
+		   mockClass.AdditionalImplementations.All(x => x.IsInterface) &&
+		   mockClass.AllImplementations().All(x => !x.HasInaccessibleRequiredMember);
 }
 
 internal readonly record struct MethodSetupKey(int Arity, bool IsVoid);

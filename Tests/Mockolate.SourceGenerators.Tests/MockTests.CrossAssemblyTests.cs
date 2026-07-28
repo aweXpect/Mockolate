@@ -17,6 +17,17 @@ public sealed partial class MockTests
 		                                               }
 		                                               """;
 
+		private const string CreateMockForMyExternalType = """
+		                                                   using Mockolate;
+
+		                                                   namespace MyCode;
+
+		                                                   public class Program
+		                                                   {
+		                                                       public static void Main(string[] args) => _ = Ext.MyExternalType.CreateMock();
+		                                                   }
+		                                                   """;
+
 		[Fact]
 		public async Task InternalVirtualMember_WithInternalsVisibleTo_ShouldBeOverridden()
 		{
@@ -121,6 +132,60 @@ public sealed partial class MockTests
 			await That(result.Sources["Mock.MyAbstractService.g.cs"])
 				.Contains("public override string Name").And
 				.Contains("public override int Compute()");
+		}
+
+		[Theory]
+		[InlineData("public abstract string MyProperty { get; internal set; }", "MyProperty")]
+		[InlineData("internal abstract void MyMethod();", "MyMethod")]
+		[InlineData("internal abstract int MyProperty { get; set; }", "MyProperty")]
+		[InlineData("internal abstract event System.EventHandler MyEvent;", "MyEvent")]
+		public async Task InaccessibleAbstractClassMember_WithInternalsVisibleTo_ShouldBeMocked(
+			string member, string memberName)
+		{
+			MetadataReference external = CompileMyExternalTypeAssembly("abstract class", member,
+				grantsInternalsVisibleTo: true);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.MyExternalType.g.cs");
+			await That(result.Sources["Mock.MyExternalType.g.cs"]).Contains(memberName);
+		}
+
+		[Theory]
+		[InlineData("interface", "string MyProperty { get; internal set; }")]
+		[InlineData("interface", "internal void MyMethod();")]
+		[InlineData("abstract class", "public abstract string MyProperty { get; internal set; }")]
+		[InlineData("abstract class", "internal abstract void MyMethod();")]
+		[InlineData("abstract class", "internal abstract int MyProperty { get; set; }")]
+		[InlineData("abstract class", "internal abstract event System.EventHandler MyEvent;")]
+		public async Task InaccessibleRequiredMember_WithoutInternalsVisibleTo_ShouldNotBeMocked(
+			string typeKeyword, string member)
+		{
+			MetadataReference external = CompileMyExternalTypeAssembly(typeKeyword, member,
+				grantsInternalsVisibleTo: false);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).DoesNotContainKey("Mock.MyExternalType.g.cs");
+		}
+
+		private static MetadataReference CompileMyExternalTypeAssembly(string typeKeyword, string member,
+			bool grantsInternalsVisibleTo)
+		{
+			string internalsVisibleTo = grantsInternalsVisibleTo
+				? """[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("TestAssembly")]"""
+				: "";
+			return ExternalAssembly.Compile($$"""
+			                                 {{internalsVisibleTo}}
+			                                 namespace Ext;
+
+			                                 public {{typeKeyword}} MyExternalType
+			                                 {
+			                                 	{{member}}
+			                                 }
+			                                 """);
 		}
 
 		private static MetadataReference CompileMyBaseClassAssembly(bool grantsInternalsVisibleTo)

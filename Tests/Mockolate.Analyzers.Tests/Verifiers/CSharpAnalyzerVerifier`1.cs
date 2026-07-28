@@ -46,6 +46,36 @@ public static partial class CSharpAnalyzerVerifier<TAnalyzer>
 		await test.RunAsync(CancellationToken.None);
 	}
 
+	public static async Task VerifyAnalyzerWithReferencedProjectAsync([StringSyntax("c#-test")] string source,
+		[StringSyntax("c#-test")] string externalSource,
+		params DiagnosticResult[] expected)
+	{
+		Test test = new()
+		{
+			TestCode = source,
+			TestState =
+			{
+				AdditionalReferences =
+				{
+					typeof(MockBehavior).Assembly.Location,
+				},
+				AdditionalProjects =
+				{
+					["ExternalProject"] =
+					{
+						Sources = { ("/ExternalProject/External.cs", externalSource), },
+					},
+				},
+				AdditionalProjectReferences = { "ExternalProject", },
+			},
+		};
+
+		// TODO: Remove once CS1705 no longer occurs
+		test.CompilerDiagnostics = CompilerDiagnostics.None;
+		test.ExpectedDiagnostics.AddRange(expected);
+		await test.RunAsync(CancellationToken.None);
+	}
+
 	/// <summary>
 	///     Overload that pins the compilation's <see cref="LanguageVersion" /> to a specific
 	///     value, overriding the default <see cref="LanguageVersion.Preview" /> selection in
