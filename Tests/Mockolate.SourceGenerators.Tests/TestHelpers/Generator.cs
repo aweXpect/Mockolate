@@ -54,6 +54,14 @@ public static class Generator
 
 	public static GeneratorResult Run(string[] sources, DocumentationMode documentationMode,
 		string[] preprocessorSymbols, params Type[] assemblyTypes)
+		=> RunCore(sources, documentationMode, preprocessorSymbols, [], assemblyTypes);
+
+	public static GeneratorResult RunWithReferences([StringSyntax("c#-test")] string source,
+		MetadataReference[] externalReferences, params Type[] assemblyTypes)
+		=> RunCore([source,], DocumentationMode.Parse, [], externalReferences, assemblyTypes);
+
+	private static GeneratorResult RunCore(string[] sources, DocumentationMode documentationMode,
+		string[] preprocessorSymbols, MetadataReference[] externalReferences, Type[] assemblyTypes)
 	{
 		MockGenerator generator = new();
 		CSharpParseOptions parseOptions = new CSharpParseOptions(LanguageVersion.Latest, documentationMode)
@@ -65,7 +73,7 @@ public static class Generator
 		CSharpCompilation compilation = CSharpCompilation.Create(
 			"TestAssembly",
 			syntaxTrees,
-			GetReferences(assemblyTypes),
+			[..GetReferences(assemblyTypes), ..externalReferences,],
 			new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
 		GeneratorDriver driver = CSharpGeneratorDriver.Create(
@@ -100,7 +108,7 @@ public static class Generator
 		return result;
 	}
 
-	private static List<PortableExecutableReference> GetReferences(Type[] types) =>
+	internal static List<PortableExecutableReference> GetReferences(Type[] types) =>
 		AppDomain.CurrentDomain.GetAssemblies()
 			.Where(x => !x.IsDynamic && !string.IsNullOrWhiteSpace(x.Location))
 			.Select(x => x.Location)
