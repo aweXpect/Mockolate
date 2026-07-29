@@ -286,7 +286,7 @@ public interface IPropertySetup<T>
 public interface IPropertyGetterOnlySetup<T>
 {
 	/// <inheritdoc cref="IPropertySetup{T}.OnGet" />
-	IPropertyGetterSetup<T> OnGet { get; }
+	IPropertyGetterOnlyGetterSetup<T> OnGet { get; }
 
 	/// <inheritdoc cref="IPropertySetup{T}.SkippingBaseClass(bool)" />
 	IPropertyGetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
@@ -302,26 +302,26 @@ public interface IPropertyGetterOnlySetup<T>
 	IPropertyGetterOnlySetup<T> InitializeWith(T value);
 
 	/// <inheritdoc cref="IPropertySetup{T}.Returns(T)" />
-	IPropertySetupReturnBuilder<T> Returns(T returnValue);
+	IPropertyGetterOnlySetupReturnBuilder<T> Returns(T returnValue);
 
 	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T})" />
-	IPropertySetupReturnBuilder<T> Returns(Func<T> callback);
+	IPropertyGetterOnlySetupReturnBuilder<T> Returns(Func<T> callback);
 
 	/// <inheritdoc cref="IPropertySetup{T}.Returns(Func{T, T})" />
-	IPropertySetupReturnBuilder<T> Returns(Func<T, T> callback);
+	IPropertyGetterOnlySetupReturnBuilder<T> Returns(Func<T, T> callback);
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws{TException}()" />
-	IPropertySetupReturnBuilder<T> Throws<TException>()
+	IPropertyGetterOnlySetupReturnBuilder<T> Throws<TException>()
 		where TException : Exception, new();
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws(Exception)" />
-	IPropertySetupReturnBuilder<T> Throws(Exception exception);
+	IPropertyGetterOnlySetupReturnBuilder<T> Throws(Exception exception);
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{Exception})" />
-	IPropertySetupReturnBuilder<T> Throws(Func<Exception> callback);
+	IPropertyGetterOnlySetupReturnBuilder<T> Throws(Func<Exception> callback);
 
 	/// <inheritdoc cref="IPropertySetup{T}.Throws(Func{T, Exception})" />
-	IPropertySetupReturnBuilder<T> Throws(Func<T, Exception> callback);
+	IPropertyGetterOnlySetupReturnBuilder<T> Throws(Func<T, Exception> callback);
 }
 
 /// <summary>
@@ -335,7 +335,7 @@ public interface IPropertyGetterOnlySetup<T>
 public interface IPropertySetterOnlySetup<T>
 {
 	/// <inheritdoc cref="IPropertySetup{T}.OnSet" />
-	IPropertySetterSetup<T> OnSet { get; }
+	IPropertySetterOnlySetterSetup<T> OnSet { get; }
 
 	/// <inheritdoc cref="IPropertySetup{T}.SkippingBaseClass(bool)" />
 	IPropertySetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
@@ -498,4 +498,131 @@ public interface IPropertySetupReturnWhenBuilder<T> : IPropertySetup<T>
 	/// <param name="times">The number of executions after which the callback stops firing.</param>
 	/// <returns>The outer setup for chaining additional returns/throws.</returns>
 	IPropertySetup<T> Only(int times);
+}
+
+/// <summary>
+///     Setup for attaching side-effects to the getter of a property the mock only reads.
+/// </summary>
+/// <remarks>
+///     The counterpart of <see cref="IPropertyGetterSetup{T}" /> for <see cref="IPropertyGetterOnlySetup{T}" />:
+///     the returned builders stay on the getter-only surface, so chaining can never reach
+///     <see cref="IPropertySetup{T}.OnSet" />.
+/// </remarks>
+public interface IPropertyGetterOnlyGetterSetup<T>
+{
+	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action)" />
+	IPropertyGetterOnlySetupCallbackBuilder<T> Do(Action callback);
+
+	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{T})" />
+	IPropertyGetterOnlySetupCallbackBuilder<T> Do(Action<T> callback);
+
+	/// <inheritdoc cref="IPropertyGetterSetup{T}.Do(Action{int, T})" />
+	IPropertyGetterOnlySetupCallbackBuilder<T> Do(Action<int, T> callback);
+
+	/// <inheritdoc cref="IPropertyGetterSetup{T}.TransitionTo(string)" />
+	IPropertyGetterOnlySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Interface for setting up the getter of a get-only property with fluent syntax.
+/// </summary>
+public interface IPropertyGetterOnlySetupParallelCallbackBuilder<T> : IPropertyGetterOnlySetupCallbackWhenBuilder<T>
+{
+	/// <inheritdoc cref="IPropertyGetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
+	IPropertyGetterOnlySetupCallbackWhenBuilder<T> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Interface for setting up the getter of a get-only property with fluent syntax.
+/// </summary>
+public interface IPropertyGetterOnlySetupCallbackBuilder<T> : IPropertyGetterOnlySetupParallelCallbackBuilder<T>
+{
+	/// <inheritdoc cref="IPropertyGetterSetupCallbackBuilder{T}.InParallel()" />
+	IPropertyGetterOnlySetupParallelCallbackBuilder<T> InParallel();
+}
+
+/// <summary>
+///     Interface for setting up the getter of a get-only property with fluent syntax.
+/// </summary>
+public interface IPropertyGetterOnlySetupCallbackWhenBuilder<T> : IPropertyGetterOnlySetup<T>
+{
+	/// <inheritdoc cref="IPropertyGetterSetupCallbackWhenBuilder{T}.For(int)" />
+	IPropertyGetterOnlySetupCallbackWhenBuilder<T> For(int times);
+
+	/// <inheritdoc cref="IPropertyGetterSetupCallbackWhenBuilder{T}.Only(int)" />
+	IPropertyGetterOnlySetup<T> Only(int times);
+}
+
+/// <summary>
+///     Setup for attaching side-effects to the setter of a property the mock only writes.
+/// </summary>
+/// <remarks>
+///     The counterpart of <see cref="IPropertySetterSetup{T}" /> for <see cref="IPropertySetterOnlySetup{T}" />:
+///     the returned builders stay on the setter-only surface, so chaining can never reach
+///     <see cref="IPropertySetup{T}.OnGet" /> or the <c>Returns</c>/<c>Throws</c> read-sequence.
+/// </remarks>
+public interface IPropertySetterOnlySetterSetup<T>
+{
+	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action)" />
+	IPropertySetterOnlySetupCallbackBuilder<T> Do(Action callback);
+
+	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{T})" />
+	IPropertySetterOnlySetupCallbackBuilder<T> Do(Action<T> callback);
+
+	/// <inheritdoc cref="IPropertySetterSetup{T}.Do(Action{int, T})" />
+	IPropertySetterOnlySetupCallbackBuilder<T> Do(Action<int, T> callback);
+
+	/// <inheritdoc cref="IPropertySetterSetup{T}.TransitionTo(string)" />
+	IPropertySetterOnlySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+}
+
+/// <summary>
+///     Interface for setting up the setter of a set-only property with fluent syntax.
+/// </summary>
+public interface IPropertySetterOnlySetupParallelCallbackBuilder<T> : IPropertySetterOnlySetupCallbackWhenBuilder<T>
+{
+	/// <inheritdoc cref="IPropertySetterSetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
+	IPropertySetterOnlySetupCallbackWhenBuilder<T> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Interface for setting up the setter of a set-only property with fluent syntax.
+/// </summary>
+public interface IPropertySetterOnlySetupCallbackBuilder<T> : IPropertySetterOnlySetupParallelCallbackBuilder<T>
+{
+	/// <inheritdoc cref="IPropertySetterSetupCallbackBuilder{T}.InParallel()" />
+	IPropertySetterOnlySetupParallelCallbackBuilder<T> InParallel();
+}
+
+/// <summary>
+///     Interface for setting up the setter of a set-only property with fluent syntax.
+/// </summary>
+public interface IPropertySetterOnlySetupCallbackWhenBuilder<T> : IPropertySetterOnlySetup<T>
+{
+	/// <inheritdoc cref="IPropertySetterSetupCallbackWhenBuilder{T}.For(int)" />
+	IPropertySetterOnlySetupCallbackWhenBuilder<T> For(int times);
+
+	/// <inheritdoc cref="IPropertySetterSetupCallbackWhenBuilder{T}.Only(int)" />
+	IPropertySetterOnlySetup<T> Only(int times);
+}
+
+/// <summary>
+///     Interface for setting up a return/throw builder for a get-only property with fluent syntax.
+/// </summary>
+public interface IPropertyGetterOnlySetupReturnBuilder<T> : IPropertyGetterOnlySetupReturnWhenBuilder<T>
+{
+	/// <inheritdoc cref="IPropertySetupReturnBuilder{T}.When(Func{int, bool})" />
+	IPropertyGetterOnlySetupReturnWhenBuilder<T> When(Func<int, bool> predicate);
+}
+
+/// <summary>
+///     Interface for setting up a when builder for returns/throws for a get-only property with fluent syntax.
+/// </summary>
+public interface IPropertyGetterOnlySetupReturnWhenBuilder<T> : IPropertyGetterOnlySetup<T>
+{
+	/// <inheritdoc cref="IPropertySetupReturnWhenBuilder{T}.For(int)" />
+	IPropertyGetterOnlySetupReturnWhenBuilder<T> For(int times);
+
+	/// <inheritdoc cref="IPropertySetupReturnWhenBuilder{T}.Only(int)" />
+	IPropertyGetterOnlySetup<T> Only(int times);
 }

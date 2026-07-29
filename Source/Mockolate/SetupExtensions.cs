@@ -70,6 +70,65 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
+	///     Extensions for setups of get-only properties.
+	/// </summary>
+	extension<T>(IPropertyGetterOnlySetupReturnWhenBuilder<T> setup)
+	{
+		/// <summary>
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
+		public void Forever()
+			=> setup.For(int.MaxValue);
+
+		/// <summary>
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IPropertyGetterOnlySetup<T> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for getter callback setups of get-only properties.
+	/// </summary>
+	extension<T>(IPropertyGetterOnlySetupCallbackWhenBuilder<T> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IPropertyGetterOnlySetup<T> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setter callback setups of set-only properties.
+	/// </summary>
+	extension<T>(IPropertySetterOnlySetupCallbackWhenBuilder<T> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IPropertySetterOnlySetup<T> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
 	///     Extensions for event subscription callback setups.
 	/// </summary>
 	extension(IEventSubscriptionSetupCallbackWhenBuilder setup)
