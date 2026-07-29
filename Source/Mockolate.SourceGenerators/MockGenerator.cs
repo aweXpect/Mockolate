@@ -89,14 +89,8 @@ public class MockGenerator : IIncrementalGenerator
 					return;
 				}
 
-				Dictionary<int, (bool NeedsGetterOnly, bool NeedsSetterOnly)> indexerSetups = new();
-				foreach (IndexerSetupKey key in source.Left)
-				{
-					indexerSetups[key.Arity] = (key.NeedsGetterOnly, key.NeedsSetterOnly);
-				}
-
 				spc.AddSource("IndexerSetups.g.cs",
-					ToSource(Sources.Sources.IndexerSetups(indexerSetups, source.Right)));
+					ToSource(Sources.Sources.IndexerSetups(source.Left, source.Right)));
 			});
 
 		IncrementalValueProvider<EquatableArray<MethodSetupKey>> methodSetupKeys = collectedMocks
@@ -247,15 +241,9 @@ public class MockGenerator : IIncrementalGenerator
 					int arity = property.IndexerParameters.Value.Count;
 					bool needsGetterOnly = property is { Getter: not null, Setter: null, };
 					bool needsSetterOnly = property is { Getter: null, Setter: not null, };
-					if (map.TryGetValue(arity, out (bool NeedsGetterOnly, bool NeedsSetterOnly) existing))
-					{
-						map[arity] = (existing.NeedsGetterOnly || needsGetterOnly,
-							existing.NeedsSetterOnly || needsSetterOnly);
-					}
-					else
-					{
-						map[arity] = (needsGetterOnly, needsSetterOnly);
-					}
+					map.TryGetValue(arity, out (bool NeedsGetterOnly, bool NeedsSetterOnly) existing);
+					map[arity] = (existing.NeedsGetterOnly || needsGetterOnly,
+						existing.NeedsSetterOnly || needsSetterOnly);
 				}
 			}
 		}

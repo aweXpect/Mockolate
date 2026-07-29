@@ -119,8 +119,7 @@ interactions. See [Mockolate0002](../analyzers#mockolate0002) for when such a ty
 
 Both facades are fully restricted: the fluent builders returned by `Returns`, `Throws`, `Do` and
 `TransitionTo` stay on the narrowed surface, so no amount of chaining reaches the accessor the mock
-does not intercept. This applies to any number of keys: up to four keys the narrowed types ship with
-the library, for more keys they are generated per-compilation.
+does not intercept.
 
 **Notes:**
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Mockolate.Setup;
+using Mockolate.Verify;
 
 namespace Mockolate.Tests.MockIndexers;
 
@@ -425,6 +426,317 @@ public sealed partial class SetupIndexerTests
 			await That(written).IsEqualTo(["abcde-x",]);
 			await That(sut.Mock.Verify[It.Is("a"), It.Is("b"), It.Is("c"), It.Is("d"), It.Is("e")].Set("x")).Once();
 			await That(sut.Mock.Verify[It.Is("a"), It.Is("b"), It.Is("c"), It.Is("d"), It.Is("e")].Set("y")).Never();
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_Throws_ShouldIterateThroughAllRegisteredExceptions()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.Throws<InvalidOperationException>()
+				.Throws(new Exception("foo"))
+				.Throws(() => new Exception("bar"))
+				.Throws((k1, k2, k3, k4, k5) => new Exception($"baz-{k1 + k2 + k3 + k4 + k5}"))
+				.Throws((k1, k2, k3, k4, k5, v) => new Exception($"qux-{k1 + k2 + k3 + k4 + k5}-{v}"));
+
+			void Act() => _ = sut[1, 2, 3, 4, 5];
+
+			await That(Act).Throws<InvalidOperationException>();
+			Exception? result2 = Record.Exception(Act);
+			Exception? result3 = Record.Exception(Act);
+			Exception? result4 = Record.Exception(Act);
+			Exception? result5 = Record.Exception(Act);
+			await That(result2).HasMessage("foo");
+			await That(result3).HasMessage("bar");
+			await That(result4).HasMessage("baz-15");
+			await That(result5).HasMessage("qux-15-0");
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_InitializeWith_ShouldSeedTheReadValue()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.InitializeWith(3)
+				.Returns((_, _, _, _, _, v) => 4 * v);
+
+			await That(sut[1, 2, 3, 4, 5]).IsEqualTo(12);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_InitializeWithGenerator_ShouldSeedTheReadValue()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.InitializeWith((k1, k2, k3, k4, k5) => 10 * (k1 + k2 + k3 + k4 + k5));
+
+			await That(sut[1, 2, 3, 4, 5]).IsEqualTo(150);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_ReturnsWhen_ShouldOnlyUseValueWhenPredicateIsTrue()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.Returns(() => 4).When(i => i > 0);
+
+			int result1 = sut[1, 2, 3, 4, 5];
+			int result2 = sut[1, 2, 3, 4, 5];
+
+			await That(result1).IsEqualTo(0);
+			await That(result2).IsEqualTo(4);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_SkippingBaseClass_ShouldStayOnGetterOnlySurface()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			IIndexerGetterOnlySetup<int, int, int, int, int, int> chained = sut.Mock
+				.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.SkippingBaseClass();
+			chained.Returns(7);
+
+			await That(sut[1, 2, 3, 4, 5]).IsEqualTo(7);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_OnGetChain_ShouldStayOnGetterOnlySurface()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			IIndexerGetterOnlySetup<int, int, int, int, int, int> chained = sut.Mock
+				.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.Do(() => { callCount1++; })
+				.OnGet.Do((k1, k2, k3, k4, k5) => { callCount2++; }).OnlyOnce();
+			chained.Returns(9);
+
+			int result = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+
+			await That(result).IsEqualTo(9);
+			await That(callCount1).IsEqualTo(3);
+			await That(callCount2).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_OnGetWhen_ShouldOnlyInvokeCallbackWhenPredicateIsTrue()
+		{
+			int callCount = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.Do(() => { callCount++; }).When(i => i > 0);
+
+			_ = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+
+			await That(callCount).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_OnGetInParallel_ShouldInvokeParallelCallbacksAlways()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			int callCount3 = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.Do(() => { callCount1++; })
+				.OnGet.Do((k1, k2, k3, k4, k5) => { callCount2++; }).InParallel()
+				.OnGet.Do((k1, k2, k3, k4, k5, v) => { callCount3++; });
+
+			_ = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+			_ = sut[1, 2, 3, 4, 5];
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(4);
+			await That(callCount3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_OnGetFor_ShouldRepeatCallbackTheGivenNumberOfTimes()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.Do(() => { callCount1++; }).For(2)
+				.OnGet.Do(() => { callCount2++; });
+
+			for (int i = 0; i < 6; i++)
+			{
+				_ = sut[1, 2, 3, 4, 5];
+			}
+
+			await That(callCount1).IsEqualTo(4);
+			await That(callCount2).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_OnGetDoWithCounter_ShouldReceiveTheAccessCounter()
+		{
+			List<int> invocations = [];
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.Do((i, _, _, _, _, _, _) => { invocations.Add(i); });
+
+			for (int i = 0; i < 3; i++)
+			{
+				_ = sut[1, 2, 3, 4, 5];
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2,]);
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_OnGetTransitionTo_ShouldSwitchScenario()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.InScenario("a")
+				.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.OnGet.Do(() => { })
+				.OnGet.TransitionTo("b");
+			sut.Mock.TransitionTo("a");
+
+			_ = sut[1, 2, 3, 4, 5];
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_OnSetChain_ShouldStayOnSetterOnlySurface()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			IIndexerSetterOnlySetup<string, string, string, string, string, string> chained = sut.Mock
+				.Setup[It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<string>()]
+				.OnSet.Do(() => { callCount1++; })
+				.OnSet.Do(v => { callCount2++; }).OnlyOnce();
+			chained.SkippingBaseClass();
+
+			sut["a", "b", "c", "d", "e"] = "1";
+			sut["a", "b", "c", "d", "e"] = "2";
+			sut["a", "b", "c", "d", "e"] = "3";
+			sut["a", "b", "c", "d", "e"] = "4";
+
+			await That(callCount1).IsEqualTo(3);
+			await That(callCount2).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_OnSetWhen_ShouldOnlyInvokeCallbackWhenPredicateIsTrue()
+		{
+			int callCount = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock
+				.Setup[It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<string>()]
+				.OnSet.Do(() => { callCount++; }).When(i => i > 0);
+
+			sut["a", "b", "c", "d", "e"] = "1";
+			sut["a", "b", "c", "d", "e"] = "2";
+			sut["a", "b", "c", "d", "e"] = "3";
+
+			await That(callCount).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_OnSetInParallel_ShouldInvokeParallelCallbacksAlways()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			int callCount3 = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock
+				.Setup[It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<string>()]
+				.OnSet.Do(() => { callCount1++; })
+				.OnSet.Do((k1, k2, k3, k4, k5, v) => { callCount2++; }).InParallel()
+				.OnSet.Do(() => { callCount3++; });
+
+			sut["a", "b", "c", "d", "e"] = "1";
+			sut["a", "b", "c", "d", "e"] = "2";
+			sut["a", "b", "c", "d", "e"] = "3";
+			sut["a", "b", "c", "d", "e"] = "4";
+
+			await That(callCount1).IsEqualTo(2);
+			await That(callCount2).IsEqualTo(4);
+			await That(callCount3).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_OnSetFor_ShouldRepeatCallbackTheGivenNumberOfTimes()
+		{
+			int callCount1 = 0;
+			int callCount2 = 0;
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock
+				.Setup[It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<string>()]
+				.OnSet.Do(() => { callCount1++; }).For(2)
+				.OnSet.Do(() => { callCount2++; });
+
+			for (int i = 0; i < 6; i++)
+			{
+				sut["a", "b", "c", "d", "e"] = "1";
+			}
+
+			await That(callCount1).IsEqualTo(4);
+			await That(callCount2).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_OnSetDoWithCounter_ShouldReceiveTheAccessCounter()
+		{
+			List<int> invocations = [];
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock
+				.Setup[It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<string>()]
+				.OnSet.Do((i, _, _, _, _, _, _) => { invocations.Add(i); });
+
+			for (int i = 0; i < 3; i++)
+			{
+				sut["a", "b", "c", "d", "e"] = "1";
+			}
+
+			await That(invocations).IsEqualTo([0, 1, 2,]);
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_OnSetTransitionTo_ShouldSwitchScenario()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.InScenario("a")
+				.Setup[It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(),
+					It.IsAny<string>()]
+				.OnSet.Do(() => { })
+				.OnSet.TransitionTo("b");
+			sut.Mock.TransitionTo("a");
+
+			sut["a", "b", "c", "d", "e"] = "x";
+
+			await That(((IMock)sut).MockRegistry.Scenario).IsEqualTo("b");
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_SetExpectation_ShouldFormatTheValueLikeTheShippedSurface()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+
+			IVerificationResult result = (IVerificationResult)sut.Mock
+				.Verify[It.Is("a"), It.Is("b"), It.Is("c"), It.Is("d"), It.Is("e")].Set("x");
+
+			await That(result.Expectation)
+				.IsEqualTo("set indexer [\"a\", \"b\", \"c\", \"d\", \"e\"] to \"x\"")
+				.Because("the generated narrowed result must render the value like the shipped one");
 		}
 
 		public interface IAccessorService

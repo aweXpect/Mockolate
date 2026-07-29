@@ -1611,7 +1611,7 @@ namespace Mockolate.Verify
 		/// </summary>
 		public global::Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value)
 			=> mockRegistry.IndexerSet(subject, setMemberId, setPredicate,
-				(global::Mockolate.Parameters.IParameterMatch<TParameter>)global::Mockolate.It.Is(value, value?.ToString() ?? "null"), parametersDescription);
+				(global::Mockolate.Parameters.IParameterMatch<TParameter>)global::Mockolate.It.IsValue<TParameter>(value), parametersDescription);
 	}
 }
 

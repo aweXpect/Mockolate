@@ -5,7 +5,7 @@ namespace Mockolate.SourceGenerators.Sources;
 internal static partial class Sources
 {
 	public static string IndexerSetups(
-		Dictionary<int, (bool NeedsGetterOnly, bool NeedsSetterOnly)> indexerSetups,
+		IEnumerable<IndexerSetupKey> indexerSetups,
 		bool hasOverloadResolutionPriority)
 	{
 		StringBuilder sb = InitializeBuilder();
@@ -16,18 +16,18 @@ internal static partial class Sources
 		          namespace Mockolate.Setup
 		          {
 		          """);
-		foreach (KeyValuePair<int, (bool NeedsGetterOnly, bool NeedsSetterOnly)> item in indexerSetups)
+		foreach (IndexerSetupKey item in indexerSetups)
 		{
 			sb.AppendLine();
-			AppendIndexerSetup(sb, item.Key, item.Value.NeedsGetterOnly, item.Value.NeedsSetterOnly);
-			if (item.Value.NeedsGetterOnly)
+			AppendIndexerSetup(sb, item.Arity, item.NeedsGetterOnly, item.NeedsSetterOnly);
+			if (item.NeedsGetterOnly)
 			{
-				AppendGetterOnlyIndexerInterfaces(sb, item.Key);
+				AppendGetterOnlyIndexerInterfaces(sb, item.Arity);
 			}
 
-			if (item.Value.NeedsSetterOnly)
+			if (item.NeedsSetterOnly)
 			{
-				AppendSetterOnlyIndexerInterfaces(sb, item.Key);
+				AppendSetterOnlyIndexerInterfaces(sb, item.Arity);
 			}
 		}
 
@@ -46,9 +46,9 @@ internal static partial class Sources
 		              	internal static class IndexerSetupExtensions
 		              	{
 		              """).AppendLine();
-		foreach (KeyValuePair<int, (bool NeedsGetterOnly, bool NeedsSetterOnly)> setup in indexerSetups)
+		foreach (IndexerSetupKey setup in indexerSetups)
 		{
-			int item = setup.Key;
+			int item = setup.Arity;
 			string types = GetGenericTypeParameters(item);
 			sb.Append($$"""
 			            		/// <summary>
@@ -96,7 +96,7 @@ internal static partial class Sources
 			            		}
 			            """).AppendLine();
 
-			if (setup.Value.NeedsGetterOnly)
+			if (setup.NeedsGetterOnly)
 			{
 				sb.AppendLine();
 				sb.Append($$"""
@@ -134,7 +134,7 @@ internal static partial class Sources
 				            """).AppendLine();
 			}
 
-			if (setup.Value.NeedsSetterOnly)
+			if (setup.NeedsSetterOnly)
 			{
 				sb.AppendLine();
 				sb.Append($$"""
@@ -159,29 +159,29 @@ internal static partial class Sources
 		          """).AppendLine();
 		sb.Append("namespace Mockolate.Interactions").AppendLine();
 		sb.Append("{").AppendLine();
-		foreach (int count in indexerSetups.Keys)
+		foreach (IndexerSetupKey key in indexerSetups)
 		{
-			AppendIndexerGetterAccess(sb, count);
-			AppendIndexerSetterAccess(sb, count);
+			AppendIndexerGetterAccess(sb, key.Arity);
+			AppendIndexerSetterAccess(sb, key.Arity);
 		}
 
 		sb.Append("}").AppendLine();
 		sb.AppendLine();
 
-		if (indexerSetups.Values.Any(v => v.NeedsGetterOnly || v.NeedsSetterOnly))
+		if (indexerSetups.Any(v => v.NeedsGetterOnly || v.NeedsSetterOnly))
 		{
 			sb.Append("namespace Mockolate.Verify").AppendLine();
 			sb.Append("{").AppendLine();
-			foreach (KeyValuePair<int, (bool NeedsGetterOnly, bool NeedsSetterOnly)> item in indexerSetups)
+			foreach (IndexerSetupKey item in indexerSetups)
 			{
-				if (item.Value.NeedsGetterOnly)
+				if (item.NeedsGetterOnly)
 				{
-					AppendIndexerVerifyGetterResult(sb, item.Key);
+					AppendIndexerVerifyGetterResult(sb, item.Arity);
 				}
 
-				if (item.Value.NeedsSetterOnly)
+				if (item.NeedsSetterOnly)
 				{
-					AppendIndexerVerifySetterResult(sb, item.Key, hasOverloadResolutionPriority);
+					AppendIndexerVerifySetterResult(sb, item.Arity, hasOverloadResolutionPriority);
 				}
 			}
 
@@ -1872,13 +1872,17 @@ internal static partial class Sources
 			sb.Append("\t\t[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]").AppendLine();
 		}
 
+		// It.IsValue instead of It.Is: this file is emitted into the consumer's compilation, which
+		// cannot see the internal CallerArgumentExpression polyfill the shipped result relies on.
+		// IsValue formats the value lazily and invariantly, so a literal renders exactly as it does
+		// on the shipped surface, and no description is built on the passing path.
 		sb.Append($$"""
 		            		/// <summary>
 		            		///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
 		            		/// </summary>
 		            		public global::Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value)
 		            			=> mockRegistry.IndexerSet(subject, setMemberId, setPredicate,
-		            				(global::Mockolate.Parameters.IParameterMatch<TParameter>)global::Mockolate.It.Is(value, value?.ToString() ?? "null"), parametersDescription);
+		            				(global::Mockolate.Parameters.IParameterMatch<TParameter>)global::Mockolate.It.IsValue<TParameter>(value), parametersDescription);
 		            	}
 		            """).AppendLine();
 	}
