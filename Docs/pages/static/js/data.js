@@ -396,6 +396,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -464,7 +470,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -536,7 +543,8 @@ window.BENCHMARK_DATA = {
           233.83566827774047,
           304.87013619740804,
           338.54000643321444,
-          315.92719723383584
+          315.92719723383584,
+          316.98198420206705
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -594,6 +602,7 @@ window.BENCHMARK_DATA = {
           1720,
           1720,
           1720,
+          1608,
           1608,
           1608,
           1608,
@@ -693,7 +702,8 @@ window.BENCHMARK_DATA = {
           55579.74009602865,
           70127.98216145833,
           98553.52796223959,
-          98070.17232572116
+          98070.17232572116,
+          96724.79527994791
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -768,6 +778,7 @@ window.BENCHMARK_DATA = {
           9096,
           9090,
           9095,
+          9096,
           9096,
           9096,
           9096
@@ -850,7 +861,8 @@ window.BENCHMARK_DATA = {
           3195.4091007526104,
           4464.94301714216,
           4660.529517618815,
-          4530.997351074218
+          4530.997351074218,
+          4444.085898263113
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -918,6 +930,7 @@ window.BENCHMARK_DATA = {
           7928,
           7928,
           7928,
+          7896,
           7896,
           7896,
           7896,
@@ -1007,7 +1020,8 @@ window.BENCHMARK_DATA = {
           3453.215056639451,
           4613.2336435953775,
           4996.264932250977,
-          4653.901652526855
+          4653.901652526855,
+          4682.908741542271
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1081,6 +1095,7 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6959,
+          6970,
           6970,
           6970,
           6970,
@@ -1164,7 +1179,8 @@ window.BENCHMARK_DATA = {
           314.61810314655304,
           397.1482574939728,
           436.9740293502808,
-          408.8502257347107
+          408.8502257347107,
+          403.2457737604777
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1176,6 +1192,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -1321,7 +1338,8 @@ window.BENCHMARK_DATA = {
           408.7862802573613,
           521.0506278355916,
           519.2043080647786,
-          496.15166759490967
+          496.15166759490967,
+          478.1871331532796
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1374,6 +1392,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040,
@@ -1808,6 +1827,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -1876,7 +1901,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -1948,7 +1974,8 @@ window.BENCHMARK_DATA = {
           283.8544905662537,
           343.95641090075173,
           302.7238277753194,
-          311.0599866549174
+          311.0599866549174,
+          304.4136558532715
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2006,6 +2033,7 @@ window.BENCHMARK_DATA = {
           1824,
           1824,
           1824,
+          1744,
           1744,
           1744,
           1744,
@@ -2105,7 +2133,8 @@ window.BENCHMARK_DATA = {
           15684.371069335937,
           16455.06512451172,
           16097.807698567709,
-          15562.921696589543
+          15562.921696589543,
+          16083.408168247768
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2175,6 +2204,7 @@ window.BENCHMARK_DATA = {
           12809,
           12809,
           13033,
+          12809,
           12809,
           12809,
           12809,
@@ -2262,7 +2292,8 @@ window.BENCHMARK_DATA = {
           5639.0034430367605,
           5759.33374949864,
           5737.427684238979,
-          5577.8185457502095
+          5577.8185457502095,
+          5634.959563191732
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2274,6 +2305,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -2419,7 +2451,8 @@ window.BENCHMARK_DATA = {
           217270.27696010045,
           217952.669921875,
           214967.39815848213,
-          215003.62329101562
+          215003.62329101562,
+          216645.1521484375
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2476,6 +2509,7 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15740,
+          15628,
           15628,
           15628,
           15628,
@@ -2576,7 +2610,8 @@ window.BENCHMARK_DATA = {
           1303.6409413473946,
           1384.2240882873534,
           1421.3957656860352,
-          1356.7023572188157
+          1356.7023572188157,
+          1300.5073385238647
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2588,6 +2623,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -2733,7 +2769,8 @@ window.BENCHMARK_DATA = {
           180.68983476956686,
           199.38998092015584,
           199.99673886299132,
-          190.09133056004842
+          190.09133056004842,
+          181.2117733001709
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -2786,6 +2823,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376,
@@ -3220,6 +3258,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -3288,7 +3332,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -3360,7 +3405,8 @@ window.BENCHMARK_DATA = {
           947.3332894189017,
           1078.6244870503745,
           952.9067010879517,
-          1089.7179542269025
+          1089.7179542269025,
+          1089.4693036397298
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3418,6 +3464,7 @@ window.BENCHMARK_DATA = {
           3912,
           3912,
           3912,
+          3856,
           3856,
           3856,
           3856,
@@ -3517,7 +3564,8 @@ window.BENCHMARK_DATA = {
           218407.83848353795,
           162275.02575683594,
           216662.42679268974,
-          169330.16217447916
+          169330.16217447916,
+          165675.35878208705
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3594,7 +3642,8 @@ window.BENCHMARK_DATA = {
           20860,
           20849,
           21084,
-          20860
+          20860,
+          20721
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3674,7 +3723,8 @@ window.BENCHMARK_DATA = {
           9678.738721720378,
           9542.720741271973,
           9380.841971842448,
-          8736.016325887043
+          8736.016325887043,
+          9656.230134230394
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3751,7 +3801,8 @@ window.BENCHMARK_DATA = {
           13088,
           13088,
           13144,
-          13088
+          13088,
+          13144
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -3831,7 +3882,8 @@ window.BENCHMARK_DATA = {
           11974.241760253906,
           11293.455675397601,
           11704.41151936849,
-          10376.851698811848
+          10376.851698811848,
+          11536.05404663086
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3908,7 +3960,8 @@ window.BENCHMARK_DATA = {
           13954,
           13943,
           13954,
-          13954
+          13954,
+          13943
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3988,7 +4041,8 @@ window.BENCHMARK_DATA = {
           889.9982554117838,
           1002.0929336547852,
           884.6290324529012,
-          932.0157714571271
+          932.0157714571271,
+          1033.1468142100744
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4000,6 +4054,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -4475,6 +4530,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -4543,7 +4604,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -4615,7 +4677,8 @@ window.BENCHMARK_DATA = {
           2444.5829933166506,
           2933.3939977373398,
           2474.6643068949384,
-          2612.9068524678546
+          2612.9068524678546,
+          2988.203005727132
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4673,6 +4736,7 @@ window.BENCHMARK_DATA = {
           4992,
           4992,
           4992,
+          4936,
           4936,
           4936,
           4936,
@@ -4772,7 +4836,8 @@ window.BENCHMARK_DATA = {
           232036.67150878906,
           172812.87188720703,
           230324.41517857142,
-          180590.88082449776
+          180590.88082449776,
+          174601.81026517428
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4849,7 +4914,8 @@ window.BENCHMARK_DATA = {
           30610,
           30603,
           30834,
-          30610
+          30610,
+          29324
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4929,7 +4995,8 @@ window.BENCHMARK_DATA = {
           24557.570361328126,
           22849.17380777995,
           23631.128139241537,
-          21045.46776123047
+          21045.46776123047,
+          22106.977935791016
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5006,7 +5073,8 @@ window.BENCHMARK_DATA = {
           26193,
           26193,
           26249,
-          26193
+          26193,
+          26753
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5086,7 +5154,8 @@ window.BENCHMARK_DATA = {
           25327.010450090682,
           23854.911507161458,
           25427.437854003907,
-          22177.984540666854
+          22177.984540666854,
+          24050.800742013114
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5163,7 +5232,8 @@ window.BENCHMARK_DATA = {
           33764,
           33772,
           33764,
-          33764
+          33764,
+          33772
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5243,7 +5313,8 @@ window.BENCHMARK_DATA = {
           2193.3809973398843,
           2314.987053171794,
           2279.2455932617186,
-          2124.21291410006
+          2124.21291410006,
+          2367.0357233683267
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5255,6 +5326,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -5730,6 +5802,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -5798,7 +5876,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -5870,7 +5949,8 @@ window.BENCHMARK_DATA = {
           349.1203324113573,
           365.04202092488606,
           355.5138861020406,
-          431.7438709576925
+          431.7438709576925,
+          365.09577690760295
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5928,6 +6008,7 @@ window.BENCHMARK_DATA = {
           2088,
           2088,
           2088,
+          1976,
           1976,
           1976,
           1976,
@@ -6027,7 +6108,8 @@ window.BENCHMARK_DATA = {
           131618.17653111048,
           184427.82934570312,
           182860.48538643974,
-          190417.4588797433
+          190417.4588797433,
+          181957.67563100962
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6104,7 +6186,8 @@ window.BENCHMARK_DATA = {
           14938,
           14926,
           14926,
-          15086
+          15086,
+          14926
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6184,7 +6267,8 @@ window.BENCHMARK_DATA = {
           5699.676369887132,
           5742.258112226214,
           5844.54299214681,
-          6201.093027750651
+          6201.093027750651,
+          6009.35810546875
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6257,6 +6341,7 @@ window.BENCHMARK_DATA = {
           9336,
           9280,
           9280,
+          9336,
           9336,
           9336,
           9336,
@@ -6341,7 +6426,8 @@ window.BENCHMARK_DATA = {
           5432.5193846566335,
           6191.8823582967125,
           6150.991718546549,
-          6528.343469347273
+          6528.343469347273,
+          6239.82685546875
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6414,6 +6500,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8257,
+          8244,
           8244,
           8244,
           8244,
@@ -6498,7 +6585,8 @@ window.BENCHMARK_DATA = {
           525.3137947491238,
           581.8757630666097,
           571.6466881116231,
-          712.5273922602336
+          712.5273922602336,
+          571.6753939219883
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6510,6 +6598,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -6655,7 +6744,8 @@ window.BENCHMARK_DATA = {
           495.75327898661294,
           532.0203690895668,
           516.3570227940877,
-          537.8053874969482
+          537.8053874969482,
+          498.96156616210936
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -6708,6 +6798,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064,
@@ -7142,6 +7233,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -7210,7 +7307,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -7282,7 +7380,8 @@ window.BENCHMARK_DATA = {
           613.4477546691894,
           644.2165404637655,
           649.9733187357584,
-          735.925442314148
+          735.925442314148,
+          690.6661709271945
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7340,6 +7439,7 @@ window.BENCHMARK_DATA = {
           2304,
           2304,
           2304,
+          2192,
           2192,
           2192,
           2192,
@@ -7439,7 +7539,8 @@ window.BENCHMARK_DATA = {
           134640.22403971353,
           192211.78876953124,
           188843.2723388672,
-          196190.44829101564
+          196190.44829101564,
+          187121.45711263022
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7516,7 +7617,8 @@ window.BENCHMARK_DATA = {
           18925,
           18925,
           18925,
-          19085
+          19085,
+          18925
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7596,7 +7698,8 @@ window.BENCHMARK_DATA = {
           8779.439086914062,
           8564.137435913086,
           8650.046662394207,
-          9246.305272420248
+          9246.305272420248,
+          9006.116842651367
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7669,6 +7772,7 @@ window.BENCHMARK_DATA = {
           12361,
           11800,
           11800,
+          12361,
           12361,
           12361,
           12361,
@@ -7753,7 +7857,8 @@ window.BENCHMARK_DATA = {
           9270.795721200797,
           9368.49080505371,
           9620.116142859826,
-          10145.140006510417
+          10145.140006510417,
+          9484.979748317173
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7826,6 +7931,7 @@ window.BENCHMARK_DATA = {
           15786,
           15786,
           15785,
+          15786,
           15786,
           15786,
           15786,
@@ -7910,7 +8016,8 @@ window.BENCHMARK_DATA = {
           1086.1297899882,
           1207.200300725301,
           1107.7102049418859,
-          1311.3419133504233
+          1311.3419133504233,
+          1182.048668797811
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7922,6 +8029,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -8067,7 +8175,8 @@ window.BENCHMARK_DATA = {
           1422.4450224467687,
           1427.5544918060302,
           1429.839004244123,
-          1551.5114203135172
+          1551.5114203135172,
+          1389.2851549148559
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8120,6 +8229,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816,
@@ -8554,6 +8664,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -8622,7 +8738,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -8694,7 +8811,8 @@ window.BENCHMARK_DATA = {
           515.0266249338786,
           533.4404433568319,
           512.8865855534872,
-          538.5777901240757
+          538.5777901240757,
+          521.8073163986206
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8752,6 +8870,7 @@ window.BENCHMARK_DATA = {
           2528,
           2528,
           2528,
+          2472,
           2472,
           2472,
           2472,
@@ -8851,7 +8970,8 @@ window.BENCHMARK_DATA = {
           11681.255776541573,
           12081.422640286959,
           11805.683162434896,
-          11979.410469563802
+          11979.410469563802,
+          12158.157392229352
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8927,6 +9047,7 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10513,
+          10641,
           10641,
           10641
         ],
@@ -9008,7 +9129,8 @@ window.BENCHMARK_DATA = {
           7469.636166890462,
           7745.394556681315,
           7750.286188398089,
-          7338.027305603027
+          7338.027305603027,
+          7426.521343485514
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9020,6 +9142,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -9165,7 +9288,8 @@ window.BENCHMARK_DATA = {
           8288.348692830403,
           8504.53475036621,
           8164.596163068499,
-          8582.309055873326
+          8582.309055873326,
+          8565.357666015625
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -9234,6 +9358,7 @@ window.BENCHMARK_DATA = {
           11508,
           11518,
           11518,
+          11508,
           11508,
           11508,
           11508,
@@ -9322,7 +9447,8 @@ window.BENCHMARK_DATA = {
           438.8086566925049,
           456.751085464771,
           437.89676787303046,
-          459.3522218636104
+          459.3522218636104,
+          448.5490442911784
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -9334,6 +9460,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -9479,7 +9606,8 @@ window.BENCHMARK_DATA = {
           441.8393448193868,
           477.85770117441814,
           457.0866293566568,
-          450.59719177881874
+          450.59719177881874,
+          452.0248119354248
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9532,6 +9660,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680,
@@ -9966,6 +10095,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -10034,7 +10169,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -10106,7 +10242,8 @@ window.BENCHMARK_DATA = {
           1011.4862211772373,
           1041.3009877522786,
           979.5559772491455,
-          1045.7979262034098
+          1045.7979262034098,
+          1029.810273106893
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -10164,6 +10301,7 @@ window.BENCHMARK_DATA = {
           3032,
           3032,
           3032,
+          2976,
           2976,
           2976,
           2976,
@@ -10263,7 +10401,8 @@ window.BENCHMARK_DATA = {
           18385.107271466935,
           18947.869179861886,
           18284.636784144812,
-          18843.53831599309
+          18843.53831599309,
+          19305.87374291053
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -10339,6 +10478,7 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           17441,
+          18721,
           18721,
           18721
         ],
@@ -10420,7 +10560,8 @@ window.BENCHMARK_DATA = {
           17264.331286621094,
           16808.787976074218,
           17256.64190908579,
-          17669.517685953775
+          17669.517685953775,
+          17049.015416071965
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -10432,6 +10573,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -10577,7 +10719,8 @@ window.BENCHMARK_DATA = {
           19146.209773472376,
           19584.828454589842,
           19661.706117902482,
-          20468.134142049155
+          20468.134142049155,
+          20653.234213692802
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -10646,6 +10789,7 @@ window.BENCHMARK_DATA = {
           31546,
           31543,
           31543,
+          31546,
           31546,
           31546,
           31546,
@@ -10734,7 +10878,8 @@ window.BENCHMARK_DATA = {
           1101.0203612009684,
           1117.6113394419351,
           1138.6515425364175,
-          1132.669133122762
+          1132.669133122762,
+          1128.9886621747698
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -10746,6 +10891,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -10891,7 +11037,8 @@ window.BENCHMARK_DATA = {
           1600.1489267985025,
           1578.8674963633218,
           1580.7155344645182,
-          1623.1693159739177
+          1623.1693159739177,
+          1621.479844792684
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -10944,6 +11091,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032,
@@ -11378,6 +11526,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Jul 29 11:30:29 2026 \u002B0200",
         "message": "feat!: only expose property accessors the mock intercepts (#829)"
+      },
+      {
+        "sha": "a0e6d15696a0a4eee27a68471ca0854b4f29ef1b",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Jul 29 14:19:20 2026 \u002B0200",
+        "message": "fix: require Roslyn 5.0 instead of 5.6 for the generator and analyzers (#831)"
       }
     ],
     "labels": [
@@ -11446,7 +11600,8 @@ window.BENCHMARK_DATA = {
       "e99f0b49",
       "7a658ac8",
       "5a6b0acb",
-      "01a814ac"
+      "01a814ac",
+      "a0e6d156"
     ],
     "datasets": [
       {
@@ -11518,7 +11673,8 @@ window.BENCHMARK_DATA = {
           17.36899935801824,
           20.085231909155844,
           13.948555895260402,
-          19.249059720834097
+          19.249059720834097,
+          18.322679114341735
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -11576,6 +11732,7 @@ window.BENCHMARK_DATA = {
           440,
           440,
           440,
+          160,
           160,
           160,
           160,
@@ -11675,7 +11832,8 @@ window.BENCHMARK_DATA = {
           272.74244413375857,
           282.34438778559365,
           213.89395275482764,
-          298.5865109761556
+          298.5865109761556,
+          281.9588975906372
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -11687,6 +11845,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -11832,7 +11991,8 @@ window.BENCHMARK_DATA = {
           38.438577338059744,
           39.04570859869321,
           28.593377117315928,
-          37.647073952356976
+          37.647073952356976,
+          35.58939743439357
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -11885,6 +12045,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200,
@@ -11989,7 +12150,8 @@ window.BENCHMARK_DATA = {
           1080.452170916966,
           1342.8113082005427,
           1014.3127007802327,
-          1433.523740641276
+          1433.523740641276,
+          1416.2833251953125
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -12001,6 +12163,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -12146,7 +12309,8 @@ window.BENCHMARK_DATA = {
           1754.341262272426,
           1890.1709733690534,
           1414.575299535479,
-          2117.875296274821
+          2117.875296274821,
+          2073.711014556885
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -12158,6 +12322,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -12303,7 +12468,8 @@ window.BENCHMARK_DATA = {
           1275.4025169372558,
           1792.3916962305705,
           1341.710626738412,
-          1948.6891827901204
+          1948.6891827901204,
+          1914.3765904562813
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -12378,6 +12544,7 @@ window.BENCHMARK_DATA = {
           2763,
           2763,
           2759,
+          2763,
           2763,
           2763,
           2763
