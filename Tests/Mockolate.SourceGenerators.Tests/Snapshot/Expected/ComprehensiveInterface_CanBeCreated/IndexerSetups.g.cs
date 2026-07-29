@@ -341,7 +341,14 @@ namespace Mockolate.Setup
 		global::Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4, T5>,
 		global::Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4, T5>,
 		global::Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>,
-		global::Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>
+		global::Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>,
+		global::Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>,
+		global::Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5>,
+		global::Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5>,
+		global::Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5>,
+		global::Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5>,
+		global::Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5>,
+		global::Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5>
 	{
 		private Callbacks<global::System.Action<int, T1, T2, T3, T4, T5, TValue>>? _getterCallbacks;
 		private Callbacks<global::System.Action<int, T1, T2, T3, T4, T5, TValue>>? _setterCallbacks;
@@ -842,6 +849,466 @@ namespace Mockolate.Setup
 		public override string ToString()
 			=> $"{FormatType(typeof(TValue))} this[{parameter1}, {parameter2}, {parameter3}, {parameter4}, {parameter5}]";
 
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.SkippingBaseClass(bool)" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.SkippingBaseClass(bool skipBaseClass)
+		{
+			SkippingBaseClass(skipBaseClass);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.InitializeWith(TValue)" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.InitializeWith(TValue value)
+		{
+			InitializeWith(value);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.InitializeWith(global::System.Func{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.InitializeWith(global::System.Func<T1, T2, T3, T4, T5, TValue> valueGenerator)
+		{
+			InitializeWith(valueGenerator);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.OnGet" />
+		IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.OnGet
+			=> this;
+
+		/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action)" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action callback)
+		{
+			((IIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{T1, T2, T3, T4, T5})" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action<T1, T2, T3, T4, T5> callback)
+		{
+			((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action<T1, T2, T3, T4, T5, TValue> callback)
+		{
+			((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{int, T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action<int, T1, T2, T3, T4, T5, TValue> callback)
+		{
+			((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4, T5}.TransitionTo(string)" />
+		IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5>.TransitionTo(string scenario)
+		{
+			((IIndexerGetterSetup<TValue, T1, T2, T3, T4, T5>)this).TransitionTo(scenario);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackBuilder{TValue, T1, T2, T3, T4, T5}.InParallel()" />
+		IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5>.InParallel()
+		{
+			((IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4, T5>)this).InParallel();
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetupParallelCallbackBuilder{TValue, T1, T2, T3, T4, T5}.When(global::System.Func{int, bool})" />
+		IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5>.When(global::System.Func<int, bool> predicate)
+		{
+			((IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5>)this).When(predicate);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.For(int)" />
+		IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>.For(int times)
+		{
+			((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>)this).For(times);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.Only(int)" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>.Only(int times)
+		{
+			((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>)this).Only(times);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Returns(TValue)" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Returns(TValue returnValue)
+		{
+			Returns(returnValue);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Returns(global::System.Func{TValue})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Returns(global::System.Func<TValue> callback)
+		{
+			Returns(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Returns(global::System.Func{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Returns(global::System.Func<T1, T2, T3, T4, T5, TValue> callback)
+		{
+			Returns(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Returns(global::System.Func{T1, T2, T3, T4, T5, TValue, TValue})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Returns(global::System.Func<T1, T2, T3, T4, T5, TValue, TValue> callback)
+		{
+			Returns(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Throws{TException}()" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Throws<TException>()
+		{
+			Throws<TException>();
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Exception)" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Throws(global::System.Exception exception)
+		{
+			Throws(exception);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Func{global::System.Exception})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Throws(global::System.Func<global::System.Exception> callback)
+		{
+			Throws(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Func{T1, T2, T3, T4, T5, global::System.Exception})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Throws(global::System.Func<T1, T2, T3, T4, T5, global::System.Exception> callback)
+		{
+			Throws(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Func{T1, T2, T3, T4, T5, TValue, global::System.Exception})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>.Throws(global::System.Func<T1, T2, T3, T4, T5, TValue, global::System.Exception> callback)
+		{
+			Throws(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetupReturnBuilder{TValue, T1, T2, T3, T4, T5}.When(global::System.Func{int, bool})" />
+		IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5>.When(global::System.Func<int, bool> predicate)
+		{
+			((IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4, T5>)this).When(predicate);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2, T3, T4, T5}.For(int)" />
+		IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5>.For(int times)
+		{
+			((IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5>)this).For(times);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2, T3, T4, T5}.Only(int)" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5>.Only(int times)
+		{
+			((IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5>)this).Only(times);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2, T3, T4, T5}.SkippingBaseClass(bool)" />
+		IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5>.SkippingBaseClass(bool skipBaseClass)
+		{
+			SkippingBaseClass(skipBaseClass);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2, T3, T4, T5}.OnSet" />
+		IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5>.OnSet
+			=> this;
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action)" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action callback)
+		{
+			((IIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{TValue})" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action<TValue> callback)
+		{
+			((IIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action<T1, T2, T3, T4, T5, TValue> callback)
+		{
+			((IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{int, T1, T2, T3, T4, T5, TValue})" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5>.Do(global::System.Action<int, T1, T2, T3, T4, T5, TValue> callback)
+		{
+			((IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4, T5>)this).Do(callback);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4, T5}.TransitionTo(string)" />
+		IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5>.TransitionTo(string scenario)
+		{
+			((IIndexerSetterSetup<TValue, T1, T2, T3, T4, T5>)this).TransitionTo(scenario);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackBuilder{TValue, T1, T2, T3, T4, T5}.InParallel()" />
+		IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5>.InParallel()
+		{
+			((IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4, T5>)this).InParallel();
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetupParallelCallbackBuilder{TValue, T1, T2, T3, T4, T5}.When(global::System.Func{int, bool})" />
+		IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5>.When(global::System.Func<int, bool> predicate)
+		{
+			((IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5>)this).When(predicate);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.For(int)" />
+		IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>.For(int times)
+		{
+			((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>)this).For(times);
+			return this;
+		}
+
+		/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.Only(int)" />
+		IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>.Only(int times)
+		{
+			((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>)this).Only(times);
+			return this;
+		}
+
+	}
+
+	/// <summary>
+	///     Setup for a mocked <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" /> that the mock only reads.
+	/// </summary>
+	/// <remarks>
+	///     Used instead of <see cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}">IIndexerSetup&lt;TValue, T1, T2, T3, T4, T5&gt;</see> when the mock has no setter to intercept, either
+	///     because the indexer is declared without one or because its setter is not accessible from the mock's assembly.
+	///     Writes then never reach the mock, so <see cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.OnSet">IIndexerSetup&lt;TValue, T1, T2, T3, T4, T5&gt;.OnSet</see> is not offered.
+	/// </remarks>
+	internal interface IIndexerGetterOnlySetup<TValue, out T1, out T2, out T3, out T4, out T5>
+	{
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.OnGet" />
+		IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4, T5> OnGet { get; }
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.SkippingBaseClass(bool)" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> SkippingBaseClass(bool skipBaseClass = true);
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.InitializeWith(TValue)" />
+		/// <remarks>
+		///     Seeds the value that reads return. Unlike a read-write indexer there is no setter to update the
+		///     slot afterwards, so it stays at <paramref name="value" /> unless a <c>Returns</c> entry applies.
+		/// </remarks>
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> InitializeWith(TValue value);
+
+		/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4, T5}.InitializeWith(global::System.Func{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> InitializeWith(global::System.Func<T1, T2, T3, T4, T5, TValue> valueGenerator);
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.Returns(TValue)" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Returns(TValue returnValue);
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.Returns(global::System.Func{TValue})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Returns(global::System.Func<TValue> callback);
+
+		/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Returns(global::System.Func{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Returns(global::System.Func<T1, T2, T3, T4, T5, TValue> callback);
+
+		/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Returns(global::System.Func{T1, T2, T3, T4, T5, TValue, TValue})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Returns(global::System.Func<T1, T2, T3, T4, T5, TValue, TValue> callback);
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.Throws{TException}()" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Throws<TException>()
+			where TException : global::System.Exception, new();
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Exception)" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Throws(global::System.Exception exception);
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Func{global::System.Exception})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Throws(global::System.Func<global::System.Exception> callback);
+
+		/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Func{T1, T2, T3, T4, T5, global::System.Exception})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Throws(global::System.Func<T1, T2, T3, T4, T5, global::System.Exception> callback);
+
+		/// <inheritdoc cref="IIndexerSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Throws(global::System.Func{T1, T2, T3, T4, T5, TValue, global::System.Exception})" />
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4, T5> Throws(global::System.Func<T1, T2, T3, T4, T5, TValue, global::System.Exception> callback);
+	}
+
+	/// <summary>
+	///     Setup for attaching side-effects to the getter of a get-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	/// <remarks>
+	///     The counterpart of <see cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3, T4, T5}">IIndexerGetterSetupWithCallback&lt;TValue, T1, T2, T3, T4, T5&gt;</see> for
+	///     <see cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}">IIndexerGetterOnlySetup&lt;TValue, T1, T2, T3, T4, T5&gt;</see>: the returned builders stay on the getter-only surface,
+	///     so chaining can never reach <see cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.OnSet">IIndexerSetup&lt;TValue, T1, T2, T3, T4, T5&gt;.OnSet</see>.
+	/// </remarks>
+	internal interface IIndexerGetterOnlyGetterSetup<TValue, out T1, out T2, out T3, out T4, out T5>
+	{
+		/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action)" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action callback);
+
+		/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{T1, T2, T3, T4, T5})" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action<T1, T2, T3, T4, T5> callback);
+
+		/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action<T1, T2, T3, T4, T5, TValue> callback);
+
+		/// <inheritdoc cref="IIndexerGetterSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{int, T1, T2, T3, T4, T5, TValue})" />
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action<int, T1, T2, T3, T4, T5, TValue> callback);
+
+		/// <inheritdoc cref="IIndexerGetterSetup{TValue, T1, T2, T3, T4, T5}.TransitionTo(string)" />
+		IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> TransitionTo(string scenario);
+	}
+
+	/// <summary>
+	///     Sets up a callback for a get-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerGetterOnlySetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerGetterSetupCallbackBuilder{TValue, T1, T2, T3, T4, T5}.InParallel()" />
+		IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> InParallel();
+	}
+
+	/// <summary>
+	///     Sets up a parallel callback for a get-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerGetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4, T5}.When(global::System.Func{int, bool})" />
+		IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> When(global::System.Func<int, bool> predicate);
+	}
+
+	/// <summary>
+	///     Sets up a when callback for a get-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.For(int)" />
+		IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> For(int times);
+
+		/// <inheritdoc cref="IIndexerGetterSetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.Only(int)" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> Only(int times);
+	}
+
+	/// <summary>
+	///     Sets up a return/throw builder for a get-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerGetterOnlySetupReturnBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerSetupReturnBuilder{TValue, T1, T2, T3, T4, T5}.When(global::System.Func{int, bool})" />
+		IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5> When(global::System.Func<int, bool> predicate);
+	}
+
+	/// <summary>
+	///     Sets up a when builder for returns/throws for a get-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerGetterOnlySetupReturnWhenBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue, T1, T2, T3, T4, T5}.For(int)" />
+		IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5> For(int times);
+
+		/// <inheritdoc cref="IIndexerSetupReturnWhenBuilder{TValue, T1, T2, T3, T4, T5}.Only(int)" />
+		IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> Only(int times);
+	}
+
+	/// <summary>
+	///     Setup for a mocked <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" /> that the mock only writes.
+	/// </summary>
+	/// <remarks>
+	///     The write-only counterpart of <see cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4, T5}">IIndexerGetterOnlySetup&lt;TValue, T1, T2, T3, T4, T5&gt;</see>: the mock has no getter to
+	///     intercept, so <see cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.OnGet">IIndexerSetup&lt;TValue, T1, T2, T3, T4, T5&gt;.OnGet</see>, <c>InitializeWith</c> and the
+	///     <c>Returns</c>/<c>Throws</c> read-sequence are not offered.
+	/// </remarks>
+	internal interface IIndexerSetterOnlySetup<TValue, out T1, out T2, out T3, out T4, out T5>
+	{
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.OnSet" />
+		IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4, T5> OnSet { get; }
+
+		/// <inheritdoc cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.SkippingBaseClass(bool)" />
+		IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5> SkippingBaseClass(bool skipBaseClass = true);
+	}
+
+	/// <summary>
+	///     Setup for attaching side-effects to the setter of a set-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	/// <remarks>
+	///     The counterpart of <see cref="IIndexerSetterSetupWithCallback{TValue, T1, T2, T3, T4, T5}">IIndexerSetterSetupWithCallback&lt;TValue, T1, T2, T3, T4, T5&gt;</see> for
+	///     <see cref="IIndexerSetterOnlySetup{TValue, T1, T2, T3, T4, T5}">IIndexerSetterOnlySetup&lt;TValue, T1, T2, T3, T4, T5&gt;</see>: the returned builders stay on the setter-only surface,
+	///     so chaining can never reach <see cref="IIndexerSetup{TValue, T1, T2, T3, T4, T5}.OnGet">IIndexerSetup&lt;TValue, T1, T2, T3, T4, T5&gt;.OnGet</see> or the
+	///     <c>Returns</c>/<c>Throws</c> read-sequence.
+	/// </remarks>
+	internal interface IIndexerSetterOnlySetterSetup<TValue, out T1, out T2, out T3, out T4, out T5>
+	{
+		/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action)" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action callback);
+
+		/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{TValue})" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action<TValue> callback);
+
+		/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{T1, T2, T3, T4, T5, TValue})" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action<T1, T2, T3, T4, T5, TValue> callback);
+
+		/// <inheritdoc cref="IIndexerSetterSetupWithCallback{TValue, T1, T2, T3, T4, T5}.Do(global::System.Action{int, T1, T2, T3, T4, T5, TValue})" />
+		IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4, T5> Do(global::System.Action<int, T1, T2, T3, T4, T5, TValue> callback);
+
+		/// <inheritdoc cref="IIndexerSetterSetup{TValue, T1, T2, T3, T4, T5}.TransitionTo(string)" />
+		IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> TransitionTo(string scenario);
+	}
+
+	/// <summary>
+	///     Sets up a setter callback for a set-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerSetterOnlySetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerSetterSetupCallbackBuilder{TValue, T1, T2, T3, T4, T5}.InParallel()" />
+		IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4, T5> InParallel();
+	}
+
+	/// <summary>
+	///     Sets up a parallel setter callback for a set-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerSetterSetupParallelCallbackBuilder{TValue, T1, T2, T3, T4, T5}.When(global::System.Func{int, bool})" />
+		IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> When(global::System.Func<int, bool> predicate);
+	}
+
+	/// <summary>
+	///     Sets up a when setter callback for a set-only <typeparamref name="TValue"/> indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" />.
+	/// </summary>
+	internal interface IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4, out T5>
+		: IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5>
+	{
+		/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.For(int)" />
+		IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> For(int times);
+
+		/// <inheritdoc cref="IIndexerSetterSetupCallbackWhenBuilder{TValue, T1, T2, T3, T4, T5}.Only(int)" />
+		IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5> Only(int times);
 	}
 
 }
@@ -892,6 +1359,50 @@ namespace Mockolate
 			///     Uses the return value only once.
 			/// </summary>
 			public global::Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4, T5> OnlyOnce()
+				=> setup.Only(1);
+		}
+
+		/// <summary>
+		///     Extensions for setups of get-only indexers with 5 parameters.
+		/// </summary>
+		extension<TValue, T1, T2, T3, T4, T5>(Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4, T5> setup)
+		{
+			/// <summary>
+			///     Returns/throws forever.
+			/// </summary>
+			public void Forever()
+			{
+				setup.For(int.MaxValue);
+			}
+
+			/// <summary>
+			///     Uses the return value only once.
+			/// </summary>
+			public global::Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> OnlyOnce()
+				=> setup.Only(1);
+		}
+
+		/// <summary>
+		///     Extensions for getter callback setups of get-only indexers with 5 parameters.
+		/// </summary>
+		extension<TValue, T1, T2, T3, T4, T5>(Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> setup)
+		{
+			/// <summary>
+			///     Executes the callback only once.
+			/// </summary>
+			public global::Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4, T5> OnlyOnce()
+				=> setup.Only(1);
+		}
+
+		/// <summary>
+		///     Extensions for setter callback setups of set-only indexers with 5 parameters.
+		/// </summary>
+		extension<TValue, T1, T2, T3, T4, T5>(Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4, T5> setup)
+		{
+			/// <summary>
+			///     Executes the callback only once.
+			/// </summary>
+			public global::Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4, T5> OnlyOnce()
 				=> setup.Only(1);
 		}
 	}
@@ -1049,6 +1560,58 @@ namespace Mockolate.Interactions
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
 			=> $"set indexer [{Parameter1?.ToString() ?? "null"}, {Parameter2?.ToString() ?? "null"}, {Parameter3?.ToString() ?? "null"}, {Parameter4?.ToString() ?? "null"}, {Parameter5?.ToString() ?? "null"}] to {TypedValue?.ToString() ?? "null"}";
+	}
+}
+
+namespace Mockolate.Verify
+{
+	/// <summary>
+	///     Verifications on a 5-key indexer for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" /> that the mock only reads.
+	/// </summary>
+	/// <remarks>
+	///     Used instead of <see cref="global::Mockolate.Verify.VerificationIndexerResult{TSubject, TParameter}">VerificationIndexerResult&lt;TSubject, TParameter&gt;</see> when the
+	///     mock has no setter to intercept. Writes then never reach the mock, so offering <c>Set(...)</c> here would
+	///     always report zero interactions.
+	/// </remarks>
+	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	internal class VerificationIndexerGetterResult<TSubject, T1, T2, T3, T4, T5>(
+		TSubject subject,
+		global::Mockolate.MockRegistry mockRegistry,
+		int getMemberId,
+		global::System.Func<global::Mockolate.Interactions.IInteraction, bool> gotPredicate,
+		global::System.Func<string> parametersDescription)
+	{
+		/// <inheritdoc cref="global::Mockolate.Verify.VerificationIndexerResult{TSubject, TParameter}.Got()" />
+		public global::Mockolate.Verify.VerificationResult<TSubject> Got()
+			=> mockRegistry.IndexerGot(subject, getMemberId, gotPredicate, parametersDescription);
+	}
+	/// <summary>
+	///     Verifications on a 5-key indexer of type <typeparamref name="TParameter" /> for <typeparamref name="T1" />, <typeparamref name="T2" />, <typeparamref name="T3" />, <typeparamref name="T4" /> and <typeparamref name="T5" /> that the mock only writes.
+	/// </summary>
+	/// <remarks>
+	///     Used instead of <see cref="global::Mockolate.Verify.VerificationIndexerResult{TSubject, TParameter}">VerificationIndexerResult&lt;TSubject, TParameter&gt;</see> when the
+	///     mock has no getter to intercept, so <c>Got()</c> is not offered.
+	/// </remarks>
+	[global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+	internal class VerificationIndexerSetterResult<TSubject, T1, T2, T3, T4, T5, TParameter>(
+		TSubject subject,
+		global::Mockolate.MockRegistry mockRegistry,
+		int setMemberId,
+		global::System.Func<global::Mockolate.Interactions.IInteraction, global::Mockolate.Parameters.IParameterMatch<TParameter>, bool> setPredicate,
+		global::System.Func<string> parametersDescription)
+	{
+		/// <inheritdoc cref="global::Mockolate.Verify.VerificationIndexerResult{TSubject, TParameter}.Set(global::Mockolate.Parameters.IParameter{TParameter})" />
+		public global::Mockolate.Verify.VerificationResult<TSubject> Set(global::Mockolate.Parameters.IParameter<TParameter> value)
+			=> mockRegistry.IndexerSet(subject, setMemberId, setPredicate,
+				(global::Mockolate.Parameters.IParameterMatch<TParameter>)value, parametersDescription);
+
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(1)]
+		/// <summary>
+		///     Verifies the indexer write access on the mock with the given <paramref name="value" />.
+		/// </summary>
+		public global::Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value)
+			=> mockRegistry.IndexerSet(subject, setMemberId, setPredicate,
+				(global::Mockolate.Parameters.IParameterMatch<TParameter>)global::Mockolate.It.Is(value, value?.ToString() ?? "null"), parametersDescription);
 	}
 }
 

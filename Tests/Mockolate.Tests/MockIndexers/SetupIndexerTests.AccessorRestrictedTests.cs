@@ -378,6 +378,55 @@ public sealed partial class SetupIndexerTests
 			await That(sut.Mock.Verify[It.Is(1), It.Is(2), It.Is(3), It.Is(5)].Set(It.IsAny<string>())).Never();
 		}
 
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_ChainedReturns_ShouldStayOnGetterOnlySurface()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			IIndexerGetterOnlySetup<int, int, int, int, int, int> chained = sut.Mock
+				.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.Returns(1).OnlyOnce();
+			chained.Returns((k1, k2, k3, k4, k5) => k1 + k2 + k3 + k4 + k5);
+
+			await That(sut[1, 2, 3, 4, 5]).IsEqualTo(1);
+			await That(sut[1, 2, 3, 4, 5]).IsEqualTo(15);
+			await That(sut.Mock.Verify[It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(5)].Got()).Exactly(2)
+				.Because("the narrowed surface is generated per-compilation for indexers with more than four keys");
+			await That(sut.Mock.Verify[It.Is(1), It.Is(2), It.Is(3), It.Is(4), It.Is(6)].Got()).Never();
+		}
+
+		[Fact]
+		public async Task GetOnlyFiveKeyIndexer_ReturnsForever_ShouldUseTheLastValueForever()
+		{
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock.Setup[It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()]
+				.Returns(2)
+				.Returns(4).Forever();
+
+			int[] result = new int[4];
+			for (int i = 0; i < 4; i++)
+			{
+				result[i] = sut[i, i, i, i, i];
+			}
+
+			await That(result).IsEqualTo([2, 4, 4, 4,]);
+		}
+
+		[Fact]
+		public async Task SetOnlyFiveKeyIndexer_OnSetAndVerify_ShouldUseTheNarrowedSurface()
+		{
+			List<string> written = new();
+			IAccessorService sut = IAccessorService.CreateMock();
+			sut.Mock
+				.Setup[It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()]
+				.OnSet.Do((k1, k2, k3, k4, k5, v) => written.Add($"{k1}{k2}{k3}{k4}{k5}-{v}"));
+
+			sut["a", "b", "c", "d", "e"] = "x";
+
+			await That(written).IsEqualTo(["abcde-x",]);
+			await That(sut.Mock.Verify[It.Is("a"), It.Is("b"), It.Is("c"), It.Is("d"), It.Is("e")].Set("x")).Once();
+			await That(sut.Mock.Verify[It.Is("a"), It.Is("b"), It.Is("c"), It.Is("d"), It.Is("e")].Set("y")).Never();
+		}
+
 		public interface IAccessorService
 		{
 			int this[int key] { get; }
@@ -385,6 +434,8 @@ public sealed partial class SetupIndexerTests
 			int this[int key1, int key2] { get; }
 			string this[string key1, string key2] { set; }
 			string this[int key1, int key2, int key3, int key4] { set; }
+			int this[int key1, int key2, int key3, int key4, int key5] { get; }
+			string this[string key1, string key2, string key3, string key4, string key5] { set; }
 		}
 
 		public class AccessorService
