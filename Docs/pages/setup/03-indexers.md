@@ -119,7 +119,7 @@ interactions. See [Mockolate0002](../analyzers#mockolate0002) for when such a ty
 
 Both facades are fully restricted: the fluent builders returned by `Returns`, `Throws`, `Do` and
 `TransitionTo` stay on the narrowed surface, so no amount of chaining reaches the accessor the mock
-does not intercept. Indexers with more than four keys keep the full surface.
+does not intercept.
 
 **Notes:**
 

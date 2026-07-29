@@ -77,17 +77,21 @@ public class MockGenerator : IIncrementalGenerator
 		});
 
 		// Aggregate inputs derived from per-mock projections — each aggregate caches independently.
-		IncrementalValueProvider<EquatableArray<int>> indexerSetupArities = collectedMocks
-			.Select(static (arr, _) => CollectIndexerSetupArities(arr));
+		IncrementalValueProvider<EquatableArray<IndexerSetupKey>> indexerSetupKeys = collectedMocks
+			.Select(static (arr, _) => CollectIndexerSetupKeys(arr));
 
-		context.RegisterSourceOutput(indexerSetupArities, static (spc, arities) =>
-		{
-			if (arities.Count > 0)
+		context.RegisterSourceOutput(
+			indexerSetupKeys.Combine(hasOverloadResolutionPriority),
+			static (spc, source) =>
 			{
+				if (source.Left.Count == 0)
+				{
+					return;
+				}
+
 				spc.AddSource("IndexerSetups.g.cs",
-					ToSource(Sources.Sources.IndexerSetups(ToHashSet(arities))));
-			}
-		});
+					ToSource(Sources.Sources.IndexerSetups(source.Left, source.Right)));
+			});
 
 		IncrementalValueProvider<EquatableArray<MethodSetupKey>> methodSetupKeys = collectedMocks
 			.Select(static (arr, _) => CollectMethodSetupKeys(arr));
@@ -212,18 +216,6 @@ public class MockGenerator : IIncrementalGenerator
 		return new EquatableArray<MockClass>(distinct.ToArray());
 	}
 
-	private static HashSet<int> ToHashSet(EquatableArray<int> arities)
-	{
-		int[] arr = arities.AsArray();
-		HashSet<int> set = new();
-		foreach (int item in arr)
-		{
-			set.Add(item);
-		}
-
-		return set;
-	}
-
 	private static HashSet<(int, bool)> ToMethodSetupHashSet(EquatableArray<MethodSetupKey> keys)
 	{
 		MethodSetupKey[] arr = keys.AsArray();
@@ -236,24 +228,31 @@ public class MockGenerator : IIncrementalGenerator
 		return set;
 	}
 
-	private static EquatableArray<int> CollectIndexerSetupArities(EquatableArray<MockClass> mocks)
+	private static EquatableArray<IndexerSetupKey> CollectIndexerSetupKeys(EquatableArray<MockClass> mocks)
 	{
 		MockClass[] arr = mocks.AsArray();
-		HashSet<int> set = new();
+		Dictionary<int, (bool NeedsGetterOnly, bool NeedsSetterOnly)> map = new();
 		foreach (MockClass mc in arr)
 		{
 			foreach (Property property in mc.AllProperties())
 			{
 				if (property.IndexerParameters?.Count > 4)
 				{
-					set.Add(property.IndexerParameters.Value.Count);
+					int arity = property.IndexerParameters.Value.Count;
+					bool needsGetterOnly = property is { Getter: not null, Setter: null, };
+					bool needsSetterOnly = property is { Getter: null, Setter: not null, };
+					map.TryGetValue(arity, out (bool NeedsGetterOnly, bool NeedsSetterOnly) existing);
+					map[arity] = (existing.NeedsGetterOnly || needsGetterOnly,
+						existing.NeedsSetterOnly || needsSetterOnly);
 				}
 			}
 		}
 
-		int[] sorted = set.ToArray();
-		Array.Sort(sorted);
-		return new EquatableArray<int>(sorted);
+		IndexerSetupKey[] sorted = map
+			.OrderBy(kvp => kvp.Key)
+			.Select(kvp => new IndexerSetupKey(kvp.Key, kvp.Value.NeedsGetterOnly, kvp.Value.NeedsSetterOnly))
+			.ToArray();
+		return new EquatableArray<IndexerSetupKey>(sorted);
 	}
 
 	private static EquatableArray<MethodSetupKey> CollectMethodSetupKeys(EquatableArray<MockClass> mocks)
@@ -543,6 +542,8 @@ public class MockGenerator : IIncrementalGenerator
 internal readonly record struct MethodSetupKey(int Arity, bool IsVoid);
 
 internal readonly record struct RefStructIndexerSetup(int Arity, bool HasGetter, bool HasSetter);
+
+internal readonly record struct IndexerSetupKey(int Arity, bool NeedsGetterOnly, bool NeedsSetterOnly);
 
 internal readonly record struct MockAsExtensionPair(
 	string SourceName,

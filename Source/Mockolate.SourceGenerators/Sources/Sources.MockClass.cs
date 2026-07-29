@@ -3191,22 +3191,13 @@ internal static partial class Sources
 		};
 
 	/// <summary>
-	///     Which accessors of the <paramref name="indexer" /> the narrowed setup/verify facades follow. The
-	///     narrowed indexer types only exist for up to <see cref="MaxExplicitParameters" /> keys, so indexers
-	///     with more keys keep the full surface regardless of <see cref="GetInterceptedAccessors" />.
-	/// </summary>
-	private static PropertyAccessors GetIndexerInterceptedAccessors(Property indexer)
-		=> indexer.IndexerParameters!.Value.Count <= MaxExplicitParameters
-			? GetInterceptedAccessors(indexer)
-			: PropertyAccessors.Both;
-
-	/// <summary>
 	///     The open-generic setup facade emitted for the <paramref name="indexer" />, narrowed to the accessors
-	///     classified by <see cref="GetIndexerInterceptedAccessors" />. The caller appends the value and key type
-	///     arguments and the closing angle bracket.
+	///     classified by <see cref="GetInterceptedAccessors" />. The narrowed types are shipped for up to
+	///     <see cref="MaxExplicitParameters" /> keys and generated per-compilation for more. The caller appends
+	///     the value and key type arguments and the closing angle bracket.
 	/// </summary>
 	private static string GetIndexerSetupType(Property indexer)
-		=> GetIndexerInterceptedAccessors(indexer) switch
+		=> GetInterceptedAccessors(indexer) switch
 		{
 			PropertyAccessors.GetOnly => "global::Mockolate.Setup.IIndexerGetterOnlySetup<",
 			PropertyAccessors.SetOnly => "global::Mockolate.Setup.IIndexerSetterOnlySetup<",
@@ -3215,13 +3206,13 @@ internal static partial class Sources
 
 	/// <summary>
 	///     Appends the verify facade emitted for the <paramref name="indexer" />, narrowed to the accessors
-	///     classified by <see cref="GetIndexerInterceptedAccessors" />. The narrowed results are keyed by the
+	///     classified by <see cref="GetInterceptedAccessors" />. The narrowed results are keyed by the
 	///     indexer parameters (the setter result additionally by the value type), the full
 	///     <c>VerificationIndexerResult</c> only by the value type.
 	/// </summary>
 	private static void AppendIndexerVerifyType(StringBuilder sb, Property indexer, string verifyName)
 	{
-		switch (GetIndexerInterceptedAccessors(indexer))
+		switch (GetInterceptedAccessors(indexer))
 		{
 			case PropertyAccessors.GetOnly:
 				sb.Append("global::Mockolate.Verify.VerificationIndexerGetterResult<").Append(verifyName);
@@ -4827,7 +4818,7 @@ internal static partial class Sources
 		bool useTypedVerify = indexer.IndexerParameters.Value.Count is >= 1 and <= 4;
 		if (useTypedVerify)
 		{
-			PropertyAccessors interceptedAccessors = GetIndexerInterceptedAccessors(indexer);
+			PropertyAccessors interceptedAccessors = GetInterceptedAccessors(indexer);
 			string typedVerifyType = interceptedAccessors switch
 			{
 				PropertyAccessors.GetOnly => "VerificationIndexerGetterResult",
@@ -4861,39 +4852,72 @@ internal static partial class Sources
 		}
 		else
 		{
-			sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName)
-				.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
-				.Append(", ").Append(indexerGetMemberId).Append(", ").Append(indexerSetMemberId).Append(",").AppendLine();
-
-			sb.Append("\t\t\t\t\tinteraction => interaction is global::Mockolate.Interactions.IndexerGetterAccess<");
-			int ti = 0;
-			foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+			PropertyAccessors interceptedAccessors = GetInterceptedAccessors(indexer);
+			// The narrow views take only the member id and predicate of the accessor they expose.
+			switch (interceptedAccessors)
 			{
-				if (ti > 0)
+				case PropertyAccessors.GetOnly:
+					sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerGetterResult<")
+						.Append(verifyName);
+					foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+					{
+						sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
+					}
+
+					sb.Append(">(this, this.").Append(mockRegistryName)
+						.Append(", ").Append(indexerGetMemberId).Append(",").AppendLine();
+					break;
+				case PropertyAccessors.SetOnly:
+					sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerSetterResult<")
+						.Append(verifyName);
+					foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+					{
+						sb.Append(", ").AppendTypeOrWrapper(parameter.Type);
+					}
+
+					sb.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
+						.Append(", ").Append(indexerSetMemberId).Append(",").AppendLine();
+					break;
+				default:
+					sb.Append("\t\t\t\treturn new global::Mockolate.Verify.VerificationIndexerResult<").Append(verifyName)
+						.Append(", ").AppendTypeOrWrapper(indexer.Type).Append(">(this, this.").Append(mockRegistryName)
+						.Append(", ").Append(indexerGetMemberId).Append(", ").Append(indexerSetMemberId).Append(",").AppendLine();
+					break;
+			}
+
+			if (interceptedAccessors != PropertyAccessors.SetOnly)
+			{
+				sb.Append("\t\t\t\t\tinteraction => interaction is global::Mockolate.Interactions.IndexerGetterAccess<");
+				int ti = 0;
+				foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
 				{
-					sb.Append(", ");
+					if (ti > 0)
+					{
+						sb.Append(", ");
+					}
+
+					sb.AppendTypeOrWrapper(parameter.Type);
+					ti++;
 				}
 
-				sb.AppendTypeOrWrapper(parameter.Type);
-				ti++;
+				sb.Append("> g");
+				AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "g");
+				sb.Append(",").AppendLine();
 			}
 
-			sb.Append("> g");
-			AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "g");
-			sb.Append(",").AppendLine();
-
-			sb.Append(
-				"\t\t\t\t\t(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<");
-			ti = 0;
-			foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+			if (interceptedAccessors != PropertyAccessors.GetOnly)
 			{
-				sb.AppendTypeOrWrapper(parameter.Type).Append(", ");
-				ti++;
-			}
+				sb.Append(
+					"\t\t\t\t\t(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<");
+				foreach (MethodParameter parameter in indexer.IndexerParameters.Value)
+				{
+					sb.AppendTypeOrWrapper(parameter.Type).Append(", ");
+				}
 
-			sb.AppendTypeOrWrapper(indexer.Type).Append("> s");
-			AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "s");
-			sb.Append(" && value.Matches(s.TypedValue),").AppendLine();
+				sb.AppendTypeOrWrapper(indexer.Type).Append("> s");
+				AppendIndexerVerifyParameterMatches(sb, indexer.IndexerParameters.Value, valueFlags, "s");
+				sb.Append(" && value.Matches(s.TypedValue),").AppendLine();
+			}
 		}
 
 		sb.Append("\t\t\t\t\t() => global::System.String.Format(\"[");
