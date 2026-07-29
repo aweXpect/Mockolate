@@ -22,8 +22,8 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.CodeAnalysis.Common"/>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp"/>
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" VersionOverride="$(MinimumRoslynVersion)"/>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(MinimumRoslynVersion)"/>
 	</ItemGroup>
 
 	<ItemGroup>
