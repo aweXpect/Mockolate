@@ -66,7 +66,10 @@ implementing it, so the rule still fires.
 The same applies per accessor. For a property whose accessors differ in accessibility, such as
 `public abstract string Flavour { get; internal set; }`, an override further down discharges only the
 inaccessible half. The mock then overrides the accessor it can see and leaves the other one to the
-referenced assembly's implementation, so writes through the mock are not intercepted or recorded.
+referenced assembly's implementation. Because writes never reach the mock, `Setup` and `Verify` expose
+only the getter for such a property, so a write that could never be recorded is not offered for
+configuration or verification. See
+[properties with only one accessor](setup/properties#properties-with-only-one-accessor) for details.
 
 ## Mockolate0003
 

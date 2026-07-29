@@ -189,7 +189,11 @@ public abstract class PropertySetup : IInteractivePropertySetup
 public class PropertySetup<T> : PropertySetup,
 	IPropertyGetterSetupCallbackBuilder<T>, IPropertySetterSetupCallbackBuilder<T>,
 	IPropertySetupReturnBuilder<T>,
-	IPropertyGetterSetup<T>, IPropertySetterSetup<T>
+	IPropertyGetterSetup<T>, IPropertySetterSetup<T>,
+	IPropertyGetterOnlySetup<T>, IPropertySetterOnlySetup<T>,
+	IPropertyGetterOnlyGetterSetup<T>, IPropertySetterOnlySetterSetup<T>,
+	IPropertyGetterOnlySetupCallbackBuilder<T>, IPropertySetterOnlySetupCallbackBuilder<T>,
+	IPropertyGetterOnlySetupReturnBuilder<T>
 {
 	private readonly MockRegistry _mockRegistry;
 	private readonly string _name;
@@ -668,4 +672,235 @@ public class PropertySetup<T> : PropertySetup,
 	}
 
 	#endregion IPropertySetup<T>
+
+	#region Accessor-restricted views
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.SkippingBaseClass(bool)" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetup<T>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Register()" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetup<T>.Register()
+	{
+		Register();
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.InitializeWith(T)" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetup<T>.InitializeWith(T value)
+	{
+		InitializeWith(value);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.OnGet" />
+	IPropertyGetterOnlyGetterSetup<T> IPropertyGetterOnlySetup<T>.OnGet
+		=> this;
+
+	/// <inheritdoc cref="IPropertyGetterOnlyGetterSetup{T}.Do(Action)" />
+	IPropertyGetterOnlySetupCallbackBuilder<T> IPropertyGetterOnlyGetterSetup<T>.Do(Action callback)
+	{
+		((IPropertyGetterSetup<T>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlyGetterSetup{T}.Do(Action{T})" />
+	IPropertyGetterOnlySetupCallbackBuilder<T> IPropertyGetterOnlyGetterSetup<T>.Do(Action<T> callback)
+	{
+		((IPropertyGetterSetup<T>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlyGetterSetup{T}.Do(Action{int, T})" />
+	IPropertyGetterOnlySetupCallbackBuilder<T> IPropertyGetterOnlyGetterSetup<T>.Do(Action<int, T> callback)
+	{
+		((IPropertyGetterSetup<T>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlyGetterSetup{T}.TransitionTo(string)" />
+	IPropertyGetterOnlySetupParallelCallbackBuilder<T> IPropertyGetterOnlyGetterSetup<T>.TransitionTo(string scenario)
+	{
+		((IPropertyGetterSetup<T>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetupCallbackBuilder{T}.InParallel()" />
+	IPropertyGetterOnlySetupParallelCallbackBuilder<T> IPropertyGetterOnlySetupCallbackBuilder<T>.InParallel()
+	{
+		((IPropertyGetterSetupCallbackBuilder<T>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
+	IPropertyGetterOnlySetupCallbackWhenBuilder<T> IPropertyGetterOnlySetupParallelCallbackBuilder<T>.When(
+		Func<int, bool> predicate)
+	{
+		((IPropertyGetterSetupParallelCallbackBuilder<T>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetupCallbackWhenBuilder{T}.For(int)" />
+	IPropertyGetterOnlySetupCallbackWhenBuilder<T> IPropertyGetterOnlySetupCallbackWhenBuilder<T>.For(int times)
+	{
+		((IPropertyGetterSetupCallbackWhenBuilder<T>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetupCallbackWhenBuilder{T}.Only(int)" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetupCallbackWhenBuilder<T>.Only(int times)
+	{
+		((IPropertyGetterSetupCallbackWhenBuilder<T>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Returns(T)" />
+	IPropertyGetterOnlySetupReturnBuilder<T> IPropertyGetterOnlySetup<T>.Returns(T returnValue)
+	{
+		Returns(returnValue);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Returns(Func{T})" />
+	IPropertyGetterOnlySetupReturnBuilder<T> IPropertyGetterOnlySetup<T>.Returns(Func<T> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Returns(Func{T, T})" />
+	IPropertyGetterOnlySetupReturnBuilder<T> IPropertyGetterOnlySetup<T>.Returns(Func<T, T> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Throws{TException}()" />
+	IPropertyGetterOnlySetupReturnBuilder<T> IPropertyGetterOnlySetup<T>.Throws<TException>()
+	{
+		Throws<TException>();
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Throws(Exception)" />
+	IPropertyGetterOnlySetupReturnBuilder<T> IPropertyGetterOnlySetup<T>.Throws(Exception exception)
+	{
+		Throws(exception);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Throws(Func{Exception})" />
+	IPropertyGetterOnlySetupReturnBuilder<T> IPropertyGetterOnlySetup<T>.Throws(Func<Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetup{T}.Throws(Func{T, Exception})" />
+	IPropertyGetterOnlySetupReturnBuilder<T> IPropertyGetterOnlySetup<T>.Throws(Func<T, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetupReturnBuilder{T}.When(Func{int, bool})" />
+	IPropertyGetterOnlySetupReturnWhenBuilder<T> IPropertyGetterOnlySetupReturnBuilder<T>.When(Func<int, bool> predicate)
+	{
+		((IPropertySetupReturnBuilder<T>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetupReturnWhenBuilder{T}.For(int)" />
+	IPropertyGetterOnlySetupReturnWhenBuilder<T> IPropertyGetterOnlySetupReturnWhenBuilder<T>.For(int times)
+	{
+		((IPropertySetupReturnWhenBuilder<T>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertyGetterOnlySetupReturnWhenBuilder{T}.Only(int)" />
+	IPropertyGetterOnlySetup<T> IPropertyGetterOnlySetupReturnWhenBuilder<T>.Only(int times)
+	{
+		((IPropertySetupReturnWhenBuilder<T>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetup{T}.SkippingBaseClass(bool)" />
+	IPropertySetterOnlySetup<T> IPropertySetterOnlySetup<T>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetup{T}.Register()" />
+	IPropertySetterOnlySetup<T> IPropertySetterOnlySetup<T>.Register()
+	{
+		Register();
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetup{T}.OnSet" />
+	IPropertySetterOnlySetterSetup<T> IPropertySetterOnlySetup<T>.OnSet
+		=> this;
+
+	/// <inheritdoc cref="IPropertySetterOnlySetterSetup{T}.Do(Action)" />
+	IPropertySetterOnlySetupCallbackBuilder<T> IPropertySetterOnlySetterSetup<T>.Do(Action callback)
+	{
+		((IPropertySetterSetup<T>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetterSetup{T}.Do(Action{T})" />
+	IPropertySetterOnlySetupCallbackBuilder<T> IPropertySetterOnlySetterSetup<T>.Do(Action<T> callback)
+	{
+		((IPropertySetterSetup<T>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetterSetup{T}.Do(Action{int, T})" />
+	IPropertySetterOnlySetupCallbackBuilder<T> IPropertySetterOnlySetterSetup<T>.Do(Action<int, T> callback)
+	{
+		((IPropertySetterSetup<T>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetterSetup{T}.TransitionTo(string)" />
+	IPropertySetterOnlySetupParallelCallbackBuilder<T> IPropertySetterOnlySetterSetup<T>.TransitionTo(string scenario)
+	{
+		((IPropertySetterSetup<T>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetupCallbackBuilder{T}.InParallel()" />
+	IPropertySetterOnlySetupParallelCallbackBuilder<T> IPropertySetterOnlySetupCallbackBuilder<T>.InParallel()
+	{
+		((IPropertySetterSetupCallbackBuilder<T>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetupParallelCallbackBuilder{T}.When(Func{int, bool})" />
+	IPropertySetterOnlySetupCallbackWhenBuilder<T> IPropertySetterOnlySetupParallelCallbackBuilder<T>.When(
+		Func<int, bool> predicate)
+	{
+		((IPropertySetterSetupParallelCallbackBuilder<T>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetupCallbackWhenBuilder{T}.For(int)" />
+	IPropertySetterOnlySetupCallbackWhenBuilder<T> IPropertySetterOnlySetupCallbackWhenBuilder<T>.For(int times)
+	{
+		((IPropertySetterSetupCallbackWhenBuilder<T>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IPropertySetterOnlySetupCallbackWhenBuilder{T}.Only(int)" />
+	IPropertySetterOnlySetup<T> IPropertySetterOnlySetupCallbackWhenBuilder<T>.Only(int times)
+	{
+		((IPropertySetterSetupCallbackWhenBuilder<T>)this).Only(times);
+		return this;
+	}
+
+	#endregion Accessor-restricted views
 }

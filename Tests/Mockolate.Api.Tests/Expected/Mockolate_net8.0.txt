@@ -365,6 +365,19 @@ namespace Mockolate
         {
             public Mockolate.Setup.IPropertySetup<T> OnlyOnce() { }
         }
+        extension<T>(Mockolate.Setup.IPropertyGetterOnlySetupReturnWhenBuilder<T?>? setup)
+        {
+            public void Forever() { }
+            public Mockolate.Setup.IPropertyGetterOnlySetup<T> OnlyOnce() { }
+        }
+        extension<T>(Mockolate.Setup.IPropertyGetterOnlySetupCallbackWhenBuilder<T?>? setup)
+        {
+            public Mockolate.Setup.IPropertyGetterOnlySetup<T> OnlyOnce() { }
+        }
+        extension<T>(Mockolate.Setup.IPropertySetterOnlySetupCallbackWhenBuilder<T?>? setup)
+        {
+            public Mockolate.Setup.IPropertySetterOnlySetup<T> OnlyOnce() { }
+        }
         extension(Mockolate.Setup.IEventSubscriptionSetupCallbackWhenBuilder? setup)
         {
             public void Forever() { }
@@ -1430,6 +1443,50 @@ namespace Mockolate.Setup
         string Name { get; }
     }
     public interface IMockSetup<out T> : Mockolate.IInteractiveMock<T> { }
+    public interface IPropertyGetterOnlyGetterSetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterOnlySetupCallbackBuilder<T> Do(System.Action callback);
+        Mockolate.Setup.IPropertyGetterOnlySetupCallbackBuilder<T> Do(System.Action<T> callback);
+        Mockolate.Setup.IPropertyGetterOnlySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
+        Mockolate.Setup.IPropertyGetterOnlySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+    }
+    public interface IPropertyGetterOnlySetupCallbackBuilder<T> : Mockolate.Setup.IPropertyGetterOnlySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterOnlySetupParallelCallbackBuilder<T> InParallel();
+    }
+    public interface IPropertyGetterOnlySetupCallbackWhenBuilder<T> : Mockolate.Setup.IPropertyGetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterOnlySetupCallbackWhenBuilder<T> For(int times);
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> Only(int times);
+    }
+    public interface IPropertyGetterOnlySetupParallelCallbackBuilder<T> : Mockolate.Setup.IPropertyGetterOnlySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterOnlySetupCallbackWhenBuilder<T> When(System.Func<int, bool> predicate);
+    }
+    public interface IPropertyGetterOnlySetupReturnBuilder<T> : Mockolate.Setup.IPropertyGetterOnlySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnWhenBuilder<T> When(System.Func<int, bool> predicate);
+    }
+    public interface IPropertyGetterOnlySetupReturnWhenBuilder<T> : Mockolate.Setup.IPropertyGetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnWhenBuilder<T> For(int times);
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> Only(int times);
+    }
+    public interface IPropertyGetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertyGetterOnlyGetterSetup<T> OnGet { get; }
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> InitializeWith(T value);
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> Register();
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T> Returns(System.Func<T> callback);
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T> Returns(System.Func<T, T> callback);
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T> Returns(T returnValue);
+        Mockolate.Setup.IPropertyGetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T> Throws(System.Exception exception);
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T> Throws(System.Func<System.Exception> callback);
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T> Throws(System.Func<T, System.Exception> callback);
+        Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
     public interface IPropertyGetterSetupCallbackBuilder<T> : Mockolate.Setup.IPropertyGetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T> InParallel();
@@ -1449,6 +1506,32 @@ namespace Mockolate.Setup
         Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T> Do(System.Action<T> callback);
         Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T> Do(System.Action<int, T> callback);
         Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+    }
+    public interface IPropertySetterOnlySetterSetup<T>
+    {
+        Mockolate.Setup.IPropertySetterOnlySetupCallbackBuilder<T> Do(System.Action callback);
+        Mockolate.Setup.IPropertySetterOnlySetupCallbackBuilder<T> Do(System.Action<T> callback);
+        Mockolate.Setup.IPropertySetterOnlySetupCallbackBuilder<T> Do(System.Action<int, T> callback);
+        Mockolate.Setup.IPropertySetterOnlySetupParallelCallbackBuilder<T> TransitionTo(string scenario);
+    }
+    public interface IPropertySetterOnlySetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetterOnlySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterOnlySetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertySetterOnlySetupParallelCallbackBuilder<T> InParallel();
+    }
+    public interface IPropertySetterOnlySetupCallbackWhenBuilder<T> : Mockolate.Setup.IPropertySetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertySetterOnlySetupCallbackWhenBuilder<T> For(int times);
+        Mockolate.Setup.IPropertySetterOnlySetup<T> Only(int times);
+    }
+    public interface IPropertySetterOnlySetupParallelCallbackBuilder<T> : Mockolate.Setup.IPropertySetterOnlySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertySetterOnlySetupCallbackWhenBuilder<T> When(System.Func<int, bool> predicate);
+    }
+    public interface IPropertySetterOnlySetup<T>
+    {
+        Mockolate.Setup.IPropertySetterOnlySetterSetup<T> OnSet { get; }
+        Mockolate.Setup.IPropertySetterOnlySetup<T> Register();
+        Mockolate.Setup.IPropertySetterOnlySetup<T> SkippingBaseClass(bool skipBaseClass = true);
     }
     public interface IPropertySetterSetupCallbackBuilder<T> : Mockolate.Setup.IPropertySetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
@@ -2070,7 +2153,7 @@ namespace Mockolate.Setup
         protected abstract void InvokeSetter<TValue>(TValue value, Mockolate.MockBehavior behavior);
         protected abstract bool Matches(Mockolate.Interactions.PropertyAccess propertyAccess);
     }
-    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
+    public class PropertySetup<T> : Mockolate.Setup.PropertySetup, Mockolate.Setup.IPropertyGetterOnlyGetterSetup<T>, Mockolate.Setup.IPropertyGetterOnlySetupCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetupReturnBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertyGetterOnlySetup<T>, Mockolate.Setup.IPropertyGetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertyGetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertyGetterSetup<T>, Mockolate.Setup.IPropertySetterOnlySetterSetup<T>, Mockolate.Setup.IPropertySetterOnlySetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetterOnlySetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterOnlySetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetterOnlySetup<T>, Mockolate.Setup.IPropertySetterSetupCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetupCallbackWhenBuilder<T>, Mockolate.Setup.IPropertySetterSetupParallelCallbackBuilder<T>, Mockolate.Setup.IPropertySetterSetup<T>, Mockolate.Setup.IPropertySetupReturnBuilder<T>, Mockolate.Setup.IPropertySetupReturnWhenBuilder<T>, Mockolate.Setup.IPropertySetup<T>
     {
         public PropertySetup(Mockolate.MockRegistry mockRegistry, string name) { }
         public override string Name { get; }
@@ -2443,11 +2526,22 @@ namespace Mockolate.Verify
         public override Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
         public override Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }
+    public class VerificationPropertyGetterResult<TSubject>
+    {
+        public VerificationPropertyGetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, string propertyName) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+    }
     public class VerificationPropertyResult<TSubject, TParameter>
     {
         public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, string propertyName) { }
         public VerificationPropertyResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, int setMemberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public class VerificationPropertySetterResult<TSubject, TParameter>
+    {
+        public VerificationPropertySetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int setMemberId, string propertyName) { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
         public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }

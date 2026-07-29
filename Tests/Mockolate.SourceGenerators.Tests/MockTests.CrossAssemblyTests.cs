@@ -299,6 +299,9 @@ public sealed partial class MockTests
 
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("global::Mockolate.Setup.IPropertyGetterOnlySetup<string> Mixed { get; }").And
+				.Contains("global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForMyExternalType> Mixed { get; }")
+				.Because("the mock does not intercept the inaccessible setter, so neither surface may offer it").And
 				.Contains("public override string Mixed").And
 				.Contains(".GetProperty").And
 				.DoesNotContain(inaccessibleAccessor)
@@ -329,6 +332,10 @@ public sealed partial class MockTests
 
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("global::Mockolate.Setup.IPropertySetterOnlySetup<string> Mixed { get; }").And
+				.Contains(
+					"global::Mockolate.Verify.VerificationPropertySetterResult<IMockVerifyForMyExternalType, string> Mixed { get; }")
+				.Because("the mock does not intercept the inaccessible getter, so neither surface may offer it").And
 				.Contains("public override string Mixed").And
 				.Contains(".SetProperty").And
 				.DoesNotContain(inaccessibleAccessor)

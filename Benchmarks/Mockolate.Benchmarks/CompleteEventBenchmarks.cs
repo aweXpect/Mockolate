@@ -89,7 +89,7 @@ public class CompleteEventBenchmarks : BenchmarksBase
 		EventHandler handler = (_, _) => { };
 
 		mock.SomeEvent += handler;
-		mock.SomeEvent += Raise.EventWith(null, EventArgs.Empty);
+		mock.SomeEvent += Raise.EventWith(null!, EventArgs.Empty);
 
 		mock.Received(1).SomeEvent += Arg.Any<EventHandler>();
 	}

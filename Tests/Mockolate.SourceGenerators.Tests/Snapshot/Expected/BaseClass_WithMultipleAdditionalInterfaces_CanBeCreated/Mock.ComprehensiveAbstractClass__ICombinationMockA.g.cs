@@ -415,7 +415,7 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Setup.PropertySetup<int> global::Mockolate.Mock.IMockSetupForICombinationMockA.Value
+		global::Mockolate.Setup.IPropertyGetterOnlySetup<int> global::Mockolate.Mock.IMockSetupForICombinationMockA.Value
 		{
 			get
 			{
@@ -463,11 +463,11 @@ internal static partial class Mock
 
 		/// <inheritdoc />
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
-		global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForICombinationMockA, int> IMockVerifyForICombinationMockA.Value
+		global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForICombinationMockA> IMockVerifyForICombinationMockA.Value
 		{
 			get
 			{
-				return new global::Mockolate.Verify.VerificationPropertyResult<IMockVerifyForICombinationMockA, int>(this, this.MockRegistry, -1, -1, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA.Value");
+				return new global::Mockolate.Verify.VerificationPropertyGetterResult<IMockVerifyForICombinationMockA>(this, this.MockRegistry, -1, "global::Mockolate.Tests.GeneratorCoverage.ICombinationMockA.Value");
 			}
 		}
 
