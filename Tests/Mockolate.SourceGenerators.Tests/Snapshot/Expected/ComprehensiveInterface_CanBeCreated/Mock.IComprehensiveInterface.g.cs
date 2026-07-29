@@ -43,36 +43,40 @@ internal static partial class Mock
 		internal const int MemberId_Indexer_int_Set = 19;
 		internal const int MemberId_Indexer_int_int_int_int_int_Get = 20;
 		internal const int MemberId_Indexer_int_int_int_int_int_Set = 21;
-		internal const int MemberId_StaticAbstractMethod = 22;
-		internal const int MemberId_WithModifiers = 23;
-		internal const int MemberId_WithDefaults = 24;
-		internal const int MemberId_WithCollidingNames = 25;
-		internal const int MemberId_GetMaybeNull = 26;
-		internal const int MemberId_TakeObject = 27;
-		internal const int MemberId_TakeTwoObjects = 28;
-		internal const int MemberId_TakeIntAndObject = 29;
-		internal const int MemberId_DoTask = 30;
-		internal const int MemberId_DoTaskOf = 31;
-		internal const int MemberId_DoVT = 32;
-		internal const int MemberId_DoVTOf = 33;
-		internal const int MemberId_GetTuple = 34;
-		internal const int MemberId_GetNullable = 35;
-		internal const int MemberId_GetSpan = 36;
-		internal const int MemberId_GetROSpan = 37;
-		internal const int MemberId_GetByRef = 38;
-		internal const int MemberId_GetByRefReadonly = 39;
-		internal const int MemberId_G1_T_ = 40;
-		internal const int MemberId_G2_T_ = 41;
-		internal const int MemberId_G3_T_ = 42;
-		internal const int MemberId_G4_T_ = 43;
-		internal const int MemberId_G5_T_ = 44;
-		internal const int MemberId_G6_T_ = 45;
-		internal const int MemberId_G7_T_ = 46;
-		internal const int MemberId_G8_T_ = 47;
-		internal const int MemberId_Five = 48;
-		internal const int MemberId_Seventeen = 49;
-		internal const int MemberId_SeventeenVoid = 50;
-		internal const int MemberCount = 51;
+		internal const int MemberId_Indexer_double_Get = 22;
+		internal const int MemberId_Indexer_double_Set = 23;
+		internal const int MemberId_Indexer_char_Get = 24;
+		internal const int MemberId_Indexer_char_Set = 25;
+		internal const int MemberId_StaticAbstractMethod = 26;
+		internal const int MemberId_WithModifiers = 27;
+		internal const int MemberId_WithDefaults = 28;
+		internal const int MemberId_WithCollidingNames = 29;
+		internal const int MemberId_GetMaybeNull = 30;
+		internal const int MemberId_TakeObject = 31;
+		internal const int MemberId_TakeTwoObjects = 32;
+		internal const int MemberId_TakeIntAndObject = 33;
+		internal const int MemberId_DoTask = 34;
+		internal const int MemberId_DoTaskOf = 35;
+		internal const int MemberId_DoVT = 36;
+		internal const int MemberId_DoVTOf = 37;
+		internal const int MemberId_GetTuple = 38;
+		internal const int MemberId_GetNullable = 39;
+		internal const int MemberId_GetSpan = 40;
+		internal const int MemberId_GetROSpan = 41;
+		internal const int MemberId_GetByRef = 42;
+		internal const int MemberId_GetByRefReadonly = 43;
+		internal const int MemberId_G1_T_ = 44;
+		internal const int MemberId_G2_T_ = 45;
+		internal const int MemberId_G3_T_ = 46;
+		internal const int MemberId_G4_T_ = 47;
+		internal const int MemberId_G5_T_ = 48;
+		internal const int MemberId_G6_T_ = 49;
+		internal const int MemberId_G7_T_ = 50;
+		internal const int MemberId_G8_T_ = 51;
+		internal const int MemberId_Five = 52;
+		internal const int MemberId_Seventeen = 53;
+		internal const int MemberId_SeventeenVoid = 54;
+		internal const int MemberCount = 55;
 		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_GetSet_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetSet");
 		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_GetOnly_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.GetOnly");
 		internal static readonly global::Mockolate.Interactions.PropertyGetterAccess PropertyAccess_SetOnly_Get = new global::Mockolate.Interactions.PropertyGetterAccess("global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.SetOnly");
@@ -110,6 +114,18 @@ internal static partial class Mock
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string> MockolateBuffer_Indexer_int_Set
 			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_int_Set, static fast => new global::Mockolate.Interactions.FastIndexerSetterBuffer<int, string>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastIndexerGetterBuffer<double> MockolateBuffer_Indexer_double_Get
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastIndexerGetterBuffer<double>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get, static fast => new global::Mockolate.Interactions.FastIndexerGetterBuffer<double>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastIndexerSetterBuffer<double, string> MockolateBuffer_Indexer_double_Set
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastIndexerSetterBuffer<double, string>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Set, static fast => new global::Mockolate.Interactions.FastIndexerSetterBuffer<double, string>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastIndexerGetterBuffer<char> MockolateBuffer_Indexer_char_Get
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastIndexerGetterBuffer<char>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Get, static fast => new global::Mockolate.Interactions.FastIndexerGetterBuffer<char>(fast)));
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		private global::Mockolate.Interactions.FastIndexerSetterBuffer<char, string> MockolateBuffer_Indexer_char_Set
+			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastIndexerSetterBuffer<char, string>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Set, static fast => new global::Mockolate.Interactions.FastIndexerSetterBuffer<char, string>(fast)));
 		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
 		private global::Mockolate.Interactions.FastMethod4Buffer<int, string, long, int[]> MockolateBuffer_WithModifiers
 			=> field ?? (field = ((global::Mockolate.Interactions.FastMockInteractions)this.MockRegistry.Interactions).GetOrCreateBuffer<global::Mockolate.Interactions.FastMethod4Buffer<int, string, long, int[]>>(global::Mockolate.Mock.IComprehensiveInterface.MemberId_WithModifiers, static fast => new global::Mockolate.Interactions.FastMethod4Buffer<int, string, long, int[]>(fast)));
@@ -502,6 +518,79 @@ internal static partial class Mock
 				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface wraps)
 				{
 					wraps[a, b, c, d, e] = value;
+				}
+			}
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[double]" />
+		public string this[double key]
+		{
+			get
+			{
+				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+				{
+					this.MockolateBuffer_Indexer_double_Get.Append(key);
+				}
+				global::Mockolate.Setup.IndexerSetup<string, double>? setup = null;
+				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+				{
+					global::Mockolate.Setup.IndexerSetup[]? snapshot_setup = this.MockRegistry.GetIndexerSetupSnapshot(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get);
+					if (snapshot_setup is not null)
+					{
+						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
+						{
+							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<string, double> s_setup && s_setup.Matches(key))
+							{
+								setup = s_setup;
+								break;
+							}
+						}
+					}
+				}
+				global::Mockolate.Interactions.IndexerGetterAccess<double> access = new(key);
+				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<string, double>>(access);
+				if (this.MockRegistry.Wraps is not global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface wraps)
+				{
+					return setup is null
+						? this.MockRegistry.GetIndexerFallback<string>(access, 2)
+						: this.MockRegistry.ApplyIndexerSetup<string>(access, setup, 2);
+				}
+				string baseResult = wraps[key];
+				return this.MockRegistry.ApplyIndexerGetter(access, setup, baseResult, 2);
+			}
+		}
+
+		/// <inheritdoc cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[char]" />
+		public string this[char key]
+		{
+			set
+			{
+				if (this.MockRegistry.Behavior.SkipInteractionRecording == false)
+				{
+					this.MockolateBuffer_Indexer_char_Set.Append(key, value);
+				}
+				global::Mockolate.Setup.IndexerSetup<string, char>? setup = null;
+				if (string.IsNullOrEmpty(this.MockRegistry.Scenario))
+				{
+					global::Mockolate.Setup.IndexerSetup[]? snapshot_setup = this.MockRegistry.GetIndexerSetupSnapshot(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Get);
+					if (snapshot_setup is not null)
+					{
+						for (int i_setup = snapshot_setup.Length - 1; i_setup >= 0; i_setup--)
+						{
+							if (snapshot_setup[i_setup] is global::Mockolate.Setup.IndexerSetup<string, char> s_setup && s_setup.Matches(key, value))
+							{
+								setup = s_setup;
+								break;
+							}
+						}
+					}
+				}
+				global::Mockolate.Interactions.IndexerSetterAccess<char, string> access = new(key, value);
+				setup ??= this.MockRegistry.GetIndexerSetup<global::Mockolate.Setup.IndexerSetup<string, char>>(access);
+				this.MockRegistry.ApplyIndexerSetter(access, setup, value, 3);
+				if (this.MockRegistry.Wraps is global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface wraps)
+				{
+					wraps[key] = value;
 				}
 			}
 		}
@@ -2335,6 +2424,54 @@ internal static partial class Mock
 		}
 
 		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerGetterOnlySetup<string, double> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<double>? parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, double>(MockRegistry, CovariantParameterAdapter<double>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<double>("null")));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerGetterOnlySetup<string, double> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[double parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, double>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<double>)global::Mockolate.It.IsValue<double>(parameter1));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerSetterOnlySetup<string, char> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<char>? parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, char>(MockRegistry, CovariantParameterAdapter<char>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<char>("null")));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Get, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerSetterOnlySetup<string, char> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[char parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, char>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<char>)global::Mockolate.It.IsValue<char>(parameter1));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Get, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
 		global::Mockolate.Setup.IVoidMethodSetupWithCallback<int, string, long, int[]> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.WithModifiers(global::Mockolate.Parameters.IParameters parameters)
 		{
 			var methodSetup = new global::Mockolate.Setup.VoidMethodSetup<int, string, long, int[]>.WithParameters(MockRegistry, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.WithModifiers", parameters, "a", "b", "c", "tail");
@@ -2975,6 +3112,54 @@ internal static partial class Mock
 		}
 
 		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double> IMockVerifyForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<double>? key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get,
+					CovariantParameterAdapter<double>.Wrap(key ?? global::Mockolate.It.IsNull<double>("null")),
+					() => global::System.String.Format("[{0}]", (object?)key ?? "null"));
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double> IMockVerifyForIComprehensiveInterface.this[double key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get,
+					(global::Mockolate.Parameters.IParameterMatch<double>)global::Mockolate.It.Is<double>(key, "key"),
+					() => global::System.String.Format("[{0}]", (object?)key));
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string> IMockVerifyForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<char>? key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Set,
+					CovariantParameterAdapter<char>.Wrap(key ?? global::Mockolate.It.IsNull<char>("null")),
+					() => global::System.String.Format("[{0}]", (object?)key ?? "null"));
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string> IMockVerifyForIComprehensiveInterface.this[char key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Set,
+					(global::Mockolate.Parameters.IParameterMatch<char>)global::Mockolate.It.Is<char>(key, "key"),
+					() => global::System.String.Format("[{0}]", (object?)key));
+			}
+		}
+
+		/// <inheritdoc />
 		global::Mockolate.Verify.VerificationResult<IMockVerifyForIComprehensiveInterface> IMockVerifyForIComprehensiveInterface.WithModifiers(global::Mockolate.Parameters.IParameters parameters)
 			=> this.MockRegistry.VerifyMethod<IMockVerifyForIComprehensiveInterface, global::Mockolate.Interactions.MethodInvocation<int, string, long, int[]>>(this, global::Mockolate.Mock.IComprehensiveInterface.MemberId_WithModifiers, "global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.WithModifiers", __i => parameters switch
 				{
@@ -3501,6 +3686,54 @@ internal static partial class Mock
 					interaction => interaction is global::Mockolate.Interactions.IndexerGetterAccess<int, int, int, int, int> g && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(a, g.Parameter1) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(b, g.Parameter2) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(c, g.Parameter3) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(d, g.Parameter4) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(e, g.Parameter5),
 					(interaction, value) => interaction is global::Mockolate.Interactions.IndexerSetterAccess<int, int, int, int, int, string> s && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(a, s.Parameter1) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(b, s.Parameter2) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(c, s.Parameter3) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(d, s.Parameter4) && global::System.Collections.Generic.EqualityComparer<int>.Default.Equals(e, s.Parameter5) && value.Matches(s.TypedValue),
 					() => global::System.String.Format("[{0}, {1}, {2}, {3}, {4}]", (object?)a, (object?)b, (object?)c, (object?)d, (object?)e));
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double> IMockVerifyForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<double>? key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get,
+					CovariantParameterAdapter<double>.Wrap(key ?? global::Mockolate.It.IsNull<double>("null")),
+					() => global::System.String.Format("[{0}]", (object?)key ?? "null"));
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double> IMockVerifyForIComprehensiveInterface.this[double key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get,
+					(global::Mockolate.Parameters.IParameterMatch<double>)global::Mockolate.It.Is<double>(key, "key"),
+					() => global::System.String.Format("[{0}]", (object?)key));
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string> IMockVerifyForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<char>? key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Set,
+					CovariantParameterAdapter<char>.Wrap(key ?? global::Mockolate.It.IsNull<char>("null")),
+					() => global::System.String.Format("[{0}]", (object?)key ?? "null"));
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string> IMockVerifyForIComprehensiveInterface.this[char key]
+		{
+			get
+			{
+				return new global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string>(this, this.MockRegistry, global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Set,
+					(global::Mockolate.Parameters.IParameterMatch<char>)global::Mockolate.It.Is<char>(key, "key"),
+					() => global::System.String.Format("[{0}]", (object?)key));
 			}
 		}
 
@@ -4068,6 +4301,54 @@ internal static partial class Mock
 			{
 				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, int, int, int, int, int>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter1), (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter2), (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter3), (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter4), (global::Mockolate.Parameters.IParameterMatch<int>)global::Mockolate.It.IsValue<int>(parameter5));
 				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_int_int_int_int_int_Get, _scenarioName, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerGetterOnlySetup<string, double> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<double>? parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, double>(MockRegistry, CovariantParameterAdapter<double>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<double>("null")));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get, _scenarioName, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerGetterOnlySetup<string, double> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[double parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, double>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<double>)global::Mockolate.It.IsValue<double>(parameter1));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_double_Get, _scenarioName, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerSetterOnlySetup<string, char> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[global::Mockolate.Parameters.IParameter<char>? parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, char>(MockRegistry, CovariantParameterAdapter<char>.Wrap(parameter1 ?? global::Mockolate.It.IsNull<char>("null")));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Get, _scenarioName, indexerSetup);
+				return indexerSetup;
+			}
+		}
+
+		/// <inheritdoc />
+		[global::System.Diagnostics.DebuggerBrowsable(global::System.Diagnostics.DebuggerBrowsableState.Never)]
+		global::Mockolate.Setup.IIndexerSetterOnlySetup<string, char> global::Mockolate.Mock.IMockSetupForIComprehensiveInterface.this[char parameter1]
+		{
+			get
+			{
+				var indexerSetup = new global::Mockolate.Setup.IndexerSetup<string, char>(MockRegistry, (global::Mockolate.Parameters.IParameterMatch<char>)global::Mockolate.It.IsValue<char>(parameter1));
+				this.MockRegistry.SetupIndexer(global::Mockolate.Mock.IComprehensiveInterface.MemberId_Indexer_char_Get, _scenarioName, indexerSetup);
 				return indexerSetup;
 			}
 		}
@@ -4760,6 +5041,42 @@ internal static partial class Mock
 		global::Mockolate.Setup.IndexerSetup<string, int, int, int, int, int> this[int parameter1, int parameter2, int parameter3, int parameter4, int parameter5] { get; }
 
 		/// <summary>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[double]">this[double]</see>
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		global::Mockolate.Setup.IIndexerGetterOnlySetup<string, double> this[global::Mockolate.Parameters.IParameter<double>? parameter1] { get; }
+
+		/// <summary>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[double]">this[double]</see>
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
+		global::Mockolate.Setup.IIndexerGetterOnlySetup<string, double> this[double parameter1] { get; }
+
+		/// <summary>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[char]">this[char]</see>
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		global::Mockolate.Setup.IIndexerSetterOnlySetup<string, char> this[global::Mockolate.Parameters.IParameter<char>? parameter1] { get; }
+
+		/// <summary>
+		///     Setup for the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[char]">this[char]</see>
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter; each is treated as <c>It.Is&lt;T&gt;(value)</c>.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
+		global::Mockolate.Setup.IIndexerSetterOnlySetup<string, char> this[char parameter1] { get; }
+
+		/// <summary>
 		///     Setup for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.WithModifiers(ref int, out string, in long, int[])">WithModifiers(ref int, out string, in long, int[])</see> with the given <paramref name="parameters" />.
 		/// </summary>
 		/// <remarks>
@@ -5362,6 +5679,42 @@ internal static partial class Mock
 		/// </remarks>
 		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
 		global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIComprehensiveInterface, string> this[int a, int b, int c, int d, int e] { get; }
+
+		/// <summary>
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[double]">this[double]</see>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double> this[global::Mockolate.Parameters.IParameter<double>? key] { get; }
+
+		/// <summary>
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[double]">this[double]</see>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
+		global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForIComprehensiveInterface, double> this[double key] { get; }
+
+		/// <summary>
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[char]">this[char]</see>.
+		/// </summary>
+		/// <remarks>
+		///     This overload takes <see cref="global::Mockolate.It">It</see> argument matchers (e.g. <c>It.IsAny&lt;T&gt;()</c>, <c>It.Is&lt;T&gt;(value)</c>) for every parameter.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(int.MaxValue)]
+		global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string> this[global::Mockolate.Parameters.IParameter<char>? key] { get; }
+
+		/// <summary>
+		///     Verify interactions with the string indexer <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.this[char]">this[char]</see>.
+		/// </summary>
+		/// <remarks>
+		///     This overload accepts direct values for every parameter and returns a <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters">VerificationResult&lt;TVerify&gt;.IgnoreParameters</see> whose <see cref="global::Mockolate.Verify.VerificationResult{TVerify}.IgnoreParameters.AnyParameters()">VerificationResult&lt;TVerify&gt;.AnyParameters()</see> drops per-parameter matching entirely.
+		/// </remarks>
+		[global::System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
+		global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForIComprehensiveInterface, char, string> this[char key] { get; }
 
 		/// <summary>
 		///     Verify invocations for the method <see cref="global::Mockolate.Tests.GeneratorCoverage.IComprehensiveInterface.WithModifiers(ref int, out string, in long, int[])">WithModifiers(ref int, out string, in long, int[])</see> with the given <paramref name="parameters"/>.

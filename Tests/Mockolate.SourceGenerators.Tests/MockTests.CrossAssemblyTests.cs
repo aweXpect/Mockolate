@@ -364,8 +364,40 @@ public sealed partial class MockTests
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources["Mock.MyExternalType.g.cs"])
 				.Contains("public override int this[int index]").And
+				.Contains("global::Mockolate.Setup.IIndexerGetterOnlySetup<int, int> this[").And
+				.Contains("global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForMyExternalType, int> this[").And
+				.DoesNotContain("global::Mockolate.Setup.IndexerSetup<int, int> this[").And
 				.DoesNotContain("internal set")
 				.Because("the setter is invisible to the mock's assembly, so only the getter may be overridden");
+		}
+
+		[Fact]
+		public async Task MixedAccessorIndexerSlotAlreadyOverridden_WithOnlyTheSetterReachable_ShouldBeMockedWithTheSetter()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      public abstract class MyBaseType
+			                                                      {
+			                                                      	public abstract int this[int index] { internal get; set; }
+			                                                      }
+
+			                                                      public abstract class MyExternalType : MyBaseType
+			                                                      {
+			                                                      	public override int this[int index] { internal get => 0; set { } }
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForMyExternalType, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyExternalType.g.cs"])
+				.Contains("public override int this[int index]").And
+				.Contains("global::Mockolate.Setup.IIndexerSetterOnlySetup<int, int> this[").And
+				.Contains("global::Mockolate.Verify.VerificationIndexerSetterResult<IMockVerifyForMyExternalType, int, int> this[").And
+				.DoesNotContain("global::Mockolate.Setup.IndexerSetup<int, int> this[").And
+				.DoesNotContain("internal get")
+				.Because("the getter is invisible to the mock's assembly, so only the setter may be overridden");
 		}
 
 		[Fact]

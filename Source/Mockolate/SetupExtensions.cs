@@ -417,6 +417,242 @@ public static class SetupExtensions
 	}
 
 	/// <summary>
+	///     Extensions for setups of get-only indexers with one parameter.
+	/// </summary>
+	extension<TValue, T1>(IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1> setup)
+	{
+		/// <summary>
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
+		public void Forever()
+			=> setup.For(int.MaxValue);
+
+		/// <summary>
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for getter callback setups of get-only indexers with one parameter.
+	/// </summary>
+	extension<TValue, T1>(IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setter callback setups of set-only indexers with one parameter.
+	/// </summary>
+	extension<TValue, T1>(IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerSetterOnlySetup<TValue, T1> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setups of get-only indexers with two parameters.
+	/// </summary>
+	extension<TValue, T1, T2>(IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2> setup)
+	{
+		/// <summary>
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
+		public void Forever()
+			=> setup.For(int.MaxValue);
+
+		/// <summary>
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1, T2> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for getter callback setups of get-only indexers with two parameters.
+	/// </summary>
+	extension<TValue, T1, T2>(IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1, T2> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setter callback setups of set-only indexers with two parameters.
+	/// </summary>
+	extension<TValue, T1, T2>(IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerSetterOnlySetup<TValue, T1, T2> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setups of get-only indexers with three parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3>(IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3> setup)
+	{
+		/// <summary>
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
+		public void Forever()
+			=> setup.For(int.MaxValue);
+
+		/// <summary>
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1, T2, T3> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for getter callback setups of get-only indexers with three parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3>(IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1, T2, T3> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setter callback setups of set-only indexers with three parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3>(IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerSetterOnlySetup<TValue, T1, T2, T3> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setups of get-only indexers with four parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3, T4>(IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4> setup)
+	{
+		/// <summary>
+		///     Terminates the return/throw sequence by repeating the preceding entry forever instead of cycling
+		///     back to the first entry once the end is reached.
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.For(int.MaxValue)</c>. Applies only to the preceding <c>Returns(...)</c>/<c>Throws(...)</c>
+		///     entry; earlier entries in the sequence still run once each in order.
+		/// </remarks>
+		public void Forever()
+			=> setup.For(int.MaxValue);
+
+		/// <summary>
+		///     Deactivates the preceding <c>Returns(...)</c>/<c>Throws(...)</c> entry after a single invocation,
+		///     so subsequent invocations fall through to the next sequence entry (or to the mock's default behaviour).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for getter callback setups of get-only indexers with four parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3, T4>(IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
+	///     Extensions for setter callback setups of set-only indexers with four parameters.
+	/// </summary>
+	extension<TValue, T1, T2, T3, T4>(IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> setup)
+	{
+		/// <summary>
+		///     Deactivates the preceding <c>Do(...)</c> callback after a single invocation, so subsequent invocations
+		///     fall through to the next callback in the sequence (or are skipped).
+		/// </summary>
+		/// <remarks>
+		///     Equivalent to <c>.Only(1)</c>.
+		/// </remarks>
+		public IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4> OnlyOnce()
+			=> setup.Only(1);
+	}
+
+	/// <summary>
 	///     Extensions for method setup returning <typeparamref name="TReturn" /> without parameters.
 	/// </summary>
 	extension<TReturn>(IReturnMethodSetupReturnWhenBuilder<TReturn> setup)

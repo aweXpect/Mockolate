@@ -6,6 +6,99 @@ public sealed partial class MockTests
 	{
 		public sealed class IndexerTests
 		{
+			[Theory]
+			[InlineData("string this[int key] { get; }",
+				"Setup.IIndexerGetterOnlySetup<string, int>",
+				"Verify.VerificationIndexerGetterResult<IMockVerifyForIMyService, int>",
+				"Setup.IndexerSetup<string, int>",
+				"Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>")]
+			[InlineData("string this[int key] { set; }",
+				"Setup.IIndexerSetterOnlySetup<string, int>",
+				"Verify.VerificationIndexerSetterResult<IMockVerifyForIMyService, int, string>",
+				"Setup.IndexerSetup<string, int>",
+				"Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>")]
+			[InlineData("string this[int key] { get; set; }",
+				"Setup.IndexerSetup<string, int>",
+				"Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>",
+				"Setup.IIndexerGetterOnlySetup<string, int>",
+				"Verify.VerificationIndexerGetterResult<IMockVerifyForIMyService, int>")]
+			[InlineData("string this[int key, bool flag] { get; }",
+				"Setup.IIndexerGetterOnlySetup<string, int, bool>",
+				"Verify.VerificationIndexerGetterResult<IMockVerifyForIMyService, int, bool>",
+				"Setup.IndexerSetup<string, int, bool>",
+				"Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>")]
+			[InlineData("string this[int key, bool flag] { set; }",
+				"Setup.IIndexerSetterOnlySetup<string, int, bool>",
+				"Verify.VerificationIndexerSetterResult<IMockVerifyForIMyService, int, bool, string>",
+				"Setup.IndexerSetup<string, int, bool>",
+				"Verify.VerificationIndexerResult<IMockVerifyForIMyService, string>")]
+			public async Task IndexerSurface_ShouldOnlyExposeTheAccessorsTheMockIntercepts(
+				string indexer, string expectedSetupType, string expectedVerifyType,
+				string unexpectedSetupType, string unexpectedVerifyType)
+			{
+				GeneratorResult result = Generator
+					.Run($$"""
+					       using Mockolate;
+
+					       namespace MyCode;
+					       public class Program
+					       {
+					           public static void Main(string[] args)
+					           {
+					       		_ = IMyService.CreateMock();
+					           }
+					       }
+
+					       public interface IMyService
+					       {
+					           {{indexer}}
+					       }
+					       """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources["Mock.IMyService.g.cs"])
+					.Contains($"global::Mockolate.{expectedSetupType} this[").And
+					.Contains($"global::Mockolate.{expectedVerifyType} this[").And
+					.DoesNotContain($"global::Mockolate.{unexpectedSetupType} this[").And
+					.DoesNotContain($"global::Mockolate.{unexpectedVerifyType} this[")
+					.Because("a widened facade would silently re-expose an accessor the mock never intercepts");
+			}
+
+			[Theory]
+			[InlineData("string this[int a, int b, int c, int d, int e] { get; }")]
+			[InlineData("string this[int a, int b, int c, int d, int e] { set; }")]
+			public async Task IndexerWithMoreThanFourKeys_ShouldKeepTheFullSurface(string indexer)
+			{
+				GeneratorResult result = Generator
+					.Run($$"""
+					       using Mockolate;
+
+					       namespace MyCode;
+					       public class Program
+					       {
+					           public static void Main(string[] args)
+					           {
+					       		_ = IMyService.CreateMock();
+					           }
+					       }
+
+					       public interface IMyService
+					       {
+					           {{indexer}}
+					       }
+					       """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources["Mock.IMyService.g.cs"])
+					.Contains("global::Mockolate.Setup.IndexerSetup<string, int, int, int, int, int> this[").And
+					.Contains("global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string> this[").And
+					.DoesNotContain("IIndexerGetterOnlySetup").And
+					.DoesNotContain("IIndexerSetterOnlySetup").And
+					.DoesNotContain("VerificationIndexerGetterResult").And
+					.DoesNotContain("VerificationIndexerSetterResult")
+					.Because("the narrowed indexer types only exist for up to four keys, so a wider indexer keeps the full surface");
+			}
+
 			[Fact]
 			public async Task InterfaceIndexerWithParameterNamedLikeLocal_ShouldGenerateUniqueLocalVariableName()
 			{

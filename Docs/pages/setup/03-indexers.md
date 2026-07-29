@@ -73,6 +73,54 @@ sut.Mock.Setup[It.IsAny<string>()].OnGet
     .Do(() => Console.WriteLine("Execute on all odd read interactions"));
 ```
 
+## Indexers with only one accessor
+
+The setup and verify surfaces only offer the accessors the mock actually intercepts.
+`SkippingBaseClass(…)` stays available on both, but the accessor-specific members do not: a get-only
+indexer has no `OnSet`, and a set-only indexer has neither `OnGet` nor the `Returns`/`Throws`
+read-sequence nor `InitializeWith`, since there is no getter to read the value back.
+
+```csharp
+public interface IChocolateStorage
+{
+    int this[string shelf] { get; }    // no setter
+    string this[int box] { set; }      // no getter
+}
+
+IChocolateStorage sut = IChocolateStorage.CreateMock();
+
+sut.Mock.Setup[It.IsAny<string>()].Returns(3);
+sut.Mock.Setup[It.IsAny<string>()].OnSet…                 // does not compile
+sut.Mock.Setup[It.IsAny<string>()].Returns(3).OnSet…      // does not compile
+
+sut.Mock.Setup[It.IsAny<int>()].OnSet.Do(value => { });
+sut.Mock.Setup[It.IsAny<int>()].Returns("Ada")…           // does not compile
+sut.Mock.Setup[It.IsAny<int>()].InitializeWith("Ada")…    // does not compile
+sut.Mock.Setup[It.IsAny<int>()].OnSet.Do(value => { }).OnGet… // does not compile
+```
+
+The verify facade likewise offers the intercepted accessor only:
+
+```csharp
+_ = sut["top"];
+sut[7] = "Ada";
+
+await That(sut.Mock.Verify[It.Is("top")].Got()).Once();
+await That(sut.Mock.Verify[It.Is(7)].Set("Ada")).Once();
+
+sut.Mock.Verify[It.Is("top")].Set(3)…                     // does not compile
+sut.Mock.Verify[It.Is(7)].Got()…                          // does not compile
+```
+
+This also applies when the indexer declares an accessor the mock cannot see, such as
+`{ get; internal set; }` on a type from an assembly that does not grant `InternalsVisibleTo`. Writes
+never reach the mock in that case, so configuring or verifying one could only ever report zero
+interactions. See [Mockolate0002](../analyzers#mockolate0002) for when such a type is mockable at all.
+
+Both facades are fully restricted: the fluent builders returned by `Returns`, `Throws`, `Do` and
+`TransitionTo` stay on the narrowed surface, so no amount of chaining reaches the accessor the mock
+does not intercept. Indexers with more than four keys keep the full surface.
+
 **Notes:**
 
 - All callbacks support more advanced features like conditional execution, frequency control, parallel execution, and
