@@ -3216,7 +3216,8 @@ internal static partial class Sources
 	/// <summary>
 	///     Appends the verify facade emitted for the <paramref name="indexer" />, narrowed to the accessors
 	///     classified by <see cref="GetIndexerInterceptedAccessors" />. The narrowed results are keyed by the
-	///     indexer parameters, the full <c>VerificationIndexerResult</c> only by the value type.
+	///     indexer parameters (the setter result additionally by the value type), the full
+	///     <c>VerificationIndexerResult</c> only by the value type.
 	/// </summary>
 	private static void AppendIndexerVerifyType(StringBuilder sb, Property indexer, string verifyName)
 	{

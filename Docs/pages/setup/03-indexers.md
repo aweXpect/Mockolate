@@ -115,7 +115,7 @@ sut.Mock.Verify[It.Is(7)].Got()…                          // does not compile
 This also applies when the indexer declares an accessor the mock cannot see, such as
 `{ get; internal set; }` on a type from an assembly that does not grant `InternalsVisibleTo`. Writes
 never reach the mock in that case, so configuring or verifying one could only ever report zero
-interactions.
+interactions. See [Mockolate0002](../analyzers#mockolate0002) for when such a type is mockable at all.
 
 Both facades are fully restricted: the fluent builders returned by `Returns`, `Throws`, `Do` and
 `TransitionTo` stay on the narrowed surface, so no amount of chaining reaches the accessor the mock

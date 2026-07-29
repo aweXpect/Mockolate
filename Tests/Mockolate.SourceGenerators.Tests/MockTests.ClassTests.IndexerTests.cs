@@ -64,6 +64,41 @@ public sealed partial class MockTests
 					.Because("a widened facade would silently re-expose an accessor the mock never intercepts");
 			}
 
+			[Theory]
+			[InlineData("string this[int a, int b, int c, int d, int e] { get; }")]
+			[InlineData("string this[int a, int b, int c, int d, int e] { set; }")]
+			public async Task IndexerWithMoreThanFourKeys_ShouldKeepTheFullSurface(string indexer)
+			{
+				GeneratorResult result = Generator
+					.Run($$"""
+					       using Mockolate;
+
+					       namespace MyCode;
+					       public class Program
+					       {
+					           public static void Main(string[] args)
+					           {
+					       		_ = IMyService.CreateMock();
+					           }
+					       }
+
+					       public interface IMyService
+					       {
+					           {{indexer}}
+					       }
+					       """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources["Mock.IMyService.g.cs"])
+					.Contains("global::Mockolate.Setup.IndexerSetup<string, int, int, int, int, int> this[").And
+					.Contains("global::Mockolate.Verify.VerificationIndexerResult<IMockVerifyForIMyService, string> this[").And
+					.DoesNotContain("IIndexerGetterOnlySetup").And
+					.DoesNotContain("IIndexerSetterOnlySetup").And
+					.DoesNotContain("VerificationIndexerGetterResult").And
+					.DoesNotContain("VerificationIndexerSetterResult")
+					.Because("the narrowed indexer types only exist for up to four keys, so a wider indexer keeps the full surface");
+			}
+
 			[Fact]
 			public async Task InterfaceIndexerWithParameterNamedLikeLocal_ShouldGenerateUniqueLocalVariableName()
 			{
