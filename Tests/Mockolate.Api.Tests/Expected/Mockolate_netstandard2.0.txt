@@ -387,6 +387,58 @@ namespace Mockolate
         {
             public Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4> OnlyOnce() { }
         }
+        extension<TValue, T1>(Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue?, T1?>? setup)
+        {
+            public void Forever() { }
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1> OnlyOnce() { }
+        }
+        extension<TValue, T1>(Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue?, T1?>? setup)
+        {
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1> OnlyOnce() { }
+        }
+        extension<TValue, T1>(Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue?, T1?>? setup)
+        {
+            public Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue?, T1?, T2?>? setup)
+        {
+            public void Forever() { }
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue?, T1?, T2?>? setup)
+        {
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2>(Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue?, T1?, T2?>? setup)
+        {
+            public Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue?, T1?, T2?, T3?>? setup)
+        {
+            public void Forever() { }
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue?, T1?, T2?, T3?>? setup)
+        {
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2, T3>(Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue?, T1?, T2?, T3?>? setup)
+        {
+            public Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue?, T1?, T2?, T3?, T4?>? setup)
+        {
+            public void Forever() { }
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue?, T1?, T2?, T3?, T4?>? setup)
+        {
+            public Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> OnlyOnce() { }
+        }
+        extension<TValue, T1, T2, T3, T4>(Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue?, T1?, T2?, T3?, T4?>? setup)
+        {
+            public Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4> OnlyOnce() { }
+        }
         extension<TReturn>(Mockolate.Setup.IReturnMethodSetupReturnWhenBuilder<TReturn?>? setup)
         {
             public void Forever() { }
@@ -1052,6 +1104,194 @@ namespace Mockolate.Setup
     {
         Mockolate.Setup.IEventUnsubscriptionSetupCallbackWhenBuilder When(System.Func<int, bool> predicate);
     }
+    public interface IIndexerGetterOnlyGetterSetup<TValue, out T1>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action<T1> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action<T1, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action<int, T1, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+    }
+    public interface IIndexerGetterOnlyGetterSetup<TValue, out T1, out T2>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action<int, T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+    }
+    public interface IIndexerGetterOnlyGetterSetup<TValue, out T1, out T2, out T3>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<int, T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+    }
+    public interface IIndexerGetterOnlyGetterSetup<TValue, out T1, out T2, out T3, out T4>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<int, T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+    }
+    public interface IIndexerGetterOnlySetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1> InParallel();
+    }
+    public interface IIndexerGetterOnlySetupCallbackBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> InParallel();
+    }
+    public interface IIndexerGetterOnlySetupCallbackBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> InParallel();
+    }
+    public interface IIndexerGetterOnlySetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> InParallel();
+    }
+    public interface IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, out T1> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupReturnBuilder<TValue, out T1> : Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupReturnBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupReturnBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupReturnBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerGetterOnlySetupReturnWhenBuilder<TValue, out T1> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetupReturnWhenBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetupReturnWhenBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetupReturnWhenBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4> For(int times);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> Only(int times);
+    }
+    public interface IIndexerGetterOnlySetup<TValue, out T1>
+    {
+        Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1> OnGet { get; }
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1> InitializeWith(System.Func<T1, TValue> valueGenerator);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1> InitializeWith(TValue value);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Returns(System.Func<TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Returns(System.Func<T1, TValue, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Returns(TValue returnValue);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Throws(System.Exception exception);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Throws(System.Func<System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Throws(System.Func<T1, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Throws(System.Func<T1, TValue, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IIndexerGetterOnlySetup<TValue, out T1, out T2>
+    {
+        Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1, T2> OnGet { get; }
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2> InitializeWith(System.Func<T1, T2, TValue> valueGenerator);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2> InitializeWith(TValue value);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Returns(System.Func<TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Returns(System.Func<T1, T2, TValue, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Returns(TValue returnValue);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Throws(System.Exception exception);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Throws(System.Func<System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Throws(System.Func<T1, T2, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Throws(System.Func<T1, T2, TValue, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IIndexerGetterOnlySetup<TValue, out T1, out T2, out T3>
+    {
+        Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3> OnGet { get; }
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3> InitializeWith(System.Func<T1, T2, T3, TValue> valueGenerator);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3> InitializeWith(TValue value);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Returns(System.Func<T1, T2, T3, TValue, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Returns(TValue returnValue);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Exception exception);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<T1, T2, T3, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Throws(System.Func<T1, T2, T3, TValue, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
+    public interface IIndexerGetterOnlySetup<TValue, out T1, out T2, out T3, out T4>
+    {
+        Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4> OnGet { get; }
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> InitializeWith(System.Func<T1, T2, T3, T4, TValue> valueGenerator);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> InitializeWith(TValue value);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(System.Func<T1, T2, T3, T4, TValue, TValue> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Returns(TValue returnValue);
+        Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Exception exception);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Throws(System.Func<T1, T2, T3, T4, TValue, System.Exception> callback);
+        Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> Throws<TException>()
+            where TException : System.Exception, new ();
+    }
     public interface IIndexerGetterSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
         Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1> InParallel();
@@ -1147,6 +1387,110 @@ namespace Mockolate.Setup
     {
         Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action callback);
         Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+    }
+    public interface IIndexerSetterOnlySetterSetup<TValue, out T1>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action<TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action<T1, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> Do(System.Action<int, T1, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1> TransitionTo(string scenario);
+    }
+    public interface IIndexerSetterOnlySetterSetup<TValue, out T1, out T2>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action<TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action<T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> Do(System.Action<int, T1, T2, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> TransitionTo(string scenario);
+    }
+    public interface IIndexerSetterOnlySetterSetup<TValue, out T1, out T2, out T3>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> Do(System.Action<int, T1, T2, T3, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> TransitionTo(string scenario);
+    }
+    public interface IIndexerSetterOnlySetterSetup<TValue, out T1, out T2, out T3, out T4>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> Do(System.Action<int, T1, T2, T3, T4, TValue> callback);
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> TransitionTo(string scenario);
+    }
+    public interface IIndexerSetterOnlySetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1> InParallel();
+    }
+    public interface IIndexerSetterOnlySetupCallbackBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> InParallel();
+    }
+    public interface IIndexerSetterOnlySetupCallbackBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> InParallel();
+    }
+    public interface IIndexerSetterOnlySetupCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> InParallel();
+    }
+    public interface IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1> For(int times);
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1> Only(int times);
+    }
+    public interface IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> For(int times);
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2> Only(int times);
+    }
+    public interface IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> For(int times);
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3> Only(int times);
+    }
+    public interface IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> For(int times);
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4> Only(int times);
+    }
+    public interface IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2, out T3> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, out T1, out T2, out T3, out T4> : Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> When(System.Func<int, bool> predicate);
+    }
+    public interface IIndexerSetterOnlySetup<TValue, out T1>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1> OnSet { get; }
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1> SkippingBaseClass(bool skipBaseClass = true);
+    }
+    public interface IIndexerSetterOnlySetup<TValue, out T1, out T2>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1, T2> OnSet { get; }
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2> SkippingBaseClass(bool skipBaseClass = true);
+    }
+    public interface IIndexerSetterOnlySetup<TValue, out T1, out T2, out T3>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3> OnSet { get; }
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3> SkippingBaseClass(bool skipBaseClass = true);
+    }
+    public interface IIndexerSetterOnlySetup<TValue, out T1, out T2, out T3, out T4>
+    {
+        Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4> OnSet { get; }
+        Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4> SkippingBaseClass(bool skipBaseClass = true);
     }
     public interface IIndexerSetterSetupCallbackBuilder<TValue, out T1> : Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
@@ -1960,7 +2304,7 @@ namespace Mockolate.Setup
         protected static string FormatType(System.Type type) { }
         protected static bool TryCast<T>([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] object? value, out T result, Mockolate.MockBehavior behavior) { }
     }
-    public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
+    public class IndexerSetup<TValue, T1> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1>, Mockolate.Setup.IIndexerSetup<TValue, T1>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1> OnGet { get; }
@@ -1988,7 +2332,7 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
+    public class IndexerSetup<TValue, T1, T2> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2> OnGet { get; }
@@ -2016,7 +2360,7 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
+    public class IndexerSetup<TValue, T1, T2, T3> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3> OnGet { get; }
@@ -2044,7 +2388,7 @@ namespace Mockolate.Setup
             where TException : System.Exception, new () { }
         public override string ToString() { }
     }
-    public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
+    public class IndexerSetup<TValue, T1, T2, T3, T4> : Mockolate.Setup.IndexerSetup, Mockolate.Setup.IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerGetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetterSetup<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>, Mockolate.Setup.IIndexerSetup<TValue, T1, T2, T3, T4>
     {
         public IndexerSetup(Mockolate.MockRegistry mockRegistry, Mockolate.Parameters.IParameterMatch<T1> parameter1, Mockolate.Parameters.IParameterMatch<T2> parameter2, Mockolate.Parameters.IParameterMatch<T3> parameter3, Mockolate.Parameters.IParameterMatch<T4> parameter4) { }
         public Mockolate.Setup.IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4> OnGet { get; }
@@ -2419,6 +2763,26 @@ namespace Mockolate.Verify
         public Mockolate.Verify.VerificationResult<TSubject> Subscribed() { }
         public Mockolate.Verify.VerificationResult<TSubject> Unsubscribed() { }
     }
+    public class VerificationIndexerGetterResult<TSubject, T1>
+    {
+        public VerificationIndexerGetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+    }
+    public class VerificationIndexerGetterResult<TSubject, T1, T2>
+    {
+        public VerificationIndexerGetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+    }
+    public class VerificationIndexerGetterResult<TSubject, T1, T2, T3>
+    {
+        public VerificationIndexerGetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+    }
+    public class VerificationIndexerGetterResult<TSubject, T1, T2, T3, T4>
+    {
+        public VerificationIndexerGetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int getMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Got() { }
+    }
     public class VerificationIndexerResult<TSubject, TParameter>
     {
         public VerificationIndexerResult(TSubject subject, Mockolate.MockRegistry mockRegistry, System.Func<Mockolate.Interactions.IInteraction, bool> gotPredicate, System.Func<Mockolate.Interactions.IInteraction, Mockolate.Parameters.IParameterMatch<TParameter>, bool> setPredicate, System.Func<string> parametersDescription) { }
@@ -2454,6 +2818,30 @@ namespace Mockolate.Verify
         public override Mockolate.Verify.VerificationResult<TSubject> Got() { }
         public override Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
         public override Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public class VerificationIndexerSetterResult<TSubject, T1, TParameter>
+    {
+        public VerificationIndexerSetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public class VerificationIndexerSetterResult<TSubject, T1, T2, TParameter>
+    {
+        public VerificationIndexerSetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public class VerificationIndexerSetterResult<TSubject, T1, T2, T3, TParameter>
+    {
+        public VerificationIndexerSetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
+    }
+    public class VerificationIndexerSetterResult<TSubject, T1, T2, T3, T4, TParameter>
+    {
+        public VerificationIndexerSetterResult(TSubject subject, Mockolate.MockRegistry mockRegistry, int setMemberId, Mockolate.Parameters.IParameterMatch<T1> match1, Mockolate.Parameters.IParameterMatch<T2> match2, Mockolate.Parameters.IParameterMatch<T3> match3, Mockolate.Parameters.IParameterMatch<T4> match4, System.Func<string> parametersDescription) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(Mockolate.Parameters.IParameter<TParameter> value) { }
+        public Mockolate.Verify.VerificationResult<TSubject> Set(TParameter value, [System.Runtime.CompilerServices.CallerArgumentExpression("value")] string doNotPopulateThisValue = "") { }
     }
     public class VerificationPropertyGetterResult<TSubject>
     {

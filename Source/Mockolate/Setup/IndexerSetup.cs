@@ -133,7 +133,11 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		IIndexerSetupWithCallback<TValue, T1>,
 		IIndexerGetterSetupCallbackBuilder<TValue, T1>, IIndexerSetterSetupCallbackBuilder<TValue, T1>,
 		IIndexerSetupReturnBuilder<TValue, T1>,
-		IIndexerGetterSetupWithCallback<TValue, T1>, IIndexerSetterSetupWithCallback<TValue, T1>
+		IIndexerGetterSetupWithCallback<TValue, T1>, IIndexerSetterSetupWithCallback<TValue, T1>,
+		IIndexerGetterOnlySetup<TValue, T1>, IIndexerSetterOnlySetup<TValue, T1>,
+		IIndexerGetterOnlyGetterSetup<TValue, T1>, IIndexerSetterOnlySetterSetup<TValue, T1>,
+		IIndexerGetterOnlySetupCallbackBuilder<TValue, T1>, IIndexerSetterOnlySetupCallbackBuilder<TValue, T1>,
+		IIndexerGetterOnlySetupReturnBuilder<TValue, T1>
 {
 	private Callbacks<Action<int, T1, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, TValue, TValue>>? _returnCallbacks;
@@ -716,6 +720,272 @@ public class IndexerSetup<TValue, T1>(MockRegistry mockRegistry, IParameterMatch
 		p1 = default!;
 		return false;
 	}
+
+	#region Accessor-restricted views
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.SkippingBaseClass(bool)" />
+	IIndexerGetterOnlySetup<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.InitializeWith(TValue)" />
+	IIndexerGetterOnlySetup<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.InitializeWith(TValue value)
+	{
+		InitializeWith(value);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.InitializeWith(Func{T1, TValue})" />
+	IIndexerGetterOnlySetup<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.InitializeWith(Func<T1, TValue> valueGenerator)
+	{
+		InitializeWith(valueGenerator);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.OnGet" />
+	IIndexerGetterOnlyGetterSetup<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.OnGet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1}.Do(Action)" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> IIndexerGetterOnlyGetterSetup<TValue, T1>.Do(Action callback)
+	{
+		((IIndexerGetterSetup<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1}.Do(Action{T1})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> IIndexerGetterOnlyGetterSetup<TValue, T1>.Do(Action<T1> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> IIndexerGetterOnlyGetterSetup<TValue, T1>.Do(
+		Action<T1, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1> IIndexerGetterOnlyGetterSetup<TValue, T1>.Do(
+		Action<int, T1, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1}.TransitionTo(string)" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1> IIndexerGetterOnlyGetterSetup<TValue, T1>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerGetterSetup<TValue, T1>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackBuilder{TValue, T1}.InParallel()" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1> IIndexerGetterOnlySetupCallbackBuilder<TValue, T1>.InParallel()
+	{
+		((IIndexerGetterSetupCallbackBuilder<TValue, T1>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1> IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerGetterSetupParallelCallbackBuilder<TValue, T1>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1}.For(int)" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1>.For(
+		int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1>.Only(int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Returns(TValue)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Returns(TValue returnValue)
+	{
+		Returns(returnValue);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Returns(Func{TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Returns(Func<TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Returns(Func{T1, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Returns(Func<T1, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Returns(Func{T1, TValue, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Returns(
+		Func<T1, TValue, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Throws{TException}()" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Throws<TException>()
+	{
+		Throws<TException>();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Throws(Exception)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Throws(Exception exception)
+	{
+		Throws(exception);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Throws(Func{Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Throws(Func<Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Throws(Func{T1, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Throws(
+		Func<T1, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1}.Throws(Func{T1, TValue, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1> IIndexerGetterOnlySetup<TValue, T1>.Throws(
+		Func<T1, TValue, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnBuilder{TValue, T1}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1> IIndexerGetterOnlySetupReturnBuilder<TValue, T1>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetupReturnBuilder<TValue, T1>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1}.For(int)" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1>.For(
+		int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1>.Only(int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1}.SkippingBaseClass(bool)" />
+	IIndexerSetterOnlySetup<TValue, T1> IIndexerSetterOnlySetup<TValue, T1>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1}.OnSet" />
+	IIndexerSetterOnlySetterSetup<TValue, T1> IIndexerSetterOnlySetup<TValue, T1>.OnSet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1}.Do(Action)" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> IIndexerSetterOnlySetterSetup<TValue, T1>.Do(Action callback)
+	{
+		((IIndexerSetterSetup<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1}.Do(Action{TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> IIndexerSetterOnlySetterSetup<TValue, T1>.Do(
+		Action<TValue> callback)
+	{
+		((IIndexerSetterSetup<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1}.Do(Action{T1, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> IIndexerSetterOnlySetterSetup<TValue, T1>.Do(
+		Action<T1, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1}.Do(Action{int, T1, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1> IIndexerSetterOnlySetterSetup<TValue, T1>.Do(
+		Action<int, T1, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1}.TransitionTo(string)" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1> IIndexerSetterOnlySetterSetup<TValue, T1>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerSetterSetup<TValue, T1>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackBuilder{TValue, T1}.InParallel()" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1> IIndexerSetterOnlySetupCallbackBuilder<TValue, T1>.InParallel()
+	{
+		((IIndexerSetterSetupCallbackBuilder<TValue, T1>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupParallelCallbackBuilder{TValue, T1}.When(Func{int, bool})" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1> IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetterSetupParallelCallbackBuilder<TValue, T1>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1}.For(int)" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1>.For(
+		int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1}.Only(int)" />
+	IIndexerSetterOnlySetup<TValue, T1> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1>.Only(int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1>)this).Only(times);
+		return this;
+	}
+
+	#endregion Accessor-restricted views
 }
 
 /// <summary>
@@ -731,7 +1001,11 @@ public class IndexerSetup<TValue, T1, T2>(
 	IIndexerSetupWithCallback<TValue, T1, T2>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2>,
-	IIndexerGetterSetupWithCallback<TValue, T1, T2>, IIndexerSetterSetupWithCallback<TValue, T1, T2>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2>, IIndexerSetterSetupWithCallback<TValue, T1, T2>,
+	IIndexerGetterOnlySetup<TValue, T1, T2>, IIndexerSetterOnlySetup<TValue, T1, T2>,
+	IIndexerGetterOnlyGetterSetup<TValue, T1, T2>, IIndexerSetterOnlySetterSetup<TValue, T1, T2>,
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2>, IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2>,
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2>
 {
 	private Callbacks<Action<int, T1, T2, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, TValue, TValue>>? _returnCallbacks;
@@ -1321,6 +1595,272 @@ public class IndexerSetup<TValue, T1, T2>(
 		p2 = default!;
 		return false;
 	}
+
+	#region Accessor-restricted views
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.SkippingBaseClass(bool)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.InitializeWith(TValue)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.InitializeWith(TValue value)
+	{
+		InitializeWith(value);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.InitializeWith(Func{T1, T2, TValue})" />
+	IIndexerGetterOnlySetup<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.InitializeWith(Func<T1, T2, TValue> valueGenerator)
+	{
+		InitializeWith(valueGenerator);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.OnGet" />
+	IIndexerGetterOnlyGetterSetup<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.OnGet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2}.Do(Action)" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerGetterOnlyGetterSetup<TValue, T1, T2>.Do(Action callback)
+	{
+		((IIndexerGetterSetup<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2}.Do(Action{T1, T2})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerGetterOnlyGetterSetup<TValue, T1, T2>.Do(Action<T1, T2> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerGetterOnlyGetterSetup<TValue, T1, T2>.Do(
+		Action<T1, T2, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerGetterOnlyGetterSetup<TValue, T1, T2>.Do(
+		Action<int, T1, T2, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2}.TransitionTo(string)" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> IIndexerGetterOnlyGetterSetup<TValue, T1, T2>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerGetterSetup<TValue, T1, T2>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackBuilder{TValue, T1, T2}.InParallel()" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2>.InParallel()
+	{
+		((IIndexerGetterSetupCallbackBuilder<TValue, T1, T2>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2}.For(int)" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>.For(
+		int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>.Only(int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Returns(TValue)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Returns(TValue returnValue)
+	{
+		Returns(returnValue);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Returns(Func{TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Returns(Func<TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Returns(Func{T1, T2, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Returns(Func<T1, T2, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Returns(Func{T1, T2, TValue, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Returns(
+		Func<T1, T2, TValue, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Throws{TException}()" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Throws<TException>()
+	{
+		Throws<TException>();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Throws(Exception)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Throws(Exception exception)
+	{
+		Throws(exception);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Throws(Func{Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Throws(Func<Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Throws(Func{T1, T2, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Throws(
+		Func<T1, T2, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2}.Throws(Func{T1, T2, TValue, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2> IIndexerGetterOnlySetup<TValue, T1, T2>.Throws(
+		Func<T1, T2, TValue, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnBuilder{TValue, T1, T2}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2> IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetupReturnBuilder<TValue, T1, T2>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2}.For(int)" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2>.For(
+		int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1, T2>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2>.Only(int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1, T2>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2}.SkippingBaseClass(bool)" />
+	IIndexerSetterOnlySetup<TValue, T1, T2> IIndexerSetterOnlySetup<TValue, T1, T2>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2}.OnSet" />
+	IIndexerSetterOnlySetterSetup<TValue, T1, T2> IIndexerSetterOnlySetup<TValue, T1, T2>.OnSet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2}.Do(Action)" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerSetterOnlySetterSetup<TValue, T1, T2>.Do(Action callback)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2}.Do(Action{TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerSetterOnlySetterSetup<TValue, T1, T2>.Do(
+		Action<TValue> callback)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2}.Do(Action{T1, T2, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerSetterOnlySetterSetup<TValue, T1, T2>.Do(
+		Action<T1, T2, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2}.Do(Action{int, T1, T2, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2> IIndexerSetterOnlySetterSetup<TValue, T1, T2>.Do(
+		Action<int, T1, T2, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1, T2>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2}.TransitionTo(string)" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> IIndexerSetterOnlySetterSetup<TValue, T1, T2>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackBuilder{TValue, T1, T2}.InParallel()" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2> IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2>.InParallel()
+	{
+		((IIndexerSetterSetupCallbackBuilder<TValue, T1, T2>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupParallelCallbackBuilder{TValue, T1, T2}.When(Func{int, bool})" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2}.For(int)" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>.For(
+		int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2}.Only(int)" />
+	IIndexerSetterOnlySetup<TValue, T1, T2> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2>.Only(int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2>)this).Only(times);
+		return this;
+	}
+
+	#endregion Accessor-restricted views
 }
 
 /// <summary>
@@ -1338,7 +1878,11 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 	IIndexerSetupWithCallback<TValue, T1, T2, T3>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3>,
-	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>,
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3>, IIndexerSetterOnlySetup<TValue, T1, T2, T3>,
+	IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3>, IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3>,
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3>, IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3>,
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3>
 {
 	private Callbacks<Action<int, T1, T2, T3, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, T3, TValue, TValue>>? _returnCallbacks;
@@ -1943,6 +2487,272 @@ public class IndexerSetup<TValue, T1, T2, T3>(
 		p3 = default!;
 		return false;
 	}
+
+	#region Accessor-restricted views
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.SkippingBaseClass(bool)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.InitializeWith(TValue)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.InitializeWith(TValue value)
+	{
+		InitializeWith(value);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.InitializeWith(Func{T1, T2, T3, TValue})" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.InitializeWith(Func<T1, T2, T3, TValue> valueGenerator)
+	{
+		InitializeWith(valueGenerator);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.OnGet" />
+	IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.OnGet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3}.Do(Action)" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3>.Do(Action callback)
+	{
+		((IIndexerGetterSetup<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3>.Do(Action<T1, T2, T3> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3>.Do(
+		Action<T1, T2, T3, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3>.Do(
+		Action<int, T1, T2, T3, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3}.TransitionTo(string)" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerGetterSetup<TValue, T1, T2, T3>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackBuilder{TValue, T1, T2, T3}.InParallel()" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3>.InParallel()
+	{
+		((IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3}.For(int)" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(
+		int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>.Only(int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Returns(TValue)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Returns(TValue returnValue)
+	{
+		Returns(returnValue);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Returns(Func{TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Returns(Func<TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Returns(Func<T1, T2, T3, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Returns(Func{T1, T2, T3, TValue, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Returns(
+		Func<T1, T2, T3, TValue, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Throws{TException}()" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Throws<TException>()
+	{
+		Throws<TException>();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Throws(Exception)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Throws(Exception exception)
+	{
+		Throws(exception);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Throws(Func{Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Throws(Func<Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Throws(
+		Func<T1, T2, T3, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3}.Throws(Func{T1, T2, T3, TValue, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetup<TValue, T1, T2, T3>.Throws(
+		Func<T1, T2, T3, TValue, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetupReturnBuilder<TValue, T1, T2, T3>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2, T3}.For(int)" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3>.For(
+		int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2, T3}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3>.Only(int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2, T3}.SkippingBaseClass(bool)" />
+	IIndexerSetterOnlySetup<TValue, T1, T2, T3> IIndexerSetterOnlySetup<TValue, T1, T2, T3>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2, T3}.OnSet" />
+	IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3> IIndexerSetterOnlySetup<TValue, T1, T2, T3>.OnSet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3}.Do(Action)" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3>.Do(Action callback)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3}.Do(Action{TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3>.Do(
+		Action<TValue> callback)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3}.Do(Action{T1, T2, T3, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3>.Do(
+		Action<T1, T2, T3, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3}.Do(Action{int, T1, T2, T3, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3>.Do(
+		Action<int, T1, T2, T3, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1, T2, T3>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3}.TransitionTo(string)" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2, T3>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackBuilder{TValue, T1, T2, T3}.InParallel()" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3>.InParallel()
+	{
+		((IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupParallelCallbackBuilder{TValue, T1, T2, T3}.When(Func{int, bool})" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3}.For(int)" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>.For(
+		int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3}.Only(int)" />
+	IIndexerSetterOnlySetup<TValue, T1, T2, T3> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3>.Only(int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3>)this).Only(times);
+		return this;
+	}
+
+	#endregion Accessor-restricted views
 }
 
 /// <summary>
@@ -1961,7 +2771,12 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 	IIndexerSetupWithCallback<TValue, T1, T2, T3, T4>,
 	IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>, IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>,
 	IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>,
-	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>
+	IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>, IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>,
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>, IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4>,
+	IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4>, IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4>,
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4>,
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4>,
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4>
 {
 	private Callbacks<Action<int, T1, T2, T3, T4, TValue>>? _getterCallbacks;
 	private Callbacks<Func<int, T1, T2, T3, T4, TValue, TValue>>? _returnCallbacks;
@@ -2575,4 +3390,270 @@ public class IndexerSetup<TValue, T1, T2, T3, T4>(
 		p4 = default!;
 		return false;
 	}
+
+	#region Accessor-restricted views
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.SkippingBaseClass(bool)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.InitializeWith(TValue)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.InitializeWith(TValue value)
+	{
+		InitializeWith(value);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.InitializeWith(Func{T1, T2, T3, T4, TValue})" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.InitializeWith(Func<T1, T2, T3, T4, TValue> valueGenerator)
+	{
+		InitializeWith(valueGenerator);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.OnGet" />
+	IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.OnGet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
+	{
+		((IIndexerGetterSetup<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4>.Do(Action<T1, T2, T3, T4> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<T1, T2, T3, T4, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
+	IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<int, T1, T2, T3, T4, TValue> callback)
+	{
+		((IIndexerGetterSetupWithCallback<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlyGetterSetup{TValue, T1, T2, T3, T4}.TransitionTo(string)" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlyGetterSetup<TValue, T1, T2, T3, T4>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerGetterSetup<TValue, T1, T2, T3, T4>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackBuilder{TValue, T1, T2, T3, T4}.InParallel()" />
+	IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4>.InParallel()
+	{
+		((IIndexerGetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerGetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4}.For(int)" />
+	IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.For(
+		int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
+	{
+		((IIndexerGetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Returns(TValue)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Returns(TValue returnValue)
+	{
+		Returns(returnValue);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Returns(Func{TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Returns(Func<TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Returns(Func<T1, T2, T3, T4, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Returns(Func{T1, T2, T3, T4, TValue, TValue})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Returns(
+		Func<T1, T2, T3, T4, TValue, TValue> callback)
+	{
+		Returns(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Throws{TException}()" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Throws<TException>()
+	{
+		Throws<TException>();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Throws(Exception)" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Throws(Exception exception)
+	{
+		Throws(exception);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Throws(Func{Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Throws(Func<Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Throws(
+		Func<T1, T2, T3, T4, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetup{TValue, T1, T2, T3, T4}.Throws(Func{T1, T2, T3, T4, TValue, Exception})" />
+	IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4>.Throws(
+		Func<T1, T2, T3, T4, TValue, Exception> callback)
+	{
+		Throws(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetupReturnBuilder<TValue, T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetupReturnBuilder<TValue, T1, T2, T3, T4>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2, T3, T4}.For(int)" />
+	IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.For(
+		int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerGetterOnlySetupReturnWhenBuilder{TValue, T1, T2, T3, T4}.Only(int)" />
+	IIndexerGetterOnlySetup<TValue, T1, T2, T3, T4> IIndexerGetterOnlySetupReturnWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
+	{
+		((IIndexerSetupReturnWhenBuilder<TValue, T1, T2, T3, T4>)this).Only(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2, T3, T4}.SkippingBaseClass(bool)" />
+	IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4>.SkippingBaseClass(bool skipBaseClass)
+	{
+		SkippingBaseClass(skipBaseClass);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetup{TValue, T1, T2, T3, T4}.OnSet" />
+	IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4>.OnSet
+		=> this;
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4}.Do(Action)" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4>.Do(Action callback)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4}.Do(Action{TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<TValue> callback)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4}.Do(Action{T1, T2, T3, T4, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<T1, T2, T3, T4, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4}.Do(Action{int, T1, T2, T3, T4, TValue})" />
+	IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4>.Do(
+		Action<int, T1, T2, T3, T4, TValue> callback)
+	{
+		((IIndexerSetterSetupWithCallback<TValue, T1, T2, T3, T4>)this).Do(callback);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetterSetup{TValue, T1, T2, T3, T4}.TransitionTo(string)" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetterSetup<TValue, T1, T2, T3, T4>.TransitionTo(
+		string scenario)
+	{
+		((IIndexerSetterSetup<TValue, T1, T2, T3, T4>)this).TransitionTo(scenario);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackBuilder{TValue, T1, T2, T3, T4}.InParallel()" />
+	IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetupCallbackBuilder<TValue, T1, T2, T3, T4>.InParallel()
+	{
+		((IIndexerSetterSetupCallbackBuilder<TValue, T1, T2, T3, T4>)this).InParallel();
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupParallelCallbackBuilder{TValue, T1, T2, T3, T4}.When(Func{int, bool})" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>.When(
+		Func<int, bool> predicate)
+	{
+		((IIndexerSetterSetupParallelCallbackBuilder<TValue, T1, T2, T3, T4>)this).When(predicate);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4}.For(int)" />
+	IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.For(
+		int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>)this).For(times);
+		return this;
+	}
+
+	/// <inheritdoc cref="IIndexerSetterOnlySetupCallbackWhenBuilder{TValue, T1, T2, T3, T4}.Only(int)" />
+	IIndexerSetterOnlySetup<TValue, T1, T2, T3, T4> IIndexerSetterOnlySetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>.Only(int times)
+	{
+		((IIndexerSetterSetupCallbackWhenBuilder<TValue, T1, T2, T3, T4>)this).Only(times);
+		return this;
+	}
+
+	#endregion Accessor-restricted views
 }

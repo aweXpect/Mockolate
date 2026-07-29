@@ -364,6 +364,9 @@ public sealed partial class MockTests
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources["Mock.MyExternalType.g.cs"])
 				.Contains("public override int this[int index]").And
+				.Contains("global::Mockolate.Setup.IIndexerGetterOnlySetup<int, int> this[").And
+				.Contains("global::Mockolate.Verify.VerificationIndexerGetterResult<IMockVerifyForMyExternalType, int> this[").And
+				.DoesNotContain("global::Mockolate.Setup.IndexerSetup<int, int> this[").And
 				.DoesNotContain("internal set")
 				.Because("the setter is invisible to the mock's assembly, so only the getter may be overridden");
 		}

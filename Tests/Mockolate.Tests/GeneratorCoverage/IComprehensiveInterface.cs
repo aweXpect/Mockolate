@@ -6,7 +6,7 @@ namespace Mockolate.Tests.GeneratorCoverage;
 
 /// <summary>
 ///     Squeezes every interface-shaped generator branch we can fit into a single type:
-///     property accessor combinations, indexers (single + arity-5), all three event flavors,
+///     property accessor combinations, indexers (single + arity-5, get-only + set-only), all three event flavors,
 ///     static abstract members, every parameter modifier, every default-value kind,
 ///     every "reserved" parameter name, nullable annotations, async returns, special return
 ///     shapes (Span/ReadOnlySpan/ref/ref-readonly/tuple/Nullable&lt;T&gt;),
@@ -23,6 +23,8 @@ public interface IComprehensiveInterface
 
 	string this[int i] { get; set; }
 	string this[int a, int b, int c, int d, int e] { get; set; }
+	string this[double key] { get; }
+	string this[char key] { set; }
 
 	static abstract int StaticAbstractValue { get; }
 

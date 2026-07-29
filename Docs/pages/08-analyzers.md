@@ -68,8 +68,9 @@ The same applies per accessor. For a property whose accessors differ in accessib
 inaccessible half. The mock then overrides the accessor it can see and leaves the other one to the
 referenced assembly's implementation. Because writes never reach the mock, `Setup` and `Verify` expose
 only the getter for such a property, so a write that could never be recorded is not offered for
-configuration or verification. See
-[properties with only one accessor](setup/properties#properties-with-only-one-accessor) for details.
+configuration or verification. The same narrowing applies to indexers. See
+[properties with only one accessor](setup/properties#properties-with-only-one-accessor) and
+[indexers with only one accessor](setup/indexers#indexers-with-only-one-accessor) for details.
 
 ## Mockolate0003
 
