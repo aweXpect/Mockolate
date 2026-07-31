@@ -317,6 +317,21 @@ public sealed class ReturnsThrowsAsyncExtensionsTests
 
 			await That(result).IsEqualTo(42);
 		}
+
+		[Fact]
+		public async Task Returns_TaskFactory_ShouldReturnPendingTaskAsIs()
+		{
+			TaskCompletionSource<int> completionSource = new();
+			IReturnsAsyncExtensionsSetupTest sut = IReturnsAsyncExtensionsSetupTest.CreateMock();
+			sut.Mock.Setup.Method0().Returns(() => completionSource.Task);
+
+			Task<int> result = sut.Method0();
+
+			await That(result.IsCompleted).IsFalse()
+				.Because("the factory's task must be handed to the caller as-is, so it can be raced against timeouts or cancellation");
+			completionSource.SetResult(42);
+			await That(await result).IsEqualTo(42);
+		}
 	}
 
 #if NET8_0_OR_GREATER
