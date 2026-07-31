@@ -471,6 +471,38 @@ public sealed partial class MockTests
 			}
 
 			[Fact]
+			public async Task ShouldNotCallBaseForAbstractIndexersOfAbstractClasses()
+			{
+				GeneratorResult result = Generator
+					.Run("""
+					     using Mockolate;
+
+					     namespace MyCode;
+					     public class Program
+					     {
+					         public static void Main(string[] args)
+					         {
+					     		_ = MyAbstractService.CreateMock();
+					         }
+					     }
+
+					     public abstract class MyAbstractService
+					     {
+					         public abstract object this[int index] { get; }
+					         public abstract int this[string key] { get; set; }
+					     }
+					     """);
+
+				await That(result.Diagnostics).IsEmpty();
+				await That(result.Sources).ContainsKey("Mock.MyAbstractService.g.cs");
+				await That(result.Sources["Mock.MyAbstractService.g.cs"])
+					.Contains("public override object this[int index]").And
+					.Contains("public override int this[string key]").And
+					.DoesNotContain("base[")
+					.Because("abstract indexers have no base implementation to call (CS0205)");
+			}
+
+			[Fact]
 			public async Task ShouldSupportSpanAndReadOnlySpanIndexerParameters()
 			{
 				GeneratorResult result = Generator
