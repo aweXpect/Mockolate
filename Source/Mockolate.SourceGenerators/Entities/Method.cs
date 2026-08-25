@@ -12,7 +12,8 @@ internal record Method
 		OverrideAccessibility = Helpers.ResolveOverrideVisibility(
 			Accessibility, methodSymbol.ContainingAssembly, sourceAssembly);
 		UseOverride = methodSymbol.IsVirtual || methodSymbol.IsAbstract;
-		IsOverridableFromMock = Helpers.IsOverridableFrom(methodSymbol, sourceAssembly);
+		IsOverridableFromMock = Helpers.IsOverridableFrom(methodSymbol, sourceAssembly) &&
+		                        Helpers.HasAccessibleSignature(methodSymbol, sourceAssembly);
 		IsAbstract = methodSymbol.IsAbstract;
 		IsStatic = methodSymbol.IsStatic;
 		IsInitOnly = methodSymbol.IsInitOnly;

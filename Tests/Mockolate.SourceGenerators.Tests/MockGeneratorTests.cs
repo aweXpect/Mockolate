@@ -582,6 +582,350 @@ public partial class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenConstructorParameterTypeIsProtectedInternalNestedType_ShouldEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(new MyService.Configuration());
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected MyService(Configuration configuration) { }
+			         protected internal class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.Contains("CreateMock(global::MyCode.MyService.Configuration configuration)")
+			.IgnoringNewlineStyle()
+			.Because("the internal half of `protected internal` is visible within the declaring assembly");
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterTypeIsProtectedNestedType_ShouldNotEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService() { }
+			         protected MyService(Configuration configuration) { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.Contains("public MyService(global::Mockolate.MockRegistry mockRegistry)").IgnoringNewlineStyle().And
+			.DoesNotContain("Configuration")
+			.Because(
+				"a protected nested type is only reachable through inheritance, so naming it on the generated public constructor (CS0051) or in MockExtensionsForMyService (CS0122) would not compile");
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterTypeIsProtectedNestedTypeArgument_ShouldNotEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService() { }
+			         protected MyService(List<Configuration> configurations) { }
+			         protected MyService(Configuration[] configurations) { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.DoesNotContain("Configuration")
+			.Because("an inaccessible type is equally unusable when composed into an array or a type argument");
+	}
+
+	[Fact]
+	public async Task WhenOnlyConstructorHasProtectedNestedParameterType_ShouldNotGenerateMock()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected MyService(Configuration configuration) { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Sources).DoesNotContainKey("Mock.MyService.g.cs")
+			.Because("no constructor remains that the generated mock could invoke");
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterTypeNestsInProtectedTypeArgumentOfContainingType_ShouldNotEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class Wrapper<T>
+			     {
+			         public class Inner { }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService() { }
+			         protected MyService(Wrapper<Configuration>.Inner inner) { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.DoesNotContain("Configuration")
+			.Because(
+				"`Wrapper<Configuration>.Inner` carries the type argument on its containing type, so checking only the innermost type's arguments would let the inaccessible type through");
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterTypeIsInternalInSameAssembly_ShouldEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(new Configuration());
+			         }
+			     }
+
+			     internal class Configuration { }
+
+			     internal class MyService
+			     {
+			         protected MyService(Configuration configuration) { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.Contains("CreateMock(global::MyCode.Configuration configuration)")
+			.IgnoringNewlineStyle()
+			.Because("the generated mock lives in the same assembly, so an internal parameter type is nameable");
+	}
+
+	[Fact]
+	public async Task WhenVirtualMemberSignatureUsesProtectedNestedType_ShouldNotMockMember()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected virtual void Consume(Configuration configuration) { }
+			         protected virtual Configuration Produce() => new Configuration();
+			         protected virtual Configuration Current { get; set; }
+			         protected virtual void Constrained<T>() where T : Configuration { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.DoesNotContain("Configuration").And
+			.DoesNotContain("Consume").And
+			.DoesNotContain("Produce").And
+			.DoesNotContain("Current").And
+			.DoesNotContain("Constrained")
+			.Because(
+				"the setup and verify surfaces restate the signature verbatim but do not derive from the mocked type, so a protected nested type would cause CS0122 there");
+	}
+
+	[Fact]
+	public async Task WhenVirtualEventTypeUsesProtectedNestedType_ShouldNotMockEvent()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected virtual event Handler Changed;
+			         protected void Fire() => Changed?.Invoke();
+			         protected delegate void Handler();
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.DoesNotContain("Changed").And
+			.DoesNotContain("Handler")
+			.Because("the raise surface names the delegate type verbatim");
+	}
+
+	[Fact]
+	public async Task WhenAbstractMemberSignatureUsesProtectedNestedType_ShouldNotGenerateMock()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public abstract class MyService
+			     {
+			         protected abstract void Consume(Configuration configuration);
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Sources).DoesNotContainKey("Mock.MyService.g.cs")
+			.Because("the member must be implemented, but the mock cannot restate its signature");
+	}
+
+	[Theory]
+	[InlineData("protected abstract void Consume(Configuration configuration);",
+		"protected override void Consume(Configuration configuration) { }")]
+	[InlineData("protected abstract Configuration Current { get; set; }",
+		"protected override Configuration Current { get; set; }")]
+	[InlineData("protected abstract event Handler Changed;",
+		"protected override event Handler Changed; protected void Fire() => Changed?.Invoke();")]
+	public async Task WhenAbstractMemberWithInaccessibleSignatureIsAlreadyOverridden_ShouldGenerateMock(
+		string baseMember, string derivedOverride)
+	{
+		GeneratorResult result = Generator
+			.Run($$"""
+			       using Mockolate;
+
+			       namespace MyCode;
+
+			       public class Program
+			       {
+			           public static void Main(string[] args)
+			           {
+			       		_ = Derived.CreateMock();
+			           }
+			       }
+
+			       public abstract class Base
+			       {
+			           {{baseMember}}
+			           protected class Configuration { }
+			           protected delegate void Handler();
+			       }
+
+			       public class Derived : Base
+			       {
+			           {{derivedOverride}}
+			       }
+			       """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.Derived.g.cs")
+			.Because("`Derived` already fills the slot, so restating the signature is not the mock's obligation");
+		await That(result.Sources["Mock.Derived.g.cs"])
+			.DoesNotContain("Configuration").And
+			.DoesNotContain("Handler");
+	}
+
+	[Fact]
 	public async Task WhenConstructorsDifferOnlyByNullableValueType_ShouldEmitBothTypedOverloads()
 	{
 		GeneratorResult result = Generator

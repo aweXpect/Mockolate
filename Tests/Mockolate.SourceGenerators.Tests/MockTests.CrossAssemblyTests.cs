@@ -6,6 +6,17 @@ public sealed partial class MockTests
 {
 	public sealed class CrossAssemblyTests
 	{
+		private const string CreateMockForClientBase = """
+		                                              using Mockolate;
+
+		                                              namespace MyCode;
+
+		                                              public class Program
+		                                              {
+		                                                  public static void Main(string[] args) => _ = Ext.ClientBase.CreateMock();
+		                                              }
+		                                              """;
+
 		private const string CreateMockForMyBaseClass = """
 		                                               using Mockolate;
 
@@ -89,6 +100,90 @@ public sealed partial class MockTests
 				.Contains("protected set").And
 				.DoesNotContain("protected internal override").And
 				.DoesNotContain("protected internal set");
+		}
+
+		[Fact]
+		public async Task ProtectedInternalNestedConstructorParameter_WithInternalsVisibleTo_ShouldEmitConstructor()
+		{
+			MetadataReference external = CompileClientBaseAssembly(grantsInternalsVisibleTo: true);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForClientBase, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.ClientBase.g.cs");
+			await That(result.Sources["Mock.ClientBase.g.cs"])
+				.Contains("CreateMock(global::Ext.ClientBase.ClientBaseConfiguration configuration)")
+				.Because("InternalsVisibleTo makes the internal half of `protected internal` visible");
+		}
+
+		[Fact]
+		public async Task ProtectedInternalNestedConstructorParameter_WithoutInternalsVisibleTo_ShouldNotEmitConstructor()
+		{
+			MetadataReference external = CompileClientBaseAssembly(grantsInternalsVisibleTo: false);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForClientBase, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.ClientBase.g.cs");
+			await That(result.Sources["Mock.ClientBase.g.cs"])
+				.Contains("public ClientBase(global::Mockolate.MockRegistry mockRegistry)").And
+				.DoesNotContain("ClientBaseConfiguration")
+				.Because(
+					"`protected internal` degrades to `protected` outside the declaring assembly, so the type is only reachable through inheritance and cannot be named on the generated public constructor (CS0051) or in MockExtensionsForClientBase (CS0122)");
+		}
+
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task ProtectedInternalNestedMemberSignature_ShouldFollowInternalsVisibleTo(
+			bool grantsInternalsVisibleTo)
+		{
+			MetadataReference external = CompileClientBaseAssembly(grantsInternalsVisibleTo);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForClientBase, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.ClientBase.g.cs");
+			if (grantsInternalsVisibleTo)
+			{
+				await That(result.Sources["Mock.ClientBase.g.cs"])
+					.Contains("ApplyOptions")
+					.Because("InternalsVisibleTo makes the internal half of `protected internal` visible");
+			}
+			else
+			{
+				await That(result.Sources["Mock.ClientBase.g.cs"])
+					.DoesNotContain("ApplyOptions")
+					.Because(
+						"the setup and verify surfaces would have to name `ClientBaseConfiguration`, which degrades to `protected` outside the declaring assembly (CS0122)");
+			}
+		}
+
+		[Fact]
+		public async Task AttributeWithInaccessibleTypeArgument_ShouldNotBeEmitted()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      internal class Secret { }
+
+			                                                      public class MyMarkerAttribute<T> : System.Attribute { }
+
+			                                                      public class ClientBase
+			                                                      {
+			                                                      	[MyMarkerAttribute<Secret>]
+			                                                      	public virtual void Send() { }
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForClientBase, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.ClientBase.g.cs"])
+				.Contains("Send").And
+				.DoesNotContain("MyMarkerAttribute")
+				.Because(
+					"the attribute name is emitted verbatim, so an inaccessible type argument makes it unusable even though the attribute class itself is public");
 		}
 
 		[Fact]
@@ -506,6 +601,63 @@ public sealed partial class MockTests
 			await That(result.Sources).DoesNotContainKey("Mock.MyExternalType.g.cs")
 				.Because(
 					"an `abstract override` re-declaration continues the slot without filling it, so the member is still the mock's obligation");
+		}
+
+		[Fact]
+		public async Task PartlyReachableSlot_WithInaccessibleSignatureType_ShouldSkipMember()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      public abstract class Base
+			                                                      {
+			                                                      	protected abstract Configuration Current { get; private protected set; }
+			                                                      	protected class Configuration { }
+			                                                      }
+
+			                                                      public class Derived : Base
+			                                                      {
+			                                                      	protected override Configuration Current { get; private protected set; }
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences("""
+			                                                     using Mockolate;
+
+			                                                     namespace MyCode;
+
+			                                                     public class Program
+			                                                     {
+			                                                         public static void Main(string[] args) => _ = Ext.Derived.CreateMock();
+			                                                     }
+			                                                     """, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.Derived.g.cs");
+			await That(result.Sources["Mock.Derived.g.cs"])
+				.DoesNotContain("Configuration").And
+				.DoesNotContain("Current")
+				.Because(
+					"the reachable getter could be restated in the mock class, but the setup and verify surfaces would have to name `Configuration`, which is only reachable through inheritance (CS0122)");
+		}
+
+		private static MetadataReference CompileClientBaseAssembly(bool grantsInternalsVisibleTo)
+		{
+			string internalsVisibleTo = grantsInternalsVisibleTo
+				? """[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("TestAssembly")]"""
+				: "";
+			return ExternalAssembly.Compile($$"""
+			                                 {{internalsVisibleTo}}
+			                                 namespace Ext;
+
+			                                 public class ClientBase
+			                                 {
+			                                 	protected ClientBase() { }
+			                                 	protected ClientBase(ClientBaseConfiguration configuration) { }
+			                                 	protected virtual void ApplyOptions(ClientBaseConfiguration configuration) { }
+			                                 	protected internal class ClientBaseConfiguration { }
+			                                 }
+			                                 """);
 		}
 
 		private static MetadataReference CompileMyExternalTypeAssembly(string typeKeyword, string member,

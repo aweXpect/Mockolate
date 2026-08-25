@@ -466,10 +466,11 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 			return false;
 		}
 
-		if (FindInaccessibleRequiredMember(typeSymbol, sourceAssembly) is { } inaccessibleMember)
+		if (FindInaccessibleRequiredMember(typeSymbol, sourceAssembly) is { } inaccessible)
 		{
-			reason =
-				$"the member '{inaccessibleMember.ToDisplayString()}' must be implemented, but it is not accessible from this assembly";
+			reason = inaccessible.InaccessibleType is { } inaccessibleType
+				? $"the member '{inaccessible.Member.ToDisplayString()}' must be implemented, but its signature uses the type '{inaccessibleType.ToDisplayString()}', which is not accessible from this assembly"
+				: $"the member '{inaccessible.Member.ToDisplayString()}' must be implemented, but it is not accessible from this assembly";
 			return false;
 		}
 
@@ -477,7 +478,8 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		return true;
 	}
 
-	private static ISymbol? FindInaccessibleRequiredMember(ITypeSymbol type, IAssemblySymbol sourceAssembly)
+	private static (ISymbol Member, ITypeSymbol? InaccessibleType)? FindInaccessibleRequiredMember(ITypeSymbol type,
+		IAssemblySymbol sourceAssembly)
 	{
 		HashSet<string> filledSlots = new(StringComparer.Ordinal);
 
@@ -559,17 +561,99 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 		}
 	}
 
-	private static ISymbol? FindInaccessibleMember(ISymbol member, IAssemblySymbol sourceAssembly)
-		=> member switch
+	private static (ISymbol Member, ITypeSymbol? InaccessibleType)? FindInaccessibleMember(ISymbol member,
+		IAssemblySymbol sourceAssembly)
+	{
+		switch (member)
 		{
-			IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method
-				=> IsAccessibleFrom(method, sourceAssembly) ? null : method,
-			IPropertySymbol { IsAbstract: true, } property
-				=> FindInaccessibleAccessor(property, sourceAssembly),
-			IEventSymbol { IsAbstract: true, } @event
-				=> IsAccessibleFrom(@event, sourceAssembly) ? null : @event,
-			_ => null,
-		};
+			case IMethodSymbol { MethodKind: MethodKind.Ordinary, IsAbstract: true, } method:
+				return !IsAccessibleFrom(method, sourceAssembly)
+					? (method, null)
+					: Combine(method, FindInaccessibleSignatureType(method, sourceAssembly));
+			case IPropertySymbol { IsAbstract: true, } property:
+				return FindInaccessibleAccessor(property, sourceAssembly) is { } accessor
+					? (accessor, null)
+					: Combine(property, FindInaccessibleSignatureType(property, sourceAssembly));
+			case IEventSymbol { IsAbstract: true, } @event:
+				return !IsAccessibleFrom(@event, sourceAssembly)
+					? (@event, null)
+					: Combine(@event, FindInaccessibleSignatureType(@event, sourceAssembly));
+			default:
+				return null;
+		}
+
+		static (ISymbol Member, ITypeSymbol? InaccessibleType)? Combine(ISymbol member, ITypeSymbol? inaccessibleType)
+			=> inaccessibleType is null ? null : (member, inaccessibleType);
+	}
+
+	/// <summary>
+	///     The first type named in <paramref name="member" />'s signature that the mock cannot restate,
+	///     or <see langword="null" /> when the whole signature is reachable. Mirrors
+	///     <c>Helpers.HasAccessibleSignature</c> in the source generator; keep both in sync.
+	/// </summary>
+	private static ITypeSymbol? FindInaccessibleSignatureType(ISymbol member, IAssemblySymbol sourceAssembly)
+	{
+		switch (member)
+		{
+			case IMethodSymbol method:
+				return FirstInaccessible([
+					method.ReturnType,
+					..method.Parameters.Select(parameter => parameter.Type),
+					..method.TypeParameters.SelectMany(typeParameter => typeParameter.ConstraintTypes),
+				]);
+			case IPropertySymbol property:
+				return FirstInaccessible([
+					property.Type, ..property.Parameters.Select(parameter => parameter.Type),
+				]);
+			case IEventSymbol @event:
+				return FirstInaccessible([@event.Type,]);
+			default:
+				return null;
+		}
+
+		ITypeSymbol? FirstInaccessible(IEnumerable<ITypeSymbol> types)
+			=> types.FirstOrDefault(type => !IsTypeAccessibleFrom(type, sourceAssembly));
+	}
+
+	/// <summary>
+	///     Mirror of <c>Helpers.IsAccessibleFrom</c>: every type in the containing chain and every
+	///     composed type must be public, or internal/protected internal with access granted. The
+	///     <see langword="protected" /> half never counts, because the surfaces naming the type do not
+	///     derive from the mocked type.
+	/// </summary>
+	private static bool IsTypeAccessibleFrom(ITypeSymbol type, IAssemblySymbol sourceAssembly)
+	{
+		switch (type)
+		{
+			case IArrayTypeSymbol array:
+				return IsTypeAccessibleFrom(array.ElementType, sourceAssembly);
+			case IPointerTypeSymbol pointer:
+				return IsTypeAccessibleFrom(pointer.PointedAtType, sourceAssembly);
+			case INamedTypeSymbol named:
+				for (INamedTypeSymbol? t = named; t is not null; t = t.ContainingType)
+				{
+					if (!IsDeclarationAccessible(t) ||
+					    !t.TypeArguments.All(argument => IsTypeAccessibleFrom(argument, sourceAssembly)))
+					{
+						return false;
+					}
+				}
+
+				return true;
+			default:
+				return true;
+		}
+
+		bool IsDeclarationAccessible(INamedTypeSymbol candidate)
+			=> candidate.DeclaredAccessibility switch
+			{
+				Accessibility.Public => true,
+				Accessibility.Internal or Accessibility.ProtectedOrInternal =>
+					SymbolEqualityComparer.Default.Equals(candidate.ContainingAssembly, sourceAssembly) ||
+					candidate.ContainingAssembly?.GivesAccessTo(sourceAssembly) == true,
+				_ => false,
+			};
+	}
 
 	private static ISymbol? FindInaccessibleAccessor(IPropertySymbol property, IAssemblySymbol sourceAssembly)
 	{

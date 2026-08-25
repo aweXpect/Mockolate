@@ -193,10 +193,13 @@ internal class Class : IEquatable<Class>
 
 			if (IsInterface || member.IsAbstract)
 			{
+				// An abstract member is kept even when it cannot be restated;
+				// `ComputeHasInaccessibleRequiredMember` then rejects the whole type.
 				return true;
 			}
 
-			return Helpers.IsOverridableFrom(member, _sourceAssembly);
+			return Helpers.IsOverridableFrom(member, _sourceAssembly) &&
+			       Helpers.HasAccessibleSignature(member, _sourceAssembly);
 		}
 	}
 
@@ -257,7 +260,8 @@ internal class Class : IEquatable<Class>
 
 	/// <summary>
 	///     True when a member the mock is still obliged to implement is invisible to the mock's
-	///     assembly, leaving no valid code the generator could emit for it.
+	///     assembly - either the member itself, or a type named in its signature - leaving no valid code
+	///     the generator could emit for it.
 	/// </summary>
 	/// <remarks>
 	///     Deliberately reads the filtered <see cref="Methods" />/<see cref="Properties" />/
@@ -280,7 +284,8 @@ internal class Class : IEquatable<Class>
 	/// <summary>
 	///     True when <paramref name="member" /> fills a base slot (by <see langword="override" /> or by
 	///     explicit interface implementation) that the mock must leave alone entirely, because the base
-	///     declaration or one of its accessors is invisible to <paramref name="sourceAssembly" />.
+	///     declaration, one of its accessors, or a type in its signature is invisible to
+	///     <paramref name="sourceAssembly" />.
 	/// </summary>
 	private static bool FillsInaccessibleBaseSlot(ISymbol member, IAssemblySymbol? sourceAssembly)
 	{
@@ -305,6 +310,7 @@ internal class Class : IEquatable<Class>
 		IAssemblySymbol? sourceAssembly)
 		=> member is IPropertySymbol { IsAbstract: false, OverriddenProperty: { } slot, } &&
 		   Helpers.IsOverridableFrom(slot, sourceAssembly) &&
+		   Helpers.HasAccessibleSignature(slot, sourceAssembly) &&
 		   HasUnreachableAccessor(slot, sourceAssembly)
 			? slot
 			: null;
@@ -359,6 +365,7 @@ internal class Class : IEquatable<Class>
 
 	private static bool IsSlotReachable(ISymbol slot, IAssemblySymbol? sourceAssembly)
 		=> Helpers.IsOverridableFrom(slot, sourceAssembly) &&
+		   Helpers.HasAccessibleSignature(slot, sourceAssembly) &&
 		   (slot is not IPropertySymbol property || !HasUnreachableAccessor(property, sourceAssembly));
 
 	private static bool HasUnreachableAccessor(IPropertySymbol property, IAssemblySymbol? sourceAssembly)

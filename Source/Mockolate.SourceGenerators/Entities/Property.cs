@@ -42,7 +42,8 @@ internal record Property
 		bool setterOverridable = propertySymbol.SetMethod is not { } setterSymbol ||
 		                         Helpers.IsOverridableFrom(setterSymbol, sourceAssembly);
 		IsOverridableFromMock = getterOverridable && setterOverridable &&
-		                        Helpers.IsOverridableFrom(propertySymbol, sourceAssembly);
+		                        Helpers.IsOverridableFrom(propertySymbol, sourceAssembly) &&
+		                        Helpers.HasAccessibleSignature(propertySymbol, sourceAssembly);
 
 		Getter = propertySymbol.GetMethod is { } getter && getterOverridable
 			? new Method(getter, null, sourceAssembly)
