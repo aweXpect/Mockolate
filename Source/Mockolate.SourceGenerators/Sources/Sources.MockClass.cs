@@ -1592,8 +1592,12 @@ internal static partial class Sources
 		}
 
 		sb.AppendLine("\t\t{");
-		bool supportsWrapping = @event is { IsStatic: false, IsProtected: false, ExplicitImplementation: null, } &&
+		bool supportsWrapping = @event is { IsStatic: false, IsProtected: false, } &&
 		                        !explicitInterfaceImplementation;
+		// An event that hides a base member (`new`) is emitted as an explicit interface implementation.
+		// The wrapped instance must be cast to the declaring interface, otherwise the subscription
+		// binds to the hiding member, whose delegate type differs from the one being implemented.
+		string wrapsType = @event.ExplicitImplementation ?? className;
 		bool supportsBaseForwarding = supportsWrapping && !isClassInterface && @event.UseOverride && !@event.IsAbstract;
 		if (supportsWrapping)
 		{
@@ -1604,7 +1608,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t\t").Append(mockRegistry).Append(addCall).Append(@event.GetUniqueNameString()).Append(", value.Target, value.Method);").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" += value;").AppendLine();
-			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType).Append(" wraps)").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" += value;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
@@ -1624,7 +1628,7 @@ internal static partial class Sources
 			sb.Append("\t\t\t\t\t").Append(mockRegistry).Append(removeCall).Append(@event.GetUniqueNameString()).Append(", value.Target, value.Method);").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
 			sb.Append("\t\t\t\t").Append(backingFieldAccess).Append(" -= value;").AppendLine();
-			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className).Append(" wraps)").AppendLine();
+			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType).Append(" wraps)").AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			sb.Append("\t\t\t\t\twraps.").Append(@event.Name).Append(" -= value;").AppendLine();
 			sb.Append("\t\t\t\t}").AppendLine();
@@ -1669,6 +1673,10 @@ internal static partial class Sources
 #pragma warning restore S107
 	{
 		string mockRegistry = property.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
+		// A property that hides a base member (`new`) is emitted as an explicit interface implementation.
+		// The wrapped instance must be cast to the declaring interface, otherwise the delegated access
+		// binds to the hiding member instead: wrong property type (CS0266).
+		string wrapsType = property.ExplicitImplementation ?? className;
 		bool useFastForProperty = useFastBuffers && !property.IsIndexer && IsFastBufferEligibleProperty(property);
 		bool useFastForIndexer = useFastBuffers && property.IsIndexer && IsFastBufferEligibleIndexer(property);
 		string indexerGetIdRef = property.IsIndexer
@@ -1764,7 +1772,7 @@ internal static partial class Sources
 			{
 				AppendRefStructIndexerGetterBody(sb, property, mockRegistry);
 			}
-			else if (isClassInterface && !explicitInterfaceImplementation && property.ExplicitImplementation is null)
+			else if (isClassInterface && !explicitInterfaceImplementation)
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
@@ -1781,7 +1789,7 @@ internal static partial class Sources
 						property.Type, property.IndexerParameters.Value, useFastForIndexer,
 						useFastForIndexer ? indexerGetIdRef : null,
 						cachedBufferRef: indexerGetCachedBufferRef);
-					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(className)
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is not ").Append(wrapsType)
 						.Append(' ').Append(wrapsVarName).Append(')').AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\treturn ").Append(setupVarName).Append(" is null")
@@ -1814,7 +1822,7 @@ internal static partial class Sources
 							.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue");
 						if (!property.IsStatic)
 						{
-							sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className)
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(wrapsType)
 								.Append(" wraps ? null : () => wraps.").Append(property.Name);
 						}
 
@@ -1828,7 +1836,7 @@ internal static partial class Sources
 							.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 						if (!property.IsStatic)
 						{
-							sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(className)
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is not ").Append(wrapsType)
 								.Append(" wraps ? null : () => wraps.").Append(property.Name);
 						}
 						else
@@ -1865,7 +1873,7 @@ internal static partial class Sources
 						sb.Append("\t\t\t\t\t").AppendTypeOrWrapper(property.Type).Append(' ')
 							.Append(baseResultVarName).Append(" = this.")
 							.Append(mockRegistryName)
-							.Append(".Wraps is ").Append(className).Append(' ').Append(wrapsVarName).Append(" ? ")
+							.Append(".Wraps is ").Append(wrapsType).Append(' ').Append(wrapsVarName).Append(" ? ")
 							.Append(wrapsVarName).Append('[')
 							.Append(FormatIndexerParametersAsNames(property.IndexerParameters.Value))
 							.Append("] : base[")
@@ -1905,7 +1913,7 @@ internal static partial class Sources
 							.AppendDefaultValueGeneratorFor(property.Type, "b.DefaultValue");
 						if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
 						{
-							sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType)
 								.Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.")
 								.Append(property.Name);
 						}
@@ -1924,7 +1932,7 @@ internal static partial class Sources
 							.AppendDefaultValueGeneratorFor(property.Type, $"{mockRegistry}.Behavior.DefaultValue");
 						if (property is { IsStatic: false, } && property.Getter?.IsProtected != true)
 						{
-							sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(className)
+							sb.Append(", ").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType)
 								.Append(" wraps ? () => wraps.").Append(property.Name).Append(" : () => base.")
 								.Append(property.Name);
 						}
@@ -2001,7 +2009,7 @@ internal static partial class Sources
 			{
 				AppendRefStructIndexerSetterBody(sb, property, mockRegistry);
 			}
-			else if (isClassInterface && !explicitInterfaceImplementation && property.ExplicitImplementation is null)
+			else if (isClassInterface && !explicitInterfaceImplementation)
 			{
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
 				{
@@ -2022,7 +2030,7 @@ internal static partial class Sources
 						.Append(signatureIndex).Append(");")
 						.AppendLine();
 
-					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+					sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType)
 						.Append(' ').Append(wrapsVarName).Append(')').AppendLine();
 					sb.Append("\t\t\t\t{").AppendLine();
 					sb.Append("\t\t\t\t\t").Append(wrapsVarName).Append('[')
@@ -2050,7 +2058,7 @@ internal static partial class Sources
 
 					if (!property.IsStatic && !property.Setter.IsInitOnly)
 					{
-						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+						sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType)
 							.Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\twraps.").Append(property.Name).Append(" = value;").AppendLine();
@@ -2080,7 +2088,7 @@ internal static partial class Sources
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property.Setter?.IsProtected != true)
 					{
-						sb.Append("\t\t\t\t\tif (this.").Append(mockRegistryName).Append(".Wraps is ").Append(className)
+						sb.Append("\t\t\t\t\tif (this.").Append(mockRegistryName).Append(".Wraps is ").Append(wrapsType)
 							.Append(' ').Append(wrapsVarName).Append(')').AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\t").Append(wrapsVarName).Append('[')
@@ -2138,7 +2146,7 @@ internal static partial class Sources
 					sb.Append("\t\t\t\t{").AppendLine();
 					if (property is { IsStatic: false, } && property.Setter?.IsProtected != true)
 					{
-						sb.Append("\t\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+						sb.Append("\t\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType)
 							.Append(" wraps)").AppendLine();
 						sb.Append("\t\t\t\t\t{").AppendLine();
 						sb.Append("\t\t\t\t\t\twraps.").Append(property.Name).Append(" = value;").AppendLine();

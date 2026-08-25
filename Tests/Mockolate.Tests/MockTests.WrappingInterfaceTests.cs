@@ -80,6 +80,24 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Wrap_HiddenEvent_ShouldSubscribeOnDeclaringInterface()
+		{
+			MyChocolateShelf myShelf = new();
+			IChocolateShelf wrappedShelf = IChocolateShelf.CreateMock().Wrapping(myShelf);
+
+			int baseInvocations = 0;
+			int shelfInvocations = 0;
+			((IChocolateShelfBase)wrappedShelf).Restocked += (_, _) => baseInvocations++;
+			wrappedShelf.Restocked += () => shelfInvocations++;
+
+			myShelf.RaiseBaseRestocked();
+			myShelf.RaiseShelfRestocked();
+
+			await That(baseInvocations).IsEqualTo(1);
+			await That(shelfInvocations).IsEqualTo(1);
+		}
+
+		[Fact]
 		public async Task Wrap_HiddenGenericMethod_ShouldDelegateToDeclaringInterface()
 		{
 			MyChocolateCatalog myCatalog = new();
@@ -89,6 +107,82 @@ public sealed partial class MockTests
 			_ = ((IChocolateSource)wrappedCatalog).Get<string>();
 
 			await That(myCatalog.ReceivedCalls).IsEqualTo(["catalog", "source",]);
+		}
+
+		[Fact]
+		public async Task Wrap_HiddenGetOnlyProperty_ShouldDelegateToDeclaringInterface()
+		{
+			MyChocolateShelf myShelf = new();
+			IChocolateShelf wrappedShelf = IChocolateShelf.CreateMock().Wrapping(myShelf);
+
+			await That(wrappedShelf.Featured).IsEqualTo(["Dark",]);
+			await That(((IChocolateShelfBase)wrappedShelf).Featured).IsEqualTo(["Praline",]);
+			await That(myShelf.ReceivedCalls).IsEqualTo(["get:shelf-featured", "get:base-featured",]);
+		}
+
+		[Fact]
+		public async Task Wrap_HiddenIndexer_ShouldDelegateGetterToDeclaringInterface()
+		{
+			MyChocolateShelf myShelf = new();
+			IChocolateShelf wrappedShelf = IChocolateShelf.CreateMock().Wrapping(myShelf);
+
+			await That(wrappedShelf[1]).IsEqualTo(["Truffle",]);
+			await That(((IChocolateShelfBase)wrappedShelf)[1]).IsEqualTo(["Ganache",]);
+			await That(myShelf.ReceivedCalls).IsEqualTo(["get:shelf-item", "get:base-item",]);
+		}
+
+		[Fact]
+		public async Task Wrap_HiddenIndexer_ShouldDelegateSetterToDeclaringInterface()
+		{
+			MyChocolateShelf myShelf = new();
+			IChocolateShelf wrappedShelf = IChocolateShelf.CreateMock().Wrapping(myShelf);
+
+			wrappedShelf[2] = ["Nougat",];
+			((IChocolateShelfBase)wrappedShelf)[2] = ["Marzipan",];
+
+			await That(myShelf.ReceivedCalls).IsEqualTo(["set:shelf-item", "set:base-item",]);
+			await That(myShelf.ShelfItems[2]).IsEqualTo(["Nougat",]);
+			await That(myShelf.BaseItems[2]).IsEqualTo(["Marzipan",]);
+		}
+
+		[Fact]
+		public async Task Wrap_HiddenProperty_ShouldDelegateGetterToDeclaringInterface()
+		{
+			MyChocolateShelf myShelf = new();
+			IChocolateShelf wrappedShelf = IChocolateShelf.CreateMock().Wrapping(myShelf);
+
+			await That(wrappedShelf.Assortment).IsEqualTo(["Milk", "Dark",]);
+			await That(((IChocolateShelfBase)wrappedShelf).Assortment).IsEqualTo(["Praline",]);
+			await That(myShelf.ReceivedCalls).IsEqualTo(["get:shelf", "get:base",]);
+		}
+
+		[Fact]
+		public async Task Wrap_HiddenProperty_ShouldDelegateSetterToDeclaringInterface()
+		{
+			MyChocolateShelf myShelf = new();
+			IChocolateShelf wrappedShelf = IChocolateShelf.CreateMock().Wrapping(myShelf);
+
+			wrappedShelf.Assortment = ["Truffle",];
+			((IChocolateShelfBase)wrappedShelf).Assortment = ["Ganache",];
+
+			await That(myShelf.ReceivedCalls).IsEqualTo(["set:shelf", "set:base",]);
+			await That(myShelf.ShelfAssortment).IsEqualTo(["Truffle",]);
+			await That(myShelf.BaseAssortment).IsEqualTo(["Ganache",]);
+		}
+
+		[Fact]
+		public async Task Wrap_HiddenPropertyWithUnrelatedType_ShouldDelegateToDeclaringInterface()
+		{
+			MyChocolateShelf myShelf = new();
+			IChocolateShelf wrappedShelf = IChocolateShelf.CreateMock().Wrapping(myShelf);
+
+			wrappedShelf.Label = 7;
+			((IChocolateShelfBase)wrappedShelf).Label = "Seasonal";
+
+			await That(wrappedShelf.Label).IsEqualTo(7);
+			await That(((IChocolateShelfBase)wrappedShelf).Label).IsEqualTo("Seasonal");
+			await That(myShelf.ShelfLabel).IsEqualTo(7);
+			await That(myShelf.BaseLabel).IsEqualTo("Seasonal");
 		}
 
 		[Fact]
@@ -198,6 +292,135 @@ public sealed partial class MockTests
 				ReceivedCalls.Add("source");
 				return [];
 			}
+		}
+
+		private class MyChocolateShelf : IChocolateShelf
+		{
+			private IEnumerable<string> _baseAssortment = ["Praline",];
+			private string _baseLabel = "Classic";
+			private event EventHandler? _baseRestocked;
+
+			public List<string> ReceivedCalls { get; } = [];
+
+			public Dictionary<int, IList<string>> ShelfItems { get; } = new()
+			{
+				{
+					1, ["Truffle",]
+				},
+			};
+
+			public Dictionary<int, IEnumerable<string>> BaseItems { get; } = new()
+			{
+				{
+					1, ["Ganache",]
+				},
+			};
+
+			public IList<string> ShelfAssortment { get; private set; } = ["Milk", "Dark",];
+
+			public IEnumerable<string> BaseAssortment => _baseAssortment;
+
+			public int ShelfLabel { get; private set; }
+
+			public string BaseLabel => _baseLabel;
+
+			public IList<string> this[int index]
+			{
+				get
+				{
+					ReceivedCalls.Add("get:shelf-item");
+					return ShelfItems[index];
+				}
+				set
+				{
+					ReceivedCalls.Add("set:shelf-item");
+					ShelfItems[index] = value;
+				}
+			}
+
+			public IList<string> Assortment
+			{
+				get
+				{
+					ReceivedCalls.Add("get:shelf");
+					return ShelfAssortment;
+				}
+				set
+				{
+					ReceivedCalls.Add("set:shelf");
+					ShelfAssortment = value;
+				}
+			}
+
+			public IList<string> Featured
+			{
+				get
+				{
+					ReceivedCalls.Add("get:shelf-featured");
+					return ["Dark",];
+				}
+			}
+
+			public int Label
+			{
+				get => ShelfLabel;
+				set => ShelfLabel = value;
+			}
+
+			public event Action? Restocked;
+
+			IEnumerable<string> IChocolateShelfBase.this[int index]
+			{
+				get
+				{
+					ReceivedCalls.Add("get:base-item");
+					return BaseItems[index];
+				}
+				set
+				{
+					ReceivedCalls.Add("set:base-item");
+					BaseItems[index] = value;
+				}
+			}
+
+			IEnumerable<string> IChocolateShelfBase.Assortment
+			{
+				get
+				{
+					ReceivedCalls.Add("get:base");
+					return _baseAssortment;
+				}
+				set
+				{
+					ReceivedCalls.Add("set:base");
+					_baseAssortment = value;
+				}
+			}
+
+			IEnumerable<string> IChocolateShelfBase.Featured
+			{
+				get
+				{
+					ReceivedCalls.Add("get:base-featured");
+					return ["Praline",];
+				}
+			}
+
+			string IChocolateShelfBase.Label
+			{
+				get => _baseLabel;
+				set => _baseLabel = value;
+			}
+
+			event EventHandler IChocolateShelfBase.Restocked
+			{
+				add => _baseRestocked += value;
+				remove => _baseRestocked -= value;
+			}
+
+			public void RaiseBaseRestocked() => _baseRestocked?.Invoke(this, EventArgs.Empty);
+
+			public void RaiseShelfRestocked() => Restocked?.Invoke();
 		}
 
 		public delegate void MyDelegate();

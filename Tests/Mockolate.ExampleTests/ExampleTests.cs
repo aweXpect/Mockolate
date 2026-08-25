@@ -267,4 +267,41 @@ public class ExampleTests
 		await That(result).IsEqualTo(returnValue);
 		sut.Mock.Verify.TryDelete(It.Is(id), It.IsOut<User?>()).Once();
 	}
+
+	[Fact]
+	public async Task Wrapping_HiddenMember_ShouldForwardToDeclaringInterface()
+	{
+		User alice = new(Guid.NewGuid(), "Alice");
+		User bob = new(Guid.NewGuid(), "Bob");
+		MyUserCache realCache = new();
+		IUserCache sut = IUserCache.CreateMock().Wrapping(realCache);
+
+		sut.Users = [alice,];
+		((IReadOnlyUserCache)sut).Users = [bob,];
+
+		// Each interface sees its own member on the wrapped instance.
+		await That(sut.Users).IsEqualTo([alice,]);
+		await That(((IReadOnlyUserCache)sut).Users).IsEqualTo([bob,]);
+		await That(realCache.CacheUsers).IsEqualTo([alice,]);
+		await That(realCache.ReadOnlyUsers).IsEqualTo([bob,]);
+	}
+
+	private sealed class MyUserCache : IUserCache
+	{
+		public IList<User> CacheUsers { get; private set; } = [];
+
+		public IEnumerable<User> ReadOnlyUsers { get; private set; } = [];
+
+		public IList<User> Users
+		{
+			get => CacheUsers;
+			set => CacheUsers = value;
+		}
+
+		IEnumerable<User> IReadOnlyUserCache.Users
+		{
+			get => ReadOnlyUsers;
+			set => ReadOnlyUsers = value;
+		}
+	}
 }
