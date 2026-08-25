@@ -193,10 +193,13 @@ internal class Class : IEquatable<Class>
 
 			if (IsInterface || member.IsAbstract)
 			{
+				// An abstract member is the mock's obligation, so it is kept even when it cannot be
+				// restated: `ComputeHasInaccessibleRequiredMember` then rejects the whole type.
 				return true;
 			}
 
-			return Helpers.IsOverridableFrom(member, _sourceAssembly);
+			return Helpers.IsOverridableFrom(member, _sourceAssembly) &&
+			       Helpers.HasAccessibleSignature(member, _sourceAssembly);
 		}
 	}
 
@@ -257,7 +260,8 @@ internal class Class : IEquatable<Class>
 
 	/// <summary>
 	///     True when a member the mock is still obliged to implement is invisible to the mock's
-	///     assembly, leaving no valid code the generator could emit for it.
+	///     assembly - either the member itself, or a type named in its signature - leaving no valid code
+	///     the generator could emit for it.
 	/// </summary>
 	/// <remarks>
 	///     Deliberately reads the filtered <see cref="Methods" />/<see cref="Properties" />/

@@ -12,7 +12,8 @@ internal record Event
 		OverrideAccessibility = Helpers.ResolveOverrideVisibility(
 			Accessibility, eventSymbol.ContainingAssembly, sourceAssembly);
 		UseOverride = eventSymbol.IsVirtual || eventSymbol.IsAbstract;
-		IsOverridableFromMock = Helpers.IsOverridableFrom(eventSymbol, sourceAssembly);
+		IsOverridableFromMock = Helpers.IsOverridableFrom(eventSymbol, sourceAssembly) &&
+		                        Helpers.HasAccessibleSignature(eventSymbol, sourceAssembly);
 		IsAbstract = eventSymbol.IsAbstract;
 		Name = Helpers.EscapeIfKeyword(eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name);
 		Type = Type.From(eventSymbol.Type);

@@ -123,12 +123,13 @@ internal static class Helpers
 
 	/// <summary>
 	///     Conservative visibility test for a type that the generator names verbatim in emitted code
-	///     (attribute names, constructor parameter types). A type is accessible only if its whole
-	///     containing chain, and every type it is composed of (array element, type argument), is
-	///     either Public, or Internal/ProtectedOrInternal with InternalsVisibleTo granted (or the same
-	///     assembly). Private/Protected/ProtectedAndInternal nested types, and ProtectedOrInternal
-	///     across assemblies without IVT, are treated as inaccessible: the <c>protected</c> half is
-	///     only reachable by deriving from the declaring type, which the surfaces naming the type
+	///     (attribute names, constructor parameter types, member signatures). A type is accessible only
+	///     if every type in its containing chain, and every type it is composed of (array element,
+	///     pointed-at type, type argument at any nesting level), is either Public, or
+	///     Internal/ProtectedOrInternal with InternalsVisibleTo granted (or the same assembly).
+	///     Private/Protected/ProtectedAndInternal nested types, and ProtectedOrInternal across
+	///     assemblies without IVT, are treated as inaccessible: the <c>protected</c> half is only
+	///     reachable by deriving from the declaring type, which the surfaces naming the type
 	///     (e.g. <c>MockExtensionsForXXX</c>) do not do.
 	/// </summary>
 	public static bool IsAccessibleFrom(ITypeSymbol type, IAssemblySymbol? sourceAssembly)
@@ -140,30 +141,55 @@ internal static class Helpers
 			case IPointerTypeSymbol pointer:
 				return IsAccessibleFrom(pointer.PointedAtType, sourceAssembly);
 			case INamedTypeSymbol named:
+				// Both the declaration and the type arguments are checked per nesting level: for
+				// `Outer<TArg>.Inner` the arguments sit on the containing type, so inspecting only
+				// `named.TypeArguments` would miss them.
 				for (INamedTypeSymbol? t = named; t is not null; t = t.ContainingType)
 				{
-					switch (t.DeclaredAccessibility)
+					if (!IsDeclarationAccessible(t) ||
+					    !t.TypeArguments.All(argument => IsAccessibleFrom(argument, sourceAssembly)))
 					{
-						case Accessibility.Public:
-							continue;
-						case Accessibility.Internal:
-						case Accessibility.ProtectedOrInternal:
-							if (sourceAssembly is null || HasInternalAccess(t.ContainingAssembly, sourceAssembly))
-							{
-								continue;
-							}
-
-							return false;
-						default:
-							return false;
+						return false;
 					}
 				}
 
-				return named.TypeArguments.All(argument => IsAccessibleFrom(argument, sourceAssembly));
+				return true;
 			default:
 				return true;
 		}
+
+		bool IsDeclarationAccessible(INamedTypeSymbol candidate)
+			=> candidate.DeclaredAccessibility switch
+			{
+				Accessibility.Public => true,
+				Accessibility.Internal or Accessibility.ProtectedOrInternal =>
+					sourceAssembly is null || HasInternalAccess(candidate.ContainingAssembly, sourceAssembly),
+				_ => false,
+			};
 	}
+
+	/// <summary>
+	///     True when every type named in <paramref name="member" />'s signature (return/member type,
+	///     parameter types, generic constraint types) is accessible per <see cref="IsAccessibleFrom" />.
+	/// </summary>
+	/// <remarks>
+	///     The mock restates those types verbatim on surfaces that do <b>not</b> derive from the mocked
+	///     type (<c>IMockSetupForXXX</c>, <c>IMockVerifyForXXX</c>, <c>MockExtensionsForXXX</c>), so a
+	///     <see langword="protected" /> nested type in a signature causes CS0122 there even though the
+	///     <see langword="override" /> inside the mock class itself would compile.
+	/// </remarks>
+	public static bool HasAccessibleSignature(ISymbol member, IAssemblySymbol? sourceAssembly)
+		=> member switch
+		{
+			IMethodSymbol method => IsAccessibleFrom(method.ReturnType, sourceAssembly) &&
+			                        method.Parameters.All(p => IsAccessibleFrom(p.Type, sourceAssembly)) &&
+			                        method.TypeParameters.All(p => p.ConstraintTypes
+				                        .All(c => IsAccessibleFrom(c, sourceAssembly))),
+			IPropertySymbol property => IsAccessibleFrom(property.Type, sourceAssembly) &&
+			                            property.Parameters.All(p => IsAccessibleFrom(p.Type, sourceAssembly)),
+			IEventSymbol @event => IsAccessibleFrom(@event.Type, sourceAssembly),
+			_ => true,
+		};
 
 	private static bool HasInternalAccess(IAssemblySymbol? containingAssembly, IAssemblySymbol? sourceAssembly)
 	{

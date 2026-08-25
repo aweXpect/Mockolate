@@ -132,6 +132,60 @@ public sealed partial class MockTests
 					"`protected internal` degrades to `protected` outside the declaring assembly, so the type is only reachable through inheritance and cannot be named on the generated public constructor (CS0051) or in MockExtensionsForClientBase (CS0122)");
 		}
 
+		[Theory]
+		[InlineData(true)]
+		[InlineData(false)]
+		public async Task ProtectedInternalNestedMemberSignature_ShouldFollowInternalsVisibleTo(
+			bool grantsInternalsVisibleTo)
+		{
+			MetadataReference external = CompileClientBaseAssembly(grantsInternalsVisibleTo);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForClientBase, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.ClientBase.g.cs");
+			if (grantsInternalsVisibleTo)
+			{
+				await That(result.Sources["Mock.ClientBase.g.cs"])
+					.Contains("ApplyOptions")
+					.Because("InternalsVisibleTo makes the internal half of `protected internal` visible");
+			}
+			else
+			{
+				await That(result.Sources["Mock.ClientBase.g.cs"])
+					.DoesNotContain("ApplyOptions")
+					.Because(
+						"the setup and verify surfaces would have to name `ClientBaseConfiguration`, which degrades to `protected` outside the declaring assembly (CS0122)");
+			}
+		}
+
+		[Fact]
+		public async Task AttributeWithInaccessibleTypeArgument_ShouldNotBeEmitted()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      internal class Secret { }
+
+			                                                      public class MyMarkerAttribute<T> : System.Attribute { }
+
+			                                                      public class ClientBase
+			                                                      {
+			                                                      	[MyMarkerAttribute<Secret>]
+			                                                      	public virtual void Send() { }
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences(CreateMockForClientBase, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.ClientBase.g.cs"])
+				.Contains("Send").And
+				.DoesNotContain("MyMarkerAttribute")
+				.Because(
+					"the attribute name is emitted verbatim, so an inaccessible type argument makes it unusable even though the attribute class itself is public");
+		}
+
 		[Fact]
 		public async Task PublicMembers_ShouldBeMockedAcrossAssemblyBoundary()
 		{
@@ -562,6 +616,7 @@ public sealed partial class MockTests
 			                                 {
 			                                 	protected ClientBase() { }
 			                                 	protected ClientBase(ClientBaseConfiguration configuration) { }
+			                                 	protected virtual void ApplyOptions(ClientBaseConfiguration configuration) { }
 			                                 	protected internal class ClientBaseConfiguration { }
 			                                 }
 			                                 """);
