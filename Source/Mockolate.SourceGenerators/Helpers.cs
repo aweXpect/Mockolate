@@ -122,15 +122,11 @@ internal static class Helpers
 		};
 
 	/// <summary>
-	///     Conservative visibility test for a type that the generator names verbatim in emitted code
-	///     (attribute names, constructor parameter types, member signatures). A type is accessible only
-	///     if every type in its containing chain, and every type it is composed of (array element,
-	///     pointed-at type, type argument at any nesting level), is either Public, or
-	///     Internal/ProtectedOrInternal with InternalsVisibleTo granted (or the same assembly).
-	///     Private/Protected/ProtectedAndInternal nested types, and ProtectedOrInternal across
-	///     assemblies without IVT, are treated as inaccessible: the <c>protected</c> half is only
-	///     reachable by deriving from the declaring type, which the surfaces naming the type
-	///     (e.g. <c>MockExtensionsForXXX</c>) do not do.
+	///     Conservative visibility test for a type the generator names verbatim (attribute names,
+	///     constructor parameter types, member signatures): every type in the containing chain and
+	///     every composed type (array element, pointed-at type, type argument) must be public, or
+	///     internal/protected internal with access granted. The <c>protected</c> half never counts,
+	///     because the surfaces naming the type do not derive from the mocked type.
 	/// </summary>
 	public static bool IsAccessibleFrom(ITypeSymbol type, IAssemblySymbol? sourceAssembly)
 	{
@@ -141,9 +137,8 @@ internal static class Helpers
 			case IPointerTypeSymbol pointer:
 				return IsAccessibleFrom(pointer.PointedAtType, sourceAssembly);
 			case INamedTypeSymbol named:
-				// Both the declaration and the type arguments are checked per nesting level: for
-				// `Outer<TArg>.Inner` the arguments sit on the containing type, so inspecting only
-				// `named.TypeArguments` would miss them.
+				// For `Outer<TArg>.Inner` the arguments sit on the containing type, so
+				// `named.TypeArguments` alone would miss them.
 				for (INamedTypeSymbol? t = named; t is not null; t = t.ContainingType)
 				{
 					if (!IsDeclarationAccessible(t) ||
@@ -171,13 +166,11 @@ internal static class Helpers
 	/// <summary>
 	///     True when every type named in <paramref name="member" />'s signature (return/member type,
 	///     parameter types, generic constraint types) is accessible per <see cref="IsAccessibleFrom" />.
-	/// </summary>
-	/// <remarks>
-	///     The mock restates those types verbatim on surfaces that do <b>not</b> derive from the mocked
-	///     type (<c>IMockSetupForXXX</c>, <c>IMockVerifyForXXX</c>, <c>MockExtensionsForXXX</c>), so a
-	///     <see langword="protected" /> nested type in a signature causes CS0122 there even though the
+	///     The mock restates them on surfaces that do <b>not</b> derive from the mocked type
+	///     (<c>IMockSetupForXXX</c>, <c>IMockVerifyForXXX</c>, <c>MockExtensionsForXXX</c>), so a
+	///     <see langword="protected" /> nested type causes CS0122 there even though the
 	///     <see langword="override" /> inside the mock class itself would compile.
-	/// </remarks>
+	/// </summary>
 	public static bool HasAccessibleSignature(ISymbol member, IAssemblySymbol? sourceAssembly)
 		=> member switch
 		{
@@ -333,10 +326,8 @@ internal static class Helpers
 	{
 		public EquatableArray<Attribute>? ToAttributeArray(IAssemblySymbol? sourceAssembly = null)
 		{
-			// The attribute name is emitted verbatim into the generated code (e.g.
-			// `[global::Azure.Core.CallerShouldAudit(...)]`), so an attribute class that is not visible
-			// to the generated mock assembly would cause CS0122. Drop it instead of producing
-			// uncompilable output.
+			// The attribute name is emitted verbatim, so an attribute class invisible to the mock's
+			// assembly would cause CS0122. Drop it instead of emitting uncompilable code.
 			Attribute[] consideredAttributes = attributes
 				.Where(x => x.AttributeClass is not null
 				            && !IsCompilerEmittedAttribute(x.AttributeClass)

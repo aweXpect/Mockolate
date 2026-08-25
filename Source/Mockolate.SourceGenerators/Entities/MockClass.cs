@@ -24,11 +24,9 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 					.Where(x => x.DeclaredAccessibility == Accessibility.Protected ||
 					            x.DeclaredAccessibility == Accessibility.ProtectedOrInternal ||
 					            x.DeclaredAccessibility == Accessibility.Public)
-					// A constructor parameter type is named verbatim in `MockExtensionsForXXX`, which does
-					// not derive from the mocked type: a type that is only reachable through inheritance
-					// (a `protected` nested type, or a `protected internal` one across assemblies) would
-					// cause CS0122 there and CS0051 on the generated `public` constructor. Such a
-					// constructor cannot be driven from the outside at all, so drop it entirely.
+					// Parameter types are named verbatim in `MockExtensionsForXXX`, which does not derive
+					// from the mocked type: a type reachable only through inheritance would cause CS0122
+					// there and CS0051 on the generated `public` constructor.
 					.Where(x => x.Parameters.All(p => Helpers.IsAccessibleFrom(p.Type, sourceAssembly)))
 					.Select(x => new Method(x, null, sourceAssembly)).ToArray());
 			if (namedTypeSymbol.DelegateInvokeMethod is not null)
