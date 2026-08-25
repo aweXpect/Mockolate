@@ -80,6 +80,18 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Wrap_HiddenGenericMethod_ShouldDelegateToDeclaringInterface()
+		{
+			MyChocolateCatalog myCatalog = new();
+			IChocolateCatalog wrappedCatalog = IChocolateCatalog.CreateMock().Wrapping(myCatalog);
+
+			_ = wrappedCatalog.Get<string>();
+			_ = ((IChocolateSource)wrappedCatalog).Get<string>();
+
+			await That(myCatalog.ReceivedCalls).IsEqualTo(["catalog", "source",]);
+		}
+
+		[Fact]
 		public async Task Wrap_Indexer_ShouldDelegateToWrappedInstance()
 		{
 			MyChocolateDispenser myDispenser = new();
@@ -169,6 +181,23 @@ public sealed partial class MockTests
 			}
 
 			public event ChocolateDispensedDelegate? ChocolateDispensed;
+		}
+
+		private class MyChocolateCatalog : IChocolateCatalog
+		{
+			public List<string> ReceivedCalls { get; } = [];
+
+			public IList<T> Get<T>() where T : notnull
+			{
+				ReceivedCalls.Add("catalog");
+				return [];
+			}
+
+			IEnumerable<T> IChocolateSource.Get<T>()
+			{
+				ReceivedCalls.Add("source");
+				return [];
+			}
 		}
 
 		public delegate void MyDelegate();
