@@ -794,6 +794,36 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task InitOnlyProperty_InClass_ShouldNotDelegateSetterToWrappedInstance()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyClass.CreateMock();
+			         }
+			     }
+
+			     public class MyClass
+			     {
+			     	public virtual int Items { get; init; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources["Mock.MyClass.g.cs"])
+			.Contains("base.Items = value;").And
+			.DoesNotContain("wraps.Items = value")
+			.Because("an init accessor cannot be forwarded to an already constructed instance");
+	}
+
+	[Fact]
 	public async Task HiddenIndexer_ShouldDelegateWrappingToDeclaringInterface()
 	{
 		GeneratorResult result = Generator

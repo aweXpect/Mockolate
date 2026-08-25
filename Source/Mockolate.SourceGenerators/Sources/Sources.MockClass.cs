@@ -2144,7 +2144,7 @@ internal static partial class Sources
 					}
 
 					sb.Append("\t\t\t\t{").AppendLine();
-					if (property is { IsStatic: false, } && property.Setter?.IsProtected != true)
+					if (property is { IsStatic: false, Setter: { IsProtected: false, IsInitOnly: false, }, })
 					{
 						sb.Append("\t\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType)
 							.Append(" wraps)").AppendLine();
