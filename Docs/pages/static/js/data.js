@@ -444,6 +444,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -520,7 +526,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -600,7 +607,8 @@ window.BENCHMARK_DATA = {
           290.4568015734355,
           310.2189816406795,
           318.59711437225343,
-          342.68439887364707
+          342.68439887364707,
+          348.572620010376
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -658,6 +666,7 @@ window.BENCHMARK_DATA = {
           1720,
           1720,
           1720,
+          1608,
           1608,
           1608,
           1608,
@@ -773,7 +782,8 @@ window.BENCHMARK_DATA = {
           39572.837357584634,
           71163.43162434896,
           71055.32189127603,
-          101212.6211313101
+          101212.6211313101,
+          97009.31855119977
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -856,6 +866,7 @@ window.BENCHMARK_DATA = {
           9185,
           9096,
           9086,
+          9096,
           9096,
           9096,
           9096
@@ -946,7 +957,8 @@ window.BENCHMARK_DATA = {
           3319.4469340006513,
           4181.216692097982,
           4547.079173787435,
-          5052.269893900553
+          5052.269893900553,
+          4853.613306681315
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1014,6 +1026,7 @@ window.BENCHMARK_DATA = {
           7928,
           7928,
           7928,
+          7896,
           7896,
           7896,
           7896,
@@ -1119,7 +1132,8 @@ window.BENCHMARK_DATA = {
           2955.717190806071,
           4303.449159894671,
           4708.6191204616,
-          5027.183563741049
+          5027.183563741049,
+          5032.545133737417
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1202,6 +1216,7 @@ window.BENCHMARK_DATA = {
           7076,
           6970,
           6964,
+          6970,
           6970,
           6970,
           6970
@@ -1292,7 +1307,8 @@ window.BENCHMARK_DATA = {
           345.77219860894337,
           407.81297063827515,
           405.14305904933383,
-          495.9117853982108
+          495.9117853982108,
+          459.81400667826335
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1304,6 +1320,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -1465,7 +1482,8 @@ window.BENCHMARK_DATA = {
           466.0357973098755,
           550.3974321365356,
           560.7288476308187,
-          518.219449488322
+          518.219449488322,
+          533.7285177230835
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1518,6 +1536,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040,
@@ -2008,6 +2027,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -2084,7 +2109,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -2164,7 +2190,8 @@ window.BENCHMARK_DATA = {
           312.0537154197693,
           292.4134663740794,
           265.86848834355675,
-          319.82862131412213
+          319.82862131412213,
+          294.59596083958945
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2222,6 +2249,7 @@ window.BENCHMARK_DATA = {
           1824,
           1824,
           1824,
+          1744,
           1744,
           1744,
           1744,
@@ -2337,7 +2365,8 @@ window.BENCHMARK_DATA = {
           16166.614379882812,
           16253.790067232572,
           12152.885689871651,
-          14215.22841389974
+          14215.22841389974,
+          15759.297345842633
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2407,6 +2436,7 @@ window.BENCHMARK_DATA = {
           12809,
           12809,
           13033,
+          12809,
           12809,
           12809,
           12809,
@@ -2510,7 +2540,8 @@ window.BENCHMARK_DATA = {
           5751.943305969238,
           5728.545158894857,
           4333.254476420085,
-          5471.087212626139
+          5471.087212626139,
+          5745.6646401541575
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2522,6 +2553,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -2683,7 +2715,8 @@ window.BENCHMARK_DATA = {
           218661.88527134486,
           219979.94549153646,
           104975.04886067708,
-          229300.2216389974
+          229300.2216389974,
+          216536.93997395833
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2768,6 +2801,7 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15587,
+          15628,
           15628
         ],
         "borderColor": "#4A6FA5",
@@ -2856,7 +2890,8 @@ window.BENCHMARK_DATA = {
           1514.6034681955973,
           1330.7500148500715,
           1029.5563982450044,
-          1362.547195287851
+          1362.547195287851,
+          1313.2279220308576
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -2868,6 +2903,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -3029,7 +3065,8 @@ window.BENCHMARK_DATA = {
           204.7455385684967,
           191.9738677910396,
           159.44273584683737,
-          179.3126258055369
+          179.3126258055369,
+          184.49100443522136
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -3082,6 +3119,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376,
@@ -3572,6 +3610,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -3648,7 +3692,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -3728,7 +3773,8 @@ window.BENCHMARK_DATA = {
           1015.3340075174967,
           1034.7902465820312,
           937.1089941660563,
-          1029.9036671320598
+          1029.9036671320598,
+          969.7964831034343
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -3786,6 +3832,7 @@ window.BENCHMARK_DATA = {
           3912,
           3912,
           3912,
+          3856,
           3856,
           3856,
           3856,
@@ -3901,7 +3948,8 @@ window.BENCHMARK_DATA = {
           168551.21875,
           216922.38505859376,
           169942.15290715144,
-          98132.56495768229
+          98132.56495768229,
+          169296.57185246394
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -3986,7 +4034,8 @@ window.BENCHMARK_DATA = {
           20732,
           20860,
           20732,
-          20873
+          20873,
+          20732
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4074,7 +4123,8 @@ window.BENCHMARK_DATA = {
           8856.791537693569,
           9242.34910176595,
           9341.865833536784,
-          9302.829701741537
+          9302.829701741537,
+          10009.447130475726
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4159,7 +4209,8 @@ window.BENCHMARK_DATA = {
           13088,
           13144,
           13088,
-          13144
+          13144,
+          13088
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4247,7 +4298,8 @@ window.BENCHMARK_DATA = {
           9866.465256754558,
           12386.21280110677,
           9909.2289255778,
-          7952.645236675556
+          7952.645236675556,
+          10327.259541829428
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4332,7 +4384,8 @@ window.BENCHMARK_DATA = {
           13954,
           13954,
           13954,
-          13948
+          13948,
+          13954
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4420,7 +4473,8 @@ window.BENCHMARK_DATA = {
           865.7857509340558,
           955.2351661046346,
           847.1065067927043,
-          969.3479086558024
+          969.3479086558024,
+          877.5847956793649
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4432,6 +4486,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -4963,6 +5018,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -5039,7 +5100,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -5119,7 +5181,8 @@ window.BENCHMARK_DATA = {
           2496.9152725764684,
           2691.02305170695,
           2428.1244702657063,
-          2645.2401580810547
+          2645.2401580810547,
+          2605.3088923136393
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5177,6 +5240,7 @@ window.BENCHMARK_DATA = {
           4992,
           4992,
           4992,
+          4936,
           4936,
           4936,
           4936,
@@ -5292,7 +5356,8 @@ window.BENCHMARK_DATA = {
           178662.40698242188,
           228337.1064371745,
           181527.487109375,
-          104823.29259314903
+          104823.29259314903,
+          180123.64482770648
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5377,7 +5442,8 @@ window.BENCHMARK_DATA = {
           29332,
           30610,
           29332,
-          30594
+          30594,
+          29332
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5465,7 +5531,8 @@ window.BENCHMARK_DATA = {
           20878.54806082589,
           22855.10729777018,
           22620.017809041343,
-          21949.996387736002
+          21949.996387736002,
+          24824.98596426157
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5550,7 +5617,8 @@ window.BENCHMARK_DATA = {
           26193,
           26249,
           26193,
-          26248
+          26248,
+          26193
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5638,7 +5706,8 @@ window.BENCHMARK_DATA = {
           21430.722493489582,
           24922.417787824357,
           20375.679306030273,
-          19209.44631253756
+          19209.44631253756,
+          22039.703859769383
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5723,7 +5792,8 @@ window.BENCHMARK_DATA = {
           33764,
           33764,
           33764,
-          33769
+          33769,
+          33764
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -5811,7 +5881,8 @@ window.BENCHMARK_DATA = {
           2060.0447316850937,
           2260.830199432373,
           2000.0285448710124,
-          2189.3829045613606
+          2189.3829045613606,
+          2193.3948356628416
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -5823,6 +5894,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -6354,6 +6426,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -6430,7 +6508,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -6510,7 +6589,8 @@ window.BENCHMARK_DATA = {
           321.3296387195587,
           344.1183240413666,
           370.36880534035816,
-          364.25747912724813
+          364.25747912724813,
+          369.76827801976884
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6568,6 +6648,7 @@ window.BENCHMARK_DATA = {
           2088,
           2088,
           2088,
+          1976,
           1976,
           1976,
           1976,
@@ -6683,7 +6764,8 @@ window.BENCHMARK_DATA = {
           79143.34095110212,
           181562.7138671875,
           132701.43731219953,
-          132427.03914969307
+          132427.03914969307,
+          136326.1462214543
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6768,7 +6850,8 @@ window.BENCHMARK_DATA = {
           14930,
           14926,
           14938,
-          14938
+          14938,
+          15086
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -6856,7 +6939,8 @@ window.BENCHMARK_DATA = {
           4452.7133712768555,
           5987.335515340169,
           5943.281125749861,
-          5682.556537083217
+          5682.556537083217,
+          6158.488579341343
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6941,7 +7025,8 @@ window.BENCHMARK_DATA = {
           9336,
           9336,
           9336,
-          9280
+          9280,
+          9336
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7029,7 +7114,8 @@ window.BENCHMARK_DATA = {
           3608.089454923357,
           6092.947483062744,
           5899.9782148088725,
-          5478.483062199184
+          5478.483062199184,
+          5880.237444364107
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7113,6 +7199,7 @@ window.BENCHMARK_DATA = {
           8257,
           8257,
           8245,
+          8244,
           8244,
           8244
         ],
@@ -7202,7 +7289,8 @@ window.BENCHMARK_DATA = {
           436.65418055852257,
           557.9394901820591,
           590.0493596394857,
-          528.8175379889352
+          528.8175379889352,
+          553.9979063034058
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7214,6 +7302,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -7375,7 +7464,8 @@ window.BENCHMARK_DATA = {
           423.6126940091451,
           484.2881603240967,
           533.8800001780193,
-          524.4320254007976
+          524.4320254007976,
+          517.2064080919538
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7428,6 +7518,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064,
@@ -7918,6 +8009,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -7994,7 +8091,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -8074,7 +8172,8 @@ window.BENCHMARK_DATA = {
           679.7366242090861,
           664.7969449996948,
           651.4455003738403,
-          631.5598805972508
+          631.5598805972508,
+          649.0999912534442
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8132,6 +8231,7 @@ window.BENCHMARK_DATA = {
           2304,
           2304,
           2304,
+          2192,
           2192,
           2192,
           2192,
@@ -8247,7 +8347,8 @@ window.BENCHMARK_DATA = {
           80828.00235689603,
           186154.34861653644,
           139840.88901367187,
-          134609.36031901042
+          134609.36031901042,
+          139593.94407435827
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8332,7 +8433,8 @@ window.BENCHMARK_DATA = {
           18907,
           18925,
           18924,
-          18925
+          18925,
+          19085
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8420,7 +8522,8 @@ window.BENCHMARK_DATA = {
           6434.489289347331,
           8912.18624979655,
           8873.800668569711,
-          8149.133056640625
+          8149.133056640625,
+          8828.622992379325
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8505,7 +8608,8 @@ window.BENCHMARK_DATA = {
           12360,
           12361,
           12361,
-          11800
+          11800,
+          12361
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -8593,7 +8697,8 @@ window.BENCHMARK_DATA = {
           6139.974256243025,
           9418.47786763509,
           9194.705534871418,
-          8503.657836914062
+          8503.657836914062,
+          8970.12873433431
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -8676,6 +8781,7 @@ window.BENCHMARK_DATA = {
           15786,
           15780,
           15780,
+          15786,
           15786,
           15786,
           15786
@@ -8766,7 +8872,8 @@ window.BENCHMARK_DATA = {
           878.1426787376404,
           1134.7371954236712,
           1166.7499168940953,
-          1089.6564113616944
+          1089.6564113616944,
+          1107.1872333526612
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -8778,6 +8885,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -8939,7 +9047,8 @@ window.BENCHMARK_DATA = {
           1390.9620992115565,
           1368.7026707575872,
           1469.952951558431,
-          1418.4453744252523
+          1418.4453744252523,
+          1475.5742298762004
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8992,6 +9101,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816,
@@ -9482,6 +9592,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -9558,7 +9674,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -9638,7 +9755,8 @@ window.BENCHMARK_DATA = {
           561.3609050750732,
           518.0762089320591,
           553.7894126347134,
-          618.21612033844
+          618.21612033844,
+          559.7041901906331
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -9696,6 +9814,7 @@ window.BENCHMARK_DATA = {
           2528,
           2528,
           2528,
+          2472,
           2472,
           2472,
           2472,
@@ -9811,7 +9930,8 @@ window.BENCHMARK_DATA = {
           11680.181171123799,
           11879.97420654297,
           10685.774487304687,
-          11739.992736816406
+          11739.992736816406,
+          10387.847617013114
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9896,7 +10016,8 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10641,
-          10513
+          10513,
+          10641
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9984,7 +10105,8 @@ window.BENCHMARK_DATA = {
           7765.925448826381,
           7627.900148119245,
           7453.344776698521,
-          7695.6866984049475
+          7695.6866984049475,
+          7066.98993741549
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9996,6 +10118,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -10157,7 +10280,8 @@ window.BENCHMARK_DATA = {
           8339.253876749675,
           8525.395179161658,
           7918.063324519566,
-          8620.856666056316
+          8620.856666056316,
+          7350.765085347493
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -10238,6 +10362,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11518,
+          11508,
           11508,
           11508,
           11508,
@@ -10330,7 +10455,8 @@ window.BENCHMARK_DATA = {
           532.8568995793661,
           462.0319378035409,
           448.2792820612589,
-          510.5367065429688
+          510.5367065429688,
+          474.147380956014
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -10342,6 +10468,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -10503,7 +10630,8 @@ window.BENCHMARK_DATA = {
           456.5923581804548,
           466.23259254864286,
           511.3964429855347,
-          494.46119853428434
+          494.46119853428434,
+          473.7403844319857
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -10556,6 +10684,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680,
@@ -11046,6 +11175,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -11122,7 +11257,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -11202,7 +11338,8 @@ window.BENCHMARK_DATA = {
           1014.4355490366618,
           1057.9938893999372,
           1071.6117051442463,
-          1040.0801462809245
+          1040.0801462809245,
+          1020.2984457749587
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -11260,6 +11397,7 @@ window.BENCHMARK_DATA = {
           3032,
           3032,
           3032,
+          2976,
           2976,
           2976,
           2976,
@@ -11375,7 +11513,8 @@ window.BENCHMARK_DATA = {
           18617.454037006086,
           18529.123143122746,
           17198.127016339982,
-          18532.692833533652
+          18532.692833533652,
+          16613.430145263672
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -11460,7 +11599,8 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           18721,
-          17441
+          17441,
+          18721
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -11548,7 +11688,8 @@ window.BENCHMARK_DATA = {
           18483.71137084961,
           17634.558199564617,
           17548.57046101888,
-          17753.70004976713
+          17753.70004976713,
+          15588.200398036412
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -11560,6 +11701,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -11721,7 +11863,8 @@ window.BENCHMARK_DATA = {
           19954.783700125558,
           20132.54195658366,
           18887.6875386556,
-          19677.684509277344
+          19677.684509277344,
+          16986.990836588542
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -11802,6 +11945,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31543,
+          31546,
           31546,
           31546,
           31546,
@@ -11894,7 +12038,8 @@ window.BENCHMARK_DATA = {
           1139.4965359824043,
           1172.9225410461427,
           1163.610905783517,
-          1204.352461496989
+          1204.352461496989,
+          1074.080023574829
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -11906,6 +12051,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -12067,7 +12213,8 @@ window.BENCHMARK_DATA = {
           1575.050504811605,
           1620.0986804962158,
           1726.4119378498622,
-          1614.702313296
+          1614.702313296,
+          1605.6566875457763
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -12120,6 +12267,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032,
@@ -12610,6 +12758,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Tue Aug 25 16:54:34 2026 \u002B0200",
         "message": "fix: delegate wrapped calls of hidden interface members to the declaring interface (#847)"
+      },
+      {
+        "sha": "3f0fbc9584b1d1810de384d04857ca7e895c83fd",
+        "author": "dependabot[bot]",
+        "date": "Tue Aug 25 17:01:23 2026 \u002B0200",
+        "message": "chore: Bump Microsoft.NET.Test.Sdk from 18.8.1 to 18.9.0 (#840)"
       }
     ],
     "labels": [
@@ -12686,7 +12840,8 @@ window.BENCHMARK_DATA = {
       "0bc6652a",
       "a8c3f333",
       "84441518",
-      "72c5ed1a"
+      "72c5ed1a",
+      "3f0fbc95"
     ],
     "datasets": [
       {
@@ -12766,7 +12921,8 @@ window.BENCHMARK_DATA = {
           18.74410541256269,
           18.379720980922382,
           19.021953560908635,
-          14.428516964499767
+          14.428516964499767,
+          23.052815727392833
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -12824,6 +12980,7 @@ window.BENCHMARK_DATA = {
           440,
           440,
           440,
+          160,
           160,
           160,
           160,
@@ -12939,7 +13096,8 @@ window.BENCHMARK_DATA = {
           291.5635019938151,
           282.2538327217102,
           300.000438785553,
-          232.29536749521893
+          232.29536749521893,
+          376.2524485270182
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -12951,6 +13109,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -13112,7 +13271,8 @@ window.BENCHMARK_DATA = {
           35.71470552285512,
           38.17069026827812,
           37.81580723707493,
-          30.46178079502923
+          30.46178079502923,
+          42.89573227933475
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -13165,6 +13325,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200,
@@ -13285,7 +13446,8 @@ window.BENCHMARK_DATA = {
           1478.6162643432617,
           1404.9086443583171,
           1349.5352005277362,
-          1071.812982559204
+          1071.812982559204,
+          1425.707113129752
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -13297,6 +13459,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -13458,7 +13621,8 @@ window.BENCHMARK_DATA = {
           2043.5399881998699,
           1903.7468411127727,
           1942.0643037160237,
-          1569.352523122515
+          1569.352523122515,
+          2058.6200085957844
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -13470,6 +13634,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -13631,7 +13796,8 @@ window.BENCHMARK_DATA = {
           1788.781857808431,
           1862.4549728393554,
           2007.0052625020346,
-          1570.1310521443686
+          1570.1310521443686,
+          1809.4831790924072
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -13716,7 +13882,8 @@ window.BENCHMARK_DATA = {
           2763,
           2763,
           2763,
-          2763
+          2763,
+          2772
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
