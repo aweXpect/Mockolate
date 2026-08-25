@@ -310,6 +310,7 @@ internal class Class : IEquatable<Class>
 		IAssemblySymbol? sourceAssembly)
 		=> member is IPropertySymbol { IsAbstract: false, OverriddenProperty: { } slot, } &&
 		   Helpers.IsOverridableFrom(slot, sourceAssembly) &&
+		   Helpers.HasAccessibleSignature(slot, sourceAssembly) &&
 		   HasUnreachableAccessor(slot, sourceAssembly)
 			? slot
 			: null;

@@ -603,6 +603,44 @@ public sealed partial class MockTests
 					"an `abstract override` re-declaration continues the slot without filling it, so the member is still the mock's obligation");
 		}
 
+		[Fact]
+		public async Task PartlyReachableSlot_WithInaccessibleSignatureType_ShouldSkipMember()
+		{
+			MetadataReference external = ExternalAssembly.Compile("""
+			                                                      namespace Ext;
+
+			                                                      public abstract class Base
+			                                                      {
+			                                                      	protected abstract Configuration Current { get; private protected set; }
+			                                                      	protected class Configuration { }
+			                                                      }
+
+			                                                      public class Derived : Base
+			                                                      {
+			                                                      	protected override Configuration Current { get; private protected set; }
+			                                                      }
+			                                                      """);
+
+			GeneratorResult result = Generator.RunWithReferences("""
+			                                                     using Mockolate;
+
+			                                                     namespace MyCode;
+
+			                                                     public class Program
+			                                                     {
+			                                                         public static void Main(string[] args) => _ = Ext.Derived.CreateMock();
+			                                                     }
+			                                                     """, [external,]);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources).ContainsKey("Mock.Derived.g.cs");
+			await That(result.Sources["Mock.Derived.g.cs"])
+				.DoesNotContain("Configuration").And
+				.DoesNotContain("Current")
+				.Because(
+					"the reachable getter could be restated in the mock class, but the setup and verify surfaces would have to name `Configuration`, which is only reachable through inheritance (CS0122)");
+		}
+
 		private static MetadataReference CompileClientBaseAssembly(bool grantsInternalsVisibleTo)
 		{
 			string internalsVisibleTo = grantsInternalsVisibleTo
