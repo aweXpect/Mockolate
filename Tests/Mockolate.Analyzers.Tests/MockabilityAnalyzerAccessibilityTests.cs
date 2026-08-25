@@ -186,6 +186,31 @@ public class MockabilityAnalyzerAccessibilityTests
 			                               """, internalsVisibleToTestProject: true));
 
 	[Theory]
+	[InlineData("protected abstract void MyMember(MyConfiguration configuration);",
+		"protected override void MyMember(MyConfiguration configuration) { }")]
+	[InlineData("protected abstract MyConfiguration MyMember { get; set; }",
+		"protected override MyConfiguration MyMember { get; set; }")]
+	public async Task WhenAbstractMemberWithInaccessibleSignatureIsAlreadyOverridden_ShouldNotBeFlagged(
+		string baseMember, string derivedOverride) => await Verifier
+		.VerifyAnalyzerWithReferencedProjectAsync(
+			MockCreation,
+			$$"""
+			  namespace Ext
+			  {
+			  	public abstract class MyBaseType
+			  	{
+			  		{{baseMember}}
+			  		protected internal class MyConfiguration { }
+			  	}
+
+			  	public class MyExternalType : MyBaseType
+			  	{
+			  		{{derivedOverride}}
+			  	}
+			  }
+			  """);
+
+	[Theory]
 	[InlineData("private protected abstract void MyMember();", "Ext.MyExternalType.MyMember()")]
 	[InlineData("private protected abstract int MyMember { get; set; }", "Ext.MyExternalType.MyMember.get")]
 	[InlineData("private protected abstract event System.EventHandler MyMember;", "Ext.MyExternalType.MyMember")]

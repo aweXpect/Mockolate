@@ -588,15 +588,9 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 
 	/// <summary>
 	///     The first type named in <paramref name="member" />'s signature that the mock cannot restate,
-	///     or <see langword="null" /> when the whole signature is reachable.
+	///     or <see langword="null" /> when the whole signature is reachable. Mirrors
+	///     <c>Helpers.HasAccessibleSignature</c> in the source generator; keep both in sync.
 	/// </summary>
-	/// <remarks>
-	///     Must stay in sync with <c>Helpers.HasAccessibleSignature</c> and
-	///     <c>Helpers.IsAccessibleFrom</c> in <c>Source/Mockolate.SourceGenerators/Helpers.cs</c>. The
-	///     generator refuses to emit a mock whose required member names a type it cannot reference from
-	///     <c>IMockSetupForXXX</c> / <c>IMockVerifyForXXX</c> / <c>MockExtensionsForXXX</c>, none of
-	///     which derive from the mocked type.
-	/// </remarks>
 	private static ITypeSymbol? FindInaccessibleSignatureType(ISymbol member, IAssemblySymbol sourceAssembly)
 	{
 		switch (member)
@@ -622,11 +616,10 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 	}
 
 	/// <summary>
-	///     Mirror of <c>Helpers.IsAccessibleFrom</c>: a type is reachable only if every type in its
-	///     containing chain, and every type it is composed of, is either public or internal with access
-	///     granted. The <see langword="protected" /> half of <c>protected</c> /
-	///     <c>protected internal</c> does not count, because the surfaces naming the type do not derive
-	///     from the mocked type.
+	///     Mirror of <c>Helpers.IsAccessibleFrom</c>: every type in the containing chain and every
+	///     composed type must be public, or internal/protected internal with access granted. The
+	///     <see langword="protected" /> half never counts, because the surfaces naming the type do not
+	///     derive from the mocked type.
 	/// </summary>
 	private static bool IsTypeAccessibleFrom(ITypeSymbol type, IAssemblySymbol sourceAssembly)
 	{
@@ -657,7 +650,7 @@ public sealed class MockabilityAnalyzer : DiagnosticAnalyzer
 				Accessibility.Public => true,
 				Accessibility.Internal or Accessibility.ProtectedOrInternal =>
 					SymbolEqualityComparer.Default.Equals(candidate.ContainingAssembly, sourceAssembly) ||
-					candidate.ContainingAssembly.GivesAccessTo(sourceAssembly),
+					candidate.ContainingAssembly?.GivesAccessTo(sourceAssembly) == true,
 				_ => false,
 			};
 	}

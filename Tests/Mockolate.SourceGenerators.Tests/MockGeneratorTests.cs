@@ -880,6 +880,51 @@ public partial class MockGeneratorTests
 			.Because("the member must be implemented, but the mock cannot restate its signature");
 	}
 
+	[Theory]
+	[InlineData("protected abstract void Consume(Configuration configuration);",
+		"protected override void Consume(Configuration configuration) { }")]
+	[InlineData("protected abstract Configuration Current { get; set; }",
+		"protected override Configuration Current { get; set; }")]
+	[InlineData("protected abstract event Handler Changed;",
+		"protected override event Handler Changed; protected void Fire() => Changed?.Invoke();")]
+	public async Task WhenAbstractMemberWithInaccessibleSignatureIsAlreadyOverridden_ShouldGenerateMock(
+		string baseMember, string derivedOverride)
+	{
+		GeneratorResult result = Generator
+			.Run($$"""
+			       using Mockolate;
+
+			       namespace MyCode;
+
+			       public class Program
+			       {
+			           public static void Main(string[] args)
+			           {
+			       		_ = Derived.CreateMock();
+			           }
+			       }
+
+			       public abstract class Base
+			       {
+			           {{baseMember}}
+			           protected class Configuration { }
+			           protected delegate void Handler();
+			       }
+
+			       public class Derived : Base
+			       {
+			           {{derivedOverride}}
+			       }
+			       """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.Derived.g.cs")
+			.Because("`Derived` already fills the slot, so restating the signature is not the mock's obligation");
+		await That(result.Sources["Mock.Derived.g.cs"])
+			.DoesNotContain("Configuration").And
+			.DoesNotContain("Handler");
+	}
+
 	[Fact]
 	public async Task WhenConstructorsDifferOnlyByNullableValueType_ShouldEmitBothTypedOverloads()
 	{

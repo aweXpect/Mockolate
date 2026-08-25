@@ -193,8 +193,8 @@ internal class Class : IEquatable<Class>
 
 			if (IsInterface || member.IsAbstract)
 			{
-				// An abstract member is the mock's obligation, so it is kept even when it cannot be
-				// restated: `ComputeHasInaccessibleRequiredMember` then rejects the whole type.
+				// An abstract member is kept even when it cannot be restated;
+				// `ComputeHasInaccessibleRequiredMember` then rejects the whole type.
 				return true;
 			}
 
@@ -284,7 +284,8 @@ internal class Class : IEquatable<Class>
 	/// <summary>
 	///     True when <paramref name="member" /> fills a base slot (by <see langword="override" /> or by
 	///     explicit interface implementation) that the mock must leave alone entirely, because the base
-	///     declaration or one of its accessors is invisible to <paramref name="sourceAssembly" />.
+	///     declaration, one of its accessors, or a type in its signature is invisible to
+	///     <paramref name="sourceAssembly" />.
 	/// </summary>
 	private static bool FillsInaccessibleBaseSlot(ISymbol member, IAssemblySymbol? sourceAssembly)
 	{
@@ -363,6 +364,7 @@ internal class Class : IEquatable<Class>
 
 	private static bool IsSlotReachable(ISymbol slot, IAssemblySymbol? sourceAssembly)
 		=> Helpers.IsOverridableFrom(slot, sourceAssembly) &&
+		   Helpers.HasAccessibleSignature(slot, sourceAssembly) &&
 		   (slot is not IPropertySymbol property || !HasUnreachableAccessor(property, sourceAssembly));
 
 	private static bool HasUnreachableAccessor(IPropertySymbol property, IAssemblySymbol? sourceAssembly)
