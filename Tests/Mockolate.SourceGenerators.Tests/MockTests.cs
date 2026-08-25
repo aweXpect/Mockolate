@@ -471,6 +471,174 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task HiddenGenericMethod_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	IEnumerable<T> Get<T>() where T : notnull;
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<T> Get<T>() where T : notnull;
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wrappedResult = wraps.Get<T>();
+			          """).IgnoringNewlineStyle()
+			.Because(
+				"the explicit implementation of the hidden member must delegate to the declaring interface, not to the hiding member");
+	}
+
+	[Fact]
+	public async Task HiddenGenericMethod_WithAdditionalConstraints_ShouldNotDelegateToHidingMember()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	IEnumerable<T> Get<T>();
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<T> Get<T>() where T : class, new();
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0452: the hiding member requires a reference type, the hidden member does not");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wrappedResult = wraps.Get<T>();
+			          """).IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task HiddenGenericMethod_WithNarrowedConstraints_ShouldNotDelegateToHidingMember()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	IEnumerable<T> Get<T>() where T : notnull;
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IEnumerable<T> Get<T>() where T : struct;
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0453: the hiding member requires a non-nullable value type, the hidden member does not");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wrappedResult = wraps.Get<T>();
+			          """).IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task HiddenGenericMethod_InDeepHierarchy_ShouldNotDelegateToHidingMember()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface IGrandParent
+			     {
+			     	T Get<T>(int id) where T : notnull;
+			     }
+
+			     public interface ITestParent : IGrandParent
+			     {
+			     	new IEnumerable<T> Get<T>(int id) where T : notnull;
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<T> Get<T>(int id) where T : notnull;
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0266: each hidden member has its own return type");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wrappedResult = wraps.Get<T>(id);
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.IGrandParent wraps)
+			          				{
+			          					wrappedResult = wraps.Get<T>(id);
+			          """).IgnoringNewlineStyle()
+			.Because("every level of the hierarchy must delegate to its own declaring interface");
+	}
+
+	[Fact]
 	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
 	{
 		GeneratorResult result = Generator

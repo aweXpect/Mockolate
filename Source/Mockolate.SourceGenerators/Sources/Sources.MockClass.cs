@@ -2332,6 +2332,10 @@ internal static partial class Sources
 		string wpc = Helpers.GetUniqueLocalVariableName("wpc", method.Parameters);
 		string wraps = Helpers.GetUniqueLocalVariableName("wraps", method.Parameters);
 		bool supportsWrapping = !explicitInterfaceImplementation && method is { IsStatic: false, IsProtected: false, };
+		// A method that hides a base member (`new`) is emitted as an explicit interface implementation.
+		// The wrapped instance must be cast to the declaring interface, otherwise the delegated call
+		// binds to the hiding member instead: wrong return type (CS0266) or missing constraints (CS0452/CS0453).
+		string wrapsType = method.ExplicitImplementation ?? className;
 		bool isAbstractOrInterface = isClassInterface || method.IsAbstract;
 
 		StringBuilder sb2 = new();
@@ -2452,7 +2456,7 @@ internal static partial class Sources
 
 		if (supportsWrapping)
 		{
-			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(className)
+			sb.Append("\t\t\t\tif (").Append(mockRegistry).Append(".Wraps is ").Append(wrapsType)
 				.Append(' ').Append(wraps).Append(')').AppendLine();
 			sb.Append("\t\t\t\t{").AppendLine();
 			if (method.ReturnType != Type.Void)
