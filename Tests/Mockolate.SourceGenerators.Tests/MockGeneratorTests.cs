@@ -582,6 +582,134 @@ public partial class MockGeneratorTests
 	}
 
 	[Fact]
+	public async Task WhenConstructorParameterTypeIsProtectedInternalNestedType_ShouldEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock(new MyService.Configuration());
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected MyService(Configuration configuration) { }
+			         protected internal class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.Contains("CreateMock(global::MyCode.MyService.Configuration configuration)")
+			.IgnoringNewlineStyle()
+			.Because("the internal half of `protected internal` is visible within the declaring assembly");
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterTypeIsProtectedNestedType_ShouldNotEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService() { }
+			         protected MyService(Configuration configuration) { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.Contains("public MyService(global::Mockolate.MockRegistry mockRegistry)").IgnoringNewlineStyle().And
+			.DoesNotContain("Configuration")
+			.Because(
+				"a protected nested type is only reachable through inheritance, so naming it on the generated public constructor (CS0051) or in MockExtensionsForMyService (CS0122) would not compile");
+	}
+
+	[Fact]
+	public async Task WhenConstructorParameterTypeIsProtectedNestedTypeArgument_ShouldNotEmitConstructor()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         public MyService() { }
+			         protected MyService(List<Configuration> configurations) { }
+			         protected MyService(Configuration[] configurations) { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources).ContainsKey("Mock.MyService.g.cs");
+		await That(result.Sources["Mock.MyService.g.cs"])
+			.DoesNotContain("Configuration")
+			.Because("an inaccessible type is equally unusable when composed into an array or a type argument");
+	}
+
+	[Fact]
+	public async Task WhenOnlyConstructorHasProtectedNestedParameterType_ShouldNotGenerateMock()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyService.CreateMock();
+			         }
+			     }
+
+			     public class MyService
+			     {
+			         protected MyService(Configuration configuration) { }
+			         protected class Configuration { }
+			     }
+			     """);
+
+		await That(result.Sources).DoesNotContainKey("Mock.MyService.g.cs")
+			.Because("no constructor remains that the generated mock could invoke");
+	}
+
+	[Fact]
 	public async Task WhenConstructorsDifferOnlyByNullableValueType_ShouldEmitBothTypedOverloads()
 	{
 		GeneratorResult result = Generator

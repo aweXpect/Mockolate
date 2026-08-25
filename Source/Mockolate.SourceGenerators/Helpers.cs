@@ -121,6 +121,50 @@ internal static class Helpers
 			_ => "private",
 		};
 
+	/// <summary>
+	///     Conservative visibility test for a type that the generator names verbatim in emitted code
+	///     (attribute names, constructor parameter types). A type is accessible only if its whole
+	///     containing chain, and every type it is composed of (array element, type argument), is
+	///     either Public, or Internal/ProtectedOrInternal with InternalsVisibleTo granted (or the same
+	///     assembly). Private/Protected/ProtectedAndInternal nested types, and ProtectedOrInternal
+	///     across assemblies without IVT, are treated as inaccessible: the <c>protected</c> half is
+	///     only reachable by deriving from the declaring type, which the surfaces naming the type
+	///     (e.g. <c>MockExtensionsForXXX</c>) do not do.
+	/// </summary>
+	public static bool IsAccessibleFrom(ITypeSymbol type, IAssemblySymbol? sourceAssembly)
+	{
+		switch (type)
+		{
+			case IArrayTypeSymbol array:
+				return IsAccessibleFrom(array.ElementType, sourceAssembly);
+			case IPointerTypeSymbol pointer:
+				return IsAccessibleFrom(pointer.PointedAtType, sourceAssembly);
+			case INamedTypeSymbol named:
+				for (INamedTypeSymbol? t = named; t is not null; t = t.ContainingType)
+				{
+					switch (t.DeclaredAccessibility)
+					{
+						case Accessibility.Public:
+							continue;
+						case Accessibility.Internal:
+						case Accessibility.ProtectedOrInternal:
+							if (sourceAssembly is null || HasInternalAccess(t.ContainingAssembly, sourceAssembly))
+							{
+								continue;
+							}
+
+							return false;
+						default:
+							return false;
+					}
+				}
+
+				return named.TypeArguments.All(argument => IsAccessibleFrom(argument, sourceAssembly));
+			default:
+				return true;
+		}
+	}
+
 	private static bool HasInternalAccess(IAssemblySymbol? containingAssembly, IAssemblySymbol? sourceAssembly)
 	{
 		if (sourceAssembly is null || containingAssembly is null)
@@ -263,6 +307,10 @@ internal static class Helpers
 	{
 		public EquatableArray<Attribute>? ToAttributeArray(IAssemblySymbol? sourceAssembly = null)
 		{
+			// The attribute name is emitted verbatim into the generated code (e.g.
+			// `[global::Azure.Core.CallerShouldAudit(...)]`), so an attribute class that is not visible
+			// to the generated mock assembly would cause CS0122. Drop it instead of producing
+			// uncompilable output.
 			Attribute[] consideredAttributes = attributes
 				.Where(x => x.AttributeClass is not null
 				            && !IsCompilerEmittedAttribute(x.AttributeClass)
@@ -291,43 +339,6 @@ internal static class Helpers
 				return attribute.Name is "NullableContextAttribute" or "NullableAttribute"
 					or "AsyncStateMachineAttribute" or "IteratorStateMachineAttribute"
 					or "AsyncIteratorStateMachineAttribute";
-			}
-
-			// The attribute name is emitted verbatim into the generated code (e.g.
-			// `[global::Azure.Core.CallerShouldAudit(...)]`). If the attribute class — or any of its
-			// containing types — is not visible to the generated mock assembly, referencing it causes
-			// CS0122. Drop the attribute instead of producing uncompilable output.
-			//
-			// Conservative rule: a type is accessible only if its whole containing chain is either
-			// Public, or Internal/ProtectedOrInternal with InternalsVisibleTo granted (or the
-			// same assembly). Private/Protected/ProtectedAndInternal nested types and
-			// ProtectedOrInternal across assemblies without IVT are treated as inaccessible — the
-			// `protected` half would require knowing the derivation relationship to the declaring
-			// type, which we don't verify here.
-			static bool IsAccessibleFrom(INamedTypeSymbol attribute, IAssemblySymbol? sourceAssembly)
-			{
-				for (INamedTypeSymbol? t = attribute; t is not null; t = t.ContainingType)
-				{
-					switch (t.DeclaredAccessibility)
-					{
-						case Accessibility.Public:
-							continue;
-						case Accessibility.Internal:
-						case Accessibility.ProtectedOrInternal:
-							if (sourceAssembly is null ||
-							    SymbolEqualityComparer.Default.Equals(t.ContainingAssembly, sourceAssembly) ||
-							    t.ContainingAssembly.GivesAccessTo(sourceAssembly))
-							{
-								continue;
-							}
-
-							return false;
-						default:
-							return false;
-					}
-				}
-
-				return true;
 			}
 		}
 	}
