@@ -1102,11 +1102,21 @@ public sealed partial class MockTests
 			          					wraps.Changed += value;
 			          """).IgnoringNewlineStyle().And
 			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestLeft wraps)
+			          				{
+			          					wraps.Changed -= value;
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestRight wraps)
+			          				{
+			          					wraps.Changed += value;
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
 			          				if (this.MockRegistry.Wraps is global::MyCode.ITestRight wraps)
 			          				{
 			          					wraps.Changed -= value;
 			          """).IgnoringNewlineStyle()
-			.Because("each sibling event must subscribe on its own declaring interface");
+			.Because("each sibling event must subscribe and unsubscribe on its own declaring interface");
 	}
 
 	[Fact]

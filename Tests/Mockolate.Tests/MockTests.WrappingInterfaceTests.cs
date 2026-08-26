@@ -243,6 +243,27 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Wrap_SiblingInterfaceEvent_ShouldUnsubscribeOnDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			int trayInvocations = 0;
+			int boxInvocations = 0;
+			EventHandler trayHandler = (_, _) => trayInvocations++;
+			EventHandler boxHandler = (_, _) => boxInvocations++;
+			((IChocolateTray)wrappedGiftSet).Refilled += trayHandler;
+			((IChocolateBox)wrappedGiftSet).Refilled += boxHandler;
+
+			((IChocolateTray)wrappedGiftSet).Refilled -= trayHandler;
+			myGiftSet.RaiseTrayRefilled();
+			myGiftSet.RaiseBoxRefilled();
+
+			await That(trayInvocations).IsEqualTo(0);
+			await That(boxInvocations).IsEqualTo(1);
+		}
+
+		[Fact]
 		public async Task Wrap_SiblingInterfaceIndexer_ShouldDelegateGetterToDeclaringInterface()
 		{
 			MyChocolateGiftSet myGiftSet = new();
