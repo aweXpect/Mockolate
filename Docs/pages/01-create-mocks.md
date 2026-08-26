@@ -141,8 +141,9 @@ wrappedDispenser.Mock.Verify.Dispense(It.Is("Dark"), It.Is(5)).Once();
 
 - Both interface and class types can be wrapped.
 - All public calls are forwarded to the wrapped instance.
-- Members that hide a base member with `new` are forwarded to the interface that declares them, so each
-  interface view of the mock reaches the matching member on the wrapped instance.
+- Interface members are forwarded through the interface that declares them, so each interface view of the mock
+  reaches the matching member on the wrapped instance. This also covers members that hide a base member with
+  `new` and same-named members declared by several base interfaces.
 - You can still set up custom behavior that overrides the wrapped instance's behavior.
 - Protected members are not forwarded to the wrapped instance; the base class implementation is used instead.
 - Init-only properties are not forwarded to the wrapped instance, since it is already constructed.

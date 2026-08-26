@@ -1594,10 +1594,11 @@ internal static partial class Sources
 		sb.AppendLine("\t\t{");
 		bool supportsWrapping = @event is { IsStatic: false, IsProtected: false, } &&
 		                        !explicitInterfaceImplementation;
-		// An event that hides a base member (`new`) is emitted as an explicit interface implementation.
-		// The wrapped instance must be cast to the declaring interface, otherwise the subscription
-		// binds to the hiding member, whose delegate type differs from the one being implemented.
-		string wrapsType = @event.ExplicitImplementation ?? className;
+		// Interface members are forwarded via their declaring interface: an explicit implementation (hidden
+		// via `new`, or a name collision between sibling interfaces) has a different delegate type than the
+		// one reachable through the mocked interface, and an implicit member declared by several sibling
+		// interfaces is ambiguous on the mocked interface (CS0229).
+		string wrapsType = isClassInterface ? @event.ContainingType : className;
 		bool supportsBaseForwarding = supportsWrapping && !isClassInterface && @event.UseOverride && !@event.IsAbstract;
 		if (supportsWrapping)
 		{
@@ -1673,10 +1674,11 @@ internal static partial class Sources
 #pragma warning restore S107
 	{
 		string mockRegistry = property.IsStatic ? "MockRegistryProvider.Value" : $"this.{mockRegistryName}";
-		// A property that hides a base member (`new`) is emitted as an explicit interface implementation.
-		// The wrapped instance must be cast to the declaring interface, otherwise the delegated access
-		// binds to the hiding member instead: wrong property type (CS0266).
-		string wrapsType = property.ExplicitImplementation ?? className;
+		// Interface members are forwarded via their declaring interface: an explicit implementation (hidden
+		// via `new`, or a name collision between sibling interfaces) has a different property type than the
+		// one reachable through the mocked interface (CS0266), and an implicit member declared by several
+		// sibling interfaces is ambiguous on the mocked interface (CS0229/CS0121).
+		string wrapsType = isClassInterface ? property.ContainingType : className;
 		bool useFastForProperty = useFastBuffers && !property.IsIndexer && IsFastBufferEligibleProperty(property);
 		bool useFastForIndexer = useFastBuffers && property.IsIndexer && IsFastBufferEligibleIndexer(property);
 		string indexerGetIdRef = property.IsIndexer
@@ -2340,10 +2342,11 @@ internal static partial class Sources
 		string wpc = Helpers.GetUniqueLocalVariableName("wpc", method.Parameters);
 		string wraps = Helpers.GetUniqueLocalVariableName("wraps", method.Parameters);
 		bool supportsWrapping = !explicitInterfaceImplementation && method is { IsStatic: false, IsProtected: false, };
-		// A method that hides a base member (`new`) is emitted as an explicit interface implementation.
-		// The wrapped instance must be cast to the declaring interface, otherwise the delegated call
-		// binds to the hiding member instead: wrong return type (CS0266) or missing constraints (CS0452/CS0453).
-		string wrapsType = method.ExplicitImplementation ?? className;
+		// Interface members are forwarded via their declaring interface: an explicit implementation (hidden
+		// via `new`, or a name collision between sibling interfaces) has a different signature than the one
+		// reachable through the mocked interface, and an implicit member declared by several sibling
+		// interfaces is ambiguous on the mocked interface (CS0121).
+		string wrapsType = isClassInterface ? method.ContainingType : className;
 		bool isAbstractOrInterface = isClassInterface || method.IsAbstract;
 
 		StringBuilder sb2 = new();

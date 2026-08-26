@@ -735,7 +735,7 @@ public sealed partial class MockTests
 					          			}
 					          			try
 					          			{
-					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyServiceBase1 wraps)
 					          				{
 					          					wrappedResult = wraps.MyBaseMethod1(value);
 					          					hasWrappedResult = true;
@@ -774,7 +774,7 @@ public sealed partial class MockTests
 					          			}
 					          			try
 					          			{
-					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyServiceBase2 wraps)
 					          				{
 					          					wrappedResult = wraps.MyBaseMethod2(value);
 					          					hasWrappedResult = true;
@@ -813,7 +813,7 @@ public sealed partial class MockTests
 					          			}
 					          			try
 					          			{
-					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyServiceBase3 wraps)
 					          				{
 					          					wrappedResult = wraps.MyBaseMethod3(value);
 					          					hasWrappedResult = true;
