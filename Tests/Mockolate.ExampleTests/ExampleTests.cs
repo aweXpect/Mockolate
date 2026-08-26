@@ -277,20 +277,20 @@ public class ExampleTests
 		IUserCache sut = IUserCache.CreateMock().Wrapping(realCache);
 
 		sut.Users = [alice,];
-		((IReadOnlyUserCache)sut).Users = [bob,];
+		((IUserCacheBase)sut).Users = [bob,];
 
 		// Each interface sees its own member on the wrapped instance.
 		await That(sut.Users).IsEqualTo([alice,]);
-		await That(((IReadOnlyUserCache)sut).Users).IsEqualTo([bob,]);
+		await That(((IUserCacheBase)sut).Users).IsEqualTo([bob,]);
 		await That(realCache.CacheUsers).IsEqualTo([alice,]);
-		await That(realCache.ReadOnlyUsers).IsEqualTo([bob,]);
+		await That(realCache.BaseUsers).IsEqualTo([bob,]);
 	}
 
 	private sealed class MyUserCache : IUserCache
 	{
 		public IList<User> CacheUsers { get; private set; } = [];
 
-		public IEnumerable<User> ReadOnlyUsers { get; private set; } = [];
+		public IEnumerable<User> BaseUsers { get; private set; } = [];
 
 		public IList<User> Users
 		{
@@ -298,10 +298,10 @@ public class ExampleTests
 			set => CacheUsers = value;
 		}
 
-		IEnumerable<User> IReadOnlyUserCache.Users
+		IEnumerable<User> IUserCacheBase.Users
 		{
-			get => ReadOnlyUsers;
-			set => ReadOnlyUsers = value;
+			get => BaseUsers;
+			set => BaseUsers = value;
 		}
 	}
 }

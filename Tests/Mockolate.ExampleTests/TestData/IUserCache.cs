@@ -2,12 +2,12 @@ using System.Collections.Generic;
 
 namespace Mockolate.ExampleTests.TestData;
 
-public interface IReadOnlyUserCache
+public interface IUserCacheBase
 {
 	IEnumerable<User> Users { get; set; }
 }
 
-public interface IUserCache : IReadOnlyUserCache
+public interface IUserCache : IUserCacheBase
 {
 	new IList<User> Users { get; set; }
 }
