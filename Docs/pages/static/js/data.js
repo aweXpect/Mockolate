@@ -474,6 +474,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -555,7 +561,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -640,7 +647,8 @@ window.BENCHMARK_DATA = {
           241.5775982538859,
           318.13181657791137,
           327.5429092553946,
-          308.82421167691547
+          308.82421167691547,
+          355.2131740129911
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -698,6 +706,7 @@ window.BENCHMARK_DATA = {
           1720,
           1720,
           1720,
+          1608,
           1608,
           1608,
           1608,
@@ -823,7 +832,8 @@ window.BENCHMARK_DATA = {
           57030.506119791666,
           99152.82797851562,
           98322.1769670759,
-          97347.82314453126
+          97347.82314453126,
+          99236.09825721153
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -913,7 +923,8 @@ window.BENCHMARK_DATA = {
           9095,
           9096,
           9096,
-          9208
+          9208,
+          9096
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1006,7 +1017,8 @@ window.BENCHMARK_DATA = {
           3323.439343261719,
           4742.046186319987,
           4781.881197793143,
-          4567.043127950033
+          4567.043127950033,
+          4872.897757466634
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1074,6 +1086,7 @@ window.BENCHMARK_DATA = {
           7928,
           7928,
           7928,
+          7896,
           7896,
           7896,
           7896,
@@ -1189,7 +1202,8 @@ window.BENCHMARK_DATA = {
           3481.314025624593,
           4759.875017801921,
           4980.536379496257,
-          4776.925729479109
+          4776.925729479109,
+          5144.053995259603
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1272,6 +1286,7 @@ window.BENCHMARK_DATA = {
           7076,
           6970,
           6964,
+          6970,
           6970,
           6970,
           6970,
@@ -1372,7 +1387,8 @@ window.BENCHMARK_DATA = {
           309.53070361797626,
           410.62420139312746,
           479.7624978337969,
-          401.8008369377681
+          401.8008369377681,
+          499.047552617391
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1384,6 +1400,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -1555,7 +1572,8 @@ window.BENCHMARK_DATA = {
           413.4074793595534,
           483.86073977152506,
           586.1484643936158,
-          474.12281932149614
+          474.12281932149614,
+          540.2355673472086
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1608,6 +1626,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040,
@@ -2133,6 +2152,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -2214,7 +2239,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -2299,7 +2325,8 @@ window.BENCHMARK_DATA = {
           313.5372440133776,
           323.4324266592661,
           325.3471104621887,
-          304.7454094568888
+          304.7454094568888,
+          232.72481746673583
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2357,6 +2384,7 @@ window.BENCHMARK_DATA = {
           1824,
           1824,
           1824,
+          1744,
           1744,
           1744,
           1744,
@@ -2482,7 +2510,8 @@ window.BENCHMARK_DATA = {
           16650.173191615515,
           16473.52024623326,
           16416.13192313058,
-          14164.397143554688
+          14164.397143554688,
+          11103.972709147136
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2570,6 +2599,7 @@ window.BENCHMARK_DATA = {
           12809,
           12809,
           13241,
+          12809,
           12809,
           12809,
           12809
@@ -2665,7 +2695,8 @@ window.BENCHMARK_DATA = {
           6175.076712544759,
           5994.947562081473,
           6074.12186126709,
-          5402.966403706869
+          5402.966403706869,
+          4131.554660797119
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2677,6 +2708,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -2848,7 +2880,8 @@ window.BENCHMARK_DATA = {
           219119.33885091144,
           220161.32620442708,
           216761.01623535156,
-          231810.97403390068
+          231810.97403390068,
+          99193.39887883113
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -2938,7 +2971,8 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15628,
-          15628
+          15628,
+          15601
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3031,7 +3065,8 @@ window.BENCHMARK_DATA = {
           1422.8009180655847,
           1434.0729359944662,
           1504.9421038309733,
-          1353.7960335867745
+          1353.7960335867745,
+          1033.3015943254743
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3043,6 +3078,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -3214,7 +3250,8 @@ window.BENCHMARK_DATA = {
           191.75107482274373,
           199.69067618052165,
           197.73835191726684,
-          178.44781282742818
+          178.44781282742818,
+          156.7039527575175
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -3267,6 +3304,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376,
@@ -3792,6 +3830,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -3873,7 +3917,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -3958,7 +4003,8 @@ window.BENCHMARK_DATA = {
           720.8399199705857,
           1054.9157133836013,
           1020.779529435294,
-          1067.3900662740073
+          1067.3900662740073,
+          807.4067818959554
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4016,6 +4062,7 @@ window.BENCHMARK_DATA = {
           3912,
           3912,
           3912,
+          3856,
           3856,
           3856,
           3856,
@@ -4141,7 +4188,8 @@ window.BENCHMARK_DATA = {
           134327.27353515624,
           108639.1451171875,
           219800.0225655692,
-          163667.2823311942
+          163667.2823311942,
+          133219.76729910713
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4231,7 +4279,8 @@ window.BENCHMARK_DATA = {
           20748,
           20873,
           20860,
-          20721
+          20721,
+          21251
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4324,7 +4373,8 @@ window.BENCHMARK_DATA = {
           7239.642817361014,
           9940.761729939779,
           10598.823600260417,
-          10666.07171194894
+          10666.07171194894,
+          7424.8615997314455
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4414,6 +4464,7 @@ window.BENCHMARK_DATA = {
           13088,
           13088,
           13144,
+          13088,
           13088
         ],
         "borderColor": "#5E2750",
@@ -4507,7 +4558,8 @@ window.BENCHMARK_DATA = {
           7729.743007405599,
           8446.08135659354,
           11902.857801164899,
-          11363.671033586774
+          11363.671033586774,
+          7665.845008263221
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4597,7 +4649,8 @@ window.BENCHMARK_DATA = {
           13954,
           13948,
           13954,
-          13943
+          13943,
+          13954
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4690,7 +4743,8 @@ window.BENCHMARK_DATA = {
           656.1503532849825,
           976.458555494036,
           900.6450984818595,
-          1020.0332397733416
+          1020.0332397733416,
+          677.0292280832927
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4702,6 +4756,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -5268,6 +5323,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -5349,7 +5410,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -5434,7 +5496,8 @@ window.BENCHMARK_DATA = {
           1864.8177975245885,
           2801.138429914202,
           2660.4278204781667,
-          2928.593722788493
+          2928.593722788493,
+          1977.2610013144356
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5492,6 +5555,7 @@ window.BENCHMARK_DATA = {
           4992,
           4992,
           4992,
+          4936,
           4936,
           4936,
           4936,
@@ -5617,7 +5681,8 @@ window.BENCHMARK_DATA = {
           142359.01865797775,
           116041.21731131418,
           228859.7059000651,
-          174888.8441859654
+          174888.8441859654,
+          145264.2588266226
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5707,7 +5772,8 @@ window.BENCHMARK_DATA = {
           29332,
           30594,
           30610,
-          29324
+          29324,
+          31002
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5800,7 +5866,8 @@ window.BENCHMARK_DATA = {
           18481.4911722819,
           23529.021936035155,
           25312.43442241962,
-          25090.739656575523
+          25090.739656575523,
+          18319.98122514997
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -5890,6 +5957,7 @@ window.BENCHMARK_DATA = {
           26193,
           26192,
           26249,
+          26193,
           26193
         ],
         "borderColor": "#5E2750",
@@ -5983,7 +6051,8 @@ window.BENCHMARK_DATA = {
           16164.660198974609,
           20074.295532226562,
           25208.695239727313,
-          24324.45004272461
+          24324.45004272461,
+          16576.154525756836
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6073,7 +6142,8 @@ window.BENCHMARK_DATA = {
           33764,
           33769,
           33764,
-          33772
+          33772,
+          33764
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6166,7 +6236,8 @@ window.BENCHMARK_DATA = {
           1525.8108175717866,
           2181.553864034017,
           2158.6294339497886,
-          2409.292793273926
+          2409.292793273926,
+          1575.7844529151917
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6178,6 +6249,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -6744,6 +6816,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -6825,7 +6903,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -6910,7 +6989,8 @@ window.BENCHMARK_DATA = {
           334.6402351697286,
           371.3894118309021,
           196.40976060231526,
-          340.20293045043945
+          340.20293045043945,
+          371.80793864386425
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -6968,6 +7048,7 @@ window.BENCHMARK_DATA = {
           2088,
           2088,
           2088,
+          1976,
           1976,
           1976,
           1976,
@@ -7093,7 +7174,8 @@ window.BENCHMARK_DATA = {
           83367.10537923177,
           135183.5757023738,
           53663.78326822917,
-          183703.54575892858
+          183703.54575892858,
+          135706.54993489583
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7183,7 +7265,8 @@ window.BENCHMARK_DATA = {
           14930,
           14938,
           15104,
-          14926
+          14926,
+          14938
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7276,7 +7359,8 @@ window.BENCHMARK_DATA = {
           5229.028970591227,
           6034.795496804373,
           2833.7572067260744,
-          6367.636356099447
+          6367.636356099447,
+          6039.763196309407
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7366,7 +7450,8 @@ window.BENCHMARK_DATA = {
           9336,
           9336,
           9336,
-          9280
+          9280,
+          9336
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7459,7 +7544,8 @@ window.BENCHMARK_DATA = {
           4066.9000794546946,
           5745.036745198568,
           2774.9872884114584,
-          6293.097577412923
+          6293.097577412923,
+          5852.590672302246
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7547,6 +7633,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8257,
+          8244,
           8244,
           8244,
           8244
@@ -7642,7 +7729,8 @@ window.BENCHMARK_DATA = {
           473.05828561782835,
           563.7041735649109,
           265.5714152776278,
-          603.3955214182536
+          603.3955214182536,
+          579.8941809972127
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7654,6 +7742,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -7825,7 +7914,8 @@ window.BENCHMARK_DATA = {
           447.01961030278886,
           536.9442237445286,
           263.0320213953654,
-          506.2372404734294
+          506.2372404734294,
+          534.4878470557077
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -7878,6 +7968,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064,
@@ -8403,6 +8494,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -8484,7 +8581,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -8569,7 +8667,8 @@ window.BENCHMARK_DATA = {
           744.0804574012757,
           652.375999041966,
           465.47115704218544,
-          677.6127344767252
+          677.6127344767252,
+          663.1991659800211
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8627,6 +8726,7 @@ window.BENCHMARK_DATA = {
           2304,
           2304,
           2304,
+          2192,
           2192,
           2192,
           2192,
@@ -8752,7 +8852,8 @@ window.BENCHMARK_DATA = {
           84825.01813151041,
           138115.24981689453,
           54984.24808146159,
-          186885.85613141741
+          186885.85613141741,
+          139865.80307617187
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -8842,6 +8943,7 @@ window.BENCHMARK_DATA = {
           18907,
           18925,
           19089,
+          18925,
           18925
         ],
         "borderColor": "#A052B0",
@@ -8935,7 +9037,8 @@ window.BENCHMARK_DATA = {
           7452.403099060059,
           8701.130881754558,
           4363.791085379465,
-          9307.483118693033
+          9307.483118693033,
+          8849.415971883138
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9025,7 +9128,8 @@ window.BENCHMARK_DATA = {
           12360,
           12361,
           12360,
-          11800
+          11800,
+          12361
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9118,7 +9222,8 @@ window.BENCHMARK_DATA = {
           6996.948545837402,
           9084.758983357748,
           4311.152380625407,
-          9230.942581176758
+          9230.942581176758,
+          8942.23372239333
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -9206,6 +9311,7 @@ window.BENCHMARK_DATA = {
           15786,
           15786,
           15780,
+          15786,
           15786,
           15786,
           15786
@@ -9301,7 +9407,8 @@ window.BENCHMARK_DATA = {
           945.448511668614,
           1092.7741973876953,
           595.608756796519,
-          1170.792232386271
+          1170.792232386271,
+          1124.9457785288494
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -9313,6 +9420,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -9484,7 +9592,8 @@ window.BENCHMARK_DATA = {
           1481.5458187739055,
           1503.1046738942464,
           959.4621905644734,
-          1417.168568166097
+          1417.168568166097,
+          1476.5607891082764
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9537,6 +9646,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816,
@@ -10062,6 +10172,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -10143,7 +10259,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -10228,7 +10345,8 @@ window.BENCHMARK_DATA = {
           588.4822308858236,
           599.7388317108155,
           441.120180777141,
-          527.8218469619751
+          527.8218469619751,
+          537.6874072392782
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -10286,6 +10404,7 @@ window.BENCHMARK_DATA = {
           2528,
           2528,
           2528,
+          2472,
           2472,
           2472,
           2472,
@@ -10411,7 +10530,8 @@ window.BENCHMARK_DATA = {
           12101.24161202567,
           12338.50790640024,
           8409.75231061663,
-          10395.380680338541
+          10395.380680338541,
+          11892.097800118583
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -10501,6 +10621,7 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10640,
+          10641,
           10641
         ],
         "borderColor": "#A052B0",
@@ -10594,7 +10715,8 @@ window.BENCHMARK_DATA = {
           7817.57520705003,
           8028.651217651367,
           5899.192690922664,
-          7078.9406595865885
+          7078.9406595865885,
+          7664.492067777193
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -10606,6 +10728,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -10777,7 +10900,8 @@ window.BENCHMARK_DATA = {
           8601.78892211914,
           9276.902220589775,
           6344.998076847622,
-          7467.2967397054035
+          7467.2967397054035,
+          8502.288127354213
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -10858,6 +10982,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11518,
+          11508,
           11508,
           11508,
           11508,
@@ -10960,7 +11085,8 @@ window.BENCHMARK_DATA = {
           507.5877460071019,
           645.3435053507487,
           382.021755027771,
-          440.0739903450012
+          440.0739903450012,
+          477.2894432067871
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -10972,6 +11098,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -11143,7 +11270,8 @@ window.BENCHMARK_DATA = {
           523.2995103836059,
           539.8683181490217,
           389.75230429967246,
-          457.3670784632365
+          457.3670784632365,
+          454.41401440756664
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -11196,6 +11324,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680,
@@ -11721,6 +11850,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -11802,7 +11937,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -11887,7 +12023,8 @@ window.BENCHMARK_DATA = {
           1065.3868225097656,
           1139.252428327288,
           791.485369168795,
-          1054.3641129811606
+          1054.3641129811606,
+          1005.4392667497907
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -11945,6 +12082,7 @@ window.BENCHMARK_DATA = {
           3032,
           3032,
           3032,
+          2976,
           2976,
           2976,
           2976,
@@ -12070,7 +12208,8 @@ window.BENCHMARK_DATA = {
           19186.79096883138,
           19613.005493164062,
           12908.111005655925,
-          17341.724791463217
+          17341.724791463217,
+          19324.31494140625
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -12156,6 +12295,7 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           17441,
+          18721,
           18721,
           18721,
           18721,
@@ -12253,7 +12393,8 @@ window.BENCHMARK_DATA = {
           17528.62628580729,
           17959.126120431083,
           12374.530263264975,
-          16645.965996878487
+          16645.965996878487,
+          16774.37577718099
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -12265,6 +12406,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -12436,7 +12578,8 @@ window.BENCHMARK_DATA = {
           20056.719083513533,
           21413.90951538086,
           13883.810961914063,
-          18700.33306274414
+          18700.33306274414,
+          19522.662663386418
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -12517,6 +12660,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31543,
+          31546,
           31546,
           31546,
           31546,
@@ -12619,7 +12763,8 @@ window.BENCHMARK_DATA = {
           1108.599908320109,
           1377.7694703420004,
           845.589686529977,
-          1117.1431120554605
+          1117.1431120554605,
+          1115.7293960253398
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -12631,6 +12776,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -12802,7 +12948,8 @@ window.BENCHMARK_DATA = {
           1574.6802290507726,
           1736.2979090372721,
           1224.0260972340902,
-          1665.4471930185953
+          1665.4471930185953,
+          1554.3127210934956
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -12855,6 +13002,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032,
@@ -13380,6 +13528,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Wed Aug 26 20:38:34 2026 \u002B0200",
         "message": "fix: forward wrapped access of hidden interface members to the declaring interface (#848)"
+      },
+      {
+        "sha": "0e57c9ecf84946ffedf62e11ca5540ac48fc8e79",
+        "author": "Valentin Breu\u00DF",
+        "date": "Wed Aug 26 21:12:27 2026 \u002B0200",
+        "message": "fix: forward wrapped access of interface members via the declaring interface (#849)"
       }
     ],
     "labels": [
@@ -13461,7 +13615,8 @@ window.BENCHMARK_DATA = {
       "e5d9de9c",
       "4a94550b",
       "c60eb7fc",
-      "cb55194a"
+      "cb55194a",
+      "0e57c9ec"
     ],
     "datasets": [
       {
@@ -13546,7 +13701,8 @@ window.BENCHMARK_DATA = {
           15.549687640025066,
           19.174899105230967,
           9.81508632004261,
-          14.459068278471628
+          14.459068278471628,
+          17.0011643744432
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -13604,6 +13760,7 @@ window.BENCHMARK_DATA = {
           440,
           440,
           440,
+          160,
           160,
           160,
           160,
@@ -13729,7 +13886,8 @@ window.BENCHMARK_DATA = {
           232.50016357217515,
           323.92339375813805,
           143.7788930279868,
-          217.3644940302922
+          217.3644940302922,
+          285.33962354660036
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -13741,6 +13899,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -13912,7 +14071,8 @@ window.BENCHMARK_DATA = {
           33.65619249343872,
           40.494533038139345,
           20.76369034556242,
-          29.15884520457341
+          29.15884520457341,
+          34.52587903397424
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -13965,6 +14125,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200,
@@ -14095,7 +14256,8 @@ window.BENCHMARK_DATA = {
           1016.1617020198277,
           1395.3505263328552,
           773.6769044739859,
-          935.9503423984235
+          935.9503423984235,
+          1375.698389371236
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -14107,6 +14269,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -14278,7 +14441,8 @@ window.BENCHMARK_DATA = {
           1547.95079981486,
           2014.0362990243095,
           982.6235129492624,
-          1473.121235030038
+          1473.121235030038,
+          1932.543007659912
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -14290,6 +14454,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -14461,7 +14626,8 @@ window.BENCHMARK_DATA = {
           1150.1373561859132,
           1917.104311806815,
           1091.7450069745382,
-          1067.2472628275552
+          1067.2472628275552,
+          1704.3283224105835
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -14551,7 +14717,8 @@ window.BENCHMARK_DATA = {
           2759,
           2763,
           2763,
-          2759
+          2759,
+          2763
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
