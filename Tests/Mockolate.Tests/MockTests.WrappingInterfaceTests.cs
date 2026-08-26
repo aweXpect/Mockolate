@@ -225,6 +225,109 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task Wrap_SiblingInterfaceEvent_ShouldSubscribeOnDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			int trayInvocations = 0;
+			int boxInvocations = 0;
+			((IChocolateTray)wrappedGiftSet).Refilled += (_, _) => trayInvocations++;
+			((IChocolateBox)wrappedGiftSet).Refilled += (_, _) => boxInvocations++;
+
+			myGiftSet.RaiseTrayRefilled();
+			myGiftSet.RaiseBoxRefilled();
+
+			await That(trayInvocations).IsEqualTo(1);
+			await That(boxInvocations).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task Wrap_SiblingInterfaceEvent_ShouldUnsubscribeOnDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			int trayInvocations = 0;
+			int boxInvocations = 0;
+			EventHandler trayHandler = (_, _) => trayInvocations++;
+			EventHandler boxHandler = (_, _) => boxInvocations++;
+			((IChocolateTray)wrappedGiftSet).Refilled += trayHandler;
+			((IChocolateBox)wrappedGiftSet).Refilled += boxHandler;
+
+			((IChocolateTray)wrappedGiftSet).Refilled -= trayHandler;
+			myGiftSet.RaiseTrayRefilled();
+			myGiftSet.RaiseBoxRefilled();
+
+			await That(trayInvocations).IsEqualTo(0);
+			await That(boxInvocations).IsEqualTo(1);
+		}
+
+		[Fact]
+		public async Task Wrap_SiblingInterfaceIndexer_ShouldDelegateGetterToDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			await That(((IChocolateTray)wrappedGiftSet)[1]).IsEqualTo(5);
+			await That(((IChocolateBox)wrappedGiftSet)[1]).IsEqualTo(7);
+			await That(myGiftSet.ReceivedCalls).IsEqualTo(["get:tray-slot", "get:box-slot",]);
+		}
+
+		[Fact]
+		public async Task Wrap_SiblingInterfaceIndexer_ShouldDelegateSetterToDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			((IChocolateTray)wrappedGiftSet)[2] = 50;
+			((IChocolateBox)wrappedGiftSet)[2] = 70;
+
+			await That(myGiftSet.ReceivedCalls).IsEqualTo(["set:tray-slot", "set:box-slot",]);
+			await That(myGiftSet.TraySlots[2]).IsEqualTo(50);
+			await That(myGiftSet.BoxSlots[2]).IsEqualTo(70);
+		}
+
+		[Fact]
+		public async Task Wrap_SiblingInterfaceMethod_ShouldDelegateToDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			int trayCount = ((IChocolateTray)wrappedGiftSet).Count("Dark");
+			int boxCount = ((IChocolateBox)wrappedGiftSet).Count("Dark");
+
+			await That(trayCount).IsEqualTo(2);
+			await That(boxCount).IsEqualTo(1);
+			await That(myGiftSet.ReceivedCalls).IsEqualTo(["count:tray", "count:box",]);
+		}
+
+		[Fact]
+		public async Task Wrap_SiblingInterfaceProperty_ShouldDelegateGetterToDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			await That(((IChocolateTray)wrappedGiftSet).Flavor).IsEqualTo("Dark");
+			await That(((IChocolateBox)wrappedGiftSet).Flavor).IsEqualTo("Milk");
+			await That(myGiftSet.ReceivedCalls).IsEqualTo(["get:tray", "get:box",]);
+		}
+
+		[Fact]
+		public async Task Wrap_SiblingInterfaceProperty_ShouldDelegateSetterToDeclaringInterface()
+		{
+			MyChocolateGiftSet myGiftSet = new();
+			IChocolateGiftSet wrappedGiftSet = IChocolateGiftSet.CreateMock().Wrapping(myGiftSet);
+
+			((IChocolateTray)wrappedGiftSet).Flavor = "Ruby";
+			((IChocolateBox)wrappedGiftSet).Flavor = "White";
+
+			await That(myGiftSet.ReceivedCalls).IsEqualTo(["set:tray", "set:box",]);
+			await That(myGiftSet.TrayFlavor).IsEqualTo("Ruby");
+			await That(myGiftSet.BoxFlavor).IsEqualTo("White");
+		}
+
+		[Fact]
 		public async Task Wrap_WithSetup_ShouldOverrideMethod()
 		{
 			MyChocolateDispenser myDispenser = new();
@@ -421,6 +524,116 @@ public sealed partial class MockTests
 			public void RaiseBaseRestocked() => _baseRestocked?.Invoke(this, EventArgs.Empty);
 
 			public void RaiseShelfRestocked() => Restocked?.Invoke();
+		}
+
+		private class MyChocolateGiftSet : IChocolateGiftSet
+		{
+			private event EventHandler? _boxRefilled;
+			private event EventHandler? _trayRefilled;
+
+			public List<string> ReceivedCalls { get; } = [];
+
+			public Dictionary<int, int> BoxSlots { get; } = new()
+			{
+				{
+					1, 7
+				},
+			};
+
+			public Dictionary<int, int> TraySlots { get; } = new()
+			{
+				{
+					1, 5
+				},
+			};
+
+			public string BoxFlavor { get; private set; } = "Milk";
+
+			public string TrayFlavor { get; private set; } = "Dark";
+
+			int IChocolateBox.this[int slot]
+			{
+				get
+				{
+					ReceivedCalls.Add("get:box-slot");
+					return BoxSlots[slot];
+				}
+				set
+				{
+					ReceivedCalls.Add("set:box-slot");
+					BoxSlots[slot] = value;
+				}
+			}
+
+			int IChocolateTray.this[int slot]
+			{
+				get
+				{
+					ReceivedCalls.Add("get:tray-slot");
+					return TraySlots[slot];
+				}
+				set
+				{
+					ReceivedCalls.Add("set:tray-slot");
+					TraySlots[slot] = value;
+				}
+			}
+
+			string IChocolateBox.Flavor
+			{
+				get
+				{
+					ReceivedCalls.Add("get:box");
+					return BoxFlavor;
+				}
+				set
+				{
+					ReceivedCalls.Add("set:box");
+					BoxFlavor = value;
+				}
+			}
+
+			string IChocolateTray.Flavor
+			{
+				get
+				{
+					ReceivedCalls.Add("get:tray");
+					return TrayFlavor;
+				}
+				set
+				{
+					ReceivedCalls.Add("set:tray");
+					TrayFlavor = value;
+				}
+			}
+
+			event EventHandler IChocolateBox.Refilled
+			{
+				add => _boxRefilled += value;
+				remove => _boxRefilled -= value;
+			}
+
+			event EventHandler IChocolateTray.Refilled
+			{
+				add => _trayRefilled += value;
+				remove => _trayRefilled -= value;
+			}
+
+			int IChocolateBox.Count(string flavor)
+			{
+				ReceivedCalls.Add("count:box");
+				return 1;
+			}
+
+			int IChocolateTray.Count(string flavor)
+			{
+				ReceivedCalls.Add("count:tray");
+				return 2;
+			}
+
+			public void RaiseBoxRefilled() => _boxRefilled?.Invoke(this, EventArgs.Empty);
+
+			public void RaiseTrayRefilled() => _trayRefilled?.Invoke(this, EventArgs.Empty);
 		}
 
 		public delegate void MyDelegate();

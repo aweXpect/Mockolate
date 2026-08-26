@@ -957,6 +957,209 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task SiblingInterfaceProperty_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestLeft
+			     {
+			     	string Name { get; set; }
+			     }
+
+			     public interface ITestRight
+			     {
+			     	string Name { get; set; }
+			     }
+
+			     public interface ITest : ITestLeft, ITestRight
+			     {
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0229: accessing the member on the mocked interface is ambiguous between the siblings");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.ITestLeft wraps ? null : () => wraps.Name").And
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.ITestRight wraps ? null : () => wraps.Name").And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestLeft wraps)
+			          				{
+			          					wraps.Name = value;
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestRight wraps)
+			          				{
+			          					wraps.Name = value;
+			          """).IgnoringNewlineStyle()
+			.Because("each sibling member must delegate to its own declaring interface");
+	}
+
+	[Fact]
+	public async Task SiblingInterfaceIndexer_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestLeft
+			     {
+			     	string this[int index] { get; set; }
+			     }
+
+			     public interface ITestRight
+			     {
+			     	string this[int index] { get; set; }
+			     }
+
+			     public interface ITest : ITestLeft, ITestRight
+			     {
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0229: accessing the indexer on the mocked interface is ambiguous between the siblings");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is not global::MyCode.ITestLeft wraps)
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is not global::MyCode.ITestRight wraps)
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestLeft wraps)
+			          				{
+			          					wraps[index] = value;
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestRight wraps)
+			          				{
+			          					wraps[index] = value;
+			          """).IgnoringNewlineStyle()
+			.Because("each sibling indexer must delegate to its own declaring interface");
+	}
+
+	[Fact]
+	public async Task SiblingInterfaceEvent_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestLeft
+			     {
+			     	event EventHandler Changed;
+			     }
+
+			     public interface ITestRight
+			     {
+			     	event EventHandler Changed;
+			     }
+
+			     public interface ITest : ITestLeft, ITestRight
+			     {
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0229: subscribing on the mocked interface is ambiguous between the siblings");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestLeft wraps)
+			          				{
+			          					wraps.Changed += value;
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestLeft wraps)
+			          				{
+			          					wraps.Changed -= value;
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestRight wraps)
+			          				{
+			          					wraps.Changed += value;
+			          """).IgnoringNewlineStyle().And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestRight wraps)
+			          				{
+			          					wraps.Changed -= value;
+			          """).IgnoringNewlineStyle()
+			.Because("each sibling event must subscribe and unsubscribe on its own declaring interface");
+	}
+
+	[Fact]
+	public async Task SiblingInterfaceMethod_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestLeft
+			     {
+			     	int Count(string value);
+			     }
+
+			     public interface ITestRight
+			     {
+			     	int Count(string value);
+			     }
+
+			     public interface ITest : ITestLeft, ITestRight
+			     {
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0121: calling the method on the mocked interface is ambiguous between the siblings");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("if (this.MockRegistry.Wraps is global::MyCode.ITestLeft wraps)").And
+			.Contains("if (this.MockRegistry.Wraps is global::MyCode.ITestRight wraps)")
+			.Because("each sibling method must delegate to its own declaring interface");
+	}
+
+	[Fact]
 	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
 	{
 		GeneratorResult result = Generator

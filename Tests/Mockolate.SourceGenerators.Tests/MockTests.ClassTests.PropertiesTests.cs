@@ -380,12 +380,12 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty1_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty1_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty1);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty1_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty1_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyServiceBase1 wraps ? null : () => wraps.MyBaseProperty1);
 					          			}
 					          			set
 					          			{
 					          				this.MockRegistry.SetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty1_Get, global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty1_Set, "global::MyCode.IMyServiceBase1.MyBaseProperty1", value);
-					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyServiceBase1 wraps)
 					          				{
 					          					wraps.MyBaseProperty1 = value;
 					          				}
@@ -398,12 +398,12 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty2_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty2_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty2);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty2_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty2_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyServiceBase2 wraps ? null : () => wraps.MyBaseProperty2);
 					          			}
 					          			set
 					          			{
 					          				this.MockRegistry.SetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty2_Get, global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty2_Set, "global::MyCode.IMyServiceBase2.MyBaseProperty2", value);
-					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyServiceBase2 wraps)
 					          				{
 					          					wraps.MyBaseProperty2 = value;
 					          				}
@@ -416,12 +416,12 @@ public sealed partial class MockTests
 					          		{
 					          			get
 					          			{
-					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty3_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty3_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyService wraps ? null : () => wraps.MyBaseProperty3);
+					          				return this.MockRegistry.GetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty3_Get, global::Mockolate.Mock.IMyService.PropertyAccess_MyBaseProperty3_Get, static b => b.DefaultValue.Generate(default(int)!), this.MockRegistry.Wraps is not global::MyCode.IMyServiceBase3 wraps ? null : () => wraps.MyBaseProperty3);
 					          			}
 					          			set
 					          			{
 					          				this.MockRegistry.SetPropertyFast<int>(global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty3_Get, global::Mockolate.Mock.IMyService.MemberId_MyBaseProperty3_Set, "global::MyCode.IMyServiceBase3.MyBaseProperty3", value);
-					          				if (this.MockRegistry.Wraps is global::MyCode.IMyService wraps)
+					          				if (this.MockRegistry.Wraps is global::MyCode.IMyServiceBase3 wraps)
 					          				{
 					          					wraps.MyBaseProperty3 = value;
 					          				}
