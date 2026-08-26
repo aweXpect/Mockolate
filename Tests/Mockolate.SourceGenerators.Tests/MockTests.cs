@@ -639,6 +639,324 @@ public sealed partial class MockTests
 	}
 
 	[Fact]
+	public async Task HiddenProperty_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	IEnumerable<int> Items { get; set; }
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<int> Items { get; set; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0266: the hiding member has a narrower property type than the hidden member");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.ITestParent wraps ? null : () => wraps.Items")
+			.Because("the getter of the explicit implementation must read the declaring interface").And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wraps.Items = value;
+			          """).IgnoringNewlineStyle()
+			.Because("the setter of the explicit implementation must write to the declaring interface");
+	}
+
+	[Fact]
+	public async Task HiddenProperty_WithUnrelatedType_ShouldNotDelegateToHidingMember()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	string Label { get; set; }
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new DateTime Label { get; set; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0029: the hiding member has a type unrelated to the hidden member");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.ITestParent wraps ? null : () => wraps.Label")
+			.And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wraps.Label = value;
+			          """).IgnoringNewlineStyle();
+	}
+
+	[Fact]
+	public async Task HiddenGetOnlyProperty_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	IEnumerable<int> Items { get; }
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<int> Items { get; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.ITestParent wraps ? null : () => wraps.Items")
+			.Because("a get-only hidden property must still read from the declaring interface");
+	}
+
+	[Fact]
+	public async Task HiddenInitOnlyProperty_ShouldOnlyDelegateGetterToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	IEnumerable<int> Items { get; init; }
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<int> Items { get; init; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.ITestParent wraps ? null : () => wraps.Items")
+			.Because("the getter of the explicit implementation must read the declaring interface").And
+			.DoesNotContain("wraps.Items = value")
+			.Because("an init accessor cannot be forwarded to an already constructed instance");
+	}
+
+	[Fact]
+	public async Task InitOnlyProperty_InClass_ShouldNotDelegateSetterToWrappedInstance()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = MyClass.CreateMock();
+			         }
+			     }
+
+			     public class MyClass
+			     {
+			     	public virtual int Items { get; init; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty();
+		await That(result.Sources["Mock.MyClass.g.cs"])
+			.Contains("base.Items = value;").And
+			.DoesNotContain("wraps.Items = value")
+			.Because("an init accessor cannot be forwarded to an already constructed instance");
+	}
+
+	[Fact]
+	public async Task HiddenIndexer_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	IEnumerable<int> this[int index] { get; set; }
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<int> this[int index] { get; set; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0266: the hiding indexer has a narrower value type than the hidden indexer");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is not global::MyCode.ITestParent wraps)
+			          """).IgnoringNewlineStyle()
+			.Because("the getter of the explicit implementation must read the declaring interface").And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wraps[index] = value;
+			          """).IgnoringNewlineStyle()
+			.Because("the setter of the explicit implementation must write to the declaring interface");
+	}
+
+	[Fact]
+	public async Task HiddenEvent_ShouldDelegateWrappingToDeclaringInterface()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface ITestParent
+			     {
+			     	event EventHandler Changed;
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new event Action Changed;
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("the hiding event has a delegate type unrelated to the hidden event");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wraps.Changed += value;
+			          """).IgnoringNewlineStyle()
+			.Because("subscribing on the explicit implementation must subscribe on the declaring interface").And
+			.Contains("""
+			          				if (this.MockRegistry.Wraps is global::MyCode.ITestParent wraps)
+			          				{
+			          					wraps.Changed -= value;
+			          """).IgnoringNewlineStyle()
+			.Because("unsubscribing on the explicit implementation must unsubscribe on the declaring interface");
+	}
+
+	[Fact]
+	public async Task HiddenProperty_InDeepHierarchy_ShouldNotDelegateToHidingMember()
+	{
+		GeneratorResult result = Generator
+			.Run("""
+			     using System.Collections.Generic;
+			     using Mockolate;
+
+			     namespace MyCode;
+
+			     public class Program
+			     {
+			         public static void Main(string[] args)
+			         {
+			     		_ = ITest.CreateMock();
+			         }
+			     }
+
+			     public interface IGrandParent
+			     {
+			     	object Items { get; set; }
+			     }
+
+			     public interface ITestParent : IGrandParent
+			     {
+			     	new IEnumerable<int> Items { get; set; }
+			     }
+
+			     public interface ITest : ITestParent
+			     {
+			     	new IList<int> Items { get; set; }
+			     }
+			     """);
+
+		await That(result.Diagnostics).IsEmpty()
+			.Because("CS0266: each hidden member has its own property type");
+		await That(result.Sources["Mock.ITest.g.cs"])
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.ITestParent wraps ? null : () => wraps.Items")
+			.And
+			.Contains("this.MockRegistry.Wraps is not global::MyCode.IGrandParent wraps ? null : () => wraps.Items")
+			.Because("every level of the hierarchy must delegate to its own declaring interface");
+	}
+
+	[Fact]
 	public async Task MembersWithReservedNames_ShouldPrefixAtSymbol()
 	{
 		GeneratorResult result = Generator
