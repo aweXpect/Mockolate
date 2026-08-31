@@ -11,7 +11,7 @@ internal static partial class Sources
 	{
 		string mockRegistryName = @class.GetUniqueName("MockRegistry", "MockolateMockRegistry");
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
-		MemberIdTable memberIds = new();
+		MemberIdTable memberIds = new(new MemberAliases());
 		memberIds.AddMethod(delegateMethod);
 		string memberIdPrefix = $"global::Mockolate.Mock.{name}.";
 		StringBuilder sb = InitializeBuilder();

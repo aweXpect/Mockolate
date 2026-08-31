@@ -12,6 +12,14 @@ internal static partial class Sources
 		(string Name, Class Class)[] additionalInterfaces)
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
+		MemberAliases aliases = new();
+		if (@class is MockClass { HasImplementedMembers: true, } implementor)
+		{
+			additionalInterfaces = additionalInterfaces
+				.Select(additional => (additional.Name, additional.Class.RebaseOnto(implementor, aliases)))
+				.ToArray();
+		}
+
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
 		bool hasEvents = @class.AllEvents().Any(x => !x.IsStatic);
 		bool hasStaticEvents = @class.IsInterface && @class.AllEvents().Any(x => x.IsStatic);
@@ -36,7 +44,7 @@ internal static partial class Sources
 			allMemberClasses[memberClassIndex + 1] = additionalInterfaces[memberClassIndex].Class;
 		}
 
-		MemberIdTable memberIds = ComputeMemberIds(allMemberClasses);
+		MemberIdTable memberIds = ComputeMemberIds(aliases, allMemberClasses);
 		string memberIdPrefix = $"global::Mockolate.Mock.{fileName}.";
 		StringBuilder sb = InitializeBuilder();
 
