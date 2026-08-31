@@ -43,7 +43,7 @@ internal record Event
 	public Method Delegate { get; }
 
 	public Type Type { get; }
-	public string ContainingType { get; }
+	public string ContainingType { get; init; }
 	public bool UseOverride { get; }
 	public bool IsOverridableFromMock { get; }
 	public bool IsAbstract { get; }

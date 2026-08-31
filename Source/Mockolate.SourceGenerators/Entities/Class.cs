@@ -203,6 +203,116 @@ internal class Class : IEquatable<Class>
 		}
 	}
 
+	private Class(Class original, EquatableArray<Method> methods, EquatableArray<Property> properties,
+		EquatableArray<Event> events, EquatableArray<Class> inheritedTypes)
+	{
+		_sourceAssembly = original._sourceAssembly;
+		ClassFullName = original.ClassFullName;
+		ClassName = original.ClassName;
+		DisplayString = original.DisplayString;
+		IsInterface = original.IsInterface;
+		HasRequiredMembers = original.HasRequiredMembers;
+		HasInaccessibleRequiredMember = original.HasInaccessibleRequiredMember;
+		ReservedNames = original.ReservedNames;
+		Methods = methods;
+		Properties = properties;
+		Events = events;
+		InheritedTypes = inheritedTypes;
+		_surfaceHash = ComputeSurfaceHash();
+	}
+
+	/// <summary>
+	///     Returns a copy of this interface whose members carry the containing type of the
+	///     <paramref name="implementor" /> member that already implements them, so both surfaces address
+	///     one mock member instead of two. The replaced members are recorded in
+	///     <paramref name="aliases" />.
+	/// </summary>
+	/// <remarks>
+	///     A combination mock re-implements the additional interface, which re-maps every interface slot
+	///     to the mock's own explicit implementation. That is what makes a member the class implements
+	///     non-virtually (unreachable through the class) configurable through the interface - but applied
+	///     to a member the mock already overrides it forks one member into two, with separate setups and
+	///     separate recorded interactions. Members that <paramref name="implementor" /> implements
+	///     overridably are rebased onto the class member instead; the ones it does not implement (or
+	///     implements non-virtually or explicitly) keep their own containing type and stay re-implemented.
+	///     <para />
+	///     Indexers are left alone: they are keyed by their parameter signature rather than by the
+	///     declaring type, so both surfaces already share storage.
+	/// </remarks>
+	public Class RebaseOnto(Class implementor, MemberAliases aliases)
+		=> new(this,
+			new EquatableArray<Method>(Methods.AsArray().Select(method => Rebase(method, implementor, aliases))
+				.ToArray()),
+			new EquatableArray<Property>(Properties.AsArray()
+				.Select(property => Rebase(property, implementor, aliases)).ToArray()),
+			new EquatableArray<Event>(Events.AsArray().Select(@event => Rebase(@event, implementor, aliases))
+				.ToArray()),
+			new EquatableArray<Class>(InheritedTypes.AsArray()
+				.Select(inherited => inherited.RebaseOnto(implementor, aliases)).ToArray()));
+
+	private static Method Rebase(Method method, Class implementor, MemberAliases aliases)
+	{
+		if (method.ExplicitImplementation is not null || method.IsStatic)
+		{
+			return method;
+		}
+
+		Method? target = implementor.AllMethods().FirstOrDefault(candidate
+			=> candidate is { ExplicitImplementation: null, IsStatic: false, } &&
+			   candidate.ReturnType == method.ReturnType &&
+			   Method.ContainingTypeIndependentEqualityComparer.Equals(candidate, method));
+		if (target is null || target.ContainingType == method.ContainingType)
+		{
+			return method;
+		}
+
+		Method rebased = method with { ContainingType = target.ContainingType, };
+		aliases.Add(rebased, target);
+		return rebased;
+	}
+
+	private static Property Rebase(Property property, Class implementor, MemberAliases aliases)
+	{
+		if (property.IsIndexer || property.ExplicitImplementation is not null || property.IsStatic)
+		{
+			return property;
+		}
+
+		Property? target = implementor.AllProperties().FirstOrDefault(candidate
+			=> candidate is { IsIndexer: false, ExplicitImplementation: null, IsStatic: false, } &&
+			   candidate.Type == property.Type &&
+			   Property.ContainingTypeIndependentEqualityComparer.Equals(candidate, property));
+		if (target is null || target.ContainingType == property.ContainingType)
+		{
+			return property;
+		}
+
+		Property rebased = property with { ContainingType = target.ContainingType, };
+		aliases.Add(rebased, target);
+		return rebased;
+	}
+
+	private static Event Rebase(Event @event, Class implementor, MemberAliases aliases)
+	{
+		if (@event.ExplicitImplementation is not null || @event.IsStatic)
+		{
+			return @event;
+		}
+
+		Event? target = implementor.AllEvents().FirstOrDefault(candidate
+			=> candidate is { ExplicitImplementation: null, IsStatic: false, } &&
+			   candidate.Type == @event.Type &&
+			   Event.ContainingTypeIndependentEqualityComparer.Equals(candidate, @event));
+		if (target is null || target.ContainingType == @event.ContainingType)
+		{
+			return @event;
+		}
+
+		Event rebased = @event with { ContainingType = target.ContainingType, };
+		aliases.Add(rebased, target);
+		return rebased;
+	}
+
 	public EquatableArray<Method> Methods { get; }
 	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }

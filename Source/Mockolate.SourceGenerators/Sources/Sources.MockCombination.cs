@@ -12,6 +12,18 @@ internal static partial class Sources
 		(string Name, Class Class)[] additionalInterfaces)
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
+		MemberAliases aliases = new();
+		// Interface mocks are unaffected: an inherited interface member keeps its declaring interface as
+		// its containing type on both surfaces, and a member hidden via `new` is meant to stay separate.
+		if (@class is MockClass { IsInterface: false, ImplementedInterfaces: { Count: > 0, } implementedInterfaces, })
+		{
+			additionalInterfaces = additionalInterfaces
+				.Select(additional => implementedInterfaces.Contains(additional.Class.ClassFullName)
+					? (additional.Name, additional.Class.RebaseOnto(@class, aliases))
+					: additional)
+				.ToArray();
+		}
+
 		string escapedClassName = @class.ClassFullName.EscapeForXmlDoc();
 		bool hasEvents = @class.AllEvents().Any(x => !x.IsStatic);
 		bool hasStaticEvents = @class.IsInterface && @class.AllEvents().Any(x => x.IsStatic);
@@ -36,7 +48,7 @@ internal static partial class Sources
 			allMemberClasses[memberClassIndex + 1] = additionalInterfaces[memberClassIndex].Class;
 		}
 
-		MemberIdTable memberIds = ComputeMemberIds(allMemberClasses);
+		MemberIdTable memberIds = ComputeMemberIds(aliases, allMemberClasses);
 		string memberIdPrefix = $"global::Mockolate.Mock.{fileName}.";
 		StringBuilder sb = InitializeBuilder();
 

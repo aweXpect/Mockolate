@@ -1466,10 +1466,13 @@ internal static partial class Sources
 		sb.Append("\t\t#region ").Append(@class.DisplayString).AppendLine();
 		sb.AppendLine();
 
+		// An aliased member is served by the mocked class' own override: re-implementing it here would
+		// re-map the interface slot away from that override and fork the member in two.
 		List<Event>? mockEvents = mockClass?.AllEvents().ToList();
 		foreach (Event @event in @class.AllEvents())
 		{
-			if (mockEvents?.All(e => !Event.EqualityComparer.Equals(@event, e)) != false)
+			if (!memberIds.IsAlias(@event) &&
+			    mockEvents?.All(e => !Event.EqualityComparer.Equals(@event, e)) != false)
 			{
 				AppendMockSubject_ImplementClass_AddEvent(sb, @event, mockRegistryName, className,
 					mockClass is not null,
@@ -1483,7 +1486,8 @@ internal static partial class Sources
 		int[] nextSignatureIndex = nextSignatureIndexRef ?? [0,];
 		foreach (Property property in @class.AllProperties())
 		{
-			if (mockProperties?.All(p => !Property.EqualityComparer.Equals(property, p)) != false)
+			if (!memberIds.IsAlias(property) &&
+			    mockProperties?.All(p => !Property.EqualityComparer.Equals(property, p)) != false)
 			{
 				int signatureIndex = -1;
 				if (property is { IsIndexer: true, IndexerParameters: not null, })
@@ -1511,7 +1515,8 @@ internal static partial class Sources
 		List<Method>? mockMethods = mockClass?.AllMethods().ToList();
 		foreach (Method method in @class.AllMethods())
 		{
-			if (mockMethods?.All(m => !Method.EqualityComparer.Equals(method, m)) != false)
+			if (!memberIds.IsAlias(method) &&
+			    mockMethods?.All(m => !Method.EqualityComparer.Equals(method, m)) != false)
 			{
 				AppendMockSubject_ImplementClass_AddMethod(sb, method, mockRegistryName, className,
 					mockClass is not null,

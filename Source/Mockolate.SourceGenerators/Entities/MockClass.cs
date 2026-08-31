@@ -12,6 +12,9 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 		AdditionalImplementations = new EquatableArray<Class>(
 			types.Skip(1).Select(x => new Class(x, sourceAssembly)).ToArray());
 
+		ImplementedInterfaces = new EquatableArray<string>(types[0].AllInterfaces
+			.Select(x => x.ToDisplayString(Helpers.TypeDisplayFormat)).ToArray());
+
 		HiddenBaseInterfaces = IsInterface
 			? new EquatableArray<Class>(GetHiddenBaseInterfaces(types[0])
 				.Select(x => new Class(x, sourceAssembly)).ToArray())
@@ -43,6 +46,14 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 	public EquatableArray<Method>? Constructors { get; }
 
 	public EquatableArray<Class> AdditionalImplementations { get; }
+
+	/// <summary>
+	///     The full names of all interfaces the mocked type implements. An entry in
+	///     <see cref="AdditionalImplementations" /> that is listed here is not really additional: the
+	///     mocked type already implements it, so its members are rebased onto the class members that
+	///     implement them (see <see cref="Class.RebaseOnto" />).
+	/// </summary>
+	public EquatableArray<string> ImplementedInterfaces { get; }
 
 	/// <summary>
 	///     Base interfaces whose members are hidden (via <see langword="new" />) by the mocked
@@ -90,6 +101,7 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 	{
 		int hash = base.GetHashCode();
 		hash = unchecked((hash * 17) + AdditionalImplementations.GetHashCode());
+		hash = unchecked((hash * 17) + ImplementedInterfaces.GetHashCode());
 		hash = unchecked((hash * 17) + HiddenBaseInterfaces.GetHashCode());
 		if (Constructors is { } constructors)
 		{

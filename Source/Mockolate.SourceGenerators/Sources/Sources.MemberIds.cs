@@ -92,25 +92,35 @@ internal static partial class Sources
 	}
 
 	internal static MemberIdTable ComputeMemberIds(params Class[] classes)
+		=> ComputeMemberIds(new MemberAliases(), classes);
+
+	/// <remarks>
+	///     <paramref name="classes" /> must start with the mocked class, so an aliased member's target
+	///     already has an id by the time the additional interface is processed.
+	/// </remarks>
+	internal static MemberIdTable ComputeMemberIds(MemberAliases aliases, params Class[] classes)
 	{
-		MemberIdTable table = new();
+		MemberIdTable table = new(aliases);
 		foreach (Class @class in classes)
 		{
-			AddMissing(@class.AllProperties().Where(p => !p.IsIndexer), table.PropertyGetIds, table.AddProperty);
-			AddMissing(@class.AllEvents(), table.EventSubscribeIds, table.AddEvent);
-			AddMissing(@class.AllProperties().Where(p => p.IsIndexer), table.IndexerGetIds, table.AddIndexer);
-			AddMissing(@class.AllMethods(), table.MethodIds, table.AddMethod);
+			AddMissing(@class.AllProperties().Where(p => !p.IsIndexer), table.PropertyGetIds, table.AddProperty,
+				aliases.IsAlias);
+			AddMissing(@class.AllEvents(), table.EventSubscribeIds, table.AddEvent, aliases.IsAlias);
+			AddMissing(@class.AllProperties().Where(p => p.IsIndexer), table.IndexerGetIds, table.AddIndexer,
+				_ => false);
+			AddMissing(@class.AllMethods(), table.MethodIds, table.AddMethod, aliases.IsAlias);
 		}
 
 		return table;
 	}
 
-	private static void AddMissing<T>(IEnumerable<T> items, Dictionary<T, int> existing, Action<T> add)
+	private static void AddMissing<T>(IEnumerable<T> items, Dictionary<T, int> existing, Action<T> add,
+		Func<T, bool> isAlias)
 		where T : notnull
 	{
 		foreach (T item in items)
 		{
-			if (!existing.ContainsKey(item))
+			if (!existing.ContainsKey(item) && !isAlias(item))
 			{
 				add(item);
 			}
@@ -130,9 +140,25 @@ internal static partial class Sources
 	/// </remarks>
 	internal sealed class MemberIdTable
 	{
+		private readonly MemberAliases _aliases;
 		private readonly List<string> _declarations = new();
 		private readonly List<(Property Property, string FieldName)> _propertyGetterAccessFields = new();
 		private readonly Dictionary<string, int> _usedIdentifiers = new();
+
+		internal MemberIdTable(MemberAliases aliases)
+		{
+			_aliases = aliases;
+		}
+
+		/// <summary>
+		///     True when the member is an additional interface member that the mocked class already
+		///     implements, and whose slot is therefore served by the mock's own override.
+		/// </summary>
+		internal bool IsAlias(Method method) => _aliases.IsAlias(method);
+
+		internal bool IsAlias(Property property) => _aliases.IsAlias(property);
+
+		internal bool IsAlias(Event @event) => _aliases.IsAlias(@event);
 
 		internal Dictionary<Method, int> MethodIds { get; } = new();
 		internal Dictionary<Property, int> PropertyGetIds { get; } = new();
@@ -146,13 +172,13 @@ internal static partial class Sources
 		internal int Count => _declarations.Count;
 
 		internal string GetMethodIdentifier(Method method)
-			=> _declarations[MethodIds[method]];
+			=> _declarations[MethodIds[_aliases.Resolve(method)]];
 
 		internal string GetPropertyGetIdentifier(Property property)
-			=> _declarations[PropertyGetIds[property]];
+			=> _declarations[PropertyGetIds[_aliases.Resolve(property)]];
 
 		internal string GetPropertySetIdentifier(Property property)
-			=> _declarations[PropertySetIds[property]];
+			=> _declarations[PropertySetIds[_aliases.Resolve(property)]];
 
 		internal string GetIndexerGetIdentifier(Property indexer)
 			=> _declarations[IndexerGetIds[indexer]];
@@ -161,10 +187,10 @@ internal static partial class Sources
 			=> _declarations[IndexerSetIds[indexer]];
 
 		internal string GetEventSubscribeIdentifier(Event @event)
-			=> _declarations[EventSubscribeIds[@event]];
+			=> _declarations[EventSubscribeIds[_aliases.Resolve(@event)]];
 
 		internal string GetEventUnsubscribeIdentifier(Event @event)
-			=> _declarations[EventUnsubscribeIds[@event]];
+			=> _declarations[EventUnsubscribeIds[_aliases.Resolve(@event)]];
 
 		/// <summary>
 		///     Returns the cached typed-buffer field name for the indexer's getter slot.
@@ -182,7 +208,7 @@ internal static partial class Sources
 		///     Returns the cached typed-buffer field name for the method's slot.
 		/// </summary>
 		internal string GetMethodBufferFieldName(Method method)
-			=> ToBufferFieldName(_declarations[MethodIds[method]]);
+			=> ToBufferFieldName(_declarations[MethodIds[_aliases.Resolve(method)]]);
 
 		private static string ToBufferFieldName(string identifier)
 		{
@@ -237,7 +263,7 @@ internal static partial class Sources
 		}
 
 		internal string GetPropertyGetterAccessFieldName(Property property)
-			=> PropertyGetterAccessFieldNames[property];
+			=> PropertyGetterAccessFieldNames[_aliases.Resolve(property)];
 
 		internal void AddIndexer(Property indexer)
 		{

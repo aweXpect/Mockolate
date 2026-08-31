@@ -76,7 +76,7 @@ internal record Method
 	public string OverrideAccessibility { get; }
 	public Type ReturnType { get; }
 	public string Name { get; }
-	public string ContainingType { get; }
+	public string ContainingType { get; init; }
 	public EquatableArray<MethodParameter> Parameters { get; }
 	public string? ExplicitImplementation { get; }
 	public EquatableArray<Attribute>? Attributes { get; }

@@ -74,7 +74,7 @@ internal record Property
 
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
-	public string ContainingType { get; }
+	public string ContainingType { get; init; }
 	public Method? Setter { get; }
 
 	public Method? Getter { get; }
