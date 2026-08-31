@@ -130,8 +130,9 @@ the `As<T>()` hop can be skipped:
 **Reaching members hidden with `new`**
 
 `Mock.As<T>()` also reaches a base interface whose members the mocked interface hides with `new`. No
-`.Implementing<T>()` is needed here - the base interface is already part of the mocked type - and (for methods, properties, and events) the two slots stay separate members, each with its own setups and recorded interactions (indexers are an exception; see Notes below):
-
+`.Implementing<T>()` is needed here - the base interface is already part of the mocked type - and (for methods,
+properties, and events) the two slots stay separate members, each with its own setups and recorded interactions
+(indexers are an exception; see Notes below):
 ```csharp
 public interface IChocolateShelfBase
 {
