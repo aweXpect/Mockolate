@@ -203,6 +203,122 @@ internal class Class : IEquatable<Class>
 		}
 	}
 
+	private Class(Class original, EquatableArray<Method> methods, EquatableArray<Property> properties,
+		EquatableArray<Event> events, EquatableArray<Class> inheritedTypes)
+	{
+		_sourceAssembly = original._sourceAssembly;
+		ClassFullName = original.ClassFullName;
+		ClassName = original.ClassName;
+		DisplayString = original.DisplayString;
+		IsInterface = original.IsInterface;
+		HasRequiredMembers = original.HasRequiredMembers;
+		HasInaccessibleRequiredMember = original.HasInaccessibleRequiredMember;
+		ReservedNames = original.ReservedNames;
+		Methods = methods;
+		Properties = properties;
+		Events = events;
+		InheritedTypes = inheritedTypes;
+		_surfaceHash = ComputeSurfaceHash();
+	}
+
+	/// <summary>
+	///     Returns a copy of this interface whose members carry the containing type of the
+	///     <paramref name="implementor" /> member that already implements them, so both surfaces address
+	///     one mock member instead of two. The replaced members are recorded in
+	///     <paramref name="aliases" />.
+	/// </summary>
+	/// <remarks>
+	///     A combination mock re-implements the additional interface, which re-maps every interface slot
+	///     to the mock's own explicit implementation. That is what makes a member the class implements
+	///     non-virtually (unreachable through the class) configurable through the interface - but applied
+	///     to a member the mock already overrides it forks one member into two, with separate setups and
+	///     separate recorded interactions.
+	///     <para />
+	///     Which class member implements which interface member is not guessed from signatures: it comes
+	///     from <see cref="MockClass.FindImplementation(Method)" />, i.e. from the compiler. Rebasing then
+	///     happens only when that implementation is also part of the mock's own surface
+	///     (<see cref="AllMethods" /> and friends, which carry only members the mock can override). An
+	///     implementation the mock cannot override - non-virtual, sealed, explicit, or with an
+	///     inaccessible signature - is therefore left alone, and the interface member keeps its own
+	///     containing type and stays re-implemented, which is the only way to reach that slot.
+	///     <para />
+	///     Only <see cref="Method.ContainingType" /> is rewritten; <see cref="Method.DeclaredContainingType" />
+	///     keeps naming the interface, so generated documentation still refers to the interface member.
+	///     <para />
+	///     Must be called on an interface; the copy carries only the surface <see cref="Class" /> itself
+	///     declares, so calling it on a <see cref="MockClass" /> would drop the mock-only fields.
+	/// </remarks>
+	public Class RebaseOnto(MockClass implementor, MemberAliases aliases)
+		=> new(this,
+			new EquatableArray<Method>(Methods.AsArray().Select(method => Rebase(method, implementor, aliases))
+				.ToArray()),
+			new EquatableArray<Property>(Properties.AsArray()
+				.Select(property => Rebase(property, implementor, aliases)).ToArray()),
+			new EquatableArray<Event>(Events.AsArray().Select(@event => Rebase(@event, implementor, aliases))
+				.ToArray()),
+			new EquatableArray<Class>(InheritedTypes.AsArray()
+				.Select(inherited => inherited.RebaseOnto(implementor, aliases)).ToArray()));
+
+	private static Method Rebase(Method method, MockClass implementor, MemberAliases aliases)
+	{
+		if (method.ExplicitImplementation is not null || method.IsStatic ||
+		    implementor.FindImplementation(method) is not { } implementation)
+		{
+			return method;
+		}
+
+		Method? target = implementor.AllMethods()
+			.FirstOrDefault(candidate => Method.EqualityComparer.Equals(candidate, implementation));
+		if (target is null || target.ContainingType == method.ContainingType)
+		{
+			return method;
+		}
+
+		Method rebased = method with { ContainingType = target.ContainingType, };
+		aliases.Add(rebased, target);
+		return rebased;
+	}
+
+	private static Property Rebase(Property property, MockClass implementor, MemberAliases aliases)
+	{
+		if (property.ExplicitImplementation is not null || property.IsStatic ||
+		    implementor.FindImplementation(property) is not { } implementation)
+		{
+			return property;
+		}
+
+		Property? target = implementor.AllProperties()
+			.FirstOrDefault(candidate => Property.EqualityComparer.Equals(candidate, implementation));
+		if (target is null || target.ContainingType == property.ContainingType)
+		{
+			return property;
+		}
+
+		Property rebased = property with { ContainingType = target.ContainingType, };
+		aliases.Add(rebased, target);
+		return rebased;
+	}
+
+	private static Event Rebase(Event @event, MockClass implementor, MemberAliases aliases)
+	{
+		if (@event.ExplicitImplementation is not null || @event.IsStatic ||
+		    implementor.FindImplementation(@event) is not { } implementation)
+		{
+			return @event;
+		}
+
+		Event? target = implementor.AllEvents()
+			.FirstOrDefault(candidate => Event.EqualityComparer.Equals(candidate, implementation));
+		if (target is null || target.ContainingType == @event.ContainingType)
+		{
+			return @event;
+		}
+
+		Event rebased = @event with { ContainingType = target.ContainingType, };
+		aliases.Add(rebased, target);
+		return rebased;
+	}
+
 	public EquatableArray<Method> Methods { get; }
 	public EquatableArray<Class> InheritedTypes { get; }
 	public EquatableArray<Property> Properties { get; }
