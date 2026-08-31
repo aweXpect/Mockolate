@@ -13,14 +13,10 @@ internal static partial class Sources
 	{
 		EquatableArray<Method>? constructors = (@class as MockClass)?.Constructors;
 		MemberAliases aliases = new();
-		// Interface mocks are unaffected: an inherited interface member keeps its declaring interface as
-		// its containing type on both surfaces, and a member hidden via `new` is meant to stay separate.
-		if (@class is MockClass { IsInterface: false, ImplementedInterfaces: { Count: > 0, } implementedInterfaces, })
+		if (@class is MockClass { HasImplementedMembers: true, } implementor)
 		{
 			additionalInterfaces = additionalInterfaces
-				.Select(additional => implementedInterfaces.Contains(additional.Class.ClassFullName)
-					? (additional.Name, additional.Class.RebaseOnto(@class, aliases))
-					: additional)
+				.Select(additional => (additional.Name, additional.Class.RebaseOnto(implementor, aliases)))
 				.ToArray();
 		}
 

@@ -117,9 +117,43 @@ sut.Mock.As<ILemonadeDispenser>().Verify.DispenseLemonade(5).Once();
 The returned mock shares the registry of the original - recorded interactions, scenario state, and setups apply
 across all faces of the same instance.
 
+**When the class already implements the interface**
+
+`.Implementing<T>()` is also useful when the mocked class itself implements `T`, because it makes members the
+class implements non-virtually reachable:
+
+```csharp
+public interface ICalculator
+{
+    int Add(int a, int b);
+    int Multiply(int a, int b);
+}
+
+public abstract class Calculator : ICalculator
+{
+    public int Add(int a, int b) => a + b;          // not virtual
+    public abstract int Multiply(int a, int b);
+}
+
+Calculator sut = Calculator.CreateMock().Implementing<ICalculator>();
+
+// `Multiply` is overridable, so the class and the interface are one member:
+// either surface configures it, and both calls are recorded against it.
+sut.Mock.Setup.Multiply(It.IsAny<int>(), It.IsAny<int>()).Returns(7);
+int viaClass = sut.Multiply(3, 4);                   // 7
+int viaInterface = ((ICalculator)sut).Multiply(3, 4); // 7
+
+// `Add` is not virtual, so the class call cannot be intercepted - only the interface slot can.
+sut.Mock.As<ICalculator>().Setup.Add(It.IsAny<int>(), It.IsAny<int>()).Returns(99);
+int addViaClass = sut.Add(1, 2);                     // 3 - the real implementation
+int addViaInterface = ((ICalculator)sut).Add(1, 2);  // 99
+```
+
 **Notes:**
 
 - Only the first type can be a class; additional types must be interfaces.
+- Members the class implements non-virtually are only mockable through the interface; cast the mock (or type
+  your subject as the interface) to reach them.
 
 ## Wrapping existing instances
 

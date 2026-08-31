@@ -104,11 +104,11 @@ internal static partial class Sources
 		foreach (Class @class in classes)
 		{
 			AddMissing(@class.AllProperties().Where(p => !p.IsIndexer), table.PropertyGetIds, table.AddProperty,
-				aliases.IsAlias);
-			AddMissing(@class.AllEvents(), table.EventSubscribeIds, table.AddEvent, aliases.IsAlias);
+				table.IsAlias);
+			AddMissing(@class.AllEvents(), table.EventSubscribeIds, table.AddEvent, table.IsAlias);
 			AddMissing(@class.AllProperties().Where(p => p.IsIndexer), table.IndexerGetIds, table.AddIndexer,
-				_ => false);
-			AddMissing(@class.AllMethods(), table.MethodIds, table.AddMethod, aliases.IsAlias);
+				table.IsAlias);
+			AddMissing(@class.AllMethods(), table.MethodIds, table.AddMethod, table.IsAlias);
 		}
 
 		return table;
@@ -181,10 +181,10 @@ internal static partial class Sources
 			=> _declarations[PropertySetIds[_aliases.Resolve(property)]];
 
 		internal string GetIndexerGetIdentifier(Property indexer)
-			=> _declarations[IndexerGetIds[indexer]];
+			=> _declarations[IndexerGetIds[_aliases.Resolve(indexer)]];
 
 		internal string GetIndexerSetIdentifier(Property indexer)
-			=> _declarations[IndexerSetIds[indexer]];
+			=> _declarations[IndexerSetIds[_aliases.Resolve(indexer)]];
 
 		internal string GetEventSubscribeIdentifier(Event @event)
 			=> _declarations[EventSubscribeIds[_aliases.Resolve(@event)]];
@@ -196,13 +196,13 @@ internal static partial class Sources
 		///     Returns the cached typed-buffer field name for the indexer's getter slot.
 		/// </summary>
 		internal string GetIndexerGetterBufferFieldName(Property indexer)
-			=> ToBufferFieldName(_declarations[IndexerGetIds[indexer]]);
+			=> ToBufferFieldName(_declarations[IndexerGetIds[_aliases.Resolve(indexer)]]);
 
 		/// <summary>
 		///     Returns the cached typed-buffer field name for the indexer's setter slot.
 		/// </summary>
 		internal string GetIndexerSetterBufferFieldName(Property indexer)
-			=> ToBufferFieldName(_declarations[IndexerSetIds[indexer]]);
+			=> ToBufferFieldName(_declarations[IndexerSetIds[_aliases.Resolve(indexer)]]);
 
 		/// <summary>
 		///     Returns the cached typed-buffer field name for the method's slot.

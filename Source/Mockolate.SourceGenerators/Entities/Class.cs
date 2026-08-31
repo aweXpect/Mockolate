@@ -232,14 +232,20 @@ internal class Class : IEquatable<Class>
 	///     to the mock's own explicit implementation. That is what makes a member the class implements
 	///     non-virtually (unreachable through the class) configurable through the interface - but applied
 	///     to a member the mock already overrides it forks one member into two, with separate setups and
-	///     separate recorded interactions. Members that <paramref name="implementor" /> implements
-	///     overridably are rebased onto the class member instead; the ones it does not implement (or
-	///     implements non-virtually or explicitly) keep their own containing type and stay re-implemented.
+	///     separate recorded interactions.
 	///     <para />
-	///     Indexers are left alone: they are keyed by their parameter signature rather than by the
-	///     declaring type, so both surfaces already share storage.
+	///     Which class member implements which interface member is not guessed from signatures: it comes
+	///     from <see cref="MockClass.FindImplementation(Method)" />, i.e. from the compiler. Rebasing then
+	///     happens only when that implementation is also part of the mock's own surface
+	///     (<see cref="AllMethods" /> and friends, which carry only members the mock can override). An
+	///     implementation the mock cannot override - non-virtual, sealed, explicit, or with an
+	///     inaccessible signature - is therefore left alone, and the interface member keeps its own
+	///     containing type and stays re-implemented, which is the only way to reach that slot.
+	///     <para />
+	///     Must be called on an interface; the copy carries only the surface <see cref="Class" /> itself
+	///     declares, so calling it on a <see cref="MockClass" /> would drop the mock-only fields.
 	/// </remarks>
-	public Class RebaseOnto(Class implementor, MemberAliases aliases)
+	public Class RebaseOnto(MockClass implementor, MemberAliases aliases)
 		=> new(this,
 			new EquatableArray<Method>(Methods.AsArray().Select(method => Rebase(method, implementor, aliases))
 				.ToArray()),
@@ -250,17 +256,16 @@ internal class Class : IEquatable<Class>
 			new EquatableArray<Class>(InheritedTypes.AsArray()
 				.Select(inherited => inherited.RebaseOnto(implementor, aliases)).ToArray()));
 
-	private static Method Rebase(Method method, Class implementor, MemberAliases aliases)
+	private static Method Rebase(Method method, MockClass implementor, MemberAliases aliases)
 	{
-		if (method.ExplicitImplementation is not null || method.IsStatic)
+		if (method.ExplicitImplementation is not null || method.IsStatic ||
+		    implementor.FindImplementation(method) is not { } implementation)
 		{
 			return method;
 		}
 
-		Method? target = implementor.AllMethods().FirstOrDefault(candidate
-			=> candidate is { ExplicitImplementation: null, IsStatic: false, } &&
-			   candidate.ReturnType == method.ReturnType &&
-			   Method.ContainingTypeIndependentEqualityComparer.Equals(candidate, method));
+		Method? target = implementor.AllMethods()
+			.FirstOrDefault(candidate => Method.EqualityComparer.Equals(candidate, implementation));
 		if (target is null || target.ContainingType == method.ContainingType)
 		{
 			return method;
@@ -271,17 +276,16 @@ internal class Class : IEquatable<Class>
 		return rebased;
 	}
 
-	private static Property Rebase(Property property, Class implementor, MemberAliases aliases)
+	private static Property Rebase(Property property, MockClass implementor, MemberAliases aliases)
 	{
-		if (property.IsIndexer || property.ExplicitImplementation is not null || property.IsStatic)
+		if (property.ExplicitImplementation is not null || property.IsStatic ||
+		    implementor.FindImplementation(property) is not { } implementation)
 		{
 			return property;
 		}
 
-		Property? target = implementor.AllProperties().FirstOrDefault(candidate
-			=> candidate is { IsIndexer: false, ExplicitImplementation: null, IsStatic: false, } &&
-			   candidate.Type == property.Type &&
-			   Property.ContainingTypeIndependentEqualityComparer.Equals(candidate, property));
+		Property? target = implementor.AllProperties()
+			.FirstOrDefault(candidate => Property.EqualityComparer.Equals(candidate, implementation));
 		if (target is null || target.ContainingType == property.ContainingType)
 		{
 			return property;
@@ -292,17 +296,16 @@ internal class Class : IEquatable<Class>
 		return rebased;
 	}
 
-	private static Event Rebase(Event @event, Class implementor, MemberAliases aliases)
+	private static Event Rebase(Event @event, MockClass implementor, MemberAliases aliases)
 	{
-		if (@event.ExplicitImplementation is not null || @event.IsStatic)
+		if (@event.ExplicitImplementation is not null || @event.IsStatic ||
+		    implementor.FindImplementation(@event) is not { } implementation)
 		{
 			return @event;
 		}
 
-		Event? target = implementor.AllEvents().FirstOrDefault(candidate
-			=> candidate is { ExplicitImplementation: null, IsStatic: false, } &&
-			   candidate.Type == @event.Type &&
-			   Event.ContainingTypeIndependentEqualityComparer.Equals(candidate, @event));
+		Event? target = implementor.AllEvents()
+			.FirstOrDefault(candidate => Event.EqualityComparer.Equals(candidate, implementation));
 		if (target is null || target.ContainingType == @event.ContainingType)
 		{
 			return @event;

@@ -365,6 +365,86 @@ public sealed partial class MockTests
 		}
 
 		[Fact]
+		public async Task InterfaceTheClassAlreadyImplements_ShouldShareIndexers()
+		{
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = MyCalculator.CreateMock().Implementing<ICalculator>();
+				         }
+				     }
+
+				     public interface ICalculator
+				     {
+				         int this[int index] { get; set; }
+				     }
+
+				     public abstract class MyCalculator : ICalculator
+				     {
+				         public abstract int this[int index] { get; set; }
+				     }
+				     """);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyCalculator__ICalculator.g.cs"])
+				.Contains("internal const int MemberCount = 2;")
+				.Because("both surfaces address a single indexer").And
+				.DoesNotContain("MemberId_Indexer_int_Get_2").And
+				.DoesNotContain("global::MyCode.ICalculator.this[int index]")
+				.Because("the mock's own override already serves the interface slot, and a second "
+				         + "implementation would get its own value storage");
+		}
+
+		[Fact]
+		public async Task ImplementedMemberDifferingOnlyInNullabilityOrTypeParameterName_ShouldStillBeShared()
+		{
+			// The class member is the compiler-resolved implementation of the interface member in both
+			// cases, so the two surfaces must share one mock member - a signature comparison would see
+			// `string` vs `string?` and `TValue` vs `T` and keep them apart.
+			GeneratorResult result = Generator
+				.Run("""
+				     using Mockolate;
+
+				     namespace MyCode;
+
+				     public class Program
+				     {
+				         public static void Main(string[] args)
+				         {
+				     		_ = MyCalculator.CreateMock().Implementing<ICalculator>();
+				         }
+				     }
+
+				     #nullable enable
+				     public interface ICalculator
+				     {
+				         string? Describe();
+				         T Convert<T>(T value);
+				     }
+				     #nullable disable
+
+				     public abstract class MyCalculator : ICalculator
+				     {
+				         public abstract string Describe();
+				         public abstract TValue Convert<TValue>(TValue value);
+				     }
+				     """);
+
+			await That(result.Diagnostics).IsEmpty();
+			await That(result.Sources["Mock.MyCalculator__ICalculator.g.cs"])
+				.Contains("internal const int MemberCount = 2;").And
+				.DoesNotContain("global::MyCode.ICalculator.Describe()").And
+				.DoesNotContain("global::MyCode.ICalculator.Convert<T>(T value)");
+		}
+
+		[Fact]
 		public async Task InterfaceTheClassDoesNotImplement_ShouldKeepCollidingMembersSeparate()
 		{
 			GeneratorResult result = Generator
@@ -383,18 +463,22 @@ public sealed partial class MockTests
 
 				     public interface ICalculator
 				     {
+				         int this[int index] { get; set; }
 				         int Multiply(int a, int b);
 				     }
 
 				     public abstract class MyCalculator
 				     {
+				         public abstract int this[int index] { get; set; }
 				         public abstract int Multiply(int a, int b);
 				     }
 				     """);
 
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources["Mock.MyCalculator__ICalculator.g.cs"])
-				.Contains("int global::MyCode.ICalculator.Multiply(int a, int b)")
+				.Contains("int global::MyCode.ICalculator.Multiply(int a, int b)").And
+				.Contains("int global::MyCode.ICalculator.this[int index]").And
+				.Contains("MemberId_Indexer_int_Get_2")
 				.Because("the class does not implement the interface, so the two members are unrelated");
 		}
 	}

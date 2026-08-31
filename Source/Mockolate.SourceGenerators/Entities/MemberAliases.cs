@@ -6,7 +6,9 @@ namespace Mockolate.SourceGenerators.Entities;
 /// </summary>
 /// <remarks>
 ///     Only populated for combination mocks (<c>Implementing&lt;TInterface&gt;()</c>) whose mocked
-///     class implements <c>TInterface</c> with an overridable member. See <see cref="Class.RebaseOnto" />.
+///     class implements <c>TInterface</c> with an overridable member. Filled once by
+///     <see cref="Class.RebaseOnto" /> and read-only from then on: <c>Sources.ComputeMemberIds</c>
+///     assigns ids against a finished map.
 /// </remarks>
 internal sealed class MemberAliases
 {
@@ -14,6 +16,16 @@ internal sealed class MemberAliases
 	public Dictionary<Property, Property> Properties { get; } = new();
 	public Dictionary<Event, Event> Events { get; } = new();
 
+	/// <summary>
+	///     Records that <paramref name="alias" /> resolves to <paramref name="target" />.
+	/// </summary>
+	/// <remarks>
+	///     Rebasing only rewrites the containing type, so an interface member that already matches the
+	///     class member in every other respect ends up equal to it. Recording that as an alias would make
+	///     <see cref="IsAlias(Method)" /> true for the class member itself, which then never gets an id -
+	///     and resolving it later would throw. Both surfaces already share one id in that case, by plain
+	///     record equality, so there is nothing to record.
+	/// </remarks>
 	public void Add(Method alias, Method target)
 	{
 		if (!alias.Equals(target))
@@ -22,6 +34,7 @@ internal sealed class MemberAliases
 		}
 	}
 
+	/// <inheritdoc cref="Add(Method,Method)" />
 	public void Add(Property alias, Property target)
 	{
 		if (!alias.Equals(target))
@@ -30,6 +43,7 @@ internal sealed class MemberAliases
 		}
 	}
 
+	/// <inheritdoc cref="Add(Method,Method)" />
 	public void Add(Event alias, Event target)
 	{
 		if (!alias.Equals(target))
