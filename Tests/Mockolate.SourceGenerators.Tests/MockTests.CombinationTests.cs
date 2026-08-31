@@ -323,8 +323,10 @@ public sealed partial class MockTests
 				.Because("the class implements it non-virtually, so only the interface slot can be mocked").And
 				.DoesNotContain("int global::MyCode.ICalculator.Multiply(int a, int b)").And
 				.DoesNotContain("int global::MyCode.ICalculator.Precision").And
-				.DoesNotContain("global::MyCode.ICalculator.Calculated")
-				.Because("the mock's own override already serves those interface slots");
+				.DoesNotContain("event global::System.EventHandler? global::MyCode.ICalculator.Calculated")
+				.Because("the mock's own override already serves those interface slots").And
+				.Contains("<see cref=\"global::MyCode.ICalculator.Calculated\">")
+				.Because("documentation keeps referring to the interface member the shared member implements");
 		}
 
 		[Fact]
@@ -440,7 +442,7 @@ public sealed partial class MockTests
 			await That(result.Diagnostics).IsEmpty();
 			await That(result.Sources["Mock.MyCalculator__ICalculator.g.cs"])
 				.Contains("internal const int MemberCount = 2;").And
-				.DoesNotContain("global::MyCode.ICalculator.Describe()").And
+				.DoesNotContain("string? global::MyCode.ICalculator.Describe()").And
 				.DoesNotContain("global::MyCode.ICalculator.Convert<T>(T value)");
 		}
 

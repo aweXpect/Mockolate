@@ -20,37 +20,18 @@ internal sealed class MemberAliases
 	///     Records that <paramref name="alias" /> resolves to <paramref name="target" />.
 	/// </summary>
 	/// <remarks>
-	///     Rebasing only rewrites the containing type, so an interface member that already matches the
-	///     class member in every other respect ends up equal to it. Recording that as an alias would make
-	///     <see cref="IsAlias(Method)" /> true for the class member itself, which then never gets an id -
-	///     and resolving it later would throw. Both surfaces already share one id in that case, by plain
-	///     record equality, so there is nothing to record.
+	///     The alias key can never collide with the target: rebasing rewrites only
+	///     <see cref="Method.ContainingType" /> and keeps <see cref="Method.DeclaredContainingType" />,
+	///     which names the interface on the alias and the class on the target. So recording an alias
+	///     never makes <see cref="IsAlias(Method)" /> true for the class member itself.
 	/// </remarks>
-	public void Add(Method alias, Method target)
-	{
-		if (!alias.Equals(target))
-		{
-			Methods[alias] = target;
-		}
-	}
+	public void Add(Method alias, Method target) => Methods[alias] = target;
 
 	/// <inheritdoc cref="Add(Method,Method)" />
-	public void Add(Property alias, Property target)
-	{
-		if (!alias.Equals(target))
-		{
-			Properties[alias] = target;
-		}
-	}
+	public void Add(Property alias, Property target) => Properties[alias] = target;
 
 	/// <inheritdoc cref="Add(Method,Method)" />
-	public void Add(Event alias, Event target)
-	{
-		if (!alias.Equals(target))
-		{
-			Events[alias] = target;
-		}
-	}
+	public void Add(Event alias, Event target) => Events[alias] = target;
 
 	public Method Resolve(Method method) => Methods.TryGetValue(method, out Method? target) ? target : method;
 

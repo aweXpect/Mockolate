@@ -6,9 +6,9 @@ namespace Mockolate.SourceGenerators.Entities;
 internal sealed class MockClass : Class, IEquatable<MockClass>
 {
 	private readonly int _mockSurfaceHash;
-	private Dictionary<Event, Event>? _eventImplementations;
-	private Dictionary<Method, Method>? _methodImplementations;
-	private Dictionary<Property, Property>? _propertyImplementations;
+	private readonly Dictionary<Event, Event> _eventImplementations;
+	private readonly Dictionary<Method, Method> _methodImplementations;
+	private readonly Dictionary<Property, Property> _propertyImplementations;
 
 	public MockClass(ITypeSymbol[] types, IAssemblySymbol sourceAssembly) : base(types[0], sourceAssembly)
 	{
@@ -22,6 +22,9 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 		ImplementedMethods = implementedMethods;
 		ImplementedProperties = implementedProperties;
 		ImplementedEvents = implementedEvents;
+		_methodImplementations = BuildLookup(ImplementedMethods, Method.EqualityComparer);
+		_propertyImplementations = BuildLookup(ImplementedProperties, Property.EqualityComparer);
+		_eventImplementations = BuildLookup(ImplementedEvents, Event.EqualityComparer);
 
 		HiddenBaseInterfaces = IsInterface
 			? new EquatableArray<Class>(GetHiddenBaseInterfaces(types[0])
@@ -114,30 +117,21 @@ internal sealed class MockClass : Class, IEquatable<MockClass>
 	///     must still look it up in the surface they intend to address.
 	/// </remarks>
 	internal Method? FindImplementation(Method interfaceMember)
-	{
-		_methodImplementations ??= BuildLookup(ImplementedMethods, Method.EqualityComparer);
-		return _methodImplementations.TryGetValue(interfaceMember, out Method? implementation)
+		=> _methodImplementations.TryGetValue(interfaceMember, out Method? implementation)
 			? implementation
 			: null;
-	}
 
 	/// <inheritdoc cref="FindImplementation(Method)" />
 	internal Property? FindImplementation(Property interfaceMember)
-	{
-		_propertyImplementations ??= BuildLookup(ImplementedProperties, Property.EqualityComparer);
-		return _propertyImplementations.TryGetValue(interfaceMember, out Property? implementation)
+		=> _propertyImplementations.TryGetValue(interfaceMember, out Property? implementation)
 			? implementation
 			: null;
-	}
 
 	/// <inheritdoc cref="FindImplementation(Method)" />
 	internal Event? FindImplementation(Event interfaceMember)
-	{
-		_eventImplementations ??= BuildLookup(ImplementedEvents, Event.EqualityComparer);
-		return _eventImplementations.TryGetValue(interfaceMember, out Event? implementation)
+		=> _eventImplementations.TryGetValue(interfaceMember, out Event? implementation)
 			? implementation
 			: null;
-	}
 
 	/// <remarks>
 	///     Keyed by the member's identity comparer (name, containing type, parameters) rather than by

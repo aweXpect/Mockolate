@@ -16,6 +16,7 @@ internal record Property
 		Name = propertySymbol.IsIndexer ? rawName : Helpers.EscapeIfKeyword(rawName);
 		Type = Type.From(propertySymbol.Type);
 		ContainingType = propertySymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
+		DeclaredContainingType = ContainingType;
 		IsIndexer = propertySymbol.IsIndexer;
 		IsAbstract = propertySymbol.IsAbstract;
 		IsStatic = propertySymbol.IsStatic;
@@ -75,6 +76,10 @@ internal record Property
 	public EquatableArray<MethodParameter>? IndexerParameters { get; }
 	public Type Type { get; }
 	public string ContainingType { get; init; }
+
+	/// <inheritdoc cref="Method.DeclaredContainingType" />
+	public string DeclaredContainingType { get; }
+
 	public Method? Setter { get; }
 
 	public Method? Getter { get; }

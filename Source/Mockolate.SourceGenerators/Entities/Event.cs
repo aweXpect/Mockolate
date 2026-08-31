@@ -18,6 +18,7 @@ internal record Event
 		Name = Helpers.EscapeIfKeyword(eventSymbol.ExplicitInterfaceImplementations.Length > 0 ? eventSymbol.ExplicitInterfaceImplementations[0].Name : eventSymbol.Name);
 		Type = Type.From(eventSymbol.Type);
 		ContainingType = eventSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
+		DeclaredContainingType = ContainingType;
 		Delegate = new Method(delegateInvokeMethod, null, sourceAssembly);
 		Attributes = eventSymbol.GetAttributes().ToAttributeArray(sourceAssembly);
 		IsStatic = eventSymbol.IsStatic;
@@ -44,6 +45,10 @@ internal record Event
 
 	public Type Type { get; }
 	public string ContainingType { get; init; }
+
+	/// <inheritdoc cref="Method.DeclaredContainingType" />
+	public string DeclaredContainingType { get; }
+
 	public bool UseOverride { get; }
 	public bool IsOverridableFromMock { get; }
 	public bool IsAbstract { get; }

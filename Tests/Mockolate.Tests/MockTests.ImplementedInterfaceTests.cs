@@ -142,6 +142,79 @@ public sealed partial class MockTests
 				.Because("the interface slot is re-implemented, which is the only way to reach it");
 		}
 
+		[Fact]
+		public async Task VirtualEvent_RaisedThroughEitherSurface_ShouldInvokeHandlersFromBothSurfaces()
+		{
+			Calculator mock = Calculator.CreateMock().Implementing<ICalculator>();
+			int classHandlerCalls = 0;
+			int interfaceHandlerCalls = 0;
+			mock.Calculated += (_, _) => classHandlerCalls++;
+			((ICalculator)mock).Calculated += (_, _) => interfaceHandlerCalls++;
+
+			mock.Mock.As<ICalculator>().Raise.Calculated(this, EventArgs.Empty);
+
+			await That(classHandlerCalls).IsEqualTo(1)
+				.Because("both surfaces share one event, so raising through the interface reaches all handlers");
+			await That(interfaceHandlerCalls).IsEqualTo(1);
+
+			mock.Mock.Raise.Calculated(this, EventArgs.Empty);
+
+			await That(classHandlerCalls).IsEqualTo(2);
+			await That(interfaceHandlerCalls).IsEqualTo(2);
+		}
+
+		[Fact]
+		public async Task GetOnlyInterfaceProperty_ImplementedWithGetterAndSetter_ShouldShareTheValue()
+		{
+			Thermometer mock = Thermometer.CreateMock().Implementing<IReadOnlyThermometer>();
+
+			mock.Temperature = 21;
+
+			await That(mock.Temperature).IsEqualTo(21);
+			await That(((IReadOnlyThermometer)mock).Temperature).IsEqualTo(21)
+				.Because("the class member implements the interface getter, so both surfaces read one value");
+		}
+
+		[Fact]
+		public async Task TwoAdditionalInterfaces_ImplementedByTheSameClassMember_ShouldShareOneMember()
+		{
+			Sensor mock = Sensor.CreateMock().Implementing<IPressureSensor>().Implementing<ITemperatureSensor>();
+			mock.Mock.Setup.Read().Returns(8);
+
+			await That(mock.Read()).IsEqualTo(8);
+			await That(((IPressureSensor)mock).Read()).IsEqualTo(8);
+			await That(((ITemperatureSensor)mock).Read()).IsEqualTo(8);
+			await That(mock.Mock.Verify.Read()).Exactly(3);
+			await That(mock.Mock.As<IPressureSensor>().Verify.Read()).Exactly(3)
+				.Because("all three surfaces address the same member and share its recorded interactions");
+			await That(mock.Mock.As<ITemperatureSensor>().Verify.Read()).Exactly(3);
+		}
+
+		public interface IReadOnlyThermometer
+		{
+			int Temperature { get; }
+		}
+
+		public abstract class Thermometer : IReadOnlyThermometer
+		{
+			public abstract int Temperature { get; set; }
+		}
+
+		public interface IPressureSensor
+		{
+			int Read();
+		}
+
+		public interface ITemperatureSensor
+		{
+			int Read();
+		}
+
+		public abstract class Sensor : IPressureSensor, ITemperatureSensor
+		{
+			public abstract int Read();
+		}
+
 		public interface ISquarer
 		{
 			int Square(int value);

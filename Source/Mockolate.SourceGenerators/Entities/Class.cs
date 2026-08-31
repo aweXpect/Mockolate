@@ -242,6 +242,9 @@ internal class Class : IEquatable<Class>
 	///     inaccessible signature - is therefore left alone, and the interface member keeps its own
 	///     containing type and stays re-implemented, which is the only way to reach that slot.
 	///     <para />
+	///     Only <see cref="Method.ContainingType" /> is rewritten; <see cref="Method.DeclaredContainingType" />
+	///     keeps naming the interface, so generated documentation still refers to the interface member.
+	///     <para />
 	///     Must be called on an interface; the copy carries only the surface <see cref="Class" /> itself
 	///     declares, so calling it on a <see cref="MockClass" /> would drop the mock-only fields.
 	/// </remarks>

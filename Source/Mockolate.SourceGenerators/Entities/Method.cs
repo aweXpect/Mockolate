@@ -22,6 +22,7 @@ internal record Method
 		ReturnType = methodSymbol.ReturnsVoid ? Type.Void : Type.From(methodSymbol.ReturnType);
 		Name = Helpers.EscapeIfKeyword(methodSymbol.ExplicitInterfaceImplementations.Length > 0 ? methodSymbol.ExplicitInterfaceImplementations[0].Name : methodSymbol.Name);
 		ContainingType = methodSymbol.ContainingType.ToDisplayString(Helpers.TypeDisplayFormat);
+		DeclaredContainingType = ContainingType;
 		Parameters = new EquatableArray<MethodParameter>(
 			methodSymbol.Parameters.Select(MethodParameter.From).ToArray());
 
@@ -77,6 +78,14 @@ internal record Method
 	public Type ReturnType { get; }
 	public string Name { get; }
 	public string ContainingType { get; init; }
+
+	/// <summary>
+	///     The containing type the member is declared on. Unlike <see cref="ContainingType" /> it is not
+	///     rewritten by <see cref="Class.RebaseOnto" />, so documentation keeps referring to the interface
+	///     member even when the member is addressed through the implementing class member.
+	/// </summary>
+	public string DeclaredContainingType { get; }
+
 	public EquatableArray<MethodParameter> Parameters { get; }
 	public string? ExplicitImplementation { get; }
 	public EquatableArray<Attribute>? Attributes { get; }
