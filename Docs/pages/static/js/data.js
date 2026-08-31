@@ -486,6 +486,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -569,7 +575,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -656,7 +663,8 @@ window.BENCHMARK_DATA = {
           327.5429092553946,
           308.82421167691547,
           355.2131740129911,
-          376.14761889775593
+          376.14761889775593,
+          307.24783143997195
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -714,6 +722,7 @@ window.BENCHMARK_DATA = {
           1720,
           1720,
           1720,
+          1608,
           1608,
           1608,
           1608,
@@ -843,7 +852,8 @@ window.BENCHMARK_DATA = {
           98322.1769670759,
           97347.82314453126,
           99236.09825721153,
-          71018.08825683594
+          71018.08825683594,
+          70785.8850423177
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -935,7 +945,8 @@ window.BENCHMARK_DATA = {
           9096,
           9208,
           9096,
-          9090
+          9090,
+          9096
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1030,7 +1041,8 @@ window.BENCHMARK_DATA = {
           4781.881197793143,
           4567.043127950033,
           4872.897757466634,
-          4580.605422973633
+          4580.605422973633,
+          4464.039071655274
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1098,6 +1110,7 @@ window.BENCHMARK_DATA = {
           7928,
           7928,
           7928,
+          7896,
           7896,
           7896,
           7896,
@@ -1217,7 +1230,8 @@ window.BENCHMARK_DATA = {
           4980.536379496257,
           4776.925729479109,
           5144.053995259603,
-          4601.413376363119
+          4601.413376363119,
+          4272.156764690692
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1309,7 +1323,8 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6970,
-          6959
+          6959,
+          6970
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1404,7 +1419,8 @@ window.BENCHMARK_DATA = {
           479.7624978337969,
           401.8008369377681,
           499.047552617391,
-          454.805120976766
+          454.805120976766,
+          397.8650733743395
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1416,6 +1432,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -1591,7 +1608,8 @@ window.BENCHMARK_DATA = {
           586.1484643936158,
           474.12281932149614,
           540.2355673472086,
-          585.0423788343157
+          585.0423788343157,
+          531.2680973325457
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1644,6 +1662,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040,
@@ -2183,6 +2202,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -2266,7 +2291,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -2353,7 +2379,8 @@ window.BENCHMARK_DATA = {
           325.3471104621887,
           304.7454094568888,
           232.72481746673583,
-          387.80373328526815
+          387.80373328526815,
+          291.7373906930288
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2411,6 +2438,7 @@ window.BENCHMARK_DATA = {
           1824,
           1824,
           1824,
+          1744,
           1744,
           1744,
           1744,
@@ -2540,7 +2568,8 @@ window.BENCHMARK_DATA = {
           16416.13192313058,
           14164.397143554688,
           11103.972709147136,
-          14338.30526297433
+          14338.30526297433,
+          12620.333448137555
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2628,6 +2657,7 @@ window.BENCHMARK_DATA = {
           12809,
           12809,
           13241,
+          12809,
           12809,
           12809,
           12809,
@@ -2727,7 +2757,8 @@ window.BENCHMARK_DATA = {
           6074.12186126709,
           5402.966403706869,
           4131.554660797119,
-          5410.135469055176
+          5410.135469055176,
+          4736.624467032297
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2739,6 +2770,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -2914,7 +2946,8 @@ window.BENCHMARK_DATA = {
           216761.01623535156,
           231810.97403390068,
           99193.39887883113,
-          123807.42602539062
+          123807.42602539062,
+          109325.76159667969
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3006,6 +3039,7 @@ window.BENCHMARK_DATA = {
           15628,
           15628,
           15601,
+          15587,
           15587
         ],
         "borderColor": "#4A6FA5",
@@ -3101,7 +3135,8 @@ window.BENCHMARK_DATA = {
           1504.9421038309733,
           1353.7960335867745,
           1033.3015943254743,
-          1622.9925096218403
+          1622.9925096218403,
+          1127.6868303934732
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3113,6 +3148,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -3288,7 +3324,8 @@ window.BENCHMARK_DATA = {
           197.73835191726684,
           178.44781282742818,
           156.7039527575175,
-          258.91497570673624
+          258.91497570673624,
+          171.45722467104594
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -3341,6 +3378,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376,
@@ -3880,6 +3918,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -3963,7 +4007,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -4050,7 +4095,8 @@ window.BENCHMARK_DATA = {
           1020.779529435294,
           1067.3900662740073,
           807.4067818959554,
-          956.3737862450736
+          956.3737862450736,
+          1022.0504829406739
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4108,6 +4154,7 @@ window.BENCHMARK_DATA = {
           3912,
           3912,
           3912,
+          3856,
           3856,
           3856,
           3856,
@@ -4237,7 +4284,8 @@ window.BENCHMARK_DATA = {
           219800.0225655692,
           163667.2823311942,
           133219.76729910713,
-          226983.04506138392
+          226983.04506138392,
+          219012.23831380208
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4329,7 +4377,8 @@ window.BENCHMARK_DATA = {
           20860,
           20721,
           21251,
-          21084
+          21084,
+          20860
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4424,7 +4473,8 @@ window.BENCHMARK_DATA = {
           10598.823600260417,
           10666.07171194894,
           7424.8615997314455,
-          10689.86881205241
+          10689.86881205241,
+          10535.205549112956
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4516,7 +4566,8 @@ window.BENCHMARK_DATA = {
           13144,
           13088,
           13088,
-          13144
+          13144,
+          13088
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4611,7 +4662,8 @@ window.BENCHMARK_DATA = {
           11902.857801164899,
           11363.671033586774,
           7665.845008263221,
-          12567.813811238606
+          12567.813811238606,
+          12262.231779915946
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4702,6 +4754,7 @@ window.BENCHMARK_DATA = {
           13948,
           13954,
           13943,
+          13954,
           13954,
           13954
         ],
@@ -4798,7 +4851,8 @@ window.BENCHMARK_DATA = {
           900.6450984818595,
           1020.0332397733416,
           677.0292280832927,
-          947.6924722035726
+          947.6924722035726,
+          936.49820505778
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4810,6 +4864,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -5390,6 +5445,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -5473,7 +5534,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -5560,7 +5622,8 @@ window.BENCHMARK_DATA = {
           2660.4278204781667,
           2928.593722788493,
           1977.2610013144356,
-          2598.2408882141112
+          2598.2408882141112,
+          2565.315633138021
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5618,6 +5681,7 @@ window.BENCHMARK_DATA = {
           4992,
           4992,
           4992,
+          4936,
           4936,
           4936,
           4936,
@@ -5747,7 +5811,8 @@ window.BENCHMARK_DATA = {
           228859.7059000651,
           174888.8441859654,
           145264.2588266226,
-          238538.27880859375
+          238538.27880859375,
+          232173.07577078682
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5839,7 +5904,8 @@ window.BENCHMARK_DATA = {
           30610,
           29324,
           31002,
-          30834
+          30834,
+          30610
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5934,7 +6000,8 @@ window.BENCHMARK_DATA = {
           25312.43442241962,
           25090.739656575523,
           18319.98122514997,
-          25597.007592773436
+          25597.007592773436,
+          24653.029804774695
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6026,7 +6093,8 @@ window.BENCHMARK_DATA = {
           26249,
           26193,
           26193,
-          26249
+          26249,
+          26193
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6121,7 +6189,8 @@ window.BENCHMARK_DATA = {
           25208.695239727313,
           24324.45004272461,
           16576.154525756836,
-          25882.37259565081
+          25882.37259565081,
+          25888.808498128255
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6212,6 +6281,7 @@ window.BENCHMARK_DATA = {
           33769,
           33764,
           33772,
+          33764,
           33764,
           33764
         ],
@@ -6308,7 +6378,8 @@ window.BENCHMARK_DATA = {
           2158.6294339497886,
           2409.292793273926,
           1575.7844529151917,
-          2327.0886413574217
+          2327.0886413574217,
+          2296.7017003377277
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6320,6 +6391,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -6900,6 +6972,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -6983,7 +7061,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -7070,7 +7149,8 @@ window.BENCHMARK_DATA = {
           196.40976060231526,
           340.20293045043945,
           371.80793864386425,
-          361.60002393722533
+          361.60002393722533,
+          281.2549233118693
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7128,6 +7208,7 @@ window.BENCHMARK_DATA = {
           2088,
           2088,
           2088,
+          1976,
           1976,
           1976,
           1976,
@@ -7257,7 +7338,8 @@ window.BENCHMARK_DATA = {
           53663.78326822917,
           183703.54575892858,
           135706.54993489583,
-          134896.46393229166
+          134896.46393229166,
+          103699.26065499442
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7348,6 +7430,7 @@ window.BENCHMARK_DATA = {
           14938,
           15104,
           14926,
+          14938,
           14938,
           14938
         ],
@@ -7444,7 +7527,8 @@ window.BENCHMARK_DATA = {
           2833.7572067260744,
           6367.636356099447,
           6039.763196309407,
-          5812.74742380778
+          5812.74742380778,
+          4441.5548624674475
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7536,7 +7620,8 @@ window.BENCHMARK_DATA = {
           9336,
           9280,
           9336,
-          9336
+          9336,
+          9280
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7631,7 +7716,8 @@ window.BENCHMARK_DATA = {
           2774.9872884114584,
           6293.097577412923,
           5852.590672302246,
-          5542.37218170166
+          5542.37218170166,
+          4325.260521952311
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7719,6 +7805,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8257,
+          8244,
           8244,
           8244,
           8244,
@@ -7818,7 +7905,8 @@ window.BENCHMARK_DATA = {
           265.5714152776278,
           603.3955214182536,
           579.8941809972127,
-          538.5896723429362
+          538.5896723429362,
+          444.4829080581665
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7830,6 +7918,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -8005,7 +8094,8 @@ window.BENCHMARK_DATA = {
           263.0320213953654,
           506.2372404734294,
           534.4878470557077,
-          522.0357245763142
+          522.0357245763142,
+          421.63193534215293
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8058,6 +8148,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064,
@@ -8597,6 +8688,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -8680,7 +8777,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -8767,7 +8865,8 @@ window.BENCHMARK_DATA = {
           465.47115704218544,
           677.6127344767252,
           663.1991659800211,
-          635.0999643325806
+          635.0999643325806,
+          493.08111782073973
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8825,6 +8924,7 @@ window.BENCHMARK_DATA = {
           2304,
           2304,
           2304,
+          2192,
           2192,
           2192,
           2192,
@@ -8954,7 +9054,8 @@ window.BENCHMARK_DATA = {
           54984.24808146159,
           186885.85613141741,
           139865.80307617187,
-          137990.38720703125
+          137990.38720703125,
+          108446.44984788161
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9046,7 +9147,8 @@ window.BENCHMARK_DATA = {
           19089,
           18925,
           18925,
-          18925
+          18925,
+          18930
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9141,7 +9243,8 @@ window.BENCHMARK_DATA = {
           4363.791085379465,
           9307.483118693033,
           8849.415971883138,
-          8356.26524235652
+          8356.26524235652,
+          6660.64074198405
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9233,7 +9336,8 @@ window.BENCHMARK_DATA = {
           12360,
           11800,
           12361,
-          12361
+          12361,
+          11800
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9328,7 +9432,8 @@ window.BENCHMARK_DATA = {
           4311.152380625407,
           9230.942581176758,
           8942.23372239333,
-          8492.77579498291
+          8492.77579498291,
+          6940.541612243653
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -9416,6 +9521,7 @@ window.BENCHMARK_DATA = {
           15786,
           15786,
           15780,
+          15786,
           15786,
           15786,
           15786,
@@ -9515,7 +9621,8 @@ window.BENCHMARK_DATA = {
           595.608756796519,
           1170.792232386271,
           1124.9457785288494,
-          1061.837372716268
+          1061.837372716268,
+          864.237465540568
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -9527,6 +9634,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -9702,7 +9810,8 @@ window.BENCHMARK_DATA = {
           959.4621905644734,
           1417.168568166097,
           1476.5607891082764,
-          1456.7910191853841
+          1456.7910191853841,
+          1158.2090836842856
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9755,6 +9864,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816,
@@ -10294,6 +10404,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -10377,7 +10493,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -10464,7 +10581,8 @@ window.BENCHMARK_DATA = {
           441.120180777141,
           527.8218469619751,
           537.6874072392782,
-          515.4416469256083
+          515.4416469256083,
+          320.39138209025066
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -10522,6 +10640,7 @@ window.BENCHMARK_DATA = {
           2528,
           2528,
           2528,
+          2472,
           2472,
           2472,
           2472,
@@ -10651,7 +10770,8 @@ window.BENCHMARK_DATA = {
           8409.75231061663,
           10395.380680338541,
           11892.097800118583,
-          11466.336342947823
+          11466.336342947823,
+          5608.595306396484
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -10743,6 +10863,7 @@ window.BENCHMARK_DATA = {
           10640,
           10641,
           10641,
+          10513,
           10513
         ],
         "borderColor": "#A052B0",
@@ -10838,7 +10959,8 @@ window.BENCHMARK_DATA = {
           5899.192690922664,
           7078.9406595865885,
           7664.492067777193,
-          7568.625034877232
+          7568.625034877232,
+          3804.9903678894043
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -10850,6 +10972,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -11025,7 +11148,8 @@ window.BENCHMARK_DATA = {
           6344.998076847622,
           7467.2967397054035,
           8502.288127354213,
-          7988.861615862165
+          7988.861615862165,
+          4001.389949798584
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -11106,6 +11230,7 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11518,
+          11508,
           11508,
           11508,
           11508,
@@ -11212,7 +11337,8 @@ window.BENCHMARK_DATA = {
           382.021755027771,
           440.0739903450012,
           477.2894432067871,
-          449.65440004212513
+          449.65440004212513,
+          245.93755985895794
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -11224,6 +11350,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -11399,7 +11526,8 @@ window.BENCHMARK_DATA = {
           389.75230429967246,
           457.3670784632365,
           454.41401440756664,
-          439.3734318293058
+          439.3734318293058,
+          293.65739801951815
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -11452,6 +11580,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680,
@@ -11991,6 +12120,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -12074,7 +12209,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -12161,7 +12297,8 @@ window.BENCHMARK_DATA = {
           791.485369168795,
           1054.3641129811606,
           1005.4392667497907,
-          1030.8017642157417
+          1030.8017642157417,
+          767.9370059967041
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -12219,6 +12356,7 @@ window.BENCHMARK_DATA = {
           3032,
           3032,
           3032,
+          2976,
           2976,
           2976,
           2976,
@@ -12348,7 +12486,8 @@ window.BENCHMARK_DATA = {
           12908.111005655925,
           17341.724791463217,
           19324.31494140625,
-          18247.78715616862
+          18247.78715616862,
+          9225.403713771275
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -12440,6 +12579,7 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           18721,
+          17441,
           17441
         ],
         "borderColor": "#A052B0",
@@ -12535,7 +12675,8 @@ window.BENCHMARK_DATA = {
           12374.530263264975,
           16645.965996878487,
           16774.37577718099,
-          17513.398550851005
+          17513.398550851005,
+          8881.10117994036
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -12547,6 +12688,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -12722,7 +12864,8 @@ window.BENCHMARK_DATA = {
           13883.810961914063,
           18700.33306274414,
           19522.662663386418,
-          19200.486158098494
+          19200.486158098494,
+          9469.034168497721
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -12803,6 +12946,7 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31543,
+          31546,
           31546,
           31546,
           31546,
@@ -12909,7 +13053,8 @@ window.BENCHMARK_DATA = {
           845.589686529977,
           1117.1431120554605,
           1115.7293960253398,
-          1123.357696914673
+          1123.357696914673,
+          732.882216317313
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -12921,6 +13066,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -13096,7 +13242,8 @@ window.BENCHMARK_DATA = {
           1224.0260972340902,
           1665.4471930185953,
           1554.3127210934956,
-          1556.0964103426252
+          1556.0964103426252,
+          1198.1782433191936
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -13149,6 +13296,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032,
@@ -13688,6 +13836,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 20:43:21 2026 \u002B0200",
         "message": "fix: share interface members with the class members implementing them (#854)"
+      },
+      {
+        "sha": "665863fd419817a308b590d6706918debfe4848f",
+        "author": "Valentin Breu\u00DF",
+        "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
+        "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
       }
     ],
     "labels": [
@@ -13771,7 +13925,8 @@ window.BENCHMARK_DATA = {
       "c60eb7fc",
       "cb55194a",
       "0e57c9ec",
-      "b1569f23"
+      "b1569f23",
+      "665863fd"
     ],
     "datasets": [
       {
@@ -13858,7 +14013,8 @@ window.BENCHMARK_DATA = {
           9.81508632004261,
           14.459068278471628,
           17.0011643744432,
-          16.683633200327556
+          16.683633200327556,
+          15.108890595038732
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -13916,6 +14072,7 @@ window.BENCHMARK_DATA = {
           440,
           440,
           440,
+          160,
           160,
           160,
           160,
@@ -14045,7 +14202,8 @@ window.BENCHMARK_DATA = {
           143.7788930279868,
           217.3644940302922,
           285.33962354660036,
-          269.2653820991516
+          269.2653820991516,
+          229.3282632668813
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -14057,6 +14215,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -14232,7 +14391,8 @@ window.BENCHMARK_DATA = {
           20.76369034556242,
           29.15884520457341,
           34.52587903397424,
-          35.02519398530324
+          35.02519398530324,
+          31.33360399518694
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -14285,6 +14445,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200,
@@ -14419,7 +14580,8 @@ window.BENCHMARK_DATA = {
           773.6769044739859,
           935.9503423984235,
           1375.698389371236,
-          882.6666674296062
+          882.6666674296062,
+          996.3470425923665
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -14431,6 +14593,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -14606,7 +14769,8 @@ window.BENCHMARK_DATA = {
           982.6235129492624,
           1473.121235030038,
           1932.543007659912,
-          1443.690290587289
+          1443.690290587289,
+          1520.1794083913167
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -14618,6 +14782,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -14793,7 +14958,8 @@ window.BENCHMARK_DATA = {
           1091.7450069745382,
           1067.2472628275552,
           1704.3283224105835,
-          1115.2170834859212
+          1115.2170834859212,
+          1120.8735254727876
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -14885,6 +15051,7 @@ window.BENCHMARK_DATA = {
           2763,
           2759,
           2763,
+          2759,
           2759
         ],
         "borderColor": "#4A6FA5",
