@@ -117,9 +117,87 @@ sut.Mock.As<ILemonadeDispenser>().Verify.DispenseLemonade(5).Once();
 The returned mock shares the registry of the original - recorded interactions, scenario state, and setups apply
 across all faces of the same instance.
 
+Where the mock is already typed as the additional interface, its own `Mock` accessor reaches the same surface, so
+the `As<T>()` hop can be skipped:
+
+```csharp
+((ILemonadeDispenser)sut).Mock.Setup.DispenseLemonade(It.IsAny<int>()).Returns(true);
+((ILemonadeDispenser)sut).Mock.Verify.DispenseLemonade(5).Once();
+```
+
+`Mock.As<T>()` throws a `MockException` when the mock does not implement `T`.
+
+**Reaching members hidden with `new`**
+
+`Mock.As<T>()` also reaches a base interface whose members the mocked interface hides with `new`. No
+`.Implementing<T>()` is needed here - the base interface is already part of the mocked type - and the two slots stay
+separate members, each with its own setups and recorded interactions:
+
+```csharp
+public interface IChocolateShelfBase
+{
+    int Restock();
+}
+
+public interface IChocolateShelf : IChocolateShelfBase
+{
+    new int Restock();
+}
+
+IChocolateShelf sut = IChocolateShelf.CreateMock();
+sut.Mock.Setup.Restock().Returns(42);
+sut.Mock.As<IChocolateShelfBase>().Setup.Restock().Returns(43);
+
+int viaDerived = sut.Restock();                     // 42
+int viaBase = ((IChocolateShelfBase)sut).Restock(); // 43
+
+sut.Mock.Verify.Restock().Once();
+sut.Mock.As<IChocolateShelfBase>().Verify.Restock().Once();
+```
+
+**When the class already implements the interface**
+
+`.Implementing<T>()` is also useful when the mocked class itself implements `T`, because it makes members the
+class implements non-virtually reachable:
+
+```csharp
+public interface ICalculator
+{
+    int Add(int a, int b);
+    int Multiply(int a, int b);
+}
+
+public abstract class Calculator : ICalculator
+{
+    public int Add(int a, int b) => a + b;          // not virtual
+    public abstract int Multiply(int a, int b);
+}
+
+Calculator sut = Calculator.CreateMock().Implementing<ICalculator>();
+
+// `Multiply` is overridable, so the class and the interface are one member:
+// either surface configures it, and both calls are recorded against it.
+sut.Mock.Setup.Multiply(It.IsAny<int>(), It.IsAny<int>()).Returns(7);
+int viaClass = sut.Multiply(3, 4);                   // 7
+int viaInterface = ((ICalculator)sut).Multiply(3, 4); // 7
+
+// `Add` is not virtual, so the class call cannot be intercepted - only the interface slot can.
+sut.Mock.As<ICalculator>().Setup.Add(It.IsAny<int>(), It.IsAny<int>()).Returns(99);
+int addViaClass = sut.Add(1, 2);                     // 3 - the real implementation
+int addViaInterface = ((ICalculator)sut).Add(1, 2);  // 99
+```
+
 **Notes:**
 
 - Only the first type can be a class; additional types must be interfaces.
+- Members the class implements non-virtually are only mockable through the interface; cast the mock (or type
+  your subject as the interface) to reach them.
+- `.Implementing<T>()` returns a new instance rather than modifying the one it was called on. Keep the returned
+  mock - the original reference does not implement `T`.
+- On class mocks, `.Implementing<T>()` reuses the constructor parameters the mock was created with, so
+  `CreateMock([…])` arguments carry over.
+- Indexers are keyed by their parameter signature rather than by the declaring interface, so a `new` indexer and
+  the base indexer it hides share the same storage.
 
 ## Wrapping existing instances
 
