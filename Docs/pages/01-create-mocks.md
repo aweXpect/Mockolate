@@ -157,8 +157,8 @@ sut.Mock.As<IChocolateShelfBase>().Verify.Restock().Once();
 
 **When the class already implements the interface**
 
-`.Implementing<T>()` is also useful when the mocked class itself implements `T`, because it makes members the
-class implements non-virtually reachable:
+`.Implementing<T>()` is also useful when the mocked class itself implements `T`, because it makes non-virtual
+members that the class implements mockable through the interface slot:
 
 ```csharp
 public interface ICalculator
