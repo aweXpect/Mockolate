@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Mockolate is a strongly-typed .NET mocking library powered by **Roslyn source generators**. Unlike reflection-based mocking libraries, it generates mock implementations at compile time, providing full IntelliSense support and AOT compatibility.
 
-**Supported targets**: .NET Standard 2.0, .NET 8, .NET 10, .NET Framework 4.8
+**Supported targets**: .NET Standard 2.0, .NET 8, .NET 10, .NET 11, .NET Framework 4.8
 
 ## Build and Test Commands
 
@@ -33,7 +33,7 @@ dotnet test Tests/Mockolate.Tests/Mockolate.Tests.csproj --filter "FullyQualifie
 ./build.sh Pack               # Create NuGet packages
 ```
 
-**Requires**: .NET 10 SDK (see `global.json`). For source generator changes, run `dotnet clean && dotnet build` to force regeneration.
+**Requires**: .NET 11 SDK (currently a preview, see `global.json`). For source generator changes, run `dotnet clean && dotnet build` to force regeneration.
 
 ## Architecture
 
