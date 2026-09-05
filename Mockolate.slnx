@@ -35,7 +35,10 @@
 		<File Path="nuget.config" />
 		<File Path="README.md" />
 	</Folder>
-	<Folder Name="/_/.github/" />
+	<Folder Name="/_/.github/">
+		<File Path=".github/dependabot.yml" />
+		<File Path=".github/mergify.yml" />
+	</Folder>
 	<Folder Name="/_/.github/workflows/">
 		<File Path=".github/workflows/build.yml" />
 		<File Path=".github/workflows/ci-analysis.yml" />
