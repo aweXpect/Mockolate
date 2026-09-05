@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Mockolate.SourceGenerators.Tests.Snapshot;
 
 public sealed class MockGenerationSnapshotAcceptance
@@ -9,12 +11,13 @@ public sealed class MockGenerationSnapshotAcceptance
 	[Fact(Explicit = true)]
     public void AcceptSnapshotChanges()
     {
+        Dictionary<string, IReadOnlyDictionary<string, string>> scenarios = new();
         foreach (var scenario in MockGenerationSnapshotTests.Scenarios)
         {
             var result = MockGenerationSnapshotTests.RunGenerator(scenario);
-            var generated =
-                MockGenerationSnapshotTests.NormalizeSources(result);
-            SnapshotStorage.SetExpected(scenario.Name, generated);
+            scenarios[scenario.Name] = MockGenerationSnapshotTests.NormalizeSources(result);
         }
+
+        SnapshotStorage.SetExpected(scenarios);
     }
 }
