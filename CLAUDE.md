@@ -53,6 +53,7 @@ An `IIncrementalGenerator` that runs at compile time and generates `Mock.{TypeNa
 - Handles interfaces, abstract classes, and delegates
 - Emits method overrides that delegate to `MockRegistry`
 - Targets .NET Standard 2.0 (Roslyn constraint)
+- Union mode (`Sources.MockClass.Unions.cs`): with C# 15 (or `MockolateUnionParameters=true`) the setup/verify overloads take `ParameterArg<T>?` or `Func<T, bool>` per parameter instead of the classic matcher/value set; below that the output is unchanged
 
 ### Source/Mockolate.Analyzers + Source/Mockolate.Analyzers.CodeFixers
 Roslyn analyzers that validate mock usage at compile time:
