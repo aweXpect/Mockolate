@@ -492,6 +492,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -576,7 +582,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -664,7 +671,8 @@ window.BENCHMARK_DATA = {
           308.82421167691547,
           355.2131740129911,
           376.14761889775593,
-          307.24783143997195
+          307.24783143997195,
+          288.6527127901713
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -722,6 +730,7 @@ window.BENCHMARK_DATA = {
           1720,
           1720,
           1720,
+          1608,
           1608,
           1608,
           1608,
@@ -853,7 +862,8 @@ window.BENCHMARK_DATA = {
           97347.82314453126,
           99236.09825721153,
           71018.08825683594,
-          70785.8850423177
+          70785.8850423177,
+          34859.74361008864
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -946,7 +956,8 @@ window.BENCHMARK_DATA = {
           9208,
           9096,
           9090,
-          9096
+          9096,
+          9166
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -1042,7 +1053,8 @@ window.BENCHMARK_DATA = {
           4567.043127950033,
           4872.897757466634,
           4580.605422973633,
-          4464.039071655274
+          4464.039071655274,
+          3206.6193466186523
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -1110,6 +1122,7 @@ window.BENCHMARK_DATA = {
           7928,
           7928,
           7928,
+          7896,
           7896,
           7896,
           7896,
@@ -1231,7 +1244,8 @@ window.BENCHMARK_DATA = {
           4776.925729479109,
           5144.053995259603,
           4601.413376363119,
-          4272.156764690692
+          4272.156764690692,
+          2964.7754587809245
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1324,7 +1338,8 @@ window.BENCHMARK_DATA = {
           6970,
           6970,
           6959,
-          6970
+          6970,
+          6964
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -1420,7 +1435,8 @@ window.BENCHMARK_DATA = {
           401.8008369377681,
           499.047552617391,
           454.805120976766,
-          397.8650733743395
+          397.8650733743395,
+          334.0848093032837
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -1432,6 +1448,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2440,
           2440,
           2440,
           2440,
@@ -1609,7 +1626,8 @@ window.BENCHMARK_DATA = {
           474.12281932149614,
           540.2355673472086,
           585.0423788343157,
-          531.2680973325457
+          531.2680973325457,
+          425.6833377202352
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -1662,6 +1680,7 @@ window.BENCHMARK_DATA = {
           2032,
           2032,
           2032,
+          2040,
           2040,
           2040,
           2040,
@@ -2208,6 +2227,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -2292,7 +2317,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -2380,7 +2406,8 @@ window.BENCHMARK_DATA = {
           304.7454094568888,
           232.72481746673583,
           387.80373328526815,
-          291.7373906930288
+          291.7373906930288,
+          299.2856509208679
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -2438,6 +2465,7 @@ window.BENCHMARK_DATA = {
           1824,
           1824,
           1824,
+          1744,
           1744,
           1744,
           1744,
@@ -2569,7 +2597,8 @@ window.BENCHMARK_DATA = {
           14164.397143554688,
           11103.972709147136,
           14338.30526297433,
-          12620.333448137555
+          12620.333448137555,
+          13758.22649637858
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -2657,6 +2686,7 @@ window.BENCHMARK_DATA = {
           12809,
           12809,
           13241,
+          12809,
           12809,
           12809,
           12809,
@@ -2758,7 +2788,8 @@ window.BENCHMARK_DATA = {
           5402.966403706869,
           4131.554660797119,
           5410.135469055176,
-          4736.624467032297
+          4736.624467032297,
+          5255.407651628767
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -2770,6 +2801,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          9264,
           9264,
           9264,
           9264,
@@ -2947,7 +2979,8 @@ window.BENCHMARK_DATA = {
           231810.97403390068,
           99193.39887883113,
           123807.42602539062,
-          109325.76159667969
+          109325.76159667969,
+          229911.83685302734
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3040,7 +3073,8 @@ window.BENCHMARK_DATA = {
           15628,
           15601,
           15587,
-          15587
+          15587,
+          15628
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -3136,7 +3170,8 @@ window.BENCHMARK_DATA = {
           1353.7960335867745,
           1033.3015943254743,
           1622.9925096218403,
-          1127.6868303934732
+          1127.6868303934732,
+          1301.3955598977896
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -3148,6 +3183,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          9016,
           9016,
           9016,
           9016,
@@ -3325,7 +3361,8 @@ window.BENCHMARK_DATA = {
           178.44781282742818,
           156.7039527575175,
           258.91497570673624,
-          171.45722467104594
+          171.45722467104594,
+          169.81549156506856
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -3378,6 +3415,7 @@ window.BENCHMARK_DATA = {
           1368,
           1368,
           1368,
+          1376,
           1376,
           1376,
           1376,
@@ -3924,6 +3962,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -4008,7 +4052,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -4096,7 +4141,8 @@ window.BENCHMARK_DATA = {
           1067.3900662740073,
           807.4067818959554,
           956.3737862450736,
-          1022.0504829406739
+          1022.0504829406739,
+          729.9082616170248
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -4154,6 +4200,7 @@ window.BENCHMARK_DATA = {
           3912,
           3912,
           3912,
+          3856,
           3856,
           3856,
           3856,
@@ -4285,7 +4332,8 @@ window.BENCHMARK_DATA = {
           163667.2823311942,
           133219.76729910713,
           226983.04506138392,
-          219012.23831380208
+          219012.23831380208,
+          135152.24040339544
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4378,7 +4426,8 @@ window.BENCHMARK_DATA = {
           20721,
           21251,
           21084,
-          20860
+          20860,
+          20875
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -4474,7 +4523,8 @@ window.BENCHMARK_DATA = {
           10666.07171194894,
           7424.8615997314455,
           10689.86881205241,
-          10535.205549112956
+          10535.205549112956,
+          7184.774315388998
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4567,7 +4617,8 @@ window.BENCHMARK_DATA = {
           13088,
           13088,
           13144,
-          13088
+          13088,
+          13144
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -4663,7 +4714,8 @@ window.BENCHMARK_DATA = {
           11363.671033586774,
           7665.845008263221,
           12567.813811238606,
-          12262.231779915946
+          12262.231779915946,
+          7668.314065551758
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -4754,6 +4806,7 @@ window.BENCHMARK_DATA = {
           13948,
           13954,
           13943,
+          13954,
           13954,
           13954,
           13954
@@ -4852,7 +4905,8 @@ window.BENCHMARK_DATA = {
           1020.0332397733416,
           677.0292280832927,
           947.6924722035726,
-          936.49820505778
+          936.49820505778,
+          674.8846497217814
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -4864,6 +4918,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5280,
           5280,
           5280,
           5280,
@@ -5451,6 +5506,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -5535,7 +5596,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -5623,7 +5685,8 @@ window.BENCHMARK_DATA = {
           2928.593722788493,
           1977.2610013144356,
           2598.2408882141112,
-          2565.315633138021
+          2565.315633138021,
+          1943.1132387433734
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -5681,6 +5744,7 @@ window.BENCHMARK_DATA = {
           4992,
           4992,
           4992,
+          4936,
           4936,
           4936,
           4936,
@@ -5812,7 +5876,8 @@ window.BENCHMARK_DATA = {
           174888.8441859654,
           145264.2588266226,
           238538.27880859375,
-          232173.07577078682
+          232173.07577078682,
+          143179.9257405599
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -5905,6 +5970,7 @@ window.BENCHMARK_DATA = {
           29324,
           31002,
           30834,
+          30610,
           30610
         ],
         "borderColor": "#A052B0",
@@ -6001,7 +6067,8 @@ window.BENCHMARK_DATA = {
           25090.739656575523,
           18319.98122514997,
           25597.007592773436,
-          24653.029804774695
+          24653.029804774695,
+          18588.81007033128
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6094,7 +6161,8 @@ window.BENCHMARK_DATA = {
           26193,
           26193,
           26249,
-          26193
+          26193,
+          26753
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -6190,7 +6258,8 @@ window.BENCHMARK_DATA = {
           24324.45004272461,
           16576.154525756836,
           25882.37259565081,
-          25888.808498128255
+          25888.808498128255,
+          15938.494380405971
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -6281,6 +6350,7 @@ window.BENCHMARK_DATA = {
           33769,
           33764,
           33772,
+          33764,
           33764,
           33764,
           33764
@@ -6379,7 +6449,8 @@ window.BENCHMARK_DATA = {
           2409.292793273926,
           1575.7844529151917,
           2327.0886413574217,
-          2296.7017003377277
+          2296.7017003377277,
+          1622.9971558888753
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -6391,6 +6462,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          8160,
           8160,
           8160,
           8160,
@@ -6978,6 +7050,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -7062,7 +7140,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -7150,7 +7229,8 @@ window.BENCHMARK_DATA = {
           340.20293045043945,
           371.80793864386425,
           361.60002393722533,
-          281.2549233118693
+          281.2549233118693,
+          365.62154153415133
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -7208,6 +7288,7 @@ window.BENCHMARK_DATA = {
           2088,
           2088,
           2088,
+          1976,
           1976,
           1976,
           1976,
@@ -7339,7 +7420,8 @@ window.BENCHMARK_DATA = {
           183703.54575892858,
           135706.54993489583,
           134896.46393229166,
-          103699.26065499442
+          103699.26065499442,
+          185137.94474283853
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7432,7 +7514,8 @@ window.BENCHMARK_DATA = {
           14926,
           14938,
           14938,
-          14938
+          14938,
+          14926
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -7528,7 +7611,8 @@ window.BENCHMARK_DATA = {
           6367.636356099447,
           6039.763196309407,
           5812.74742380778,
-          4441.5548624674475
+          4441.5548624674475,
+          6315.06966603597
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7621,7 +7705,8 @@ window.BENCHMARK_DATA = {
           9280,
           9336,
           9336,
-          9280
+          9280,
+          9336
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -7717,7 +7802,8 @@ window.BENCHMARK_DATA = {
           6293.097577412923,
           5852.590672302246,
           5542.37218170166,
-          4325.260521952311
+          4325.260521952311,
+          6195.219191414969
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -7805,6 +7891,7 @@ window.BENCHMARK_DATA = {
           8244,
           8244,
           8257,
+          8244,
           8244,
           8244,
           8244,
@@ -7906,7 +7993,8 @@ window.BENCHMARK_DATA = {
           603.3955214182536,
           579.8941809972127,
           538.5896723429362,
-          444.4829080581665
+          444.4829080581665,
+          595.232050214495
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -7918,6 +8006,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4136,
           4136,
           4136,
           4136,
@@ -8095,7 +8184,8 @@ window.BENCHMARK_DATA = {
           506.2372404734294,
           534.4878470557077,
           522.0357245763142,
-          421.63193534215293
+          421.63193534215293,
+          493.95215740203855
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -8148,6 +8238,7 @@ window.BENCHMARK_DATA = {
           2056,
           2056,
           2056,
+          2064,
           2064,
           2064,
           2064,
@@ -8694,6 +8785,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -8778,7 +8875,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -8866,7 +8964,8 @@ window.BENCHMARK_DATA = {
           677.6127344767252,
           663.1991659800211,
           635.0999643325806,
-          493.08111782073973
+          493.08111782073973,
+          719.3055405934651
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -8924,6 +9023,7 @@ window.BENCHMARK_DATA = {
           2304,
           2304,
           2304,
+          2192,
           2192,
           2192,
           2192,
@@ -9055,7 +9155,8 @@ window.BENCHMARK_DATA = {
           186885.85613141741,
           139865.80307617187,
           137990.38720703125,
-          108446.44984788161
+          108446.44984788161,
+          191171.56030273438
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9148,7 +9249,8 @@ window.BENCHMARK_DATA = {
           18925,
           18925,
           18925,
-          18930
+          18930,
+          18925
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -9244,7 +9346,8 @@ window.BENCHMARK_DATA = {
           9307.483118693033,
           8849.415971883138,
           8356.26524235652,
-          6660.64074198405
+          6660.64074198405,
+          9260.970914713542
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9337,7 +9440,8 @@ window.BENCHMARK_DATA = {
           11800,
           12361,
           12361,
-          11800
+          11800,
+          12361
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -9433,7 +9537,8 @@ window.BENCHMARK_DATA = {
           9230.942581176758,
           8942.23372239333,
           8492.77579498291,
-          6940.541612243653
+          6940.541612243653,
+          9283.6688243321
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -9521,6 +9626,7 @@ window.BENCHMARK_DATA = {
           15786,
           15786,
           15780,
+          15786,
           15786,
           15786,
           15786,
@@ -9622,7 +9728,8 @@ window.BENCHMARK_DATA = {
           1170.792232386271,
           1124.9457785288494,
           1061.837372716268,
-          864.237465540568
+          864.237465540568,
+          1245.4707171122234
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -9634,6 +9741,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          5648,
           5648,
           5648,
           5648,
@@ -9811,7 +9919,8 @@ window.BENCHMARK_DATA = {
           1417.168568166097,
           1476.5607891082764,
           1456.7910191853841,
-          1158.2090836842856
+          1158.2090836842856,
+          1464.724013873509
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -9864,6 +9973,7 @@ window.BENCHMARK_DATA = {
           3808,
           3808,
           3808,
+          3816,
           3816,
           3816,
           3816,
@@ -10410,6 +10520,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -10494,7 +10610,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -10582,7 +10699,8 @@ window.BENCHMARK_DATA = {
           527.8218469619751,
           537.6874072392782,
           515.4416469256083,
-          320.39138209025066
+          320.39138209025066,
+          574.3056358973186
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -10640,6 +10758,7 @@ window.BENCHMARK_DATA = {
           2528,
           2528,
           2528,
+          2472,
           2472,
           2472,
           2472,
@@ -10771,7 +10890,8 @@ window.BENCHMARK_DATA = {
           10395.380680338541,
           11892.097800118583,
           11466.336342947823,
-          5608.595306396484
+          5608.595306396484,
+          12200.064709472656
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -10864,7 +10984,8 @@ window.BENCHMARK_DATA = {
           10641,
           10641,
           10513,
-          10513
+          10513,
+          10593
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -10960,7 +11081,8 @@ window.BENCHMARK_DATA = {
           7078.9406595865885,
           7664.492067777193,
           7568.625034877232,
-          3804.9903678894043
+          3804.9903678894043,
+          7890.906777954102
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -10972,6 +11094,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          11720,
           11720,
           11720,
           11720,
@@ -11149,7 +11272,8 @@ window.BENCHMARK_DATA = {
           7467.2967397054035,
           8502.288127354213,
           7988.861615862165,
-          4001.389949798584
+          4001.389949798584,
+          9104.236697387696
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -11242,7 +11366,8 @@ window.BENCHMARK_DATA = {
           11508,
           11508,
           11508,
-          11508
+          11508,
+          11749
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -11338,7 +11463,8 @@ window.BENCHMARK_DATA = {
           440.0739903450012,
           477.2894432067871,
           449.65440004212513,
-          245.93755985895794
+          245.93755985895794,
+          483.9894162495931
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -11350,6 +11476,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          3200,
           3200,
           3200,
           3200,
@@ -11527,7 +11654,8 @@ window.BENCHMARK_DATA = {
           457.3670784632365,
           454.41401440756664,
           439.3734318293058,
-          293.65739801951815
+          293.65739801951815,
+          486.40207178252086
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -11580,6 +11708,7 @@ window.BENCHMARK_DATA = {
           1672,
           1672,
           1672,
+          1680,
           1680,
           1680,
           1680,
@@ -12126,6 +12255,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -12210,7 +12345,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -12298,7 +12434,8 @@ window.BENCHMARK_DATA = {
           1054.3641129811606,
           1005.4392667497907,
           1030.8017642157417,
-          767.9370059967041
+          767.9370059967041,
+          1089.2454062241775
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -12356,6 +12493,7 @@ window.BENCHMARK_DATA = {
           3032,
           3032,
           3032,
+          2976,
           2976,
           2976,
           2976,
@@ -12487,7 +12625,8 @@ window.BENCHMARK_DATA = {
           17341.724791463217,
           19324.31494140625,
           18247.78715616862,
-          9225.403713771275
+          9225.403713771275,
+          19271.108912876673
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -12580,7 +12719,8 @@ window.BENCHMARK_DATA = {
           18721,
           18721,
           17441,
-          17441
+          17441,
+          17521
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -12676,7 +12816,8 @@ window.BENCHMARK_DATA = {
           16645.965996878487,
           16774.37577718099,
           17513.398550851005,
-          8881.10117994036
+          8881.10117994036,
+          17487.511278424943
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -12688,6 +12829,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          21585,
           21585,
           21585,
           21585,
@@ -12865,7 +13007,8 @@ window.BENCHMARK_DATA = {
           18700.33306274414,
           19522.662663386418,
           19200.486158098494,
-          9469.034168497721
+          9469.034168497721,
+          21305.97424926758
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -12958,7 +13101,8 @@ window.BENCHMARK_DATA = {
           31546,
           31546,
           31546,
-          31546
+          31546,
+          31786
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -13054,7 +13198,8 @@ window.BENCHMARK_DATA = {
           1117.1431120554605,
           1115.7293960253398,
           1123.357696914673,
-          732.882216317313
+          732.882216317313,
+          1257.3214051564535
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -13066,6 +13211,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          4784,
           4784,
           4784,
           4784,
@@ -13243,7 +13389,8 @@ window.BENCHMARK_DATA = {
           1665.4471930185953,
           1554.3127210934956,
           1556.0964103426252,
-          1198.1782433191936
+          1198.1782433191936,
+          1648.8050666536603
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -13296,6 +13443,7 @@ window.BENCHMARK_DATA = {
           4024,
           4024,
           4024,
+          4032,
           4032,
           4032,
           4032,
@@ -13842,6 +13990,12 @@ window.BENCHMARK_DATA = {
         "author": "Valentin Breu\u00DF",
         "date": "Mon Aug 31 21:07:36 2026 \u002B0200",
         "message": "docs: describe reaching a mock\u0027s other interfaces (#855)"
+      },
+      {
+        "sha": "c3a76ac10b45cb7084186f8fb95959e9f8a2ab78",
+        "author": "Valentin Breu\u00DF",
+        "date": "Sat Sep 5 09:01:34 2026 \u002B0200",
+        "message": "chore: add mergify auto-merge for dependabot PRs (#857)"
       }
     ],
     "labels": [
@@ -13926,7 +14080,8 @@ window.BENCHMARK_DATA = {
       "cb55194a",
       "0e57c9ec",
       "b1569f23",
-      "665863fd"
+      "665863fd",
+      "c3a76ac1"
     ],
     "datasets": [
       {
@@ -14014,7 +14169,8 @@ window.BENCHMARK_DATA = {
           14.459068278471628,
           17.0011643744432,
           16.683633200327556,
-          15.108890595038732
+          15.108890595038732,
+          18.861721330881117
         ],
         "borderColor": "#63A2AC",
         "backgroundColor": "#63A2AC",
@@ -14072,6 +14228,7 @@ window.BENCHMARK_DATA = {
           440,
           440,
           440,
+          160,
           160,
           160,
           160,
@@ -14203,7 +14360,8 @@ window.BENCHMARK_DATA = {
           217.3644940302922,
           285.33962354660036,
           269.2653820991516,
-          229.3282632668813
+          229.3282632668813,
+          297.17768500645957
         ],
         "borderColor": "#E84393",
         "backgroundColor": "#E84393",
@@ -14215,6 +14373,7 @@ window.BENCHMARK_DATA = {
         "label": "Imposter memory",
         "unit": "b",
         "data": [
+          2248,
           2248,
           2248,
           2248,
@@ -14392,7 +14551,8 @@ window.BENCHMARK_DATA = {
           29.15884520457341,
           34.52587903397424,
           35.02519398530324,
-          31.33360399518694
+          31.33360399518694,
+          38.16534467538198
         ],
         "borderColor": "#FF8C00",
         "backgroundColor": "#FF8C00",
@@ -14445,6 +14605,7 @@ window.BENCHMARK_DATA = {
           192,
           192,
           192,
+          200,
           200,
           200,
           200,
@@ -14581,7 +14742,8 @@ window.BENCHMARK_DATA = {
           935.9503423984235,
           1375.698389371236,
           882.6666674296062,
-          996.3470425923665
+          996.3470425923665,
+          1419.9355201721191
         ],
         "borderColor": "#A052B0",
         "backgroundColor": "#A052B0",
@@ -14593,6 +14755,7 @@ window.BENCHMARK_DATA = {
         "label": "Moq memory",
         "unit": "b",
         "data": [
+          2096,
           2096,
           2096,
           2096,
@@ -14770,7 +14933,8 @@ window.BENCHMARK_DATA = {
           1473.121235030038,
           1932.543007659912,
           1443.690290587289,
-          1520.1794083913167
+          1520.1794083913167,
+          2079.731773885091
         ],
         "borderColor": "#5E2750",
         "backgroundColor": "#5E2750",
@@ -14782,6 +14946,7 @@ window.BENCHMARK_DATA = {
         "label": "NSubstitute memory",
         "unit": "b",
         "data": [
+          5048,
           5048,
           5048,
           5048,
@@ -14959,7 +15124,8 @@ window.BENCHMARK_DATA = {
           1067.2472628275552,
           1704.3283224105835,
           1115.2170834859212,
-          1120.8735254727876
+          1120.8735254727876,
+          1955.6585178375244
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
@@ -15052,7 +15218,8 @@ window.BENCHMARK_DATA = {
           2759,
           2763,
           2759,
-          2759
+          2759,
+          2763
         ],
         "borderColor": "#4A6FA5",
         "backgroundColor": "#4A6FA5",
