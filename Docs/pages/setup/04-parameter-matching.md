@@ -7,7 +7,8 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 ### Basic Matchers
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
-- `It.Is<T>(value)`: Matches a specific value.
+- `It.Is<T>(value)`: Matches a specific value. For `double`, `float`, `decimal`, `DateTime` and `TimeSpan` you can
+  append `.Within(tolerance)` to accept values within the given tolerance.
 - `It.IsNot<T>(value)`: Matches any value not equal to `value`.
 - `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values.
 - `It.IsNotOneOf<T>(params IEnumerable<T> values)`: Matches any value that is not in the given set.
@@ -118,6 +119,21 @@ sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
 
 int result = sut.Process("HELLO");
 // result == 42
+```
+
+### Tolerance
+
+Use `.Within(tolerance)` on `It.Is()` to accept values that differ from the expected value by at most the given
+tolerance. It is available for `double`, `float` and `decimal` (numeric tolerance) as well as `DateTime` and `TimeSpan`
+(`TimeSpan` tolerance):
+
+```csharp
+// Example: Accept any temperature between 31.4 and 31.6 degrees
+sut.Mock.Setup.SetTemperature(It.Is(31.5).Within(0.1))
+    .Returns(true);
+
+bool result = sut.SetTemperature(31.45);
+// result == true
 ```
 
 ### Covariant Type Matching

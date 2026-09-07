@@ -265,6 +265,11 @@ namespace Mockolate
         public static Mockolate.Parameters.IOutParameter<T> Monitor<T>(this Mockolate.Parameters.IOutParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
         public static Mockolate.Parameters.IParameterWithCallback<T> Monitor<T>(this Mockolate.Parameters.IParameterWithCallback<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
         public static Mockolate.Parameters.IRefParameter<T> Monitor<T>(this Mockolate.Parameters.IRefParameter<T> parameter, out Mockolate.Parameters.IParameterMonitor<T> monitor) { }
+        public static Mockolate.It.IIsParameter<System.DateTime> Within(this Mockolate.It.IIsParameter<System.DateTime> parameter, System.TimeSpan tolerance, [System.Runtime.CompilerServices.CallerArgumentExpression("tolerance")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.It.IIsParameter<System.TimeSpan> Within(this Mockolate.It.IIsParameter<System.TimeSpan> parameter, System.TimeSpan tolerance, [System.Runtime.CompilerServices.CallerArgumentExpression("tolerance")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.It.IIsParameter<decimal> Within(this Mockolate.It.IIsParameter<decimal> parameter, decimal tolerance, [System.Runtime.CompilerServices.CallerArgumentExpression("tolerance")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.It.IIsParameter<double> Within(this Mockolate.It.IIsParameter<double> parameter, double tolerance, [System.Runtime.CompilerServices.CallerArgumentExpression("tolerance")] string doNotPopulateThisValue = "") { }
+        public static Mockolate.It.IIsParameter<float> Within(this Mockolate.It.IIsParameter<float> parameter, float tolerance, [System.Runtime.CompilerServices.CallerArgumentExpression("tolerance")] string doNotPopulateThisValue = "") { }
     }
     public static class ReturnsThrowsAsyncExtensions
     {

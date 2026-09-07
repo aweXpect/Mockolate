@@ -114,6 +114,11 @@ public partial class It
 		public override string ToString()
 		{
 			string expression = _valueExpression ??= FormatValueLazily(_value);
+			if (_comparer is ToleranceComparer<T>)
+			{
+				return $"It.Is({expression}).Within({_comparerExpression})";
+			}
+
 			if (_comparer is not null)
 			{
 				return $"It.Is({expression}).Using({_comparerExpression})";
@@ -141,6 +146,17 @@ public partial class It
 
 			return value.ToString() ?? "null";
 		}
+	}
+
+	/// <summary>
+	///     Equality comparer backing <c>It.Is(value).Within(tolerance)</c>; recognized by
+	///     <see cref="ParameterEqualsMatch{T}.ToString" /> to render the <c>.Within(...)</c> suffix.
+	/// </summary>
+	internal sealed class ToleranceComparer<T>(Func<T?, T?, bool> isWithinTolerance) : IEqualityComparer<T>
+	{
+		public bool Equals(T? x, T? y) => isWithinTolerance(x, y);
+
+		public int GetHashCode(T obj) => obj!.GetHashCode();
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members

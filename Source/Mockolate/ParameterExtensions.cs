@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Mockolate.Parameters;
 
 namespace Mockolate;
@@ -56,6 +58,73 @@ public static class ParameterExtensions
 		parameter.Do(v => parameterMonitor.AddValue(v));
 		monitor = parameterMonitor;
 		return parameter;
+	}
+
+	/// <summary>
+	///     Relaxes the equality check to accept any value whose distance to the expected value is at most
+	///     <paramref name="tolerance" />.
+	/// </summary>
+	/// <param name="parameter">The equality matcher created by <c>It.Is(value)</c>.</param>
+	/// <param name="tolerance">The maximum allowed absolute difference (inclusive).</param>
+	/// <param name="doNotPopulateThisValue">Do not populate - captured automatically by the compiler.</param>
+	/// <returns>The same <paramref name="parameter" />, allowing further fluent calls.</returns>
+	/// <exception cref="ArgumentOutOfRangeException"><paramref name="tolerance" /> is negative.</exception>
+	public static It.IIsParameter<double> Within(this It.IIsParameter<double> parameter, double tolerance,
+		[CallerArgumentExpression(nameof(tolerance))]
+		string doNotPopulateThisValue = "")
+	{
+		ThrowIfNegative(tolerance < 0, nameof(tolerance));
+		return parameter.Using(new It.ToleranceComparer<double>((x, y) => Math.Abs(x - y) <= tolerance),
+			doNotPopulateThisValue);
+	}
+
+	/// <inheritdoc cref="Within(It.IIsParameter{double}, double, string)" />
+	public static It.IIsParameter<float> Within(this It.IIsParameter<float> parameter, float tolerance,
+		[CallerArgumentExpression(nameof(tolerance))]
+		string doNotPopulateThisValue = "")
+	{
+		ThrowIfNegative(tolerance < 0, nameof(tolerance));
+		return parameter.Using(new It.ToleranceComparer<float>((x, y) => Math.Abs(x - y) <= tolerance),
+			doNotPopulateThisValue);
+	}
+
+	/// <inheritdoc cref="Within(It.IIsParameter{double}, double, string)" />
+	public static It.IIsParameter<decimal> Within(this It.IIsParameter<decimal> parameter, decimal tolerance,
+		[CallerArgumentExpression(nameof(tolerance))]
+		string doNotPopulateThisValue = "")
+	{
+		ThrowIfNegative(tolerance < 0, nameof(tolerance));
+		return parameter.Using(new It.ToleranceComparer<decimal>((x, y) => Math.Abs(x - y) <= tolerance),
+			doNotPopulateThisValue);
+	}
+
+	/// <inheritdoc cref="Within(It.IIsParameter{double}, double, string)" />
+	public static It.IIsParameter<DateTime> Within(this It.IIsParameter<DateTime> parameter, TimeSpan tolerance,
+		[CallerArgumentExpression(nameof(tolerance))]
+		string doNotPopulateThisValue = "")
+	{
+		ThrowIfNegative(tolerance < TimeSpan.Zero, nameof(tolerance));
+		return parameter.Using(new It.ToleranceComparer<DateTime>((x, y) => (x - y).Duration() <= tolerance),
+			doNotPopulateThisValue);
+	}
+
+	/// <inheritdoc cref="Within(It.IIsParameter{double}, double, string)" />
+	public static It.IIsParameter<TimeSpan> Within(this It.IIsParameter<TimeSpan> parameter, TimeSpan tolerance,
+		[CallerArgumentExpression(nameof(tolerance))]
+		string doNotPopulateThisValue = "")
+	{
+		ThrowIfNegative(tolerance < TimeSpan.Zero, nameof(tolerance));
+		return parameter.Using(new It.ToleranceComparer<TimeSpan>((x, y) => (x - y).Duration() <= tolerance),
+			doNotPopulateThisValue);
+	}
+
+	private static void ThrowIfNegative(bool isNegative, string paramName)
+	{
+		if (isNegative)
+		{
+			// ReSharper disable once LocalizableElement
+			throw new ArgumentOutOfRangeException(paramName, "The tolerance must not be negative.");
+		}
 	}
 
 	private sealed class ParameterMonitor<T> : IParameterMonitor<T>
