@@ -34,9 +34,9 @@
 		<PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5"/>
 		<PackageVersion Include="coverlet.collector" Version="10.0.1"/>
 		<PackageVersion Include="PublicApiGenerator" Version="11.5.4"/>
-		<PackageVersion Include="aweXpect" Version="2.35.0"/>
+		<PackageVersion Include="aweXpect" Version="2.37.0"/>
 		<PackageVersion Include="aweXpect.Chronology" Version="1.1.0"/>
-		<PackageVersion Include="aweXpect.Mockolate" Version="3.1.0"/>
+		<PackageVersion Include="aweXpect.Mockolate" Version="3.2.0"/>
 		<PackageVersion Include="Testably.Abstractions" Version="10.3.0"/>
 		<PackageVersion Include="Azure.Data.Tables" Version="12.12.0"/>
 		<PackageVersion Include="Azure.Storage.Blobs" Version="12.29.2"/>
