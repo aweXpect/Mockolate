@@ -119,7 +119,8 @@ You can use argument matchers from the `It` class to verify calls with flexible 
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
 - `It.Is<T>(value)`: Matches a specific value. With `.Using(IEqualityComparer<T>)`, you can provide a custom equality
-  comparer.
+  comparer. For `double`, `float`, `decimal`, `DateTime`, `DateTimeOffset` and `TimeSpan` (and their nullable
+  counterparts) you can append `.Within(tolerance)` to accept values within the given tolerance.
 - `It.IsNot<T>(value)`: Matches any value not equal to `value`.
 - `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values. With `.Using(IEqualityComparer<T>)`,
   you can provide a custom equality comparer.

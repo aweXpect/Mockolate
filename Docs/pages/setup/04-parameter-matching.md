@@ -7,7 +7,9 @@ Mockolate provides flexible parameter matching for method setups and verificatio
 ### Basic Matchers
 
 - `It.IsAny<T>()`: Matches any value of type `T`.
-- `It.Is<T>(value)`: Matches a specific value.
+- `It.Is<T>(value)`: Matches a specific value. For `double`, `float`, `decimal`, `DateTime`, `DateTimeOffset` and
+  `TimeSpan` (and their nullable counterparts) you can append `.Within(tolerance)` to accept values within the given
+  tolerance.
 - `It.IsNot<T>(value)`: Matches any value not equal to `value`.
 - `It.IsOneOf<T>(params IEnumerable<T> values)`: Matches any of the given values.
 - `It.IsNotOneOf<T>(params IEnumerable<T> values)`: Matches any value that is not in the given set.
@@ -119,6 +121,33 @@ sut.Mock.Setup.Process(It.Is("hello").Using(comparer))
 int result = sut.Process("HELLO");
 // result == 42
 ```
+
+### Tolerance
+
+Use `.Within(tolerance)` on `It.Is()` to accept values that differ from the expected value by at most the given
+tolerance. It is available for `double`, `float` and `decimal` (numeric tolerance) as well as `DateTime`,
+`DateTimeOffset` and `TimeSpan` (`TimeSpan` tolerance), and for their nullable counterparts:
+
+```csharp
+// Example: Accept a tempering temperature that differs from 31.5 degrees by at most 0.1
+sut.Mock.Setup.SetTemperature(It.Is(31.5).Within(0.1))
+    .Returns(true);
+
+bool result = sut.SetTemperature(31.45);
+// result == true
+```
+
+:::info[Tolerance semantics]
+
+- The bound is inclusive, but for `double` and `float` it is subject to the usual binary representation error, so
+  values that lie exactly on the bound may or may not match.
+- The tolerance must not be negative (or `NaN`); otherwise an `ArgumentOutOfRangeException` is thrown.
+- `NaN` and the infinities keep matching themselves, just like without a tolerance.
+- For nullable parameters, `null` only matches `null`; a tolerance never bridges the gap between `null` and a value.
+- `.Within(tolerance)` cannot be combined with `.Using(IEqualityComparer<T>)`, because a custom comparer would
+  replace the tolerance.
+
+:::
 
 ### Covariant Type Matching
 

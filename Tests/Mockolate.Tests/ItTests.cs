@@ -106,8 +106,10 @@ public sealed partial class ItTests
 	internal interface IMyServiceWithNullable
 	{
 		void DoSomething(int? value, bool flag);
+		void DoSomethingWithDouble(double value);
 		void DoSomethingWithInt(int value);
 		void DoSomethingWithLong(int value);
+		void DoSomethingWithNullableDouble(double? value);
 		void DoSomethingWithString(string value);
 	}
 
