@@ -67,14 +67,32 @@ public partial class It
 			string doNotPopulateThisValue = "");
 	}
 
+	/// <summary>
+	///     Extension point behind <c>It.Is(value).Within(tolerance)</c>, used by <see cref="ParameterExtensions" />.
+	/// </summary>
+	/// <remarks>
+	///     The tolerance overloads are type-specific and can therefore not be declared on the generic
+	///     <see cref="IIsParameter{T}" />.
+	/// </remarks>
+	internal interface IToleranceParameter<T>
+	{
+		/// <summary>
+		///     Switches equality comparison to <paramref name="isWithinTolerance" /> and renders
+		///     <paramref name="toleranceExpression" /> in the <c>.Within(...)</c> suffix of <see cref="object.ToString" />.
+		/// </summary>
+		IParameterWithCallback<T> Within(Func<T, T, bool> isWithinTolerance, string toleranceExpression);
+	}
+
 #if !DEBUG
 	[System.Diagnostics.DebuggerNonUserCode]
 #endif
-	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>
+	private sealed class ParameterEqualsMatch<T> : TypedMatch<T>, IIsParameter<T>, IToleranceParameter<T>
 	{
 		private readonly T _value;
 		private IEqualityComparer<T>? _comparer;
 		private string? _comparerExpression;
+		private Func<T, T, bool>? _isWithinTolerance;
+		private string? _toleranceExpression;
 		private string? _valueExpression;
 
 		/// <summary>
@@ -96,12 +114,32 @@ public partial class It
 		{
 			_comparer = comparer;
 			_comparerExpression = doNotPopulateThisValue;
+			// A custom comparer and a tolerance are mutually exclusive; the last call wins.
+			_isWithinTolerance = null;
+			_toleranceExpression = null;
+			return this;
+		}
+
+		/// <inheritdoc cref="IToleranceParameter{T}.Within(Func{T, T, bool}, string)" />
+		IParameterWithCallback<T> IToleranceParameter<T>.Within(Func<T, T, bool> isWithinTolerance,
+			string toleranceExpression)
+		{
+			_isWithinTolerance = isWithinTolerance;
+			_toleranceExpression = toleranceExpression;
+			// A custom comparer and a tolerance are mutually exclusive; the last call wins.
+			_comparer = null;
+			_comparerExpression = null;
 			return this;
 		}
 
 		/// <inheritdoc cref="TypedMatch{T}.Matches(T)" />
 		protected override bool Matches(T value1)
 		{
+			if (_isWithinTolerance is not null)
+			{
+				return _isWithinTolerance(value1, _value);
+			}
+
 			if (_comparer is not null)
 			{
 				return _comparer.Equals(value1, _value);
@@ -114,9 +152,9 @@ public partial class It
 		public override string ToString()
 		{
 			string expression = _valueExpression ??= FormatValueLazily(_value);
-			if (_comparer is ToleranceComparer<T>)
+			if (_toleranceExpression is not null)
 			{
-				return $"It.Is({expression}).Within({_comparerExpression})";
+				return $"It.Is({expression}).Within({_toleranceExpression})";
 			}
 
 			if (_comparer is not null)
@@ -146,17 +184,6 @@ public partial class It
 
 			return value.ToString() ?? "null";
 		}
-	}
-
-	/// <summary>
-	///     Equality comparer backing <c>It.Is(value).Within(tolerance)</c>; recognized by
-	///     <see cref="ParameterEqualsMatch{T}.ToString" /> to render the <c>.Within(...)</c> suffix.
-	/// </summary>
-	internal sealed class ToleranceComparer<T>(Func<T?, T?, bool> isWithinTolerance) : IEqualityComparer<T>
-	{
-		public bool Equals(T? x, T? y) => isWithinTolerance(x, y);
-
-		public int GetHashCode(T obj) => obj!.GetHashCode();
 	}
 }
 #pragma warning restore S3218 // Inner class members should not shadow outer class "static" or type members

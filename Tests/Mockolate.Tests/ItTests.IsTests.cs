@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Mockolate.Parameters;
 
 namespace Mockolate.Tests;
@@ -71,6 +72,17 @@ public sealed partial class ItTests
 			await That(result).IsTrue();
 		}
 
+		[Fact]
+		public async Task Within_AfterUsing_ShouldReplaceTheComparer()
+		{
+			IParameter<double> sut = It.Is(5.0).Using(EqualityComparer<double>.Default).Within(0.1);
+
+			bool result = ((IParameterMatch<double>)sut).Matches(4.95);
+
+			await That(result).IsTrue();
+			await That(sut.ToString()).IsEqualTo("It.Is(5.0).Within(0.1)");
+		}
+
 		[Theory]
 		[InlineData(-11, false)]
 		[InlineData(-10, true)]
@@ -83,6 +95,22 @@ public sealed partial class ItTests
 			IParameter<DateTime> sut = It.Is(expected).Within(TimeSpan.FromSeconds(10));
 
 			bool result = ((IParameterMatch<DateTime>)sut).Matches(expected.AddSeconds(offsetInSeconds));
+
+			await That(result).IsEqualTo(expectMatch);
+		}
+
+		[Theory]
+		[InlineData(-11, false)]
+		[InlineData(-10, true)]
+		[InlineData(0, true)]
+		[InlineData(10, true)]
+		[InlineData(11, false)]
+		public async Task Within_DateTimeOffset_ShouldMatchWhenWithinTolerance(int offsetInSeconds, bool expectMatch)
+		{
+			DateTimeOffset expected = new(2024, 5, 6, 7, 8, 9, TimeSpan.FromHours(2));
+			IParameter<DateTimeOffset> sut = It.Is(expected).Within(TimeSpan.FromSeconds(10));
+
+			bool result = ((IParameterMatch<DateTimeOffset>)sut).Matches(expected.AddSeconds(offsetInSeconds));
 
 			await That(result).IsEqualTo(expectMatch);
 		}
@@ -118,6 +146,19 @@ public sealed partial class ItTests
 		}
 
 		[Theory]
+		[InlineData(double.NaN)]
+		[InlineData(double.PositiveInfinity)]
+		[InlineData(double.NegativeInfinity)]
+		public async Task Within_Double_WithNonFiniteValue_ShouldMatchItself(double value)
+		{
+			IParameter<double> sut = It.Is(value).Within(0.1);
+
+			bool result = ((IParameterMatch<double>)sut).Matches(value);
+
+			await That(result).IsTrue();
+		}
+
+		[Theory]
 		[InlineData(4.85f, false)]
 		[InlineData(4.9f, true)]
 		[InlineData(5.0f, true)]
@@ -130,6 +171,28 @@ public sealed partial class ItTests
 			bool result = ((IParameterMatch<float>)sut).Matches(value);
 
 			await That(result).IsEqualTo(expectMatch);
+		}
+
+		[Theory]
+		[InlineData(float.NaN)]
+		[InlineData(float.PositiveInfinity)]
+		[InlineData(float.NegativeInfinity)]
+		public async Task Within_Float_WithNonFiniteValue_ShouldMatchItself(float value)
+		{
+			IParameter<float> sut = It.Is(value).Within(0.1f);
+
+			bool result = ((IParameterMatch<float>)sut).Matches(value);
+
+			await That(result).IsTrue();
+		}
+
+		[Fact]
+		public async Task Within_NaNTolerance_ShouldThrowArgumentOutOfRangeException()
+		{
+			await That(() => It.Is(5.0).Within(double.NaN)).Throws<ArgumentOutOfRangeException>()
+				.WithParamName("tolerance");
+			await That(() => It.Is(5.0f).Within(float.NaN)).Throws<ArgumentOutOfRangeException>()
+				.WithParamName("tolerance");
 		}
 
 		[Fact]
@@ -148,6 +211,42 @@ public sealed partial class ItTests
 		}
 
 		[Fact]
+		public async Task Within_Nullable_ShouldMatchWhenWithinTolerance()
+		{
+			DateTime dateTime = new(2024, 5, 6, 7, 8, 9, DateTimeKind.Utc);
+			DateTimeOffset dateTimeOffset = new(dateTime, TimeSpan.Zero);
+			TimeSpan timeSpan = TimeSpan.FromMinutes(3);
+			TimeSpan tolerance = TimeSpan.FromSeconds(10);
+			IParameter<double?> doubleMatcher = It.Is<double?>(5.0).Within(0.1);
+			IParameter<float?> floatMatcher = It.Is<float?>(5.0f).Within(0.1f);
+			IParameter<decimal?> decimalMatcher = It.Is<decimal?>(5.0m).Within(0.1m);
+			IParameter<DateTime?> dateTimeMatcher = It.Is<DateTime?>(dateTime).Within(tolerance);
+			IParameter<DateTimeOffset?> dateTimeOffsetMatcher = It.Is<DateTimeOffset?>(dateTimeOffset).Within(tolerance);
+			IParameter<TimeSpan?> timeSpanMatcher = It.Is<TimeSpan?>(timeSpan).Within(tolerance);
+
+			await That(((IParameterMatch<double?>)doubleMatcher).Matches(4.95)).IsTrue();
+			await That(((IParameterMatch<float?>)floatMatcher).Matches(4.95f)).IsTrue();
+			await That(((IParameterMatch<decimal?>)decimalMatcher).Matches(4.95m)).IsTrue();
+			await That(((IParameterMatch<DateTime?>)dateTimeMatcher).Matches(dateTime.AddSeconds(5))).IsTrue();
+			await That(((IParameterMatch<DateTimeOffset?>)dateTimeOffsetMatcher).Matches(dateTimeOffset.AddSeconds(5)))
+				.IsTrue();
+			await That(((IParameterMatch<TimeSpan?>)timeSpanMatcher).Matches(timeSpan.Add(TimeSpan.FromSeconds(5))))
+				.IsTrue();
+		}
+
+		[Fact]
+		public async Task Within_Nullable_ShouldOnlyMatchNullWithNull()
+		{
+			IParameter<double?> nullMatcher = It.Is<double?>(null).Within(0.1);
+			IParameter<double?> valueMatcher = It.Is<double?>(5.0).Within(0.1);
+
+			await That(((IParameterMatch<double?>)nullMatcher).Matches(null)).IsTrue();
+			await That(((IParameterMatch<double?>)nullMatcher).Matches(5.0)).IsFalse();
+			await That(((IParameterMatch<double?>)valueMatcher).Matches(null)).IsFalse();
+			await That(((IParameterMatch<double?>)valueMatcher).Matches(4.85)).IsFalse();
+		}
+
+		[Fact]
 		public async Task Within_ShouldVerifyMockInvocation()
 		{
 			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
@@ -156,6 +255,31 @@ public sealed partial class ItTests
 
 			await That(sut.Mock.Verify.DoSomethingWithDouble(It.Is(5.0).Within(0.1))).Once();
 			await That(sut.Mock.Verify.DoSomethingWithDouble(It.Is(5.0).Within(0.01))).Never();
+		}
+
+		[Fact]
+		public async Task Within_ShouldVerifyMockInvocationWithNullableParameter()
+		{
+			IMyServiceWithNullable sut = IMyServiceWithNullable.CreateMock();
+
+			sut.DoSomethingWithNullableDouble(4.95);
+
+			await That(sut.Mock.Verify.DoSomethingWithNullableDouble(It.Is<double?>(5.0).Within(0.1))).Once();
+			await That(sut.Mock.Verify.DoSomethingWithNullableDouble(It.Is<double?>(5.0).Within(0.01))).Never();
+		}
+
+		[Fact]
+		public async Task Within_ThenUsing_ShouldReplaceTheTolerance()
+		{
+			// Within() does not return an It.IIsParameter, so Using() can only be reached via the original reference.
+			It.IIsParameter<double> sut = It.Is(5.0);
+			sut.Within(0.1);
+			sut.Using(EqualityComparer<double>.Default);
+
+			bool result = ((IParameterMatch<double>)sut).Matches(4.95);
+
+			await That(result).IsFalse();
+			await That(sut.ToString()).IsEqualTo("It.Is(5.0).Using(EqualityComparer<double>.Default)");
 		}
 
 		[Theory]
@@ -184,6 +308,20 @@ public sealed partial class ItTests
 			string? result = sut.ToString();
 
 			await That(result).IsEqualTo(expectedValue);
+		}
+
+		[Fact]
+		public async Task Within_WithExtremeValues_ShouldNotOverflow()
+		{
+			IParameter<decimal> decimalMatcher = It.Is(decimal.MaxValue).Within(1m);
+			IParameter<TimeSpan> timeSpanMatcher = It.Is(TimeSpan.Zero).Within(TimeSpan.FromSeconds(1));
+			IParameter<DateTime> dateTimeMatcher = It.Is(DateTime.MaxValue).Within(TimeSpan.FromSeconds(1));
+
+			await That(((IParameterMatch<decimal>)decimalMatcher).Matches(decimal.MinValue)).IsFalse();
+			await That(((IParameterMatch<decimal>)decimalMatcher).Matches(decimal.MaxValue - 1m)).IsTrue();
+			await That(((IParameterMatch<TimeSpan>)timeSpanMatcher).Matches(TimeSpan.MinValue)).IsFalse();
+			await That(((IParameterMatch<TimeSpan>)timeSpanMatcher).Matches(TimeSpan.FromSeconds(-1))).IsTrue();
+			await That(((IParameterMatch<DateTime>)dateTimeMatcher).Matches(DateTime.MinValue)).IsFalse();
 		}
 
 		public interface IMyBase
